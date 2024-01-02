@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.HomeActivity">
+
+    <TextView
+        android:id="@+id/homeActivity_today"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="today"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/homeActivity_projects"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/homeActivity_projects"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="projects"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/homeActivity_mental"
+        app:layout_constraintTop_toBottomOf="@+id/homeActivity_today" />
+
+    <TextView
+        android:id="@+id/homeActivity_mental"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="mental"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@id/homeActivity_statistics"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/homeActivity_projects" />
+
+    <TextView
+        android:id="@+id/homeActivity_statistics"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="statistics"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/homeActivity_mental" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

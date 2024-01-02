@@ -1,0 +1,105 @@
+package se.curtrune.lucy.util;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Locale;
+
+import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.Mental;
+import se.curtrune.lucy.classes.State;
+import se.curtrune.lucy.classes.Type;
+
+public class Logger {
+    public static void log(Item item){
+        log("Logger.log(Item)");
+        if( item == null){
+            log("log(Item) called with null item");
+            return;
+        }
+        log("\tid", item.getID());
+        log("\tparent_id ", item.getParentId());
+        log("\thas child", item.hasChild());
+        log("\theading", item.getHeading());
+        log("\tcomment", item.getComment());
+        log("\ttags", item.getTags());
+        log("\tdescription", item.getDescription() );
+        log("\tget info", item.getInfo());
+        log("\tduration", item.getDuration());
+        log("\tcreated", item.getCreated());
+        log("\tupdated", item.getUpdated());
+        log("\ttarget_date", item.getTargetDate());
+        log("\ttarget_time", item.getTargetTime());
+        log("\tdays", item.getDays());
+        log("\tstate", item.getState());
+        log("\tcategory", item.getCategory());
+        log("\ttype", item.getType());
+    }
+    public static void log(Mental mental){
+        log("log(Mental mental");
+        if(mental == null){
+            log("log mental called with null mental");
+            return;
+        }
+        log("\tid", mental.getID());
+        log("\theading", mental.getHeading());
+        log("\ttime", mental.getTime());
+        log("\tcomment", mental.getComment());
+        log("\tdate", mental.getDate());
+        log("\tcreated", Converter.epochToFormattedDateTime(mental.getCreatedEpoch()));
+        log("\tgetInfo()", mental.getInfo());
+        log("\tanxiety", mental.getAnxiety());
+        log("\tdepression", mental.getDepression());
+        log("\tenergy", mental.getEnergy());
+    }
+    public static void log(String str){
+        System.out.println(str);
+    }
+    public static void log(String str,Exception  e){
+        log(str + ", " + e.getMessage());
+    }
+    public static void log(String description, boolean value)  {
+        String message = String.format(Locale.getDefault(),"%s: %b",description, value);
+        log(message);
+    }
+    public static void log(String description, int value){
+        log(description + ": " + value);
+    }
+    public static void log(String description, long value)  {
+        String message = String.format(Locale.getDefault(),"%s: %d", description, value);
+        log(message);
+    }
+    public static void log(String description, String value){
+        log(description +", " + value);
+    }
+    public static void log(String description, LocalTime time){
+        if( time == null){
+            log("log(String, LocalTime, locaTime is null");
+            return;
+        }
+        String message = String.format("%s %s", description, time.toString());
+        log(message);
+    }
+    public static void log(String description, LocalDate value)  {
+        String message = String.format(Locale.getDefault(),"%s: %s",description, value.toString());
+        log(message);
+    }
+    public static void log(String description, LocalDateTime value){
+        log(description, value == null ? "": value.toString());
+    }
+
+    public static void log(String  description, State state){
+        if(state == null){
+            log(description, "null");
+            return;
+        }
+        log(description, state.toString());
+    }
+    public static void log(String  description, Type type){
+        if(type == null){
+            log(description, "null");
+            return;
+        }
+        log(description, type.toString());
+    }
+}

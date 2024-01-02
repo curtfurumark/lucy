@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<item android:id="@+id/homeActivity_openDB"
+    android:title="open db"/>
+    <item android:id="@+id/homeActivity_dropTableItems"
+        android:title="drop table items"/>
+    <item android:id="@+id/homeActivity_createTableItems"
+        android:title="create table item"/>
+    <item android:title="create table mental"
+        android:id="@+id/homeActivity_createTableMental"/>
+    <item android:id="@+id/homeActivity_listTables"
+        android:title="list tables"/>
+    <item android:id="@+id/homeActivity_resetApp"
+        android:title="reset app"/>
+    <item android:title="drop table menta"
+        android:id="@+id/homeActivity_dropTableMental"/>
+    <item android:title="create table categories"
+        android:id="@+id/homeActivity_createTableCategories"/>
+</menu>

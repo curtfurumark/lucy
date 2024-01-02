@@ -1,0 +1,451 @@
+package se.curtrune.lucy.activities;
+
+
+
+
+import static se.curtrune.lucy.util.Logger.log;
+
+import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import android.content.Intent;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.Switch;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Locale;
+
+import se.curtrune.lucy.R;
+import se.curtrune.lucy.classes.CallingActivity;
+import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.State;
+import se.curtrune.lucy.classes.Type;
+import se.curtrune.lucy.dialogs.AddItemDialog;
+import se.curtrune.lucy.dialogs.EditParentIdDialog;
+import se.curtrune.lucy.persist.LocalDB;
+import se.curtrune.lucy.util.Constants;
+import se.curtrune.lucy.util.Converter;
+import se.curtrune.lucy.util.ItemStack;
+import se.curtrune.lucy.util.Kronos;
+import se.curtrune.lucy.util.Settings;
+import se.curtrune.lucy.workers.ItemsWorker;
+
+
+public class ItemEditor extends AppCompatActivity implements
+        AddItemDialog.Callback,
+        //EditParentIdDialog.Callback,
+        DatePickerDialog.OnDateSetListener,
+        Kronos.Callback/*,
+        TextWatcher */
+{
+
+    private EditText editTextHeading;
+
+    private EditText editTextComment;
+    private EditText editTextTags;
+    private TextView textViewCreated;
+    private TextView textViewUpdated;
+    private TextView textViewId;
+    private TextView textViewParentId;
+    private TextView textViewHasChild;
+    private EditText editTextDuration;
+    private TextView textViewTargetDate;
+    private TextView textViewTargetTime;
+    private TextView editTextDays;
+    private Button buttonTimer;
+    private LocalDate targetDate;
+    private LocalTime targetTime = LocalTime.now();
+    private boolean hasDuration = true;
+    private Spinner spinnerCategories;
+    private Spinner spinnerState;
+    private Switch switchHasDuration;
+    private Type type = Type.PENDING;
+    private State state = State.PENDING;
+    private static final boolean VERBOSE = false;
+    private CallingActivity callingActivity;
+    private Item currentItem;
+    private Kronos kronos;
+    @Override
+    protected void onCreate(android.os.Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.item_editor);
+        setTitle("currentItem editor");
+        log("ItemEditorActivity.onCreate()");
+
+        initDefaults();
+        initComponents();
+        //initSpinnerType();
+        initSpinnerCategories();
+        initSpinnerState();
+        initListeners();
+        kronos = Kronos.getInstance(this);
+        Intent intent = getIntent();
+        if( intent.getBooleanExtra(Constants.INTENT_EDIT_ITEM, false)){
+            editItem(intent);
+        }
+    }
+
+    public void addChildItem(){
+        log("...addChildItem()");
+        AddItemDialog addItemDialog = new AddItemDialog();
+        addItemDialog.show(getSupportFragmentManager(), "currentItem editor");
+    }
+    private void deleteItem() {
+        log("...deleteItem()");
+        LocalDB db = new LocalDB(this);
+        db.delete(currentItem);
+    }
+    private void editItem(Intent intent){
+        log ("...editItem(Intent)");
+        currentItem = (Item) intent.getSerializableExtra(Constants.INTENT_SERIALIZED_ITEM);
+        if(currentItem == null){
+            Toast.makeText(this, "currentItem is null, surrender", Toast.LENGTH_LONG).show();
+            return;
+        }
+        callingActivity = (CallingActivity) intent.getSerializableExtra(Constants.INTENT_CALLING_ACTIVITY);
+        if( callingActivity == null){
+            callingActivity = CallingActivity.TODAY_ACTIVITY;
+        }
+        if( VERBOSE) log(currentItem);
+        setUserInterface(currentItem);
+        setTitle(currentItem.getHeading());
+    }
+    private Item getItem(){
+        log("...getItem()");
+        currentItem.setComment(editTextComment.getText().toString());
+        currentItem.setHeading(editTextHeading.getText().toString());
+        currentItem.setUpdated(LocalDateTime.now());
+        currentItem.setType(type);
+        currentItem.setState(state);
+        currentItem.setTags(editTextTags.getText().toString());
+        long duration = 0;
+        if( hasDuration) {
+            duration = Converter.stringToSeconds(editTextDuration.getText().toString());
+        }
+        currentItem.setDuration(duration);
+        currentItem.setDays(Integer.parseInt(editTextDays.getText().toString()));
+        currentItem.setTargetDate(targetDate);
+        currentItem.setTargetTime(targetTime);
+        return currentItem;
+
+    }
+    private void initComponents(){
+        log("...initComponents()");
+        editTextHeading = findViewById(R.id.editText_itemEditor_heading);
+        editTextComment = findViewById(R.id.editText_itemEditor_comment);
+        editTextTags = findViewById(R.id.editText_itemEditor_tags);
+        textViewCreated = findViewById(R.id.itemEditor_created);
+        textViewUpdated = findViewById(R.id.itemEditor_updated);
+        textViewId = findViewById(R.id.itemEditor_itemID);
+        textViewParentId = findViewById(R.id.itemEditor_parent_id);
+        textViewHasChild = findViewById(R.id.itemEditor_hasChild);
+        spinnerCategories = findViewById(R.id.itemEditor_type);
+        spinnerState = findViewById(R.id.spinner_itemEditor_state);
+        buttonTimer = findViewById(R.id.itemEditor_buttonTimer);
+        editTextDuration = findViewById(R.id.itemEditor_duration);
+        textViewTargetDate = findViewById(R.id.itemEditor_targetDate);
+        editTextDays = findViewById(R.id.itemEditor_days);
+        textViewTargetTime = findViewById(R.id.itemEditor_targetTime);
+    }
+    private void initDefaults() {
+        log("...initDefaults()");
+        targetTime = LocalTime.now();
+    }
+    private void initListeners(){
+        log("...initListeners()");
+        textViewTargetDate.setOnClickListener(click-> showDatePickerDialog());
+        textViewTargetTime.setOnClickListener(view->showTimePicker());
+        buttonTimer.setOnClickListener(b->toggleTimer());
+        buttonTimer.setOnLongClickListener(v -> {
+            resetKronos();
+            return true;
+        });
+        textViewParentId.setOnClickListener(v -> showParentIDDialog());
+    }
+    private void initSpinnerState() {
+        log("...initSpinnerState()", State.PENDING.toString());
+        ArrayAdapter<State> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, State.values());
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+        spinnerState.setAdapter(arrayAdapter);
+        spinnerState.setSelection(State.PENDING.ordinal());
+        spinnerState.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                state = (State) spinnerState.getSelectedItem();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+/*    private void initSpinnerType() {
+        log("...initSpinnerType()", Type.PENDING.toString());
+        String[] types  = Type.toArray();
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, types);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+        spinnerType.setAdapter(arrayAdapter);
+        spinnerType.setSelection(Type.PENDING.ordinal());
+        spinnerType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                ItemEditor.this.type = Type.values()[position];
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }*/
+
+    private void initSpinnerCategories() {
+        log("...initSpinnerCategories()");
+        String[] categories = Settings.getCategories(this);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+        spinnerCategories.setAdapter(arrayAdapter);
+        spinnerCategories.setSelection(0);
+        spinnerCategories.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                //ItemEditor.this.type = Type.values()[position];
+                String category = (String) spinnerCategories.getSelectedItem();
+                log("...category", category);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    /**
+     * callback for AddItemDialog
+     * @param child, child to current currentItem
+     */
+    @Override
+    public void onAddItem(Item child) {
+        log("...onAddItem(Item child)");
+        if( currentItem == null){
+            Toast.makeText(this, "currentItem is null WTF", Toast.LENGTH_LONG).show();
+            log("currentItem is null, i surrender");
+            return;
+        }
+        child.setParent(currentItem);
+        child.setType(currentItem.getType());
+        if(!currentItem.hasChild()){
+            LocalDB db = new LocalDB(this);
+            db.setItemHasChild(currentItem.getID());
+        }
+        if( VERBOSE) log("...will log new child item");
+        if( VERBOSE) log(child);
+
+        LocalDB db  = new LocalDB(this);
+        try {
+            child = db.insert(child);
+            currentItem.addChild(child);
+            returnToCallingActivity();
+        } catch (SQLException e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+            throw new RuntimeException(e);
+        }
+    }
+    @Override
+    public boolean onCreateOptionsMenu(android.view.Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.item_editor_menu, menu);
+        return true;
+    }
+
+    @Override
+    public void onDateSet(android.widget.DatePicker view, int year, int month, int dayOfMonth) {
+        String date = String.format(Locale.getDefault(),"%d-%02d-%02d", year, month + 1, dayOfMonth);
+        targetDate = LocalDate.of(year, month + 1, dayOfMonth);
+        textViewTargetDate.setText(date);
+    }
+
+
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public boolean onOptionsItemSelected(@androidx.annotation.NonNull MenuItem menuItem) {
+        log("...onOptionsItemSelected(...)");
+        if( currentItem == null){
+            log("CURRENT ITEM IS NULL");
+            Toast.makeText(this, "currentItem is null WTF", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        log("CURRENT ITEM FOLLOWS");
+        log(currentItem);
+        if( menuItem.getItemId() == R.id.itemEditor_home){
+            returnToCallingActivity();
+        }else if( menuItem.getItemId() == R.id.itemEditor_save){
+            updateItem();
+        }else if( menuItem.getItemId() == R.id.itemEditor_delete){
+            deleteItem();
+        }else if(menuItem.getItemId() == R.id.itemEditor_add_child_item){
+            addChildItem();
+        }
+        return super.onOptionsItemSelected(menuItem);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        kronos.removeCallback();
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        restoreUI();
+        kronos.setCallback(this);
+        if( VERBOSE) log("ItemEditorActivity.onResume()");
+    }
+
+    public void onTimerTick(long secs) {
+        editTextDuration.setText(Converter.formatSecondsWithHours(secs));
+    }
+
+
+
+
+    private void restoreUI() {
+        if(VERBOSE) log("ItemEditorActivity.restoreUI()");
+        Kronos.State state = kronos.getState();
+        switch (state){
+            case RUNNING:
+                buttonTimer.setText("pause");
+                break;
+            case PAUSED:
+                buttonTimer.setText("resume");
+                break;
+            case STOPPED:
+                buttonTimer.setText("start");
+                break;
+        }
+
+    }
+    private void resetKronos() {
+        if( VERBOSE) log("NewItemEditor.resetKronos()");
+        kronos.reLoadTimer(this);
+        buttonTimer.setText("start");
+        editTextDuration.setText("00:00:00");
+    }
+    private void returnToCallingActivity(){
+        log("...returnToCallingActivity()");
+        switch(callingActivity){
+            case TODAY_ACTIVITY:
+                startActivity(new Intent(this, TodayActivity.class));
+                break;
+            case ITEMS_ACTIVITY:
+                Intent intent = new Intent(this, ItemsActivity.class);
+                intent.putExtra(Constants.INTENT_SHOW_SIBLINGS, true);
+                intent.putExtra(Constants.CURRENT_ITEM_IS_IN_STACK, true);
+                ItemStack.currentItem = currentItem;
+                startActivity(intent);
+                break;
+            case STATISTICS_ACTIVITY:
+                startActivity(new Intent(this, StatisticsActivity.class));
+                break;
+            default:
+                Toast.makeText(this, "strange, no enum calling activity", Toast.LENGTH_LONG).show();
+                break;
+        }
+
+    }
+    private void showDatePickerDialog() {
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this);
+        datePickerDialog.setOnDateSetListener(this);
+        datePickerDialog.show();
+    }
+    private void showParentIDDialog(){
+        EditParentIdDialog dialog = new EditParentIdDialog(currentItem.getParentId());
+        dialog.show(getSupportFragmentManager(), "whatever");
+    }
+    private void showTimePicker(){
+        log("...showTimerPicker()");
+        int minutes = targetTime.getMinute();
+        int hour = targetTime.getHour();
+        TimePickerDialog timePicker = new TimePickerDialog(this, (view, hourOfDay, minute) -> {
+            targetTime = LocalTime.of(hourOfDay, minute);
+            textViewTargetTime.setText(targetTime.toString());
+        }, hour, minutes, true);
+        timePicker.show();
+    }
+
+    private void setUserInterface(Item item) {
+        log("...setUserInterface(Item)");
+        if( VERBOSE) log(item);
+        editTextHeading.setText(item.getHeading());
+        editTextComment.setText(item.getComment() == null ? "" : item.getComment());
+        editTextTags.setText(item.getTags() == null ? "" : item.getTags());
+        textViewCreated.setText(Converter.formatDateTimeUI(item.getCreatedEpoch()));
+        textViewUpdated.setText(Converter.formatUI(item.getUpdated()));
+        textViewId.setText(String.valueOf(item.getID()));
+        targetDate = item.getTargetDate();
+        textViewTargetDate.setText(targetDate.toString());
+        targetTime = item.getTargetTime();
+        textViewTargetTime.setText(targetTime.toString());
+        editTextDays.setText(String.valueOf(item.getDays()));
+        textViewParentId.setText(String.valueOf(item.getParentId()));
+        textViewHasChild.setText(String.valueOf(item.hasChild()));
+        spinnerCategories.setSelection(0);
+        spinnerState.setSelection(item.getState().ordinal());
+        String strDuration = String.format(Locale.ENGLISH, "%s", Converter.formatSecondsWithHours(item.getDuration()));
+        editTextDuration.setText(strDuration);
+
+    }
+    private void showProjectIdDialog(){
+        log("...showProjectIdDialog()");
+        Toast.makeText(this, "not implemented", Toast.LENGTH_LONG).show();
+
+    }
+    private void toggleTimer(){
+        log("...toggleTimer()");
+        Kronos.State state = kronos.getState();
+        log("...state", state.toString());
+        switch (state){
+            case PAUSED:
+            case PENDING:
+            case STOPPED:
+                kronos.start(currentItem.getID());
+                buttonTimer.setText("pause");
+                break;
+            case RUNNING:
+                kronos.pause();
+                buttonTimer.setText("resume");
+                break;
+        }
+        kronos.setCallback(this);
+    }
+    private void updateItem() {
+        log("...updateItem()");
+        currentItem = getItem();
+        kronos.reset();
+        kronos.removeCallback();
+        editTextDuration.setText("00:00:00");
+        ItemsWorker worker = ItemsWorker.getInstance();
+        int rowsAffected = worker.update(currentItem, this);
+        if( rowsAffected != 1){
+            log("rowsAffected", rowsAffected);
+            Toast.makeText(this, "error updating item", Toast.LENGTH_LONG).show();
+        }else{
+            log("item updated");
+        }
+        returnToCallingActivity();
+    }
+
+
+}
