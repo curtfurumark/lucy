@@ -54,12 +54,16 @@ public class Item implements Serializable , Listable {
         has_child = 0;
         children = new ArrayList<>();
     }
+    public Item(String heading){
+        this();
+        this.heading = heading;
+    }
     public void addChild(Item item){
         children.add(0, item);
     }
     public long compare(){
         if( type == Type.APPOINTMENT.ordinal()){return target_date;}
-        return state == State.DONE.ordinal() ? Long.MIN_VALUE + updated: updated;
+        return (state == State.DONE.ordinal() ? Long.MIN_VALUE + updated: updated ) * -1;
     }
 
     public String getCategory() {
@@ -114,6 +118,9 @@ public class Item implements Serializable , Listable {
     public boolean contains(String str) {
         return (heading + description + comment + tags).contains(str);
     }
+    public LocalDate getDateUpdated(){
+        return getUpdated().toLocalDate();
+    }
 
     public Item getParent(){
         return parent;
@@ -141,6 +148,9 @@ public class Item implements Serializable , Listable {
     public LocalTime getTargetTime() {
         return LocalTime.ofSecondOfDay(target_time);
     }
+    public LocalTime getTimeUpdated(){
+        return getUpdated().toLocalTime();
+    }
     public Type getType() {
         return Type.values()[type];
     }
@@ -160,7 +170,7 @@ public class Item implements Serializable , Listable {
         return state == State.DONE.ordinal();
     }
     public  boolean isInfinite(){
-        return days > 0;
+        return state == State.INFINITE.ordinal();
     }
     public boolean isRoot(){
         return parent_id < 1;

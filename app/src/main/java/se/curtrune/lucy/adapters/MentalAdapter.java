@@ -15,14 +15,13 @@ import java.util.List;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Mental;
-import se.curtrune.lucy.util.Converter;
 
 
 public class MentalAdapter extends RecyclerView.Adapter<MentalAdapter.MyViewHolder>{
     private List<Mental> items;
     public boolean VERBOSE = false;
     public enum Mode{
-        MOOD, ENERGY
+        MOOD, ENERGY, ANXIETY, STRESS
     }
     private Mode mode = Mode.ENERGY;
     public interface Callback{
@@ -54,12 +53,19 @@ public class MentalAdapter extends RecyclerView.Adapter<MentalAdapter.MyViewHold
         final Mental item = items.get(position);
         switch (mode){
             case MOOD:
-                holder.seekBar.setProgress(item.getDepression());
+                holder.seekBar.setProgress(item.getMood());
                 break;
             case ENERGY:
                 holder.seekBar.setProgress(item.getEnergy());
                 break;
+            case ANXIETY:
+                holder.seekBar.setProgress(item.getAnxiety());
+                break;
+            case STRESS:
+                holder.seekBar.setProgress(item.getStress());
+                break;
         }
+        holder.textViewHeading.setText(item.getHeading());
         holder.textViewLabel.setText(item.getLabel());
     }
 
@@ -79,8 +85,10 @@ public class MentalAdapter extends RecyclerView.Adapter<MentalAdapter.MyViewHold
         this.items = items;
         notifyDataSetChanged();
     }
-    public void show(Mode mood){
+    public void show(Mode mode){
+        log("...show(Mode)", mode.toString());
         this.mode = mode;
+        notifyDataSetChanged();
 
     }
 
@@ -88,11 +96,13 @@ public class MentalAdapter extends RecyclerView.Adapter<MentalAdapter.MyViewHold
 
         private final SeekBar seekBar;
         private TextView textViewLabel;
+        private TextView textViewHeading;
 
 
         public MyViewHolder(@androidx.annotation.NonNull android.view.View itemView) {
             super(itemView);
 
+            textViewHeading = itemView.findViewById(R.id.mentalAdapter_heading);
             textViewLabel = itemView.findViewById(R.id.mentalAdapter_labelSeekbar);
             seekBar = itemView.findViewById(R.id.mentalAdapter_seekbar);
             seekBar.setOnTouchListener((view, motionEvent) -> true);//disable seekbar

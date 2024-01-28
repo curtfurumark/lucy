@@ -11,9 +11,8 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
-import android.widget.ProgressBar;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,7 +20,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -42,6 +40,10 @@ public class MentalListActivity extends AppCompatActivity implements
     private List<Mental> items = new ArrayList<>();
     private RecyclerView recycler;
     private EditText editTextSearch;
+    private RadioButton radioButtonMood;
+    private RadioButton radioButtonAnxiety;
+    private RadioButton radioButtonStress;
+    private RadioButton radioButtonEnergy;
 
     private MentalAdapter adapter;
     private MentalWorker worker;
@@ -63,6 +65,10 @@ public class MentalListActivity extends AppCompatActivity implements
         log("...initComponents()");
         recycler = findViewById(R.id.mentalList_recycler);
         editTextSearch = findViewById(R.id.mentalList_search);
+        radioButtonAnxiety = findViewById(R.id.mentalList_radioButtonAnxiety);
+        radioButtonEnergy = findViewById(R.id. mentalList_radioButtonEnergy);
+        radioButtonMood = findViewById(R.id.mentalList_radioButtonMood);
+        radioButtonStress = findViewById(R.id.mentalList_radioButtonStress);
 
     }
     private void initListeners(){
@@ -85,6 +91,10 @@ public class MentalListActivity extends AppCompatActivity implements
                 }
             }
         });
+        radioButtonStress.setOnClickListener(v -> adapter.show(MentalAdapter.Mode.STRESS));
+        radioButtonMood.setOnClickListener(view->adapter.show(MentalAdapter.Mode.MOOD));
+        radioButtonEnergy.setOnClickListener(view->adapter.show(MentalAdapter.Mode.ENERGY));
+        radioButtonAnxiety.setOnClickListener(view->adapter.show(MentalAdapter.Mode.ANXIETY));
     }
 
     private void initRecycler(List<Mental> items) {
@@ -127,10 +137,8 @@ public class MentalListActivity extends AppCompatActivity implements
     @Override
     public void onItemClick(Mental item) {
         log("...onItemClick(Listable)");
-/*        Intent intent = new Intent(this, MentalEditor.class);
-        intent.putExtra(Constants.INTENT_EDIT_MENTAL, true);
-        intent.putExtra(Constants.INTENT_SERIALIZABE_MENTAL, (Mental)item);
-        startActivity(intent);*/
+        MentalDialog mentalDialog = new MentalDialog(item);
+        mentalDialog.show(getSupportFragmentManager(),"whatever");
     }
 
     @Override
@@ -160,6 +168,7 @@ public class MentalListActivity extends AppCompatActivity implements
             }
         }else{
             worker.update(mental, this);
+            adapter.notifyDataSetChanged();
 
         }
     }

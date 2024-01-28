@@ -12,5 +12,9 @@
         android:icon="@drawable/baseline_add_24"
         app:showAsAction="always"
         android:id="@+id/diaryList_add"/>
+    <item android:title="sort ascending"
+        android:id="@+id/mentalList_sortAscending"/>
+    <item android:title="sort descending"
+        android:id="@+id/mentalList_sortDescending"/>
 
 </menu>

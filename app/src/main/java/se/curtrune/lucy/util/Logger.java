@@ -43,14 +43,16 @@ public class Logger {
         }
         log("\tid", mental.getID());
         log("\theading", mental.getHeading());
+        log("\tcategory", mental.getCategory());
+        log("\tgetInfo()", mental.getInfo());
         log("\ttime", mental.getTime());
         log("\tcomment", mental.getComment());
         log("\tdate", mental.getDate());
         log("\tcreated", Converter.epochToFormattedDateTime(mental.getCreatedEpoch()));
-        log("\tgetInfo()", mental.getInfo());
         log("\tanxiety", mental.getAnxiety());
-        log("\tdepression", mental.getDepression());
+        log("\tmood", mental.getMood());
         log("\tenergy", mental.getEnergy());
+        log("\tstress", mental.getStress());
     }
     public static void log(String str){
         System.out.println(str);
@@ -64,6 +66,9 @@ public class Logger {
     }
     public static void log(String description, int value){
         log(description + ": " + value);
+    }
+    public static void log(String description, float value){
+        log(String.format("%s: %f", description, value));
     }
     public static void log(String description, long value)  {
         String message = String.format(Locale.getDefault(),"%s: %d", description, value);

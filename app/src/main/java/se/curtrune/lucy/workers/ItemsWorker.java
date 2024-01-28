@@ -10,8 +10,12 @@ import java.time.LocalDate;
 import java.util.List;
 
 import se.curtrune.lucy.activities.ItemSession;
+import se.curtrune.lucy.activities.Settings;
+import se.curtrune.lucy.activities.TodayActivity;
+import se.curtrune.lucy.classes.App;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.State;
+import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.persist.Queeries;
@@ -19,7 +23,7 @@ import se.curtrune.lucy.persist.Queeries;
 public class ItemsWorker {
     private static ItemsWorker instance;
     private ItemsWorker(){
-
+        log("...ItemsWorker() private constructor");
     }
     public static ItemsWorker getInstance(){
         if( instance == null){
@@ -28,8 +32,16 @@ public class ItemsWorker {
         return instance;
     }
 
-    public void delete(Item item, Context context) {
+    public static Item getParent(Item currentParent, Context context) {
+        log("ItemsWorker.getParent(Item, Context)");
+        LocalDB db = new LocalDB(context);
+        return db.selectItem(currentParent.getParentId());
+    }
+
+
+    public static boolean delete(Item item, Context context) {
         log("LocalDB.delete(Item, Context)");
+        boolean res = false;
         if( item.hasChild()){
             Toast.makeText(context, "unlink not implemented", Toast.LENGTH_LONG).show();
         }else{
@@ -37,10 +49,54 @@ public class ItemsWorker {
             int rowsAffected = db.delete(item);
             if( rowsAffected != 1){
                 Toast.makeText(context, "error deleting item", Toast.LENGTH_LONG).show();
+            }else{
+                res = true;
             }
         }
+        return res;
     }
 
+    public static boolean hasChild(long parentId, Context context) {
+        log("ItemsWorker.hasChild(long) parentID", parentId );
+        LocalDB db = new LocalDB(context);
+        return  db.selectItem(parentId).hasChild();
+    }
+
+    public static List<Item> selectItems(Context context) {
+        log("ItemsWorker.selectItems(Context");
+        LocalDB db = new LocalDB(context);
+        return db.selectItems();
+    }
+
+    public static Item getTodayParent(Context context) {
+        log("ItemsWorker.getTodayParent(Context context)");
+        LocalDB db = new LocalDB(context);
+        return db.selectItem(App.getTodoListID());
+    }
+
+    private Item createChildToInfinite(Item parent){
+        log("...createChildToInfinite(Item item)");
+        Item child = new Item();
+        child.setParentId(parent.getID());
+        child.setHeading(parent.getHeading());
+        child.setState(State.DONE);
+        return child;
+    }
+
+    /**
+     * sets targetDate of infiniteItem to 'today + item.getDays'
+     * @param item, is an Item with State.INFINITE
+     * @param context,
+     * @throws SQLException
+     */
+    public void handleInfinite(Item item, Context context) throws SQLException {
+        log("...handleInfinite(Item, Context)", item.getHeading());
+        Item child = createChildToInfinite(item);
+        child = insert(child, context);
+        item.setTargetDate(LocalDate.now().plusDays(item.getDays()));
+        update(item, context);
+
+    }
     public static Item insert(Item item, Context context) throws SQLException {
         log("ItemsWorker.insert(Item, Context");
         LocalDB db = new LocalDB(context);
@@ -48,13 +104,24 @@ public class ItemsWorker {
         db.close();
         return item;
     }
+    private static Item insertChild(Item parent, Item child, Context context) throws SQLException {
+        log("ItemsWorker.insertChild(Item, Item, Context)");
+        if( !parent.hasChild()){
+            //TODO: set hasChild to true
+        }
+        LocalDB db = new LocalDB(context);
+        return db.insert(child);
+    }
 
     private Mental insert(Mental mental, Context context) throws SQLException {
         log("ItemsWorker.insert(Mental, Context)");
         LocalDB db = new LocalDB(context);
         return db.insert(mental);
-
-
+    }
+    public static List<Item> selectChildren(Item item, Context context){
+        log("ItemsWorker.selectChildren(Item, Context)");
+        LocalDB db = new LocalDB(context);
+        return db.selectChildren(item);
     }
     public static List<Item> selectDateState(LocalDate date, State state, Context context){
         log("ItemsWorker.selectDateState()");
@@ -66,6 +133,10 @@ public class ItemsWorker {
         LocalDB db = new LocalDB(context);
         return db.selectItems(Queeries.selectItems(state));
     }
+    public static List<Item> selectItems(Type type, TodayActivity context) {
+        LocalDB db = new LocalDB(context);
+        return db.selectItems(type);
+    }
 
     public static List<Item> selectItems(LocalDate date, Context context, State state){
         log("ItemsWorker.selectItems(LocalDate, Context, State");
@@ -74,30 +145,50 @@ public class ItemsWorker {
         return items;
     }
 
-
     public List<Item> selectChildItems(Item parent ,Context context) {
-        log("ItemsWorker.selectChildItems(Item, Context");
+        log("ItemsWorker.selectChildItems(Item, Context)", parent.getHeading());
         LocalDB db = new LocalDB(context);
         return db.selectItems(Queeries.selectChildren(parent));
     }
-
-
-
-    public int update(Item item, Context context) {
-        log("ItemsWorker.update(Item, Context)");
+    public static List<Item> selectTodayList(LocalDate date, Context context){
+        log("...selectTodayList(LocalDate, Context)", date.toString());
+        String query = Queeries.selectTodayList(date);
         LocalDB db = new LocalDB(context);
-        return db.update(item);
-    }
+        return db.selectItems(query);
 
-    public void setHasChild(Item item, Context context) {
+
+    }
+    public static void setHasChild(Item item, boolean hasChild, Context context) {
         log("ItemsWorker.setHasChild(Item, Context)");
         LocalDB db = new LocalDB(context);
-        db.setItemHasChild(item.getID());
+        db.setItemHasChild(item.getID(), hasChild);
+    }
+    public static void setHasChild(long id, boolean hasChild, Context context){
+        log("ItemsWorker.setHasChild(long, boolean, Context");
+        LocalDB db = new LocalDB(context);
+        db.setItemHasChild(id, hasChild);
     }
 
-    public int  setItemState(Item item, State state, Context context) {
+    public void setItemState(Item item, State state, Context context) throws SQLException {
         log("ItemsWorker.setItemState(Item, State, Context)");
-        item.setState(state);
+        if( item.isInfinite()){
+            handleInfinite(item, context);
+        }else {
+            log("...item is not infinite");
+            item.setState(state);
+            LocalDB db = new LocalDB(context);
+            int rowsAffected = db.update(item);
+            log("...rowsAffected", rowsAffected);
+        }
+    }
+
+    public void touch(Item currentItem, Context context) {
+        log("ItemsWorker.touch(Item, Context)");
+        LocalDB db = new LocalDB(context);
+        db.touch(currentItem);
+    }
+    public int update(Item item, Context context) {
+        log("ItemsWorker.update(Item, Context)");
         LocalDB db = new LocalDB(context);
         return db.update(item);
     }

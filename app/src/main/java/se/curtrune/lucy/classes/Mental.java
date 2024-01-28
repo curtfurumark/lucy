@@ -9,14 +9,16 @@ import se.curtrune.lucy.util.Converter;
 
 public class Mental implements Listable{
     private long id;
-    private String title;
+    private String heading;
     private String comment;
     private int anxiety;
     private long itemID;
     private int stress;
     private int depression;
+    private int mood;
     private int energy;
     private long date;
+    private String category;
     private int time;
     private long created;
     private long updated;
@@ -26,41 +28,71 @@ public class Mental implements Listable{
         time = LocalTime.now().toSecondOfDay();
 
     }
-
-    @Override
-    public String getHeading() {
-        return title;
-    }
-
-    @Override
-    public String getInfo() {
-        return null;
-    }
-
     public boolean contains(String text) {
-        return (title + comment).contains(text);
+        return (heading + comment).toLowerCase().contains(text.toLowerCase());
     }
-
     @Override
     public long compare() {
-        return 0;
+        return (date *  3600 * 24 + time) * -1;
     }
 
     public int getAnxiety() {
         return anxiety;
     }
-    public LocalDateTime getCreated(){
-        return LocalDateTime.ofEpochSecond(created, 0 , ZoneOffset.UTC);
+    public String getCategory() {
+        return category;
+    }
+    public String getComment() {
+        return comment;
+    }
+
+    public LocalDateTime getCreated() {
+        return LocalDateTime.ofEpochSecond(created, 0, ZoneOffset.UTC);
+    }
+
+    public long getCreatedEpoch() {
+        return created;
+    }
+    public LocalDate getDate(){
+        return LocalDate.ofEpochDay(date);
     }
     public long getDateEpoch() {
         return date;
+    }
+    public int getDepression() {
+        return depression;
+    }
+    public int getEnergy() {
+        return energy;
+    }
+    @Override
+    public String getHeading() {
+        return heading;
     }
 
     public long getID() {
         return id;
     }
+    @Override
+    public String getInfo() {
+        return "no info as of yet";
+    }
     public long getItemID() {
         return itemID;
+    }
+
+    public String getLabel() {
+        if( LocalDate.now().toEpochDay() == date){
+            return  Converter.formatTime(time);
+        }
+        return Converter.formatDate(date);
+    }
+    public int getMood(){
+        return mood;
+    }
+
+    public int getStress() {
+        return stress;
     }
 
     public LocalTime getTime() {
@@ -70,56 +102,25 @@ public class Mental implements Listable{
         return time;
     }
 
-
-    public String getTitle() {
-        return title;
-    }
-
-
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public long getCreatedEpoch() {
-        return created;
-    }
-    public LocalDate getDate(){
-        return LocalDate.ofEpochDay(date);
-    }
-    public int getStress() {
-        return stress;
-    }
     public long getUpdatedEpoch(){
         return updated;
     }
+
+
     public void setAnxiety(int anxiety) {
         this.anxiety = anxiety;
     }
-    public void setId(long id) {
-        this.id = id;
+    public void setCategory(String category){
+        this.category = category;
+    }
+    public void setComment(String comment) {
+
+        this.comment = comment;
     }
 
-
-    public void setStress(int stress) {
-        this.stress = stress;
+    public void setDate(LocalDate date) {
+        this.date = date.toEpochDay();
     }
-
-    public int getDepression() {
-        return depression;
-    }
-
-
-
-    public int getEnergy() {
-        return energy;
-    }
-
-
     public void setCreated(long created){
         this.created = created;
     }
@@ -127,33 +128,50 @@ public class Mental implements Listable{
     public void setDate(long date) {
         this.date = date;
     }
-
     public void setDepression(int depression) {
         this.depression = depression;
     }
     public void setEnergy(int energy) {
         this.energy = energy;
     }
+    public void setHeading(String heading) {
+        this.heading = heading;
+    }
+
+    public void setID(long id) {
+        this.id = id;
+    }
     public void setItemID(long ditemID){
         this.itemID = itemID;
     }
+    public void setMood(int mood){
+        this.mood = mood;
+    }
 
+
+    public void setStress(int stress) {
+        this.stress = stress;
+    }
+
+    /**
+     *
+     * @param time second of day
+     */
     public void setTime(int time) {
         this.time = time;
     }
-    public void setTitle(String title) {
-        this.title = title;
+    public void setTime(LocalTime time) {
+        this.time = time.toSecondOfDay();
     }
+
 
     public void setUpdated(long updated){
         this.updated = updated;
     }
 
 
-    public String getLabel() {
-        if( LocalDate.now().toEpochDay() == date){
-            return  Converter.formatTime(time);
-        }
-        return Converter.formatDate(date);
-    }
+
+
+
+
 }

@@ -1,17 +1,21 @@
 package se.curtrune.lucy.dialogs;
 
 
-
 import static se.curtrune.lucy.util.Logger.log;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,42 +23,59 @@ import androidx.annotation.Nullable;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Locale;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
+import se.curtrune.lucy.util.Constants;
+import se.curtrune.lucy.util.Converter;
+import se.curtrune.lucy.util.Settings;
 
 
 public class MentalDialog extends BottomSheetDialogFragment {
 
+
     private SeekBar seekBarEnergy;
     private SeekBar seekBarAnxiety;
     private SeekBar seekBarStress;
-    private SeekBar seekBarDepression;
+    private SeekBar seekBarMood;
     private TextView textViewDepression;
     private EditText editTextComment;
     private TextView textViewEnergy;
     private EditText editTextHeading;
     private TextView textViewItemID;
     private TextView textViewMentalID;
+    private TextView textViewDate;
+    private TextView textViewTime;
+    private TextView labelEnergy;
+    private TextView labelAnxiety;
+    private TextView labelStress;
+    private TextView labelMood;
+
+    private Spinner spinnerCategory;
     private Mental mental;
 
     private String heading;
     private Button buttonSave;
-    private int energyLevel;
-    private int moodLevel;
-    private int anxiety;
-    private int stress;
+    private ArrayAdapter<String> arrayAdapter;
+
+    private LocalDate date;
+    private LocalTime time;
+    private Item item;
+    private String[] categories;
+
     private long itemID = -1;
-    public static boolean VERBOSE = false;
-    //private boolean parentItem = false;
+    public static boolean VERBOSE = true;
+    private String category;
 
     public  enum Mode {
         CREATE, CREATE_WITH_ITEM, EDIT
 
     }
-    private Mode mode = Mode.CREATE;
+    private Mode mode;
     public interface Callback{
         void onMental(Mental mental, Mode mode);
     }
@@ -63,23 +84,29 @@ public class MentalDialog extends BottomSheetDialogFragment {
         mode = Mode.CREATE;
         log("MentalDialog default constructor");
         this.heading = "";
+        this.date = LocalDate.now();
+        this.time = LocalTime.now();
     }
     public MentalDialog(Item item ){
+        this();
         log("MentalDialog(Item)");
         mode = Mode.CREATE_WITH_ITEM;
+        this.item = item;
         this.itemID = item.getID();
+        this.date = item.getDateUpdated();
+        this.time = item.getTimeUpdated();
         this.heading = item.getHeading();
     }
     public MentalDialog(Mental  mental){
+        this();
         log("MentalDialog(Mental)");
+        if( VERBOSE) log(mental);
         mode = Mode.EDIT;
         this.mental = mental;
         this.heading = mental.getHeading();
         this.itemID = mental.getItemID();
-        this.energyLevel = mental.getEnergy();
-        this.stress = mental.getStress();
-        this.itemID = mental.getAnxiety();
-        this.itemID = mental.getDepression();
+
+        category = mental.getCategory();
     }
 
     private Callback listener;
@@ -94,47 +121,72 @@ public class MentalDialog extends BottomSheetDialogFragment {
             log("...savedInstance is null");
         }
         initComponents(view );
-        //setDefaults();
+        initDefaults();
         initListeners();
+        initSpinnerCategory();
         setUserInterface();
         return view;
+    }
+    private Mental getMental(){
+        log("...getMental()");
+        if( !mode.equals(Mode.EDIT)){
+            mental = new Mental();
+        }
+        mental.setHeading(editTextHeading.getText().toString());
+        mental.setComment(editTextComment.getText().toString());
+        mental.setMood(seekBarMood.getProgress());
+        mental.setDate(date);
+        mental.setTime(time);
+        mental.setItemID(itemID);
+        mental.setCategory(category);
+        mental.setAnxiety(seekBarAnxiety.getProgress());
+        mental.setStress(seekBarStress.getProgress());
+        mental.setMood(seekBarMood.getProgress() - Settings.MOOD_OFFSET);
+        mental.setEnergy(seekBarEnergy.getProgress() - Settings.ENERGY_OFFSET);
+        return mental;
     }
 
     private void initComponents(View view){
         log("...initComponents()");
         buttonSave = view.findViewById(R.id.mentalDialog_button);
-        textViewEnergy = view.findViewById(R.id.moodEnergy_textEnergy);
+        textViewEnergy = view.findViewById(R.id.mentalDialog_labelEnergy);
         seekBarEnergy = view.findViewById(R.id.mentalDialog_energy);
-        textViewDepression = view.findViewById(R.id.moodEnergy_textMood);
-        seekBarDepression = view.findViewById(R.id.mentalDialog_mood);
+        textViewDepression = view.findViewById(R.id.mentalDialog_labelMood);
+        seekBarMood = view.findViewById(R.id.mentalDialog_mood);
         seekBarStress = view.findViewById(R.id.mentalDialog_stress);
         seekBarAnxiety = view.findViewById(R.id.mentalDialog_anxiety);
         editTextHeading = view.findViewById(R.id.mentalDialog_heading);
         editTextComment = view.findViewById(R.id.mentalDialog_comment);
         textViewMentalID = view.findViewById(R.id.mentalDialog_mentalID);
         textViewItemID = view.findViewById(R.id.mentalDialog_itemID);
+        spinnerCategory = view.findViewById(R.id.mentalDialog_spinnerCategories);
+        textViewDate = view.findViewById(R.id.mentalDialog_date);
+        textViewTime = view.findViewById(R.id.mentalDialog_time);
+        labelEnergy = view.findViewById(R.id.mentalDialog_labelEnergy);
+        labelAnxiety = view.findViewById(R.id.mentalDialog_labelAnxiety);
+        labelStress = view.findViewById(R.id.mentalDialog_labelStress);
+        labelMood = view.findViewById(R.id.mentalDialog_labelMood);
+    }
+    private void initDefaults(){
+        log("...initDefaults()");
+        categories = Settings.getCategories(getContext());
+        assert categories.length > 0;
+        category = categories[0];
+
     }
     private void initListeners(){
         log("...initListeners()");
         buttonSave.setOnClickListener(view1 -> {
-            if( !mode.equals(Mode.EDIT)){
-                mental = new Mental();
-            }
-            mental.setTitle(editTextHeading.getText().toString());
-            mental.setComment(editTextComment.getText().toString());
-            mental.setEnergy(energyLevel);
-            mental.setDepression(moodLevel);
-            mental.setItemID(itemID);
-            mental.setAnxiety(anxiety);
-            mental.setStress(stress);
+            mental = getMental();
             listener.onMental(mental, mode);
-
             dismiss();
         });
+        textViewDate.setOnClickListener(view->showDateDialog());
+        textViewTime.setOnClickListener(view->showTimeDialog());
         seekBarAnxiety.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
+                updateUserInterface();
             }
 
             @Override
@@ -144,15 +196,14 @@ public class MentalDialog extends BottomSheetDialogFragment {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                anxiety = seekBar.getProgress();
+
             }
         });
         seekBarEnergy.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int level, boolean fromUser) {
-                //log("...onProgressChanged(...)", progress);
-                energyLevel = level;
-                textViewEnergy.setText(String.format("energy %d", energyLevel));
+                //textViewEnergy.setText(String.format(Locale.ENGLISH, "energy %d", seekBarEnergy.getProgress()));
+                updateUserInterface();
             }
 
             @Override
@@ -162,14 +213,13 @@ public class MentalDialog extends BottomSheetDialogFragment {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                //log("...onStopTrackingTouch(SeekBar)");
             }
         });
-        seekBarDepression.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        seekBarMood.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int level, boolean fromUser) {
-                moodLevel = level;
-                textViewDepression.setText(String.format("mood %d", moodLevel));
+                updateUserInterface();
+                //textViewDepression.setText(String.format(Locale.ENGLISH, "mood %d", seekBarMood.getProgress()));
             }
 
             @Override
@@ -185,7 +235,7 @@ public class MentalDialog extends BottomSheetDialogFragment {
         seekBarStress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
+                updateUserInterface();
             }
 
             @Override
@@ -195,11 +245,32 @@ public class MentalDialog extends BottomSheetDialogFragment {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                stress = seekBar.getProgress();
+
             }
         });
     }
+    private void initSpinnerCategory(){
+        log("...initSpinnerCategory()");
+        arrayAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, categories);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+        spinnerCategory.setAdapter(arrayAdapter);
+        int pos = arrayAdapter.getPosition("PENDING");
+        log("...pos of PENDING", pos);
+        spinnerCategory.setSelection(arrayAdapter.getPosition(category));
+        spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                //ItemEditor.this.type = Type.values()[position];
+                category = (String) spinnerCategory.getSelectedItem();
+                log("...category chosen", category);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
 
+            }
+        });
+        //spinnerCategory.setSelection(arrayAdapter.getPosition(category));
+    }
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -207,20 +278,28 @@ public class MentalDialog extends BottomSheetDialogFragment {
         this.listener = (Callback) context;
     }
     private void setUserInterface(){
-        log("MentalDialog.setUserInterface()");
+        log("MentalDialog.setUserInterface()", mode.toString());
         if( mode.equals(Mode.CREATE_WITH_ITEM)) {
             editTextHeading.setText(heading);
+            textViewTime.setText(Converter.format(time));
+            textViewDate.setText(date.toString());
         }
         if( mode.equals(Mode.CREATE)){
-            editTextHeading.setHint("<heading here>");
+            textViewTime.setText(Converter.format(time));
+            textViewDate.setText(date.toString());
         }
-        editTextComment.setHint("<comment here>");
         if( mode.equals(Mode.EDIT)){
+            log(mental);
             editTextHeading.setText(mental.getHeading());
             editTextComment.setText(mental.getComment());
-            seekBarEnergy.setProgress(mental.getEnergy());
+            time = mental.getTime();
+            textViewTime.setText(time.toString());
+            date = mental.getDate();
+            textViewDate.setText(date.toString());
+            seekBarEnergy.setProgress(mental.getEnergy() + Settings.ENERGY_OFFSET);
             seekBarStress.setProgress(mental.getStress());
-            seekBarDepression.setProgress(mental.getDepression());
+            seekBarMood.setProgress(mental.getMood() + Settings.MOOD_OFFSET);
+            setSpinnerCategory(mental.getCategory());
             seekBarAnxiety.setProgress(mental.getAnxiety());
             String strItemID = String.format(Locale.ENGLISH, "item id: %d", mental.getItemID());
             textViewItemID.setText(strItemID);
@@ -230,8 +309,48 @@ public class MentalDialog extends BottomSheetDialogFragment {
         }else {
             seekBarEnergy.setProgress(0);
             seekBarStress.setProgress(0);
-            seekBarDepression.setProgress(0);
+            seekBarMood.setProgress(0);
             seekBarAnxiety.setProgress(0);
         }
+        updateUserInterface();
+    }
+    private void setSpinnerCategory(String category){
+        log("...setSpinnerCategory(String) ", category);
+        spinnerCategory.setSelection(arrayAdapter.getPosition(category));
+    }
+    private void showDateDialog(){
+        log("...showDateDialog()");
+        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext());
+        datePickerDialog.setOnDateSetListener((view, year, month, dayOfMonth) -> {
+            date = LocalDate.of(year, month +1, dayOfMonth);
+            textViewDate.setText(date.toString());
+        });
+        datePickerDialog.show();
+    }
+    private void showTimeDialog(){
+        log("...showTimeDialog()");
+        int minutes = time.getMinute();
+        int hour = time.getHour();
+        TimePickerDialog timePicker = new TimePickerDialog(getContext(), (view, hourOfDay, minute) -> {
+                time = LocalTime.of(hourOfDay, minute);
+                textViewTime.setText(time.toString());
+                }, hour, minutes, true);
+            timePicker.show();
+    }
+
+    /**
+     * sets labels to current progress
+     */
+    private void updateUserInterface(){
+        log("...updateUserInterface()");
+        String strEnergy = String.format("energy %d", seekBarEnergy.getProgress() - Settings.ENERGY_OFFSET);
+        String strMood = String.format("mood %d", seekBarMood.getProgress() - Settings.MOOD_OFFSET);
+        String strAnxiety = String.format("anxiety %d", seekBarAnxiety.getProgress());
+        String strStress = String.format("stress %d", seekBarStress.getProgress());
+        labelEnergy.setText(strEnergy);
+        labelMood.setText(strMood);
+        labelStress.setText(strStress);
+        labelAnxiety.setText(strAnxiety);
+
     }
 }

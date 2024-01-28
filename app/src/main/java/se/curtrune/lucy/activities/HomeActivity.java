@@ -7,13 +7,16 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import se.curtrune.lucy.R;
+import se.curtrune.lucy.classes.App;
 import se.curtrune.lucy.persist.DBAdmin;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
@@ -84,9 +87,14 @@ public class HomeActivity extends AppCompatActivity {
             resetApp();
         }else if( item.getItemId() == R.id.homeActivity_createTableCategories){
             createTableCategories();
+        }else if( item.getItemId() == R.id.homeActivity_createTodoList){
+            try {
+                App.createDefaultLists(this);
+            } catch (SQLException e) {
+                Toast.makeText(this,e.getMessage(), Toast.LENGTH_LONG).show();
+            }
         }
         return true;
-        //return super.onOptionsItemSelected(item);
     }
 
     private void openDB(){

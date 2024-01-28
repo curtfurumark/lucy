@@ -11,4 +11,7 @@
         android:title="add item"/>
     <item android:title="testing"
         android:id="@+id/testingID"/>
+    <item
+        android:id="@+id/todayActivity_viewStatistics"
+        android:title="view statistics" />
 </menu>

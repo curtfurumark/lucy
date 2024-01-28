@@ -1,35 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:padding="16dp">
 
 
-    <EditText
-        android:id="@+id/addPeriod_heading"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="heading"
-        android:inputType="text"
-        android:minHeight="48dp" />
-
     <Spinner
         android:id="@+id/addItem_spinnerType"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <Switch
-        android:id="@+id/addItem_state"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="done" />
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayouteading" />
 
     <Button
-        android:id="@+id/addItem_save"
+        android:id="@+id/periodDialog_save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="add" />
+        android:layout_marginTop="16dp"
+        android:text="add"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addItemDialog_spinnerState" />
 
-</LinearLayout>
+    <Spinner
+        android:id="@+id/addItemDialog_spinnerState"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:minHeight="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addItem_spinnerType" />
+
+    <TextView
+        android:id="@+id/labelCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="category"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/addItem_spinnerType" />
+
+    <TextView
+        android:id="@+id/labelState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="state"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/addItemDialog_spinnerState" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayouteading"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="heading"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/periodDialog_days"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/addItemDialog_dismiss"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="dismiss"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/periodDialog_save" />
+
+    <Button
+        android:id="@+id/addItemDialog_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="edit"
+        app:layout_constraintEnd_toStartOf="@+id/periodDialog_save"
+        app:layout_constraintStart_toEndOf="@+id/addItemDialog_dismiss"
+        app:layout_constraintTop_toTopOf="@+id/periodDialog_save" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

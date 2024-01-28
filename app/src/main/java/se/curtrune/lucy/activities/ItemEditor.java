@@ -1,8 +1,6 @@
 package se.curtrune.lucy.activities;
 
 
-
-
 import static se.curtrune.lucy.util.Logger.log;
 
 import android.annotation.SuppressLint;
@@ -14,10 +12,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,10 +28,12 @@ import java.util.Locale;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.CallingActivity;
 import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.Period;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.dialogs.EditParentIdDialog;
+import se.curtrune.lucy.dialogs.PeriodDialog;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.util.Converter;
@@ -47,7 +45,7 @@ import se.curtrune.lucy.workers.ItemsWorker;
 
 public class ItemEditor extends AppCompatActivity implements
         AddItemDialog.Callback,
-        //EditParentIdDialog.Callback,
+        PeriodDialog.Callback,
         DatePickerDialog.OnDateSetListener,
         Kronos.Callback/*,
         TextWatcher */
@@ -62,18 +60,20 @@ public class ItemEditor extends AppCompatActivity implements
     private TextView textViewId;
     private TextView textViewParentId;
     private TextView textViewHasChild;
+    private TextView textViewPeriod;
     private EditText editTextDuration;
     private TextView textViewTargetDate;
     private TextView textViewTargetTime;
-    private TextView editTextDays;
-    private Button buttonTimer;
+    private TextView textViewNotification;
+
     private LocalDate targetDate;
     private LocalTime targetTime = LocalTime.now();
-    private boolean hasDuration = true;
+
     private Spinner spinnerCategories;
     private Spinner spinnerState;
-    private Switch switchHasDuration;
-    private Type type = Type.PENDING;
+    private Spinner spinnerType;
+
+    private Type type = Type.NODE;
     private State state = State.PENDING;
     private static final boolean VERBOSE = false;
     private CallingActivity callingActivity;
@@ -88,7 +88,7 @@ public class ItemEditor extends AppCompatActivity implements
 
         initDefaults();
         initComponents();
-        //initSpinnerType();
+        initSpinnerType();
         initSpinnerCategories();
         initSpinnerState();
         initListeners();
@@ -101,7 +101,7 @@ public class ItemEditor extends AppCompatActivity implements
 
     public void addChildItem(){
         log("...addChildItem()");
-        AddItemDialog addItemDialog = new AddItemDialog();
+        AddItemDialog addItemDialog = new AddItemDialog(currentItem);
         addItemDialog.show(getSupportFragmentManager(), "currentItem editor");
     }
     private void deleteItem() {
@@ -118,6 +118,7 @@ public class ItemEditor extends AppCompatActivity implements
         }
         callingActivity = (CallingActivity) intent.getSerializableExtra(Constants.INTENT_CALLING_ACTIVITY);
         if( callingActivity == null){
+            log("...callingActivity is null, defaulting to 'TODAY_ACTIVITY'");
             callingActivity = CallingActivity.TODAY_ACTIVITY;
         }
         if( VERBOSE) log(currentItem);
@@ -129,15 +130,13 @@ public class ItemEditor extends AppCompatActivity implements
         currentItem.setComment(editTextComment.getText().toString());
         currentItem.setHeading(editTextHeading.getText().toString());
         currentItem.setUpdated(LocalDateTime.now());
-        currentItem.setType(type);
-        currentItem.setState(state);
+        currentItem.setType((Type) spinnerType.getSelectedItem());
+        currentItem.setState((State) spinnerState.getSelectedItem());
         currentItem.setTags(editTextTags.getText().toString());
-        long duration = 0;
-        if( hasDuration) {
-            duration = Converter.stringToSeconds(editTextDuration.getText().toString());
-        }
-        currentItem.setDuration(duration);
-        currentItem.setDays(Integer.parseInt(editTextDays.getText().toString()));
+        currentItem.setCategory((String) spinnerCategories.getSelectedItem());
+        //TODO, fix this when youre brain is working
+        currentItem.setDuration(Converter.stringToSeconds(editTextDuration.getText().toString()));
+        //currentItem.setDays(Integer.parseInt(textViewPeriod.getText().toString()));
         currentItem.setTargetDate(targetDate);
         currentItem.setTargetTime(targetTime);
         return currentItem;
@@ -145,21 +144,22 @@ public class ItemEditor extends AppCompatActivity implements
     }
     private void initComponents(){
         log("...initComponents()");
-        editTextHeading = findViewById(R.id.editText_itemEditor_heading);
-        editTextComment = findViewById(R.id.editText_itemEditor_comment);
-        editTextTags = findViewById(R.id.editText_itemEditor_tags);
+        editTextHeading = findViewById(R.id.itemEditor_heading);
+        editTextComment = findViewById(R.id.itemEditor_comment);
+        editTextTags = findViewById(R.id.itemEditor_tags);
         textViewCreated = findViewById(R.id.itemEditor_created);
         textViewUpdated = findViewById(R.id.itemEditor_updated);
         textViewId = findViewById(R.id.itemEditor_itemID);
         textViewParentId = findViewById(R.id.itemEditor_parent_id);
         textViewHasChild = findViewById(R.id.itemEditor_hasChild);
-        spinnerCategories = findViewById(R.id.itemEditor_type);
-        spinnerState = findViewById(R.id.spinner_itemEditor_state);
-        buttonTimer = findViewById(R.id.itemEditor_buttonTimer);
+        spinnerCategories = findViewById(R.id.itemEditor_spinnerCategory);
+        spinnerState = findViewById(R.id.itemEditor_spinnerState);
         editTextDuration = findViewById(R.id.itemEditor_duration);
         textViewTargetDate = findViewById(R.id.itemEditor_targetDate);
-        editTextDays = findViewById(R.id.itemEditor_days);
         textViewTargetTime = findViewById(R.id.itemEditor_targetTime);
+        spinnerType = findViewById(R.id.itemEditor_spinnerType);
+        textViewNotification = findViewById(R.id.itemEditor_notification);
+        textViewPeriod = findViewById(R.id.itemEditor_labelPersiod);
     }
     private void initDefaults() {
         log("...initDefaults()");
@@ -169,15 +169,12 @@ public class ItemEditor extends AppCompatActivity implements
         log("...initListeners()");
         textViewTargetDate.setOnClickListener(click-> showDatePickerDialog());
         textViewTargetTime.setOnClickListener(view->showTimePicker());
-        buttonTimer.setOnClickListener(b->toggleTimer());
-        buttonTimer.setOnLongClickListener(v -> {
-            resetKronos();
-            return true;
-        });
         textViewParentId.setOnClickListener(v -> showParentIDDialog());
+        textViewNotification.setOnClickListener(view->showNotificationDialog());
+        textViewPeriod.setOnClickListener(view->showPeriodDialog());
     }
     private void initSpinnerState() {
-        log("...initSpinnerState()", State.PENDING.toString());
+        log("...initSpinnerState()");
         ArrayAdapter<State> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, State.values());
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
         spinnerState.setAdapter(arrayAdapter);
@@ -193,24 +190,23 @@ public class ItemEditor extends AppCompatActivity implements
             }
         });
     }
-/*    private void initSpinnerType() {
+    private void initSpinnerType() {
         log("...initSpinnerType()", Type.PENDING.toString());
-        String[] types  = Type.toArray();
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, types);
+        ArrayAdapter<Type> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, Type.values());
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
         spinnerType.setAdapter(arrayAdapter);
         spinnerType.setSelection(Type.PENDING.ordinal());
         spinnerType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                ItemEditor.this.type = Type.values()[position];
+                log("type", (Type) spinnerType.getSelectedItem());
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });
-    }*/
+    }
 
     private void initSpinnerCategories() {
         log("...initSpinnerCategories()");
@@ -247,9 +243,10 @@ public class ItemEditor extends AppCompatActivity implements
         }
         child.setParent(currentItem);
         child.setType(currentItem.getType());
+        child.setTags(currentItem.getTags());
         if(!currentItem.hasChild()){
             LocalDB db = new LocalDB(this);
-            db.setItemHasChild(currentItem.getID());
+            db.setItemHasChild(currentItem.getID(), true);
         }
         if( VERBOSE) log("...will log new child item");
         if( VERBOSE) log(child);
@@ -306,43 +303,12 @@ public class ItemEditor extends AppCompatActivity implements
         super.onPause();
         kronos.removeCallback();
     }
-    @Override
-    protected void onResume() {
-        super.onResume();
-        restoreUI();
-        kronos.setCallback(this);
-        if( VERBOSE) log("ItemEditorActivity.onResume()");
-    }
+
 
     public void onTimerTick(long secs) {
         editTextDuration.setText(Converter.formatSecondsWithHours(secs));
     }
 
-
-
-
-    private void restoreUI() {
-        if(VERBOSE) log("ItemEditorActivity.restoreUI()");
-        Kronos.State state = kronos.getState();
-        switch (state){
-            case RUNNING:
-                buttonTimer.setText("pause");
-                break;
-            case PAUSED:
-                buttonTimer.setText("resume");
-                break;
-            case STOPPED:
-                buttonTimer.setText("start");
-                break;
-        }
-
-    }
-    private void resetKronos() {
-        if( VERBOSE) log("NewItemEditor.resetKronos()");
-        kronos.reLoadTimer(this);
-        buttonTimer.setText("start");
-        editTextDuration.setText("00:00:00");
-    }
     private void returnToCallingActivity(){
         log("...returnToCallingActivity()");
         switch(callingActivity){
@@ -369,6 +335,10 @@ public class ItemEditor extends AppCompatActivity implements
         DatePickerDialog datePickerDialog = new DatePickerDialog(this);
         datePickerDialog.setOnDateSetListener(this);
         datePickerDialog.show();
+    }
+    private void showNotificationDialog(){
+        log("...showNotificationDialog()");
+
     }
     private void showParentIDDialog(){
         EditParentIdDialog dialog = new EditParentIdDialog(currentItem.getParentId());
@@ -398,38 +368,41 @@ public class ItemEditor extends AppCompatActivity implements
         textViewTargetDate.setText(targetDate.toString());
         targetTime = item.getTargetTime();
         textViewTargetTime.setText(targetTime.toString());
-        editTextDays.setText(String.valueOf(item.getDays()));
+        if( item.isInfinite()) {
+            textViewPeriod.setText(String.valueOf(item.getDays()));
+        }
         textViewParentId.setText(String.valueOf(item.getParentId()));
         textViewHasChild.setText(String.valueOf(item.hasChild()));
         spinnerCategories.setSelection(0);
+
         spinnerState.setSelection(item.getState().ordinal());
+        spinnerType.setSelection(item.getType().ordinal());
         String strDuration = String.format(Locale.ENGLISH, "%s", Converter.formatSecondsWithHours(item.getDuration()));
         editTextDuration.setText(strDuration);
+    }
 
+    private void setUserInterface(Period period){
+        log("...setUserInterface(Period)");
+        textViewPeriod.setText(String.valueOf(period.getDays()));
+    }
+    private void showPeriodDialog(){
+        log("...showPeriodDialog()");
+        PeriodDialog dialog = new PeriodDialog();
+        dialog.show(getSupportFragmentManager(), "hello");
+    }
+
+    @Override
+    public void onPeriod(Period period) {
+        log("...onPeriod(Period)", period.toString());
+        currentItem.setDays(period.getDays());
+        setUserInterface(period);
     }
     private void showProjectIdDialog(){
         log("...showProjectIdDialog()");
         Toast.makeText(this, "not implemented", Toast.LENGTH_LONG).show();
 
     }
-    private void toggleTimer(){
-        log("...toggleTimer()");
-        Kronos.State state = kronos.getState();
-        log("...state", state.toString());
-        switch (state){
-            case PAUSED:
-            case PENDING:
-            case STOPPED:
-                kronos.start(currentItem.getID());
-                buttonTimer.setText("pause");
-                break;
-            case RUNNING:
-                kronos.pause();
-                buttonTimer.setText("resume");
-                break;
-        }
-        kronos.setCallback(this);
-    }
+
     private void updateItem() {
         log("...updateItem()");
         currentItem = getItem();
@@ -446,6 +419,7 @@ public class ItemEditor extends AppCompatActivity implements
         }
         returnToCallingActivity();
     }
+
 
 
 }

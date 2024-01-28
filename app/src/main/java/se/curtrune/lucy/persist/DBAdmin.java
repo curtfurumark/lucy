@@ -21,7 +21,6 @@ public class DBAdmin {
             do{
                 items.add(getItem(cursor));
             }while(cursor.moveToNext());
-
         }
         return items;
     }
@@ -40,6 +39,7 @@ public class DBAdmin {
         item.setHasChild(cursor.getInt(11) == 1 ? true: false);
         item.setDuration(cursor.getLong(12));
         item.setParentId(cursor.getInt(13));
+        item.setDays(cursor.getInt(14));
         return item;
     }
 
@@ -57,40 +57,42 @@ public class DBAdmin {
         cv.put("state", item.getState().ordinal());
         cv.put("hasChild", item.hasChild() ? 1: 0);
         cv.put("duration", item.getDuration());
+        cv.put("days", item.getDays());
         cv.put("parentID", item.getParentId());
         return cv;
     }
     public static ContentValues getContentValues(Mental mental){
-        log("DBAdmin.getContentValues(Mental)");
+        if(VERBOSE)log("DBAdmin.getContentValues(Mental)");
         ContentValues cv = new ContentValues();
         cv.put("itemID", mental.getItemID());
-        cv.put("title", mental.getTitle());
+        cv.put("heading", mental.getHeading());
         cv.put("comment", mental.getComment());
         cv.put("energy", mental.getEnergy());
-        cv.put("depression", mental.getDepression());
+        cv.put("mood", mental.getMood());
         cv.put("stress", mental.getStress());
         cv.put("anxiety", mental.getAnxiety());
+        cv.put("category", mental.getCategory());
         cv.put("date", mental.getDateEpoch());
         cv.put("time", mental.getTimeSecondOfDay());
         return cv;
-
     }
 
     public static Mental getMental(Cursor cursor) {
         log("DBAdmin.getMental(Cursor)");
         Mental mental = new Mental();
-        mental.setId(cursor.getLong(0));
+        mental.setID(cursor.getLong(0));
         mental.setItemID(cursor.getLong(1));
-        mental.setTitle(cursor.getString(2));
+        mental.setHeading(cursor.getString(2));
         mental.setComment(cursor.getString(3));
-        mental.setDate(cursor.getLong(4));
-        mental.setTime(cursor.getInt(5));
-        mental.setEnergy(cursor.getInt(6));
-        mental.setDepression(cursor.getInt(7));
-        mental.setAnxiety(cursor.getInt(8));
-        mental.setStress(cursor.getInt(9));
-        mental.setCreated(cursor.getLong(10));
-        mental.setUpdated(cursor.getLong(11));
+        mental.setCategory(cursor.getString(4));
+        mental.setDate(cursor.getLong(5));
+        mental.setTime(cursor.getInt(6));
+        mental.setEnergy(cursor.getInt(7));
+        mental.setMood(cursor.getInt(8));
+        mental.setAnxiety(cursor.getInt(9));
+        mental.setStress(cursor.getInt(10));
+        mental.setCreated(cursor.getLong(11));
+        mental.setUpdated(cursor.getLong(12));
         return mental;
     }
 

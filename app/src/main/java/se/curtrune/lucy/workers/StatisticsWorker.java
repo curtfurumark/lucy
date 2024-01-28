@@ -13,10 +13,12 @@ import java.util.stream.Collectors;
 import se.curtrune.lucy.classes.DailyStatistics;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Listable;
+import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.classes.TypeStatistic;
 import se.curtrune.lucy.persist.LocalDB;
+import se.curtrune.lucy.persist.Queeries;
 
 
 public class StatisticsWorker {
@@ -26,7 +28,28 @@ public class StatisticsWorker {
     private DailyStatistics dailyStatistics;
     private LocalDate date = LocalDate.now();
 
+    /**
+     * @param context, just the f-ing context
+     * @return a list of mentals where date = today
+     */
+    public static List<Mental>  getCurrentMental(Context context) {
+        log("...getCurrentMental()");
+        LocalDB db = new LocalDB(context);
+        return  db.selectMentals(LocalDate.now());
+    }
 
+
+
+
+    public static long getSum(List<Item> items) {
+        assert items != null;
+        log("StatisticsWorker.getSum(List<Item>)", items.size());
+        long sum = 0;
+        for(Item item: items){
+            sum += item.getDuration();
+        }
+        return sum;
+    }
 
 
     public interface Callback{
@@ -43,6 +66,18 @@ public class StatisticsWorker {
             instance = new StatisticsWorker();
         }
         return instance;
+    }
+
+    public static long  getCurrentEnergy(Context context){
+        log("...getCurrentEnergy(Context)");
+        String query = "SELECT * FROM mental ORDER BY updated DESC LIMIT 10";
+        LocalDB db = new LocalDB(context);
+        List<Mental> items = db.selectMentals(query);
+       long sum = 0;
+        for( Mental mental : items){
+            sum += mental.getEnergy();
+        }
+        return sum / items.size();
     }
 
     public List<Listable> getItems(Type type){

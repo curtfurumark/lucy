@@ -55,7 +55,7 @@ public class StatisticsActivity extends AppCompatActivity implements ListableAda
         super.onCreate(savedInstanceState);
         setContentView(R.layout.statistics_activity);
         log("StatisticsActivity.onCreate(Bundle)");
-        setTitle("statistics");
+        setTitle("duration");
         initComponents();
         initListeners();
         initRecycler(items);
@@ -64,6 +64,9 @@ public class StatisticsActivity extends AppCompatActivity implements ListableAda
         worker = StatisticsWorker.getInstance();
         List<Item> items = worker.selectItems(LocalDate.now(), this);
         log("...number of items today", items.size());
+        if( items.size() == 0){
+            Toast.makeText(this, "no items yet", Toast.LENGTH_LONG).show();
+        }
         List<Listable> listables = new ArrayList<>();
         items.forEach(Logger::log);
         for( Item item : items){
@@ -160,7 +163,7 @@ public class StatisticsActivity extends AppCompatActivity implements ListableAda
 
     @Override
     public void onUpdateStats(List<Listable> stats) {
-        log("Statistics.onUpdateStats(List<Listable>)");
+        log("MentalStatistics.onUpdateStats(List<Listable>)");
         stats.sort((item1, item2) -> Long.compare(item2.compare(), item1.compare()));
         adapter.setList(stats);
     }

@@ -18,6 +18,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.sql.SQLException;
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 import se.curtrune.lucy.R;
@@ -27,16 +28,19 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.AddItemDialog;
+import se.curtrune.lucy.dialogs.DurationDialog;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.util.Converter;
 import se.curtrune.lucy.util.ItemStack;
 import se.curtrune.lucy.util.Kronos;
 import se.curtrune.lucy.workers.ItemsWorker;
+import se.curtrune.lucy.workers.MentalWorker;
 
 
 public class ItemSession extends AppCompatActivity implements
         Kronos.Callback,
         AddItemDialog.Callback,
+        DurationDialog.Callback,
         ItemAdapter.Callback
 {
     private EditText editTextHeading;
@@ -44,20 +48,26 @@ public class ItemSession extends AppCompatActivity implements
     private CheckBox checkBoxDone;
 
     private Button buttonTimer;
-    private TextView textView_timer;
+    private TextView textViewDuration;
+    private TextView textViewEnergy;
+    private TextView textViewStress;
+    private TextView textViewAnxiety;
+    private TextView textViewMood;
     private SeekBar seekBarStress;
     private SeekBar seekBarAnxiety;
-    private SeekBar seekBarDepression;
+    private SeekBar seekBarMood;
     private SeekBar seekBarEnergy;
 
     private CallingActivity callingActivity = CallingActivity.ITEMS_ACTIVITY;
     //variables
     private Integer n_repetitions = 0;
     private Item currentItem;
+    private Mental mental;
     private int anxiety;
-    private int depression;
+    private int mood;
     private int stress;
     private int energy;
+    private long duration;
 
     private final boolean VERBOSE = false;
 
@@ -85,7 +95,10 @@ public class ItemSession extends AppCompatActivity implements
 
     private void addChildItem(){
         log("ItemSession.addChildItem()");
-        new AddItemDialog().show(getSupportFragmentManager(), "new assignment");
+        AddItemDialog dialog = new AddItemDialog(currentItem);
+        dialog.setHeading(currentItem.getHeading());
+        dialog.setCategory(currentItem.getCategory());
+        dialog.show(getSupportFragmentManager(), "new assignment");
 
     }
     private void deleteItem(){
@@ -94,13 +107,15 @@ public class ItemSession extends AppCompatActivity implements
             Toast.makeText(this, "delete item with child not implemented", Toast.LENGTH_LONG).show();
         }
         worker.delete(currentItem, this);
+        returnToCallingActivity();
     }
     private Item getItem(){
         log("...getItem()");
         currentItem.setUpdated(LocalDateTime.now());
         currentItem.setComment(editTextComment.getText().toString());
         currentItem.setHeading(editTextHeading.getText().toString());
-        currentItem.setDuration(kronos.getElapsedTime());
+        currentItem.setDuration(duration);
+        //currentItem.setDuration(kronos.getElapsedTime()); 240124
         currentItem.setState(checkBoxDone.isChecked() ? State.DONE: State.WIP);
         return currentItem;
     }
@@ -115,17 +130,20 @@ public class ItemSession extends AppCompatActivity implements
             Toast.makeText(this, "item is null, i surrender", Toast.LENGTH_LONG).show();
             return;
         }
+        setTitle(currentItem.getHeading());
         if( VERBOSE) log(currentItem);
         if(currentItem.isWIP()){
             kronos.setElapsedTime(currentItem.getDuration());
         }
-        setTitle(currentItem.getHeading());
+
         callingActivity = (CallingActivity) intent.getSerializableExtra(Constants.INTENT_CALLING_ACTIVITY);
         if( callingActivity == null){
             Toast.makeText(this, "calling activity is null", Toast.LENGTH_LONG).show();
             return;
         }
         log("...return to calling activity: ", callingActivity.toString());
+        mental = MentalWorker.getMental(currentItem, this);
+        setUserInterfaceMental(mental);
         setUserInterface(currentItem);
     }
 
@@ -135,11 +153,23 @@ public class ItemSession extends AppCompatActivity implements
         checkBoxDone = findViewById(R.id.itemSession_checkBoxDone);
         editTextComment = findViewById(R.id.itemSession_comment);
         editTextHeading = findViewById(R.id.itemSession_heading);
-        textView_timer = findViewById(R.id.itemSession_duration);
+        textViewDuration = findViewById(R.id.itemSession_duration);
         seekBarAnxiety = findViewById(R.id.itemSession_anxietySeekbar);
-        seekBarDepression = findViewById(R.id.itemSession_depression);
+        seekBarMood = findViewById(R.id.itemSession_depression);
         seekBarEnergy = findViewById(R.id.itemSession_energy);
         seekBarStress = findViewById(R.id.itemSession_stressSeekbar);
+        textViewAnxiety = findViewById(R.id.itemSession_labelAnxiety);
+        textViewStress = findViewById(R.id.itemSession_labelStress);
+        textViewMood = findViewById(R.id.itemSession_labelMood);
+        textViewEnergy = findViewById(R.id.itemSession_labelEnergy);
+    }
+    private void initDefaults(){
+        log("...initDefaults()");
+        mood = 0;
+        anxiety = 0;
+        energy = 0;
+        stress = 0;
+
     }
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
@@ -163,11 +193,75 @@ public class ItemSession extends AppCompatActivity implements
         buttonTimer.setOnLongClickListener(view -> {
             kronos.stop();
             kronos.reset();
-            textView_timer.setText(R.string.hhmmss);
+            textViewDuration.setText(R.string.hhmmss);
             buttonTimer.setText(R.string.ui_start);
             return true;
         });
-        textView_timer.setOnClickListener(v -> Toast.makeText(this,"not implemented", Toast.LENGTH_LONG).show());
+        textViewDuration.setOnClickListener(v -> showDurationDialog());
+        seekBarEnergy.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                textViewEnergy.setText(String.format("energy %d", progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        seekBarStress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                textViewStress.setText(String.format("stress %d", progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        seekBarAnxiety.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                textViewAnxiety.setText(String.format("anxiety %d", progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        seekBarMood.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                textViewMood.setText(String.format("mood %d", progress - Constants.MOOD_OFFSET));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
     }
 
     /**
@@ -177,12 +271,14 @@ public class ItemSession extends AppCompatActivity implements
     @Override
     public void onAddItem(Item childItem) {
         log("MusicSessionActivity.onAddItem(Item)");
-        Toast.makeText(this, "work in progress, but basically not done", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "work in progress, but basically not done", Toast.LENGTH_LONG).show();
         childItem.setParent(currentItem);
         if( !currentItem.hasChild()) {
-            worker.setHasChild(currentItem, this);
+            worker.setHasChild(currentItem, true, this);
         }
         try {
+            worker.touch(currentItem, this);
+            childItem.setType(currentItem.getType());
             childItem = worker.insert(childItem, this);
             Intent intent = new Intent(this, ItemsActivity.class);
             intent.putExtra(Constants.INTENT_SHOW_CHILD_ITEMS, true);
@@ -224,7 +320,7 @@ public class ItemSession extends AppCompatActivity implements
             openInEditor();
         } else if (item.getItemId() == R.id.itemSession_save) {
             saveItem();
-        } else if (item.getItemId() == R.id.itemsActivity_home)  {
+        } else if (item.getItemId() == R.id.itemSession_home)  {
             returnToCallingActivity();
         }
         return super.onOptionsItemSelected(item);
@@ -265,8 +361,8 @@ public class ItemSession extends AppCompatActivity implements
     @Override
     public void onTimerTick(long secs) {
         if(VERBOSE) log("ItemSession.onTimerClick() secs", secs);
-        //textView_timer.
-        textView_timer.setText(Converter.formatSecondsWithHours(secs));
+        this.duration = secs;
+        textViewDuration.setText(Converter.formatSecondsWithHours(secs));
     }
 
     private void returnToCallingActivity(){
@@ -281,9 +377,13 @@ public class ItemSession extends AppCompatActivity implements
                 break;
             case STATISTICS_ACTIVITY:
                 log("return to statistics activity");
+                Intent statsIntent = new Intent(this, StatisticsActivity.class);
+                startActivity(statsIntent);
                 break;
             case TODAY_ACTIVITY:
                 log("return to today activity");
+                Intent todayIntent = new Intent(this, TodayActivity.class);
+                startActivity(todayIntent);
                 break;
             default:
                 Toast.makeText(this, "get your shit together", Toast.LENGTH_LONG).show();
@@ -317,31 +417,62 @@ public class ItemSession extends AppCompatActivity implements
             return;
         }
         saveMental();
-        returnToCallingActivity();
         kronos.reset();
+        ///returnToCallingActivity();
+        Intent intent = new Intent(this, TodayActivity.class);
+        startActivity(intent);
+
     }
     private void saveMental(){
         log("...saveMental()");
         energy = seekBarEnergy.getProgress();
-
     }
+
     private void setUserInterface(Item item){
         if( VERBOSE) log("...setUserInterface(Item item)");
         if( item == null){
             log("...called with item == null");
             return;
         }
-        textView_timer.setText(Converter.formatSecondsWithHours(item.getDuration()));
+        textViewDuration.setText(Converter.formatSecondsWithHours(item.getDuration()));
         editTextHeading.setText(item.getHeading());
         editTextComment.setText(item.getComment());
         checkBoxDone.setChecked(item.isDone());
         if( item.getDuration() > 0){
             buttonTimer.setText("resume");
         }
+        setUserInterfaceMental(null);
     }
-    private void setUserInterface(Mental mental){
+    private void setUserInterfaceMental(Mental mental){
+        log("...setUserInterface(Mental)");
+        if( mental == null){
+            seekBarAnxiety.setProgress(0);
+            textViewAnxiety.setText("anxiety 0");
+            seekBarMood.setProgress(5);
+            textViewMood.setText("mood 0");
+            seekBarStress.setProgress(0);
+            textViewStress.setText("stress 0");
+            seekBarEnergy.setProgress(5);
+            textViewEnergy.setText("energy 0");
+        }else{
+            seekBarAnxiety.setProgress(mental.getAnxiety());
+            seekBarEnergy.setProgress(mental.getEnergy());
+            seekBarMood.setProgress(mental.getDepression());
+            seekBarStress.setProgress(mental.getStress());
+        }
+    }
 
-
+    private void showDurationDialog(){
+        log("...showDurationDialog()");
+        DurationDialog dialog = new DurationDialog();
+        dialog.show(getSupportFragmentManager(), "duration");
+    }
+    @Override
+    public void onDurationDialog(Duration duration) {
+        log("..onDurationDialog(Duration duration)", duration.toString());
+        log("...seconds", duration.getSeconds());
+        currentItem.setDuration(duration.getSeconds());
+        textViewDuration.setText(Converter.formatSecondsWithHours(duration.getSeconds()));
     }
 
 
@@ -354,4 +485,6 @@ public class ItemSession extends AppCompatActivity implements
         }
         return true;
     }
+
+
 }

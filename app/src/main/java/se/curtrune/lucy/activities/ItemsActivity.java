@@ -51,19 +51,29 @@ public class ItemsActivity extends AppCompatActivity implements ItemAdapter.Call
         if( intent.getBooleanExtra(Constants.INTENT_SHOW_CHILD_ITEMS, false)){
             log("INTENT_SHOW_CHILD_ITEMS");
             currentParent = (Item) intent.getSerializableExtra(Constants.INTENT_SERIALIZED_ITEM);
-            //adapter.setList(worker.selectChildItems(currentParent, this));
+            if(  currentParent == null){
+                Toast.makeText(this, "currentParent is null", Toast.LENGTH_LONG).show();
+            }else{
+                setTitle(currentParent.getHeading());
+            }
         }
-        initRecycler(worker.selectChildItems(currentParent, this));
+        if( currentParent !=  null) {
+            initRecycler(worker.selectChildItems(currentParent, this));
+        }
     }
     private void addItem(){
         log("...addItem()");
         String heading = "";
         Type type = Type.PENDING;
+        AddItemDialog addItemDialog = new AddItemDialog(currentParent);
         if( currentParent != null) {
             heading = currentParent.getHeading();
             type = currentParent.getType();
+            addItemDialog.setHeading(heading);
+            addItemDialog.setCategory(type.toString());
+            worker.touch(currentParent, this);
         }
-        AddItemDialog addItemDialog = new AddItemDialog();
+
         addItemDialog.show(getSupportFragmentManager(), "add item");
 
     }
@@ -114,10 +124,12 @@ public class ItemsActivity extends AppCompatActivity implements ItemAdapter.Call
     public void onAddItem(Item item) {
         log("ItemsActivity.onAddItem(Item item)");
         if( currentParent == null){
-            log("currentParent is null");
+            log("...currentParent is null");
+            item.setParentId(-1);
+        }else {
+            item.setParentId(currentParent.getID());
         }
         try {
-            item.setParentId(currentParent.getID());
             item = worker.insert(item, this);
             adapter.insert(item);
         }catch(SQLException e){
@@ -130,11 +142,15 @@ public class ItemsActivity extends AppCompatActivity implements ItemAdapter.Call
     public void onCheckboxClicked(Item item, boolean checked) {
         log("...onCheckBoxClicked(Item, boolean");
         if( checked){
-            worker.setItemState(item, State.DONE, this);
+            try {
+                worker.setItemState(item, State.DONE, this);
+            } catch (SQLException e) {
+                e.printStackTrace();
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+            }
         }else{
             Toast.makeText(this, "work to be done, which state? ", Toast.LENGTH_LONG).show();
         }
-
     }
 
     @Override
@@ -166,6 +182,7 @@ public class ItemsActivity extends AppCompatActivity implements ItemAdapter.Call
         log("...onLongClick(Item item");
         Intent intent = new Intent(this, ItemEditor.class);
         intent.putExtra(Constants.INTENT_EDIT_ITEM, true);
+        intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.ITEMS_ACTIVITY);
         intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, item);
         startActivity(intent);
     }

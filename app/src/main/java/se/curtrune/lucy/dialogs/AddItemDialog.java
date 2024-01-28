@@ -12,7 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Switch;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,77 +22,140 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
-import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.util.Settings;
 
 
 public class AddItemDialog extends BottomSheetDialogFragment {
     private EditText editText_heading;
-    private Spinner spinnerType;
+    private Spinner spinnerCategory;
+    private Spinner spinnerState;
+    private State state;
     private String heading;
     private Button buttonSave;
+    private Button buttonDismiss;
+    private Button buttonEdit;
     private String category;
+
+    private Item parent;
     public interface Callback{
-        //void onAddItem(String text);
         void onAddItem(Item item);
     }
 
-    public AddItemDialog(){
-        log("AddItemFragment default constructor");
-        this.heading = "";
-    }
-    public AddItemDialog(String heading, String category) {
-        this.category = category;
-        this.heading = heading;
+    private Callback listener;
+
+    public AddItemDialog(Item parent) {
+        log("AddItemDialog(Item parent)");
+        if( parent == null){
+            log("...item parent is null, this is a project");
+        }
+        this.parent = parent;
     }
 
-    private Callback listener;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         log("AddItemDialog.onCreateView(...)");
         View view = inflater.inflate(R.layout.add_item_dialog, container, false);
-        if( savedInstanceState != null) {
-            heading = savedInstanceState.getString("heading");
-        }else{
-            log("...savedInstance is null");
-        }
-        Switch switchDone = view.findViewById(R.id.addItem_state);
-        spinnerType = view.findViewById(R.id.addItem_spinnerType);
-        editText_heading = view.findViewById(R.id.addPeriod_heading);
-        if( heading.isEmpty()){
-            editText_heading.setHint("heading here please");
-        }else {
-            editText_heading.setText(heading);
-        }
-        buttonSave = view.findViewById(R.id.addItem_save);
+        initComponents(view);
+        initListeners();
+        initDefaults();
+        editText_heading.setText(heading);
         initSpinnerCategories();
+        initSpinnerState();
+        initUserInterface(parent);
+
+        return view;
+    }
+    private void startEditor(Item item){
+        log("...startEditor(Item)");
+    }
+    private String getCategory(){
+        return (String) spinnerCategory.getSelectedItem();
+    }
+    private Item getItem(){
+        log("...getItem()");
+        Item item = new Item();
+        item.setHeading(editText_heading.getText().toString());
+        if( parent != null) {
+            log("...parent is not null");
+            item.setTags(parent.getTags());
+            item.setParentId(parent.getID());
+        }else{
+            log("...parent is null, project");
+            item.setParentId(0);
+
+        }
+        item.setCategory(getCategory());
+        item.setState(state);
+        return item;
+
+    }
+    private void initComponents(View view){
+        log("...initComponents(View)");
+        spinnerCategory = view.findViewById(R.id.addItem_spinnerType);
+        spinnerState = view.findViewById(R.id.addItemDialog_spinnerState);
+        editText_heading = view.findViewById(R.id.periodDialog_days);
+        buttonSave = view.findViewById(R.id.periodDialog_save);
+        buttonDismiss = view.findViewById(R.id.addItemDialog_dismiss);
+        buttonEdit = view.findViewById(R.id.addItemDialog_edit);
+    }
+    private void initDefaults(){
+        log("...initDefaults()");
+        state = State.PENDING;
+    }
+    private void initListeners(){
+        log("...initListeners()");
         buttonSave.setOnClickListener(view1 -> {
-            Item item = new Item();
-            item.setHeading(editText_heading.getText().toString());
-            item.setState(switchDone.isChecked()? State.DONE: State.TODO);
-            //item.setType(currentType);
-            item.setCategory(category);
+            log("...saveItem()");
+            Item item = getItem();
+            log(item);
             listener.onAddItem(item);
             dismiss();
         });
-        return view;
+        buttonDismiss.setOnClickListener(view->dismiss());
+        buttonEdit.setOnClickListener(view->Toast.makeText(getContext(), "not implemented", Toast.LENGTH_LONG).show());
+
     }
     private void initSpinnerCategories(){
             ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, Settings.getCategories(getContext()));
             arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
-            spinnerType.setAdapter(arrayAdapter);
-            spinnerType.setSelection(0);
-            spinnerType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            spinnerCategory.setAdapter(arrayAdapter);
+            spinnerCategory.setSelection(0);
+            spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    category = (String) spinnerType.getSelectedItem();
+                    category = (String) spinnerCategory.getSelectedItem();
                 }
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {
 
                 }
             });
+    }
+    private void initSpinnerState(){
+        log("...initSpinnerState()");
+        ArrayAdapter<State> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, State.values());
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+        spinnerState.setAdapter(arrayAdapter);
+        spinnerState.setSelection(state.ordinal());
+        spinnerState.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                state = (State) spinnerState.getSelectedItem();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+    public void initUserInterface(Item parentItem){
+        log("...initUserInterface()");
+        if( parentItem != null) {
+            editText_heading.setText(parentItem.getHeading());
+            spinnerState.setSelection(parentItem.getState().ordinal());
+        }
     }
 
     @Override
@@ -101,6 +164,10 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         this.listener = (Callback) context;
     }
 
+    public void setState(State state){
+        log("AddItemDialog.setState(State) ", state.toString());
+        this.state = state;
+    }
     public void setHeading(String heading){
         this.heading = heading;
     }

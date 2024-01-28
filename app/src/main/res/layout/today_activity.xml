@@ -6,66 +6,72 @@
     android:layout_height="match_parent"
     tools:context=".activities.TodayActivity">
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout5"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/todayActivity_date">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/todayActivity_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="search" />
+    </com.google.android.material.textfield.TextInputLayout>
+
     <TextView
         android:id="@+id/todayActivity_date"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="date"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/todayActivity_currentEnergy"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="current energy"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        app:itemBackground="@color/teal_700"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_navigation_menu" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/todayActivity_recycler"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigation"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.64"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout5">
 
-    <RadioGroup
-        android:id="@+id/radioGroup"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/todayActivity_date">
-
-        <RadioButton
-            android:id="@+id/todayActivity_todayButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="today" />
-
-        <RadioButton
-            android:id="@+id/todayActivity_wipButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="wip" />
-
-        <RadioButton
-            android:id="@+id/todayActivity_todoButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="todo" />
-
-        <RadioButton
-            android:id="@+id/todayActivity_appointmentsButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="appointments" />
-
-    </RadioGroup>
+    </androidx.recyclerview.widget.RecyclerView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

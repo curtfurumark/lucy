@@ -7,37 +7,11 @@
     android:backgroundTint="@color/purple_500"
     tools:context=".activities.ItemEditor">
 
-    <EditText
-        android:id="@+id/itemSession_heading"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:hint="heading"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/itemSession_comment"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:hint="comment"
-        android:minHeight="48dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/itemSession_heading" />
-
     <Button
         android:id="@+id/itemSession_buttonTimer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="start"
         app:layout_constraintStart_toStartOf="parent"
@@ -47,8 +21,9 @@
         android:id="@+id/itemSession_duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="16dp"
         android:inputType="time"
+        android:minHeight="48dp"
         android:text="00:00:00"
         android:textSize="28sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -58,12 +33,12 @@
         android:id="@+id/itemSession_checkBoxDone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="done"
         app:checkedState="checked"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/itemSession_comment"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutComment"
         tools:text="done" />
 
     <SeekBar
@@ -74,8 +49,8 @@
         android:max="10"
         android:progress="3"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/labelEnergy"
-        app:layout_constraintTop_toTopOf="@+id/labelEnergy" />
+        app:layout_constraintStart_toEndOf="@+id/itemSession_labelEnergy"
+        app:layout_constraintTop_toTopOf="@+id/itemSession_labelEnergy" />
 
     <SeekBar
         android:id="@+id/itemSession_anxietySeekbar"
@@ -85,8 +60,8 @@
         android:max="10"
         android:progress="3"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/labelAnxiety"
-        app:layout_constraintTop_toTopOf="@+id/labelAnxiety" />
+        app:layout_constraintStart_toEndOf="@+id/itemSession_labelAnxiety"
+        app:layout_constraintTop_toTopOf="@+id/itemSession_labelAnxiety" />
 
     <SeekBar
         android:id="@+id/itemSession_depression"
@@ -96,8 +71,8 @@
         android:max="10"
         android:progress="3"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/labelDepression"
-        app:layout_constraintTop_toTopOf="@+id/labelDepression" />
+        app:layout_constraintStart_toEndOf="@+id/itemSession_labelMood"
+        app:layout_constraintTop_toTopOf="@+id/itemSession_labelMood" />
 
     <SeekBar
         android:id="@+id/itemSession_stressSeekbar"
@@ -108,51 +83,137 @@
         android:max="10"
         android:progress="3"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/labelStress"
-        app:layout_constraintTop_toTopOf="@+id/labelStress" />
+        app:layout_constraintStart_toEndOf="@+id/itemSession_labelStress"
+        app:layout_constraintTop_toTopOf="@+id/itemSession_labelStress" />
 
     <TextView
-        android:id="@+id/labelEnergy"
+        android:id="@+id/itemSession_labelEnergy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
         android:layout_marginBottom="8dp"
         android:ems="5"
         android:text="energy"
-        app:layout_constraintBottom_toTopOf="@+id/labelAnxiety"
+        app:layout_constraintBottom_toTopOf="@+id/itemSession_labelAnxiety"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/labelAnxiety"
+        android:id="@+id/itemSession_labelAnxiety"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
         android:layout_marginBottom="8dp"
         android:ems="5"
         android:text="anxiety"
-        app:layout_constraintBottom_toTopOf="@+id/labelDepression"
+        app:layout_constraintBottom_toTopOf="@+id/itemSession_labelMood"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/labelDepression"
+        android:id="@+id/itemSession_labelMood"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
         android:layout_marginBottom="8dp"
         android:ems="5"
-        android:text="depression"
-        app:layout_constraintBottom_toTopOf="@+id/labelStress"
+        android:text="mood"
+        app:layout_constraintBottom_toTopOf="@+id/itemSession_labelStress"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/labelStress"
+        android:id="@+id/itemSession_labelStress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
         android:ems="5"
         android:text="stress"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/textInputLayoutMentalComment"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/itemSession_headingLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:hint="heading"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/itemSession_heading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+             />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutComment"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:hint="comment"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/itemSession_headingLayout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/itemSession_comment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="145dp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutMentalComment"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:hint="mental comment"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/itemSession_mentalComment"
+            android:layout_width="match_parent"
+            android:lines="4"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintBottom_toTopOf="@+id/itemSession_mentalSwitch"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Switch
+        android:id="@+id/itemSession_mentalSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="save mental"
+        app:layout_constraintBottom_toTopOf="@+id/itemSession_labelEnergy"
+        app:layout_constraintStart_toStartOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
