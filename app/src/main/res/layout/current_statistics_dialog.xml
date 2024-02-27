@@ -13,11 +13,11 @@
         android:id="@+id/mentalDialog_labelEnergy"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         android:ems="4"
         android:text="energy"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider4" />
+        app:layout_constraintTop_toBottomOf="@+id/statisticsDialog_numberMentals" />
 
     <SeekBar
         android:id="@+id/mentalDialog_energy"
@@ -60,7 +60,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="dismiss"
+        android:text="ok"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider5" />
@@ -134,7 +134,7 @@
         android:ems="4"
         android:text="duration"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider3" />
+        app:layout_constraintTop_toBottomOf="@+id/mentalDialog_date" />
 
     <TextView
         android:id="@+id/currentStatistics_duration"
@@ -143,29 +143,6 @@
         android:text="00:00:00"
         app:layout_constraintStart_toEndOf="@+id/currentStatistics_labelDuration"
         app:layout_constraintTop_toTopOf="@+id/currentStatistics_labelDuration" />
-
-    <View
-        android:id="@+id/divider3"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mentalDialog_date" />
-
-    <View
-        android:id="@+id/divider4"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/currentStatistics_labelDuration" />
 
     <View
         android:id="@+id/divider5"
@@ -177,5 +154,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mentalDialog_labelAnxiety" />
+
+    <TextView
+        android:id="@+id/statisticsDialog_activitiesDone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="0/0 activities done"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/currentStatistics_labelDuration" />
+
+    <TextView
+        android:id="@+id/statisticsDialog_numberMentals"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="number of mentals"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/statisticsDialog_activitiesDone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

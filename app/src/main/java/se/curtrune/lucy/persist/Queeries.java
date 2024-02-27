@@ -1,14 +1,17 @@
 package se.curtrune.lucy.persist;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Locale;
 
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
+import se.curtrune.lucy.fragments.TopTenFragment;
 
 public class Queeries {
-    public static final String DELETE_ITEMS_TABLE = "DROP TABLE items";
+    public static final String DROP_TABLE_ITEMS = "DROP TABLE items";
     public static final String DROP_TABLE_CATEGORIES = "DROP TABLE categories";
     public static final  String DROP_TABLE_MENTAL = "DROP table mental";
     public static String CREATE_TABLE_ITEMS =
@@ -44,6 +47,9 @@ public class Queeries {
                 "updated INTEGER)";
     public static String CREATE_TABLE_CATEGORIES = "CREATE TABLE categories " +
             "(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)";
+    public static String insertCategory(String category) {
+        return String.format("INSERT INTO categories (name) values ('%s')", category);
+    }
 
     public static String selectItems(){
         return "SELECT * FROM items ORDER BY updated DESC";
@@ -68,12 +74,10 @@ public class Queeries {
     }
 
 
-    public static String selectMental() {
-        return "SELECT * FROM mental ORDER  BY created DESC";
-    }
+
 
     public static String selectItems(State state) {
-        return String.format("SELECT * FROM items WHERE state = %d ORDER BY targetDate DESC", state.ordinal());
+        return String.format("SELECT * FROM items WHERE state = %d  AND type != %d AND hasChild = 0 ORDER BY targetDate DESC", state.ordinal(), Type.ROOT.ordinal());
     }
     public static String selectItems(State state, LocalDate date) {
         return String.format("SELECT * FROM items WHERE state = %d  AND date = %d ORDER BY targetDate DESC",
@@ -81,22 +85,33 @@ public class Queeries {
                 date.toEpochDay());
     }
 
-    public static String insertCategory(String category) {
-        return String.format("INSERT INTO categories (name) values ('%s')", category);
-    }
+
 
     public static String selectTodayList(LocalDate date) {
-        return String.format(Locale.ENGLISH, "SELECT * FROM items WHERE (state = %d AND targetDate <= %d)  OR " +
-                "(state = %d AND targetDate = %d)", State.INFINITE.ordinal(), date.toEpochDay(), State.DONE.ordinal(), date.toEpochDay());
+        LocalDateTime.now().toLocalDate();
+        //or updated >= %d AND updated < %d startEpoch, startEpoch + 24 * 3600
+        LocalDateTime startLocalDateTime = date.atStartOfDay();
+        long startEpoch = startLocalDateTime.toEpochSecond(ZoneOffset.UTC);
+        long endEpoch = startEpoch + (3600 * 24);
+        //AND (updated)
+        return String.format(Locale.ENGLISH, "SELECT * FROM items WHERE " +
+                        "(state = %d AND targetDate <= %d)  OR " +
+                        "(state = %d AND targetDate = %d) OR " +
+                        "(state = %d AND updated >= %d AND updated <= %d)",
+                State.INFINITE.ordinal(), date.toEpochDay(),
+                State.DONE.ordinal(), date.toEpochDay(),
+                State.DONE.ordinal(), startEpoch, endEpoch);
     }
 
     public static String selectItems(Type type) {
         return String.format(Locale.ENGLISH, "SELECT * FROM items WHERE type = %d ORDER BY updated", type.ordinal());
     }
 
-    public static String selectMentals(LocalDate date) {
-        return String.format("SELECT * FROM mental WHERE date = %d", date.toEpochDay());
+    public static String selectMentals() {
+        return "SELECT * FROM mental ORDER  BY created DESC";
     }
+
+
 
     public static String selectLatestMentals(int limit) {
         return String.format("SELECT * FROM mental ORDER BY updated LIMIT 10");
@@ -104,5 +119,38 @@ public class Queeries {
 
     public static String selectItem(long id) {
         return String.format("SELECT  *  FROM items WHERE id = %d", id);
+    }
+
+    public static String selectItems(LocalDate firstDate, LocalDate lastDate) {
+        String query = String.format(Locale.ENGLISH, "SELECT * FROM items WHERE ()");
+        return null;
+    }
+    public static String selectItems(LocalDate firstDate, LocalDate lastDate, State state) {
+        LocalDateTime localDateTimeFirst = firstDate.atStartOfDay();
+        long startEpoch = localDateTimeFirst.toEpochSecond(ZoneOffset.UTC);
+        long endEpoch = lastDate.atStartOfDay().toEpochSecond(ZoneOffset.UTC) + (3600 *24);
+        //long endEpoch = startEpoch + (3600 * 24);
+        return String.format(Locale.ENGLISH, "SELECT * FROM items WHERE " +
+                "(state = %d AND  updated >= %d AND updated <= %d) ORDER BY updated DESC",
+                state.ordinal(),startEpoch, endEpoch);
+    }
+
+    public static String selectMental(Item item) {
+        return String.format("SELECT * FROM mental WHERE itemID = %d", item.getID());
+    }
+    public static String selectMentals(LocalDate date) {
+        return String.format("SELECT * FROM mental WHERE date = %d", date.toEpochDay());
+    }
+
+    public static String selectMentals(LocalDate firstDate, LocalDate lastDate) {
+        return String.format("SELECT * FROM mental WHERE date >= %d AND date <= %d ORDER BY date DESC", firstDate.toEpochDay(), lastDate.toEpochDay());
+    }
+
+    public static String selectTopTen() {
+        return "SELECT * FROM mental ORDER BY energy DESC LIMIT 10";
+    }
+
+    public static String selectMentalTopTen(TopTenFragment.Mode mode) {
+        return String.format( "SELECT * FROM mental ORDER BY %s DESC LIMIT 10", mode.toString().toLowerCase());
     }
 }

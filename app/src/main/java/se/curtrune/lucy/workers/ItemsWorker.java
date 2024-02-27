@@ -1,24 +1,27 @@
 package se.curtrune.lucy.workers;
 
 import static se.curtrune.lucy.util.Logger.log;
+import static se.curtrune.lucy.app.Settings.Root.DAILY;
+import static se.curtrune.lucy.app.Settings.Root.PROJECTS;
+import static se.curtrune.lucy.app.Settings.Root.TODO;
 
 import android.content.Context;
 import android.widget.Toast;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import se.curtrune.lucy.activities.ItemSession;
-import se.curtrune.lucy.activities.Settings;
 import se.curtrune.lucy.activities.TodayActivity;
-import se.curtrune.lucy.classes.App;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.persist.Queeries;
+import se.curtrune.lucy.app.Settings;
 
 public class ItemsWorker {
     private static ItemsWorker instance;
@@ -32,12 +35,20 @@ public class ItemsWorker {
         return instance;
     }
 
-    public static Item getParent(Item currentParent, Context context) {
-        log("ItemsWorker.getParent(Item, Context)");
+    public static Item selectItem(long parentId, Context context) {
+        log("...selectItem(long, Context");
         LocalDB db = new LocalDB(context);
-        return db.selectItem(currentParent.getParentId());
+        return db.selectItem(parentId);
     }
 
+    private Item createChildToInfinite(Item parent){
+        log("...createChildToInfinite(Item item)");
+        Item child = new Item();
+        child.setParentId(parent.getID());
+        child.setHeading(parent.getHeading());
+        child.setState(State.DONE);
+        return child;
+    }
 
     public static boolean delete(Item item, Context context) {
         log("LocalDB.delete(Item, Context)");
@@ -56,6 +67,43 @@ public class ItemsWorker {
         return res;
     }
 
+    public static Item getParent(Item currentParent, Context context) {
+        log("ItemsWorker.getParent(Item, Context)");
+        if( currentParent == null){
+            log("...currentParent is null, returning null");
+            return null;
+        }
+        LocalDB db = new LocalDB(context);
+        return db.selectItem(currentParent.getParentId());
+    }
+
+    public static Item getTodayParent(Context context) {
+        log("ItemsWorker.getTodayParent(Context context)");
+        LocalDB db = new LocalDB(context);
+        Settings settings = Settings.getInstance(context);
+        return db.selectItem(settings.getRootID(DAILY));
+    }
+    public static Item getRootItem(Settings.Root root, Context context){
+        log("...getRootItem(Settings.Root, Context");
+        Settings settings = Settings.getInstance(context);
+        long rootID = -1;
+        switch (root){
+            case TODO:
+                rootID = settings.getRootID(TODO);
+                break;
+            case DAILY:
+                rootID = settings.getRootID(DAILY);
+                break;
+            case PROJECTS:
+                rootID = settings.getRootID(PROJECTS);
+                break;
+        }
+        LocalDB db = new LocalDB(context);
+        return db.selectItem(rootID);
+    }
+
+
+
     public static boolean hasChild(long parentId, Context context) {
         log("ItemsWorker.hasChild(long) parentID", parentId );
         LocalDB db = new LocalDB(context);
@@ -68,20 +116,16 @@ public class ItemsWorker {
         return db.selectItems();
     }
 
-    public static Item getTodayParent(Context context) {
-        log("ItemsWorker.getTodayParent(Context context)");
+
+
+    public static List<Item> selectItems(LocalDate firstDate, LocalDate lastDate, Context context) {
+        log("...selectItems(LocalDate, LocalDate, Context");
         LocalDB db = new LocalDB(context);
-        return db.selectItem(App.getTodoListID());
+        String query = Queeries.selectItems(firstDate, lastDate, State.DONE);
+        return db.selectItems(query);
     }
 
-    private Item createChildToInfinite(Item parent){
-        log("...createChildToInfinite(Item item)");
-        Item child = new Item();
-        child.setParentId(parent.getID());
-        child.setHeading(parent.getHeading());
-        child.setState(State.DONE);
-        return child;
-    }
+
 
     /**
      * sets targetDate of infiniteItem to 'today + item.getDays'
@@ -104,11 +148,12 @@ public class ItemsWorker {
         db.close();
         return item;
     }
-    private static Item insertChild(Item parent, Item child, Context context) throws SQLException {
+    public  static Item insertChild(Item parent, Item child, Context context) throws SQLException {
         log("ItemsWorker.insertChild(Item, Item, Context)");
         if( !parent.hasChild()){
-            //TODO: set hasChild to true
+            setHasChild(parent, true, context);
         }
+        child.setParentId(parent.getID());
         LocalDB db = new LocalDB(context);
         return db.insert(child);
     }
@@ -155,8 +200,6 @@ public class ItemsWorker {
         String query = Queeries.selectTodayList(date);
         LocalDB db = new LocalDB(context);
         return db.selectItems(query);
-
-
     }
     public static void setHasChild(Item item, boolean hasChild, Context context) {
         log("ItemsWorker.setHasChild(Item, Context)");
@@ -176,6 +219,7 @@ public class ItemsWorker {
         }else {
             log("...item is not infinite");
             item.setState(state);
+            item.setUpdated(LocalDateTime.now());
             LocalDB db = new LocalDB(context);
             int rowsAffected = db.update(item);
             log("...rowsAffected", rowsAffected);
@@ -186,6 +230,12 @@ public class ItemsWorker {
         log("ItemsWorker.touch(Item, Context)");
         LocalDB db = new LocalDB(context);
         db.touch(currentItem);
+    }
+    public  static void touchParents(Item item, Context context){
+        log("...touchParents()");
+        LocalDB db = new LocalDB(context);
+        db.touchParents(item);
+
     }
     public int update(Item item, Context context) {
         log("ItemsWorker.update(Item, Context)");

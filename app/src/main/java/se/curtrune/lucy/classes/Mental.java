@@ -1,5 +1,7 @@
 package se.curtrune.lucy.classes;
 
+import static se.curtrune.lucy.util.Logger.log;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -14,7 +16,7 @@ public class Mental implements Listable{
     private int anxiety;
     private long itemID;
     private int stress;
-    private int depression;
+    //private int depression;
     private int mood;
     private int energy;
     private long date;
@@ -29,7 +31,7 @@ public class Mental implements Listable{
 
     }
     public boolean contains(String text) {
-        return (heading + comment).toLowerCase().contains(text.toLowerCase());
+        return (heading + comment + category).toLowerCase().contains(text.toLowerCase());
     }
     @Override
     public long compare() {
@@ -59,9 +61,7 @@ public class Mental implements Listable{
     public long getDateEpoch() {
         return date;
     }
-    public int getDepression() {
-        return depression;
-    }
+
     public int getEnergy() {
         return energy;
     }
@@ -106,7 +106,14 @@ public class Mental implements Listable{
         return updated;
     }
 
-
+    public boolean isCategory(String category){
+        //log("Mental.isCategory(String) ", category);
+        if( this.category == null){
+            log("this.category == null returning false");
+            return false;
+        }
+        return this.category.equalsIgnoreCase(category);
+    }
     public void setAnxiety(int anxiety) {
         this.anxiety = anxiety;
     }
@@ -128,9 +135,7 @@ public class Mental implements Listable{
     public void setDate(long date) {
         this.date = date;
     }
-    public void setDepression(int depression) {
-        this.depression = depression;
-    }
+
     public void setEnergy(int energy) {
         this.energy = energy;
     }
@@ -141,7 +146,7 @@ public class Mental implements Listable{
     public void setID(long id) {
         this.id = id;
     }
-    public void setItemID(long ditemID){
+    public void setItemID(long itemID){
         this.itemID = itemID;
     }
     public void setMood(int mood){

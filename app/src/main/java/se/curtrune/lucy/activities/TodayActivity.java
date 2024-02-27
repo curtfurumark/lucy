@@ -4,13 +4,11 @@ import static se.curtrune.lucy.util.Logger.log;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,17 +19,19 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.ItemAdapter;
-import se.curtrune.lucy.classes.App;
+import se.curtrune.lucy.app.Lucy;
 import se.curtrune.lucy.classes.CallingActivity;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
@@ -40,22 +40,19 @@ import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.dialogs.StatisticsDialog;
 import se.curtrune.lucy.enums.ViewMode;
 import se.curtrune.lucy.util.Constants;
+import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.workers.ItemsWorker;
-import se.curtrune.lucy.workers.StatisticsWorker;
 
 public class TodayActivity extends AppCompatActivity implements
         AddItemDialog.Callback,
         ItemAdapter.Callback {
     private RecyclerView recycler;
-    private TextView textViewDate;
+
     private EditText editTextSearch;
-    private TextView textViewCurrentEnergy;
+
+    private FloatingActionButton fabAdd;
     private ItemTouchHelper itemTouchHelper;
-    /*
-    private RadioButton radioButtonTodo;
-    private RadioButton radioButtonWip;
-    private RadioButton radioButtonAppointments;
-    private RadioButton radioButtonToday;*/
+
     private BottomNavigationView bottomNavigationView;
     private Item currentParent;
 
@@ -74,28 +71,46 @@ public class TodayActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.today_activity);
         log("TodayActivity.onCreate()");
+
         initComponents();
         initListeners();
         initRecycler();
         initSwipe();
         worker = ItemsWorker.getInstance();
-        //radioButtonToday.setChecked(true);
-        show(mode);
+        if( savedInstanceState != null){
+            log("...savedInstance != null");
+            restoreInstance(savedInstanceState);
+        }
+        if( Lucy.currentViewMode != null){
+            log("currentViewMode != null");
+            mode = Lucy.currentViewMode;
+            bottomNavigationView.setSelectedItemId(Lucy.getItemID(mode));
+        }
+        Intent intent = getIntent();
+        if( intent.getBooleanExtra(Constants.INTENT_SHOW_CHILD_ITEMS, false)){
+            log("INTENT_SHOW_CHILD_ITEMS");
+            currentParent = (Item) intent.getSerializableExtra(Constants.INTENT_SERIALIZED_ITEM);
+            Toast.makeText(this, "parent " + currentParent.getHeading(), Toast.LENGTH_LONG).show();
+            showChildren(currentParent);
+        }else {
+            show(mode);
+        }
     }
     private void ascend(){
-        log("...ascend()");
+        log("...ascend() ");
+        ///log("...old parent", currentParent.getHeading());
         currentParent = ItemsWorker.getParent(currentParent, this);
+
+        Lucy.currentParent = currentParent;
         if(currentParent == null){
-            log("...top of the world");
-            Toast.makeText(this, "top of the world", Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(this, HomeActivity.class);
-            startActivity(intent);
+            log("...top of the world, switching to homeActivity");
+            //Toast.makeText(this, "top of the world", Toast.LENGTH_LONG).show();
+            startActivity(new Intent(this, HomeActivity.class));
         }else {
+            //log("...new parent", currentParent.getHeading());
             show(ViewMode.CHILDREN);
         }
     }
-
-
 
     private boolean delete(Item item){
         log("...delete(Item)");
@@ -113,25 +128,36 @@ public class TodayActivity extends AppCompatActivity implements
     private void initComponents(){
         log("...initComponents()");
         recycler = findViewById(R.id.todayActivity_recycler);
-        textViewDate = findViewById(R.id.todayActivity_date);
-        textViewCurrentEnergy = findViewById(R.id.todayActivity_currentEnergy);
         bottomNavigationView = findViewById(R.id.bottomNavigation);
         editTextSearch = findViewById(R.id.todayActivity_search);
+        fabAdd = findViewById(R.id.todayActivity_fabAdd);
     }
 
     private void initListeners(){
         log("...initListeners()");
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
-            log("...onNavigationItemSelected()", item.getTitle().toString());
-            if (item.getItemId() == R.id.bottomNavigation_projects){
-                show( ViewMode.PROJECTS);
+            log("...onNavigationItemSelected()", Objects.requireNonNull(item.getTitle()).toString());
+            if (item.getItemId() == R.id.bottomNavigation_projects) {
+                mode = ViewMode.PROJECTS;
+                Lucy.currentViewMode = ViewMode.PROJECTS;
+                currentParent = ItemsWorker.getRootItem(Settings.Root.PROJECTS, this);
+                show(mode);
+            }else if( item.getItemId() == R.id.bottomNavigation_todo){
+                Lucy.currentViewMode = ViewMode.TODO;
+                mode = ViewMode.TODO;
+                currentParent = ItemsWorker.getRootItem(Settings.Root.TODO, this);
+                show(ViewMode.TODO);
             }else if( item.getItemId() == R.id.bottomNavigation_today){
+                Lucy.currentViewMode = ViewMode.TODAY;
+                mode = ViewMode.TODAY;
+                currentParent = ItemsWorker.getRootItem(Settings.Root.DAILY, this);
                 show(ViewMode.TODAY);
             }else if( item.getItemId() == R.id.bottomNavigation_statistics){
-                //startActivity(new Intent(this, StatisticsActivity.class));
                 Toast.makeText(this, "not implemented", Toast.LENGTH_LONG).show();
             }else if( item.getItemId() == R.id.bottomNavigation_todo){
-                show(ViewMode.TODO);
+                currentParent = ItemsWorker.getRootItem(Settings.Root.TODO, this);
+                mode = ViewMode.TODO;
+                show(mode);
             }else if(  item.getItemId() == R.id.bottomNavigation_enchilada){
                 show(ViewMode.ENCHILADA);
             }
@@ -153,6 +179,7 @@ public class TodayActivity extends AppCompatActivity implements
                 filterItems(s.toString());
             }
         });
+        fabAdd.setOnClickListener(view->showAddItemDialog());
 
     }
     private void initRecycler(){
@@ -176,16 +203,43 @@ public class TodayActivity extends AppCompatActivity implements
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int index = viewHolder.getAdapterPosition();
                 Item item = items.remove(index);
-                if( delete(item)) {
-                    adapter.notifyItemRemoved(index);
-                    Toast.makeText(TodayActivity.this, "item deleted", Toast.LENGTH_LONG).show();
-                }else{
-                    log("error deleting item");
-                    Toast.makeText(TodayActivity.this, "error deleting item", Toast.LENGTH_LONG).show();
-                }
+/*                AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+                builder.setTitle("delete " + item.getHeading());
+                builder.setMessage("are you sure? ");
+                builder.setPositiveButton(null, (dialog, which) ->{
+                    log("...on positive button click");
+                    if( delete(item)) {
+                        adapter.notifyItemRemoved(index);
+                        Toast.makeText(TodayActivity.this, "item deleted", Toast.LENGTH_LONG).show();
+                    }else{
+                        log("error deleting item");
+                        Toast.makeText(TodayActivity.this, "error deleting item", Toast.LENGTH_LONG).show();
+                    }
+                });
+                builder.setNegativeButton(null, (dialog, which) -> log("...on negative button click"));
+                AlertDialog dialog = builder.create();
+                dialog.show();*/
+
             }
         });
         itemTouchHelper.attachToRecyclerView(recycler);
+    }
+    @Override
+    public void onAddItem(Item item) {
+        log("TodayActivity.onAddItem(Item)", mode.toString());
+        try {
+            switch (mode) {
+                case TODAY:
+                case TODO:
+                case PROJECTS:
+                    item = ItemsWorker.insert(item, this);
+                    items.add(0, item);
+                    adapter.notifyItemInserted(0);
+            }
+        } catch (SQLException e) {
+            log("exception", e.getMessage());
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
 
@@ -197,7 +251,7 @@ public class TodayActivity extends AppCompatActivity implements
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        log("...onOptionsItemSelected(MenuItem)", item.getTitle().toString());
+        log("...onOptionsItemSelected(MenuItem)", Objects.requireNonNull(item.getTitle()).toString());
         if( item.getItemId() == R.id.todayActivity_home){
             ascend();
         }else if( item.getItemId() == R.id.todayActivity_addItem){
@@ -214,13 +268,16 @@ public class TodayActivity extends AppCompatActivity implements
         if(item.hasChild()){
             setTitle(item.getHeading());
             items = worker.selectChildItems(item, this);
+            Lucy.currentParent = item;
             currentParent = item;
             adapter.setList(items);
         }else {
             Intent intent = new Intent(this, ItemSession.class);
             intent.putExtra(Constants.INTENT_ITEM_SESSION, true);
             intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.TODAY_ACTIVITY);
+            intent.putExtra(Constants.CURRENT_VIEW_MODE, mode);
             intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, item);
+            Lucy.currentViewMode = mode;
             startActivity(intent);
         }
     }
@@ -232,6 +289,7 @@ public class TodayActivity extends AppCompatActivity implements
         intent.putExtra(Constants.INTENT_EDIT_ITEM, true);
         intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.TODAY_ACTIVITY);
         intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, item);
+        Lucy.currentViewMode = mode;
         startActivity(intent);
     }
 
@@ -241,6 +299,7 @@ public class TodayActivity extends AppCompatActivity implements
         if( checked){
             try {
                 worker.setItemState(item, State.DONE, this);
+                ItemsWorker.touchParents(item, this);
                 show(mode);
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -275,23 +334,38 @@ public class TodayActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
-        outPersistentState.putInt(Constants.VIEW_MODE_ORDINAL, mode.ordinal());
-        super.onSaveInstanceState(outState, outPersistentState);
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        log("...onSaveInstanceState(Bundle) mode", mode.toString());
+        outState.putInt(Constants.VIEW_MODE_ORDINAL, mode.ordinal());
+    }
+
+    private void restoreInstance(Bundle bundle){
+        log("restoreInstance()");
+        int ordinal  = bundle.getInt(Constants.VIEW_MODE_ORDINAL);
+        mode = ViewMode.values()[ordinal];
+        log("...mode", mode.toString());
+        bottomNavigationView.setSelectedItemId(getItemID(mode));
+        //super.onRestoreInstanceState(savedInstanceState);
+
     }
 
     private void show(ViewMode mode){
         log("...show(Mode)", mode.toString());
-        setTitle(mode.toString());
-        textViewCurrentEnergy.setText(String.valueOf(StatisticsWorker.getCurrentEnergy(this)));
+        if( currentParent != null){
+            log("...currentParent", currentParent.getHeading());
+        }else{
+            log("...currentParent is null");
+        }
         switch (mode){
             case CHILDREN:
                 items = ItemsWorker.selectChildren(currentParent, this);
+                break;
             case WIP:
                 items = ItemsWorker.selectItems(State.WIP, this);
                 break;
             case PROJECTS:
-                currentParent = null;
+                currentParent = ItemsWorker.getRootItem(Settings.Root.PROJECTS, this);
                 items = ItemsWorker.selectChildren(currentParent, this);
                 break;
             case TEMPLATES:
@@ -302,12 +376,14 @@ public class TodayActivity extends AppCompatActivity implements
                 items = ItemsWorker.selectTodayList(LocalDate.now(), this);
                 break;
             case TODO:
+                currentParent = ItemsWorker.getRootItem(Settings.Root.TODO, this);
                 items = ItemsWorker.selectItems(State.TODO, this);
                 break;
             case ENCHILADA:
                 items = ItemsWorker.selectItems(this);
                 break;
         }
+        setTitle(currentParent.getHeading());
         items.sort(Comparator.comparingLong(Item::compare));
         adapter.setList(items);
     }
@@ -328,26 +404,17 @@ public class TodayActivity extends AppCompatActivity implements
         }
         addItemDialog.show(getSupportFragmentManager(), "add item");
     }
-    @Override
-    public void onAddItem(Item item) {
-        log("...onAddItem(Item)", mode.toString());
-        try {
-            switch (mode) {
-                case TODAY:
-                case TODO:
-                    item = ItemsWorker.insert(item, this);
-                    items.add(0, item);
-                    adapter.notifyItemInserted(0);
-            }
-        } catch (SQLException e) {
-            log("exception", e.getMessage());
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-        }
+
+    private void showChildren(Item parent){
+        log("...showChildren(Item)");
+        currentParent = parent;
+        items = ItemsWorker.selectChildren(currentParent, this);
+        adapter.setList(items);
+
     }
     private void showStatistics(){
         log("...showStatistics()");
-        Toast.makeText(this, "wip show stats", Toast.LENGTH_LONG).show();
-        StatisticsDialog dialog = new StatisticsDialog();
+        StatisticsDialog dialog = new StatisticsDialog(this);
         dialog.show(getSupportFragmentManager(), "you statistics lover");
 
     }

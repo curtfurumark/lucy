@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,20 +22,16 @@ import se.curtrune.lucy.classes.Type;
 
 
 public class AddCategoryDialog extends BottomSheetDialogFragment {
-    private EditText editTextParentID;
-    private long parentID;
 
     private Button buttonSave;
-    private Type currentType = Type.PENDING;
+    private Button buttonDismiss;
+    private TextView textViewCategory;
     public interface Callback{
-        void onUpdateParentID(long parentID);
+        void onNewCategory(String category);
     }
 
     public AddCategoryDialog(){
-        log("AddItemFragment default constructor");
-    }
-    public AddCategoryDialog(long parentID) {
-        this.parentID = parentID;
+        log("AddCategory default constructor");
     }
 
     private Callback listener;
@@ -41,17 +39,26 @@ public class AddCategoryDialog extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         log("AddItemFragment.onCreateView(...)");
-        View view = inflater.inflate(R.layout.add_item_fragment, container, false);
+        View view = inflater.inflate(R.layout.add_category_dialog, container, false);
 
-        editTextParentID = view.findViewById(R.id.editParentID_parentID);
-        buttonSave = view.findViewById(R.id.editParentID_buttonSave);
-        editTextParentID.setText(String.valueOf(parentID));
+        textViewCategory = view.findViewById(R.id.addCategoryDialog_category);
+        buttonSave = view.findViewById(R.id.addCategoryDialog_save);
+        buttonDismiss = view.findViewById(R.id.addCategoryDialog_dismiss);
+        buttonDismiss.setOnClickListener(v->dismiss());
         buttonSave.setOnClickListener(view1 -> {
-            parentID = Long.valueOf(editTextParentID.getText().toString());
-            listener.onUpdateParentID(parentID);
+            if( validateInput()) {
+                listener.onNewCategory(textViewCategory.getText().toString());
+            }
             dismiss();
         });
         return view;
+    }
+    private boolean validateInput(){
+        if( textViewCategory.getText().toString().isEmpty()){
+            Toast.makeText(getContext(), "missing category", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        return true;
     }
     @Override
     public void onAttach(@NonNull Context context) {

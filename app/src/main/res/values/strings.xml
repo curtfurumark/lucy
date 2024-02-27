@@ -6,6 +6,16 @@
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
+    <string-array name="quotes">
+        <item>be happy</item>
+        <item>if you want something</item>
+        <item>we tend to judge other by their behaviour, and ourselves by our intentions</item>
+        <item>they laugh at me because i am  different, i laugh at them because they are all the same/cobain</item>
+        <item>people do not fake depression, the fake being okay</item>
+        <item>divide each difficulty into as many parts as is feasable and necessary to resolve it/descartes</item>
+        <item>do not offer a lecture to a person who needs a hug</item>
+
+    </string-array>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris

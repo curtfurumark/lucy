@@ -15,6 +15,7 @@ import java.util.List;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Mental;
+import se.curtrune.lucy.util.Constants;
 
 
 public class MentalAdapter extends RecyclerView.Adapter<MentalAdapter.MyViewHolder>{
@@ -31,7 +32,7 @@ public class MentalAdapter extends RecyclerView.Adapter<MentalAdapter.MyViewHold
     private final Callback callback;
 
     public MentalAdapter(List<Mental> items, Callback callback) {
-        if( VERBOSE) log("ItemsAdapter(List<Item>, Context, Callback");
+        if( VERBOSE) log("MentalAdapter(List<Mental>, Context, Callback");
         if (items == null){
             log("...items is null");
         }
@@ -42,27 +43,28 @@ public class MentalAdapter extends RecyclerView.Adapter<MentalAdapter.MyViewHold
     @androidx.annotation.NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@androidx.annotation.NonNull ViewGroup parent, int viewType) {
-        if( VERBOSE) log("ItemsAdapter.onCreateViewHolder(...)");
+        if( VERBOSE) log("MentalAdapter.onCreateViewHolder(...)");
         android.view.View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.mental_adapter, parent, false);
         return new MyViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@androidx.annotation.NonNull final MyViewHolder holder, int position) {
-        if( VERBOSE) log("ItemsAdapter.onBindViewHolder();");
+        if( VERBOSE) log("MentalAdapter.onBindViewHolder() mode", mode.toString());
         final Mental item = items.get(position);
+        log(item);
         switch (mode){
             case MOOD:
-                holder.seekBar.setProgress(item.getMood());
+                holder.seekBar.setProgress(item.getMood() + Constants.MOOD_OFFSET);
                 break;
             case ENERGY:
-                holder.seekBar.setProgress(item.getEnergy());
+                holder.seekBar.setProgress(item.getEnergy() +Constants.ENERGY_OFFSET);
                 break;
             case ANXIETY:
-                holder.seekBar.setProgress(item.getAnxiety());
+                holder.seekBar.setProgress(item.getAnxiety() + Constants.ANXIETY_OFFSET);
                 break;
             case STRESS:
-                holder.seekBar.setProgress(item.getStress());
+                holder.seekBar.setProgress(item.getStress() + Constants.STRESS_OFFSET);
                 break;
         }
         holder.textViewHeading.setText(item.getHeading());
@@ -74,6 +76,9 @@ public class MentalAdapter extends RecyclerView.Adapter<MentalAdapter.MyViewHold
     public int getItemCount() {
         return items != null? items.size(): 0;
     }
+    public List<Mental> getItems(){
+        return items;
+    }
 
     public void setList(List<Mental> items) {
         log("MentalAdapter.setList(List<Mental>) size",  items.size());
@@ -81,12 +86,11 @@ public class MentalAdapter extends RecyclerView.Adapter<MentalAdapter.MyViewHold
             log("ItemsAdapter.setList(List<Item>) called with null items");
             return;
         }
-        if( VERBOSE) log("TaskAdapter.setList(List<Task>), size ", items.size());
         this.items = items;
         notifyDataSetChanged();
     }
     public void show(Mode mode){
-        log("...show(Mode)", mode.toString());
+        log("MentalAdapter.show(Mode)", mode.toString());
         this.mode = mode;
         notifyDataSetChanged();
 

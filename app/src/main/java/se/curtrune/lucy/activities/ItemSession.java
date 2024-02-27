@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,7 +47,6 @@ public class ItemSession extends AppCompatActivity implements
     private EditText editTextHeading;
     private EditText  editTextComment;
     private CheckBox checkBoxDone;
-
     private Button buttonTimer;
     private TextView textViewDuration;
     private TextView textViewEnergy;
@@ -57,7 +57,12 @@ public class ItemSession extends AppCompatActivity implements
     private SeekBar seekBarAnxiety;
     private SeekBar seekBarMood;
     private SeekBar seekBarEnergy;
+    private Switch switchSaveMental;
 
+    private enum MentalMode{
+        EDIT, CREATE
+    }
+    private MentalMode mentalMode = MentalMode.CREATE;
     private CallingActivity callingActivity = CallingActivity.ITEMS_ACTIVITY;
     //variables
     private Integer n_repetitions = 0;
@@ -143,6 +148,14 @@ public class ItemSession extends AppCompatActivity implements
         }
         log("...return to calling activity: ", callingActivity.toString());
         mental = MentalWorker.getMental(currentItem, this);
+        if(mental == null){
+            log("...mental is null, ie no mental data associated with this activity");
+            mentalMode = MentalMode.CREATE;
+        }else{
+            log("...got mental");
+            log(mental);
+            mentalMode = MentalMode.EDIT;
+        }
         setUserInterfaceMental(mental);
         setUserInterface(currentItem);
     }
@@ -162,6 +175,7 @@ public class ItemSession extends AppCompatActivity implements
         textViewStress = findViewById(R.id.itemSession_labelStress);
         textViewMood = findViewById(R.id.itemSession_labelMood);
         textViewEnergy = findViewById(R.id.itemSession_labelEnergy);
+        switchSaveMental = findViewById(R.id.itemSession_mentalSwitch);
     }
     private void initDefaults(){
         log("...initDefaults()");
@@ -201,7 +215,8 @@ public class ItemSession extends AppCompatActivity implements
         seekBarEnergy.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                textViewEnergy.setText(String.format("energy %d", progress));
+                energy = progress - Constants.ENERGY_OFFSET;
+                textViewEnergy.setText(String.format("energy %d", energy));
             }
 
             @Override
@@ -217,7 +232,8 @@ public class ItemSession extends AppCompatActivity implements
         seekBarStress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                textViewStress.setText(String.format("stress %d", progress));
+                stress = progress - Constants.STRESS_OFFSET;
+                textViewStress.setText(String.format("stress %d", stress));
             }
 
             @Override
@@ -233,7 +249,8 @@ public class ItemSession extends AppCompatActivity implements
         seekBarAnxiety.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                textViewAnxiety.setText(String.format("anxiety %d", progress));
+                anxiety = progress - Constants.ANXIETY_OFFSET;
+                textViewAnxiety.setText(String.format("anxiety %d", anxiety));
             }
 
             @Override
@@ -249,7 +266,8 @@ public class ItemSession extends AppCompatActivity implements
         seekBarMood.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                textViewMood.setText(String.format("mood %d", progress - Constants.MOOD_OFFSET));
+                mood = progress - Constants.MOOD_OFFSET;
+                textViewMood.setText(String.format("mood %d", mood));
             }
 
             @Override
@@ -271,16 +289,17 @@ public class ItemSession extends AppCompatActivity implements
     @Override
     public void onAddItem(Item childItem) {
         log("MusicSessionActivity.onAddItem(Item)");
-        //Toast.makeText(this, "work in progress, but basically not done", Toast.LENGTH_LONG).show();
-        childItem.setParent(currentItem);
+/*        childItem.setParent(currentItem);
         if( !currentItem.hasChild()) {
             worker.setHasChild(currentItem, true, this);
-        }
+        }*/
         try {
-            worker.touch(currentItem, this);
+/*            worker.touch(currentItem, this);
             childItem.setType(currentItem.getType());
-            childItem = worker.insert(childItem, this);
-            Intent intent = new Intent(this, ItemsActivity.class);
+            childItem = worker.insert(childItem, this);*/
+            childItem = ItemsWorker.insertChild(currentItem, childItem, this);
+            log(childItem);
+            Intent intent = new Intent(this, TodayActivity.class);
             intent.putExtra(Constants.INTENT_SHOW_CHILD_ITEMS, true);
             intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, currentItem);
             startActivity(intent);
@@ -305,7 +324,7 @@ public class ItemSession extends AppCompatActivity implements
 
     @Override
     public void onCheckboxClicked(Item item, boolean checked) {
-
+        log("...onCheckboxClicked(Item, boolean)");
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -369,15 +388,11 @@ public class ItemSession extends AppCompatActivity implements
         log("...returnToCallingActivity()", callingActivity.toString());
         switch (callingActivity){
             case ITEMS_ACTIVITY:
-                Intent intent = new Intent(this, ItemsActivity.class);
-                intent.putExtra(Constants.INTENT_SHOW_SIBLINGS, true);
-                intent.putExtra(Constants.CURRENT_ITEM_IS_IN_STACK,  true);
-                ItemStack.currentItem = currentItem;
-                startActivity(intent);
+                Toast.makeText(this, "no more items activity", Toast.LENGTH_LONG).show();
                 break;
             case STATISTICS_ACTIVITY:
                 log("return to statistics activity");
-                Intent statsIntent = new Intent(this, StatisticsActivity.class);
+                Intent statsIntent = new Intent(this, StatisticsMain.class);
                 startActivity(statsIntent);
                 break;
             case TODAY_ACTIVITY:
@@ -415,17 +430,47 @@ public class ItemSession extends AppCompatActivity implements
         if(rowsAffected != 1){
             Toast.makeText(this, "error updating item", Toast.LENGTH_LONG).show();
             return;
+        }else{
+            ItemsWorker.touchParents(currentItem, this);
         }
-        saveMental();
+        if(switchSaveMental.isChecked() ){
+            saveMental();
+        }
+
         kronos.reset();
-        ///returnToCallingActivity();
         Intent intent = new Intent(this, TodayActivity.class);
+        intent.putExtra(Constants.INTENT_SHOW_CHILD_ITEMS, true);
+        Item parent = ItemsWorker.selectItem(currentItem.getParentId(), this);
+        intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, parent);
         startActivity(intent);
 
     }
     private void saveMental(){
         log("...saveMental()");
-        energy = seekBarEnergy.getProgress();
+        if( mental == null){
+            mental = new Mental();
+        }
+        mental.setEnergy(seekBarEnergy.getProgress() - Constants.ENERGY_OFFSET);
+        mental.setMood(seekBarMood.getProgress() - Constants.MOOD_OFFSET);
+        mental.setAnxiety(seekBarAnxiety.getProgress() - Constants.ANXIETY_OFFSET);
+        mental.setStress(seekBarStress.getProgress() - Constants.STRESS_OFFSET);
+        mental.setComment(editTextComment.getText().toString());
+        mental.setHeading(currentItem.getHeading());
+        mental.setCategory(currentItem.getCategory());
+        mental.setItemID(currentItem.getID());
+        if( mentalMode.equals(MentalMode.CREATE)){
+            try {
+                mental = MentalWorker.insert(mental, this);
+            } catch (SQLException e) {
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+            }
+        }else{
+            int rowsAffected = MentalWorker.update(mental, this);
+            if( rowsAffected != 1){
+                Toast.makeText(this, "error updating mental", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     private void setUserInterface(Item item){
@@ -441,24 +486,29 @@ public class ItemSession extends AppCompatActivity implements
         if( item.getDuration() > 0){
             buttonTimer.setText("resume");
         }
-        setUserInterfaceMental(null);
+        //setUserInterfaceMental(null);
     }
     private void setUserInterfaceMental(Mental mental){
         log("...setUserInterface(Mental)");
-        if( mental == null){
-            seekBarAnxiety.setProgress(0);
+        if( mentalMode.equals(MentalMode.CREATE)){
+            seekBarAnxiety.setProgress(Constants.ANXIETY_OFFSET);
             textViewAnxiety.setText("anxiety 0");
-            seekBarMood.setProgress(5);
+            seekBarMood.setProgress(Constants.MOOD_OFFSET);
             textViewMood.setText("mood 0");
-            seekBarStress.setProgress(0);
+            seekBarStress.setProgress(Constants.STRESS_OFFSET);
             textViewStress.setText("stress 0");
-            seekBarEnergy.setProgress(5);
+            seekBarEnergy.setProgress(Constants.ENERGY_OFFSET);
             textViewEnergy.setText("energy 0");
         }else{
-            seekBarAnxiety.setProgress(mental.getAnxiety());
-            seekBarEnergy.setProgress(mental.getEnergy());
-            seekBarMood.setProgress(mental.getDepression());
-            seekBarStress.setProgress(mental.getStress());
+            seekBarAnxiety.setProgress(mental.getAnxiety() + Constants.ANXIETY_OFFSET);
+            textViewAnxiety.setText(String.format("anxiety %d", mental.getAnxiety()));
+            seekBarEnergy.setProgress(mental.getEnergy() + Constants.ENERGY_OFFSET);
+            textViewEnergy.setText(String.format("energy %d", mental.getEnergy()));
+            seekBarMood.setProgress(mental.getMood() + Constants.MOOD_OFFSET);
+            textViewMood.setText(String.format("mood %d", mental.getMood()));
+            seekBarStress.setProgress(mental.getStress() + Constants.STRESS_OFFSET);
+            textViewStress.setText(String.format("stress %d", mental.getStress()));
+            editTextComment.setText(mental.getComment());
         }
     }
 

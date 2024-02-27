@@ -21,10 +21,9 @@
         android:id="@+id/periodDialog_save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:text="add"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addItemDialog_spinnerState" />
+        app:layout_constraintTop_toTopOf="@+id/addItemDialog_edit" />
 
     <Spinner
         android:id="@+id/addItemDialog_spinnerState"
@@ -71,9 +70,10 @@
         android:id="@+id/addItemDialog_dismiss"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="dismiss"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/periodDialog_save" />
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
     <Button
         android:id="@+id/addItemDialog_edit"
@@ -82,6 +82,25 @@
         android:text="edit"
         app:layout_constraintEnd_toStartOf="@+id/periodDialog_save"
         app:layout_constraintStart_toEndOf="@+id/addItemDialog_dismiss"
-        app:layout_constraintTop_toTopOf="@+id/periodDialog_save" />
+        app:layout_constraintTop_toTopOf="@+id/addItemDialog_dismiss" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="6"
+        android:text="parent item"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addItemDialog_spinnerState" />
+
+    <TextView
+        android:id="@+id/addItem_parentItem"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="parent item heading"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView4"
+        app:layout_constraintTop_toTopOf="@+id/textView4" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

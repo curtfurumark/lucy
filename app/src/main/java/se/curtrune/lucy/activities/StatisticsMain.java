@@ -2,21 +2,15 @@ package se.curtrune.lucy.activities;
 
 import static se.curtrune.lucy.util.Logger.log;
 
-import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.tabs.TabLayout;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -24,22 +18,15 @@ import java.util.List;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.ListableAdapter;
-import se.curtrune.lucy.classes.CallingActivity;
-import se.curtrune.lucy.classes.DailyStatistics;
-import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Listable;
-import se.curtrune.lucy.classes.TypeStatistic;
-import se.curtrune.lucy.util.Constants;
-import se.curtrune.lucy.util.Converter;
-import se.curtrune.lucy.util.ItemStack;
-import se.curtrune.lucy.util.Logger;
+import se.curtrune.lucy.fragments.DurationFragment;
+import se.curtrune.lucy.fragments.MentalFragment;
+import se.curtrune.lucy.fragments.TopTenFragment;
 import se.curtrune.lucy.workers.StatisticsWorker;
 
 
-public class StatisticsActivity extends AppCompatActivity implements ListableAdapter.Callback, StatisticsWorker.Callback {
-    private RecyclerView recycler;
-    private TextView textViewDate;
-    private TextView textViewTotal;
+public class StatisticsMain extends AppCompatActivity  {
+    private TabLayout tabLayout;
     private LocalDate date;
     public static boolean VERBOSE = true;
     private ListableAdapter adapter;
@@ -53,12 +40,12 @@ public class StatisticsActivity extends AppCompatActivity implements ListableAda
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.statistics_activity);
-        log("StatisticsActivity.onCreate(Bundle)");
-        setTitle("duration");
+        setContentView(R.layout.statistics_main);
+        log("StatisticsMain.onCreate(Bundle)");
+        setTitle("statisticsMain");
         initComponents();
         initListeners();
-        initRecycler(items);
+/*        initRecycler(items);
         setDefaults();
         initUserInterface();
         worker = StatisticsWorker.getInstance();
@@ -72,21 +59,46 @@ public class StatisticsActivity extends AppCompatActivity implements ListableAda
         for( Item item : items){
             listables.add(item);
         }
-        setUserInterface(listables);
+        setUserInterface(listables);*/
 
     }
     private void initComponents(){
         log("...initComponents()");
-        textViewDate = findViewById(R.id.statistics_date);
-        textViewTotal = findViewById(R.id.statistics_total);
-        recycler = findViewById(R.id.statistics_recycler);
+        tabLayout = findViewById(R.id.statisticsMain_tabLayout);
     }
-    private void initListeners(){
+   private void initListeners(){
         log("...initListeners()");
-        textViewDate.setOnClickListener(a->showDateDialog());
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener(){
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                int position =  tab.getPosition();
+                log("...onTabSelected(Tab) position", position);
+                switch (position){
+                    case 0:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.statisticsMain_fragmentContainer, new DurationFragment()).commit();
+                        break;
+                    case 1:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.statisticsMain_fragmentContainer, new MentalFragment()).commit();
+                        break;
+                    case 2:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.statisticsMain_fragmentContainer, new TopTenFragment()).commit();
+                        break;
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                log("...onTabUnselected(TabLayout)");
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                log("...onTabReselected(TabLayout)");
+            }
+        });
 
     }
-    private void initRecycler(List<Listable> items){
+/*    private void initRecycler(List<Listable> items){
         if( VERBOSE) log("ItemsActivity.initRecycler(List<Item>)");
         adapter = new ListableAdapter(items, this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
@@ -104,16 +116,16 @@ public class StatisticsActivity extends AppCompatActivity implements ListableAda
         textViewDate.setText(date.toString());
 
     }
-
+*/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.statistics_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
-
+/*
     @Override
     public void onItemClick(Listable item) {
-        log("StatisticsActivity.onItemClick(Listable)");
+        log("StatisticsMain.onItemClick(Listable)");
         if( item instanceof TypeStatistic){
             TypeStatistic typeStatistic = (TypeStatistic) item;
             adapter.setList(worker.getItems(((TypeStatistic) item).getType()));
@@ -131,19 +143,16 @@ public class StatisticsActivity extends AppCompatActivity implements ListableAda
     public void onLongClick(Listable item) {
 
     }
+    */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if( item.getItemId() == R.id.statistics_home){
             startActivity(new Intent(this, HomeActivity.class));
-        /*{else if( item.getItemId() == R.id.statistics_showItems){
-            worker.requestItems();*/
-        }else if( item.getItemId() == R.id.statistics_byType){
-            worker.requestStats(date, this);
         }
         return super.onOptionsItemSelected(item);
     }
 
-
+/*
     private void showDateDialog() {
         DatePickerDialog datePickerDialog = new DatePickerDialog(this);
         datePickerDialog.setOnDateSetListener((view1, year, month, dayOfMonth) -> {
@@ -155,7 +164,7 @@ public class StatisticsActivity extends AppCompatActivity implements ListableAda
     }
     @Override
     public void onUpdateItems(List<Listable> items) {
-        log("StatisticsActivity.onUpdateItems()");
+        log("StatisticsMain.onUpdateItems()");
         this.items = items;
         items.sort((item1, item2) -> Long.compare(item2.compare(), item1.compare()));
         adapter.setList(items);
@@ -170,7 +179,7 @@ public class StatisticsActivity extends AppCompatActivity implements ListableAda
 
     @Override
     public void onUpdateStats(DailyStatistics statistics) {
-        log("StatisticsActivity.onUpdateStats(DailyStatistics)");
+        log("StatisticsMain.onUpdateStats(DailyStatistics)");
         if( statistics == null){
             Toast.makeText(this, "bummer statistics is null", Toast.LENGTH_LONG).show();
             return;
@@ -180,7 +189,7 @@ public class StatisticsActivity extends AppCompatActivity implements ListableAda
     }
 
     private void setDefaults(){
-        log("StatisticsActivity.setDefaults()");
+        log("StatisticsMain.setDefaults()");
         date = LocalDate.now();
     }
     private void setUserInterface(List<Listable> listables){
@@ -190,7 +199,6 @@ public class StatisticsActivity extends AppCompatActivity implements ListableAda
             duration += ((Item)listable).getDuration();
         }
         textViewTotal.setText(Converter.formatSecondsWithHours(duration));
-        adapter.setList(listables);
-
-    }
+        adapter.setList(listables);*/
+    //}
 }

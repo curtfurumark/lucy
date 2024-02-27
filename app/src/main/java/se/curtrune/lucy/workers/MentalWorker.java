@@ -9,9 +9,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 
-import se.curtrune.lucy.activities.MentalListActivity;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
+import se.curtrune.lucy.fragments.TopTenFragment;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
 
@@ -33,6 +33,21 @@ public class MentalWorker {
         String query = String.format(Locale.ENGLISH,"SELECT * FROM mental WHERE itemID = %d", item.getID());
         return db.selectMental(query);
     }
+
+    public static List<Mental> select(LocalDate firstDate, LocalDate lastDate, Context context) {
+        log("MentalWorker.select(LocalDate, LocalDate, Context");
+        String query = String.format("SELECT * FROM mental WHERE date >= %d AND date <= %d", firstDate.toEpochDay(), lastDate.toEpochDay());
+        LocalDB db = new LocalDB(context);
+        return db.selectMentals(query);
+
+    }
+
+    public static List<Mental> selectTopTen(TopTenFragment.Mode mode, Context context) {
+        LocalDB db = new LocalDB(context);
+        String query = Queeries.selectMentalTopTen(mode);
+        return db.selectMentals(query);
+    }
+
     public Mental getMental(String query, Context context){
         log("...getMental(String, Context)", query);
         LocalDB db = new LocalDB(context);
@@ -44,21 +59,16 @@ public class MentalWorker {
         return false;
     }
 
-    public List<Mental> selectMentals(Context context) {
-        log("MentalWorker.selectMentals()");
-        LocalDB db = new LocalDB(context);
-        List<Mental> items = db.selectMental();
-        return items;
-    }
 
-    public Mental insert(Mental mental, Context context) throws SQLException {
+
+    public static Mental insert(Mental mental, Context context) throws SQLException {
         log("MentalWorker.insert(Mental, Context)");
         LocalDB db = new LocalDB(context);
         return db.insert(mental);
     }
 
-    public int update(Mental mental, Context context) {
-        log("MentalWorker.update(Mental mental)");
+    public static int update(Mental mental, Context context) {
+        log("MentalWorker.update(Mental, Context)");
         LocalDB db = new LocalDB(context);
         return db.update(mental);
     }
@@ -77,5 +87,11 @@ public class MentalWorker {
         }
         LocalDB db = new LocalDB(context);
         return db.selectMentals(date);
+    }
+    public List<Mental> selectMentals(Context context) {
+        log("MentalWorker.selectMentals()");
+        LocalDB db = new LocalDB(context);
+        List<Mental> items = db.selectMentals();
+        return items;
     }
 }

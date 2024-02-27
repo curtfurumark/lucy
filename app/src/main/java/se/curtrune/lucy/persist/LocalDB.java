@@ -22,7 +22,7 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
-import se.curtrune.lucy.util.Settings;
+import se.curtrune.lucy.app.Lucy;
 
 public class LocalDB extends SQLiteOpenHelper {
     private static final String DB_NAME = "lucy.db";
@@ -41,7 +41,13 @@ public class LocalDB extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         log("LocalDB.onCreate(SQLiteDatabase)");
+        log("...creating table items");
         sqLiteDatabase.execSQL(Queeries.CREATE_TABLE_ITEMS);
+        log("...creating table categories");
+        sqLiteDatabase.execSQL(Queeries.CREATE_TABLE_CATEGORIES);
+        log("....creating table mental;");
+        sqLiteDatabase.execSQL(Queeries.CREATE_TABLE_MENTAL);
+        log("...three tables created");
     }
 
     @Override
@@ -79,6 +85,10 @@ public class LocalDB extends SQLiteOpenHelper {
         db.execSQL(sql);
         db.close();
     }
+    public Item getParent(Item item){
+        log("LocalDB.getParent(Item)");
+        return selectItem(item.getParentId());
+    }
     public List<String> getTableNames() {
         log("DBSQLite.getTableNames()");
         List<String> tableNames = new ArrayList<>();
@@ -95,12 +105,24 @@ public class LocalDB extends SQLiteOpenHelper {
         db.close();
         return tableNames;
     }
+    public List<Item> getChildren(Item item){
+        return null;
+    }
 
-    public Item insert(Item item) throws SQLException {
+    public Item getTree(Item root){
+        log("...getTree()");
+        if( root.hasChild()){
+            List<Item> children = getChildren(root);
+            root.setChildren(getChildren(root));
+        }
+        return null;
+    }
+    public Item insert(Item item)  {
         log("LocalDB.insert(Item)");
         if( VERBOSE) log(item);
         db = this.getWritableDatabase();
-        long id = db.insertOrThrow(ITEMS_TABLE, null,DBAdmin.getContentValues(item));
+        //long id = db.insertOrThrow(ITEMS_TABLE, null,DBAdmin.getContentValues(item));
+        long id = db.insert(ITEMS_TABLE, null, DBAdmin.getContentValues(item));
         if( id == -1 ){
             log("...return id -1, not good enough");
         }else{
@@ -110,6 +132,13 @@ public class LocalDB extends SQLiteOpenHelper {
         db.close();
         return item;
     }
+/*    public Item insertChild(Item parent, Item child){
+        log("...insertChild(Item, Item, Context");
+        if( !parent.hasChild()){
+            setItemHasChild(parent.getID(), true);
+        }
+        insert(child);
+    }*/
 
     public Mental insert(Mental mental) throws SQLException {
         log("LocalDB.insert(Mental)");
@@ -132,8 +161,10 @@ public class LocalDB extends SQLiteOpenHelper {
             child.setId(res);
         }
         if( !parent.hasChild()){
+            setItemHasChild(parent.getID(), true);
             parent.setHasChild(true);
             String whereClause = String.format(Locale.ENGLISH, "id = %d", parent.getID());
+            db = this.getWritableDatabase();
             int rowsAffected = db.update(ITEMS_TABLE,DBAdmin.getContentValues(parent), whereClause, null);
             if( rowsAffected != 1){
                 log("...errror updating parent has child");
@@ -141,11 +172,12 @@ public class LocalDB extends SQLiteOpenHelper {
         }
         db.close();
         return child;
-
     }
     public void insertCategory(String category){
+        log("LocalDB.insertCategory(String)", category);
         db = this.getWritableDatabase();
-        //db.insert(TABLE_CATEGORIES, null, DBAdmin.getContentValues())
+        db.insert(TABLE_CATEGORIES, null, DBAdmin.getContentValues(category));
+        db.close();
 
     }
     public void open(){
@@ -154,7 +186,7 @@ public class LocalDB extends SQLiteOpenHelper {
     }
     public void populateDatabase(){
         log("LocalDB.populateDatabase()");
-        for(String category: Settings.CATEGORIES){
+        for(String category: Lucy.CATEGORIES){
             insertCategory(category);
         }
 
@@ -162,31 +194,14 @@ public class LocalDB extends SQLiteOpenHelper {
     public void resetDatabase(){
         log("LocalDB.resetDatabase()");
         db = this.getWritableDatabase();
-        db.execSQL(Queeries.DELETE_ITEMS_TABLE);
+        db.execSQL(Queeries.DROP_TABLE_ITEMS);
         db.execSQL(Queeries.DROP_TABLE_CATEGORIES);
         db.execSQL(Queeries.DROP_TABLE_MENTAL);
         //for(String stiv)
     }
 
 
-    /**
-     *
-     * @param id, of the item which to set field hasChild
-     * @return true if operation succeeded
-     */
-    public boolean setItemHasChild(long id, boolean hasChild) {
-        log("...setItemHasChild(long id)", id);
-        db = this.getWritableDatabase();
-        String whereClause = String.format(Locale.ENGLISH, "id = %d", id);
-        ContentValues cv = new ContentValues();
-        cv.put("hasChild", hasChild ? 1:0);
-        int rowsAffected = db.update(ITEMS_TABLE, cv,  whereClause, null);
-        if( rowsAffected != 1 ){
-            log("ERROR setItemHasChild...");
-        }
-        db.close();
-        return rowsAffected == 1;
-    }
+
 
     public List<Item > selectItems(LocalDate date, State state) {
         log("LocalDB.selectItems(LocalDate, State)", date.toString() + ", " + state.toString());
@@ -217,9 +232,9 @@ public class LocalDB extends SQLiteOpenHelper {
 
     }
 
-    public List<Mental> selectMental() {
-        log("LocalDB.selectMental()");
-        String query = Queeries.selectMental();
+    public List<Mental> selectMentals() {
+        log("LocalDB.selectMentals()");
+        String query = Queeries.selectMentals();
         List<Mental> items = new ArrayList<>();
         db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query, null);
@@ -248,12 +263,7 @@ public class LocalDB extends SQLiteOpenHelper {
         return items;
     }
 
-    public void touchParents(Item item, Context context){
-        log("LocalDB.touchParents(Item)");
-        //select * from items where parent_id = id OR id = id;
-        //updated
 
-    }
 
     public int update(Item item) {
         log("LocalDB.update(Item item)");
@@ -305,50 +315,10 @@ public class LocalDB extends SQLiteOpenHelper {
 
     }
 
-    public void touch(Item item) {
-        log("LocalDB.touch(Item)");
-        db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put("updated", LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
-        String whereClause = String.format("id = %d", item.getID());
-        int rowsAffected = db.update(ITEMS_TABLE,cv, whereClause, null  );
-        log("...rowsAffected", rowsAffected);
 
-    }
 
-    public List<Mental> selectMentals(String query) {
-        log("...selectMentals(String)", query);
-        List<Mental> items = new ArrayList<>();
-        db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-        if( cursor.moveToFirst()){
-            do {
-                items.add(DBAdmin.getMental(cursor));
-            }while(cursor.moveToNext());
-        }
-        db.close();
-        cursor.close();
-        return items;
 
-    }
 
-    /**
-     *
-     * @param query the query to be executed
-     * @return Mental if there is such a thing or null if not found
-     */
-    public Mental selectMental(String query) {
-        log("LocalDB.selectMental(String)", query);
-        db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-        Mental mental = null;
-        if( cursor.moveToFirst()){
-            mental = DBAdmin.getMental(cursor);
-        }
-        db.close();
-        cursor.close();
-        return mental;
-    }
 
     public List<Item> selectItems() {
         log("LocalDB.selectItems()");
@@ -370,11 +340,83 @@ public class LocalDB extends SQLiteOpenHelper {
         db.close();
         return item;
     }
+    /**
+     *
+     * @param query the query to be executed
+     * @return Mental if there is such a thing or null if not found
+     */
+    public Mental selectMental(String query) {
+        log("LocalDB.selectMentals(String)", query);
+        db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        Mental mental = null;
+        if( cursor.moveToFirst()){
+            mental = DBAdmin.getMental(cursor);
+        }
+        db.close();
+        cursor.close();
+        return mental;
+    }
 
     public List<Mental> selectMentals(LocalDate date) {
         log("...selectMentals(LocalDate)", date.toString());
         String query = Queeries.selectMentals(date);
         return selectMentals(query);
+    }
+
+
+    public List<Mental> selectMentals(String query) {
+        log("...selectMentals(String)", query);
+        List<Mental> items = new ArrayList<>();
+        db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if( cursor.moveToFirst()){
+            do {
+                items.add(DBAdmin.getMental(cursor));
+            }while(cursor.moveToNext());
+        }
+        db.close();
+        cursor.close();
+        return items;
+    }
+    /**
+     *
+     * @param id, of the item which to set field hasChild
+     * @return true if operation succeeded
+     */
+    public boolean setItemHasChild(long id, boolean hasChild) {
+        log("...setItemHasChild(long id)", id);
+        db = this.getWritableDatabase();
+        String whereClause = String.format(Locale.ENGLISH, "id = %d", id);
+        ContentValues cv = new ContentValues();
+        cv.put("hasChild", hasChild ? 1:0);
+        cv.put("updated", LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
+        int rowsAffected = db.update(ITEMS_TABLE, cv,  whereClause, null);
+        if( rowsAffected != 1 ){
+            log("ERROR setItemHasChild...");
+        }
+        db.close();
+        return rowsAffected == 1;
+    }
+
+    public void touch(Item item) {
+        log("LocalDB.touch(Item)");
+        db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("updated", LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
+        String whereClause = String.format("id = %d", item.getID());
+        int rowsAffected = db.update(ITEMS_TABLE,cv, whereClause, null  );
+        log("...rowsAffected", rowsAffected);
+    }
+
+    public void touchParents(Item item){
+        log("LocalDB.touchParents(Item)");
+        Item parent;
+        Item child = item;
+        while( (parent = getParent(child)) != null){
+            touch(parent);
+            child = parent;
+        }
     }
 
 

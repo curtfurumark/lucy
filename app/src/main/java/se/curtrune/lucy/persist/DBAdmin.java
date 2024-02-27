@@ -3,26 +3,41 @@ package se.curtrune.lucy.persist;
 import static se.curtrune.lucy.util.Logger.log;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
+import se.curtrune.lucy.app.Settings;
 
 public class DBAdmin {
 
     public static boolean VERBOSE = false;
+    public static Settings settings;
 
-    public static List<Item> getItems(Cursor cursor){
-        List<Item> items = new ArrayList<>();
-        if( cursor.moveToFirst()){
-            do{
-                items.add(getItem(cursor));
-            }while(cursor.moveToNext());
-        }
-        return items;
+    public static void createTables(Context context) {
+        log("DBAdmin.createTables()");
+        LocalDB  db = new LocalDB(context);
+        db.executeSQL(Queeries.CREATE_TABLE_MENTAL);
+        db.executeSQL(Queeries.CREATE_TABLE_CATEGORIES);
+        db.executeSQL(Queeries.CREATE_TABLE_ITEMS);
+        log("...tables created");
+    }
+    public static void dropTables(Context context){
+        log("DBAdmin.dropTables()");
+        LocalDB db = new LocalDB(context);
+        db.executeSQL(Queeries.DROP_TABLE_CATEGORIES);
+        db.executeSQL(Queeries.DROP_TABLE_ITEMS);
+        db.executeSQL(Queeries.DROP_TABLE_MENTAL);
+
+    }
+
+    public static String getCategory(Cursor cursor) {
+        return cursor.getString(    0);
     }
     public static Item getItem(Cursor cursor){
         Item item = new Item();
@@ -34,6 +49,7 @@ public class DBAdmin {
         item.setUpdated(cursor.getLong(5));
         item.setTargetDate(cursor.getLong(6));
         item.setTargetTime(cursor.getInt(7));
+        item.setCategory(cursor.getString(8));
         item.setType(cursor.getInt(9));
         item.setState(cursor.getInt(10));
         item.setHasChild(cursor.getInt(11) == 1 ? true: false);
@@ -58,6 +74,7 @@ public class DBAdmin {
         cv.put("hasChild", item.hasChild() ? 1: 0);
         cv.put("duration", item.getDuration());
         cv.put("days", item.getDays());
+        cv.put("category", item.getCategory());
         cv.put("parentID", item.getParentId());
         return cv;
     }
@@ -78,7 +95,7 @@ public class DBAdmin {
     }
 
     public static Mental getMental(Cursor cursor) {
-        log("DBAdmin.getMental(Cursor)");
+        if( VERBOSE) log("DBAdmin.getMental(Cursor)");
         Mental mental = new Mental();
         mental.setID(cursor.getLong(0));
         mental.setItemID(cursor.getLong(1));
@@ -96,7 +113,46 @@ public class DBAdmin {
         return mental;
     }
 
-    public static String getCategory(Cursor cursor) {
-        return cursor.getString(0);
+
+
+    public static ContentValues getContentValues(String category) {
+        log("DBAdmin.getContentValues(String category) ", category);
+        ContentValues cv = new ContentValues();
+        cv.put("name", category);
+        return cv;
     }
+
+
+
+    public static void insertCategories(Context context) {
+        log("...insertCategories(Context)");
+        LocalDB db = new LocalDB(context);
+        for( String category: Settings.getCategories()){
+            db.insertCategory(category);
+        }
+    }
+
+    public static void insertRootItems(Context context) throws SQLException {
+        log("...insertRootItems(Context)");
+        Settings settings = Settings.getInstance(context);
+        LocalDB db = new LocalDB(context);
+        Item todayRoot = Settings.getTodayRoot();
+        Item todoRoot = Settings.getTodoRoot();
+        Item projectsRoot = Settings.getProjectsRoot();
+        Item appointmentsRoot = Settings.getAppointmentsRoot();
+        appointmentsRoot = db.insert(appointmentsRoot);
+        settings.addRootID(Settings.Root.APPOINTMENTS, appointmentsRoot.getID(), context);
+        todayRoot = db.insert(todayRoot);
+        settings.addRootID(Settings.Root.DAILY, todayRoot.getID(), context);
+        projectsRoot = db.insert(projectsRoot);
+        settings.addRootID(Settings.Root.PROJECTS, projectsRoot.getID(), context);
+        todoRoot = db.insert(todoRoot);
+        settings.addRootID(Settings.Root.TODO, todoRoot.getID(), context);
+    }
+
+    private static Item getRemember(String heading, LocalDate date, LocalTime time){
+        Item item = new Item(heading);
+        return item;
+    }
+
 }

@@ -1,6 +1,8 @@
 package se.curtrune.lucy.classes;
 
 
+import static se.curtrune.lucy.util.Logger.log;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -96,7 +98,6 @@ public class Item implements Serializable , Listable {
     public String getHeading() {
         return heading;
     }
-    @Override
     public long getID() {
         return id;
     }
@@ -166,6 +167,14 @@ public class Item implements Serializable , Listable {
     public boolean hasItemParent(){
         return parent != null;
     }
+    public boolean isCategory(String category){
+        //log("Item.isCategory(Category)", category);
+        if( this.category == null){
+            log("Item this.category == null, returning false");
+            return false;
+        }
+        return this.category.equalsIgnoreCase(category);
+    }
     public boolean isDone(){
         return state == State.DONE.ordinal();
     }
@@ -174,6 +183,14 @@ public class Item implements Serializable , Listable {
     }
     public boolean isRoot(){
         return parent_id < 1;
+    }
+    public boolean isState(State state){
+        return this.state == state.ordinal();
+    }
+    public boolean isUpdated(LocalDate date){
+        LocalDateTime localDateTime = date.atStartOfDay();
+        long epoch = localDateTime.toEpochSecond(ZoneOffset.UTC);
+        return updated >= epoch && updated <= epoch + (3600 * 24);
     }
     public boolean isWIP(){
         return state == State.WIP.ordinal();

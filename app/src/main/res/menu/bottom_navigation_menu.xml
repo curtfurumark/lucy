@@ -12,7 +12,7 @@
     <item android:title="projects"
         android:id="@+id/bottomNavigation_projects"
         android:icon="@drawable/baseline_checklist_24"/>
-    <item android:title="statistics"
+    <item android:title="statisticsPeriod"
         android:id="@+id/bottomNavigation_statistics"
         android:icon="@drawable/baseline_insights_24"
         />

@@ -32,7 +32,8 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.util.Converter;
-import se.curtrune.lucy.util.Settings;
+import se.curtrune.lucy.app.Lucy;
+import se.curtrune.lucy.workers.CategoryWorker;
 
 
 public class MentalDialog extends BottomSheetDialogFragment {
@@ -42,9 +43,9 @@ public class MentalDialog extends BottomSheetDialogFragment {
     private SeekBar seekBarAnxiety;
     private SeekBar seekBarStress;
     private SeekBar seekBarMood;
-    private TextView textViewDepression;
+
     private EditText editTextComment;
-    private TextView textViewEnergy;
+
     private EditText editTextHeading;
     private TextView textViewItemID;
     private TextView textViewMentalID;
@@ -66,6 +67,10 @@ public class MentalDialog extends BottomSheetDialogFragment {
     private LocalTime time;
     private Item item;
     private String[] categories;
+    private int energy;
+    private int mood;
+    private int stress;
+    private int anxiety;
 
     private long itemID = -1;
     public static boolean VERBOSE = true;
@@ -139,19 +144,17 @@ public class MentalDialog extends BottomSheetDialogFragment {
         mental.setTime(time);
         mental.setItemID(itemID);
         mental.setCategory(category);
-        mental.setAnxiety(seekBarAnxiety.getProgress());
-        mental.setStress(seekBarStress.getProgress());
-        mental.setMood(seekBarMood.getProgress() - Settings.MOOD_OFFSET);
-        mental.setEnergy(seekBarEnergy.getProgress() - Settings.ENERGY_OFFSET);
+        mental.setAnxiety(seekBarAnxiety.getProgress() - Constants.ANXIETY_OFFSET);
+        mental.setStress(seekBarStress.getProgress() - Constants.STRESS_OFFSET);
+        mental.setMood(seekBarMood.getProgress() - Constants.MOOD_OFFSET);
+        mental.setEnergy(seekBarEnergy.getProgress() - Constants.ENERGY_OFFSET);
         return mental;
     }
 
     private void initComponents(View view){
         log("...initComponents()");
         buttonSave = view.findViewById(R.id.mentalDialog_button);
-        textViewEnergy = view.findViewById(R.id.mentalDialog_labelEnergy);
         seekBarEnergy = view.findViewById(R.id.mentalDialog_energy);
-        textViewDepression = view.findViewById(R.id.mentalDialog_labelMood);
         seekBarMood = view.findViewById(R.id.mentalDialog_mood);
         seekBarStress = view.findViewById(R.id.mentalDialog_stress);
         seekBarAnxiety = view.findViewById(R.id.mentalDialog_anxiety);
@@ -169,7 +172,7 @@ public class MentalDialog extends BottomSheetDialogFragment {
     }
     private void initDefaults(){
         log("...initDefaults()");
-        categories = Settings.getCategories(getContext());
+        categories = CategoryWorker.getCategories(getContext());
         assert categories.length > 0;
         category = categories[0];
 
@@ -186,7 +189,8 @@ public class MentalDialog extends BottomSheetDialogFragment {
         seekBarAnxiety.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                updateUserInterface();
+                anxiety = progress - Constants.ANXIETY_OFFSET;
+                setMentalLabels();
             }
 
             @Override
@@ -202,8 +206,8 @@ public class MentalDialog extends BottomSheetDialogFragment {
         seekBarEnergy.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int level, boolean fromUser) {
-                //textViewEnergy.setText(String.format(Locale.ENGLISH, "energy %d", seekBarEnergy.getProgress()));
-                updateUserInterface();
+                energy = level - Constants.ENERGY_OFFSET;
+                setMentalLabels();
             }
 
             @Override
@@ -218,7 +222,8 @@ public class MentalDialog extends BottomSheetDialogFragment {
         seekBarMood.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int level, boolean fromUser) {
-                updateUserInterface();
+                mood = level - Constants.MOOD_OFFSET;
+                setMentalLabels();
                 //textViewDepression.setText(String.format(Locale.ENGLISH, "mood %d", seekBarMood.getProgress()));
             }
 
@@ -235,7 +240,8 @@ public class MentalDialog extends BottomSheetDialogFragment {
         seekBarStress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                updateUserInterface();
+                stress = progress - Constants.STRESS_OFFSET;
+                setMentalLabels();
             }
 
             @Override
@@ -273,44 +279,78 @@ public class MentalDialog extends BottomSheetDialogFragment {
     }
 
     @Override
+
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        this.listener = (Callback) context;
+/*        try {
+            this.listener = (Callback) context;
+        }catch (ClassCastException exception){
+            log("...class cast exception");
+            exception.printStackTrace();
+        }*/
+    }
+    public void setCallback(MentalDialog.Callback callback){
+        this.listener = callback;
+    }
+    private void setMentalLabels(){
+        log("...setMentalLabels()");
+        String strEnergy = String.format("energy %d", energy);
+        labelEnergy.setText(strEnergy);
+
+        String strMood = String.format("mood %d", mood);
+        labelMood.setText(strMood);
+
+        String strAnxiety = String.format("anxiety %d", anxiety);
+        labelAnxiety.setText(strAnxiety);
+        String strStress = String.format("stress %d", stress);
+        labelStress.setText(strStress);
+    }
+    private void setSeekBars(){
+        log("...setSeekBars()");
+        seekBarEnergy.setProgress(energy + Constants.ENERGY_OFFSET);
+        seekBarStress.setProgress(stress + Constants.STRESS_OFFSET);
+        seekBarMood.setProgress(mood + Constants.MOOD_OFFSET);
+        seekBarAnxiety.setProgress(anxiety + Constants.ANXIETY_OFFSET);
     }
     private void setUserInterface(){
-        log("MentalDialog.setUserInterface()", mode.toString());
+        log("...setUserInterface()", mode.toString());
         if( mode.equals(Mode.CREATE_WITH_ITEM)) {
             editTextHeading.setText(heading);
             textViewTime.setText(Converter.format(time));
             textViewDate.setText(date.toString());
+            buttonSave.setText("save");
         }
         if( mode.equals(Mode.CREATE)){
             textViewTime.setText(Converter.format(time));
             textViewDate.setText(date.toString());
+            buttonSave.setText("save");
         }
         if( mode.equals(Mode.EDIT)){
             log(mental);
             editTextHeading.setText(mental.getHeading());
             editTextComment.setText(mental.getComment());
+            buttonSave.setText("update");
             time = mental.getTime();
             textViewTime.setText(time.toString());
             date = mental.getDate();
             textViewDate.setText(date.toString());
-            seekBarEnergy.setProgress(mental.getEnergy() + Settings.ENERGY_OFFSET);
-            seekBarStress.setProgress(mental.getStress());
-            seekBarMood.setProgress(mental.getMood() + Settings.MOOD_OFFSET);
+            seekBarEnergy.setProgress(mental.getEnergy() + Constants.ENERGY_OFFSET);
+            seekBarStress.setProgress(mental.getStress() + Constants.STRESS_OFFSET);
+            seekBarMood.setProgress(mental.getMood() + Constants.MOOD_OFFSET);
             setSpinnerCategory(mental.getCategory());
-            seekBarAnxiety.setProgress(mental.getAnxiety());
+            seekBarAnxiety.setProgress(mental.getAnxiety() + Constants.ANXIETY_OFFSET);
             String strItemID = String.format(Locale.ENGLISH, "item id: %d", mental.getItemID());
             textViewItemID.setText(strItemID);
             String strMentalID = String.format(Locale.ENGLISH, "mental id: %d", mental.getID());
             textViewMentalID.setText(strMentalID);
-
         }else {
-            seekBarEnergy.setProgress(0);
-            seekBarStress.setProgress(0);
-            seekBarMood.setProgress(0);
-            seekBarAnxiety.setProgress(0);
+            energy = 0;
+            anxiety = 0;
+            stress = 0;
+            mood = 0;
+            setMentalLabels();
+            setSeekBars();
+
         }
         updateUserInterface();
     }
@@ -343,14 +383,15 @@ public class MentalDialog extends BottomSheetDialogFragment {
      */
     private void updateUserInterface(){
         log("...updateUserInterface()");
-        String strEnergy = String.format("energy %d", seekBarEnergy.getProgress() - Settings.ENERGY_OFFSET);
-        String strMood = String.format("mood %d", seekBarMood.getProgress() - Settings.MOOD_OFFSET);
+        setMentalLabels();
+/*        String strEnergy = String.format("energy %d", seekBarEnergy.getProgress() - Lucy.ENERGY_OFFSET);
+        String strMood = String.format("mood %d", seekBarMood.getProgress() - Lucy.MOOD_OFFSET);
         String strAnxiety = String.format("anxiety %d", seekBarAnxiety.getProgress());
         String strStress = String.format("stress %d", seekBarStress.getProgress());
         labelEnergy.setText(strEnergy);
         labelMood.setText(strMood);
         labelStress.setText(strStress);
-        labelAnxiety.setText(strAnxiety);
+        labelAnxiety.setText(strAnxiety);*/
 
     }
 }

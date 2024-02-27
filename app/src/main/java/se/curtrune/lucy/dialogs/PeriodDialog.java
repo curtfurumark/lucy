@@ -7,8 +7,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -18,10 +16,7 @@ import androidx.annotation.Nullable;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Period;
-import se.curtrune.lucy.classes.State;
-import se.curtrune.lucy.util.Settings;
 
 
 public class PeriodDialog extends BottomSheetDialogFragment {

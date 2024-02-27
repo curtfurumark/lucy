@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/material_dynamic_tertiary80"
+    android:padding="8dp"
     tools:context=".activities.HomeActivity">
 
     <TextView
@@ -12,33 +14,11 @@
         android:layout_height="wrap_content"
         android:text="today"
         android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/homeActivity_projects"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-    <TextView
-        android:id="@+id/homeActivity_projects"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="projects"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/homeActivity_mental"
-        app:layout_constraintTop_toBottomOf="@+id/homeActivity_today" />
-
-    <TextView
-        android:id="@+id/homeActivity_mental"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="mental"
-        android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@id/homeActivity_statistics"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/homeActivity_projects" />
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <TextView
         android:id="@+id/homeActivity_statistics"
@@ -46,9 +26,36 @@
         android:layout_height="wrap_content"
         android:text="statistics"
         android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@id/homeActivity_quote"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.541"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/homeActivity_today" />
+
+    <TextView
+        android:id="@+id/homeActivity_quote"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:textSize="24sp"
+        android:text="fabulous quotes"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/homeActivity_mental" />
+        app:layout_constraintTop_toBottomOf="@+id/homeActivity_statistics" />
+
+    <TextView
+        android:id="@+id/homeActivity_newMain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="brand new"
+        app:layout_constraintBottom_toTopOf="@+id/homeActivity_today"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

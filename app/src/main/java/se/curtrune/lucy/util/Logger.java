@@ -9,8 +9,15 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
+import se.curtrune.lucy.statistics.CategoryListable;
+import se.curtrune.lucy.statistics.StatisticsPeriod;
 
 public class Logger {
+
+    public static void log(CategoryListable listable){
+        log("log(CategoryListable)");
+        log("\tcategory", listable.getCategory());
+    }
     public static void log(Item item){
         log("Logger.log(Item)");
         if( item == null){
@@ -53,6 +60,18 @@ public class Logger {
         log("\tmood", mental.getMood());
         log("\tenergy", mental.getEnergy());
         log("\tstress", mental.getStress());
+    }
+    public static void log(StatisticsPeriod statisticsPeriod){
+        log("log StatisticsPeriod...");
+        log("\tfirstDate", statisticsPeriod.getFirstDate());
+        log("\tlastDate", statisticsPeriod.getLastDate());
+        log("\tduration", Converter.formatSecondsWithHours(statisticsPeriod.getDuration().getSeconds()));
+        log("\taverage energy", statisticsPeriod.getAverageEnergy());
+        log("\taverage anxiety", statisticsPeriod.getAverageAnxiety());
+        log("\taverage mood", statisticsPeriod.getAverageMood());
+        log("\taverage stress", statisticsPeriod.getAverageStress());
+
+
     }
     public static void log(String str){
         System.out.println(str);

@@ -4,22 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.MentalListActivity">
-
-    <EditText
-        android:id="@+id/mentalList_search"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:ems="10"
-        android:hint="search"
-        android:inputType="textPersonName"
-        android:minHeight="40dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    android:padding="8dp"
+    android:background="@color/teal_200">
     <RadioGroup
         android:id="@+id/radioGroup2"
         android:layout_width="0dp"
@@ -30,45 +16,42 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mentalList_search">
+        app:layout_constraintTop_toTopOf="parent">
 
         <RadioButton
-            android:id="@+id/mentalList_radioButtonEnergy"
+            android:id="@+id/topTen_radioButtonEnergy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="energy" />
 
         <RadioButton
-            android:id="@+id/mentalList_radioButtonMood"
+            android:id="@+id/topTen_radioButtonMood"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="mood" />
 
         <RadioButton
-            android:id="@+id/mentalList_radioButtonAnxiety"
+            android:id="@+id/topTen_radioButtonAnxiety"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="anxiety" />
 
         <RadioButton
-            android:id="@+id/mentalList_radioButtonStress"
+            android:id="@+id/topTen_radioButtonStress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="stress" />
     </RadioGroup>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/mentalList_recycler"
-        android:layout_width="match_parent"
+        android:id="@+id/topTenActivity_recycler"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="1dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroup2" />
-
+        app:layout_constraintTop_toBottomOf="@id/radioGroup2" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,5 +13,5 @@
         android:id="@+id/testingID"/>
     <item
         android:id="@+id/todayActivity_viewStatistics"
-        android:title="view statistics" />
+        android:title="view statisticsPeriod" />
 </menu>

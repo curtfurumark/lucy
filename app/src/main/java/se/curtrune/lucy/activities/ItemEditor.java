@@ -27,23 +27,26 @@ import java.util.Locale;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.CallingActivity;
+import se.curtrune.lucy.classes.Categories;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Period;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
+import se.curtrune.lucy.dialogs.AddCategoryDialog;
 import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.dialogs.EditParentIdDialog;
 import se.curtrune.lucy.dialogs.PeriodDialog;
+import se.curtrune.lucy.enums.ViewMode;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.util.Converter;
-import se.curtrune.lucy.util.ItemStack;
 import se.curtrune.lucy.util.Kronos;
-import se.curtrune.lucy.util.Settings;
+import se.curtrune.lucy.workers.CategoryWorker;
 import se.curtrune.lucy.workers.ItemsWorker;
 
 
 public class ItemEditor extends AppCompatActivity implements
+        AddCategoryDialog.Callback,
         AddItemDialog.Callback,
         PeriodDialog.Callback,
         DatePickerDialog.OnDateSetListener,
@@ -65,7 +68,8 @@ public class ItemEditor extends AppCompatActivity implements
     private TextView textViewTargetDate;
     private TextView textViewTargetTime;
     private TextView textViewNotification;
-
+    private TextView textViewAddCategory;
+    private ArrayAdapter<String> categoryAdapter;
     private LocalDate targetDate;
     private LocalTime targetTime = LocalTime.now();
 
@@ -75,9 +79,11 @@ public class ItemEditor extends AppCompatActivity implements
 
     private Type type = Type.NODE;
     private State state = State.PENDING;
-    private static final boolean VERBOSE = false;
+    private static final boolean VERBOSE = true;
     private CallingActivity callingActivity;
     private Item currentItem;
+    private Categories categories;
+    private ViewMode viewMode;
     private Kronos kronos;
     @Override
     protected void onCreate(android.os.Bundle savedInstanceState) {
@@ -133,6 +139,7 @@ public class ItemEditor extends AppCompatActivity implements
         currentItem.setType((Type) spinnerType.getSelectedItem());
         currentItem.setState((State) spinnerState.getSelectedItem());
         currentItem.setTags(editTextTags.getText().toString());
+        log("selected item",(String) spinnerCategories.getSelectedItem());
         currentItem.setCategory((String) spinnerCategories.getSelectedItem());
         //TODO, fix this when youre brain is working
         currentItem.setDuration(Converter.stringToSeconds(editTextDuration.getText().toString()));
@@ -160,10 +167,12 @@ public class ItemEditor extends AppCompatActivity implements
         spinnerType = findViewById(R.id.itemEditor_spinnerType);
         textViewNotification = findViewById(R.id.itemEditor_notification);
         textViewPeriod = findViewById(R.id.itemEditor_labelPersiod);
+        textViewAddCategory = findViewById(R.id.itemEditor_addCategory);
     }
     private void initDefaults() {
         log("...initDefaults()");
         targetTime = LocalTime.now();
+        categories = new Categories(CategoryWorker.getCategories(this));
     }
     private void initListeners(){
         log("...initListeners()");
@@ -172,6 +181,7 @@ public class ItemEditor extends AppCompatActivity implements
         textViewParentId.setOnClickListener(v -> showParentIDDialog());
         textViewNotification.setOnClickListener(view->showNotificationDialog());
         textViewPeriod.setOnClickListener(view->showPeriodDialog());
+        textViewAddCategory.setOnClickListener(view->showAddCategoryDialog());
     }
     private void initSpinnerState() {
         log("...initSpinnerState()");
@@ -210,10 +220,10 @@ public class ItemEditor extends AppCompatActivity implements
 
     private void initSpinnerCategories() {
         log("...initSpinnerCategories()");
-        String[] categories = Settings.getCategories(this);
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
-        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
-        spinnerCategories.setAdapter(arrayAdapter);
+        String[] categories = CategoryWorker.getCategories(this);
+        categoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+        spinnerCategories.setAdapter(categoryAdapter);
         spinnerCategories.setSelection(0);
         spinnerCategories.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -221,6 +231,7 @@ public class ItemEditor extends AppCompatActivity implements
                 //ItemEditor.this.type = Type.values()[position];
                 String category = (String) spinnerCategories.getSelectedItem();
                 log("...category", category);
+                //arrayAdapter.
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -252,14 +263,9 @@ public class ItemEditor extends AppCompatActivity implements
         if( VERBOSE) log(child);
 
         LocalDB db  = new LocalDB(this);
-        try {
-            child = db.insert(child);
-            currentItem.addChild(child);
-            returnToCallingActivity();
-        } catch (SQLException e) {
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-            throw new RuntimeException(e);
-        }
+        child = db.insert(child);
+        currentItem.addChild(child);
+        returnToCallingActivity();
     }
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {
@@ -312,24 +318,37 @@ public class ItemEditor extends AppCompatActivity implements
     private void returnToCallingActivity(){
         log("...returnToCallingActivity()");
         switch(callingActivity){
+            case ITEMS_ACTIVITY:
             case TODAY_ACTIVITY:
                 startActivity(new Intent(this, TodayActivity.class));
                 break;
-            case ITEMS_ACTIVITY:
-                Intent intent = new Intent(this, ItemsActivity.class);
-                intent.putExtra(Constants.INTENT_SHOW_SIBLINGS, true);
-                intent.putExtra(Constants.CURRENT_ITEM_IS_IN_STACK, true);
-                ItemStack.currentItem = currentItem;
-                startActivity(intent);
-                break;
             case STATISTICS_ACTIVITY:
-                startActivity(new Intent(this, StatisticsActivity.class));
+                startActivity(new Intent(this, StatisticsMain.class));
                 break;
             default:
                 Toast.makeText(this, "strange, no enum calling activity", Toast.LENGTH_LONG).show();
                 break;
         }
 
+    }
+    private void showAddCategoryDialog(){
+        log("...showAddCategoryDialog()");
+        AddCategoryDialog dialog = new AddCategoryDialog();
+        dialog.show(getSupportFragmentManager(), "add category");
+    }
+
+    /**
+     * callback to AddCategoryDialog
+     * @param category
+     */
+    @Override
+    public void onNewCategory(String category) {
+        log("ItemEditor.onNewCategory(String)", category);
+        //categoryAdapter.get
+        CategoryWorker.insertCategory(category, this);
+        String[] categories = CategoryWorker.getCategories(this);
+        categoryAdapter.clear();
+        categoryAdapter.addAll(categories);
     }
     private void showDatePickerDialog() {
         DatePickerDialog datePickerDialog = new DatePickerDialog(this);
@@ -373,7 +392,8 @@ public class ItemEditor extends AppCompatActivity implements
         }
         textViewParentId.setText(String.valueOf(item.getParentId()));
         textViewHasChild.setText(String.valueOf(item.hasChild()));
-        spinnerCategories.setSelection(0);
+        String category = item.getCategory();
+        spinnerCategories.setSelection(categories.getIndex(category));
 
         spinnerState.setSelection(item.getState().ordinal());
         spinnerType.setSelection(item.getType().ordinal());
@@ -417,7 +437,8 @@ public class ItemEditor extends AppCompatActivity implements
         }else{
             log("item updated");
         }
-        returnToCallingActivity();
+        //returnToCallingActivity();
+        startActivity(new Intent(this, TodayActivity.class));
     }
 
 

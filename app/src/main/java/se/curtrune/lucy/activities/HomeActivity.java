@@ -16,49 +16,71 @@ import java.sql.SQLException;
 import java.util.List;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.classes.App;
+import se.curtrune.lucy.classes.Quotes;
 import se.curtrune.lucy.persist.DBAdmin;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
 import se.curtrune.lucy.util.Logger;
-import se.curtrune.lucy.util.Settings;
+import se.curtrune.lucy.app.Lucy;
 
 public class HomeActivity extends AppCompatActivity {
     private TextView textViewToday;
-    private TextView textViewProjects;
-    private TextView textViewMental;
+    //private TextView textViewProjects;
+    private TextView textViewNewMain;
     private TextView textViewStatistics;
+    private TextView textViewQuote;
+    private Lucy lucy;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_activity);
         setTitle("rocky road planner");
         log("HomeActivity.onCreate(Bundle)");
+        lucy = Lucy.getInstance(this);
+        //lucy.setIsInitialized(true, this);
+        if( !lucy.isInitialized(this)){
+            log("...lucy not initialized");
+            try {
+                lucy.initialize(this);
+            } catch (SQLException e) {
+                Toast.makeText(this, "serious, failure to initialize the app", Toast.LENGTH_LONG).show();
+                return;
+            }
+        }else{
+            log("Lucy is initialized!");
+        }
         initComponents();
         initListeners();
+        randomQuote();
         openDB();
     }
 
     private void initComponents(){
         log("...initComponents()");
         textViewToday = findViewById(R.id.homeActivity_today);
-        textViewProjects = findViewById(R.id.homeActivity_projects);
-        textViewMental = findViewById(R.id.homeActivity_mental);
         textViewStatistics = findViewById(R.id.homeActivity_statistics);
+        textViewQuote = findViewById(R.id.homeActivity_quote);
+        textViewQuote.setSelected(true);
+        textViewNewMain = findViewById(R.id.homeActivity_newMain);
     }
     private void initListeners(){
         log("...initListeners()");
         textViewToday.setOnClickListener(view -> startActivity(new Intent(this, TodayActivity.class)));
-        textViewProjects.setOnClickListener(v -> startActivity(new Intent(this, ItemsActivity.class)));
-        textViewStatistics.setOnClickListener(view->startActivity(new Intent(this, StatisticsActivity.class)));
-        textViewMental.setOnClickListener(v->startActivity(new Intent(this, MentalListActivity.class)));
+        textViewStatistics.setOnClickListener(view->startActivity(new Intent(this, StatisticsMain.class)));
+        textViewNewMain.setOnClickListener(view->startActivity(new Intent(this, MainActivity.class)));
+        textViewQuote.setOnClickListener(view->randomQuote());
+    }
+    private void randomQuote(){
+        log("...randomQuote()");
+        String quote = Quotes.getRandomQuote(this);
+        textViewQuote.setText(quote);
+
     }
     private void listTables(){
         log("...listTables()");
         LocalDB db = new LocalDB(this);
         List<String> tables = db.getTableNames();
         tables.forEach(Logger::log);
-
     }
 
     @Override
@@ -87,12 +109,6 @@ public class HomeActivity extends AppCompatActivity {
             resetApp();
         }else if( item.getItemId() == R.id.homeActivity_createTableCategories){
             createTableCategories();
-        }else if( item.getItemId() == R.id.homeActivity_createTodoList){
-            try {
-                App.createDefaultLists(this);
-            } catch (SQLException e) {
-                Toast.makeText(this,e.getMessage(), Toast.LENGTH_LONG).show();
-            }
         }
         return true;
     }
@@ -105,7 +121,7 @@ public class HomeActivity extends AppCompatActivity {
     private void deleteItemsTable(){
         log("...deleteItemsTable()");
         LocalDB db = new LocalDB(this);
-        db.executeSQL(Queeries.DELETE_ITEMS_TABLE);
+        db.executeSQL(Queeries.DROP_TABLE_ITEMS);
 
     }
     private void createItemsTable(){
@@ -132,11 +148,22 @@ public class HomeActivity extends AppCompatActivity {
     private void populateCategories(){
         log("...populateCategories()");
         LocalDB db = new LocalDB(this);
-        for(String category : Settings.CATEGORIES){
+        for(String category : Lucy.CATEGORIES){
             db.executeSQL(Queeries.insertCategory(category));
         }
     }
     private void resetApp(){
         log("...resetApp()");
+        try {
+            lucy.reset(this);
+        } catch (SQLException e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void testCategories(){
+        log("...testCategories()");
+        DBAdmin.insertCategories(this);
+
     }
 }

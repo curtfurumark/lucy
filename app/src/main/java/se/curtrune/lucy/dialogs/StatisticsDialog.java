@@ -3,6 +3,7 @@ package se.curtrune.lucy.dialogs;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,20 +19,17 @@ import androidx.annotation.Nullable;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.classes.MentalStatistics;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
-import se.curtrune.lucy.classes.State;
+import se.curtrune.lucy.statistics.StatisticsPeriod;
+import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.util.Converter;
-import se.curtrune.lucy.util.Settings;
-import se.curtrune.lucy.workers.ItemsWorker;
-import se.curtrune.lucy.workers.MentalWorker;
-import se.curtrune.lucy.workers.StatisticsWorker;
 
 
 public class StatisticsDialog extends BottomSheetDialogFragment {
@@ -53,8 +51,8 @@ public class StatisticsDialog extends BottomSheetDialogFragment {
     private TextView labelAnxiety;
     private TextView labelStress;
     private TextView labelMood;
-
-
+    private TextView textViewActivitiesDone;
+    private TextView textViewNumberMentals;
     private Button buttonSave;
     private ArrayAdapter<String> arrayAdapter;
 
@@ -64,16 +62,13 @@ public class StatisticsDialog extends BottomSheetDialogFragment {
     private String[] categories;
     public static boolean VERBOSE = true;
     private List<Mental> mentalList;
+    private StatisticsPeriod statisticsPeriod;
 
-    public StatisticsDialog(){
+    public StatisticsDialog(Context context){
         log("StatisticsDialog() constructor");
         this.date = LocalDate.now();
         this.time = LocalTime.now();
-    }
-    public StatisticsDialog(List<Item> items){
-        this();
-        this.items = items;
-
+        this.statisticsPeriod = new StatisticsPeriod(LocalDate.now(), LocalDate.now(),context);
     }
     @Nullable
     @Override
@@ -105,6 +100,8 @@ public class StatisticsDialog extends BottomSheetDialogFragment {
         labelStress = view.findViewById(R.id.mentalDialog_labelStress);
         labelMood = view.findViewById(R.id.mentalDialog_labelMood);
         textViewDuration = view.findViewById(R.id.currentStatistics_duration);
+        textViewActivitiesDone = view.findViewById(R.id.statisticsDialog_activitiesDone);
+        textViewNumberMentals = view.findViewById(R.id.statisticsDialog_numberMentals);
     }
     private void initListeners(){
         log("...initListeners()");
@@ -117,33 +114,34 @@ public class StatisticsDialog extends BottomSheetDialogFragment {
 
     private void setUserInterface(View view){
         log("...setUserInterface()");
-        mentalList = MentalWorker.getLatestMentals(10, view.getContext());
+        log(statisticsPeriod);
+/*        mentalList = MentalWorker.getLatestMentals(10, view.getContext());
         MentalStatistics stats = new MentalStatistics(mentalList);
         List<Item> items = ItemsWorker.selectItems(LocalDate.now(), view.getContext(), State.DONE);
-        long seconds = StatisticsWorker.getSum(items);
+        long seconds = StatisticsWorker.getSum(items);*/
+        Duration duration = statisticsPeriod.getDuration();
         textViewDate.setText(date.toString());
-        textViewDuration.setText(Converter.formatSecondsWithHours(seconds));
-        seekBarEnergy.setProgress((int) stats.getAverageEnergy() +5);
-        labelEnergy.setText(String.format("energy %.1f", stats.getAverageEnergy() ));
-        seekBarStress.setProgress(0);
-        seekBarMood.setProgress(0);
-        seekBarAnxiety.setProgress(0);
+        textViewTime.setText(Converter.format(LocalTime.now()));
+        String strNumberMentals = String.format("%d mentals", statisticsPeriod.getNumberMentals());
+        textViewNumberMentals.setText(strNumberMentals);
+        String strNumberDoneActivities = String.format("%d activiites done", statisticsPeriod.getNumberItems());
+        textViewActivitiesDone.setText(strNumberDoneActivities);
+        textViewDuration.setText(Converter.formatSecondsWithHours(duration.getSeconds()));
+        statisticsPeriod.getNumberMentals();
+
+        int energy = statisticsPeriod.getEnergy() + Constants.ENERGY_OFFSET;
+        seekBarEnergy.setProgress(energy);
+        labelEnergy.setText(String.format("energy %d", statisticsPeriod.getEnergy() ));
+
+        seekBarStress.setProgress((int) statisticsPeriod.getStress() + Constants.STRESS_OFFSET);
+        labelStress.setText(String.format("stress %d", statisticsPeriod.getStress() ));
+
+        seekBarMood.setProgress((int) statisticsPeriod.getMood() + Constants.MOOD_OFFSET);
+        labelMood.setText(String.format("energy %d", statisticsPeriod.getMood() ));
+
+        seekBarAnxiety.setProgress((int) statisticsPeriod.getAnxiety() + Constants.ANXIETY_OFFSET);
+        labelAnxiety.setText(String.format("anxiety %d", statisticsPeriod.getAnxiety() ));
 
     }
 
-    /**
-     * sets labels to current progress
-     */
-    private void updateUserInterface(){
-        log("...updateUserInterface()");
-        String strEnergy = String.format("energy %d", seekBarEnergy.getProgress() - Settings.ENERGY_OFFSET);
-        String strMood = String.format("mood %d", seekBarMood.getProgress() - Settings.MOOD_OFFSET);
-        String strAnxiety = String.format("anxiety %d", seekBarAnxiety.getProgress());
-        String strStress = String.format("stress %d", seekBarStress.getProgress());
-        labelEnergy.setText(strEnergy);
-        labelMood.setText(strMood);
-        labelStress.setText(strStress);
-        labelAnxiety.setText(strAnxiety);
-
-    }
 }

@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -20,13 +21,16 @@ import androidx.annotation.Nullable;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import se.curtrune.lucy.R;
+import se.curtrune.lucy.classes.Categories;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
-import se.curtrune.lucy.util.Settings;
+import se.curtrune.lucy.persist.LocalDB;
+import se.curtrune.lucy.workers.CategoryWorker;
 
 
 public class AddItemDialog extends BottomSheetDialogFragment {
     private EditText editText_heading;
+    private TextView textViewParentItem;
     private Spinner spinnerCategory;
     private Spinner spinnerState;
     private State state;
@@ -35,6 +39,7 @@ public class AddItemDialog extends BottomSheetDialogFragment {
     private Button buttonDismiss;
     private Button buttonEdit;
     private String category;
+    private Categories categories;
 
     private Item parent;
     public interface Callback{
@@ -99,10 +104,12 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         buttonSave = view.findViewById(R.id.periodDialog_save);
         buttonDismiss = view.findViewById(R.id.addItemDialog_dismiss);
         buttonEdit = view.findViewById(R.id.addItemDialog_edit);
+        textViewParentItem = view.findViewById(R.id.addItem_parentItem);
     }
     private void initDefaults(){
         log("...initDefaults()");
         state = State.PENDING;
+        categories = new Categories(CategoryWorker.getCategories(getContext()));
     }
     private void initListeners(){
         log("...initListeners()");
@@ -117,21 +124,26 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         buttonEdit.setOnClickListener(view->Toast.makeText(getContext(), "not implemented", Toast.LENGTH_LONG).show());
 
     }
-    private void initSpinnerCategories(){
-            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, Settings.getCategories(getContext()));
-            arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
-            spinnerCategory.setAdapter(arrayAdapter);
-            spinnerCategory.setSelection(0);
-            spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    category = (String) spinnerCategory.getSelectedItem();
-                }
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
 
-                }
-            });
+    private void initSpinnerCategories() {
+        log("...initSpinnerCategories()");
+        LocalDB db = new LocalDB(getContext());
+        String[] categories = db.getCategories();
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, categories);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+        spinnerCategory.setAdapter(arrayAdapter);
+        spinnerCategory.setSelection(0);
+        spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                category = (String) spinnerCategory.getSelectedItem();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
     private void initSpinnerState(){
         log("...initSpinnerState()");
@@ -155,6 +167,10 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         if( parentItem != null) {
             editText_heading.setText(parentItem.getHeading());
             spinnerState.setSelection(parentItem.getState().ordinal());
+            spinnerCategory.setSelection(categories.getIndex(parentItem.getCategory()));
+            textViewParentItem.setText(parentItem.getHeading());
+        }else{
+            textViewParentItem.setText("no parent, no good");
         }
     }
 
