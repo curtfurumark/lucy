@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import se.curtrune.lucy.R;
@@ -165,7 +166,10 @@ public class DurationFragment extends Fragment implements ListableAdapter.Callba
     }
     private void showCategory(){
         log("...showCategory()");
-        adapter.setList(statistics.getCategoryListables());
+       //statistics.getCategoryListables().sort(Comparator.comparingLong(Listable::compare));
+        List<Listable> list = statistics.getCategoryListables();
+        list.sort(Comparator.comparingLong(Listable::compare));
+        adapter.setList(list);
     }
     private void showDate(){
         log("...showDate()");

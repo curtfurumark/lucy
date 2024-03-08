@@ -1,5 +1,7 @@
 package se.curtrune.lucy.statistics;
 
+import static se.curtrune.lucy.util.Logger.log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,9 +42,8 @@ public class CategoryListable implements Listable {
 
     @Override
     public String getInfo() {
-        return String.format("duration %s, energy %d",
-                Converter.formatSecondsWithHours(StatisticsCalculator.getDuration(items)),
-                StatisticsCalculator.getEnergy(mentals));
+        return String.format("duration %s",
+                Converter.formatSecondsWithHours(StatisticsCalculator.getDuration(items)));
     }
 
     @Override
@@ -52,7 +53,8 @@ public class CategoryListable implements Listable {
 
     @Override
     public long compare() {
-        return 0;
+        //log("category listable compare");
+        return getDuration() * -1;
     }
 
     public List<Item> getItems(){

@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/material_dynamic_primary90">
+    android:layout_height="match_parent">
 
     <RadioGroup
         android:id="@+id/radioGroup2"
@@ -22,25 +21,25 @@
             android:id="@+id/mentalList_radioButtonEnergy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="energy" />
+            android:text="@string/energy" />
 
         <RadioButton
             android:id="@+id/mentalList_radioButtonMood"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="mood" />
+            android:text="@string/mood" />
 
         <RadioButton
             android:id="@+id/mentalList_radioButtonAnxiety"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="anxiety" />
+            android:text="@string/anxiety" />
 
         <RadioButton
             android:id="@+id/mentalList_radioButtonStress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="stress" />
+            android:text="@string/stress" />
     </RadioGroup>
 
     <androidx.recyclerview.widget.RecyclerView

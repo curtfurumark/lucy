@@ -102,24 +102,20 @@ public class MentalFragment extends Fragment implements MentalAdapter.Callback, 
     private void initListeners(){
         log("...initListeners()");
         radioButtonEnergy.setOnClickListener(view->{
+            mode = MentalAdapter.Mode.ENERGY;
             updateUserInterface();
-            //mode = MentalAdapter.Mode.ENERGY;
-            //adapter.show(MentalAdapter.Mode.ENERGY);
             });
         radioButtonMood.setOnClickListener(view->{
             mode = MentalAdapter.Mode.MOOD;
-            //adapter.show(MentalAdapter.Mode.MOOD);
             updateUserInterface();
         });
         radioButtonAnxiety.setOnClickListener(view->{
             mode = MentalAdapter.Mode.ANXIETY;
-            //adapter.show(MentalAdapter.Mode.ANXIETY);
             updateUserInterface();
         });
         radioButtonStress.setOnClickListener(view->{
             mode = MentalAdapter.Mode.STRESS;
             updateUserInterface();
-            //adapter.show(MentalAdapter.Mode.STRESS);
         });
         textViewFirstDate.setOnClickListener(view->showDateDialog(true));
         textViewLastDate.setOnClickListener(view->showDateDialog(false));

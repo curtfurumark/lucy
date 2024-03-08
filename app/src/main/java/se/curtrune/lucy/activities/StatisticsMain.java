@@ -33,7 +33,7 @@ public class StatisticsMain extends AppCompatActivity  {
     private List<Listable> items = new ArrayList<>();
     private StatisticsWorker worker;
     private enum Mode{
-        PENDING, TYPE_STATISTICS, ITEMS;
+        PENDING, TYPE_STATISTICS, ITEMS
     }
     private Mode mode = Mode.TYPE_STATISTICS;
 
@@ -42,7 +42,7 @@ public class StatisticsMain extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.statistics_main);
         log("StatisticsMain.onCreate(Bundle)");
-        setTitle("statisticsMain");
+        setTitle(R.string.statistics);
         initComponents();
         initListeners();
 /*        initRecycler(items);

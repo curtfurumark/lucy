@@ -4,7 +4,7 @@
 
     <item android:title="home"
         android:id="@+id/itemEditor_home"
-        android:icon="@drawable/baseline_home_24"
+        android:icon="@drawable/baseline_home_black"
         app:showAsAction="always"/>
     <item android:title="new child item"
         android:id="@+id/itemEditor_add_child_item"

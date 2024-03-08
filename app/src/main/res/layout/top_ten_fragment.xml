@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dp"
-    android:background="@color/teal_200">
+    android:padding="8dp">
     <RadioGroup
         android:id="@+id/radioGroup2"
         android:layout_width="0dp"
@@ -22,25 +21,25 @@
             android:id="@+id/topTen_radioButtonEnergy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="energy" />
+            android:text="@string/energy" />
 
         <RadioButton
             android:id="@+id/topTen_radioButtonMood"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="mood" />
+            android:text="@string/mood" />
 
         <RadioButton
             android:id="@+id/topTen_radioButtonAnxiety"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="anxiety" />
+            android:text="@string/anxiety" />
 
         <RadioButton
             android:id="@+id/topTen_radioButtonStress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="stress" />
+            android:text="@string/stress" />
     </RadioGroup>
 
     <androidx.recyclerview.widget.RecyclerView

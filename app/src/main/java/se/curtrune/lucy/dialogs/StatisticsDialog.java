@@ -137,7 +137,7 @@ public class StatisticsDialog extends BottomSheetDialogFragment {
         labelStress.setText(String.format("stress %d", statisticsPeriod.getStress() ));
 
         seekBarMood.setProgress((int) statisticsPeriod.getMood() + Constants.MOOD_OFFSET);
-        labelMood.setText(String.format("energy %d", statisticsPeriod.getMood() ));
+        labelMood.setText(String.format("mood %d", statisticsPeriod.getMood() ));
 
         seekBarAnxiety.setProgress((int) statisticsPeriod.getAnxiety() + Constants.ANXIETY_OFFSET);
         labelAnxiety.setText(String.format("anxiety %d", statisticsPeriod.getAnxiety() ));

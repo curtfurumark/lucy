@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/mainActiivity_home"
-        android:icon="@drawable/baseline_home_24"
+        android:icon="@drawable/baseline_home_black"
         android:title="main"
         app:showAsAction="always" />
 </menu>

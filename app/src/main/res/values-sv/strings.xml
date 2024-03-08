@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="statistics">statistik</string>
+    <string name="today">idag</string>
+    <string name="search">sök</string>
+    <string name="todo">att göra</string>
+    <string name="appointments">möten</string>
+    <string name="projects">projekt</string>
+    <string name="home">hem</string>
+    <string name="anxiety">ångest</string>
+    <string name="energy">energi</string>
+    <string name="mood">humör</string>
+    <string name="stress">stress</string>
+    <string name="heading">rubrik</string>
+    <string name="category">kategori</string>
+    <string name="save">spara</string>
+    <string name="days">dagar</string>
+    <string name="monday">måndag</string>
+    <string name="tuesday">tisdag</string>
+    <string name="wednesday">onsdag</string>
+    <string name="thursday">torsdag</string>
+    <string name="friday">fredag</string>
+    <string name="saturday">lördag</string>
+    <string name="sunday">söndag</string>
+    <string name="edit">redigera</string>
+    <string name="parent_item_heading">parent item heading</string>
+    <string name="parent_item">förälder lista</string>
+    <string name="comment">kommentar</string>
+    <string name="location">plats</string>
+
+</resources>

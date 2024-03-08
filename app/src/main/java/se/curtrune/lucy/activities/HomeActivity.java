@@ -34,7 +34,7 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_activity);
-        setTitle("rocky road planner");
+        setTitle("lucinda");
         log("HomeActivity.onCreate(Bundle)");
         lucy = Lucy.getInstance(this);
         //lucy.setIsInitialized(true, this);
@@ -51,7 +51,7 @@ public class HomeActivity extends AppCompatActivity {
         }
         initComponents();
         initListeners();
-        randomQuote();
+        //randomQuote();
         openDB();
     }
 
@@ -88,7 +88,6 @@ public class HomeActivity extends AppCompatActivity {
         //log("...onCreateOptionsMenu(Menu)");
         getMenuInflater().inflate(R.menu.home_activity, menu);
         return true;
-        //return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -164,6 +163,5 @@ public class HomeActivity extends AppCompatActivity {
     private void testCategories(){
         log("...testCategories()");
         DBAdmin.insertCategories(this);
-
     }
 }

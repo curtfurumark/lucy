@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/material_dynamic_tertiary80"
     android:padding="8dp"
     tools:context=".activities.HomeActivity">
 
@@ -12,8 +11,8 @@
         android:id="@+id/homeActivity_today"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="today"
-        android:textSize="24sp"
+        android:text="@string/today"
+        android:textSize="34sp"
         app:layout_constraintBottom_toTopOf="@id/homeActivity_statistics"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,11 +23,10 @@
         android:id="@+id/homeActivity_statistics"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="statistics"
-        android:textSize="24sp"
+        android:text="@string/statistics"
+        android:textSize="34sp"
         app:layout_constraintBottom_toTopOf="@id/homeActivity_quote"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.541"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/homeActivity_today" />
 
@@ -36,13 +34,12 @@
         android:id="@+id/homeActivity_quote"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:textSize="24sp"
-        android:text="fabulous quotes"
         android:ellipsize="marquee"
+        android:focusable="true"
         android:marqueeRepeatLimit="marquee_forever"
         android:scrollHorizontally="true"
-        android:focusable="true"
+        android:singleLine="true"
+        android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -57,5 +54,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/dev"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:lines="4"
+        android:text="if you want something you've never had, you must be willing to do something you've never done"
+        android:textColor="@color/quote"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/homeActivity_quote"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/homeActivity_statistics" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

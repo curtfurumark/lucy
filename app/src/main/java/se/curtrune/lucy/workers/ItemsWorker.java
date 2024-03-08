@@ -1,5 +1,6 @@
 package se.curtrune.lucy.workers;
 
+import static se.curtrune.lucy.app.Settings.Root.APPOINTMENTS;
 import static se.curtrune.lucy.util.Logger.log;
 import static se.curtrune.lucy.app.Settings.Root.DAILY;
 import static se.curtrune.lucy.app.Settings.Root.PROJECTS;
@@ -35,11 +36,19 @@ public class ItemsWorker {
         return instance;
     }
 
-    public static Item selectItem(long parentId, Context context) {
-        log("...selectItem(long, Context");
+    public static void handleTemplate(Item template, Context context) {
+        log("...handleTemplate(Item item)");
+        Item child = new Item();
+        child.setState(State.DONE);
+        child.setHeading(template.getHeading());
+        child.setDuration(template.getDuration());
+        child.setCategory(template.getCategory());
         LocalDB db = new LocalDB(context);
-        return db.selectItem(parentId);
+        db.insertChild(template, child);
+        template.setTargetDate( LocalDate.now().plusDays(template.getDays()));
+        db.update(template);
     }
+
 
     private Item createChildToInfinite(Item parent){
         log("...createChildToInfinite(Item item)");
@@ -66,6 +75,15 @@ public class ItemsWorker {
         }
         return res;
     }
+    public static List<Item> getAllChildren(Item parent, Context context){
+        List<Item> items;
+        List<Item> children = selectChildren(parent, context);
+        for(Item item: children){
+
+
+        }
+        return children;
+    }
 
     public static Item getParent(Item currentParent, Context context) {
         log("ItemsWorker.getParent(Item, Context)");
@@ -88,6 +106,9 @@ public class ItemsWorker {
         Settings settings = Settings.getInstance(context);
         long rootID = -1;
         switch (root){
+            case APPOINTMENTS:
+                rootID = settings.getRootID(APPOINTMENTS);
+                break;
             case TODO:
                 rootID = settings.getRootID(TODO);
                 break;
@@ -108,6 +129,11 @@ public class ItemsWorker {
         log("ItemsWorker.hasChild(long) parentID", parentId );
         LocalDB db = new LocalDB(context);
         return  db.selectItem(parentId).hasChild();
+    }
+    public static Item selectItem(long parentId, Context context) {
+        log("...selectItem(long, Context");
+        LocalDB db = new LocalDB(context);
+        return db.selectItem(parentId);
     }
 
     public static List<Item> selectItems(Context context) {
@@ -148,7 +174,7 @@ public class ItemsWorker {
         db.close();
         return item;
     }
-    public  static Item insertChild(Item parent, Item child, Context context) throws SQLException {
+    public  static Item insertChild(Item parent, Item child, Context context)  {
         log("ItemsWorker.insertChild(Item, Item, Context)");
         if( !parent.hasChild()){
             setHasChild(parent, true, context);
@@ -237,7 +263,7 @@ public class ItemsWorker {
         db.touchParents(item);
 
     }
-    public int update(Item item, Context context) {
+    public static int update(Item item, Context context) {
         log("ItemsWorker.update(Item, Context)");
         LocalDB db = new LocalDB(context);
         return db.update(item);

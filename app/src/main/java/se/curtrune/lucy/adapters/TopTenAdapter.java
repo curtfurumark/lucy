@@ -10,25 +10,28 @@ import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Listable;
+import se.curtrune.lucy.classes.Mental;
+import se.curtrune.lucy.fragments.TopTenFragment;
 
 
-public class ListableAdapter extends RecyclerView.Adapter<ListableAdapter.MyViewHolder>{
-    private List<Listable> items;
+public class TopTenAdapter extends RecyclerView.Adapter<TopTenAdapter.MyViewHolder>{
+    private List<Mental> items;
     public boolean VERBOSE = false;
+    private TopTenFragment.Mode mode;
 
-    public void setList(List<Listable> items) {
+    public void setList(List<Mental> items, TopTenFragment.Mode mode) {
         if( VERBOSE) log("ListableAdapter.setList(List<Listable>) size", items.size());
         if( items == null){
             log("ListableAdapter.setList(List<Item>) called with null items");
             return;
         }
-        items.sort(Comparator.comparingLong(Listable::compare));
         this.items = items;
+        this.mode = mode;
         notifyDataSetChanged();
     }
 
@@ -38,7 +41,7 @@ public class ListableAdapter extends RecyclerView.Adapter<ListableAdapter.MyView
     }
     private final Callback callback;
 
-    public ListableAdapter(List<Listable> items, Callback callback) {
+    public TopTenAdapter(List<Mental> items, Callback callback) {
         if( VERBOSE) log("ListableAdapter(List<Listable>, Context, Callback)");
         if (items == null){
             log("...taskList is null");
@@ -58,10 +61,25 @@ public class ListableAdapter extends RecyclerView.Adapter<ListableAdapter.MyView
     @Override
     public void onBindViewHolder(@androidx.annotation.NonNull final MyViewHolder holder, int position) {
         if( VERBOSE) log("ItemsAdapter.onBindViewHolder();");
-        final Listable item = items.get(position);
-        holder.textViewHeading.setText(item.getHeading());
-        //TODO rename textView
-        holder.textViewInfo.setText(item.getInfo());
+        final Mental mental = items.get(position);
+        holder.textViewHeading.setText(mental.getHeading());
+        String info = "";
+        switch(mode){
+            case ENERGY:
+                info = String.format(Locale.ENGLISH ,"energy %d, %s", mental.getEnergy(), mental.getDate().toString());
+                break;
+            case ANXIETY:
+                info = String.format(Locale.ENGLISH, "anxiety %d, %s", mental.getAnxiety(), mental.getDate().toString());
+                break;
+            case STRESS:
+                info = String.format("stress %d, %s", mental.getStress(), mental.getDate().toString());
+                break;
+            case MOOD:
+                info = String.format("mood %d, %s", mental.getMood(), mental.getDate().toString());
+                break;
+
+        }
+        holder.textViewInfo.setText(info);
     }
 
 

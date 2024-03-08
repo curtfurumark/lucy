@@ -97,9 +97,11 @@ public class Queeries {
         return String.format(Locale.ENGLISH, "SELECT * FROM items WHERE " +
                         "(state = %d AND targetDate <= %d)  OR " +
                         "(state = %d AND targetDate = %d) OR " +
+                        "(targetDate = %d AND hasChild = 0 ) OR " +
                         "(state = %d AND updated >= %d AND updated <= %d)",
                 State.INFINITE.ordinal(), date.toEpochDay(),
                 State.DONE.ordinal(), date.toEpochDay(),
+                date.toEpochDay(),
                 State.DONE.ordinal(), startEpoch, endEpoch);
     }
 

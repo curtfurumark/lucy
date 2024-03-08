@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.chip.Chip;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Period;
@@ -22,7 +23,13 @@ import se.curtrune.lucy.classes.Period;
 public class PeriodDialog extends BottomSheetDialogFragment {
     private EditText editTextDays;
     private Button buttonSave;
-    private Button buttonDismiss;
+    private Chip chipMonday;
+    private Chip chipTuesday;
+    private Chip chipWednesday;
+    private Chip chipThursday;
+    private Chip chipFriday;
+    private Chip chipSaturday;
+    private Chip chipSunday;
 
     public interface Callback{
         void onPeriod(Period period);
@@ -59,8 +66,13 @@ public class PeriodDialog extends BottomSheetDialogFragment {
         log("...initComponents(View)");
         editTextDays = view.findViewById(R.id.periodDialog_days);
         buttonSave = view.findViewById(R.id.periodDialog_save);
-        buttonDismiss = view.findViewById(R.id.periodDialog_dismiss);
-        log("...buttonDismiss is null", buttonDismiss == null ? "true": "false");
+        chipMonday = view.findViewById(R.id.periodDialog_monday);
+        chipTuesday = view.findViewById(R.id.periodDialog_tuesday);
+        chipWednesday = view.findViewById(R.id.periodDialog_wednesday);
+        chipThursday = view.findViewById(R.id.periodDialog_thursday);
+        chipFriday = view.findViewById(R.id.periodDialog_friday);
+        chipSaturday = view.findViewById(R.id.periodDialog_saturday);
+        chipSunday = view.findViewById(R.id.periodDialog_sunday);
     }
     private void initListeners(){
         log("...initListeners()");
@@ -69,7 +81,6 @@ public class PeriodDialog extends BottomSheetDialogFragment {
             listener.onPeriod(period);
             dismiss();
         });
-        buttonDismiss.setOnClickListener(view->dismiss());
 
     }
     @Override

@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/itemsActivity_home"
-        android:icon="@drawable/baseline_home_24"
+        android:icon="@drawable/baseline_home_black"
         app:showAsAction="always"
         android:title="home" />
     <item android:id="@+id/itemsActivity_ascend"

@@ -293,19 +293,15 @@ public class ItemSession extends AppCompatActivity implements
         if( !currentItem.hasChild()) {
             worker.setHasChild(currentItem, true, this);
         }*/
-        try {
-/*            worker.touch(currentItem, this);
-            childItem.setType(currentItem.getType());
-            childItem = worker.insert(childItem, this);*/
-            childItem = ItemsWorker.insertChild(currentItem, childItem, this);
-            log(childItem);
-            Intent intent = new Intent(this, TodayActivity.class);
-            intent.putExtra(Constants.INTENT_SHOW_CHILD_ITEMS, true);
-            intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, currentItem);
-            startActivity(intent);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        /*            worker.touch(currentItem, this);
+                    childItem.setType(currentItem.getType());
+                    childItem = worker.insert(childItem, this);*/
+        childItem = ItemsWorker.insertChild(currentItem, childItem, this);
+        log(childItem);
+        Intent intent = new Intent(this, TodayActivity.class);
+        intent.putExtra(Constants.INTENT_SHOW_CHILD_ITEMS, true);
+        intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, currentItem);
+        startActivity(intent);
     }
     @Override
     public boolean onCreateOptionsMenu(android.view.Menu menu) {

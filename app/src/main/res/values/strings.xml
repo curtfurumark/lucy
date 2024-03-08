@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">lucy</string>
+    <string name="app_name" translatable="false">lucinda</string>
     <string name="title_activity_item_editor">ItemEditor</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
@@ -60,4 +60,31 @@
     <string name="ui_just_do_it">just do it</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="statistics">statistics</string>
+    <string name="today">today</string>
+    <string name="search">search</string>
+    <string name="todo">todo</string>
+    <string name="appointments">appointments</string>
+    <string name="projects">projects</string>
+    <string name="home">home</string>
+    <string name="anxiety">anxiety</string>
+    <string name="energy">energy</string>
+    <string name="mood">mood</string>
+    <string name="stress">stress</string>
+    <string name="heading">heading</string>
+    <string name="category">category</string>
+    <string name="save">save</string>
+    <string name="days">days</string>
+    <string name="monday">monday</string>
+    <string name="tuesday">tuesday</string>
+    <string name="wednesday">wednesday</string>
+    <string name="friday">friday</string>
+    <string name="saturday">saturday</string>
+    <string name="sunday">sunday</string>
+    <string name="thursday">thursday</string>
+    <string name="edit">edit</string>
+    <string name="parent_item_heading">parent item heading</string>
+    <string name="parent_item">parent item</string>
+    <string name="comment">comment</string>
+    <string name="location">location</string>
 </resources>

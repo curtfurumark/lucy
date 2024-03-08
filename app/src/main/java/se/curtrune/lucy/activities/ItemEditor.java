@@ -344,7 +344,6 @@ public class ItemEditor extends AppCompatActivity implements
     @Override
     public void onNewCategory(String category) {
         log("ItemEditor.onNewCategory(String)", category);
-        //categoryAdapter.get
         CategoryWorker.insertCategory(category, this);
         String[] categories = CategoryWorker.getCategories(this);
         categoryAdapter.clear();
@@ -420,7 +419,6 @@ public class ItemEditor extends AppCompatActivity implements
     private void showProjectIdDialog(){
         log("...showProjectIdDialog()");
         Toast.makeText(this, "not implemented", Toast.LENGTH_LONG).show();
-
     }
 
     private void updateItem() {
@@ -437,10 +435,6 @@ public class ItemEditor extends AppCompatActivity implements
         }else{
             log("item updated");
         }
-        //returnToCallingActivity();
         startActivity(new Intent(this, TodayActivity.class));
     }
-
-
-
 }

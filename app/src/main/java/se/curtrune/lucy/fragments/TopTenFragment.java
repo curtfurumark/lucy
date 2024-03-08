@@ -18,16 +18,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.adapters.ListableAdapter;
+import se.curtrune.lucy.adapters.TopTenAdapter;
 import se.curtrune.lucy.classes.Listable;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.statistics.TopTenStatistics;
 import se.curtrune.lucy.util.Logger;
 import se.curtrune.lucy.workers.MentalWorker;
 
-public class TopTenFragment extends Fragment implements ListableAdapter.Callback {
+public class TopTenFragment extends Fragment implements TopTenAdapter.Callback {
     private RecyclerView recycler;
-    private ListableAdapter adapter;
+    private TopTenAdapter adapter;
     private RadioButton radioButtonEnergy;
     private RadioButton radioButtonStress;
     private RadioButton radioButtonAnxiety;
@@ -36,7 +36,7 @@ public class TopTenFragment extends Fragment implements ListableAdapter.Callback
         ANXIETY, MOOD, ENERGY, STRESS
     }
     private Mode mode = Mode.ENERGY;
-    private List<Listable> items = new ArrayList<>();
+    private List<Mental> items = new ArrayList<>();
     public TopTenFragment(){
         log("TopTenFragment()");
     }
@@ -44,17 +44,22 @@ public class TopTenFragment extends Fragment implements ListableAdapter.Callback
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         log("TopTenFragment.onCreate()");
-    }    @Override
+
+        //radioButtonEnergy.setChecked(true);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         log("TopTenFragment.onCreateView(...)");
-        View view =  inflater.inflate(R.layout.tag_fragment, container, false);
+        View view =  inflater.inflate(R.layout.top_ten_fragment, container, false);
         initComponents(view);
         initListeners();
         initRecycler();
         List<Mental> mentals = TopTenStatistics.getItems(getContext());
         mentals.forEach(Logger::log);
+        show(Mode.ENERGY);
         return view;
     }
     private void initComponents(View view){
@@ -75,7 +80,7 @@ public class TopTenFragment extends Fragment implements ListableAdapter.Callback
     }
     private void initRecycler(){
         log(",,,initRecycler()");
-        adapter = new ListableAdapter(items, this);
+        adapter = new TopTenAdapter(items, this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recycler.setLayoutManager(layoutManager);
         recycler.setItemAnimator(new DefaultItemAnimator());
@@ -94,6 +99,6 @@ public class TopTenFragment extends Fragment implements ListableAdapter.Callback
     private void show(Mode mode){
         log("...show()", mode.toString());
         List<Mental> mentals = MentalWorker.selectTopTen(mode, getContext());
-        adapter.setList(new ArrayList<>(mentals));
+        adapter.setList(new ArrayList<>(mentals), mode);
     }
 }

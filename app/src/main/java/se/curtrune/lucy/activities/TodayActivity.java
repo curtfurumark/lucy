@@ -36,7 +36,10 @@ import se.curtrune.lucy.classes.CallingActivity;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
+import se.curtrune.lucy.dialogs.AddAppointmentDialog;
 import se.curtrune.lucy.dialogs.AddItemDialog;
+import se.curtrune.lucy.dialogs.AddTemplateDialog;
+import se.curtrune.lucy.dialogs.OnNewItemCallback;
 import se.curtrune.lucy.dialogs.StatisticsDialog;
 import se.curtrune.lucy.enums.ViewMode;
 import se.curtrune.lucy.util.Constants;
@@ -152,8 +155,10 @@ public class TodayActivity extends AppCompatActivity implements
                 mode = ViewMode.TODAY;
                 currentParent = ItemsWorker.getRootItem(Settings.Root.DAILY, this);
                 show(ViewMode.TODAY);
-            }else if( item.getItemId() == R.id.bottomNavigation_statistics){
-                Toast.makeText(this, "not implemented", Toast.LENGTH_LONG).show();
+            }else if( item.getItemId() == R.id.bottomNavigation_appointments){
+                currentParent = ItemsWorker.getRootItem(Settings.Root.APPOINTMENTS, this);
+                mode = Lucy.currentViewMode = ViewMode.APPOINTMENTS;
+                show(ViewMode.APPOINTMENTS);
             }else if( item.getItemId() == R.id.bottomNavigation_todo){
                 currentParent = ItemsWorker.getRootItem(Settings.Root.TODO, this);
                 mode = ViewMode.TODO;
@@ -254,8 +259,6 @@ public class TodayActivity extends AppCompatActivity implements
         log("...onOptionsItemSelected(MenuItem)", Objects.requireNonNull(item.getTitle()).toString());
         if( item.getItemId() == R.id.todayActivity_home){
             ascend();
-        }else if( item.getItemId() == R.id.todayActivity_addItem){
-            showAddItemDialog();
         }else if( item.getItemId() == R.id.todayActivity_viewStatistics){
             showStatistics();
         }
@@ -298,8 +301,13 @@ public class TodayActivity extends AppCompatActivity implements
         log("...onCheckBoxClicked(Item, boolean");
         if( checked){
             try {
-                worker.setItemState(item, State.DONE, this);
-                ItemsWorker.touchParents(item, this);
+                if( item.isInfinite() && !item.isDone() && checked){
+                    log("...item is template");
+                    ItemsWorker.handleTemplate(item, this);
+                }else {
+                    worker.setItemState(item, State.DONE, this);
+                    ItemsWorker.touchParents(item, this);
+                }
                 show(mode);
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -350,6 +358,11 @@ public class TodayActivity extends AppCompatActivity implements
 
     }
 
+    /**
+     * make sure to set currentParent before calling this one
+     * TODO, fix projects, regarding the above statement
+     * @param mode
+     */
     private void show(ViewMode mode){
         log("...show(Mode)", mode.toString());
         if( currentParent != null){
@@ -359,6 +372,7 @@ public class TodayActivity extends AppCompatActivity implements
         }
         switch (mode){
             case CHILDREN:
+            case APPOINTMENTS:
                 items = ItemsWorker.selectChildren(currentParent, this);
                 break;
             case WIP:
@@ -389,20 +403,40 @@ public class TodayActivity extends AppCompatActivity implements
     }
     private void showAddItemDialog(){
         log("...showAddItemDialog()", mode.toString());
-        AddItemDialog addItemDialog = new AddItemDialog( currentParent);
-        switch (mode){
-            case TODAY:
-                addItemDialog.setState(State.INFINITE);
-                break;
-            case WIP:
-                addItemDialog.setState(State.WIP);
-                break;
-            case TODO:
-            case PROJECTS:
-                addItemDialog.setState(State.TODO);
-                break;
+        if( mode.equals(ViewMode.APPOINTMENTS)){
+            AddAppointmentDialog addAppointmentDialog = new AddAppointmentDialog();
+            addAppointmentDialog.setCallback(item -> {
+                log("...onNewAppointment(Item)", item.getHeading());
+                item = ItemsWorker.insertChild(currentParent, item, this);
+                items.add(item);
+                show(ViewMode.APPOINTMENTS);
+            });
+            addAppointmentDialog.show(getSupportFragmentManager(), "add appointment");
+        }else if(mode.equals(ViewMode.TODAY)){
+            AddTemplateDialog dialog = new AddTemplateDialog(currentParent);
+            dialog.setCallback(item ->{
+                    log("...onNewItem(Item)");
+                    item = ItemsWorker.insertChild(currentParent, item, this);
+                    items.add(item);
+                    show(ViewMode.TODAY);
+            });
+            dialog.show(getSupportFragmentManager(),"add template");
+        }else {
+            AddItemDialog addItemDialog = new AddItemDialog(currentParent);
+            switch (mode) {
+                case TODAY:
+                    addItemDialog.setState(State.INFINITE);
+                    break;
+                case WIP:
+                    addItemDialog.setState(State.WIP);
+                    break;
+                case TODO:
+                case PROJECTS:
+                    addItemDialog.setState(State.TODO);
+                    break;
+            }
+            addItemDialog.show(getSupportFragmentManager(), "add item");
         }
-        addItemDialog.show(getSupportFragmentManager(), "add item");
     }
 
     private void showChildren(Item parent){
