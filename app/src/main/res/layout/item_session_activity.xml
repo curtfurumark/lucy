@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:text="start"
+        android:text="@string/start"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/itemSession_checkBoxDone" />
 
@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:text="done"
+        android:text="@string/done"
         app:checkedState="checked"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayoutComment"
@@ -93,7 +93,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginBottom="8dp"
         android:ems="5"
-        android:text="energy"
+        android:text="@string/energy"
         app:layout_constraintBottom_toTopOf="@+id/itemSession_labelAnxiety"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -104,7 +104,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginBottom="8dp"
         android:ems="5"
-        android:text="anxiety"
+        android:text="@string/anxiety"
         app:layout_constraintBottom_toTopOf="@+id/itemSession_labelMood"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -115,7 +115,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginBottom="8dp"
         android:ems="5"
-        android:text="mood"
+        android:text="@string/mood"
         app:layout_constraintBottom_toTopOf="@+id/itemSession_labelStress"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -126,14 +126,14 @@
         android:layout_marginStart="16dp"
         android:layout_marginBottom="16dp"
         android:ems="5"
-        android:text="stress"
+        android:text="@string/stress"
         app:layout_constraintBottom_toTopOf="@+id/textInputLayoutMentalComment"
         app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/itemSession_headingLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:hint="heading"
+        android:hint="@string/heading"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -158,7 +158,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:hint="comment"
+        android:hint="@string/comment"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/itemSession_headingLayout">
@@ -180,7 +180,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:hint="mental comment"
+        android:hint="@string/mental_comment"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -212,7 +212,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="16dp"
-        android:text="save mental"
+        android:text="@string/save_mental"
         app:layout_constraintBottom_toTopOf="@+id/itemSession_labelEnergy"
         app:layout_constraintStart_toStartOf="parent" />
 

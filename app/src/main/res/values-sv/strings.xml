@@ -27,5 +27,6 @@
     <string name="parent_item">förälder lista</string>
     <string name="comment">kommentar</string>
     <string name="location">plats</string>
+    <string name="show_affirmation">affirmera mig!</string>
 
 </resources>

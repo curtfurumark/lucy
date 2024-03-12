@@ -8,4 +8,6 @@
     <item
         android:id="@+id/todayActivity_viewStatistics"
         android:title="@string/statistics" />
+    <item android:id="@+id/todayActivity_showAffirmation"
+        android:title="@string/show_affirmation"/>
 </menu>

@@ -56,6 +56,7 @@ public class DBAdmin {
         item.setDuration(cursor.getLong(12));
         item.setParentId(cursor.getInt(13));
         item.setDays(cursor.getInt(14));
+        item.setPeriod(cursor.getString(15));
         return item;
     }
 
@@ -76,6 +77,9 @@ public class DBAdmin {
         cv.put("days", item.getDays());
         cv.put("category", item.getCategory());
         cv.put("parentID", item.getParentId());
+        if( item.getPeriod() != null) {
+            cv.put("period", item.getPeriod().toJson());
+        }
         return cv;
     }
     public static ContentValues getContentValues(Mental mental){

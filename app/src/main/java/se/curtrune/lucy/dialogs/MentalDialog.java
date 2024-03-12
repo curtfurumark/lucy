@@ -32,7 +32,6 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.util.Converter;
-import se.curtrune.lucy.app.Lucy;
 import se.curtrune.lucy.workers.CategoryWorker;
 
 
@@ -282,27 +281,21 @@ public class MentalDialog extends BottomSheetDialogFragment {
 
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-/*        try {
-            this.listener = (Callback) context;
-        }catch (ClassCastException exception){
-            log("...class cast exception");
-            exception.printStackTrace();
-        }*/
     }
     public void setCallback(MentalDialog.Callback callback){
         this.listener = callback;
     }
     private void setMentalLabels(){
         log("...setMentalLabels()");
-        String strEnergy = String.format("energy %d", energy);
+        String strEnergy = String.format(Locale.ENGLISH,"%s %d", getString(R.string.energy), energy);
         labelEnergy.setText(strEnergy);
 
-        String strMood = String.format("mood %d", mood);
+        String strMood = String.format(Locale.ENGLISH,"%s %d", getString(R.string.mood), mood);
         labelMood.setText(strMood);
 
-        String strAnxiety = String.format("anxiety %d", anxiety);
+        String strAnxiety = String.format(Locale.ENGLISH, "%s %d",getString(R.string.anxiety),  anxiety);
         labelAnxiety.setText(strAnxiety);
-        String strStress = String.format("stress %d", stress);
+        String strStress = String.format(Locale.ENGLISH, "%s %d", getString( R.string.stress), stress);
         labelStress.setText(strStress);
     }
     private void setSeekBars(){
@@ -318,18 +311,18 @@ public class MentalDialog extends BottomSheetDialogFragment {
             editTextHeading.setText(heading);
             textViewTime.setText(Converter.format(time));
             textViewDate.setText(date.toString());
-            buttonSave.setText("save");
+            buttonSave.setText(R.string.save);
         }
         if( mode.equals(Mode.CREATE)){
             textViewTime.setText(Converter.format(time));
             textViewDate.setText(date.toString());
-            buttonSave.setText("save");
+            buttonSave.setText(R.string.save);
         }
         if( mode.equals(Mode.EDIT)){
             log(mental);
             editTextHeading.setText(mental.getHeading());
             editTextComment.setText(mental.getComment());
-            buttonSave.setText("update");
+            buttonSave.setText(R.string.update);
             time = mental.getTime();
             textViewTime.setText(time.toString());
             date = mental.getDate();
@@ -384,14 +377,5 @@ public class MentalDialog extends BottomSheetDialogFragment {
     private void updateUserInterface(){
         log("...updateUserInterface()");
         setMentalLabels();
-/*        String strEnergy = String.format("energy %d", seekBarEnergy.getProgress() - Lucy.ENERGY_OFFSET);
-        String strMood = String.format("mood %d", seekBarMood.getProgress() - Lucy.MOOD_OFFSET);
-        String strAnxiety = String.format("anxiety %d", seekBarAnxiety.getProgress());
-        String strStress = String.format("stress %d", seekBarStress.getProgress());
-        labelEnergy.setText(strEnergy);
-        labelMood.setText(strMood);
-        labelStress.setText(strStress);
-        labelAnxiety.setText(strAnxiety);*/
-
     }
 }

@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.ItemAdapter;
@@ -65,7 +66,6 @@ public class ItemSession extends AppCompatActivity implements
     private MentalMode mentalMode = MentalMode.CREATE;
     private CallingActivity callingActivity = CallingActivity.ITEMS_ACTIVITY;
     //variables
-    private Integer n_repetitions = 0;
     private Item currentItem;
     private Mental mental;
     private int anxiety;
@@ -216,7 +216,7 @@ public class ItemSession extends AppCompatActivity implements
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 energy = progress - Constants.ENERGY_OFFSET;
-                textViewEnergy.setText(String.format("energy %d", energy));
+                textViewEnergy.setText(String.format(Locale.getDefault(), "%s %d", getString(R.string.energy), energy));
             }
 
             @Override
@@ -233,7 +233,7 @@ public class ItemSession extends AppCompatActivity implements
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 stress = progress - Constants.STRESS_OFFSET;
-                textViewStress.setText(String.format("stress %d", stress));
+                textViewStress.setText(String.format(Locale.getDefault(), "%s %d", getString(R.string.stress),stress));
             }
 
             @Override
@@ -250,7 +250,7 @@ public class ItemSession extends AppCompatActivity implements
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 anxiety = progress - Constants.ANXIETY_OFFSET;
-                textViewAnxiety.setText(String.format("anxiety %d", anxiety));
+                textViewAnxiety.setText(String.format(Locale.getDefault(), "%s %d", getString(R.string.anxiety), anxiety));
             }
 
             @Override
@@ -267,7 +267,7 @@ public class ItemSession extends AppCompatActivity implements
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 mood = progress - Constants.MOOD_OFFSET;
-                textViewMood.setText(String.format("mood %d", mood));
+                textViewMood.setText(String.format(Locale.getDefault(), "%s %d",getString(R.string.mood), mood));
             }
 
             @Override
@@ -289,13 +289,7 @@ public class ItemSession extends AppCompatActivity implements
     @Override
     public void onAddItem(Item childItem) {
         log("MusicSessionActivity.onAddItem(Item)");
-/*        childItem.setParent(currentItem);
-        if( !currentItem.hasChild()) {
-            worker.setHasChild(currentItem, true, this);
-        }*/
-        /*            worker.touch(currentItem, this);
-                    childItem.setType(currentItem.getType());
-                    childItem = worker.insert(childItem, this);*/
+
         childItem = ItemsWorker.insertChild(currentItem, childItem, this);
         log(childItem);
         Intent intent = new Intent(this, TodayActivity.class);
@@ -480,7 +474,7 @@ public class ItemSession extends AppCompatActivity implements
         editTextComment.setText(item.getComment());
         checkBoxDone.setChecked(item.isDone());
         if( item.getDuration() > 0){
-            buttonTimer.setText("resume");
+            buttonTimer.setText(getString(R.string.ui_resume));
         }
         //setUserInterfaceMental(null);
     }
@@ -488,22 +482,22 @@ public class ItemSession extends AppCompatActivity implements
         log("...setUserInterface(Mental)");
         if( mentalMode.equals(MentalMode.CREATE)){
             seekBarAnxiety.setProgress(Constants.ANXIETY_OFFSET);
-            textViewAnxiety.setText("anxiety 0");
+            textViewAnxiety.setText(String.format(Locale.getDefault(),"%s 0",getString(R.string.anxiety) ));
             seekBarMood.setProgress(Constants.MOOD_OFFSET);
-            textViewMood.setText("mood 0");
+            textViewMood.setText(String.format(Locale.getDefault(), "%s 0",getString(R.string.mood)));
             seekBarStress.setProgress(Constants.STRESS_OFFSET);
-            textViewStress.setText("stress 0");
+            textViewStress.setText(String.format(Locale.ENGLISH, "%s 0", getString(R.string.stress)));
             seekBarEnergy.setProgress(Constants.ENERGY_OFFSET);
-            textViewEnergy.setText("energy 0");
+            textViewEnergy.setText(String.format(Locale.ENGLISH, "%s 0", getString(R.string.energy)));
         }else{
             seekBarAnxiety.setProgress(mental.getAnxiety() + Constants.ANXIETY_OFFSET);
-            textViewAnxiety.setText(String.format("anxiety %d", mental.getAnxiety()));
+            textViewAnxiety.setText(String.format(Locale.getDefault(), "%s %d",getString(R.string.anxiety), mental.getAnxiety()));
             seekBarEnergy.setProgress(mental.getEnergy() + Constants.ENERGY_OFFSET);
-            textViewEnergy.setText(String.format("energy %d", mental.getEnergy()));
+            textViewEnergy.setText(String.format(Locale.getDefault(), "%s %d",getString(R.string.energy), mental.getEnergy()));
             seekBarMood.setProgress(mental.getMood() + Constants.MOOD_OFFSET);
-            textViewMood.setText(String.format("mood %d", mental.getMood()));
+            textViewMood.setText(String.format(Locale.getDefault(), "%s %d",getString(R.string.mood) ,mental.getMood()));
             seekBarStress.setProgress(mental.getStress() + Constants.STRESS_OFFSET);
-            textViewStress.setText(String.format("stress %d", mental.getStress()));
+            textViewStress.setText(String.format(Locale.getDefault(), "%s %d",getString(R.string.stress), mental.getStress()));
             editTextComment.setText(mental.getComment());
         }
     }

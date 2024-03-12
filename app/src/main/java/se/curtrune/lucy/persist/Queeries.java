@@ -30,7 +30,8 @@ public class Queeries {
                     "hasChild INTEGER, " +
                     "duration INTEGER, " +
                     "parentID INTEGER," +
-                    "days INTEGER )";
+                    "days INTEGER, " +
+                    "period STRING )";
     public static String CREATE_TABLE_MENTAL =
         "CREATE TABLE mental (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "itemID INTEGER, " +

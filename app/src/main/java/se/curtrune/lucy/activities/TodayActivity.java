@@ -32,6 +32,8 @@ import java.util.stream.Collectors;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.ItemAdapter;
 import se.curtrune.lucy.app.Lucy;
+import se.curtrune.lucy.app.Settings;
+import se.curtrune.lucy.classes.Affirmation;
 import se.curtrune.lucy.classes.CallingActivity;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
@@ -39,12 +41,11 @@ import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.dialogs.AddAppointmentDialog;
 import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.dialogs.AddTemplateDialog;
-import se.curtrune.lucy.dialogs.OnNewItemCallback;
 import se.curtrune.lucy.dialogs.StatisticsDialog;
 import se.curtrune.lucy.enums.ViewMode;
 import se.curtrune.lucy.util.Constants;
-import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.workers.ItemsWorker;
+import se.curtrune.lucy.workers.WebWorker;
 
 public class TodayActivity extends AppCompatActivity implements
         AddItemDialog.Callback,
@@ -261,6 +262,8 @@ public class TodayActivity extends AppCompatActivity implements
             ascend();
         }else if( item.getItemId() == R.id.todayActivity_viewStatistics){
             showStatistics();
+        }else if( item.getItemId() == R.id.todayActivity_showAffirmation){
+            showAffirmation();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -437,6 +440,14 @@ public class TodayActivity extends AppCompatActivity implements
             }
             addItemDialog.show(getSupportFragmentManager(), "add item");
         }
+    }
+    private void showAffirmation(){
+        log("...showAffirmation");
+        WebWorker.requestAffirmation(affirmation -> {
+            log("...onRequest(Affirmation)", affirmation.getAffirmation());
+            Toast.makeText(this, affirmation.getAffirmation(), Toast.LENGTH_LONG).show();
+        });
+
     }
 
     private void showChildren(Item parent){

@@ -3,6 +3,7 @@ package se.curtrune.lucy.adapters;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -23,6 +24,7 @@ public class TopTenAdapter extends RecyclerView.Adapter<TopTenAdapter.MyViewHold
     private List<Mental> items;
     public boolean VERBOSE = false;
     private TopTenFragment.Mode mode;
+    private Context context;
 
     public void setList(List<Mental> items, TopTenFragment.Mode mode) {
         if( VERBOSE) log("ListableAdapter.setList(List<Listable>) size", items.size());
@@ -63,19 +65,20 @@ public class TopTenAdapter extends RecyclerView.Adapter<TopTenAdapter.MyViewHold
         if( VERBOSE) log("ItemsAdapter.onBindViewHolder();");
         final Mental mental = items.get(position);
         holder.textViewHeading.setText(mental.getHeading());
+        context = holder.textViewInfo.getContext();
         String info = "";
         switch(mode){
             case ENERGY:
-                info = String.format(Locale.ENGLISH ,"energy %d, %s", mental.getEnergy(), mental.getDate().toString());
+                info = String.format(Locale.ENGLISH ,"%s %d, %s", context.getString(R.string.energy),mental.getEnergy(), mental.getDate().toString());
                 break;
             case ANXIETY:
-                info = String.format(Locale.ENGLISH, "anxiety %d, %s", mental.getAnxiety(), mental.getDate().toString());
+                info = String.format(Locale.ENGLISH, "%s %d, %s", context.getString(R.string.anxiety),mental.getAnxiety(), mental.getDate().toString());
                 break;
             case STRESS:
-                info = String.format("stress %d, %s", mental.getStress(), mental.getDate().toString());
+                info = String.format(Locale.ENGLISH, "%s %d, %s", context.getString(R.string.stress),mental.getStress(), mental.getDate().toString());
                 break;
             case MOOD:
-                info = String.format("mood %d, %s", mental.getMood(), mental.getDate().toString());
+                info = String.format(Locale.getDefault(),"%s %d, %s", context.getString(R.string.mood),mental.getMood(), mental.getDate().toString());
                 break;
 
         }

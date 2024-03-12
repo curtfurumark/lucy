@@ -3,6 +3,8 @@ package se.curtrune.lucy.classes;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import com.google.gson.Gson;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -35,6 +37,7 @@ public class Item implements Serializable , Listable {
     protected List<Item> children;
     protected int days;
     protected int energy;
+    protected  Period period;
 
 
 
@@ -130,7 +133,9 @@ public class Item implements Serializable , Listable {
         return parent_id;
     }
 
-
+    public Period getPeriod(){
+        return period;
+    }
     public State getState() {
         return State.values()[state];
     }
@@ -248,6 +253,11 @@ public class Item implements Serializable , Listable {
         this.parent_id = parent_id;
     }
 
+    public void setPeriod(String strPeriod){
+        if( strPeriod != null && !strPeriod.isEmpty()){
+            period = new Gson().fromJson(strPeriod, Period.class);
+        }
+    }
 
     public void setState(int state){
         this.state = state;

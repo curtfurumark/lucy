@@ -2,7 +2,10 @@ package se.curtrune.lucy.activities;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import android.app.UiModeManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -22,10 +26,11 @@ import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
 import se.curtrune.lucy.util.Logger;
 import se.curtrune.lucy.app.Lucy;
+import se.curtrune.lucy.web.SettingsActivity;
 
 public class HomeActivity extends AppCompatActivity {
     private TextView textViewToday;
-    //private TextView textViewProjects;
+    private TextView textViewSettings;
     private TextView textViewNewMain;
     private TextView textViewStatistics;
     private TextView textViewQuote;
@@ -62,6 +67,7 @@ public class HomeActivity extends AppCompatActivity {
         textViewQuote = findViewById(R.id.homeActivity_quote);
         textViewQuote.setSelected(true);
         textViewNewMain = findViewById(R.id.homeActivity_newMain);
+        textViewSettings = findViewById(R.id.homeActivity_settings);
     }
     private void initListeners(){
         log("...initListeners()");
@@ -69,6 +75,7 @@ public class HomeActivity extends AppCompatActivity {
         textViewStatistics.setOnClickListener(view->startActivity(new Intent(this, StatisticsMain.class)));
         textViewNewMain.setOnClickListener(view->startActivity(new Intent(this, MainActivity.class)));
         textViewQuote.setOnClickListener(view->randomQuote());
+        textViewSettings.setOnClickListener(view->startActivity(new Intent(this, SettingsActivity.class)));
     }
     private void randomQuote(){
         log("...randomQuote()");
@@ -108,6 +115,8 @@ public class HomeActivity extends AppCompatActivity {
             resetApp();
         }else if( item.getItemId() == R.id.homeActivity_createTableCategories){
             createTableCategories();
+        }else if( item.getItemId() == R.id.homeActivity_toggleDarkMode){
+            toggleDarkMode();
         }
         return true;
     }
@@ -163,5 +172,37 @@ public class HomeActivity extends AppCompatActivity {
     private void testCategories(){
         log("...testCategories()");
         DBAdmin.insertCategories(this);
+    }
+    private void toggleDarkMode(){
+        log("...toggleDarkMode()");
+        UiModeManager uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
+        //uiModeManager.getCurrentModeType();
+        int currentMode = uiModeManager.getNightMode();
+        log("...currentMode");
+        switch (currentMode){
+            case UiModeManager.MODE_NIGHT_NO:
+                log("MODE_NIGHT_NO");
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                break;
+            case UiModeManager.MODE_NIGHT_YES:
+                log("MODE_NIGHT_YES");
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                break;
+            case UiModeManager.MODE_NIGHT_AUTO:
+                log("MODE_NIGHT_AUTO");
+                break;
+            case UiModeManager.MODE_NIGHT_CUSTOM:
+                log("MODE_NIGHT_CUSTOM");
+                break;
+
+        }
+/*        int currentNightMode = Configuration.uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        switch (currentNightMode) {
+            case Configuration.UI_MODE_NIGHT_NO:
+                // Night mode is not active, we're using the light theme
+                break;
+            case Configuration.UI_MODE_NIGHT_YES:
+                // Night mode is active, we're using dark theme
+                break;*/
     }
 }

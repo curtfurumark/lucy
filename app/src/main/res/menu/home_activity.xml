@@ -20,4 +20,7 @@
     <item
         android:id="@+id/homeActivity_createTodoList"
         android:title="create todo list" />
+
+    <item android:title="toggle dark mode"
+        android:id="@+id/homeActivity_toggleDarkMode"/>
 </menu>
