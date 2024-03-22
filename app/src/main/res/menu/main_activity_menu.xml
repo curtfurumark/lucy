@@ -3,8 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/mainActiivity_home"
-        android:icon="@drawable/baseline_home_black"
+        android:id="@+id/mainActivity_home"
+        android:icon="@drawable/baseline_home_24"
         android:title="main"
         app:showAsAction="always" />
 </menu>

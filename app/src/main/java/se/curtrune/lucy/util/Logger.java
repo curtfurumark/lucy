@@ -1,12 +1,15 @@
 package se.curtrune.lucy.util;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Locale;
 
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
+import se.curtrune.lucy.classes.Period;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.statistics.CategoryListable;
@@ -41,6 +44,7 @@ public class Logger {
         log("\tstate", item.getState());
         log("\tcategory", item.getCategory());
         log("\ttype", item.getType());
+        log(item.getPeriod());
     }
     public static void log(Mental mental){
         log("log(Mental mental");
@@ -60,6 +64,23 @@ public class Logger {
         log("\tmood", mental.getMood());
         log("\tenergy", mental.getEnergy());
         log("\tstress", mental.getStress());
+    }
+    public static void log(Period period){
+        log("log(Period)");
+        if( period == null){
+            log("...period is null, i surrender");
+            return;
+        }
+        log("\tmode", period.getMode().toString());
+        if( period.isMode(Period.Mode.DAYS)){
+            log("\tdays", period.getDays());
+        }else{
+            List<DayOfWeek> dayOfWeeks = period.getWeekDays();
+            dayOfWeeks.forEach(System.out::println);
+        }
+        log("\tnextDate", period.getNextDate());
+        log("\ttime", period.getTime());
+        log("\ttoJson", period.toJson());
     }
     public static void log(StatisticsPeriod statisticsPeriod){
         log("log StatisticsPeriod...");
@@ -98,7 +119,7 @@ public class Logger {
     }
     public static void log(String description, LocalTime time){
         if( time == null){
-            log("log(String, LocalTime, locaTime is null");
+            log("log(String, LocalTime), localTime is null");
             return;
         }
         String message = String.format("%s %s", description, time.toString());

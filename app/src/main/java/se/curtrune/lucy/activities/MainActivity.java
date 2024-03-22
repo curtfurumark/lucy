@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         log("...onOptionsItemSelected(MenuItem)", item.getTitle().toString());
-        if( item.getItemId() == R.id.mainActiivity_home){
+        if( item.getItemId() == R.id.mainActivity_home){
             startActivity(new Intent(this, HomeActivity.class));
         }
         return super.onOptionsItemSelected(item);

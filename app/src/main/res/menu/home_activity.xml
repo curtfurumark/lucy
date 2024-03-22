@@ -13,7 +13,7 @@
         android:title="list tables"/>
     <item android:id="@+id/homeActivity_resetApp"
         android:title="reset app"/>
-    <item android:title="drop table menta"
+    <item android:title="drop table mental"
         android:id="@+id/homeActivity_dropTableMental"/>
     <item android:title="create table categories"
         android:id="@+id/homeActivity_createTableCategories"/>

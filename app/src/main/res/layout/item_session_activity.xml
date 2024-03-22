@@ -181,16 +181,16 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:hint="@string/mental_comment"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/itemSession_addItem"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/itemSession_mentalComment"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="top"
-            android:lines="4"
-            android:layout_height="wrap_content" />
+            android:lines="4" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <View
@@ -212,9 +212,23 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="16dp"
+        android:minHeight="48dp"
         android:text="@string/save_mental"
         app:layout_constraintBottom_toTopOf="@+id/itemSession_labelEnergy"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/itemSession_addItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:contentDescription="@string/add_child_item"
+        android:text="@string/add_child_item"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/baseline_add_circle_outline_24" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -74,7 +74,7 @@ public class ItemSession extends AppCompatActivity implements
     private int energy;
     private long duration;
 
-    private final boolean VERBOSE = false;
+    private final boolean VERBOSE = true;
 
     private Kronos kronos;
     private ItemsWorker worker;

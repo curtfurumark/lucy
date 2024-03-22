@@ -90,7 +90,7 @@ public class AddItemDialog extends BottomSheetDialogFragment {
 
         }
         item.setCategory(getCategory());
-        item.setState(state);
+        item.setState(parent.getState());
         return item;
 
     }

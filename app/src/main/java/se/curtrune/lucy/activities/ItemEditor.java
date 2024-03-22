@@ -19,7 +19,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -48,7 +47,7 @@ import se.curtrune.lucy.workers.ItemsWorker;
 public class ItemEditor extends AppCompatActivity implements
         AddCategoryDialog.Callback,
         AddItemDialog.Callback,
-        PeriodDialog.Callback,
+        //PeriodDialog.Callback,
         DatePickerDialog.OnDateSetListener,
         Kronos.Callback/*,
         TextWatcher */
@@ -407,15 +406,22 @@ public class ItemEditor extends AppCompatActivity implements
     private void showPeriodDialog(){
         log("...showPeriodDialog()");
         PeriodDialog dialog = new PeriodDialog();
+        dialog.setListener(period -> {
+            log("...onPeriod(Period)");
+            log(period);
+            currentItem.setPeriod(period);
+            int res = ItemsWorker.update(currentItem, this);
+            log("...res", res);
+        });
         dialog.show(getSupportFragmentManager(), "hello");
     }
 
-    @Override
+/*    @Override
     public void onPeriod(Period period) {
         log("...onPeriod(Period)", period.toString());
         currentItem.setDays(period.getDays());
         setUserInterface(period);
-    }
+    }*/
     private void showProjectIdDialog(){
         log("...showProjectIdDialog()");
         Toast.makeText(this, "not implemented", Toast.LENGTH_LONG).show();

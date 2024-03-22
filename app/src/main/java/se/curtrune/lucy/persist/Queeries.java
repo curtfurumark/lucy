@@ -1,5 +1,7 @@
 package se.curtrune.lucy.persist;
 
+import static se.curtrune.lucy.util.Logger.log;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -31,7 +33,8 @@ public class Queeries {
                     "duration INTEGER, " +
                     "parentID INTEGER," +
                     "days INTEGER, " +
-                    "period STRING )";
+                    "period STRING, " +
+                    "estimate STRING )";
     public static String CREATE_TABLE_MENTAL =
         "CREATE TABLE mental (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "itemID INTEGER, " +
@@ -48,6 +51,8 @@ public class Queeries {
                 "updated INTEGER)";
     public static String CREATE_TABLE_CATEGORIES = "CREATE TABLE categories " +
             "(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)";
+
+    public static boolean VERBOSE = true;
     public static String insertCategory(String category) {
         return String.format("INSERT INTO categories (name) values ('%s')", category);
     }
@@ -78,6 +83,7 @@ public class Queeries {
 
 
     public static String selectItems(State state) {
+        if( VERBOSE) log("Queeries.selectItems(State)", state.toString());
         return String.format("SELECT * FROM items WHERE state = %d  AND type != %d AND hasChild = 0 ORDER BY targetDate DESC", state.ordinal(), Type.ROOT.ordinal());
     }
     public static String selectItems(State state, LocalDate date) {
@@ -96,13 +102,13 @@ public class Queeries {
         long endEpoch = startEpoch + (3600 * 24);
         //AND (updated)
         return String.format(Locale.ENGLISH, "SELECT * FROM items WHERE " +
-                        "(state = %d AND targetDate <= %d)  OR " +
-                        "(state = %d AND targetDate = %d) OR " +
-                        "(targetDate = %d AND hasChild = 0 ) OR " +
-                        "(state = %d AND updated >= %d AND updated <= %d)",
+                        "(state = %d AND targetDate <= %d)  OR " +      //INFINITE today or earlier
+                        "(state = %d AND targetDate = %d) OR " +        //items done today
+                        "(targetDate = %d AND hasChild = 0 AND state = %d) OR " +   //items todo today
+                        "(state = %d AND updated >= %d AND updated <= %d)", //items done today, but targetDate not today
                 State.INFINITE.ordinal(), date.toEpochDay(),
                 State.DONE.ordinal(), date.toEpochDay(),
-                date.toEpochDay(),
+                date.toEpochDay(), State.TODO.ordinal(),
                 State.DONE.ordinal(), startEpoch, endEpoch);
     }
 

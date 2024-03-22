@@ -4,7 +4,7 @@
     <item
         android:title="home"
         android:id="@+id/diaryList_home"
-        android:icon="@drawable/baseline_home_black"
+        android:icon="@drawable/baseline_home_24"
         app:showAsAction="always"
         ></item>
     <item

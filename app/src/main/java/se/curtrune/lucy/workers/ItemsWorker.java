@@ -263,6 +263,13 @@ public class ItemsWorker {
         db.touchParents(item);
 
     }
+
+    /**
+     *
+     * @param item, the item to be updated
+     * @param context
+     * @return, rows affected
+     */
     public static int update(Item item, Context context) {
         log("ItemsWorker.update(Item, Context)");
         LocalDB db = new LocalDB(context);

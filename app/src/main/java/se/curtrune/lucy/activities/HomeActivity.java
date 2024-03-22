@@ -5,8 +5,9 @@ import static se.curtrune.lucy.util.Logger.log;
 import android.app.UiModeManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -15,18 +16,20 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.os.LocaleListCompat;
 
 import java.sql.SQLException;
 import java.util.List;
 
 import se.curtrune.lucy.R;
+import se.curtrune.lucy.app.Lucy;
+import se.curtrune.lucy.classes.Affirmation;
 import se.curtrune.lucy.classes.Quotes;
 import se.curtrune.lucy.persist.DBAdmin;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
 import se.curtrune.lucy.util.Logger;
-import se.curtrune.lucy.app.Lucy;
-import se.curtrune.lucy.web.SettingsActivity;
+import se.curtrune.lucy.workers.WebWorker;
 
 public class HomeActivity extends AppCompatActivity {
     private TextView textViewToday;
@@ -40,6 +43,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_activity);
         setTitle("lucinda");
+        //changeLanguage();
         log("HomeActivity.onCreate(Bundle)");
         lucy = Lucy.getInstance(this);
         //lucy.setIsInitialized(true, this);
@@ -57,6 +61,7 @@ public class HomeActivity extends AppCompatActivity {
         initComponents();
         initListeners();
         //randomQuote();
+        randomAffirmation();
         openDB();
     }
 
@@ -92,7 +97,6 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //log("...onCreateOptionsMenu(Menu)");
         getMenuInflater().inflate(R.menu.home_activity, menu);
         return true;
     }
@@ -130,7 +134,19 @@ public class HomeActivity extends AppCompatActivity {
         log("...deleteItemsTable()");
         LocalDB db = new LocalDB(this);
         db.executeSQL(Queeries.DROP_TABLE_ITEMS);
+    }
 
+    private void changeLanguage(){
+        log("...changeLanguage()");
+/*        Locale locale = new Locale("en GB");
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.locale = locale;
+        getResources().updateConfiguration(config, getResources().getDisplayMetrics());*/
+
+
+        LocaleListCompat  localeListCompat = LocaleListCompat.forLanguageTags("en");
+        AppCompatDelegate.setApplicationLocales(localeListCompat);
     }
     private void createItemsTable(){
         log("...createItemsTable()");
@@ -153,12 +169,31 @@ public class HomeActivity extends AppCompatActivity {
         db.executeSQL(Queeries.CREATE_TABLE_CATEGORIES);
         populateCategories();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //changeLanguage();
+    }
+
     private void populateCategories(){
         log("...populateCategories()");
         LocalDB db = new LocalDB(this);
         for(String category : Lucy.CATEGORIES){
             db.executeSQL(Queeries.insertCategory(category));
         }
+    }
+    private void randomAffirmation(){
+        log("...randomAffirmation()");
+        WebWorker.requestAffirmation(affirmation -> {
+            textViewQuote.setText(affirmation.getAffirmation());
+/*            new Handler().postDelayed(() -> {
+                log("...run()");
+                startActivity(new Intent(this, TodayActivity.class));
+
+            },2000);*/
+        });
+
     }
     private void resetApp(){
         log("...resetApp()");

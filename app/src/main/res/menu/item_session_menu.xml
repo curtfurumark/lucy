@@ -10,7 +10,7 @@
         android:id="@+id/itemSession_addChild"
         app:showAsAction="always"/>
     <item android:title="home"
-        android:icon="@drawable/baseline_home_black"
+        android:icon="@drawable/baseline_home_24"
         android:id="@+id/itemSession_home"
         app:showAsAction="always"/>
     <item android:id="@+id/itemSession_showMoodEnergy"

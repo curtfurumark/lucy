@@ -38,6 +38,7 @@ public class Item implements Serializable , Listable {
     protected int days;
     protected int energy;
     protected  Period period;
+    protected Estimate estimate;
 
 
 
@@ -97,6 +98,9 @@ public class Item implements Serializable , Listable {
     }
     public int getEnergy(){
         return energy;
+    }
+    public Estimate getEstimate(){
+        return estimate;
     }
     public String getHeading() {
         return heading;
@@ -257,6 +261,10 @@ public class Item implements Serializable , Listable {
         if( strPeriod != null && !strPeriod.isEmpty()){
             period = new Gson().fromJson(strPeriod, Period.class);
         }
+    }
+    public void setPeriod(Period period){
+        this.period = period;
+
     }
 
     public void setState(int state){
