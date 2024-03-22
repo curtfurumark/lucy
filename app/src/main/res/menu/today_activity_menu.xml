@@ -10,4 +10,6 @@
         android:title="@string/statistics" />
     <item android:id="@+id/todayActivity_showAffirmation"
         android:title="@string/show_affirmation"/>
+    <item android:id="@+id/todayActivity_showEstimate"
+        android:title="show estimate"/>
 </menu>

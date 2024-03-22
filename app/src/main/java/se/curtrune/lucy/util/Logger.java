@@ -7,6 +7,7 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Locale;
 
+import se.curtrune.lucy.classes.Estimate;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.Period;
@@ -20,6 +21,12 @@ public class Logger {
     public static void log(CategoryListable listable){
         log("log(CategoryListable)");
         log("\tcategory", listable.getCategory());
+    }
+    public static void log(Estimate estimate){
+        log("Logger.log(Estimate");
+        log("\tenergy", estimate.getEnergy());
+        log("\tduration", estimate.getDuration());
+
     }
     public static void log(Item item){
         log("Logger.log(Item)");

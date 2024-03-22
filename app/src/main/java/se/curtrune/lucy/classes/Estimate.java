@@ -1,11 +1,13 @@
 package se.curtrune.lucy.classes;
 
+import static se.curtrune.lucy.util.Logger.log;
+
 public class Estimate {
     private long duration;
     private int energy;
 
-    public Estimate(long duration) {
-        this.duration = duration;
+    public Estimate() {
+        log("Estimate()");
     }
 
     public long getDuration() {

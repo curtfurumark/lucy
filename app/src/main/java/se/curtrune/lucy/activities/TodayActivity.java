@@ -41,6 +41,7 @@ import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.dialogs.AddAppointmentDialog;
 import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.dialogs.AddTemplateDialog;
+import se.curtrune.lucy.dialogs.EstimateDateDialog;
 import se.curtrune.lucy.dialogs.StatisticsDialog;
 import se.curtrune.lucy.enums.ViewMode;
 import se.curtrune.lucy.util.Constants;
@@ -264,6 +265,8 @@ public class TodayActivity extends AppCompatActivity implements
             showStatistics();
         }else if( item.getItemId() == R.id.todayActivity_showAffirmation){
             showAffirmation();
+        }else if(item.getItemId() == R.id.todayActivity_showEstimate){
+            showEstimate();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -455,6 +458,11 @@ public class TodayActivity extends AppCompatActivity implements
         currentParent = parent;
         items = ItemsWorker.selectChildren(currentParent, this);
         adapter.setList(items);
+    }
+    private void showEstimate(){
+        log("...showEstimate()");
+        EstimateDateDialog estimateDateDialog = new EstimateDateDialog(LocalDate.now());
+        estimateDateDialog.show(getSupportFragmentManager(), "estimate me");
 
     }
     private void showStatistics(){

@@ -27,6 +27,7 @@ import java.util.Locale;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.CallingActivity;
 import se.curtrune.lucy.classes.Categories;
+import se.curtrune.lucy.classes.Estimate;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Period;
 import se.curtrune.lucy.classes.State;
@@ -34,6 +35,7 @@ import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.dialogs.AddCategoryDialog;
 import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.dialogs.EditParentIdDialog;
+import se.curtrune.lucy.dialogs.EstimateItemDialog;
 import se.curtrune.lucy.dialogs.PeriodDialog;
 import se.curtrune.lucy.enums.ViewMode;
 import se.curtrune.lucy.persist.LocalDB;
@@ -68,6 +70,7 @@ public class ItemEditor extends AppCompatActivity implements
     private TextView textViewTargetTime;
     private TextView textViewNotification;
     private TextView textViewAddCategory;
+    private TextView textViewEstimate;
     private ArrayAdapter<String> categoryAdapter;
     private LocalDate targetDate;
     private LocalTime targetTime = LocalTime.now();
@@ -167,6 +170,7 @@ public class ItemEditor extends AppCompatActivity implements
         textViewNotification = findViewById(R.id.itemEditor_notification);
         textViewPeriod = findViewById(R.id.itemEditor_labelPersiod);
         textViewAddCategory = findViewById(R.id.itemEditor_addCategory);
+        textViewEstimate = findViewById(R.id.itemEditor_estimate);
     }
     private void initDefaults() {
         log("...initDefaults()");
@@ -181,6 +185,7 @@ public class ItemEditor extends AppCompatActivity implements
         textViewNotification.setOnClickListener(view->showNotificationDialog());
         textViewPeriod.setOnClickListener(view->showPeriodDialog());
         textViewAddCategory.setOnClickListener(view->showAddCategoryDialog());
+        textViewEstimate.setOnClickListener(view->showEstimateDialog());
     }
     private void initSpinnerState() {
         log("...initSpinnerState()");
@@ -338,7 +343,7 @@ public class ItemEditor extends AppCompatActivity implements
 
     /**
      * callback to AddCategoryDialog
-     * @param category
+     * @param category, the category to be added to the relevant db table
      */
     @Override
     public void onNewCategory(String category) {
@@ -352,6 +357,17 @@ public class ItemEditor extends AppCompatActivity implements
         DatePickerDialog datePickerDialog = new DatePickerDialog(this);
         datePickerDialog.setOnDateSetListener(this);
         datePickerDialog.show();
+    }
+    private void showEstimateDialog(){
+        log("...showEstimateDialog()");
+        //Toast.makeText(this, "estimate in progress", Toast.LENGTH_LONG).show();
+        EstimateItemDialog estimateItemDialog = new EstimateItemDialog();
+        estimateItemDialog.setCallback(estimate -> {
+            log("..onEstimate(Estimate)");
+            log(estimate);
+        });
+        estimateItemDialog.show(getSupportFragmentManager(), "do estimate");
+
     }
     private void showNotificationDialog(){
         log("...showNotificationDialog()");
@@ -433,8 +449,8 @@ public class ItemEditor extends AppCompatActivity implements
         kronos.reset();
         kronos.removeCallback();
         editTextDuration.setText("00:00:00");
-        ItemsWorker worker = ItemsWorker.getInstance();
-        int rowsAffected = worker.update(currentItem, this);
+        //ItemsWorker worker = ItemsWorker.getInstance();
+        int rowsAffected = ItemsWorker.update(currentItem, this);
         if( rowsAffected != 1){
             log("rowsAffected", rowsAffected);
             Toast.makeText(this, "error updating item", Toast.LENGTH_LONG).show();
