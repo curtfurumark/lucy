@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:backgroundTint="@color/purple_500"
     tools:context=".activities.ItemEditor">
@@ -89,8 +89,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:ems="5"
-        android:visibility="gone"
         android:text="@string/energy"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/itemSession_mentalSwitch" />
 
@@ -113,8 +113,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:ems="5"
-        android:visibility="gone"
         android:text="@string/anxiety"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/itemSession_labelEnergy" />
 
@@ -137,8 +137,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="9dp"
         android:ems="5"
-        android:visibility="gone"
         android:text="@string/mood"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/itemSession_labelAnxiety" />
 
@@ -161,8 +161,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="7dp"
         android:ems="5"
-        android:visibility="gone"
         android:text="@string/stress"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/itemSession_labelMood" />
 
@@ -188,6 +188,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:hint="@string/mental_comment"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/itemSession_labelStress">
@@ -197,8 +198,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="top"
-            android:visibility="gone"
-            android:lines="4" />
+            android:lines="4"
+            android:visibility="gone" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <View
@@ -247,5 +248,83 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayoutMentalComment" />
 
+    <TextView
+        android:id="@+id/itemSession_labelEstimate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="estimate"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider3" />
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/itemSession_layoutEstimate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/itemSession_labelEstimate">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/itemSession_textInputLayout_hours"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:minEms="4"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/itemSession_estimateHours"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:hint="hours"
+                android:text="00" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/itemSession_textInputLayout_minutes"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minEms="4"
+            app:layout_constraintStart_toEndOf="@+id/itemSession_textInputLayout_hours"
+            app:layout_constraintTop_toTopOf="@+id/itemSession_textInputLayout_hours">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/itemSession_estimateMinutes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/minutes"
+                android:inputType="number"
+                android:text="00" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:max="10"
+        android:progress="3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView10"
+        app:layout_constraintTop_toTopOf="@+id/textView10" />
+
+    <TextView
+        android:id="@+id/textView10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/energy"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/itemSession_layoutEstimate" />
 </androidx.constraintlayout.widget.ConstraintLayout>

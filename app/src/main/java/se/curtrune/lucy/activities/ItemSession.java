@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -30,6 +31,7 @@ import java.util.Locale;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.ItemAdapter;
 import se.curtrune.lucy.classes.CallingActivity;
+import se.curtrune.lucy.classes.Estimate;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.State;
@@ -53,6 +55,9 @@ public class ItemSession extends AppCompatActivity implements
     private EditText editTextHeading;
     private EditText  editTextComment;
     private EditText editTextMentalComment;
+    private EditText editTextEstimateHours;
+    private EditText editTextEstimateMinutes;
+    private TextView labelEstimate;
     private CheckBox checkBoxDone;
     private Button buttonTimer;
     private TextView textViewDuration;
@@ -60,11 +65,13 @@ public class ItemSession extends AppCompatActivity implements
     private TextView textViewStress;
     private TextView textViewAnxiety;
     private TextView textViewMood;
+
     private SeekBar seekBarStress;
     private SeekBar seekBarAnxiety;
     private SeekBar seekBarMood;
     private SeekBar seekBarEnergy;
     private Switch switchSaveMental;
+    private ConstraintLayout layoutEstimate;
     private FloatingActionButton fabAdd;
 
     private enum MentalMode{
@@ -185,6 +192,10 @@ public class ItemSession extends AppCompatActivity implements
         textViewEnergy = findViewById(R.id.itemSession_labelEnergy);
         switchSaveMental = findViewById(R.id.itemSession_mentalSwitch);
         fabAdd = findViewById(R.id.itemSession_fabAdd);
+        labelEstimate = findViewById(R.id.itemSession_labelEstimate);
+        editTextEstimateHours = findViewById(R.id.itemSession_estimateHours);
+        editTextEstimateMinutes = findViewById(R.id.itemSession_estimateMinutes);
+        layoutEstimate = findViewById(R.id.itemSession_layoutEstimate);
     }
     private void initDefaults(){
         log("...initDefaults()");
@@ -196,6 +207,7 @@ public class ItemSession extends AppCompatActivity implements
     }
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
+        labelEstimate.setOnClickListener(view->toggleEstimate());
         switchSaveMental.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -479,6 +491,13 @@ public class ItemSession extends AppCompatActivity implements
             }
         }
     }
+    private void setUserInterface(Estimate estimate){
+        log("...setUserInterface(Estimate)");
+        long seconds = estimate.getDuration();
+        //Duration duration1 = Duration.ofSeconds(seconds);
+        editTextEstimateHours.setText(String.valueOf(seconds / 3600));
+        editTextEstimateMinutes.setText(String.valueOf(seconds % 3600));
+    }
 
     private void setUserInterface(Item item){
         if( VERBOSE) log("...setUserInterface(Item item)");
@@ -492,6 +511,9 @@ public class ItemSession extends AppCompatActivity implements
         checkBoxDone.setChecked(item.isDone());
         if( item.getDuration() > 0){
             buttonTimer.setText(getString(R.string.ui_resume));
+        }
+        if( item.hasEstimate()){
+            setUserInterface(item.getEstimate());
         }
         //setUserInterfaceMental(null);
     }
@@ -543,8 +565,18 @@ public class ItemSession extends AppCompatActivity implements
             if( rowsAffected != 1){
                 Toast.makeText(this, "error updating item", Toast.LENGTH_LONG).show();
             }
+            setUserInterface(estimate);
         });
         dialog.show(getSupportFragmentManager(), "add estimate");
+    }
+    private void toggleEstimate(){
+        log("...toggleEstimate()");
+        boolean visible = layoutEstimate.getVisibility() == View.VISIBLE;
+        int visibility = visible ? View.GONE : View.VISIBLE;
+        layoutEstimate.setVisibility(visibility);
+        //editTextEstimateMinutes.setVisibility(visibility);
+        //editTextEstimateHours.setVisibility(visibility);
+
     }
     private void toggleMental(boolean visible){
         log("...toggleMental()");

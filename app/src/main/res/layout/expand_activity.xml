@@ -39,13 +39,30 @@
         app:layout_constraintTop_toBottomOf="@+id/expandActivity_seekBar" />
 
     <TextView
-        android:id="@+id/textView11"
+        android:id="@+id/expandActivity_labelPeriod"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="period"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/expandActivity_duration" />
+    <LinearLayout
+        android:id="@+id/expandActivity_layoutPeriod"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/expandActivity_labelPeriod">
+        <TextView
+            android:layout_width="match_parent"
+            android:text="hello i am a simple textView"
+            android:layout_marginStart="8dp"
+            android:layout_height="wrap_content">
+
+        </TextView>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

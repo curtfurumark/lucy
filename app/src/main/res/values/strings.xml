@@ -109,4 +109,5 @@
     <string name="click_to_view">click to view</string>
     <string name="estimateDummyInfo">i estimate that the this activity will have a durationhn of 1 hour and 7 minutes, and it will set back my energy level by 2 units, there you are</string>
     <string name="created">created</string>
+    <string name="minutes">minutes</string>
 </resources>
