@@ -125,7 +125,7 @@ public class Settings {
 
     }
     public void setLucyIsInitialized(boolean isInitialized, Context context) {
-            log("Lucy.setAppInitialized(boolean)", isInitialized);
+            log("Lucinda.setAppInitialized(boolean)", isInitialized);
             editor = getEditor(context);
             editor.putBoolean(IS_INITIALIZED, isInitialized);
             editor.commit();

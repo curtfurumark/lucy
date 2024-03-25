@@ -22,7 +22,7 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
-import se.curtrune.lucy.app.Lucy;
+import se.curtrune.lucy.app.Lucinda;
 
 public class LocalDB extends SQLiteOpenHelper {
     private static final String DB_NAME = "lucy.db";
@@ -186,7 +186,7 @@ public class LocalDB extends SQLiteOpenHelper {
     }
     public void populateDatabase(){
         log("LocalDB.populateDatabase()");
-        for(String category: Lucy.CATEGORIES){
+        for(String category: Lucinda.CATEGORIES){
             insertCategory(category);
         }
 

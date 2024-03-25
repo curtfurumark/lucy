@@ -51,6 +51,11 @@ public class Logger {
         log("\tstate", item.getState());
         log("\tcategory", item.getCategory());
         log("\ttype", item.getType());
+        if( item.hasEstimate()){
+            log("\titem has estimate");
+            log("\t\tduration", item.getEstimate().getDuration());
+            log("\t\tenergy", item.getEstimate().getEnergy());
+        }
         log(item.getPeriod());
     }
     public static void log(Mental mental){

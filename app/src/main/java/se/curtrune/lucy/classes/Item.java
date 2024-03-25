@@ -173,6 +173,9 @@ public class Item implements Serializable , Listable {
     public boolean hasChild(){
         return has_child == 1;
     }
+    public boolean hasEstimate(){
+        return estimate != null;
+    }
     public boolean hasItemParent(){
         return parent != null;
     }
@@ -237,7 +240,14 @@ public class Item implements Serializable , Listable {
     }
     public void setDuration(LocalDateTime now){
         duration  = now.toEpochSecond(ZoneOffset.UTC) - updated;
-
+    }
+    public void setEstimate(Estimate estimate){
+        log("Item.setEstimate(Estimate)");
+        this.estimate = estimate;
+    }
+    public void setEstimate(String json){
+        log("Item.setEstimate(String)", json);
+        this.estimate = new Gson().fromJson(json, Estimate.class);
     }
     public void setHeading(String heading) {
         this.heading = heading;

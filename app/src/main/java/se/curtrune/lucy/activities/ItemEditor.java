@@ -13,6 +13,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -71,6 +73,8 @@ public class ItemEditor extends AppCompatActivity implements
     private TextView textViewNotification;
     private TextView textViewAddCategory;
     private TextView textViewEstimate;
+    private TextView labelEstimate;
+    private SeekBar seekBarEnergyEstimate;
     private ArrayAdapter<String> categoryAdapter;
     private LocalDate targetDate;
     private LocalTime targetTime = LocalTime.now();
@@ -78,6 +82,7 @@ public class ItemEditor extends AppCompatActivity implements
     private Spinner spinnerCategories;
     private Spinner spinnerState;
     private Spinner spinnerType;
+    private LinearLayout layoutEstimate;
 
     private Type type = Type.NODE;
     private State state = State.PENDING;
@@ -171,6 +176,8 @@ public class ItemEditor extends AppCompatActivity implements
         textViewPeriod = findViewById(R.id.itemEditor_labelPersiod);
         textViewAddCategory = findViewById(R.id.itemEditor_addCategory);
         textViewEstimate = findViewById(R.id.itemEditor_estimate);
+        labelEstimate = findViewById(R.id.itemEditor_labelEstimate);
+        seekBarEnergyEstimate = findViewById(R.id.itemEditor_seekBarEnergyEstimate);
     }
     private void initDefaults() {
         log("...initDefaults()");
@@ -186,6 +193,8 @@ public class ItemEditor extends AppCompatActivity implements
         textViewPeriod.setOnClickListener(view->showPeriodDialog());
         textViewAddCategory.setOnClickListener(view->showAddCategoryDialog());
         textViewEstimate.setOnClickListener(view->showEstimateDialog());
+        labelEstimate.setOnClickListener(view->showEstimateDialog());
+
     }
     private void initSpinnerState() {
         log("...initSpinnerState()");
@@ -361,12 +370,33 @@ public class ItemEditor extends AppCompatActivity implements
     private void showEstimateDialog(){
         log("...showEstimateDialog()");
         //Toast.makeText(this, "estimate in progress", Toast.LENGTH_LONG).show();
-        EstimateItemDialog estimateItemDialog = new EstimateItemDialog();
-        estimateItemDialog.setCallback(estimate -> {
-            log("..onEstimate(Estimate)");
+/*        EstimateItemDialog estimateItemDialog = null;
+        if( currentItem.hasEstimate()){
+                 estimateItemDialog = new EstimateItemDialog(currentItem.getEstimate());
+        }else{
+                estimateItemDialog = new EstimateItemDialog();
+        }
+        estimateItemDialog.setCallback((estimate, mode) -> {
+            log("..onEstimate(Estimate)", mode.toString());
             log(estimate);
-        });
-        estimateItemDialog.show(getSupportFragmentManager(), "do estimate");
+            if( mode.equals(EstimateItemDialog.Mode.EDIT)){
+                //TODO
+            }else{
+                //TODO
+            }
+
+        });*/
+        //estimateItemDialog.show(getSupportFragmentManager(), "do estimate");
+        if( textViewEstimate.getVisibility() == View.GONE) {
+            log("...expanding estimate");
+            textViewEstimate.setVisibility(View.VISIBLE);
+            seekBarEnergyEstimate.setVisibility(View.VISIBLE);
+
+        }else{
+            log(" collapsing estimate");
+            textViewEstimate.setVisibility(View.GONE);
+            seekBarEnergyEstimate.setVisibility(View.GONE);
+        }
 
     }
     private void showNotificationDialog(){
@@ -413,6 +443,15 @@ public class ItemEditor extends AppCompatActivity implements
         spinnerType.setSelection(item.getType().ordinal());
         String strDuration = String.format(Locale.ENGLISH, "%s", Converter.formatSecondsWithHours(item.getDuration()));
         editTextDuration.setText(strDuration);
+        if( item.hasEstimate()){
+            //Toast.makeText(this,"item has estimate", Toast.LENGTH_LONG).show();
+            labelEstimate.setText("click to view estimate");
+            //textViewEstimate.setText("has estimate, click to view");
+        }else{
+            log("...item has no estimate");
+            textViewEstimate.setText("click to add estimate");
+        }
+
     }
 
     private void setUserInterface(Period period){

@@ -6,8 +6,6 @@ import android.app.UiModeManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -22,8 +20,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.app.Lucy;
-import se.curtrune.lucy.classes.Affirmation;
+import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.classes.Quotes;
 import se.curtrune.lucy.persist.DBAdmin;
 import se.curtrune.lucy.persist.LocalDB;
@@ -37,7 +34,7 @@ public class HomeActivity extends AppCompatActivity {
     private TextView textViewNewMain;
     private TextView textViewStatistics;
     private TextView textViewQuote;
-    private Lucy lucy;
+    private Lucinda lucinda;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,18 +42,18 @@ public class HomeActivity extends AppCompatActivity {
         setTitle("lucinda");
         //changeLanguage();
         log("HomeActivity.onCreate(Bundle)");
-        lucy = Lucy.getInstance(this);
-        //lucy.setIsInitialized(true, this);
-        if( !lucy.isInitialized(this)){
-            log("...lucy not initialized");
+        lucinda = Lucinda.getInstance(this);
+        //lucinda.setIsInitialized(true, this);
+        if( !lucinda.isInitialized(this)){
+            log("...lucinda not initialized");
             try {
-                lucy.initialize(this);
+                lucinda.initialize(this);
             } catch (SQLException e) {
                 Toast.makeText(this, "serious, failure to initialize the app", Toast.LENGTH_LONG).show();
                 return;
             }
         }else{
-            log("Lucy is initialized!");
+            log("Lucinda is initialized!");
         }
         initComponents();
         initListeners();
@@ -121,6 +118,8 @@ public class HomeActivity extends AppCompatActivity {
             createTableCategories();
         }else if( item.getItemId() == R.id.homeActivity_toggleDarkMode){
             toggleDarkMode();
+        }else if( item.getItemId() == R.id.homeActivity_expandActivity){
+            startActivity(new Intent(this, ExpandActivity.class));
         }
         return true;
     }
@@ -179,7 +178,7 @@ public class HomeActivity extends AppCompatActivity {
     private void populateCategories(){
         log("...populateCategories()");
         LocalDB db = new LocalDB(this);
-        for(String category : Lucy.CATEGORIES){
+        for(String category : Lucinda.CATEGORIES){
             db.executeSQL(Queeries.insertCategory(category));
         }
     }
@@ -198,7 +197,8 @@ public class HomeActivity extends AppCompatActivity {
     private void resetApp(){
         log("...resetApp()");
         try {
-            lucy.reset(this);
+            lucinda.reset(this);
+            Toast.makeText(this, "lucinda reset", Toast.LENGTH_LONG).show();
         } catch (SQLException e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
         }

@@ -31,9 +31,8 @@ import java.util.stream.Collectors;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.ItemAdapter;
-import se.curtrune.lucy.app.Lucy;
+import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.Settings;
-import se.curtrune.lucy.classes.Affirmation;
 import se.curtrune.lucy.classes.CallingActivity;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
@@ -86,10 +85,10 @@ public class TodayActivity extends AppCompatActivity implements
             log("...savedInstance != null");
             restoreInstance(savedInstanceState);
         }
-        if( Lucy.currentViewMode != null){
+        if( Lucinda.currentViewMode != null){
             log("currentViewMode != null");
-            mode = Lucy.currentViewMode;
-            bottomNavigationView.setSelectedItemId(Lucy.getItemID(mode));
+            mode = Lucinda.currentViewMode;
+            bottomNavigationView.setSelectedItemId(Lucinda.getItemID(mode));
         }
         Intent intent = getIntent();
         if( intent.getBooleanExtra(Constants.INTENT_SHOW_CHILD_ITEMS, false)){
@@ -106,7 +105,7 @@ public class TodayActivity extends AppCompatActivity implements
         ///log("...old parent", currentParent.getHeading());
         currentParent = ItemsWorker.getParent(currentParent, this);
 
-        Lucy.currentParent = currentParent;
+        Lucinda.currentParent = currentParent;
         if(currentParent == null){
             log("...top of the world, switching to homeActivity");
             //Toast.makeText(this, "top of the world", Toast.LENGTH_LONG).show();
@@ -144,22 +143,22 @@ public class TodayActivity extends AppCompatActivity implements
             log("...onNavigationItemSelected()", Objects.requireNonNull(item.getTitle()).toString());
             if (item.getItemId() == R.id.bottomNavigation_projects) {
                 mode = ViewMode.PROJECTS;
-                Lucy.currentViewMode = ViewMode.PROJECTS;
+                Lucinda.currentViewMode = ViewMode.PROJECTS;
                 currentParent = ItemsWorker.getRootItem(Settings.Root.PROJECTS, this);
                 show(mode);
             }else if( item.getItemId() == R.id.bottomNavigation_todo){
-                Lucy.currentViewMode = ViewMode.TODO;
+                Lucinda.currentViewMode = ViewMode.TODO;
                 mode = ViewMode.TODO;
                 currentParent = ItemsWorker.getRootItem(Settings.Root.TODO, this);
                 show(ViewMode.TODO);
             }else if( item.getItemId() == R.id.bottomNavigation_today){
-                Lucy.currentViewMode = ViewMode.TODAY;
+                Lucinda.currentViewMode = ViewMode.TODAY;
                 mode = ViewMode.TODAY;
                 currentParent = ItemsWorker.getRootItem(Settings.Root.DAILY, this);
                 show(ViewMode.TODAY);
             }else if( item.getItemId() == R.id.bottomNavigation_appointments){
                 currentParent = ItemsWorker.getRootItem(Settings.Root.APPOINTMENTS, this);
-                mode = Lucy.currentViewMode = ViewMode.APPOINTMENTS;
+                mode = Lucinda.currentViewMode = ViewMode.APPOINTMENTS;
                 show(ViewMode.APPOINTMENTS);
             }else if( item.getItemId() == R.id.bottomNavigation_todo){
                 currentParent = ItemsWorker.getRootItem(Settings.Root.TODO, this);
@@ -277,7 +276,7 @@ public class TodayActivity extends AppCompatActivity implements
         if(item.hasChild()){
             setTitle(item.getHeading());
             items = worker.selectChildItems(item, this);
-            Lucy.currentParent = item;
+            Lucinda.currentParent = item;
             currentParent = item;
             adapter.setList(items);
         }else {
@@ -286,7 +285,7 @@ public class TodayActivity extends AppCompatActivity implements
             intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.TODAY_ACTIVITY);
             intent.putExtra(Constants.CURRENT_VIEW_MODE, mode);
             intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, item);
-            Lucy.currentViewMode = mode;
+            Lucinda.currentViewMode = mode;
             startActivity(intent);
         }
     }
@@ -298,7 +297,7 @@ public class TodayActivity extends AppCompatActivity implements
         intent.putExtra(Constants.INTENT_EDIT_ITEM, true);
         intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.TODAY_ACTIVITY);
         intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, item);
-        Lucy.currentViewMode = mode;
+        Lucinda.currentViewMode = mode;
         startActivity(intent);
     }
 

@@ -11,9 +11,9 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.enums.ViewMode;
 import se.curtrune.lucy.persist.DBAdmin;
 
-public class Lucy {
+public class Lucinda {
 
-    private static Lucy instance;
+    private static Lucinda instance;
     private final Settings settings;
     public static Item currentParent;
     public static ViewMode currentViewMode;
@@ -22,18 +22,18 @@ public class Lucy {
     public static final int ENERGY_OFFSET = 5;*/
     public static String[] CATEGORIES = new String[] {"household", "work", "health", "play"};
 
-    private Lucy(Context context){
-        log("...Lucy(Context)");
+    private Lucinda(Context context){
+        log("...Lucinda(Context)");
         settings = Settings.getInstance(context);
     }
-    public static Lucy getInstance(Context context){
+    public static Lucinda getInstance(Context context){
         if( instance == null){
-            instance = new Lucy(context);
+            instance = new Lucinda(context);
         }
         return instance;
     }
     public  void initialize(Context context) throws SQLException {
-        log("Lucy.initialize(Context)");
+        log("Lucinda.initialize(Context)");
         initTheApp(context);
         settings.setLucyIsInitialized(true, context);
         log("...lucy is initialized");
@@ -45,14 +45,14 @@ public class Lucy {
         return settings.isInitialized(context);
     }
     public void initTheApp(Context context) throws SQLException {
-        log("Lucy.initTheApp(Context)");
+        log("Lucinda.initTheApp(Context)");
         DBAdmin.createTables(context);
         DBAdmin.insertCategories(context);
         DBAdmin.insertRootItems(context);
     }
 
     public static int getItemID(ViewMode mode){
-        log("Lucy.getItemID(ViewMode)", mode.toString());
+        log("Lucinda.getItemID(ViewMode)", mode.toString());
         if( mode.equals(ViewMode.TODO)){
             return R.id.bottomNavigation_todo;
         }else if (mode.equals(ViewMode.TODAY)){
@@ -65,7 +65,7 @@ public class Lucy {
         return R.id.bottomNavigation_todo;
     }
     public void reset(Context context) throws SQLException {
-        log("Lucy.reset(Context)");
+        log("Lucinda.reset(Context)");
         DBAdmin.dropTables(context);
         DBAdmin.createTables(context);
         DBAdmin.insertCategories(context);
@@ -77,7 +77,7 @@ public class Lucy {
     }
 
     public void setIsInitialized(boolean b, Context context) {
-        log("Lucy.setIsInitialized(boolean, Context");
+        log("Lucinda.setIsInitialized(boolean, Context");
         settings.setLucyIsInitialized(b, context);
     }
 }

@@ -104,4 +104,9 @@
     <string name="time_please">time please</string>
     <string name="add_child_item">add child item</string>
     <string name="duration">duration</string>
+    <string name="dismiss">dismiss</string>
+    <string name="estimate">estimate</string>
+    <string name="click_to_view">click to view</string>
+    <string name="estimateDummyInfo">i estimate that the this activity will have a durationhn of 1 hour and 7 minutes, and it will set back my energy level by 2 units, there you are</string>
+    <string name="created">created</string>
 </resources>

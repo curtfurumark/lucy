@@ -57,6 +57,7 @@ public class DBAdmin {
         item.setParentId(cursor.getInt(13));
         item.setDays(cursor.getInt(14));
         item.setPeriod(cursor.getString(15));
+        item.setEstimate(cursor.getString(16));
         return item;
     }
 
@@ -79,6 +80,9 @@ public class DBAdmin {
         cv.put("parentID", item.getParentId());
         if( item.getPeriod() != null) {
             cv.put("period", item.getPeriod().toJson());
+        }
+        if( item.getEstimate() != null){
+            cv.put("estimate", item.getEstimate().toJson());
         }
         return cv;
     }

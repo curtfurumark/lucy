@@ -9,7 +9,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/itemEditor_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:backgroundTint="@color/purple_500"
         tools:context=".activities.ItemEditor">
 
@@ -22,6 +22,7 @@
             android:ems="6"
             android:hint="id"
             android:inputType="number"
+            android:minHeight="48dp"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/labelType" />
@@ -52,7 +53,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:hint="created"
+            android:hint="@string/created"
             android:inputType="text"
             android:textSize="16sp"
             app:layout_constraintStart_toEndOf="@+id/textView3"
@@ -354,6 +355,55 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/label_category" />
 
+        <androidx.cardview.widget.CardView
+            android:id="@+id/itemEditor_cardViewEstimate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="10dp"
+
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/itemEditor_hasChild">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/itemEditor_layoutEstimate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/itemEditor_labelEstimate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:text="@string/estimate"
+                    android:textSize="24sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+                <TextView
+                    android:id="@+id/itemEditor_estimate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/estimateDummyInfo"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/itemEditor_labelEstimate"
+                    android:textSize="16sp"
+                    android:visibility="visible"
+                    tools:layout_editor_absoluteY="708dp" />
+
+                <SeekBar
+                    android:id="@+id/itemEditor_seekBarEnergyEstimate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@+id/itemEditor_estimate"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:visibility="visible"
+                    app:layout_constraintStart_toStartOf="parent"
+                    />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
         <TextView
             android:id="@+id/textView7"
             android:layout_width="wrap_content"
@@ -361,28 +411,9 @@
             android:layout_marginTop="16dp"
             android:text="even further down"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/itemEditor_cardViewEstimate" />
 
-        <TextView
-            android:id="@+id/itemEditor_labelEstimate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:ems="6"
-            android:text="estimate"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/label_hasChild" />
 
-        <TextView
-            android:id="@+id/itemEditor_estimate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="click to view"
-            android:textSize="16sp"
-            app:layout_constraintStart_toEndOf="@+id/itemEditor_labelEstimate"
-            app:layout_constraintTop_toTopOf="@+id/itemEditor_labelEstimate" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
