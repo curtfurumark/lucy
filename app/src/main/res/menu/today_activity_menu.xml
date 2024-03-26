@@ -11,5 +11,7 @@
     <item android:id="@+id/todayActivity_showAffirmation"
         android:title="@string/show_affirmation"/>
     <item android:id="@+id/todayActivity_showEstimate"
-        android:title="show estimate"/>
+        android:title="@string/show_estimate"/>
+    <item android:id="@+id/todayActivity_showPeriodDialog"
+        android:title="@string/add_period"/>
 </menu>

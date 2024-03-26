@@ -35,9 +35,10 @@ import se.curtrune.lucy.classes.Estimate;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.State;
+import se.curtrune.lucy.dialogs.AddEstimateDialog;
 import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.dialogs.DurationDialog;
-import se.curtrune.lucy.dialogs.EstimateItemDialog;
+import se.curtrune.lucy.dialogs.EstimateItemsDialog;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.util.Converter;
 import se.curtrune.lucy.util.ItemStack;
@@ -57,6 +58,7 @@ public class ItemSession extends AppCompatActivity implements
     private EditText editTextMentalComment;
     private EditText editTextEstimateHours;
     private EditText editTextEstimateMinutes;
+    private EditText editTextEstimateSeconds;
     private TextView labelEstimate;
     private CheckBox checkBoxDone;
     private Button buttonTimer;
@@ -195,6 +197,7 @@ public class ItemSession extends AppCompatActivity implements
         labelEstimate = findViewById(R.id.itemSession_labelEstimate);
         editTextEstimateHours = findViewById(R.id.itemSession_estimateHours);
         editTextEstimateMinutes = findViewById(R.id.itemSession_estimateMinutes);
+        editTextEstimateSeconds = findViewById(R.id.itemSession_estimateSeconds);
         layoutEstimate = findViewById(R.id.itemSession_layoutEstimate);
     }
     private void initDefaults(){
@@ -494,9 +497,9 @@ public class ItemSession extends AppCompatActivity implements
     private void setUserInterface(Estimate estimate){
         log("...setUserInterface(Estimate)");
         long seconds = estimate.getDuration();
-        //Duration duration1 = Duration.ofSeconds(seconds);
         editTextEstimateHours.setText(String.valueOf(seconds / 3600));
-        editTextEstimateMinutes.setText(String.valueOf(seconds % 3600));
+        editTextEstimateMinutes.setText(String.valueOf((seconds % 3600) / 60));
+        editTextEstimateSeconds.setText(String.valueOf(seconds % 60));
     }
 
     private void setUserInterface(Item item){
@@ -556,7 +559,7 @@ public class ItemSession extends AppCompatActivity implements
 
     private void showEstimateDialog(){
         log("...showEstimateDialog()");
-        EstimateItemDialog dialog = new EstimateItemDialog();
+        AddEstimateDialog dialog = new AddEstimateDialog();
         dialog.setCallback((estimate, mode) -> {
             log("...onEstimate(Estimate)");
             currentItem.setEstimate(estimate);
@@ -574,9 +577,6 @@ public class ItemSession extends AppCompatActivity implements
         boolean visible = layoutEstimate.getVisibility() == View.VISIBLE;
         int visibility = visible ? View.GONE : View.VISIBLE;
         layoutEstimate.setVisibility(visibility);
-        //editTextEstimateMinutes.setVisibility(visibility);
-        //editTextEstimateHours.setVisibility(visibility);
-
     }
     private void toggleMental(boolean visible){
         log("...toggleMental()");
@@ -590,6 +590,9 @@ public class ItemSession extends AppCompatActivity implements
         textViewAnxiety.setVisibility(visibility);
         seekBarAnxiety.setVisibility(visibility);
         editTextMentalComment.setVisibility(visibility);
+    }
+    private void togglePeriod(){
+    log("...togglePeriod()");
     }
 
     private boolean validateInput(){

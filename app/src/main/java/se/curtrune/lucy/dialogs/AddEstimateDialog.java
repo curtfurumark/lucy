@@ -20,18 +20,17 @@ import java.util.Locale;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Estimate;
-import se.curtrune.lucy.classes.EstimateDate;
 import se.curtrune.lucy.util.Constants;
 
 
-public class EstimateItemDialog extends BottomSheetDialogFragment {
+public class AddEstimateDialog extends BottomSheetDialogFragment {
     private TextView textViewEnergy;
     private SeekBar seekBarEnergy;
-    //private TextView textViewEnergy;
     private TextView textViewDuration;
     private Button buttonDismiss;
     private Button buttonSave;
     private Estimate estimate;
+
     private int energy;
     public  enum Mode{
         CREATE, EDIT
@@ -41,21 +40,15 @@ public class EstimateItemDialog extends BottomSheetDialogFragment {
         void onEstimate(Estimate estimate, Mode mode);
     }
     private Callback callback;
-    public EstimateItemDialog(){
-        mode = Mode.CREATE;
-        estimate = new Estimate();
-        log("EstimateItemDialog()");
+    public AddEstimateDialog(){
+        log("AddEstimateDialog()");
+        this.estimate = new Estimate();
     }
-    public EstimateItemDialog(Estimate estimate){
-        mode = Mode.EDIT;
-        this.estimate = estimate;
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         log("EstimateDateDialog.onCreateView(...)");
-        View view = inflater.inflate(R.layout.estimate_item_dialog, container, false);
+        View view = inflater.inflate(R.layout.add_estimate_dialog, container, false);
         initComponents(view);
        //initDefaults();
         initListeners();

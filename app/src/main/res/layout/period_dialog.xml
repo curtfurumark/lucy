@@ -7,115 +7,147 @@
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:padding="16dp">
-
-
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/chipGroup"
-        style="@style/Widget.MaterialComponents.Chip.Filter"
-        android:layout_width="0dp"
+    <TextView
+        android:id="@+id/periodDialog_labelWeekDays"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayouteading">
+        android:text="day of week"
+        android:textSize="26sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/periodDialog_monday"
-            style="@style/Widget.MaterialComponents.Chip.Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/monday" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/periodDialog_tuesday"
-            style="@style/Widget.MaterialComponents.Chip.Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/tuesday" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/periodDialog_wednesday"
-            style="@style/Widget.MaterialComponents.Chip.Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/wednesday" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/periodDialog_thursday"
-            style="@style/Widget.MaterialComponents.Chip.Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/thursday" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/periodDialog_friday"
-            style="@style/Widget.MaterialComponents.Chip.Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/friday" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/periodDialog_saturday"
-            style="@style/Widget.MaterialComponents.Chip.Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/saturday" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/periodDialog_sunday"
-            style="@style/Widget.MaterialComponents.Chip.Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sunday" />
-    </com.google.android.material.chip.ChipGroup>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayouteading"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="0dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/periodDialog_days_layoutWeekDays"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/days"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/periodDialog_labelWeekDays">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/periodDialog_days"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroup"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/periodDialog_monday"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/monday" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/periodDialog_tuesday"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tuesday" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/periodDialog_wednesday"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/wednesday" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/periodDialog_thursday"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/thursday" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/periodDialog_friday"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/friday" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/periodDialog_saturday"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/saturday" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/periodDialog_sunday"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sunday" />
+        </com.google.android.material.chip.ChipGroup>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/periodDialog_labelDays"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/days"
+        android:textSize="26sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/periodDialog_days_layoutWeekDays" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/periodDialog_layoutDays"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/periodDialog_labelDays">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/periodDialog_textInputLayoutDays"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="379dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/days"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/periodDialog_days"
+                android:inputType="number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
         android:id="@+id/periodDialog_save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:text="@string/save"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/periodDialog_time" />
-
-    <Switch
-        android:id="@+id/periodDialog_switchDays"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="days"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/periodDialog_save" />
+        app:layout_constraintTop_toTopOf="@+id/periodDialog_buttonDismiss" />
 
     <TextView
         android:id="@+id/periodDialog_time"
-        android:layout_width="0dp"
+        android:layout_width="379dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="@string/time_please"
+        android:layout_marginTop="16dp"
         android:background="@drawable/textview_border"
+        android:text="@string/time_please"
         android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chipGroup" />
+        app:layout_constraintTop_toBottomOf="@+id/periodDialog_layoutDays" />
+
+    <Button
+        android:id="@+id/periodDialog_buttonDismiss"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/dismiss"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/periodDialog_time" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

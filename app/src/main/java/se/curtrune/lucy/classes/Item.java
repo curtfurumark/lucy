@@ -179,6 +179,9 @@ public class Item implements Serializable , Listable {
     public boolean hasItemParent(){
         return parent != null;
     }
+    public boolean hasPeriod(){
+        return period != null;
+    }
     public boolean isCategory(String category){
         //log("Item.isCategory(Category)", category);
         if( this.category == null){

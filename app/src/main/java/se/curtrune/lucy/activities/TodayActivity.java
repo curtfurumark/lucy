@@ -34,13 +34,17 @@ import se.curtrune.lucy.adapters.ItemAdapter;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.CallingActivity;
+import se.curtrune.lucy.classes.EstimateItems;
 import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.Period;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.dialogs.AddAppointmentDialog;
 import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.dialogs.AddTemplateDialog;
 import se.curtrune.lucy.dialogs.EstimateDateDialog;
+import se.curtrune.lucy.dialogs.EstimateItemsDialog;
+import se.curtrune.lucy.dialogs.PeriodDialog;
 import se.curtrune.lucy.dialogs.StatisticsDialog;
 import se.curtrune.lucy.enums.ViewMode;
 import se.curtrune.lucy.util.Constants;
@@ -266,6 +270,8 @@ public class TodayActivity extends AppCompatActivity implements
             showAffirmation();
         }else if(item.getItemId() == R.id.todayActivity_showEstimate){
             showEstimate();
+        }else if ( item.getItemId() == R.id.todayActivity_showPeriodDialog){
+            showPeriodDialog();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -460,9 +466,21 @@ public class TodayActivity extends AppCompatActivity implements
     }
     private void showEstimate(){
         log("...showEstimate()");
-        EstimateDateDialog estimateDateDialog = new EstimateDateDialog(LocalDate.now());
+        EstimateItemsDialog estimateDateDialog = new EstimateItemsDialog(items);
         estimateDateDialog.show(getSupportFragmentManager(), "estimate me");
 
+    }
+    private void showPeriodDialog(){
+        log("...showPeriodDialog()");
+        PeriodDialog dialog = new PeriodDialog();
+        dialog.setListener(new PeriodDialog.Callback() {
+            @Override
+            public void onPeriod(Period period) {
+                log("...onPeriod(Period)", period.toString());
+                log(period);
+            }
+        });
+        dialog.show(getSupportFragmentManager(), "add period");
     }
     private void showStatistics(){
         log("...showStatistics()");

@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.chip.Chip;
@@ -31,7 +32,10 @@ import se.curtrune.lucy.util.Converter;
 
 public class PeriodDialog extends BottomSheetDialogFragment {
     private EditText editTextDays;
+    private TextView labelDays;
+    private TextView labelWeekDays;
     private Button buttonSave;
+    private Button buttonDismiss;
     private Chip chipMonday;
     private Chip chipTuesday;
     private Chip chipWednesday;
@@ -39,7 +43,8 @@ public class PeriodDialog extends BottomSheetDialogFragment {
     private Chip chipFriday;
     private Chip chipSaturday;
     private Chip chipSunday;
-    private Switch switchDays;
+    private ConstraintLayout layoutDays;
+    private ConstraintLayout layoutWeekDays;
     private LocalTime time;
     private TextView textViewTime;
 
@@ -49,9 +54,10 @@ public class PeriodDialog extends BottomSheetDialogFragment {
 
     private Callback listener;
     private Period period;
-    private enum EditMode{
-        CREATE, EDIT
+    private enum Mode{
+        DAYS, WEEKDAYS, PENDING
     }
+    private Mode mode = Mode.PENDING;
 
     private Period.Mode periodMode = Period.Mode.DAY_OF_WEEKS;
     public PeriodDialog(){
@@ -72,21 +78,22 @@ public class PeriodDialog extends BottomSheetDialogFragment {
         return view;
     }
     private Period getPeriod(){
-        log("...getPeriod()");
-        if( periodMode.equals(Period.Mode.DAYS)) {
+        log("...getPeriod()", mode.toString());
+        if( mode.equals(Mode.DAYS)) {
             if (editTextDays.getText().toString().isEmpty()){
                 Toast.makeText(getContext(), "missing value days", Toast.LENGTH_LONG).show();
             }else{
                 period.setDays(Integer.parseInt(editTextDays.getText().toString()));
+                //period.setTime();
             }
         }
         return period;
-
     }
     private void initComponents(View view){
         log("...initComponents(View)");
         editTextDays = view.findViewById(R.id.periodDialog_days);
         buttonSave = view.findViewById(R.id.periodDialog_save);
+        buttonDismiss = view.findViewById(R.id.periodDialog_buttonDismiss);
         chipMonday = view.findViewById(R.id.periodDialog_monday);
         chipTuesday = view.findViewById(R.id.periodDialog_tuesday);
         chipWednesday = view.findViewById(R.id.periodDialog_wednesday);
@@ -94,8 +101,12 @@ public class PeriodDialog extends BottomSheetDialogFragment {
         chipFriday = view.findViewById(R.id.periodDialog_friday);
         chipSaturday = view.findViewById(R.id.periodDialog_saturday);
         chipSunday = view.findViewById(R.id.periodDialog_sunday);
-        switchDays = view.findViewById(R.id.periodDialog_switchDays);
         textViewTime = view.findViewById(R.id.periodDialog_time);
+        labelDays = view.findViewById(R.id.periodDialog_labelDays);
+        labelWeekDays = view.findViewById(R.id.periodDialog_labelWeekDays);
+        layoutDays = view.findViewById(R.id.periodDialog_layoutDays);
+        layoutWeekDays = view.findViewById(R.id.periodDialog_days_layoutWeekDays);
+
     }
     private void initDefaults(){
         log("...initDefaults()");
@@ -103,11 +114,6 @@ public class PeriodDialog extends BottomSheetDialogFragment {
     }
     private void initListeners(){
         log("...initListeners()");
-        buttonSave.setOnClickListener(view1 -> {
-            Period period = getPeriod();
-            listener.onPeriod(period);
-            dismiss();
-        });
         textViewTime.setOnClickListener(view->showTimeDialog());
         chipMonday.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -158,15 +164,17 @@ public class PeriodDialog extends BottomSheetDialogFragment {
                 setDayOfWeek(DayOfWeek.SUNDAY, isChecked);
             }
         });
-        switchDays.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if( isChecked){
-                    periodMode = Period.Mode.DAYS;
-                }else{
-                    periodMode = Period.Mode.DAY_OF_WEEKS;
-                }
-            }
+        labelWeekDays.setOnClickListener(view->toggle(Mode.WEEKDAYS));
+        labelDays.setOnClickListener(view->toggle(Mode.DAYS));
+        buttonSave.setOnClickListener(view->{
+            log("...buttonSave()");
+            listener.onPeriod(getPeriod());
+            log("...will dismiss?");
+            dismiss();
+        });
+        buttonDismiss.setOnClickListener(view->{
+            log("...button dismiss");
+            dismiss();
         });
 
     }
@@ -202,5 +210,22 @@ public class PeriodDialog extends BottomSheetDialogFragment {
             textViewTime.setText(time.toString());
         }, hour, minutes, true);
         timePicker.show();
+    }
+
+    /**
+     * toggle between weekdays or days interval
+     * TODO, month, year
+     */
+
+    private void toggle(Mode mode){
+        log("...toggle(Mode)", mode.toString());
+        this.mode = mode;
+        if( mode.equals(Mode.DAYS)){
+            layoutDays.setVisibility(View.VISIBLE);
+            layoutWeekDays.setVisibility(View.GONE);
+        }else if( mode.equals(Mode.WEEKDAYS)){
+            layoutDays.setVisibility(View.GONE);
+            layoutWeekDays.setVisibility(View.VISIBLE);
+        }
     }
 }

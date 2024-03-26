@@ -266,7 +266,7 @@ public class LocalDB extends SQLiteOpenHelper {
 
 
     public int update(Item item) {
-        log("LocalDB.update(Item item)");
+        log("LocalDB.update(Item)", item.getHeading());
         db = this.getWritableDatabase();
         String whereClause = String.format("id = %d", item.getID());
         int rowsAffected = db.update(ITEMS_TABLE, DBAdmin.getContentValues(item),whereClause, null );

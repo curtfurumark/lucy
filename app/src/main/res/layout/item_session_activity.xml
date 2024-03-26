@@ -261,8 +261,9 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/itemSession_layoutEstimate"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/itemSession_labelEstimate">
 
@@ -281,8 +282,8 @@
                 android:id="@+id/itemSession_estimateHours"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number"
                 android:hint="hours"
+                android:inputType="number"
                 android:text="00" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -304,27 +305,52 @@
                 android:text="00" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/itemSession_layoutSeconds"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minEms="4"
+            app:layout_constraintStart_toEndOf="@+id/itemSession_textInputLayout_minutes"
+            app:layout_constraintTop_toTopOf="@+id/itemSession_textInputLayout_minutes">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/itemSession_estimateSeconds"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="seconds"
+                android:inputType="number"
+                android:text="00" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/textView10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/energy"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/itemSession_textInputLayout_hours" />
+
+        <SeekBar
+            android:id="@+id/seekBar"
+            style="@style/Widget.AppCompat.SeekBar.Discrete"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:max="10"
+            android:progress="3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView10"
+            app:layout_constraintTop_toTopOf="@+id/textView10" />
+
+
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <SeekBar
-        android:id="@+id/seekBar"
-        style="@style/Widget.AppCompat.SeekBar.Discrete"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:max="10"
-        android:progress="3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView10"
-        app:layout_constraintTop_toTopOf="@+id/textView10" />
 
-    <TextView
-        android:id="@+id/textView10"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/energy"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/itemSession_layoutEstimate" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -29,7 +29,6 @@ import java.util.Locale;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.CallingActivity;
 import se.curtrune.lucy.classes.Categories;
-import se.curtrune.lucy.classes.Estimate;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Period;
 import se.curtrune.lucy.classes.State;
@@ -37,7 +36,6 @@ import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.dialogs.AddCategoryDialog;
 import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.dialogs.EditParentIdDialog;
-import se.curtrune.lucy.dialogs.EstimateItemDialog;
 import se.curtrune.lucy.dialogs.PeriodDialog;
 import se.curtrune.lucy.enums.ViewMode;
 import se.curtrune.lucy.persist.LocalDB;
@@ -370,16 +368,16 @@ public class ItemEditor extends AppCompatActivity implements
     private void showEstimateDialog(){
         log("...showEstimateDialog()");
         //Toast.makeText(this, "estimate in progress", Toast.LENGTH_LONG).show();
-/*        EstimateItemDialog estimateItemDialog = null;
+/*        EstimateItemsDialog estimateItemDialog = null;
         if( currentItem.hasEstimate()){
-                 estimateItemDialog = new EstimateItemDialog(currentItem.getEstimate());
+                 estimateItemDialog = new EstimateItemsDialog(currentItem.getEstimate());
         }else{
-                estimateItemDialog = new EstimateItemDialog();
+                estimateItemDialog = new EstimateItemsDialog();
         }
         estimateItemDialog.setCallback((estimate, mode) -> {
             log("..onEstimate(Estimate)", mode.toString());
             log(estimate);
-            if( mode.equals(EstimateItemDialog.Mode.EDIT)){
+            if( mode.equals(EstimateItemsDialog.Mode.EDIT)){
                 //TODO
             }else{
                 //TODO

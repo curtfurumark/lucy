@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 
 public class Period implements Serializable {
@@ -55,7 +56,10 @@ public class Period implements Serializable {
         return date;
     }
     public LocalDate getNextDate(){
-        return calculateNextDate();
+        if( mode.equals(Mode.DAY_OF_WEEKS)) {
+            return calculateNextDate();
+        }
+        return LocalDate.now().plusDays(days);
     }
     public LocalTime getTime(){
         return time;
@@ -84,5 +88,10 @@ public class Period implements Serializable {
     public String toJson(){
         log("Period.toJson()");
         return new Gson().toJson(this, Period.class);
+    }
+
+    @Override
+    public String toString() {
+        return String.format(Locale.getDefault(), "%s", mode.toString());
     }
 }
