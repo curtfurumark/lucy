@@ -26,6 +26,7 @@ import se.curtrune.lucy.app.Settings;
 
 public class ItemsWorker {
     private static ItemsWorker instance;
+    public static boolean VERBOSE = false;
     private ItemsWorker(){
         log("...ItemsWorker() private constructor");
     }
@@ -45,12 +46,13 @@ public class ItemsWorker {
         child.setCategory(template.getCategory());
         LocalDB db = new LocalDB(context);
         db.insertChild(template, child);
-        template.setTargetDate( LocalDate.now().plusDays(template.getDays()));
+        template.updateTargetDate();
+        //template.setTargetDate( LocalDate.now().plusDays(template.getDays()));
         db.update(template);
     }
 
 
-    private Item createChildToInfinite(Item parent){
+    private static Item createChildToInfinite(Item parent){
         log("...createChildToInfinite(Item item)");
         Item child = new Item();
         child.setParentId(parent.getID());
@@ -96,7 +98,7 @@ public class ItemsWorker {
     }
 
     public static Item getTodayParent(Context context) {
-        log("ItemsWorker.getTodayParent(Context context)");
+        if( VERBOSE)log("ItemsWorker.getTodayParent(Context context)");
         LocalDB db = new LocalDB(context);
         Settings settings = Settings.getInstance(context);
         return db.selectItem(settings.getRootID(DAILY));
@@ -159,7 +161,7 @@ public class ItemsWorker {
      * @param context,
      * @throws SQLException
      */
-    public void handleInfinite(Item item, Context context) throws SQLException {
+    public static void handleInfinite(Item item, Context context) throws SQLException {
         log("...handleInfinite(Item, Context)", item.getHeading());
         Item child = createChildToInfinite(item);
         child = insert(child, context);
@@ -216,7 +218,7 @@ public class ItemsWorker {
         return items;
     }
 
-    public List<Item> selectChildItems(Item parent ,Context context) {
+    public static List<Item> selectChildItems(Item parent, Context context) {
         log("ItemsWorker.selectChildItems(Item, Context)", parent.getHeading());
         LocalDB db = new LocalDB(context);
         return db.selectItems(Queeries.selectChildren(parent));
@@ -238,7 +240,7 @@ public class ItemsWorker {
         db.setItemHasChild(id, hasChild);
     }
 
-    public void setItemState(Item item, State state, Context context) throws SQLException {
+    public static void setItemState(Item item, State state, Context context) throws SQLException {
         log("ItemsWorker.setItemState(Item, State, Context)");
         if( item.isInfinite()){
             handleInfinite(item, context);

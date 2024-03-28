@@ -34,17 +34,14 @@ import se.curtrune.lucy.adapters.ItemAdapter;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.CallingActivity;
-import se.curtrune.lucy.classes.EstimateItems;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Period;
 import se.curtrune.lucy.classes.State;
-import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.dialogs.AddAppointmentDialog;
 import se.curtrune.lucy.dialogs.AddItemDialog;
+import se.curtrune.lucy.dialogs.AddPeriodDialog;
 import se.curtrune.lucy.dialogs.AddTemplateDialog;
-import se.curtrune.lucy.dialogs.EstimateDateDialog;
 import se.curtrune.lucy.dialogs.EstimateItemsDialog;
-import se.curtrune.lucy.dialogs.PeriodDialog;
 import se.curtrune.lucy.dialogs.StatisticsDialog;
 import se.curtrune.lucy.enums.ViewMode;
 import se.curtrune.lucy.util.Constants;
@@ -71,7 +68,7 @@ public class TodayActivity extends AppCompatActivity implements
     }*/
     private ViewMode mode = ViewMode.TODAY;
     private ItemAdapter adapter;
-    private ItemsWorker worker;
+   // private ItemsWorker worker;
     private List<Item> items = new ArrayList<>();
 
     @Override
@@ -84,7 +81,6 @@ public class TodayActivity extends AppCompatActivity implements
         initListeners();
         initRecycler();
         initSwipe();
-        worker = ItemsWorker.getInstance();
         if( savedInstanceState != null){
             log("...savedInstance != null");
             restoreInstance(savedInstanceState);
@@ -279,9 +275,9 @@ public class TodayActivity extends AppCompatActivity implements
     @Override
     public void onItemClick(Item item) {
         log("...onItemClick(Item)");
-        if(item.hasChild()){
+        if(item.hasChild() && !item.isInfinite()){
             setTitle(item.getHeading());
-            items = worker.selectChildItems(item, this);
+            items = ItemsWorker.selectChildItems(item, this);
             Lucinda.currentParent = item;
             currentParent = item;
             adapter.setList(items);
@@ -316,7 +312,7 @@ public class TodayActivity extends AppCompatActivity implements
                     log("...item is template");
                     ItemsWorker.handleTemplate(item, this);
                 }else {
-                    worker.setItemState(item, State.DONE, this);
+                    ItemsWorker.setItemState(item, State.DONE, this);
                     ItemsWorker.touchParents(item, this);
                 }
                 show(mode);
@@ -393,9 +389,9 @@ public class TodayActivity extends AppCompatActivity implements
                 currentParent = ItemsWorker.getRootItem(Settings.Root.PROJECTS, this);
                 items = ItemsWorker.selectChildren(currentParent, this);
                 break;
-            case TEMPLATES:
+/*            case TEMPLATES:
                 items = ItemsWorker.selectItems(Type.TEMPLATE, this);
-                break;
+                break;*/
             case TODAY:
                 currentParent = ItemsWorker.getTodayParent(this);
                 items = ItemsWorker.selectTodayList(LocalDate.now(), this);
@@ -472,13 +468,10 @@ public class TodayActivity extends AppCompatActivity implements
     }
     private void showPeriodDialog(){
         log("...showPeriodDialog()");
-        PeriodDialog dialog = new PeriodDialog();
-        dialog.setListener(new PeriodDialog.Callback() {
-            @Override
-            public void onPeriod(Period period) {
-                log("...onPeriod(Period)", period.toString());
-                log(period);
-            }
+        AddPeriodDialog dialog = new AddPeriodDialog();
+        dialog.setListener(period -> {
+            log("...onPeriod(Period)", period.toString());
+            log(period);
         });
         dialog.show(getSupportFragmentManager(), "add period");
     }

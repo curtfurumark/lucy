@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.Period;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.workers.ItemsWorker;
@@ -24,7 +25,10 @@ public class Demo {
     private static Item getInfiniteItem(String heading, int days){
         Item item = new Item(heading);
         item.setState(State.INFINITE);
-        item.setDays(1);
+        item.setIsTemplate(true);
+        Period period = new Period();
+        period.setDays(1);
+        item.setPeriod(period);
         item.setParentId(settings.getRootID(Settings.Root.DAILY));
         return item;
     }

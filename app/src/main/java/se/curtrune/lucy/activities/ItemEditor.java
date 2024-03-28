@@ -35,8 +35,8 @@ import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.dialogs.AddCategoryDialog;
 import se.curtrune.lucy.dialogs.AddItemDialog;
+import se.curtrune.lucy.dialogs.AddPeriodDialog;
 import se.curtrune.lucy.dialogs.EditParentIdDialog;
-import se.curtrune.lucy.dialogs.PeriodDialog;
 import se.curtrune.lucy.enums.ViewMode;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.util.Constants;
@@ -49,7 +49,7 @@ import se.curtrune.lucy.workers.ItemsWorker;
 public class ItemEditor extends AppCompatActivity implements
         AddCategoryDialog.Callback,
         AddItemDialog.Callback,
-        //PeriodDialog.Callback,
+        //AddPeriodDialog.Callback,
         DatePickerDialog.OnDateSetListener,
         Kronos.Callback/*,
         TextWatcher */
@@ -458,7 +458,7 @@ public class ItemEditor extends AppCompatActivity implements
     }
     private void showPeriodDialog(){
         log("...showPeriodDialog()");
-        PeriodDialog dialog = new PeriodDialog();
+        AddPeriodDialog dialog = new AddPeriodDialog();
         dialog.setListener(period -> {
             log("...onPeriod(Period)");
             log(period);

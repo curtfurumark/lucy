@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,7 +29,7 @@ import se.curtrune.lucy.classes.Period;
 import se.curtrune.lucy.util.Converter;
 
 
-public class PeriodDialog extends BottomSheetDialogFragment {
+public class AddPeriodDialog extends BottomSheetDialogFragment {
     private EditText editTextDays;
     private TextView labelDays;
     private TextView labelWeekDays;
@@ -60,7 +59,7 @@ public class PeriodDialog extends BottomSheetDialogFragment {
     private Mode mode = Mode.PENDING;
 
     private Period.Mode periodMode = Period.Mode.DAY_OF_WEEKS;
-    public PeriodDialog(){
+    public AddPeriodDialog(){
         log("AddItemFragment default constructor");
         period = new Period();
     }

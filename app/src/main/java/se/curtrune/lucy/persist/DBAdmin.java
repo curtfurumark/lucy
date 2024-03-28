@@ -58,6 +58,8 @@ public class DBAdmin {
         item.setDays(cursor.getInt(14));
         item.setPeriod(cursor.getString(15));
         item.setEstimate(cursor.getString(16));
+        item.setNotification(cursor.getString(17));
+        item.setIsTemplate(cursor.getInt(18) == 0? false: true);
         return item;
     }
 
@@ -84,6 +86,7 @@ public class DBAdmin {
         if( item.getEstimate() != null){
             cv.put("estimate", item.getEstimate().toJson());
         }
+        cv.put("template", item.isTemplate()? 1:0);
         return cv;
     }
     public static ContentValues getContentValues(Mental mental){
@@ -120,8 +123,6 @@ public class DBAdmin {
         mental.setUpdated(cursor.getLong(12));
         return mental;
     }
-
-
 
     public static ContentValues getContentValues(String category) {
         log("DBAdmin.getContentValues(String category) ", category);

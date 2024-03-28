@@ -25,7 +25,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
     public static boolean VERBOSE = false;
 
     public void setList(List<Item> items) {
-        log("ItemAdapter.setList(List<Item>) size", items.size());
+        if( VERBOSE) log("ItemAdapter.setList(List<Item>) size", items.size());
         this.items = items;
         notifyDataSetChanged();
     }
@@ -45,7 +45,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
     private Callback callback;
 
     public ItemAdapter(List<Item> items, Callback callback) {
-        log("ItemAdapter(List<Item>, Callback) items size", items.size());
+        if( VERBOSE) log("ItemAdapter(List<Item>, Callback) items size", items.size());
         this.items = items;
         this.callback = callback;
     }

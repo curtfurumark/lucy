@@ -11,7 +11,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -29,16 +28,16 @@ import java.time.LocalDateTime;
 import java.util.Locale;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.adapters.ItemAdapter;
 import se.curtrune.lucy.classes.CallingActivity;
 import se.curtrune.lucy.classes.Estimate;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
+import se.curtrune.lucy.classes.Period;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.AddEstimateDialog;
 import se.curtrune.lucy.dialogs.AddItemDialog;
+import se.curtrune.lucy.dialogs.AddPeriodDialog;
 import se.curtrune.lucy.dialogs.DurationDialog;
-import se.curtrune.lucy.dialogs.EstimateItemsDialog;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.util.Converter;
 import se.curtrune.lucy.util.ItemStack;
@@ -50,8 +49,7 @@ import se.curtrune.lucy.workers.MentalWorker;
 public class ItemSession extends AppCompatActivity implements
         Kronos.Callback,
         AddItemDialog.Callback,
-        DurationDialog.Callback,
-        ItemAdapter.Callback
+        DurationDialog.Callback
 {
     private EditText editTextHeading;
     private EditText  editTextComment;
@@ -59,7 +57,14 @@ public class ItemSession extends AppCompatActivity implements
     private EditText editTextEstimateHours;
     private EditText editTextEstimateMinutes;
     private EditText editTextEstimateSeconds;
+    private TextView textViewEditPeriod;
     private TextView labelEstimate;
+    private TextView labelPeriod;
+    private TextView labelNotifications;
+    private TextView labelMental;
+    private TextView textViewPeriodDescription;
+    private TextView textViewTargetDate;
+    private TextView textViewNotificationInfo;
     private CheckBox checkBoxDone;
     private Button buttonTimer;
     private TextView textViewDuration;
@@ -67,6 +72,7 @@ public class ItemSession extends AppCompatActivity implements
     private TextView textViewStress;
     private TextView textViewAnxiety;
     private TextView textViewMood;
+    private TextView textViewIsTemplate;
 
     private SeekBar seekBarStress;
     private SeekBar seekBarAnxiety;
@@ -74,6 +80,10 @@ public class ItemSession extends AppCompatActivity implements
     private SeekBar seekBarEnergy;
     private Switch switchSaveMental;
     private ConstraintLayout layoutEstimate;
+    private ConstraintLayout layoutNotification;
+    private ConstraintLayout layoutPeriod;
+    private ConstraintLayout layoutMental;
+    private ConstraintLayout layoutInfo;
     private FloatingActionButton fabAdd;
 
     private enum MentalMode{
@@ -90,10 +100,9 @@ public class ItemSession extends AppCompatActivity implements
     private int energy;
     private long duration;
 
-    private final boolean VERBOSE = true;
+    private final boolean VERBOSE = false;
 
     private Kronos kronos;
-    private ItemsWorker worker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +112,7 @@ public class ItemSession extends AppCompatActivity implements
         setTitle("item session");
         initComponents();
         initListeners();
-        worker = ItemsWorker.getInstance();
+        //worker = ItemsWorker.getInstance();
         Intent intent = getIntent();
         kronos = Kronos.getInstance(this);
         if( intent.getBooleanExtra(Constants.INTENT_ITEM_SESSION, false)){
@@ -140,6 +149,21 @@ public class ItemSession extends AppCompatActivity implements
         currentItem.setState(checkBoxDone.isChecked() ? State.DONE: State.WIP);
         return currentItem;
     }
+    private Mental getMental(){
+        log("...getMental()");
+        if( mental == null){
+            mental = new Mental();
+        }
+        mental.setEnergy(seekBarEnergy.getProgress() - Constants.ENERGY_OFFSET);
+        mental.setMood(seekBarMood.getProgress() - Constants.MOOD_OFFSET);
+        mental.setAnxiety(seekBarAnxiety.getProgress() - Constants.ANXIETY_OFFSET);
+        mental.setStress(seekBarStress.getProgress() - Constants.STRESS_OFFSET);
+        mental.setComment(editTextMentalComment.getText().toString());
+        mental.setHeading(currentItem.getHeading());
+        mental.setCategory(currentItem.getCategory());
+        mental.setItemID(currentItem.getID());
+        return mental;
+    }
     private void handleItemSession(Intent intent){
         log("\thandleItemSession(Intent)");
         if( intent.getBooleanExtra(Constants.CURRENT_ITEM_IS_IN_STACK, false)){
@@ -162,17 +186,17 @@ public class ItemSession extends AppCompatActivity implements
             Toast.makeText(this, "calling activity is null", Toast.LENGTH_LONG).show();
             return;
         }
-        log("...return to calling activity: ", callingActivity.toString());
-        mental = MentalWorker.getMental(currentItem, this);
-        if(mental == null){
-            log("...mental is null, ie no mental data associated with this activity");
+        if ( VERBOSE) log("...return to calling activity: ", callingActivity.toString());
+        //mental = MentalWorker.getMental(currentItem, this);
+        if(!currentItem.hasMental()){
+            log("...currentItem has no mental");
             mentalMode = MentalMode.CREATE;
         }else{
-            log("...got mental");
-            log(mental);
+            log("...currentItem has mental");
+            mental = currentItem.getMental();
             mentalMode = MentalMode.EDIT;
+            setUserInterfaceMental(mental);
         }
-        setUserInterfaceMental(mental);
         setUserInterface(currentItem);
     }
 
@@ -198,7 +222,18 @@ public class ItemSession extends AppCompatActivity implements
         editTextEstimateHours = findViewById(R.id.itemSession_estimateHours);
         editTextEstimateMinutes = findViewById(R.id.itemSession_estimateMinutes);
         editTextEstimateSeconds = findViewById(R.id.itemSession_estimateSeconds);
+        layoutMental = findViewById(R.id.itemSession_layoutMental);
         layoutEstimate = findViewById(R.id.itemSession_layoutEstimate);
+        layoutNotification = findViewById(R.id.itemSession_layoutNotification);
+        layoutPeriod = findViewById(R.id.itemSession_layoutPeriod);
+        labelPeriod = findViewById(R.id.itemSession_labelPeriod);
+        labelMental = findViewById(R.id.itemSession_labelMental);
+        labelNotifications = findViewById(R.id.itemSession_labelNotifications);
+        textViewPeriodDescription = findViewById(R.id.itemSession_periodDescription);
+        textViewTargetDate = findViewById(R.id.itemSession_targetDate);
+        textViewNotificationInfo = findViewById(R.id.itemSession_notificationInfo);
+        textViewIsTemplate = findViewById(R.id.itemSession_tvIsTemplate);
+        textViewEditPeriod = findViewById(R.id.itemSession_editPeriod);
     }
     private void initDefaults(){
         log("...initDefaults()");
@@ -210,13 +245,14 @@ public class ItemSession extends AppCompatActivity implements
     }
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
+        textViewEditPeriod.setOnClickListener(view->showAddPeriodDialog());
+        labelMental.setOnClickListener(view->toggleMental());
+        labelPeriod.setOnClickListener(view->togglePeriod());
         labelEstimate.setOnClickListener(view->toggleEstimate());
-        switchSaveMental.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                log("...onCheckedChanged(CompoundButton, boolean)", isChecked);
-                toggleMental(isChecked);
-            }
+        labelNotifications.setOnClickListener(view->toggleNotifications());
+        switchSaveMental.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            log("...onCheckedChanged(CompoundButton, boolean)", isChecked);
+            saveMental();
         });
         buttonTimer.setOnClickListener(view -> {
             switch(kronos.getState()){
@@ -335,19 +371,7 @@ public class ItemSession extends AppCompatActivity implements
         menuInflater.inflate(R.menu.item_session_menu, menu);
         return true;
     }
-    @Override
-    public void onItemClick(Item item) {
-        log("...onItemClick(Listable)");
-    }
-    @Override
-    public void onLongClick(Item item) {
-        log("ItemSession.onLongClick(Listable)");
-    }
 
-    @Override
-    public void onCheckboxClicked(Item item, boolean checked) {
-        log("...onCheckboxClicked(Item, boolean)");
-    }
 
     @SuppressLint("NonConstantResourceId")
     @Override
@@ -355,8 +379,8 @@ public class ItemSession extends AppCompatActivity implements
         log("...onOptionsItemSelected(MenuItem)", item.getTitle().toString());
         if (item.getItemId() == R.id.itemSession_delete) {
             deleteItem();
-        } else if (item.getItemId() == R.id.itemSession_openInEditor) {
-            openInEditor();
+        } else if (item.getItemId() == R.id.itemSession_addPeriod) {
+            showAddPeriodDialog();
         } else if (item.getItemId() == R.id.itemSession_save) {
             saveItem();
         } else if (item.getItemId() == R.id.itemSession_home)  {
@@ -379,10 +403,7 @@ public class ItemSession extends AppCompatActivity implements
         kronos.setCallback(this);
         if( VERBOSE) log("MusicSessionActivity.onResume()");
     }
-    private void openInEditor(){
-        log("...openInEditor()");
-        Toast.makeText(this, "not implemented", Toast.LENGTH_LONG).show();
-    }
+
     @Override
     protected void onRestart() {
         super.onRestart();
@@ -470,16 +491,9 @@ public class ItemSession extends AppCompatActivity implements
     private void saveMental(){
         log("...saveMental()");
         if( mental == null){
-            mental = new Mental();
+            mentalMode = MentalMode.CREATE;
         }
-        mental.setEnergy(seekBarEnergy.getProgress() - Constants.ENERGY_OFFSET);
-        mental.setMood(seekBarMood.getProgress() - Constants.MOOD_OFFSET);
-        mental.setAnxiety(seekBarAnxiety.getProgress() - Constants.ANXIETY_OFFSET);
-        mental.setStress(seekBarStress.getProgress() - Constants.STRESS_OFFSET);
-        mental.setComment(editTextComment.getText().toString());
-        mental.setHeading(currentItem.getHeading());
-        mental.setCategory(currentItem.getCategory());
-        mental.setItemID(currentItem.getID());
+        mental = getMental();
         if( mentalMode.equals(MentalMode.CREATE)){
             try {
                 mental = MentalWorker.insert(mental, this);
@@ -487,9 +501,9 @@ public class ItemSession extends AppCompatActivity implements
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
                 e.printStackTrace();
             }
-        }else{
+        }else {
             int rowsAffected = MentalWorker.update(mental, this);
-            if( rowsAffected != 1){
+            if (rowsAffected != 1) {
                 Toast.makeText(this, "error updating mental", Toast.LENGTH_LONG).show();
             }
         }
@@ -518,10 +532,18 @@ public class ItemSession extends AppCompatActivity implements
         if( item.hasEstimate()){
             setUserInterface(item.getEstimate());
         }
-        //setUserInterfaceMental(null);
+        if( item.hasPeriod()){
+            setUserInterface(item.getPeriod());
+        }else{
+            textViewPeriodDescription.setText("no period set");
+            textViewTargetDate.setVisibility(View.GONE);
+            //textViewTargetDate.setText(currentItem.getTargetDate().toString());
+        }
+        String isTemplate = item.isTemplate()? "is template": "no a template";
+        textViewIsTemplate.setText(isTemplate);
     }
     private void setUserInterfaceMental(Mental mental){
-        log("...setUserInterface(Mental)");
+        log("...setUserInterface(Mental)", mentalMode.toString());
         if( mentalMode.equals(MentalMode.CREATE)){
             seekBarAnxiety.setProgress(Constants.ANXIETY_OFFSET);
             textViewAnxiety.setText(String.format(Locale.getDefault(),"%s 0",getString(R.string.anxiety) ));
@@ -540,8 +562,13 @@ public class ItemSession extends AppCompatActivity implements
             textViewMood.setText(String.format(Locale.getDefault(), "%s %d",getString(R.string.mood) ,mental.getMood()));
             seekBarStress.setProgress(mental.getStress() + Constants.STRESS_OFFSET);
             textViewStress.setText(String.format(Locale.getDefault(), "%s %d",getString(R.string.stress), mental.getStress()));
-            editTextComment.setText(mental.getComment());
+            editTextMentalComment.setText(mental.getComment());
         }
+    }
+    private void setUserInterface(Period period){
+        log("...setUserInterface(Period)");
+        textViewPeriodDescription.setText(period.toString());
+        textViewTargetDate.setText(currentItem.getTargetDate().toString());
     }
 
     private void showDurationDialog(){
@@ -555,6 +582,22 @@ public class ItemSession extends AppCompatActivity implements
         log("...seconds", duration.getSeconds());
         currentItem.setDuration(duration.getSeconds());
         textViewDuration.setText(Converter.formatSecondsWithHours(duration.getSeconds()));
+    }
+    private void showAddPeriodDialog(){
+        log("...showPeriodDialog()");
+        AddPeriodDialog dialog = new AddPeriodDialog();
+        dialog.setListener(period -> {
+            log("...onPeriod(Period)", period.toString());
+            log(period);
+            setUserInterface(period);
+            currentItem.setPeriod(period);
+            int rowsAffected = ItemsWorker.update(currentItem, this);
+            if( rowsAffected != 1){
+                Toast.makeText(this, "error updating item", Toast.LENGTH_LONG).show();
+            }
+        });
+        dialog.show(getSupportFragmentManager(), "add edit period");
+
     }
 
     private void showEstimateDialog(){
@@ -578,21 +621,36 @@ public class ItemSession extends AppCompatActivity implements
         int visibility = visible ? View.GONE : View.VISIBLE;
         layoutEstimate.setVisibility(visibility);
     }
-    private void toggleMental(boolean visible){
+    private void toggleMental(){
         log("...toggleMental()");
-        int visibility = visible ? View.VISIBLE: View.GONE;
-        textViewStress.setVisibility(visibility);
-        seekBarStress.setVisibility(visibility);
-        textViewMood.setVisibility(visibility);
-        seekBarMood.setVisibility(visibility);
-        textViewEnergy.setVisibility(visibility);
-        seekBarEnergy.setVisibility(visibility);
-        textViewAnxiety.setVisibility(visibility);
-        seekBarAnxiety.setVisibility(visibility);
-        editTextMentalComment.setVisibility(visibility);
+        if( layoutMental.getVisibility() == View.GONE){
+            layoutMental.setVisibility(View.VISIBLE);
+        }else{
+            layoutMental.setVisibility(View.GONE);
+        }
+    }
+    private void toggleNotifications(){
+        log("...toggleNotifications");
+        if( textViewNotificationInfo.getVisibility() == View.GONE){
+            textViewNotificationInfo.setVisibility(View.VISIBLE);
+        }else{
+            textViewNotificationInfo.setVisibility(View.GONE);
+        }
     }
     private void togglePeriod(){
-    log("...togglePeriod()");
+        log("...togglePeriod()");
+        if( layoutPeriod.getVisibility() == View.VISIBLE){
+            layoutPeriod.setVisibility(View.GONE);
+            textViewEditPeriod.setVisibility(View.GONE);
+        }else{
+            layoutPeriod.setVisibility(View.VISIBLE);
+            if( currentItem.hasPeriod()){
+                textViewEditPeriod.setText("edit");
+            }else{
+                textViewEditPeriod.setText("create");
+            }
+            textViewEditPeriod.setVisibility(View.VISIBLE);
+        }
     }
 
     private boolean validateInput(){

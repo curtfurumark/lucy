@@ -51,12 +51,19 @@ public class Logger {
         log("\tstate", item.getState());
         log("\tcategory", item.getCategory());
         log("\ttype", item.getType());
-        if( item.hasEstimate()){
+        log("\tis template", item.isTemplate());
+        log("\thas estimate", item.hasEstimate());
+        if( item.hasEstimate()) {
             log("\titem has estimate");
             log("\t\tduration", item.getEstimate().getDuration());
             log("\t\tenergy", item.getEstimate().getEnergy());
         }
-        log(item.getPeriod());
+        log("\thas period", item.hasPeriod());
+        if( item.hasPeriod()){
+            log("\t\tperiod.toString", item.getPeriod().toString());
+        }
+        log("\thas mental", item.hasMental());
+        log("\thas notification", item.hasNotification());
     }
     public static void log(Mental mental){
         log("log(Mental mental");

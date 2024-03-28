@@ -22,7 +22,11 @@ public class Period implements Serializable {
     private Mode mode = Mode.DAYS;
     private int days;
     private LocalTime time;
+    private LocalDate nextDate;
     private final List<DayOfWeek> dayOfWeeks = new ArrayList<>();
+    public Period(){
+        //log("Period() constructor");
+    }
 
     public int getDays() {
         return days;
@@ -92,6 +96,13 @@ public class Period implements Serializable {
 
     @Override
     public String toString() {
-        return String.format(Locale.getDefault(), "%s", mode.toString());
+        if( mode.equals(Mode.DAYS)) {
+            return String.format(Locale.getDefault(), "%d %s",days,  mode.toString());
+        }
+        String weekDays = "";
+        for( DayOfWeek dayOfWeek: dayOfWeeks){
+            weekDays += dayOfWeek.toString() + " ";
+        }
+        return String.format(Locale.getDefault(), "%s", weekDays);
     }
 }

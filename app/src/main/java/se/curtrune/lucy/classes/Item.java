@@ -3,6 +3,8 @@ package se.curtrune.lucy.classes;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.Gson;
 
 import java.io.Serializable;
@@ -39,6 +41,14 @@ public class Item implements Serializable , Listable {
     protected int energy;
     protected  Period period;
     protected Estimate estimate;
+    protected Notification notification;
+    protected Mental mental;
+    /**
+     * 0 = not a template in anyway
+     * templateRoot, has templateChildren
+     * templateGenerated...
+     */
+    protected int templateType;
 
 
 
@@ -129,6 +139,12 @@ public class Item implements Serializable , Listable {
     public LocalDate getDateUpdated(){
         return getUpdated().toLocalDate();
     }
+    public Mental getMental(){
+        return mental;
+    }
+    public Notification getNotification(){
+        return this.notification;
+    }
 
     public Item getParent(){
         return parent;
@@ -182,6 +198,8 @@ public class Item implements Serializable , Listable {
     public boolean hasPeriod(){
         return period != null;
     }
+    public boolean hasMental() {return mental != null;}
+    public boolean hasNotification(){return mental != null;}
     public boolean isCategory(String category){
         //log("Item.isCategory(Category)", category);
         if( this.category == null){
@@ -201,6 +219,9 @@ public class Item implements Serializable , Listable {
     }
     public boolean isState(State state){
         return this.state == state.ordinal();
+    }
+    public boolean isTemplate(){
+        return templateType != 0;
     }
     public boolean isUpdated(LocalDate date){
         LocalDateTime localDateTime = date.atStartOfDay();
@@ -229,7 +250,12 @@ public class Item implements Serializable , Listable {
     public void setCreated(long created){
         this.created = created;
     }
+    @Deprecated
     public void setDays(int days){
+/*        if (period == null) {
+            this.period = new Period();
+        }
+        this.period.setDays(days);*/
         this.days = days;
     }
     public void setEnergy(int energy){
@@ -245,22 +271,36 @@ public class Item implements Serializable , Listable {
         duration  = now.toEpochSecond(ZoneOffset.UTC) - updated;
     }
     public void setEstimate(Estimate estimate){
-        log("Item.setEstimate(Estimate)");
+        //log("Item.setEstimate(Estimate)");
         this.estimate = estimate;
     }
     public void setEstimate(String json){
-        log("Item.setEstimate(String)", json);
-        this.estimate = new Gson().fromJson(json, Estimate.class);
+        //log("Item.setEstimate(String)", json);
+        if( json != null){
+            this.estimate = new Gson().fromJson(json, Estimate.class);
+        }
     }
     public void setHeading(String heading) {
         this.heading = heading;
     }
 
+    public void setMental(Mental mental){
+        this.mental = mental;
+    }
+    public void setNotification(Notification notification){
+        this.notification = notification;
+    }
+    public void setNotification(String json){
+        //log("Item.setNotification(String)", json);
+    }
     public void setId(long id) {
         this.id = id;
     }
     public void setHasChild(boolean hasChild){
         this.has_child = hasChild? 1:0;
+    }
+    public void setIsTemplate(boolean isTemplate){
+        this.templateType = isTemplate ? 1:0;
     }
     public void setParent(Item parent){
         this.parent_id = parent.getID();
@@ -277,7 +317,19 @@ public class Item implements Serializable , Listable {
     }
     public void setPeriod(Period period){
         this.period = period;
+    }
 
+    /**
+     * sets the next targetDate,
+     * to be called when item is done
+     */
+    public void updateTargetDate(){
+        log("...updateTargetDate()");
+        if( hasPeriod()){
+            target_date = period.getNextDate().toEpochDay();
+        }else{
+            target_date = LocalDate.now().plusDays(days).toEpochDay();
+        }
     }
 
     public void setState(int state){
@@ -314,6 +366,7 @@ public class Item implements Serializable , Listable {
         this.updated = updated;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return String.format("%s (%d), parent: %d, has child: %b", heading,id, parent_id, hasChild());

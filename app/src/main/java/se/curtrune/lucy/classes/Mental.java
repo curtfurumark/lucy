@@ -2,6 +2,7 @@ package se.curtrune.lucy.classes;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -9,7 +10,7 @@ import java.time.ZoneOffset;
 
 import se.curtrune.lucy.util.Converter;
 
-public class Mental implements Listable{
+public class Mental implements Listable, Serializable {
     private long id;
     private String heading;
     private String comment;

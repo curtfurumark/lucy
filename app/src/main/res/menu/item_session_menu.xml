@@ -11,11 +11,8 @@
         android:icon="@drawable/baseline_home_24"
         android:id="@+id/itemSession_home"
         app:showAsAction="always"/>
-    <item android:id="@+id/itemSession_showMoodEnergy"
-        android:title="show mood energy"/>
-    <item
-        android:id="@+id/itemSession_openInEditor"
-        android:title="open in editor" />
     <item android:title="delete item"
         android:id="@+id/itemSession_delete"/>
+    <item android:title="@string/add_period"
+        android:id="@+id/itemSession_addPeriod"/>
 </menu>

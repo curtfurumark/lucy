@@ -30,7 +30,7 @@ public class LocalDB extends SQLiteOpenHelper {
     private static final String TABLE_MENTAL = "mental";
     private static final String TABLE_CATEGORIES = "categories";
     private static final int DB_VERSION = 1;
-    public static boolean VERBOSE = true;
+    public static boolean VERBOSE = false;
 
     private SQLiteDatabase db;
 
@@ -212,13 +212,16 @@ public class LocalDB extends SQLiteOpenHelper {
         return selectItems(Queeries.selectItems(date));
     }
     public List<Item> selectItems(String query){
-        log("LocalDB.selectItems(String query)", query);
+        if( VERBOSE) log("LocalDB.selectItems(String query)", query);
         db = this.getReadableDatabase();
         List<Item> items = new ArrayList<>();
         Cursor cursor = db.rawQuery(query,null);
         if( cursor.moveToFirst()){
             do{
-                items.add(DBAdmin.getItem(cursor));
+                Item item = DBAdmin.getItem(cursor);
+                item.setMental( selectMental(Queeries.selectMental(item)));
+                items.add(item);
+                //items.add(DBAdmin.getItem(cursor));
 
             }while(cursor.moveToNext());
         }
@@ -233,7 +236,7 @@ public class LocalDB extends SQLiteOpenHelper {
     }
 
     public List<Mental> selectMentals() {
-        log("LocalDB.selectMentals()");
+        if( VERBOSE) log("LocalDB.selectMentals()");
         String query = Queeries.selectMentals();
         List<Mental> items = new ArrayList<>();
         db = this.getReadableDatabase();
@@ -316,10 +319,6 @@ public class LocalDB extends SQLiteOpenHelper {
     }
 
 
-
-
-
-
     public List<Item> selectItems() {
         log("LocalDB.selectItems()");
         return selectItems(Queeries.selectItems());
@@ -346,7 +345,7 @@ public class LocalDB extends SQLiteOpenHelper {
      * @return Mental if there is such a thing or null if not found
      */
     public Mental selectMental(String query) {
-        log("LocalDB.selectMentals(String)", query);
+        if( VERBOSE) log("LocalDB.selectMentals(String)", query);
         db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         Mental mental = null;
