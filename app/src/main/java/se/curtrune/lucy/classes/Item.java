@@ -64,7 +64,7 @@ public class Item implements Serializable , Listable {
         this.target_date = LocalDate.now().toEpochDay();
         this.duration = 0;
         this.days = 0;
-        heading = comment = description = tags = "";
+        category = heading = comment = description = tags = "";
         state = State.TODO.ordinal();
         type = Type.PENDING.ordinal();
         has_child = 0;
@@ -186,6 +186,9 @@ public class Item implements Serializable , Listable {
     public long getUpdatedEpoch(){
         return updated;
     }
+    public boolean hasCategory(){
+        return ! this.category.isEmpty();
+    }
     public boolean hasChild(){
         return has_child == 1;
     }
@@ -200,6 +203,9 @@ public class Item implements Serializable , Listable {
     }
     public boolean hasMental() {return mental != null;}
     public boolean hasNotification(){return mental != null;}
+    public boolean hasTags(){
+        return !this.tags.isEmpty();
+    }
     public boolean isCategory(String category){
         //log("Item.isCategory(Category)", category);
         if( this.category == null){

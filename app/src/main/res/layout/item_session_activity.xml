@@ -248,7 +248,6 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/itemSession_fabAdd"
         android:layout_width="wrap_content"
@@ -472,7 +471,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
-        android:id="@+id/divider7"
+        android:id="@+id/dividerInfo"
         android:layout_width="409dp"
         android:layout_height="1dp"
         android:layout_marginTop="8dp"
@@ -490,7 +489,7 @@
         android:text="@string/info"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/divider7"/>
+        app:layout_constraintTop_toBottomOf="@id/dividerInfo"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/itemSession_layoutInfo"
@@ -509,6 +508,39 @@
             android:text="is template"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/itemSession_infoUpdated"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="updated"
+            app:layout_constraintStart_toStartOf="@+id/itemSession_tvIsTemplate"
+            app:layout_constraintTop_toBottomOf="@+id/itemSession_tvIsTemplate" />
+
+        <TextView
+            android:id="@+id/itemSession_infoCreated"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="created"
+            app:layout_constraintStart_toStartOf="@+id/itemSession_infoUpdated"
+            app:layout_constraintTop_toBottomOf="@+id/itemSession_infoUpdated" />
+        <TextView
+            android:id="@+id/itemSession_infoTags"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="tags"
+            app:layout_constraintStart_toStartOf="@+id/itemSession_infoCreated"
+            app:layout_constraintTop_toBottomOf="@+id/itemSession_infoCreated" />
+        <TextView
+            android:id="@+id/itemSession_infoCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="category"
+            app:layout_constraintStart_toStartOf="@+id/itemSession_infoTags"
+            app:layout_constraintTop_toBottomOf="@+id/itemSession_infoTags" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -522,5 +554,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/itemSession_labelPeriod" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

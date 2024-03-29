@@ -60,11 +60,16 @@ public class ItemSession extends AppCompatActivity implements
     private TextView textViewEditPeriod;
     private TextView labelEstimate;
     private TextView labelPeriod;
-    private TextView labelNotifications;
+    private TextView labelNotification;
     private TextView labelMental;
+    private TextView labelInfo;
     private TextView textViewPeriodDescription;
     private TextView textViewTargetDate;
     private TextView textViewNotificationInfo;
+    private TextView textViewCategory;
+    private TextView textViewUpdated;
+    private TextView textViewCreated;
+    private TextView textViewTags;
     private CheckBox checkBoxDone;
     private Button buttonTimer;
     private TextView textViewDuration;
@@ -226,14 +231,22 @@ public class ItemSession extends AppCompatActivity implements
         layoutEstimate = findViewById(R.id.itemSession_layoutEstimate);
         layoutNotification = findViewById(R.id.itemSession_layoutNotification);
         layoutPeriod = findViewById(R.id.itemSession_layoutPeriod);
+        layoutInfo = findViewById(R.id.itemSession_layoutInfo);
         labelPeriod = findViewById(R.id.itemSession_labelPeriod);
         labelMental = findViewById(R.id.itemSession_labelMental);
-        labelNotifications = findViewById(R.id.itemSession_labelNotifications);
+
+        labelNotification = findViewById(R.id.itemSession_labelNotifications);
         textViewPeriodDescription = findViewById(R.id.itemSession_periodDescription);
         textViewTargetDate = findViewById(R.id.itemSession_targetDate);
         textViewNotificationInfo = findViewById(R.id.itemSession_notificationInfo);
-        textViewIsTemplate = findViewById(R.id.itemSession_tvIsTemplate);
         textViewEditPeriod = findViewById(R.id.itemSession_editPeriod);
+        //info
+        labelInfo = findViewById(R.id.itemSession_labelInfo);
+        textViewIsTemplate = findViewById(R.id.itemSession_tvIsTemplate);
+        textViewUpdated = findViewById(R.id.itemSession_infoUpdated);
+        textViewCreated = findViewById(R.id.itemSession_infoCreated);
+        textViewTags = findViewById(R.id.itemSession_infoTags);
+        textViewCategory = findViewById(R.id.itemSession_infoCategory);
     }
     private void initDefaults(){
         log("...initDefaults()");
@@ -249,7 +262,8 @@ public class ItemSession extends AppCompatActivity implements
         labelMental.setOnClickListener(view->toggleMental());
         labelPeriod.setOnClickListener(view->togglePeriod());
         labelEstimate.setOnClickListener(view->toggleEstimate());
-        labelNotifications.setOnClickListener(view->toggleNotifications());
+        labelNotification.setOnClickListener(view->toggleNotifications());
+        labelInfo.setOnClickListener(view->toggleInfo());
         switchSaveMental.setOnCheckedChangeListener((buttonView, isChecked) -> {
             log("...onCheckedChanged(CompoundButton, boolean)", isChecked);
             saveMental();
@@ -539,8 +553,17 @@ public class ItemSession extends AppCompatActivity implements
             textViewTargetDate.setVisibility(View.GONE);
             //textViewTargetDate.setText(currentItem.getTargetDate().toString());
         }
-        String isTemplate = item.isTemplate()? "is template": "no a template";
+        String isTemplate = item.isTemplate()? "is template": "not a template";
         textViewIsTemplate.setText(isTemplate);
+        String textTags = item.hasTags() ? item.getTags(): "no tags";
+        textViewTags.setText(textTags);
+        String textCreated = String.format(Locale.getDefault(), "created %s", Converter.format(item.getCreated()));
+        textViewCreated.setText(textCreated);
+        String textUpdated = String.format(Locale.getDefault(), "updated %s", Converter.format(item.getUpdated()));
+        textViewUpdated.setText(textUpdated);
+        String textCategory = item.hasCategory() ? item.getCategory(): "no category";
+        textViewCategory.setText(textCategory);
+
     }
     private void setUserInterfaceMental(Mental mental){
         log("...setUserInterface(Mental)", mentalMode.toString());
@@ -621,6 +644,15 @@ public class ItemSession extends AppCompatActivity implements
         int visibility = visible ? View.GONE : View.VISIBLE;
         layoutEstimate.setVisibility(visibility);
     }
+    private void toggleInfo(){
+        log("...toggleInfo()");
+        if(layoutInfo.getVisibility() == View.GONE){
+            layoutInfo.setVisibility(View.VISIBLE);
+        }else{
+            layoutInfo.setVisibility(View.GONE);
+        }
+
+    }
     private void toggleMental(){
         log("...toggleMental()");
         if( layoutMental.getVisibility() == View.GONE){
@@ -631,10 +663,10 @@ public class ItemSession extends AppCompatActivity implements
     }
     private void toggleNotifications(){
         log("...toggleNotifications");
-        if( textViewNotificationInfo.getVisibility() == View.GONE){
-            textViewNotificationInfo.setVisibility(View.VISIBLE);
+        if( layoutNotification.getVisibility() == View.GONE){
+            layoutNotification.setVisibility(View.VISIBLE);
         }else{
-            textViewNotificationInfo.setVisibility(View.GONE);
+            layoutNotification.setVisibility(View.GONE);
         }
     }
     private void togglePeriod(){
