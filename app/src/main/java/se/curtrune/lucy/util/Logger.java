@@ -47,7 +47,7 @@ public class Logger {
         log("\tupdated", item.getUpdated());
         log("\ttarget_date", item.getTargetDate());
         log("\ttarget_time", item.getTargetTime());
-        log("\tdays", item.getDays());
+        //log("\tdays", item.getDays());
         log("\tstate", item.getState());
         log("\tcategory", item.getCategory());
         log("\ttype", item.getType());
@@ -66,7 +66,7 @@ public class Logger {
         log("\thas notification", item.hasNotification());
     }
     public static void log(Mental mental){
-        log("log(Mental mental");
+        log("log(Mental)");
         if(mental == null){
             log("log mental called with null mental");
             return;

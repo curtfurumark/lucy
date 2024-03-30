@@ -55,7 +55,7 @@ public class DBAdmin {
         item.setHasChild(cursor.getInt(11) == 1 ? true: false);
         item.setDuration(cursor.getLong(12));
         item.setParentId(cursor.getInt(13));
-        item.setDays(cursor.getInt(14));
+        //item.setDays(cursor.getInt(14));
         item.setPeriod(cursor.getString(15));
         item.setEstimate(cursor.getString(16));
         item.setNotification(cursor.getString(17));
@@ -77,7 +77,7 @@ public class DBAdmin {
         cv.put("state", item.getState().ordinal());
         cv.put("hasChild", item.hasChild() ? 1: 0);
         cv.put("duration", item.getDuration());
-        cv.put("days", item.getDays());
+        //cv.put("days", item.getDays());
         cv.put("category", item.getCategory());
         cv.put("parentID", item.getParentId());
         if( item.getPeriod() != null) {

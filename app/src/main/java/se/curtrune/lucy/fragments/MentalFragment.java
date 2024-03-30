@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,7 +27,6 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.MentalAdapter;
@@ -35,7 +35,7 @@ import se.curtrune.lucy.dialogs.MentalDialog;
 import se.curtrune.lucy.statistics.MentalStatistics;
 import se.curtrune.lucy.workers.MentalWorker;
 
-public class MentalFragment extends Fragment implements MentalAdapter.Callback, MentalDialog.Callback {
+public class MentalFragment extends Fragment implements MentalAdapter.Callback {
     private RecyclerView recycler;
     private EditText editTextSearch;
     private RadioButton radioButtonMood;
@@ -69,6 +69,23 @@ public class MentalFragment extends Fragment implements MentalAdapter.Callback, 
         initListeners();
         initStuff();
         return view;
+    }
+    private void delete(Mental mental){
+        log("...delete(Mental)", mental.getHeading());
+        int rowsAffected = MentalWorker.delete(mental, getContext());
+        if( rowsAffected != 1) {
+            log("...error deleting mental id", mental.getID());
+            Toast.makeText(getContext(), "error deleting mental", Toast.LENGTH_LONG).show();
+            return;
+        }
+        log("...mental delete ok");
+        if( !mentalStatistics.remove(mental)){
+            log("...error removing mental from statistics list");
+            Toast.makeText(getContext(), "error removing mental from list", Toast.LENGTH_LONG).show();
+            return;
+        }
+        log("...remove ok");
+        adapter.setList(mentalStatistics.getMentalList());
     }
 
     private void filter(String str){
@@ -155,10 +172,32 @@ public class MentalFragment extends Fragment implements MentalAdapter.Callback, 
     public void onItemClick(Mental item) {
         log("...onItemClick(Mental)");
         MentalDialog dialog = new MentalDialog(item);
-        dialog.setCallback((mental, mode) -> log("...mental dialog callback...for what its worth"));
+        dialog.setCallback((mental, mode) ->{
+            log("...mental dialog callback ", mode.toString());
+            switch (mode){
+                case DELETE:
+                    delete(mental);
+                    break;
+                case EDIT:
+                    MentalWorker.update(mental, getContext());
+                    adapter.notifyDataSetChanged();
+                    break;
+                case CREATE_WITH_ITEM:
+                case CREATE:
+                    try {
+                        mental = MentalWorker.insert(mental, getContext());
+                        mentals.add(0, mental);
+                        adapter.notifyDataSetChanged();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+
+            }
+
+
+        });
         dialog.show(requireActivity().getSupportFragmentManager(), "hello mental");
-        //showMentalDialog();
-        //log(item);
     }
 
     @Override
@@ -170,7 +209,7 @@ public class MentalFragment extends Fragment implements MentalAdapter.Callback, 
     }
     private void showDateDialog(boolean setFirstDate){
         log("...showDateDialog");
-        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext());
+        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext());
         datePickerDialog.setOnDateSetListener((view, year, month, dayOfMonth) ->
         {
             log("...onDateSet()");
@@ -190,6 +229,9 @@ public class MentalFragment extends Fragment implements MentalAdapter.Callback, 
             log("...onMental()", mode.toString());
             log(mental);
             switch (mode){
+                case DELETE:
+                    delete(mental);
+                    break;
                 case EDIT:
                     MentalWorker.update(mental, getContext());
                     adapter.notifyDataSetChanged();
@@ -236,10 +278,10 @@ public class MentalFragment extends Fragment implements MentalAdapter.Callback, 
         textViewFirstDate.setText(firstDate.toString());
 
     }
-    @Override
+/*    @Override
     public void onMental(Mental mental, MentalDialog.Mode mode) {
         log("MentalFragment.onMental, MentalDialog.Mode");
-    }
+    }*/
     private void updateStatistics(){
         log("...updateStatistics()");
         mentalStatistics = new MentalStatistics(firstDate, lastDate, getContext());

@@ -71,11 +71,19 @@ public class LocalDB extends SQLiteOpenHelper {
     public int delete(Item item) {
         log("LocalDB.delete(Item)");
         db = this.getWritableDatabase();
-        String whereClause = String.format("id = %d", item.getID());
+        String whereClause = String.format(Locale.getDefault(), "id = %d", item.getID());
         int rowsAffected = db.delete(ITEMS_TABLE, whereClause, null);
         if( rowsAffected != 1){
             log("some kind of error deleting item");
         }
+        db.close();
+        return rowsAffected;
+    }
+    public int delete(Mental mental){
+        log("LocalDb.delete(Mental)");
+        db = this.getWritableDatabase();
+        String whereClause = String.format(Locale.getDefault(), "id =%d", mental.getID());
+        int rowsAffected = db.delete(TABLE_MENTAL, whereClause, null);
         db.close();
         return rowsAffected;
     }

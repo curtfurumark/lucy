@@ -37,20 +37,6 @@ public class ItemsWorker {
         return instance;
     }
 
-    public static void handleTemplate(Item template, Context context) {
-        log("...handleTemplate(Item item)");
-        Item child = new Item();
-        child.setState(State.DONE);
-        child.setHeading(template.getHeading());
-        child.setDuration(template.getDuration());
-        child.setCategory(template.getCategory());
-        LocalDB db = new LocalDB(context);
-        db.insertChild(template, child);
-        template.updateTargetDate();
-        //template.setTargetDate( LocalDate.now().plusDays(template.getDays()));
-        db.update(template);
-    }
-
 
     private static Item createChildToInfinite(Item parent){
         log("...createChildToInfinite(Item item)");
@@ -132,6 +118,25 @@ public class ItemsWorker {
         LocalDB db = new LocalDB(context);
         return  db.selectItem(parentId).hasChild();
     }
+
+    public static int handleTemplate(Item template, Context context) {
+        log("...handleTemplate(Item, Context)", template.getHeading());
+        if(template.isDone()){
+            log("...do not set templates to done");
+            template.setState(State.TODO);
+        }
+        Item child = new Item();
+        child.setState(State.DONE);
+        child.setHeading(template.getHeading());
+        child.setDuration(template.getDuration());
+        child.setCategory(template.getCategory());
+        LocalDB db = new LocalDB(context);
+        db.insertChild(template, child);
+        if( template.hasPeriod()) {
+            template.updateTargetDate();
+        }
+        return db.update(template);
+    }
     public static Item selectItem(long parentId, Context context) {
         log("...selectItem(long, Context");
         LocalDB db = new LocalDB(context);
@@ -165,12 +170,13 @@ public class ItemsWorker {
         log("...handleInfinite(Item, Context)", item.getHeading());
         Item child = createChildToInfinite(item);
         child = insert(child, context);
-        item.setTargetDate(LocalDate.now().plusDays(item.getDays()));
+        //item.setTargetDate(LocalDate.now().plusDays(item.getDays()));
+        item.updateTargetDate();
         update(item, context);
 
     }
-    public static Item insert(Item item, Context context) throws SQLException {
-        log("ItemsWorker.insert(Item, Context");
+    public static Item insert(Item item, Context context)  {
+        log("ItemsWorker.insert(Item, Context)", item.getHeading());
         LocalDB db = new LocalDB(context);
         item = db.insert(item);
         db.close();
@@ -263,7 +269,6 @@ public class ItemsWorker {
         log("...touchParents()");
         LocalDB db = new LocalDB(context);
         db.touchParents(item);
-
     }
 
     /**
@@ -274,7 +279,11 @@ public class ItemsWorker {
      */
     public static int update(Item item, Context context) {
         log("ItemsWorker.update(Item, Context)");
-        LocalDB db = new LocalDB(context);
-        return db.update(item);
+        if(item.isTemplate()){
+            return handleTemplate(item, context);
+        }else {
+            LocalDB db = new LocalDB(context);
+            return db.update(item);
+        }
     }
 }

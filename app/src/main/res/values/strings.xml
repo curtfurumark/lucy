@@ -116,4 +116,5 @@
     <string name="seconds">seconds</string>
     <string name="notification">notification</string>
     <string name="info">info</string>
+    <string name="delete">delete</string>
 </resources>

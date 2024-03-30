@@ -233,18 +233,13 @@ public class TodayActivity extends AppCompatActivity implements
     @Override
     public void onAddItem(Item item) {
         log("TodayActivity.onAddItem(Item)", mode.toString());
-        try {
-            switch (mode) {
-                case TODAY:
-                case TODO:
-                case PROJECTS:
-                    item = ItemsWorker.insert(item, this);
-                    items.add(0, item);
-                    adapter.notifyItemInserted(0);
-            }
-        } catch (SQLException e) {
-            log("exception", e.getMessage());
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+        switch (mode) {
+            case TODAY:
+            case TODO:
+            case PROJECTS:
+                item = ItemsWorker.insert(item, this);
+                items.add(0, item);
+                adapter.notifyItemInserted(0);
         }
     }
 
@@ -274,8 +269,8 @@ public class TodayActivity extends AppCompatActivity implements
 
     @Override
     public void onItemClick(Item item) {
-        log("...onItemClick(Item)");
-        if(item.hasChild() && !item.isInfinite()){
+        log("...onItemClick(Item)", item.getHeading());
+        if(item.hasChild() && !item.isTemplate()){
             setTitle(item.getHeading());
             items = ItemsWorker.selectChildItems(item, this);
             Lucinda.currentParent = item;
@@ -305,9 +300,15 @@ public class TodayActivity extends AppCompatActivity implements
 
     @Override
     public void onCheckboxClicked(Item item, boolean checked) {
-        log("...onCheckBoxClicked(Item, boolean");
+        log("...onCheckBoxClicked(Item, boolean) ", checked);
         if( checked){
-            try {
+            item.setState(checked ? State.DONE: State.TODO);
+            int stat = ItemsWorker.update(item, this);
+            log("...stat (should be 1)", stat);
+            if( stat != 1){
+                Toast.makeText(this, "error updating item", Toast.LENGTH_LONG).show();
+            }
+/*            try {
                 if( item.isInfinite() && !item.isDone() && checked){
                     log("...item is template");
                     ItemsWorker.handleTemplate(item, this);
@@ -319,7 +320,7 @@ public class TodayActivity extends AppCompatActivity implements
             } catch (SQLException e) {
                 e.printStackTrace();
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-            }
+            }*/
         }else{
             Toast.makeText(this, "work to be done, which state? ", Toast.LENGTH_LONG).show();
         }

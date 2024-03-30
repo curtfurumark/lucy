@@ -63,6 +63,7 @@ public class ItemSession extends AppCompatActivity implements
     private TextView labelNotification;
     private TextView labelMental;
     private TextView labelInfo;
+    private TextView labelComment;
     private TextView textViewPeriodDescription;
     private TextView textViewTargetDate;
     private TextView textViewNotificationInfo;
@@ -70,6 +71,7 @@ public class ItemSession extends AppCompatActivity implements
     private TextView textViewUpdated;
     private TextView textViewCreated;
     private TextView textViewTags;
+    private TextView textViewID;
     private CheckBox checkBoxDone;
     private Button buttonTimer;
     private TextView textViewDuration;
@@ -89,6 +91,7 @@ public class ItemSession extends AppCompatActivity implements
     private ConstraintLayout layoutPeriod;
     private ConstraintLayout layoutMental;
     private ConstraintLayout layoutInfo;
+    private ConstraintLayout layoutComment;
     private FloatingActionButton fabAdd;
 
     private enum MentalMode{
@@ -234,6 +237,9 @@ public class ItemSession extends AppCompatActivity implements
         layoutInfo = findViewById(R.id.itemSession_layoutInfo);
         labelPeriod = findViewById(R.id.itemSession_labelPeriod);
         labelMental = findViewById(R.id.itemSession_labelMental);
+        //comment
+        layoutComment = findViewById(R.id.itemSession_layoutComment);
+        labelComment = findViewById(R.id.itemSession_labelCommentEtc);
 
         labelNotification = findViewById(R.id.itemSession_labelNotifications);
         textViewPeriodDescription = findViewById(R.id.itemSession_periodDescription);
@@ -247,6 +253,7 @@ public class ItemSession extends AppCompatActivity implements
         textViewCreated = findViewById(R.id.itemSession_infoCreated);
         textViewTags = findViewById(R.id.itemSession_infoTags);
         textViewCategory = findViewById(R.id.itemSession_infoCategory);
+        textViewID = findViewById(R.id.itemSession_infoID);
     }
     private void initDefaults(){
         log("...initDefaults()");
@@ -259,6 +266,7 @@ public class ItemSession extends AppCompatActivity implements
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
         textViewEditPeriod.setOnClickListener(view->showAddPeriodDialog());
+        labelComment.setOnClickListener(view->toggleComment());
         labelMental.setOnClickListener(view->toggleMental());
         labelPeriod.setOnClickListener(view->togglePeriod());
         labelEstimate.setOnClickListener(view->toggleEstimate());
@@ -266,7 +274,9 @@ public class ItemSession extends AppCompatActivity implements
         labelInfo.setOnClickListener(view->toggleInfo());
         switchSaveMental.setOnCheckedChangeListener((buttonView, isChecked) -> {
             log("...onCheckedChanged(CompoundButton, boolean)", isChecked);
-            saveMental();
+            if(isChecked) {
+                saveMental();
+            }
         });
         buttonTimer.setOnClickListener(view -> {
             switch(kronos.getState()){
@@ -415,20 +425,20 @@ public class ItemSession extends AppCompatActivity implements
         super.onResume();
         setButtonText();
         kronos.setCallback(this);
-        if( VERBOSE) log("MusicSessionActivity.onResume()");
+        if( VERBOSE) log("ItemSession.onResume()");
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
         kronos.setCallback(this);
-        if( VERBOSE) log("MusicSessionActivity.onRestart()");
+        if( VERBOSE) log("ItemSession.onRestart()");
     }
     @Override
     protected void onStop() {
         super.onStop();
         kronos.removeCallback();
-        if( VERBOSE) log("MusicSessionActivity.onStop()");
+        if( VERBOSE) log("ItemSession.onStop()");
     }
     /**
      * callback for Kronos, called once every second whenever Kronos is running
@@ -490,9 +500,9 @@ public class ItemSession extends AppCompatActivity implements
         }else{
             ItemsWorker.touchParents(currentItem, this);
         }
-        if(switchSaveMental.isChecked() ){
+/*        if(switchSaveMental.isChecked() ){
             saveMental();
-        }
+        }*/
 
         kronos.reset();
         Intent intent = new Intent(this, TodayActivity.class);
@@ -505,6 +515,7 @@ public class ItemSession extends AppCompatActivity implements
     private void saveMental(){
         log("...saveMental()");
         if( mental == null){
+            log("...mental == null");
             mentalMode = MentalMode.CREATE;
         }
         mental = getMental();
@@ -563,20 +574,14 @@ public class ItemSession extends AppCompatActivity implements
         textViewUpdated.setText(textUpdated);
         String textCategory = item.hasCategory() ? item.getCategory(): "no category";
         textViewCategory.setText(textCategory);
+        String textID = String.format(Locale.getDefault(), "id: %d", item.getID());
+        textViewID.setText(textID);
 
     }
     private void setUserInterfaceMental(Mental mental){
         log("...setUserInterface(Mental)", mentalMode.toString());
-        if( mentalMode.equals(MentalMode.CREATE)){
-            seekBarAnxiety.setProgress(Constants.ANXIETY_OFFSET);
-            textViewAnxiety.setText(String.format(Locale.getDefault(),"%s 0",getString(R.string.anxiety) ));
-            seekBarMood.setProgress(Constants.MOOD_OFFSET);
-            textViewMood.setText(String.format(Locale.getDefault(), "%s 0",getString(R.string.mood)));
-            seekBarStress.setProgress(Constants.STRESS_OFFSET);
-            textViewStress.setText(String.format(Locale.ENGLISH, "%s 0", getString(R.string.stress)));
-            seekBarEnergy.setProgress(Constants.ENERGY_OFFSET);
-            textViewEnergy.setText(String.format(Locale.ENGLISH, "%s 0", getString(R.string.energy)));
-        }else{
+        if( currentItem.hasMental()){
+            switchSaveMental.setText("edit mental");
             seekBarAnxiety.setProgress(mental.getAnxiety() + Constants.ANXIETY_OFFSET);
             textViewAnxiety.setText(String.format(Locale.getDefault(), "%s %d",getString(R.string.anxiety), mental.getAnxiety()));
             seekBarEnergy.setProgress(mental.getEnergy() + Constants.ENERGY_OFFSET);
@@ -586,6 +591,16 @@ public class ItemSession extends AppCompatActivity implements
             seekBarStress.setProgress(mental.getStress() + Constants.STRESS_OFFSET);
             textViewStress.setText(String.format(Locale.getDefault(), "%s %d",getString(R.string.stress), mental.getStress()));
             editTextMentalComment.setText(mental.getComment());
+
+        }else{
+            seekBarAnxiety.setProgress(Constants.ANXIETY_OFFSET);
+            textViewAnxiety.setText(String.format(Locale.getDefault(),"%s 0",getString(R.string.anxiety) ));
+            seekBarMood.setProgress(Constants.MOOD_OFFSET);
+            textViewMood.setText(String.format(Locale.getDefault(), "%s 0",getString(R.string.mood)));
+            seekBarStress.setProgress(Constants.STRESS_OFFSET);
+            textViewStress.setText(String.format(Locale.ENGLISH, "%s 0", getString(R.string.stress)));
+            seekBarEnergy.setProgress(Constants.ENERGY_OFFSET);
+            textViewEnergy.setText(String.format(Locale.ENGLISH, "%s 0", getString(R.string.energy)));
         }
     }
     private void setUserInterface(Period period){
@@ -637,6 +652,15 @@ public class ItemSession extends AppCompatActivity implements
             setUserInterface(estimate);
         });
         dialog.show(getSupportFragmentManager(), "add estimate");
+    }
+    private void toggleComment(){
+        log("...toggleComment()");
+        if( layoutComment.getVisibility() == View.GONE){
+            layoutComment.setVisibility(View.VISIBLE);
+        }else{
+            layoutComment.setVisibility(View.GONE);
+        }
+
     }
     private void toggleEstimate(){
         log("...toggleEstimate()");

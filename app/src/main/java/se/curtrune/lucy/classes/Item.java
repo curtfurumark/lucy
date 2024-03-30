@@ -37,7 +37,7 @@ public class Item implements Serializable , Listable {
     protected int has_child;
     protected Item parent;
     protected List<Item> children;
-    protected int days;
+    //protected int days;
     protected int energy;
     protected  Period period;
     protected Estimate estimate;
@@ -63,7 +63,7 @@ public class Item implements Serializable , Listable {
         this.target_time =0;
         this.target_date = LocalDate.now().toEpochDay();
         this.duration = 0;
-        this.days = 0;
+        //this.days = 0;
         category = heading = comment = description = tags = "";
         state = State.TODO.ordinal();
         type = Type.PENDING.ordinal();
@@ -97,9 +97,9 @@ public class Item implements Serializable , Listable {
     public long getCreatedEpoch(){
         return created;
     }
-    public int getDays(){
+/*    public int getDays(){
         return days;
-    }
+    }*/
     public String getDescription() {
         return description;
     }
@@ -125,9 +125,13 @@ public class Item implements Serializable , Listable {
         }
         if( state == State.DONE.ordinal()){
             return String.format("%s %s", Converter.formatDateTimeUI(updated), Converter.formatSecondsWithHours(duration));
-        }else if( state == State.INFINITE.ordinal()){
-            return String.format("%s, %s", getState().toString(), Converter.epochToDate(target_date));
+        }else if( isTemplate()){
+            return String.format("template, %s", Converter.epochToDate(target_date));
         }
+
+        /*else if( state == State.INFINITE.ordinal()){
+            return String.format("%s, %s", getState().toString(), Converter.epochToDate(target_date));
+        }*/
         return String.format("%s", Converter.formatDateTimeUI(updated));
     }
 
@@ -245,7 +249,10 @@ public class Item implements Serializable , Listable {
 
     }
     public void setCategory(String category) {
-        this.category = category;
+        //log("Item.setCategory(String)", category);
+        if( category != null) {
+            this.category = category;
+        }
     }
     public void setComment(String comment) {
         this.comment = comment;
@@ -256,14 +263,10 @@ public class Item implements Serializable , Listable {
     public void setCreated(long created){
         this.created = created;
     }
-    @Deprecated
+/*    @Deprecated
     public void setDays(int days){
-/*        if (period == null) {
-            this.period = new Period();
-        }
-        this.period.setDays(days);*/
         this.days = days;
-    }
+    }*/
     public void setEnergy(int energy){
         this.energy = energy;
     }
@@ -333,9 +336,9 @@ public class Item implements Serializable , Listable {
         log("...updateTargetDate()");
         if( hasPeriod()){
             target_date = period.getNextDate().toEpochDay();
-        }else{
+        }/*else{
             target_date = LocalDate.now().plusDays(days).toEpochDay();
-        }
+        }*/
     }
 
     public void setState(int state){

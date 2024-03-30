@@ -33,6 +33,7 @@ import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.util.Converter;
 import se.curtrune.lucy.workers.CategoryWorker;
+import se.curtrune.lucy.workers.MentalWorker;
 
 
 public class MentalDialog extends BottomSheetDialogFragment {
@@ -60,6 +61,7 @@ public class MentalDialog extends BottomSheetDialogFragment {
 
     private String heading;
     private Button buttonSave;
+    private Button buttonDelete;
     private ArrayAdapter<String> arrayAdapter;
 
     private LocalDate date;
@@ -76,7 +78,7 @@ public class MentalDialog extends BottomSheetDialogFragment {
     private String category;
 
     public  enum Mode {
-        CREATE, CREATE_WITH_ITEM, EDIT
+        CREATE, CREATE_WITH_ITEM, EDIT, DELETE
 
     }
     private Mode mode;
@@ -131,6 +133,10 @@ public class MentalDialog extends BottomSheetDialogFragment {
         setUserInterface();
         return view;
     }
+    private void delete(){
+        log("MentalDialog.delete()", mental.getHeading());
+        listener.onMental(mental, Mode.DELETE);
+    }
     private Mental getMental(){
         log("...getMental()");
         if( !mode.equals(Mode.EDIT)){
@@ -168,6 +174,7 @@ public class MentalDialog extends BottomSheetDialogFragment {
         labelAnxiety = view.findViewById(R.id.mentalDialog_labelAnxiety);
         labelStress = view.findViewById(R.id.mentalDialog_labelStress);
         labelMood = view.findViewById(R.id.mentalDialog_labelMood);
+        buttonDelete = view.findViewById(R.id.mentalDialog_delete);
     }
     private void initDefaults(){
         log("...initDefaults()");
@@ -181,6 +188,10 @@ public class MentalDialog extends BottomSheetDialogFragment {
         buttonSave.setOnClickListener(view1 -> {
             mental = getMental();
             listener.onMental(mental, mode);
+            dismiss();
+        });
+        buttonDelete.setOnClickListener(view->{
+            delete();
             dismiss();
         });
         textViewDate.setOnClickListener(view->showDateDialog());

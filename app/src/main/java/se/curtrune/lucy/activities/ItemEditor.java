@@ -430,7 +430,8 @@ public class ItemEditor extends AppCompatActivity implements
         targetTime = item.getTargetTime();
         textViewTargetTime.setText(targetTime.toString());
         if( item.isInfinite()) {
-            textViewPeriod.setText(String.valueOf(item.getDays()));
+            log("...isInfinite()");
+            //textViewPeriod.setText(String.valueOf(item.getDays()));
         }
         textViewParentId.setText(String.valueOf(item.getParentId()));
         textViewHasChild.setText(String.valueOf(item.hasChild()));

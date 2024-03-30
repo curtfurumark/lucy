@@ -77,4 +77,8 @@ public class MentalStatistics {
     public int getTotalMood() {
         return  filtered.stream().mapToInt(Mental::getMood).sum();
     }
+    public boolean remove(Mental mental){
+        log("MentalStatistics.remove(Mental)");
+        return mentals.remove(mental);
+    }
 }

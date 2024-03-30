@@ -42,5 +42,7 @@
     <string name="time_please">ange tid</string>
     <string name="add_child_item">lägg till deluppgift</string>
     <string name="dismiss">avbryt</string>
+    <string name="info">info</string>
+    <string name="delete">ta bort</string>
 
 </resources>

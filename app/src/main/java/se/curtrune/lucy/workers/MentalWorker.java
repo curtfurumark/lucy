@@ -48,6 +48,12 @@ public class MentalWorker {
         return db.selectMentals(query);
     }
 
+    public static int delete(Mental mental, Context context) {
+        log("MentalWorker.delete(Mental, Context");
+        LocalDB db = new LocalDB(context);
+        return db.delete(mental);
+    }
+
     public Mental getMental(String query, Context context){
         log("...getMental(String, Context)", query);
         LocalDB db = new LocalDB(context);

@@ -56,7 +56,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         Item item = new Item();
         item.setHeading(editTextHeading.getText().toString());
         item.setState(State.INFINITE);
-        item.setDays(Integer.parseInt(editTextDays.getText().toString()));
+        //item.setDays(Integer.parseInt(editTextDays.getText().toString()));
         item.setParent(parent);
         return item;
     }
