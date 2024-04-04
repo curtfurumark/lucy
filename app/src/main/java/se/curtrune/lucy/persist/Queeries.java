@@ -104,6 +104,22 @@ public class Queeries {
         //AND (updated)
         return String.format(Locale.ENGLISH, "SELECT * FROM items WHERE " +
                         "(template = %d AND targetDate <= %d)  OR " +      //INFINITE today or earlier
+                        //"(state = %d AND targetDate = %d) OR " +        //items done today
+                        "(targetDate = %d AND hasChild = 0 AND state = %d) OR " +   //items todo today
+                        "(state = %d AND updated >= %d AND updated <= %d)", //items done today, but targetDate not today
+                1, date.toEpochDay(),
+                //State.DONE.ordinal(), date.toEpochDay(),
+                date.toEpochDay(), State.TODO.ordinal(),
+                State.DONE.ordinal(), startEpoch, endEpoch);
+    }
+    public static String selectTodayList2(LocalDate date) {
+        LocalDateTime.now().toLocalDate();
+        LocalDateTime startLocalDateTime = date.atStartOfDay();
+        long startEpoch = startLocalDateTime.toEpochSecond(ZoneOffset.UTC);
+        long endEpoch = startEpoch + (3600 * 24);
+        //AND (updated)
+        return String.format(Locale.ENGLISH, "SELECT * FROM items WHERE " +
+                        "(template = %d AND targetDate <= %d)  OR " +      //INFINITE today or earlier
                         "(state = %d AND targetDate = %d) OR " +        //items done today
                         "(targetDate = %d AND hasChild = 0 AND state = %d) OR " +   //items todo today
                         "(state = %d AND updated >= %d AND updated <= %d)", //items done today, but targetDate not today

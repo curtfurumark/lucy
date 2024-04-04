@@ -3,22 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:padding="8dp"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="8dp">
 
     <Button
         android:id="@+id/addTemplateDialog_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:text="@string/save"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_spinner" />
+        app:layout_constraintTop_toTopOf="@+id/addTemplateDialog_dismiss" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout6"
+        android:id="@+id/textInputLayout6heading"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -33,21 +30,204 @@
             android:hint=" @string/heading" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout7"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="0dp"
+    <TextView
+        android:id="@+id/addTemplateDialog_repeat"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="repeat"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textInputLayout6heading" />
+
+    <TextView
+        android:id="@+id/addTemplateDialog_labelWeekDays"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="day of week"
+        android:textSize="26sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_repeat" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/addTemplateDialog_layoutWeekDays"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_labelWeekDays">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroup"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/addTemplateDialog_monday"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/monday"
+                android:visibility="visible" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/addTemplateDialog__tuesday"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tuesday" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/addTemplateDialog_wednesday"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/wednesday" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/addTemplateDialog_thursday"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/thursday" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/addTemplateDialog_friday"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/friday" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/addTemplateDialog_saturday"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/saturday" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/addTemplateDialog_sunday"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sunday" />
+        </com.google.android.material.chip.ChipGroup>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/addTemplateDialog_labelDays"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/days"
+        android:textSize="26sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_layoutWeekDays" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/addTemplateDialog_constrainLayoutDays"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_labelDays">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/addTemplateDialog_layoutDays"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="379dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/days"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/addTemplateDialog_days"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/addTemplateDialog_dividerInfo"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="?android:attr/listDivider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout6">
+        app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_constrainLayoutDays" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/addTemplateDialog_days"
-            android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/addTemplateDialog_labelDateTime"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_dividerInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:text="date and time" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/addTemplateDialog_layoutDateTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_labelDateTime">
+
+        <TextView
+            android:id="@+id/addTemplateDialog_date"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="@string/days" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/date"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/addTemplateDialog_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="time"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_date" />
+
+        <Spinner
+            android:id="@+id/addTemplateDialog_spinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_time" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <View
+        android:id="@+id/addTemplateDialog_dividerButtons"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_layoutDateTime" />
 
     <TextView
         android:id="@+id/addTemplateDialog_parent"
@@ -56,16 +236,17 @@
         android:layout_marginTop="16dp"
         android:inputType="number"
         android:text="parent item"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout7" />
+        app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_dismiss" />
 
-    <Spinner
-        android:id="@+id/addTemplateDialog_spinner"
-        android:layout_width="0dp"
+
+    <Button
+        android:id="@+id/addTemplateDialog_dismiss"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:text="@string/dismiss"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_parent" />
+        app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_dividerButtons" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

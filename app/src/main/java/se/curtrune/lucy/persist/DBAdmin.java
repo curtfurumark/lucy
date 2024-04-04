@@ -86,6 +86,9 @@ public class DBAdmin {
         if( item.getEstimate() != null){
             cv.put("estimate", item.getEstimate().toJson());
         }
+        if( item.hasNotification()){
+            cv.put("notification", item.getNotification().toJson());
+        }
         cv.put("template", item.isTemplate()? 1:0);
         return cv;
     }

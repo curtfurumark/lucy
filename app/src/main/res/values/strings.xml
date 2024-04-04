@@ -117,4 +117,7 @@
     <string name="notification">notification</string>
     <string name="info">info</string>
     <string name="delete">delete</string>
+    <string name="start_sequence">start sequence</string>
+    <string name="alarm">alarm</string>
+    <string name="date">date</string>
 </resources>

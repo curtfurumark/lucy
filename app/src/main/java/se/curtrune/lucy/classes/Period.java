@@ -16,14 +16,17 @@ import java.util.Locale;
 public class Period implements Serializable {
 
 
+    public static boolean   VERBOSE = false;
     public enum Mode{
         DAYS, DAY_OF_WEEKS
     }
     private Mode mode = Mode.DAYS;
     private int days;
     private LocalTime time;
-    private LocalDate nextDate;
-    private final List<DayOfWeek> dayOfWeeks = new ArrayList<>();
+    //private LocalDate nextDate;
+    private LocalDate firstDate;
+    private LocalDate lastDate;
+    private List<DayOfWeek> dayOfWeeks = new ArrayList<>();
     public Period(){
         //log("Period() constructor");
     }
@@ -31,12 +34,17 @@ public class Period implements Serializable {
     public int getDays() {
         return days;
     }
+    public LocalDate getFirstDate(){
+        return this.firstDate;
+    }
+    public LocalDate getLastDate(){
+        return this.lastDate;
+    }
     public Mode getMode(){
         return mode;
     }
 
     public void setDays(int days) {
-        //log("Period.setDays(int))", days);
         mode = Mode.DAYS;
         this.days = days;
     }
@@ -75,22 +83,23 @@ public class Period implements Serializable {
         return this.mode.equals(mode);
     }
 
-    public void print() {
-        log("Period.print()", mode.toString());
-        if( mode.equals(Mode.DAYS)){
-            log("...number of days: ", days);
-        }else{
-            dayOfWeeks.forEach(System.out::println);
-            log("next date ", calculateNextDate());
-        }
+    public void setFirstDate(LocalDate firstDate){
+        this.firstDate = firstDate;
+    }
+    public void setLastDate(LocalDate lastDate){
+        this.lastDate = lastDate;
+    }
+    public void setWeekDays(List<DayOfWeek> weekDays){
+        this.mode = Mode.DAY_OF_WEEKS;
+        this.dayOfWeeks = weekDays;
     }
     public void remove(DayOfWeek dayOfWeek){
-        log("Period.remove(DayOfWeek)", dayOfWeek.toString());
+        if( VERBOSE) log("Period.remove(DayOfWeek)", dayOfWeek.toString());
         boolean found = dayOfWeeks.remove(dayOfWeek);
         log("...dayOfWeek removed? ", found);
     }
     public String toJson(){
-        log("Period.toJson()");
+        if( VERBOSE) log("Period.toJson()");
         return new Gson().toJson(this, Period.class);
     }
 

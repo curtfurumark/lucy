@@ -1,5 +1,7 @@
 package se.curtrune.lucy.classes;
 
+import com.google.gson.Gson;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -9,21 +11,35 @@ public class Notification {
     }
     private Type type;
     private LocalDate date;
-    private long itemID;
     private LocalTime time;
+    public LocalDate getDate(){
+        return this.date;
+    }
+    public LocalTime getTime(){
+        return this.time;
+    }
+    public Type getType(){
+        return this.type;
+    }
+    public void setDate(LocalDate date){
+        this.date = date;
+    }
     public void setDate(String string) {
         date = LocalDate.parse(string);
     }
 
-    public void setItemID(long itemID){
-        this.itemID = itemID;
+
+    public void setTime(LocalTime time){
+        this.time = time;
     }
     public void setTime(String string) {
         time = LocalTime.parse(string);
     }
     public void setType(Type type){
         this.type = type;
-
+    }
+    public String toJson(){
+        return new Gson().toJson(this);
     }
 
 }

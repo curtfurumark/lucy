@@ -2,6 +2,8 @@ package se.curtrune.lucy.dialogs;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -16,27 +19,58 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.textfield.TextInputLayout;
+
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.Period;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.workers.UtilWorker;
 
 public class AddTemplateDialog extends BottomSheetDialogFragment {
+    //private ConstraintLayout layoutDays;
+    private TextInputLayout layoutDays;
+    private Chip chipMonday;
+    private Chip chipTuesday;
+    private Chip chipWednesday;
+    private Chip chipThursday;
+    private Chip chipFriday;
+    private Chip chipSaturday;
+    private Chip chipSunday;
+
+    private ConstraintLayout layoutWeekDays;
+    private ConstraintLayout layoutDateTime;
     private EditText editTextHeading;
     private EditText editTextDays;
+
     private TextView textViewParent;
+    private TextView labelDays;
+    private TextView labelWeekDays;
+    private TextView labelDateTime;
+    private TextView textViewDate;
+    private TextView textViewTime;
     private Spinner spinner;
     private Button buttonSave;
+    private Button buttonDismiss;
     private ArrayAdapter<String> arrayAdapter;
     private Item parent;
+    private LocalDate date;
+    private LocalTime time;
 
     private OnNewItemCallback callback;
     private String category;
 
+    private Period.Mode mode = Period.Mode.DAYS;
 
     public AddTemplateDialog(Item parent) {
         this.parent = parent;
@@ -55,24 +89,89 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
     private Item getItem(){
         Item item = new Item();
         item.setHeading(editTextHeading.getText().toString());
-        item.setState(State.INFINITE);
-        //item.setDays(Integer.parseInt(editTextDays.getText().toString()));
+        item.setState(State.TODO);
+        item.setIsTemplate(true);
         item.setParent(parent);
+        item.setPeriod(getPeriod());
         return item;
+    }
+    private Period getPeriod(){
+        log("...getPeriod()");
+        Period period = null;
+        boolean usePeriod = true;
+        if( usePeriod){
+            period = new Period();
+            if( mode.equals(Period.Mode.DAYS)){
+                period.setDays(Integer.valueOf(editTextDays.getText().toString()));
+            }else{
+                period.setWeekDays(getWeekDays());
+            }
+
+        }
+        return period;
+    }
+    private List<DayOfWeek> getWeekDays(){
+        log("...getWeekDays()");
+        List<DayOfWeek> weekDays = new ArrayList<>();
+        if( chipMonday.isChecked()){
+            weekDays.add(DayOfWeek.MONDAY);
+        }
+        if( chipTuesday.isChecked()){
+            weekDays.add(DayOfWeek.TUESDAY);
+        }
+        if( chipWednesday.isChecked()){
+            weekDays.add(DayOfWeek.WEDNESDAY);
+        }
+        if( chipThursday.isChecked()){
+            weekDays.add(DayOfWeek.THURSDAY);
+        }
+        if( chipFriday.isChecked()){
+            weekDays.add(DayOfWeek.FRIDAY);
+        }
+        if( chipSaturday.isChecked()){
+            weekDays.add(DayOfWeek.SATURDAY);
+        }
+        if( chipSunday.isChecked()){
+            weekDays.add(DayOfWeek.SUNDAY);
+        }
+        return weekDays;
     }
 
     private void initComponents(View view){
         log("...initComponents(View view");
         editTextHeading = view.findViewById(R.id.addTemplateDialog_heading);
         buttonSave = view.findViewById(R.id.addTemplateDialog_button);
+        buttonDismiss = view.findViewById(R.id.addTemplateDialog_dismiss);
         editTextDays = view.findViewById(R.id.addTemplateDialog_days);
         textViewParent = view.findViewById(R.id.addTemplateDialog_parent);
         spinner = view.findViewById(R.id.addTemplateDialog_spinner);
+        labelDays = view.findViewById(R.id.addTemplateDialog_labelDays);
+        labelWeekDays = view.findViewById(R.id.addTemplateDialog_labelWeekDays);
+        layoutDays = view.findViewById(R.id.addTemplateDialog_layoutDays);
+        layoutWeekDays = view.findViewById(R.id.addTemplateDialog_layoutWeekDays);
+        chipMonday = view.findViewById(R.id.addTemplateDialog_monday);
+        chipTuesday = view.findViewById(R.id.addTemplateDialog__tuesday);
+        chipWednesday = view.findViewById(R.id.addTemplateDialog_wednesday);
+        chipThursday = view.findViewById(R.id.addTemplateDialog_thursday);
+        chipFriday = view.findViewById(R.id.addTemplateDialog_friday);
+        chipSaturday = view.findViewById(R.id.addTemplateDialog_saturday);
+        chipSunday = view.findViewById(R.id.addTemplateDialog_sunday);
+        //info
+        labelDateTime = view.findViewById(R.id.addTemplateDialog_labelDateTime);
+        layoutDateTime = view.findViewById(R.id.addTemplateDialog_layoutDateTime);
+        textViewDate = view.findViewById(R.id.addTemplateDialog_date);
+        textViewTime = view.findViewById(R.id.addTemplateDialog_time);
     }
 
     private void initListeners(){
         log("...initListeners()");
         buttonSave.setOnClickListener(view->save());
+        buttonDismiss.setOnClickListener(view->dismiss());
+        labelDays.setOnClickListener(view->toggleDays());
+        labelWeekDays.setOnClickListener(view->toggleWeekDays());
+        labelDateTime.setOnClickListener(view-> toggleDateTime());
+        textViewDate.setOnClickListener(view->showDateDialog());
+        textViewTime.setOnClickListener(view->showTimeDialog());
     }
 
     /**
@@ -120,17 +219,71 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
     private void setSpinnerSelection(String category){
         log("..setSpinnerSelection(String)", category);
         spinner.setSelection(arrayAdapter.getPosition(category));
+    }
+    private void showDateDialog(){
+        log("...showDateDialog()");
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext());
+        datePickerDialog.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+
+            }
+        });
+        datePickerDialog.show();
+    }
+    private void showTimeDialog(){
+        log("...showTimeDialog()");
+        int minutes = LocalTime.now().getMinute();
+        int hour = LocalTime.now().getHour();
+        TimePickerDialog timePicker = new TimePickerDialog(this, (view, hourOfDay, minute) -> {
+            time = LocalTime.of(hourOfDay, minute);
+            textViewTime.setText(time.toString());
+        }, hour, minutes, true);
+        timePicker.show();
 
     }
+    private void toggleDays(){
+        log("...toggleDays()");
+        if( layoutDays.getVisibility() == View.GONE){
+            mode = Period.Mode.DAYS;
+            layoutDays.setVisibility(View.VISIBLE);
+            layoutWeekDays.setVisibility(View.GONE);
+        }else{
+            layoutDays.setVisibility(View.GONE);
+        }
+    }
+    private void toggleDateTime(){
+        log("...toggleDateTime()");
+        if(layoutDateTime.getVisibility() == View.GONE){
+            layoutDateTime.setVisibility(View.VISIBLE);
+        }else{
+            layoutDateTime.setVisibility(View.GONE);
+        }
+    }
+    private void toggleWeekDays(){
+        log("...toggleWeekDays()");
+        if( layoutWeekDays.getVisibility() == View.GONE){
+            mode = Period.Mode.DAY_OF_WEEKS;
+            layoutWeekDays.setVisibility(View.VISIBLE);
+            layoutDays.setVisibility(View.GONE);
+        }else{
+            layoutWeekDays.setVisibility(View.GONE);
+        }
+    }
+
     public boolean validateInput(){
         log("...validateInput()");
         if( editTextHeading.getText().toString().isEmpty()){
-            Toast.makeText(getContext(), "missing heading", Toast.LENGTH_LONG).show();
+            //Toast.makeText(getContext(), "missing heading", Toast.LENGTH_LONG).show();
+            log("...item requires heading, and no heading is supplied...");
             return false;
         }
-        if( editTextDays.getText().toString().isEmpty()){
-            Toast.makeText(getContext(), "missing days", Toast.LENGTH_LONG).show();
-            return false;
+        if( mode.equals(Period.Mode.DAYS)) {
+            if (editTextDays.getText().toString().isEmpty()) {
+                Toast.makeText(getContext(), "missing days", Toast.LENGTH_LONG).show();
+                log("...missing days");
+                return false;
+            }
         }
         return true;
     }

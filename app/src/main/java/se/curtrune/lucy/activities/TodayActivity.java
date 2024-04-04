@@ -9,6 +9,7 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -54,12 +55,14 @@ public class TodayActivity extends AppCompatActivity implements
     private RecyclerView recycler;
 
     private EditText editTextSearch;
+    private TextView textViewDate;
 
     private FloatingActionButton fabAdd;
     private ItemTouchHelper itemTouchHelper;
 
     private BottomNavigationView bottomNavigationView;
     private Item currentParent;
+    private LocalDate currentDate;
 
 
 
@@ -77,10 +80,12 @@ public class TodayActivity extends AppCompatActivity implements
         setContentView(R.layout.today_activity);
         log("TodayActivity.onCreate()");
 
+        initDefaults();
         initComponents();
         initListeners();
         initRecycler();
         initSwipe();
+        setUserInterface();
         if( savedInstanceState != null){
             log("...savedInstance != null");
             restoreInstance(savedInstanceState);
@@ -89,6 +94,8 @@ public class TodayActivity extends AppCompatActivity implements
             log("currentViewMode != null");
             mode = Lucinda.currentViewMode;
             bottomNavigationView.setSelectedItemId(Lucinda.getItemID(mode));
+        }else{
+            log("WARNING, Lucinda.currentViewMode == null");
         }
         Intent intent = getIntent();
         if( intent.getBooleanExtra(Constants.INTENT_SHOW_CHILD_ITEMS, false)){
@@ -134,11 +141,18 @@ public class TodayActivity extends AppCompatActivity implements
         recycler = findViewById(R.id.todayActivity_recycler);
         bottomNavigationView = findViewById(R.id.bottomNavigation);
         editTextSearch = findViewById(R.id.todayActivity_search);
+        textViewDate = findViewById(R.id.todayActivity_date);
         fabAdd = findViewById(R.id.todayActivity_fabAdd);
+    }
+    private void initDefaults(){
+        log("...initDefaults()");
+        currentDate = LocalDate.now();
+
     }
 
     private void initListeners(){
         log("...initListeners()");
+        textViewDate.setOnClickListener(view->showDateDialog());
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             log("...onNavigationItemSelected()", Objects.requireNonNull(item.getTitle()).toString());
             if (item.getItemId() == R.id.bottomNavigation_projects) {
@@ -263,6 +277,8 @@ public class TodayActivity extends AppCompatActivity implements
             showEstimate();
         }else if ( item.getItemId() == R.id.todayActivity_showPeriodDialog){
             showPeriodDialog();
+        }else if( item.getItemId() == R.id.todayActivity_startSequence){
+            startSequence();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -365,6 +381,11 @@ public class TodayActivity extends AppCompatActivity implements
         //super.onRestoreInstanceState(savedInstanceState);
 
     }
+    private void setUserInterface(){
+        log("...setUserInterface()");
+        textViewDate.setText(currentDate.toString());
+
+    }
 
     /**
      * make sure to set currentParent before calling this one
@@ -461,6 +482,10 @@ public class TodayActivity extends AppCompatActivity implements
         items = ItemsWorker.selectChildren(currentParent, this);
         adapter.setList(items);
     }
+    private void showDateDialog(){
+        log("...showDateDialog()");
+
+    }
     private void showEstimate(){
         log("...showEstimate()");
         EstimateItemsDialog estimateDateDialog = new EstimateItemsDialog(items);
@@ -480,6 +505,12 @@ public class TodayActivity extends AppCompatActivity implements
         log("...showStatistics()");
         StatisticsDialog dialog = new StatisticsDialog(this);
         dialog.show(getSupportFragmentManager(), "you statistics lover");
+    }
+    private void startSequence(){
+        log("...startSequence()");
+        Intent intent = new Intent(this, SequenceActivity.class);
+        intent.putExtra(Constants.INTENT_SEQUENCE_PARENT, currentParent);
+        startActivity(intent);
 
     }
 }

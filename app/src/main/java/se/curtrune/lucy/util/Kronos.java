@@ -122,8 +122,16 @@ public class Kronos {
         if( VERBOSE) log("Kronos.stop()");
         timerState = State.PENDING;
         seconds = 0;
-        timer.cancel();
-        timerTask.cancel();
+        if( timer != null) {
+            timer.cancel();
+        }else{
+            log("WARNING, Kronos.stop(), timer is null");
+        }
+        if( timerTask != null ) {
+            timerTask.cancel();
+        }else{
+            log("WARNING, Kronos.stop(), timerTask is null");
+        }
     }
 
 

@@ -83,8 +83,10 @@ public class DurationDialog extends BottomSheetDialogFragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        this.listener = (Callback) context;
+        //this.listener = (Callback) context;
     }
-
+    public void setCallback(Callback callback){
+        this.listener = callback;
+    }
 
 }

@@ -10,6 +10,7 @@ import java.util.Locale;
 import se.curtrune.lucy.classes.Estimate;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
+import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.classes.Period;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
@@ -84,6 +85,12 @@ public class Logger {
         log("\tenergy", mental.getEnergy());
         log("\tstress", mental.getStress());
     }
+    public static void log(Notification notification){
+        log("log(Notification)");
+        log("\tdate", notification.getDate());
+        log("\ttime", notification.getTime());
+        log("\ttype", notification.getType().toString());
+    }
     public static void log(Period period){
         log("log(Period)");
         if( period == null){
@@ -100,6 +107,8 @@ public class Logger {
         log("\tnextDate", period.getNextDate());
         log("\ttime", period.getTime());
         log("\ttoJson", period.toJson());
+        log("\tfirstDate", period.getFirstDate());
+        log("\tlastDate", period.getLastDate());
     }
     public static void log(StatisticsPeriod statisticsPeriod){
         log("log StatisticsPeriod...");
@@ -127,7 +136,7 @@ public class Logger {
         log(description + ": " + value);
     }
     public static void log(String description, float value){
-        log(String.format("%s: %f", description, value));
+        log(String.format(Locale.getDefault(),"%s: %f", description, value));
     }
     public static void log(String description, long value)  {
         String message = String.format(Locale.getDefault(),"%s: %d", description, value);
@@ -137,15 +146,21 @@ public class Logger {
         log(description +", " + value);
     }
     public static void log(String description, LocalTime time){
+        String message;
         if( time == null){
-            log("log(String, LocalTime), localTime is null");
-            return;
+            message = String.format(Locale.getDefault(),"%s: null", description);
+        }else {
+            message = String.format(Locale.getDefault(), "%s %s", description, time);
         }
-        String message = String.format("%s %s", description, time.toString());
         log(message);
     }
     public static void log(String description, LocalDate value)  {
-        String message = String.format(Locale.getDefault(),"%s: %s",description, value.toString());
+        String message;
+        if( value == null){
+            message = String.format(Locale.getDefault(),"%s: null",description);
+        }else{
+            message = String.format(Locale.getDefault(),"%s: %s",description, value);
+        }
         log(message);
     }
     public static void log(String description, LocalDateTime value){

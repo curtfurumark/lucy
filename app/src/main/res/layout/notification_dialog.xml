@@ -23,13 +23,13 @@
             android:id="@+id/notificationDialog_alarm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="RadioButton" />
+            android:text="@string/alarm" />
 
         <RadioButton
             android:id="@+id/notificationDialog_notification"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="RadioButton" />
+            android:text="@string/notification" />
     </RadioGroup>
 
     <TextView

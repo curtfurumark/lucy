@@ -22,6 +22,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.chip.Chip;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 import se.curtrune.lucy.R;
@@ -33,6 +34,8 @@ public class AddPeriodDialog extends BottomSheetDialogFragment {
     private EditText editTextDays;
     private TextView labelDays;
     private TextView labelWeekDays;
+    private TextView textViewFirstDate;
+    private TextView textViewLastDate;
     private Button buttonSave;
     private Button buttonDismiss;
     private Chip chipMonday;
@@ -45,6 +48,8 @@ public class AddPeriodDialog extends BottomSheetDialogFragment {
     private ConstraintLayout layoutDays;
     private ConstraintLayout layoutWeekDays;
     private LocalTime time;
+    private LocalDate firstDate;
+    private LocalDate lastDate;
     private TextView textViewTime;
 
     public interface Callback{
@@ -86,6 +91,12 @@ public class AddPeriodDialog extends BottomSheetDialogFragment {
                 //period.setTime();
             }
         }
+        if( firstDate != null){
+            period.setFirstDate(firstDate);
+        }
+        if( lastDate != null){
+            period.setLastDate(lastDate);
+        }
         return period;
     }
     private void initComponents(View view){
@@ -94,7 +105,7 @@ public class AddPeriodDialog extends BottomSheetDialogFragment {
         buttonSave = view.findViewById(R.id.periodDialog_save);
         buttonDismiss = view.findViewById(R.id.periodDialog_buttonDismiss);
         chipMonday = view.findViewById(R.id.periodDialog_monday);
-        chipTuesday = view.findViewById(R.id.periodDialog_tuesday);
+        chipTuesday = view.findViewById(R.id.periodDialog__tuesday);
         chipWednesday = view.findViewById(R.id.periodDialog_wednesday);
         chipThursday = view.findViewById(R.id.periodDialog_thursday);
         chipFriday = view.findViewById(R.id.periodDialog_friday);
@@ -103,8 +114,10 @@ public class AddPeriodDialog extends BottomSheetDialogFragment {
         textViewTime = view.findViewById(R.id.periodDialog_time);
         labelDays = view.findViewById(R.id.periodDialog_labelDays);
         labelWeekDays = view.findViewById(R.id.periodDialog_labelWeekDays);
-        layoutDays = view.findViewById(R.id.periodDialog_layoutDays);
-        layoutWeekDays = view.findViewById(R.id.periodDialog_days_layoutWeekDays);
+        layoutDays = view.findViewById(R.id.periodDialog_constrainLayoutDays);
+        layoutWeekDays = view.findViewById(R.id.periodDialog_layoutWeekDays);
+        textViewFirstDate = view.findViewById(R.id.periodDialog_firstDate);
+        textViewLastDate = view.findViewById(R.id.periodDialog_lastDate);
 
     }
     private void initDefaults(){
@@ -114,6 +127,8 @@ public class AddPeriodDialog extends BottomSheetDialogFragment {
     private void initListeners(){
         log("...initListeners()");
         textViewTime.setOnClickListener(view->showTimeDialog());
+        textViewLastDate.setOnClickListener(view->showDateDialog());
+        textViewFirstDate.setOnClickListener(view->showDateDialog());
         chipMonday.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -196,6 +211,10 @@ public class AddPeriodDialog extends BottomSheetDialogFragment {
     private void setUserInterface(){
         log("...setUserInterface()");
         textViewTime.setText(Converter.format(time));
+
+    }
+    private void showDateDialog(){
+        log("...showDateDialog()");
 
     }
 

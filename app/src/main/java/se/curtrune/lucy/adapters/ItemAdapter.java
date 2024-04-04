@@ -81,9 +81,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
 
         public ViewHolder(@NonNull android.view.View itemView) {
             super(itemView);
-            textView_heading = itemView.findViewById(R.id.todayAdapter_heading);
-            textView_info = itemView.findViewById(R.id.todayAdapter_info);
-            checkBox_state = itemView.findViewById(R.id.todayAdapter_state);
+            textView_heading = itemView.findViewById(R.id.sequenceActivity_itemHeading);
+            textView_info = itemView.findViewById(R.id.sequenceActivity_itemInfo);
+            checkBox_state = itemView.findViewById(R.id.sequenceActivity_itemState);
             checkBox_state.setOnClickListener(view -> {
                 //log("...on checkbox state");
                 Item item = items.get(getAdapterPosition());

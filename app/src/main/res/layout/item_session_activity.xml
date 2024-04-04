@@ -1,590 +1,694 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/itemSession_rootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:backgroundTint="@color/purple_500"
-    android:padding="8dp"
     tools:context=".activities.ItemEditor">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/itemSession_headingLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="@string/heading"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/itemSession_heading"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <TextView
-        android:id="@+id/itemSession_labelCommentEtc"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="comment etc"
-        android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/itemSession_headingLayout"/>
-
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/itemSession_layoutComment"
+        android:id="@+id/itemSession_rootLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/itemSession_labelCommentEtc">
+        android:layout_height="match_parent"
+        android:backgroundTint="@color/purple_500"
+        android:padding="8dp"
+        tools:context=".activities.ItemEditor">
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textInputLayout8comment"
+            android:id="@+id/itemSession_headingLayout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:hint="@string/heading"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/itemSession_comment"
+                android:id="@+id/itemSession_heading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <Button
+            android:id="@+id/itemSession_buttonTimer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/start"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/itemSession_headingLayout" />
+
+        <TextView
+            android:id="@+id/itemSession_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:inputType="time"
+            android:minHeight="48dp"
+            android:text="00:00:00"
+            android:textSize="28sp"
+            app:layout_constraintEnd_toStartOf="@+id/itemSession_checkBoxDone"
+            app:layout_constraintStart_toEndOf="@+id/itemSession_buttonTimer"
+            app:layout_constraintTop_toTopOf="@+id/itemSession_buttonTimer" />
+
+        <CheckBox
+            android:id="@+id/itemSession_checkBoxDone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/done"
+            app:checkedState="checked"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/itemSession_duration"
+            tools:text="done" />
+        <View
+            android:id="@+id/dividerComment"
+            android:layout_width="409dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/itemSession_checkBoxDone"
+            tools:layout_editor_absoluteX="-5dp" />
+
+        <TextView
+            android:id="@+id/itemSession_labelCommentEtc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="comment etc"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/itemSession_checkBoxDone" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/itemSession_layoutComment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/itemSession_labelCommentEtc">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayout8comment"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="comment" />
-        </com.google.android.material.textfield.TextInputLayout>
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_marginStart="8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/itemSession_comment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="comment" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/itemSession_layoutTags"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textInputLayout8comment">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/itemSession_tags"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="tags" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/itemSession_targetDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="target date"
+                android:textSize="24sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/itemSession_layoutTags" />
+
+            <TextView
+                android:id="@+id/itemSession_targetTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="target time"
+                android:textSize="24sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/itemSession_targetDate" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/divider_mental"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/itemSession_layoutComment" />
+
+        <TextView
+            android:id="@+id/itemSession_labelMental"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="mental"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider_mental" />
+
+        <Switch
+            android:id="@+id/itemSession_mentalSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:minHeight="48dp"
+            android:text="@string/save_mental"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/divider_mental" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/itemSession_layoutMental"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/itemSession_labelMental">
+
+            <TextView
+                android:id="@+id/itemSession_labelEnergy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:ems="5"
+                android:text="@string/energy"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <SeekBar
+                android:id="@+id/itemSession_seekBarEnergy"
+                style="@style/Widget.AppCompat.SeekBar.Discrete"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:max="10"
+                android:progress="5"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/itemSession_labelEnergy"
+                app:layout_constraintTop_toTopOf="@+id/itemSession_labelEnergy" />
+
+            <TextView
+                android:id="@+id/itemSession_labelAnxiety"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:ems="5"
+                android:text="@string/anxiety"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/itemSession_labelEnergy" />
+
+            <SeekBar
+                android:id="@+id/itemSession_anxietySeekbar"
+                style="@style/Widget.AppCompat.SeekBar.Discrete"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:max="10"
+                android:progress="5"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/itemSession_labelAnxiety"
+                app:layout_constraintTop_toTopOf="@+id/itemSession_labelAnxiety" />
+
+            <TextView
+                android:id="@+id/itemSession_labelMood"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="9dp"
+                android:ems="5"
+                android:text="@string/mood"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/itemSession_labelAnxiety" />
+
+            <SeekBar
+                android:id="@+id/itemSession_seekBarMood"
+                style="@style/Widget.AppCompat.SeekBar.Discrete"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:max="10"
+                android:progress="5"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/itemSession_labelMood"
+                app:layout_constraintTop_toTopOf="@+id/itemSession_labelMood" />
+
+            <TextView
+                android:id="@+id/itemSession_labelStress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="7dp"
+                android:ems="5"
+                android:text="@string/stress"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/itemSession_labelMood" />
+
+            <SeekBar
+                android:id="@+id/itemSession_stressSeekbar"
+                style="@style/Widget.AppCompat.SeekBar.Discrete"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:max="10"
+                android:progress="5"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/itemSession_labelStress"
+                app:layout_constraintTop_toTopOf="@+id/itemSession_labelStress" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayoutMentalComment"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:hint="@string/mental_comment"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/itemSession_labelStress">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/itemSession_mentalComment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:lines="4"
+                    android:visibility="visible" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+        <View
+            android:id="@+id/dividerEstimate"
+            android:layout_width="409dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/itemSession_layoutMental" />
+
+        <TextView
+            android:id="@+id/itemSession_labelEstimate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/estimate"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dividerEstimate" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/itemSession_layoutEstimate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/itemSession_labelEstimate">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/itemSession_textInputLayout_hours"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:minEms="4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/itemSession_estimateHours"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/hours"
+                    android:inputType="number"
+                    android:text="00" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/itemSession_textInputLayout_minutes"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minEms="4"
+                app:layout_constraintStart_toEndOf="@+id/itemSession_textInputLayout_hours"
+                app:layout_constraintTop_toTopOf="@+id/itemSession_textInputLayout_hours">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/itemSession_estimateMinutes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/minutes"
+                    android:inputType="number"
+                    android:text="00" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/itemSession_layoutSeconds"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minEms="4"
+                app:layout_constraintStart_toEndOf="@+id/itemSession_textInputLayout_minutes"
+                app:layout_constraintTop_toTopOf="@+id/itemSession_textInputLayout_minutes">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/itemSession_estimateSeconds"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/seconds"
+                    android:inputType="number"
+                    android:text="00" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/textView10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:text="@string/energy"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/itemSession_textInputLayout_hours" />
+
+            <SeekBar
+                android:id="@+id/seekBar"
+                style="@style/Widget.AppCompat.SeekBar.Discrete"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:max="10"
+                android:progress="3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textView10"
+                app:layout_constraintTop_toTopOf="@+id/textView10" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/dividerPeriod"
+            android:layout_width="407dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/itemSession_layoutEstimate" />
+
+        <TextView
+            android:id="@+id/itemSession_labelPeriod"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="period"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dividerPeriod" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/itemSession_layoutPeriod"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/itemSession_labelPeriod">
+
+            <TextView
+                android:id="@+id/itemSession_periodDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="16dp"
+                android:text="description"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/itemSession_periodTargetDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="next date"
+                app:layout_constraintStart_toStartOf="@+id/itemSession_periodDescription"
+                app:layout_constraintTop_toBottomOf="@+id/itemSession_periodDescription" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <View
+            android:id="@+id/divider6"
+            android:layout_width="407dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/itemSession_layoutPeriod" />
+
+        <TextView
+            android:id="@+id/itemSession_labelNotifications"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/notification"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/divider6" />
+        <TextView
+            android:id="@+id/itemSession_addNotification"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/itemSession_labelNotifications"
+            android:layout_width="wrap_content"
+            android:text="add"
+            android:textSize="24sp"
+            android:layout_height="wrap_content"
+            />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/itemSession_layoutNotification"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/itemSession_labelNotifications">
+
+            <TextView
+                android:id="@+id/itemSession_notificationInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="info about notification"
+                android:textSize="20sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/itemSession_notificationDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="notification date"
+                android:textSize="20sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/itemSession_notificationInfo" />
+
+            <TextView
+                android:id="@+id/itemSession_notificationTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="notification time"
+                android:textSize="20sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/itemSession_notificationDate" />/
+
+            <TextView
+                android:id="@+id/itemSession_notificationType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="notification date"
+                android:textSize="20sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/itemSession_notificationTime" />/
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/dividerInfo"
+            android:layout_width="409dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/itemSession_layoutNotification" />
+
+        <TextView
+            android:id="@+id/itemSession_labelInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/info"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dividerInfo" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/itemSession_layoutInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textInputLayout8comment">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/itemSession_tags"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="tags" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <Button
-        android:id="@+id/itemSession_buttonTimer"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/start"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/itemSession_layoutComment" />
-
-    <TextView
-        android:id="@+id/itemSession_duration"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="time"
-        android:minHeight="48dp"
-        android:text="00:00:00"
-        android:textSize="28sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/itemSession_buttonTimer" />
-
-    <CheckBox
-        android:id="@+id/itemSession_checkBoxDone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/done"
-        app:checkedState="checked"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/itemSession_buttonTimer"
-        tools:text="done" />
-
-    <View
-        android:id="@+id/divider_mental"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="8dp"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/itemSession_checkBoxDone" />
-
-    <TextView
-        android:id="@+id/itemSession_labelMental"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="mental"
-        android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/divider_mental" />
-
-    <Switch
-        android:id="@+id/itemSession_mentalSwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:minHeight="48dp"
-        android:text="@string/save_mental"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider_mental" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/itemSession_layoutMental"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/itemSession_labelMental">
-
-        <TextView
-            android:id="@+id/itemSession_labelEnergy"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:ems="5"
-            android:text="@string/energy"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/itemSession_labelInfo">
 
-        <SeekBar
-            android:id="@+id/itemSession_seekBarEnergy"
-            style="@style/Widget.AppCompat.SeekBar.Discrete"
+
+            <CheckBox
+                android:id="@+id/itemSession_checkBoxTemplate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="is template"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:layout_editor_absoluteX="49dp"
+                tools:layout_editor_absoluteY="9dp" />
+
+            <TextView
+                android:id="@+id/itemSession_infoUpdated"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="updated"
+                app:layout_constraintStart_toStartOf="@+id/itemSession_checkBoxTemplate"
+                app:layout_constraintTop_toBottomOf="@+id/itemSession_checkBoxTemplate" />
+
+            <TextView
+                android:id="@+id/itemSession_infoCreated"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="created"
+                app:layout_constraintStart_toStartOf="@+id/itemSession_infoUpdated"
+                app:layout_constraintTop_toBottomOf="@+id/itemSession_infoUpdated" />
+
+            <TextView
+                android:id="@+id/itemSession_infoTags"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="tags"
+                app:layout_constraintStart_toStartOf="@+id/itemSession_infoCreated"
+                app:layout_constraintTop_toBottomOf="@+id/itemSession_infoCreated" />
+
+            <TextView
+                android:id="@+id/itemSession_infoCategory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="category"
+                app:layout_constraintStart_toStartOf="@+id/itemSession_infoTags"
+                app:layout_constraintTop_toBottomOf="@+id/itemSession_infoTags" />
+
+            <TextView
+                android:id="@+id/itemSession_infoID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="id"
+                app:layout_constraintStart_toStartOf="@+id/itemSession_infoCategory"
+                app:layout_constraintTop_toBottomOf="@+id/itemSession_infoCategory" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/dividerDateTime"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:max="10"
-            android:progress="5"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/itemSession_labelEnergy"
-            app:layout_constraintTop_toTopOf="@+id/itemSession_labelEnergy" />
-
-        <TextView
-            android:id="@+id/itemSession_labelAnxiety"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_height="1dp"
             android:layout_marginTop="8dp"
-            android:ems="5"
-            android:text="@string/anxiety"
-            android:visibility="visible"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/itemSession_labelEnergy" />
-
-        <SeekBar
-            android:id="@+id/itemSession_anxietySeekbar"
-            style="@style/Widget.AppCompat.SeekBar.Discrete"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:max="10"
-            android:progress="5"
-            android:visibility="visible"
+            android:background="?android:attr/listDivider"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/itemSession_labelAnxiety"
-            app:layout_constraintTop_toTopOf="@+id/itemSession_labelAnxiety" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/itemSession_layoutInfo" />
+
 
         <TextView
-            android:id="@+id/itemSession_labelMood"
+            android:id="@+id/itemSession_labelDateTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="9dp"
-            android:ems="5"
-            android:text="@string/mood"
-            android:visibility="visible"
+            android:layout_marginTop="4dp"
+            android:text="date and time"
+            android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/itemSession_labelAnxiety" />
-
-        <SeekBar
-            android:id="@+id/itemSession_seekBarMood"
-            style="@style/Widget.AppCompat.SeekBar.Discrete"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:max="10"
-            android:progress="5"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/itemSession_labelMood"
-            app:layout_constraintTop_toTopOf="@+id/itemSession_labelMood" />
+            app:layout_constraintTop_toBottomOf="@+id/dividerDateTime" />
 
         <TextView
-            android:id="@+id/itemSession_labelStress"
+            android:id="@+id/itemSession_editPeriod"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="7dp"
-            android:ems="5"
-            android:text="@string/stress"
-            android:visibility="visible"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/itemSession_labelMood" />
-
-        <SeekBar
-            android:id="@+id/itemSession_stressSeekbar"
-            style="@style/Widget.AppCompat.SeekBar.Discrete"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:max="10"
-            android:progress="5"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/itemSession_labelStress"
-            app:layout_constraintTop_toTopOf="@+id/itemSession_labelStress" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textInputLayoutMentalComment"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:hint="@string/mental_comment"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/itemSession_labelStress">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/itemSession_mentalComment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="top"
-                android:lines="4"
-                android:visibility="visible" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/itemSession_fabAdd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="12dp"
-        android:layout_marginBottom="16dp"
-        android:clickable="true"
-        android:contentDescription="@string/add_child_item"
-        android:text="@string/add_child_item"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/baseline_add_circle_outline_24" />
-
-    <View
-        android:id="@+id/dividerEstimate"
-        android:layout_width="409dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="8dp"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/itemSession_layoutMental" />
-
-    <TextView
-        android:id="@+id/itemSession_labelEstimate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/estimate"
-        android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dividerEstimate" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/itemSession_layoutEstimate"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/itemSession_labelEstimate">
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/itemSession_textInputLayout_hours"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:minEms="4"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/itemSession_estimateHours"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/hours"
-                android:inputType="number"
-                android:text="00" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/itemSession_textInputLayout_minutes"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minEms="4"
-            app:layout_constraintStart_toEndOf="@+id/itemSession_textInputLayout_hours"
-            app:layout_constraintTop_toTopOf="@+id/itemSession_textInputLayout_hours">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/itemSession_estimateMinutes"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/minutes"
-                android:inputType="number"
-                android:text="00" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/itemSession_layoutSeconds"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minEms="4"
-            app:layout_constraintStart_toEndOf="@+id/itemSession_textInputLayout_minutes"
-            app:layout_constraintTop_toTopOf="@+id/itemSession_textInputLayout_minutes">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/itemSession_estimateSeconds"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/seconds"
-                android:inputType="number"
-                android:text="00" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
-            android:id="@+id/textView10"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:text="@string/energy"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/itemSession_textInputLayout_hours" />
-
-        <SeekBar
-            android:id="@+id/seekBar"
-            style="@style/Widget.AppCompat.SeekBar.Discrete"
-            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:max="10"
-            android:progress="3"
+            android:text="edit"
+            android:textSize="24sp"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textView10"
-            app:layout_constraintTop_toTopOf="@+id/textView10" />
+            app:layout_constraintTop_toTopOf="@+id/itemSession_labelPeriod" />
 
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <View
-        android:id="@+id/dividerPeriod"
-        android:layout_width="407dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="8dp"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/itemSession_layoutEstimate" />
-
-    <TextView
-        android:id="@+id/itemSession_labelPeriod"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="period"
-        android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dividerPeriod" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/itemSession_layoutPeriod"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/itemSession_labelPeriod">
-
-        <TextView
-            android:id="@+id/itemSession_periodDescription"
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/itemSession_fabAdd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="16dp"
-            android:text="description"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/itemSession_targetDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="next date"
-            app:layout_constraintStart_toStartOf="@+id/itemSession_periodDescription"
-            app:layout_constraintTop_toBottomOf="@+id/itemSession_periodDescription" />
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    <View
-        android:id="@+id/divider6"
-        android:layout_width="407dp"
-        android:layout_height="1dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/itemSession_layoutPeriod" />
-
-    <TextView
-        android:id="@+id/itemSession_labelNotifications"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/notification"
-        android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider6" />
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/itemSession_layoutNotification"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/itemSession_labelNotifications"
-        >
-
-        <TextView
-            android:id="@+id/itemSession_notificationInfo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:text="info about notification"
+            android:layout_marginEnd="12dp"
+            android:clickable="true"
+            android:contentDescription="@string/add_child_item"
+            android:text="@string/add_child_item"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/baseline_add_circle_outline_24" />
 
-    <View
-        android:id="@+id/dividerInfo"
-        android:layout_width="409dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="8dp"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/itemSession_layoutNotification" />
-
-    <TextView
-        android:id="@+id/itemSession_labelInfo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/info"
-        android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dividerInfo" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/itemSession_layoutInfo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/itemSession_labelInfo">
-
-        <TextView
-            android:id="@+id/itemSession_tvIsTemplate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="is template"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/itemSession_infoUpdated"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="updated"
-            app:layout_constraintStart_toStartOf="@+id/itemSession_tvIsTemplate"
-            app:layout_constraintTop_toBottomOf="@+id/itemSession_tvIsTemplate" />
-
-        <TextView
-            android:id="@+id/itemSession_infoCreated"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="created"
-            app:layout_constraintStart_toStartOf="@+id/itemSession_infoUpdated"
-            app:layout_constraintTop_toBottomOf="@+id/itemSession_infoUpdated" />
-
-        <TextView
-            android:id="@+id/itemSession_infoTags"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="tags"
-            app:layout_constraintStart_toStartOf="@+id/itemSession_infoCreated"
-            app:layout_constraintTop_toBottomOf="@+id/itemSession_infoCreated" />
-
-        <TextView
-            android:id="@+id/itemSession_infoCategory"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="category"
-            app:layout_constraintStart_toStartOf="@+id/itemSession_infoTags"
-            app:layout_constraintTop_toBottomOf="@+id/itemSession_infoTags" />
-
-        <TextView
-            android:id="@+id/itemSession_infoID"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="id"
-            app:layout_constraintStart_toStartOf="@+id/itemSession_infoCategory"
-            app:layout_constraintTop_toBottomOf="@+id/itemSession_infoCategory" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <TextView
-        android:id="@+id/itemSession_editPeriod"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:text="edit"
-        android:textSize="24sp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/itemSession_labelPeriod" />
-
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

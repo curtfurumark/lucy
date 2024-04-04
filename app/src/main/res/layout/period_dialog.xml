@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/periodDialog_days_layoutWeekDays"
+        android:id="@+id/periodDialog_layoutWeekDays"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
@@ -43,7 +43,7 @@
                 android:text="@string/monday" />
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/periodDialog_tuesday"
+                android:id="@+id/periodDialog__tuesday"
                 style="@style/Widget.MaterialComponents.Chip.Filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -94,9 +94,9 @@
         android:text="@string/days"
         android:textSize="26sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/periodDialog_days_layoutWeekDays" />
+        app:layout_constraintTop_toBottomOf="@+id/periodDialog_layoutWeekDays" />
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/periodDialog_layoutDays"
+        android:id="@+id/periodDialog_constrainLayoutDays"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
@@ -121,6 +121,39 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <View
+        android:id="@+id/divider3firstDateLastDate"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/periodDialog_constrainLayoutDays" />
+
+
+    <TextView
+        android:id="@+id/periodDialog_time"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/textview_border"
+        android:text="@string/time_please"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/periodDialog_lastDate" />
+
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/periodDialog_time" />
+
     <Button
         android:id="@+id/periodDialog_save"
         android:layout_width="wrap_content"
@@ -129,25 +162,35 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/periodDialog_buttonDismiss" />
 
-    <TextView
-        android:id="@+id/periodDialog_time"
-        android:layout_width="379dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/textview_border"
-        android:text="@string/time_please"
-        android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/periodDialog_layoutDays" />
-
     <Button
         android:id="@+id/periodDialog_buttonDismiss"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:text="@string/dismiss"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/periodDialog_time" />
+        app:layout_constraintTop_toBottomOf="@+id/divider" />
+
+    <TextView
+        android:id="@+id/periodDialog_firstDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="first date"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider3firstDateLastDate" />
+
+    <TextView
+        android:id="@+id/periodDialog_lastDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="last date"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="@+id/periodDialog_firstDate"
+        app:layout_constraintTop_toBottomOf="@+id/periodDialog_firstDate" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

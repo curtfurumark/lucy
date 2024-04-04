@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -32,12 +33,14 @@ import se.curtrune.lucy.classes.CallingActivity;
 import se.curtrune.lucy.classes.Estimate;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
+import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.classes.Period;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.AddEstimateDialog;
 import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.dialogs.AddPeriodDialog;
 import se.curtrune.lucy.dialogs.DurationDialog;
+import se.curtrune.lucy.dialogs.NotificationDialog;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.util.Converter;
 import se.curtrune.lucy.util.ItemStack;
@@ -48,11 +51,11 @@ import se.curtrune.lucy.workers.MentalWorker;
 
 public class ItemSession extends AppCompatActivity implements
         Kronos.Callback,
-        AddItemDialog.Callback,
-        DurationDialog.Callback
+        AddItemDialog.Callback
 {
     private EditText editTextHeading;
     private EditText  editTextComment;
+    private EditText editTextTags;
     private EditText editTextMentalComment;
     private EditText editTextEstimateHours;
     private EditText editTextEstimateMinutes;
@@ -65,21 +68,28 @@ public class ItemSession extends AppCompatActivity implements
     private TextView labelInfo;
     private TextView labelComment;
     private TextView textViewPeriodDescription;
-    private TextView textViewTargetDate;
+    //private TextView textViewTargetDate;
+    private TextView textViewPeriodTargetDate;
     private TextView textViewNotificationInfo;
+    private TextView textViewNotificationType;
     private TextView textViewCategory;
     private TextView textViewUpdated;
     private TextView textViewCreated;
     private TextView textViewTags;
     private TextView textViewID;
+    private  TextView textViewAddNotification;
     private CheckBox checkBoxDone;
+    private CheckBox checkBoxTemplate;
     private Button buttonTimer;
     private TextView textViewDuration;
     private TextView textViewEnergy;
+    private TextView textViewNotificationDate;
+    private TextView textViewNotificationTime;
     private TextView textViewStress;
     private TextView textViewAnxiety;
     private TextView textViewMood;
-    private TextView textViewIsTemplate;
+    private TextView textViewTargetDate;
+    private TextView textViewTargetTime;
 
     private SeekBar seekBarStress;
     private SeekBar seekBarAnxiety;
@@ -153,7 +163,8 @@ public class ItemSession extends AppCompatActivity implements
         currentItem.setComment(editTextComment.getText().toString());
         currentItem.setHeading(editTextHeading.getText().toString());
         currentItem.setDuration(duration);
-        //currentItem.setDuration(kronos.getElapsedTime()); 240124
+        currentItem.setTags(editTextTags.getText().toString());
+        currentItem.setIsTemplate(checkBoxTemplate.isChecked());
         currentItem.setState(checkBoxDone.isChecked() ? State.DONE: State.WIP);
         return currentItem;
     }
@@ -185,9 +196,9 @@ public class ItemSession extends AppCompatActivity implements
         }
         setTitle(currentItem.getHeading());
         if( VERBOSE) log(currentItem);
-        if(currentItem.isWIP()){
-            kronos.setElapsedTime(currentItem.getDuration());
-        }
+        //if(currentItem.isWIP()){
+        kronos.setElapsedTime(currentItem.getDuration());
+        //}
 
         callingActivity = (CallingActivity) intent.getSerializableExtra(Constants.INTENT_CALLING_ACTIVITY);
         if( callingActivity == null){
@@ -240,15 +251,25 @@ public class ItemSession extends AppCompatActivity implements
         //comment
         layoutComment = findViewById(R.id.itemSession_layoutComment);
         labelComment = findViewById(R.id.itemSession_labelCommentEtc);
+        textViewTargetDate = findViewById(R.id.itemSession_targetDate);
+        textViewTargetTime = findViewById(R.id.itemSession_targetTime);
+        editTextTags = findViewById(R.id.itemSession_tags);
+        //notification
+        textViewNotificationDate = findViewById(R.id.itemSession_notificationDate);
+        textViewNotificationTime = findViewById(R.id.itemSession_notificationTime);
+        textViewAddNotification = findViewById(R.id.itemSession_addNotification);
+        textViewNotificationType = findViewById(R.id.itemSession_notificationType);
+
 
         labelNotification = findViewById(R.id.itemSession_labelNotifications);
+
         textViewPeriodDescription = findViewById(R.id.itemSession_periodDescription);
-        textViewTargetDate = findViewById(R.id.itemSession_targetDate);
+        textViewPeriodTargetDate = findViewById(R.id.itemSession_periodTargetDate);
         textViewNotificationInfo = findViewById(R.id.itemSession_notificationInfo);
         textViewEditPeriod = findViewById(R.id.itemSession_editPeriod);
         //info
         labelInfo = findViewById(R.id.itemSession_labelInfo);
-        textViewIsTemplate = findViewById(R.id.itemSession_tvIsTemplate);
+        checkBoxTemplate = findViewById(R.id.itemSession_checkBoxTemplate);
         textViewUpdated = findViewById(R.id.itemSession_infoUpdated);
         textViewCreated = findViewById(R.id.itemSession_infoCreated);
         textViewTags = findViewById(R.id.itemSession_infoTags);
@@ -264,7 +285,27 @@ public class ItemSession extends AppCompatActivity implements
 
     }
     private void initListeners(){
-        if( VERBOSE) log("...initListeners()");
+/*        if( VERBOSE) log("...initListeners()");
+        checkBoxTemplate.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            log("...onCheckedChanged(CompoundButton, boolean)", isChecked);
+            currentItem.setIsTemplate(isChecked);
+            int rowsAffected = ItemsWorker.update(currentItem, this);
+            if( rowsAffected != 1){
+                log("...error updating item, isTemplate");
+            }
+        });*/
+        checkBoxTemplate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                log("...checkBox onClick(View)");
+                if( checkBoxTemplate.isChecked()){
+                    log("...template check true");
+                }else{
+                    log("...template check false");
+                }
+            }
+        });
+        textViewAddNotification.setOnClickListener(view->showNotificationDialog());
         textViewEditPeriod.setOnClickListener(view->showAddPeriodDialog());
         labelComment.setOnClickListener(view->toggleComment());
         labelMental.setOnClickListener(view->toggleMental());
@@ -542,7 +583,7 @@ public class ItemSession extends AppCompatActivity implements
     }
 
     private void setUserInterface(Item item){
-        if( VERBOSE) log("...setUserInterface(Item item)");
+        log("...setUserInterface(Item item)");
         if( item == null){
             log("...called with item == null");
             return;
@@ -550,7 +591,13 @@ public class ItemSession extends AppCompatActivity implements
         textViewDuration.setText(Converter.formatSecondsWithHours(item.getDuration()));
         editTextHeading.setText(item.getHeading());
         editTextComment.setText(item.getComment());
+        editTextTags.setText(item.getTags());
+        textViewTargetDate.setText(item.getTargetDate().toString());
+        textViewTargetTime.setText(Converter.format(item.getTargetTime()));
+
+
         checkBoxDone.setChecked(item.isDone());
+        log("...after setting checkbox to ", item.isDone());
         if( item.getDuration() > 0){
             buttonTimer.setText(getString(R.string.ui_resume));
         }
@@ -561,11 +608,14 @@ public class ItemSession extends AppCompatActivity implements
             setUserInterface(item.getPeriod());
         }else{
             textViewPeriodDescription.setText("no period set");
-            textViewTargetDate.setVisibility(View.GONE);
-            //textViewTargetDate.setText(currentItem.getTargetDate().toString());
+            textViewPeriodTargetDate.setVisibility(View.GONE);
         }
-        String isTemplate = item.isTemplate()? "is template": "not a template";
-        textViewIsTemplate.setText(isTemplate);
+        if(item.hasNotification()){
+            textViewNotificationInfo.setText("has notification");
+        }else{
+            textViewNotificationInfo.setText("no notification");
+        }
+        checkBoxTemplate.setChecked(item.isTemplate());
         String textTags = item.hasTags() ? item.getTags(): "no tags";
         textViewTags.setText(textTags);
         String textCreated = String.format(Locale.getDefault(), "created %s", Converter.format(item.getCreated()));
@@ -576,6 +626,19 @@ public class ItemSession extends AppCompatActivity implements
         textViewCategory.setText(textCategory);
         String textID = String.format(Locale.getDefault(), "id: %d", item.getID());
         textViewID.setText(textID);
+
+    }
+    private void setUserInterface(Notification notification){
+        log("...setUserInterface(Notification) ");
+        if( notification == null){
+            log("...no notification");
+            textViewAddNotification.setVisibility(View.VISIBLE);
+        }else{
+            textViewNotificationDate.setText(notification.getDate().toString());
+            textViewNotificationTime.setText(Converter.format(notification.getTime()));
+            textViewNotificationType.setText(notification.getType().toString());
+            textViewAddNotification.setVisibility(View.GONE);
+        }
 
     }
     private void setUserInterfaceMental(Mental mental){
@@ -606,21 +669,31 @@ public class ItemSession extends AppCompatActivity implements
     private void setUserInterface(Period period){
         log("...setUserInterface(Period)");
         textViewPeriodDescription.setText(period.toString());
-        textViewTargetDate.setText(currentItem.getTargetDate().toString());
+        textViewPeriodTargetDate.setText(currentItem.getTargetDate().toString());
     }
 
     private void showDurationDialog(){
         log("...showDurationDialog()");
         DurationDialog dialog = new DurationDialog();
+        dialog.setCallback(duration -> {
+            log("...onDurationDialog(Duration)");
+            log("..onDurationDialog(Duration duration)", duration.toString());
+            log("...seconds", duration.getSeconds());
+            this.duration = duration.getSeconds();
+            currentItem.setDuration(duration.getSeconds());
+            textViewDuration.setText(Converter.formatSecondsWithHours(duration.getSeconds()));
+            buttonTimer.setText(getString(R.string.ui_resume));
+            kronos.setElapsedTime(duration.getSeconds());
+        });
         dialog.show(getSupportFragmentManager(), "duration");
     }
-    @Override
+/*    @Override
     public void onDurationDialog(Duration duration) {
         log("..onDurationDialog(Duration duration)", duration.toString());
         log("...seconds", duration.getSeconds());
         currentItem.setDuration(duration.getSeconds());
         textViewDuration.setText(Converter.formatSecondsWithHours(duration.getSeconds()));
-    }
+    }*/
     private void showAddPeriodDialog(){
         log("...showPeriodDialog()");
         AddPeriodDialog dialog = new AddPeriodDialog();
@@ -652,6 +725,20 @@ public class ItemSession extends AppCompatActivity implements
             setUserInterface(estimate);
         });
         dialog.show(getSupportFragmentManager(), "add estimate");
+    }
+    private void showNotificationDialog(){
+        log("...showNotificationDialog()");
+        NotificationDialog dialog = new NotificationDialog();
+        dialog.setListener(new NotificationDialog.Callback() {
+            @Override
+            public void onNotification(Notification notification) {
+                log("...onNotification(Notification)");
+                currentItem.setNotification(notification);
+                log(notification);
+                setUserInterface(notification);
+            }
+        });
+        dialog.show(getSupportFragmentManager(), "add notification");
     }
     private void toggleComment(){
         log("...toggleComment()");

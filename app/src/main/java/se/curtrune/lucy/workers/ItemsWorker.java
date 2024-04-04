@@ -118,6 +118,20 @@ public class ItemsWorker {
         LocalDB db = new LocalDB(context);
         return  db.selectItem(parentId).hasChild();
     }
+    /**
+     * sets targetDate of infiniteItem to 'today + item.getDays'
+     * @param item, is an Item with State.INFINITE
+     * @param context,
+     * @throws SQLException
+     */
+    public static void handleInfinite(Item template, Context context) throws SQLException {
+        log("...handleInfinite(Item, Context)", template.getHeading());
+        Item child = createChildToInfinite(template);
+        child = insert(child, context);
+        template.setDuration(0);
+        template.updateTargetDate();
+        update(template, context);
+    }
 
     public static int handleTemplate(Item template, Context context) {
         log("...handleTemplate(Item, Context)", template.getHeading());
@@ -130,11 +144,14 @@ public class ItemsWorker {
         child.setHeading(template.getHeading());
         child.setDuration(template.getDuration());
         child.setCategory(template.getCategory());
+        child.setMental(template.getMental());
+        template.setMental(null);
         LocalDB db = new LocalDB(context);
         db.insertChild(template, child);
         if( template.hasPeriod()) {
             template.updateTargetDate();
         }
+        template.setDuration(0);
         return db.update(template);
     }
     public static Item selectItem(long parentId, Context context) {
@@ -160,21 +177,7 @@ public class ItemsWorker {
 
 
 
-    /**
-     * sets targetDate of infiniteItem to 'today + item.getDays'
-     * @param item, is an Item with State.INFINITE
-     * @param context,
-     * @throws SQLException
-     */
-    public static void handleInfinite(Item item, Context context) throws SQLException {
-        log("...handleInfinite(Item, Context)", item.getHeading());
-        Item child = createChildToInfinite(item);
-        child = insert(child, context);
-        //item.setTargetDate(LocalDate.now().plusDays(item.getDays()));
-        item.updateTargetDate();
-        update(item, context);
 
-    }
     public static Item insert(Item item, Context context)  {
         log("ItemsWorker.insert(Item, Context)", item.getHeading());
         LocalDB db = new LocalDB(context);
