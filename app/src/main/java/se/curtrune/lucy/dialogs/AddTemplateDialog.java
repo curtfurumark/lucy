@@ -39,7 +39,7 @@ import se.curtrune.lucy.workers.UtilWorker;
 
 public class AddTemplateDialog extends BottomSheetDialogFragment {
     //private ConstraintLayout layoutDays;
-    private TextInputLayout layoutDays;
+   // private TextInputLayout layoutDays;
     private Chip chipMonday;
     private Chip chipTuesday;
     private Chip chipWednesday;
@@ -50,12 +50,15 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
 
     private ConstraintLayout layoutWeekDays;
     private ConstraintLayout layoutDateTime;
+    private ConstraintLayout layoutRepeat;
+    private ConstraintLayout layoutDays;
     private EditText editTextHeading;
     private EditText editTextDays;
 
     private TextView textViewParent;
     private TextView labelDays;
     private TextView labelWeekDays;
+    private TextView labelRepeat;
     private TextView labelDateTime;
     private TextView textViewDate;
     private TextView textViewTime;
@@ -69,10 +72,13 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
 
     private OnNewItemCallback callback;
     private String category;
+    private Item item;
+    private boolean hasPeriod = false;
 
     private Period.Mode mode = Period.Mode.DAYS;
 
     public AddTemplateDialog(Item parent) {
+        log("AddTemplateDialog(Item)");
         this.parent = parent;
     }
 
@@ -84,22 +90,26 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         initListeners();
         initSpinner();
         initUserInterface();
+        createItem();
         return view;
     }
-    private Item getItem(){
-        Item item = new Item();
-        item.setHeading(editTextHeading.getText().toString());
+    private void createItem(){
+        log("...createItem()");
+        item = new Item();
         item.setState(State.TODO);
         item.setIsTemplate(true);
         item.setParent(parent);
+    }
+    private Item getItem(){
+        log("...getItem()");
+        item.setHeading(editTextHeading.getText().toString());
         item.setPeriod(getPeriod());
         return item;
     }
     private Period getPeriod(){
-        log("...getPeriod()");
+        log("...getPeriod() hasPeriod", hasPeriod);
         Period period = null;
-        boolean usePeriod = true;
-        if( usePeriod){
+        if( hasPeriod){
             period = new Period();
             if( mode.equals(Period.Mode.DAYS)){
                 period.setDays(Integer.valueOf(editTextDays.getText().toString()));
@@ -145,9 +155,11 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         editTextDays = view.findViewById(R.id.addTemplateDialog_days);
         textViewParent = view.findViewById(R.id.addTemplateDialog_parent);
         spinner = view.findViewById(R.id.addTemplateDialog_spinner);
+        //repeat
+        layoutRepeat = view.findViewById(R.id.addTemplateDialog_layoutRepeat);
         labelDays = view.findViewById(R.id.addTemplateDialog_labelDays);
         labelWeekDays = view.findViewById(R.id.addTemplateDialog_labelWeekDays);
-        layoutDays = view.findViewById(R.id.addTemplateDialog_layoutDays);
+        layoutDays = view.findViewById(R.id.addTemplateDialog_constrainLayoutDays);
         layoutWeekDays = view.findViewById(R.id.addTemplateDialog_layoutWeekDays);
         chipMonday = view.findViewById(R.id.addTemplateDialog_monday);
         chipTuesday = view.findViewById(R.id.addTemplateDialog__tuesday);
@@ -161,6 +173,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         layoutDateTime = view.findViewById(R.id.addTemplateDialog_layoutDateTime);
         textViewDate = view.findViewById(R.id.addTemplateDialog_date);
         textViewTime = view.findViewById(R.id.addTemplateDialog_time);
+        labelRepeat = view.findViewById(R.id.addTemplateDialog_repeat);
     }
 
     private void initListeners(){
@@ -170,6 +183,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         labelDays.setOnClickListener(view->toggleDays());
         labelWeekDays.setOnClickListener(view->toggleWeekDays());
         labelDateTime.setOnClickListener(view-> toggleDateTime());
+        labelRepeat.setOnClickListener(view->toggleRepeat());
         textViewDate.setOnClickListener(view->showDateDialog());
         textViewTime.setOnClickListener(view->showTimeDialog());
     }
@@ -226,7 +240,10 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         datePickerDialog.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-
+                log("...onDateSet(DatePicker, int, int , int)");
+                date = LocalDate.of(year, month +1, dayOfMonth);
+                item.setTargetDate(date);
+                textViewDate.setText(date.toString());
             }
         });
         datePickerDialog.show();
@@ -235,9 +252,10 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         log("...showTimeDialog()");
         int minutes = LocalTime.now().getMinute();
         int hour = LocalTime.now().getHour();
-        TimePickerDialog timePicker = new TimePickerDialog(this, (view, hourOfDay, minute) -> {
+        TimePickerDialog timePicker = new TimePickerDialog(getContext(), (view, hourOfDay, minute) -> {
             time = LocalTime.of(hourOfDay, minute);
             textViewTime.setText(time.toString());
+            item.setTargetTime(time);
         }, hour, minutes, true);
         timePicker.show();
 
@@ -245,6 +263,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
     private void toggleDays(){
         log("...toggleDays()");
         if( layoutDays.getVisibility() == View.GONE){
+            log("...setting visibility to visible");
             mode = Period.Mode.DAYS;
             layoutDays.setVisibility(View.VISIBLE);
             layoutWeekDays.setVisibility(View.GONE);
@@ -260,6 +279,15 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
             layoutDateTime.setVisibility(View.GONE);
         }
     }
+    private void toggleRepeat(){
+        log("...toggleRepeat()");
+        if ( layoutRepeat.getVisibility() == View.GONE){
+            layoutRepeat.setVisibility(View.VISIBLE);
+        }else{
+            layoutRepeat.setVisibility(View.GONE);
+        }
+
+    }
     private void toggleWeekDays(){
         log("...toggleWeekDays()");
         if( layoutWeekDays.getVisibility() == View.GONE){
@@ -274,17 +302,17 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
     public boolean validateInput(){
         log("...validateInput()");
         if( editTextHeading.getText().toString().isEmpty()){
-            //Toast.makeText(getContext(), "missing heading", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "missing heading", Toast.LENGTH_LONG).show();
             log("...item requires heading, and no heading is supplied...");
             return false;
         }
-        if( mode.equals(Period.Mode.DAYS)) {
+/*        if( mode.equals(Period.Mode.DAYS)) {
             if (editTextDays.getText().toString().isEmpty()) {
                 Toast.makeText(getContext(), "missing days", Toast.LENGTH_LONG).show();
                 log("...missing days");
                 return false;
             }
-        }
+        }*/
         return true;
     }
 }

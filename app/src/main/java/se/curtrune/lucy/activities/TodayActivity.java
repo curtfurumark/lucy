@@ -2,12 +2,14 @@ package se.curtrune.lucy.activities;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -484,6 +486,15 @@ public class TodayActivity extends AppCompatActivity implements
     }
     private void showDateDialog(){
         log("...showDateDialog()");
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this);
+        datePickerDialog.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                log("...onDateSet(DatePicker, int, int, int");
+                currentDate = LocalDate.of(year, month +1, dayOfMonth);
+            }
+        });
+        datePickerDialog.show();
 
     }
     private void showEstimate(){

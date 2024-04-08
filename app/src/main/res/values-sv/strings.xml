@@ -44,5 +44,27 @@
     <string name="dismiss">avbryt</string>
     <string name="info">info</string>
     <string name="delete">ta bort</string>
+    <string name="start_sequence">starta sekvens</string>
+    <string name="alarm">alarm</string>
+    <string name="date">datum</string>
+    <string name="created">skapad</string>
+    <string name="minutes">minuter</string>
+    <string name="add_period">add period</string>
+    <string name="show_estimate">visa uppskattning</string>
+    <string name="hours">timmar</string>
+    <string name="seconds">sekunder</string>
+    <string name="notification">påminnelse</string>
+    <string name="duration">duration</string>
+    <string name="estimate">estimate</string>
+    <string name="click_to_view">click to view</string>
+    <string name="ui_pause">pausa</string>
+    <string name="ui_resume">återuppta</string>
+    <string name="ui_start">starta</string>
+    <string name="hhmmss">00:00:00</string>
+    <string name="ui_just_do_it">just do it</string>
+    <string name="date_and_time">datum och tid</string>
+    <string name="repeat">upprepa</string>
+    <string name="time">tid</string>
+    <string name="day_of_week">veckodagar</string>
 
 </resources>

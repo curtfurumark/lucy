@@ -31,7 +31,9 @@ import se.curtrune.lucy.workers.WebWorker;
 public class HomeActivity extends AppCompatActivity {
     private TextView textViewToday;
     private TextView textViewSettings;
+    private TextView textViewSwipeAble;
     private TextView textViewNewMain;
+    private TextView textViewCalender;
     private TextView textViewStatistics;
     private TextView textViewQuote;
     private Lucinda lucinda;
@@ -68,14 +70,18 @@ public class HomeActivity extends AppCompatActivity {
         textViewStatistics = findViewById(R.id.homeActivity_statistics);
         textViewQuote = findViewById(R.id.homeActivity_quote);
         textViewQuote.setSelected(true);
-        textViewNewMain = findViewById(R.id.homeActivity_newMain);
+        textViewCalender = findViewById(R.id.homeActivity_calender);
+        textViewNewMain = findViewById(R.id.homeActivity_tabs);
         textViewSettings = findViewById(R.id.homeActivity_settings);
+        textViewSwipeAble = findViewById(R.id.homeActivity_swipeableCards);
     }
     private void initListeners(){
         log("...initListeners()");
+        textViewSwipeAble.setOnClickListener(view->startActivity(new Intent(this,  SwipeAbleCardsActivity.class)));
         textViewToday.setOnClickListener(view -> startActivity(new Intent(this, TodayActivity.class)));
         textViewStatistics.setOnClickListener(view->startActivity(new Intent(this, StatisticsMain.class)));
         textViewNewMain.setOnClickListener(view->startActivity(new Intent(this, MainActivity.class)));
+        textViewCalender.setOnClickListener(view->startActivity(new Intent(this, MyCalenderActivity.class)));
         textViewQuote.setOnClickListener(view->randomQuote());
         textViewSettings.setOnClickListener(view->startActivity(new Intent(this, SettingsActivity.class)));
     }
@@ -118,8 +124,6 @@ public class HomeActivity extends AppCompatActivity {
             createTableCategories();
         }else if( item.getItemId() == R.id.homeActivity_toggleDarkMode){
             toggleDarkMode();
-        }else if( item.getItemId() == R.id.homeActivity_expandActivity){
-            startActivity(new Intent(this, ExpandActivity.class));
         }
         return true;
     }

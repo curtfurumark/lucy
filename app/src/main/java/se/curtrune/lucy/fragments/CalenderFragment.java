@@ -1,0 +1,235 @@
+package se.curtrune.lucy.fragments;
+
+import static se.curtrune.lucy.util.Logger.log;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
+
+import se.curtrune.lucy.R;
+import se.curtrune.lucy.activities.ItemSession;
+import se.curtrune.lucy.adapters.CalenderAdapter;
+import se.curtrune.lucy.adapters.CalenderDateAdapter;
+import se.curtrune.lucy.classes.CallingActivity;
+import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.Week;
+import se.curtrune.lucy.dialogs.AddTemplateDialog;
+import se.curtrune.lucy.util.Constants;
+import se.curtrune.lucy.workers.ItemsWorker;
+
+/**
+ * A simple {@link Fragment} subclass.
+ * Use the {@link CalenderFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
+public class CalenderFragment extends Fragment {
+
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
+
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
+    private Button buttonPrev;
+    private Button buttonNext;
+    private Week currentWeek;
+    private RecyclerView recycler;
+    private RecyclerView recyclerDates;
+    private CalenderAdapter adapter;
+    private CalenderDateAdapter calenderDateAdapter;
+    private FloatingActionButton buttonAddItem;
+
+    //for debugging
+    private TextView labelMonthYear;
+    private TextView textViewYear;
+    private TextView textViewMonth;
+    private TextView textViewWeek;
+    private TextView textViewDate;
+    private LocalDate currentDate;
+    private List<Item> items;
+    private Month month;
+
+    public CalenderFragment() {
+        // Required empty public constructor
+    }
+
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return A new instance of fragment CalenderFragment.
+     */
+    // TODO: Rename and change types and number of parameters
+    public static CalenderFragment newInstance(String param1, String param2) {
+        CalenderFragment fragment = new CalenderFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.calender_fragment, container, false);
+        initDefaults();
+        initComponents(view);
+        initRecycler();
+        initRecyclerDates();
+        initListeners();
+        setUserInterface(currentDate);
+        return view;
+    }
+    private String getMonthYear(LocalDate date){
+        log("...getMonthYear(LocalDate)");
+        return String.format("%s, %d", date.getMonth().toString(), date.getYear());
+    }
+    private String getWeekNumber(){
+        log("...getWeekNumber()");
+        //Calendar calendar = Calendar.getInstance(Locale.getDefault());
+        //calendar.set(currentDate.getYear(), currentDate.getMonthValue(), currentDate.getDayOfMonth());
+        //int weekOfYear = calendar.get(Calendar.WEEK_OF_YEAR);
+        return String.valueOf(currentWeek.getWeekNumber());
+
+    }
+    private void initComponents(View view){
+        log("...initComponents(View)");
+        buttonNext = view.findViewById(R.id.calenderFragment_buttonNext);
+        buttonPrev = view.findViewById(R.id.calenderFragment_buttonPrev);
+        labelMonthYear = view.findViewById(R.id.calenderFragment_labelMonthYear);
+        textViewDate = view.findViewById(R.id.calenderFragment_currentDate);
+        textViewWeek = view.findViewById(R.id.calenderFragment_currentWeek);
+        textViewMonth = view.findViewById(R.id.calenderFragment_currentMonth);
+        textViewYear = view.findViewById(R.id.calenderFragment_currentYear);
+        recycler = view.findViewById(R.id.calenderFragment_recycler);
+        recyclerDates = view.findViewById(R.id.calenderFragment_recyclerDates);
+        buttonAddItem = view.findViewById(R.id.calenderFragment_addItem);
+    }
+    private void initDefaults(){
+        log("...initDefaults()");
+        currentDate = LocalDate.now();
+        currentWeek = new Week(currentDate);
+        items = new ArrayList<>();
+        Item item = new Item("medicin lunch");
+        item.setTargetTime(LocalTime.of(12, 0));
+        item.setTargetDate(LocalDate.now());
+        items.add(item);
+
+    }
+    private void initListeners(){
+        buttonPrev.setOnClickListener(view->prevWeek());
+        buttonNext.setOnClickListener(view->nextWeek());
+        buttonAddItem.setOnClickListener(view->showAddItemDialog());
+    }
+    private void initRecycler(){
+        log("...initRecycler()");
+        adapter = new CalenderAdapter(items, new CalenderAdapter.Callback() {
+            @Override
+            public void onItemClick(Item item) {
+                log("...onItemClick(Item)", item.getHeading());
+                Intent intent = new Intent(getContext(), ItemSession.class);
+                intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.CALENDER_FRAGMENT);
+                intent.putExtra(Constants.INTENT_ITEM_SESSION, true);
+                intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, item);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onLongClick(Item item) {
+
+            }
+
+            @Override
+            public void onCheckboxClicked(Item item, boolean checked) {
+
+            }
+        });
+        recycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        recycler.setItemAnimator(new DefaultItemAnimator());
+        recycler.setAdapter(adapter);
+
+    }
+    private void initRecyclerDates(){
+        log("...initRecyclerDates()");
+        calenderDateAdapter = new CalenderDateAdapter(currentWeek.getDates(), new CalenderDateAdapter.Callback() {
+            @Override
+            public void onDateSelected(LocalDate date) {
+
+            }
+        });
+        recyclerDates.setLayoutManager(new GridLayoutManager(getContext(), 7));
+        recyclerDates.setItemAnimator(new DefaultItemAnimator());
+        recyclerDates.setAdapter(calenderDateAdapter);
+
+    }
+    private void nextMonth(){
+        currentDate = currentDate.plusMonths(1);
+    }
+    private void nextWeek(){
+        log("...nextWeek()");
+        currentDate = currentDate.plusWeeks(1);
+        currentWeek = new Week(currentDate);
+        setUserInterface(currentDate);
+        calenderDateAdapter.setList(currentWeek.getDates());
+    }
+    private void prevWeek(){
+        log("...prevWeek()");
+        currentDate = currentDate.minusWeeks(1);
+        currentWeek = new Week(currentDate);
+        setUserInterface(currentDate);
+        calenderDateAdapter.setList(currentWeek.getDates());
+    }
+    private void setUserInterface(LocalDate date){
+        log("...setUserInterface()", date.toString());
+        items = ItemsWorker.selectTodayList(currentDate, getContext());
+        log("...number ot items today", items.size());
+        textViewDate.setText(currentDate.toString());
+        textViewWeek.setText(getWeekNumber());
+        textViewMonth.setText(currentDate.getMonth().toString());
+        textViewYear.setText(String.valueOf(currentDate.getYear()));
+        labelMonthYear.setText(getMonthYear(currentDate));
+        items = ItemsWorker.selectTodayList(currentDate, getContext());
+        adapter.setList(items);
+    }
+    private void showAddItemDialog(){
+        log("...showAddItemDialog()");
+        //AddTemplateDialog dialog = new AddTemplateDialog();
+        Toast.makeText(getContext(), "work to do", Toast.LENGTH_LONG).show();
+
+
+    }
+}

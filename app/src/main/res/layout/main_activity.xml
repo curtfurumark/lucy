@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".activities.MainActivity">
 
-    <com.google.android.material.tabs.TabLayout
+<!--    <com.google.android.material.tabs.TabLayout
         android:id="@+id/mainActivity_tabLayout"
         android:layout_width="409dp"
         android:layout_height="wrap_content"
@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:text="today" />
 
-    </com.google.android.material.tabs.TabLayout>
+    </com.google.android.material.tabs.TabLayout>-->
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/mainActivity_fragmentContainer"
@@ -29,7 +29,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mainActivity_tabLayout" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/mainActivity_bottomNavigation"

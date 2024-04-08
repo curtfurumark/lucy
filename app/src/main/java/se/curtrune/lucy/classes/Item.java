@@ -206,7 +206,7 @@ public class Item implements Serializable , Listable {
         return period != null;
     }
     public boolean hasMental() {return mental != null;}
-    public boolean hasNotification(){return mental != null;}
+    public boolean hasNotification(){return notification != null;}
     public boolean hasTags(){
         return !this.tags.isEmpty();
     }

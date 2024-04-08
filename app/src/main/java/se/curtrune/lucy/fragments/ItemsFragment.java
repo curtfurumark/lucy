@@ -80,17 +80,18 @@ public class ItemsFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        log("ItemsFragment.onCreateView(LayoutInflater, ViewGroup, Bundle)");
         View view = inflater.inflate(R.layout.items_fragment, container, false);
-        initComponents(view);
+/*        initComponents(view);
         items = ItemsWorker.selectTodayList(LocalDate.now(), getContext());
         initRecycler(items);
+        log("...recycler initialized");*/
         return view;
     }
     private void initComponents(View view){
         log("...initComponents()");
-        recycler = view.findViewById(R.id.itemsFragment_recycler);
-        editTextSearch = view.findViewById(R.id.itemsFragment_search);
+/*        recycler = view.findViewById(R.id.itemsFragment_recycler);
+        editTextSearch = view.findViewById(R.id.itemsFragment_search);*/
 
     }
 

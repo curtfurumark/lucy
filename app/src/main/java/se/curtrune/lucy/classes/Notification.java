@@ -12,14 +12,25 @@ public class Notification {
     private Type type;
     private LocalDate date;
     private LocalTime time;
+    private String title;
+    private String content;
+    public String getContent(){
+        return this.content;
+    }
     public LocalDate getDate(){
         return this.date;
+    }
+    public String getTitle(){
+        return this.title;
     }
     public LocalTime getTime(){
         return this.time;
     }
     public Type getType(){
         return this.type;
+    }
+    public void setContent(String content){
+        this.content = content;
     }
     public void setDate(LocalDate date){
         this.date = date;
@@ -29,6 +40,9 @@ public class Notification {
     }
 
 
+    public void setTitle(String title){
+        this.title = title;
+    }
     public void setTime(LocalTime time){
         this.time = time;
     }

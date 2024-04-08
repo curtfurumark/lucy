@@ -23,6 +23,4 @@
 
     <item android:title="toggle dark mode"
         android:id="@+id/homeActivity_toggleDarkMode"/>
-    <item android:title="expand activity"
-        android:id="@+id/homeActivity_expandActivity"/>
 </menu>

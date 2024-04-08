@@ -120,4 +120,9 @@
     <string name="start_sequence">start sequence</string>
     <string name="alarm">alarm</string>
     <string name="date">date</string>
+    <string name="date_and_time">date and time</string>
+    <string name="repeat">repeat</string>
+    <string name="time">time</string>
+    <string name="day_of_week">day of week</string>
+    <string name="prev">prev</string>
 </resources>

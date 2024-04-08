@@ -12,16 +12,20 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 
+import java.time.LocalDate;
+
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.fragments.DurationFragment;
+import se.curtrune.lucy.fragments.CalenderFragment;
 import se.curtrune.lucy.fragments.ItemsFragment;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TabLayout tabLayout;
+    //private TabLayout tabLayout;
     private Fragment currentFragment;
+    private BottomNavigationView bottomNavigation;
     private FragmentContainerView fragmentContainerView;
     public interface OnTabSelected{
         void onSelected(TabLayout.Tab tab);
@@ -31,14 +35,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
         log("MainActivity.onCreate(Bundle)");
+        setTitle(LocalDate.now().toString());
         initComponents();
         initListeners();
         initDefaultFragment();
+        navigate(new CalenderFragment());
     }
     private void initComponents(){
         log("...initComponents()");
-        tabLayout = findViewById(R.id.mainActivity_tabLayout);
+        //tabLayout = findViewById(R.id.mainActivity_tabLayout);
         fragmentContainerView = findViewById(R.id.mainActivity_fragmentContainer);
+        bottomNavigation = findViewById(R.id.mainActivity_bottomNavigation);
     }
     private void initDefaultFragment(){
         log("...initDefaultFragment()");
@@ -48,13 +55,32 @@ public class MainActivity extends AppCompatActivity {
     }
     private void initListeners(){
         log("...initListeners()");
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                log("...onNavigationItemSelected(MenuItem)");
+                if( item.getItemId() == R.id.bottomNavigation_today){
+                    navigate(new CalenderFragment());
+                }else if( item.getItemId() == R.id.bottomNavigation_projects){
+                    navigate(new ItemsFragment());
+                }else{
+                    log("...not implemented");
+                }
+                return true;
+            }
+        });
+/*        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                log("...onTabSelected()");
-            }
+                log("...onTabSelected(Tab)");
+                if( tab.getText().toString().equals("projects")){
+                    log("...load projects");
+                }else if( tab.getText().toString().equals("today")){
+                    navigate(new CalenderFragment());
+                }
+            }*/
 
-            @Override
+/*            @Override
             public void onTabUnselected(TabLayout.Tab tab) {
 
             }
@@ -63,7 +89,13 @@ public class MainActivity extends AppCompatActivity {
             public void onTabReselected(TabLayout.Tab tab) {
 
             }
-        });
+        });*/
+    }
+    private void navigate(Fragment fragment){
+        log("navigate(Fragment) ");
+        currentFragment = fragment;
+        getSupportFragmentManager().beginTransaction().replace(R.id.mainActivity_fragmentContainer, currentFragment).commit();
+
     }
 
     @Override

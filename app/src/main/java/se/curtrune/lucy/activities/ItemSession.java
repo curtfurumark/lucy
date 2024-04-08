@@ -4,6 +4,8 @@ package se.curtrune.lucy.activities;
 import static se.curtrune.lucy.util.Logger.log;
 
 import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuInflater;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -25,7 +28,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.sql.SQLException;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Locale;
 
 import se.curtrune.lucy.R;
@@ -54,8 +59,12 @@ public class ItemSession extends AppCompatActivity implements
         AddItemDialog.Callback
 {
     private EditText editTextHeading;
+    //comment etc
     private EditText  editTextComment;
     private EditText editTextTags;
+    private TextView textViewTargetDate;
+    private TextView textViewTargetTime;
+    //mental
     private EditText editTextMentalComment;
     private EditText editTextEstimateHours;
     private EditText editTextEstimateMinutes;
@@ -88,8 +97,7 @@ public class ItemSession extends AppCompatActivity implements
     private TextView textViewStress;
     private TextView textViewAnxiety;
     private TextView textViewMood;
-    private TextView textViewTargetDate;
-    private TextView textViewTargetTime;
+
 
     private SeekBar seekBarStress;
     private SeekBar seekBarAnxiety;
@@ -294,6 +302,8 @@ public class ItemSession extends AppCompatActivity implements
                 log("...error updating item, isTemplate");
             }
         });*/
+        textViewTargetTime.setOnClickListener(view->showDateDialog());
+        textViewTargetTime.setOnClickListener(view->showTimeDialog());
         checkBoxTemplate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -508,8 +518,12 @@ public class ItemSession extends AppCompatActivity implements
                 Intent todayIntent = new Intent(this, TodayActivity.class);
                 startActivity(todayIntent);
                 break;
+            case CALENDER_FRAGMENT:
+                Intent mainIntent = new Intent(this, MainActivity.class);
+                startActivity(mainIntent);
+                break;
             default:
-                Toast.makeText(this, "get your shit together", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "get your shit together, missing calling activity", Toast.LENGTH_LONG).show();
         }
     }
     private void setButtonText() {
@@ -671,6 +685,21 @@ public class ItemSession extends AppCompatActivity implements
         textViewPeriodDescription.setText(period.toString());
         textViewPeriodTargetDate.setText(currentItem.getTargetDate().toString());
     }
+    private void showDateDialog(){
+        log("...showDateDialog()");
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this);
+        datePickerDialog.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                log("...onDateSet(DatePicker, int, int, int)");
+                LocalDate targetDate = LocalDate.of(year, month +1, dayOfMonth);
+                currentItem.setTargetDate(targetDate);
+                textViewTargetDate.setText(targetDate.toString());
+            }
+        });
+        datePickerDialog.show();
+
+    }
 
     private void showDurationDialog(){
         log("...showDurationDialog()");
@@ -739,6 +768,20 @@ public class ItemSession extends AppCompatActivity implements
             }
         });
         dialog.show(getSupportFragmentManager(), "add notification");
+    }
+    private void showTimeDialog(){
+        log("...showTimeDialog()");
+        log("...showTimerPicker()");
+        LocalTime rightNow = LocalTime.now();
+        int minutes = rightNow.getMinute();
+        int hour = rightNow.getHour();
+        TimePickerDialog timePicker = new TimePickerDialog(this, (view, hourOfDay, minute) -> {
+            LocalTime targetTime = LocalTime.of(hourOfDay, minute);
+            textViewTargetTime.setText(targetTime.toString());
+            currentItem.setTargetTime(targetTime);
+        }, hour, minutes, true);
+        timePicker.show();
+
     }
     private void toggleComment(){
         log("...toggleComment()");

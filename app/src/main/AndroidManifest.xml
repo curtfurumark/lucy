@@ -16,6 +16,12 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".activities.MyCalenderActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.SwipeAbleCardsActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.SequenceActivity"
             android:exported="false" />
         <activity
@@ -44,8 +50,8 @@
             android:theme="@style/Theme.Lucy" />
         <activity
             android:name=".activities.ItemSession"
-            android:screenOrientation="portrait"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.ItemsActivity"
             android:exported="false" />
