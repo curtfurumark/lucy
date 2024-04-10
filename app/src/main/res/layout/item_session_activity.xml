@@ -76,7 +76,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="comment etc"
+            android:text="@string/comment_etc"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/itemSession_checkBoxDone" />
@@ -330,6 +330,13 @@
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/dividerEstimate" />
+        <CheckBox
+            android:id="@+id/itemSession_checkBoxEstimate"
+            android:layout_width="wrap_content"
+            android:text="save estimate"
+            app:layout_constraintTop_toBottomOf="@+id/dividerEstimate"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_height="wrap_content"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/itemSession_layoutEstimate"
@@ -434,22 +441,22 @@
             app:layout_constraintTop_toBottomOf="@+id/itemSession_layoutEstimate" />
 
         <TextView
-            android:id="@+id/itemSession_labelPeriod"
+            android:id="@+id/itemSession_labelRepeat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="period"
+            android:text="@string/repeat"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/dividerPeriod" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/itemSession_layoutPeriod"
+            android:id="@+id/itemSession_layoutRepeat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/itemSession_labelPeriod">
+            app:layout_constraintTop_toBottomOf="@+id/itemSession_labelRepeat">
 
             <TextView
                 android:id="@+id/itemSession_periodDescription"
@@ -482,7 +489,7 @@
             android:background="?android:attr/listDivider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/itemSession_layoutPeriod" />
+            app:layout_constraintTop_toBottomOf="@+id/itemSession_layoutRepeat" />
 
         <TextView
             android:id="@+id/itemSession_labelNotifications"
@@ -512,17 +519,6 @@
             app:layout_constraintTop_toBottomOf="@+id/itemSession_labelNotifications">
 
             <TextView
-                android:id="@+id/itemSession_notificationInfo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:text="info about notification"
-                android:textSize="20sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
                 android:id="@+id/itemSession_notificationDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -531,7 +527,7 @@
                 android:text="notification date"
                 android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/itemSession_notificationInfo" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/itemSession_notificationTime"
@@ -542,7 +538,7 @@
                 android:text="notification time"
                 android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/itemSession_notificationDate" />/
+                app:layout_constraintTop_toBottomOf="@id/itemSession_notificationDate" />
 
             <TextView
                 android:id="@+id/itemSession_notificationType"
@@ -553,7 +549,7 @@
                 android:text="notification date"
                 android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/itemSession_notificationTime" />/
+                app:layout_constraintTop_toBottomOf="@id/itemSession_notificationTime" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View
@@ -582,7 +578,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/itemSession_labelInfo">
 
@@ -641,6 +637,22 @@
                 android:text="id"
                 app:layout_constraintStart_toStartOf="@+id/itemSession_infoCategory"
                 app:layout_constraintTop_toBottomOf="@+id/itemSession_infoCategory" />
+            <TextView
+                android:id="@+id/itemSession_infoHasChild"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="id"
+                app:layout_constraintStart_toStartOf="@+id/itemSession_infoID"
+                app:layout_constraintTop_toBottomOf="@+id/itemSession_infoID" />
+            <TextView
+                android:id="@+id/itemSession_infoState"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="id"
+                app:layout_constraintStart_toStartOf="@+id/itemSession_infoHasChild"
+                app:layout_constraintTop_toBottomOf="@+id/itemSession_infoHasChild" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -660,7 +672,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="date and time"
+            android:text="@string/date_and_time"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/dividerDateTime" />
@@ -674,7 +686,7 @@
             android:textSize="24sp"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/itemSession_labelPeriod" />
+            app:layout_constraintTop_toTopOf="@+id/itemSession_labelRepeat" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/itemSession_fabAdd"

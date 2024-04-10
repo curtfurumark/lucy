@@ -3,33 +3,35 @@ package se.curtrune.lucy.fragments;
 import static se.curtrune.lucy.util.Logger.log;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
-
 import com.google.android.material.tabs.TabLayout;
 
-import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.ItemAdapter;
 import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.workers.ItemsWorker;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link ItemsFragment#newInstance} factory method to
+ * Use the {@link TodoFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ItemsFragment extends Fragment implements
+public class TodoFragment extends Fragment implements
         ItemAdapter.Callback,
         TabLayout.OnTabSelectedListener {
 
@@ -46,8 +48,8 @@ public class ItemsFragment extends Fragment implements
     private String mParam1;
     private String mParam2;
 
-    public ItemsFragment() {
-        log("ItemsFragment()");
+    public TodoFragment() {
+        log("ProjectsFragment()");
     }
 
     /**
@@ -56,11 +58,11 @@ public class ItemsFragment extends Fragment implements
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment ItemsFragment.
+     * @return A new instance of fragment ProjectsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ItemsFragment newInstance(String param1, String param2) {
-        ItemsFragment fragment = new ItemsFragment();
+    public static TodoFragment newInstance(String param1, String param2) {
+        TodoFragment fragment = new TodoFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -80,18 +82,44 @@ public class ItemsFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        log("ItemsFragment.onCreateView(LayoutInflater, ViewGroup, Bundle)");
-        View view = inflater.inflate(R.layout.items_fragment, container, false);
-/*        initComponents(view);
-        items = ItemsWorker.selectTodayList(LocalDate.now(), getContext());
+        log("ProjectsFragment.onCreateView(LayoutInflater, ViewGroup, Bundle)");
+        View view = inflater.inflate(R.layout.todo_fragment, container, false);
+        initComponents(view);
+        items = ItemsWorker.selectItems(State.TODO, getContext());
         initRecycler(items);
-        log("...recycler initialized");*/
+        log("...recycler initialized");
+        initListeners();
         return view;
+    }
+    private void filter(String str){
+        List<Item> filteredItems = items.stream().filter(item->item.contains(str)).collect(Collectors.toList());
+        adapter.setList(filteredItems);
     }
     private void initComponents(View view){
         log("...initComponents()");
-/*        recycler = view.findViewById(R.id.itemsFragment_recycler);
-        editTextSearch = view.findViewById(R.id.itemsFragment_search);*/
+        recycler = view.findViewById(R.id.todoFragment_recycler);
+        editTextSearch = view.findViewById(R.id.todoFragment_search);
+    }
+    private void initListeners(){
+        log("...initListeners()");
+        editTextSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                log("...onTextChanged(CharSequence, int, int, int)");
+                filter(s.toString());
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
     }
 

@@ -11,7 +11,7 @@ import static se.curtrune.lucy.util.Logger.log;
 
 public class Week {
     private final LocalDate firstDate;
-    private final LocalDate currentDate;
+    private LocalDate currentDate;
     private List<LocalDate> dates;
     public Week(LocalDate date){
         log("Week(LocalDate)", date.toString());
@@ -42,5 +42,9 @@ public class Week {
     }
     public int getWeekNumber(){
         return currentDate.get(WeekFields.of(Locale.getDefault()).weekOfYear());
+    }
+
+    public void setCurrentDate(LocalDate currentDate) {
+        this.currentDate = currentDate;
     }
 }

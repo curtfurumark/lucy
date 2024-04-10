@@ -4,6 +4,9 @@ import com.google.gson.Gson;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Locale;
+
+import se.curtrune.lucy.util.Converter;
 
 public class Notification {
     public enum Type{
@@ -56,4 +59,8 @@ public class Notification {
         return new Gson().toJson(this);
     }
 
+    @Override
+    public String toString() {
+        return String.format(Locale.getDefault(), "%s %s %s", type.toString(), date.toString(), Converter.format(time));
+    }
 }

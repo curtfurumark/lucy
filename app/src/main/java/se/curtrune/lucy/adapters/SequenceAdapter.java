@@ -11,8 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.w3c.dom.Text;
-
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -20,21 +18,20 @@ import java.util.List;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
-import se.curtrune.lucy.util.Converter;
 
 
-public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHolder>{
+public class SequenceAdapter extends RecyclerView.Adapter<SequenceAdapter.ViewHolder>{
     private List<Item> items;
     public static boolean VERBOSE = false;
 
     public void setList(List<Item> items) {
-        if( VERBOSE) log("ItemAdapter.setList(List<Item>) size", items.size());
+        if( VERBOSE) log("SequenceAdapter.setList(List<Item>) size", items.size());
         this.items = items;
         notifyDataSetChanged();
     }
 
     public void sort() {
-        if(VERBOSE)log("CalenderAdapter.sort()");
+        if(VERBOSE)log("SequenceAdapter.sort()");
         items.sort(Comparator.comparingLong(Item::compare));
         Collections.reverse(items);
         notifyDataSetChanged();
@@ -47,27 +44,26 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
     }
     private Callback callback;
 
-    public CalenderAdapter(List<Item> items, Callback callback) {
-        if( VERBOSE) log("CalenderAdapter(List<Item>, Callback) items size", items.size());
+    public SequenceAdapter(List<Item> items, Callback callback) {
+        if( VERBOSE) log("SequenceAdapter(List<Item>, Callback) items size", items.size());
         this.items = items;
         this.callback = callback;
     }
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if( VERBOSE) log("CalenderAdapter.onCreateViewHolder(...)");
-        android.view.View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.calender_adapter, parent, false);
+        if( VERBOSE) log("SequenceAdapter.onCreateViewHolder(...)");
+        android.view.View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.sequence_adapter, parent, false);
         return new ViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        if( VERBOSE) log("CalenderAdapter.onBindViewHolder() position", position);
+        if( VERBOSE) log("SequenceAdapter.onBindViewHolder() position", position);
         Item item = items.get(position);
         holder.textView_heading.setText(item.getHeading());
         holder.textView_info.setText(item.getInfo());
         holder.checkBox_state.setChecked(item.getState().equals(State.DONE));
-        holder.textViewTime.setText(Converter.format(item.getTargetTime()));
     }
 
     @Override
@@ -82,28 +78,24 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
         private final TextView textView_heading;
         private final CheckBox checkBox_state;
         private final TextView textView_info;
-        private final TextView textViewTime;
-        private final ConstraintLayout layout;
 
         public ViewHolder(@NonNull android.view.View itemView) {
             super(itemView);
-            textView_heading = itemView.findViewById(R.id.calenderAdapter_itemHeading);
-            textView_info = itemView.findViewById(R.id.calenderAdapter_itemInfo);
-            checkBox_state = itemView.findViewById(R.id.calenderAdapter_itemState);
-            textViewTime = itemView.findViewById(R.id.calenderAdapter_time);
+            textView_heading = itemView.findViewById(R.id.sequenceAdapter_itemHeading);
+            textView_info = itemView.findViewById(R.id.sequenceAdapter_itemInfo);
+            checkBox_state = itemView.findViewById(R.id.sequenceAdapter_itemState);
             checkBox_state.setOnClickListener(view -> {
+                //log("...on checkbox state");
                 Item item = items.get(getAdapterPosition());
                 callback.onCheckboxClicked(items.get(getAdapterPosition()), checkBox_state.isChecked());});
-            layout = itemView.findViewById(R.id.calenderAdapter_mainLayout);
-            layout.setOnClickListener(view -> {
-                log("...layout onClick");
+/*            ConstraintLayout parentLayout = itemView.findViewById(R.id.constraintLayout_todayAdapter);
+            parentLayout.setOnClickListener(view -> {
                 callback.onItemClick(items.get(getAdapterPosition()));
             });
-            layout.setOnLongClickListener(e->{
-                log("...onLongClick");
+            parentLayout.setOnLongClickListener(e->{
                 callback.onLongClick(items.get((getAdapterPosition())));
                 return true;
-            });
+            });*/
         }
     }
 }

@@ -23,16 +23,20 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.activities.ItemSession;
 import se.curtrune.lucy.adapters.CalenderAdapter;
 import se.curtrune.lucy.adapters.CalenderDateAdapter;
+import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.CallingActivity;
 import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Week;
 import se.curtrune.lucy.dialogs.AddTemplateDialog;
+import se.curtrune.lucy.dialogs.OnNewItemCallback;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.workers.ItemsWorker;
 
@@ -170,12 +174,22 @@ public class CalenderFragment extends Fragment {
 
             @Override
             public void onLongClick(Item item) {
-
+                log("...onLongClick(Item)");
             }
 
             @Override
             public void onCheckboxClicked(Item item, boolean checked) {
-
+                log("...onCheckboxClicked(Item, boolean)", checked);
+                item.setState(checked ? State.DONE: State.TODO);
+                log(item);
+                int rowsAffected = ItemsWorker.update(item, getContext());
+                if( rowsAffected != 1){
+                    Toast.makeText(getContext(),"error updating item", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                setUserInterface(currentDate);
+                //items = ItemsWorker.selectTodayList(currentDate, getContext());
+                //adapter.setList(items);
             }
         });
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -185,10 +199,16 @@ public class CalenderFragment extends Fragment {
     }
     private void initRecyclerDates(){
         log("...initRecyclerDates()");
-        calenderDateAdapter = new CalenderDateAdapter(currentWeek.getDates(), new CalenderDateAdapter.Callback() {
+        calenderDateAdapter = new CalenderDateAdapter(currentWeek, new CalenderDateAdapter.Callback() {
             @Override
             public void onDateSelected(LocalDate date) {
-
+                log("...onDateSelected(LocalDate)", date.toString());
+                //items = ItemsWorker.selectItems(date, getContext(), State.TODO);
+                //adapter.setList(items);
+                currentDate = date;
+                currentWeek.setCurrentDate(currentDate);
+                calenderDateAdapter.setList(currentWeek);
+                setUserInterface(date);
             }
         });
         recyclerDates.setLayoutManager(new GridLayoutManager(getContext(), 7));
@@ -204,14 +224,14 @@ public class CalenderFragment extends Fragment {
         currentDate = currentDate.plusWeeks(1);
         currentWeek = new Week(currentDate);
         setUserInterface(currentDate);
-        calenderDateAdapter.setList(currentWeek.getDates());
+        calenderDateAdapter.setList(currentWeek);
     }
     private void prevWeek(){
         log("...prevWeek()");
         currentDate = currentDate.minusWeeks(1);
         currentWeek = new Week(currentDate);
         setUserInterface(currentDate);
-        calenderDateAdapter.setList(currentWeek.getDates());
+        calenderDateAdapter.setList(currentWeek);
     }
     private void setUserInterface(LocalDate date){
         log("...setUserInterface()", date.toString());
@@ -222,14 +242,28 @@ public class CalenderFragment extends Fragment {
         textViewMonth.setText(currentDate.getMonth().toString());
         textViewYear.setText(String.valueOf(currentDate.getYear()));
         labelMonthYear.setText(getMonthYear(currentDate));
-        items = ItemsWorker.selectTodayList(currentDate, getContext());
+        if( currentDate.equals(LocalDate.now())) {
+            items = ItemsWorker.selectTodayList(currentDate, getContext());
+        }else{
+            items = ItemsWorker.selectItems(currentDate, getContext(), State.TODO);
+        }
+        items.sort(Comparator.comparingLong(Item::compareTargetTime));
+        //items.sort(Comparator.comparingLong(Item::getTargetTimeSecondOfDay));
         adapter.setList(items);
     }
     private void showAddItemDialog(){
         log("...showAddItemDialog()");
-        //AddTemplateDialog dialog = new AddTemplateDialog();
-        Toast.makeText(getContext(), "work to do", Toast.LENGTH_LONG).show();
-
-
+        AddTemplateDialog dialog = new AddTemplateDialog(ItemsWorker.getRootItem(Settings.Root.DAILY, getContext()));
+        dialog.setCallback(new OnNewItemCallback() {
+            @Override
+            public void onNewItem(Item item) {
+                log("...onNewItem(Item)");
+                log(item);
+                ItemsWorker.insert(item, getContext());
+                items.add(item);
+                adapter.notifyDataSetChanged();
+            }
+        });
+        dialog.show(getParentFragmentManager(), "add item");
     }
 }

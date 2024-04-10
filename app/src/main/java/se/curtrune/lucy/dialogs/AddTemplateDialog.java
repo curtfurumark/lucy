@@ -97,7 +97,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         log("...createItem()");
         item = new Item();
         item.setState(State.TODO);
-        item.setIsTemplate(true);
+        //item.setIsTemplate(true);
         item.setParent(parent);
     }
     private Item getItem(){

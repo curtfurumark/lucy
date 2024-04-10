@@ -5,6 +5,8 @@ import static se.curtrune.lucy.util.Logger.log;
 
 import android.content.Context;
 
+import androidx.fragment.app.Fragment;
+
 import java.sql.SQLException;
 
 import se.curtrune.lucy.classes.Item;
@@ -17,6 +19,7 @@ public class Lucinda {
     private final Settings settings;
     public static Item currentParent;
     public static ViewMode currentViewMode;
+    public static Fragment currentFragment;
 
 /*    public static final int MOOD_OFFSET = 5;
     public static final int ENERGY_OFFSET = 5;*/

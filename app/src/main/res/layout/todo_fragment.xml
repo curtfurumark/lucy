@@ -4,11 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/teal_200"
-    tools:context=".fragments.ItemsFragment">
+    tools:context=".fragments.TodoFragment">
 
-<!--    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout5"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/todoFragment_layoutSearch"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,14 +19,14 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/itemsFragment_search"
+            android:id="@+id/todoFragment_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="search" />
-    </com.google.android.material.textfield.TextInputLayout-->
+    </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/itemsFragment_recycler"
+        android:id="@+id/todoFragment_recycler"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
@@ -37,7 +36,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.64"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout5">
+        app:layout_constraintTop_toBottomOf="@+id/todoFragment_layoutSearch">
 
     </androidx.recyclerview.widget.RecyclerView>
 

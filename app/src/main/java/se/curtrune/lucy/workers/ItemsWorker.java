@@ -12,6 +12,7 @@ import android.widget.Toast;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import se.curtrune.lucy.activities.ItemSession;
@@ -145,6 +146,7 @@ public class ItemsWorker {
         child.setDuration(template.getDuration());
         child.setCategory(template.getCategory());
         child.setMental(template.getMental());
+        child.setTargetTime(LocalTime.now());
         template.setMental(null);
         LocalDB db = new LocalDB(context);
         db.insertChild(template, child);
@@ -282,7 +284,7 @@ public class ItemsWorker {
      */
     public static int update(Item item, Context context) {
         log("ItemsWorker.update(Item, Context)");
-        if(item.isTemplate()){
+        if(item.isTemplate() && item.isDone()){
             return handleTemplate(item, context);
         }else {
             LocalDB db = new LocalDB(context);

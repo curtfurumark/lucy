@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.SeekBar;
@@ -27,7 +26,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.sql.SQLException;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -74,7 +72,10 @@ public class ItemSession extends AppCompatActivity implements
     private TextView labelPeriod;
     private TextView labelNotification;
     private TextView labelMental;
+    //info
     private TextView labelInfo;
+    private TextView textViewHasChild;
+    private TextView textViewState;
     private TextView labelComment;
     private TextView textViewPeriodDescription;
     //private TextView textViewTargetDate;
@@ -104,9 +105,11 @@ public class ItemSession extends AppCompatActivity implements
     private SeekBar seekBarMood;
     private SeekBar seekBarEnergy;
     private Switch switchSaveMental;
+    //estimate
+    private CheckBox checkBoxEstimate;
     private ConstraintLayout layoutEstimate;
     private ConstraintLayout layoutNotification;
-    private ConstraintLayout layoutPeriod;
+    private ConstraintLayout layoutRepeat;
     private ConstraintLayout layoutMental;
     private ConstraintLayout layoutInfo;
     private ConstraintLayout layoutComment;
@@ -165,6 +168,27 @@ public class ItemSession extends AppCompatActivity implements
         ItemsWorker.delete(currentItem, this);
         returnToCallingActivity();
     }
+    private Estimate getEstimate(){
+        log("...getEstimate()");
+        Estimate estimate = null;
+        if( checkBoxEstimate.isChecked()){
+            estimate = new Estimate();
+            estimate.setDuration(getEstimatedDuration());
+            estimate.setEnergy(0);//TODO,
+        }
+        return estimate;
+    }
+    private long getEstimatedDuration(){
+        log("...getEstimatedDuration()");
+        //TODO validate input and maybe add seconds
+        int hours = Integer.valueOf(editTextEstimateHours.getText().toString());
+        int minutes = Integer.valueOf(editTextEstimateMinutes.getText().toString());
+        int duration = (hours * 3600) + (minutes * 60);
+        log("...estimated duration", duration);
+        return duration;
+
+    }
+
     private Item getItem(){
         log("...getItem()");
         currentItem.setUpdated(LocalDateTime.now());
@@ -174,6 +198,7 @@ public class ItemSession extends AppCompatActivity implements
         currentItem.setTags(editTextTags.getText().toString());
         currentItem.setIsTemplate(checkBoxTemplate.isChecked());
         currentItem.setState(checkBoxDone.isChecked() ? State.DONE: State.WIP);
+        currentItem.setEstimate(getEstimate());
         return currentItem;
     }
     private Mental getMental(){
@@ -245,16 +270,20 @@ public class ItemSession extends AppCompatActivity implements
         textViewEnergy = findViewById(R.id.itemSession_labelEnergy);
         switchSaveMental = findViewById(R.id.itemSession_mentalSwitch);
         fabAdd = findViewById(R.id.itemSession_fabAdd);
-        labelEstimate = findViewById(R.id.itemSession_labelEstimate);
+
+        //estimate
+        checkBoxEstimate = findViewById(R.id.itemSession_checkBoxEstimate);
         editTextEstimateHours = findViewById(R.id.itemSession_estimateHours);
         editTextEstimateMinutes = findViewById(R.id.itemSession_estimateMinutes);
         editTextEstimateSeconds = findViewById(R.id.itemSession_estimateSeconds);
+        labelEstimate = findViewById(R.id.itemSession_labelEstimate);
+
         layoutMental = findViewById(R.id.itemSession_layoutMental);
         layoutEstimate = findViewById(R.id.itemSession_layoutEstimate);
         layoutNotification = findViewById(R.id.itemSession_layoutNotification);
-        layoutPeriod = findViewById(R.id.itemSession_layoutPeriod);
-        layoutInfo = findViewById(R.id.itemSession_layoutInfo);
-        labelPeriod = findViewById(R.id.itemSession_labelPeriod);
+        layoutRepeat = findViewById(R.id.itemSession_layoutRepeat);
+
+        labelPeriod = findViewById(R.id.itemSession_labelRepeat);
         labelMental = findViewById(R.id.itemSession_labelMental);
         //comment
         layoutComment = findViewById(R.id.itemSession_layoutComment);
@@ -273,7 +302,7 @@ public class ItemSession extends AppCompatActivity implements
 
         textViewPeriodDescription = findViewById(R.id.itemSession_periodDescription);
         textViewPeriodTargetDate = findViewById(R.id.itemSession_periodTargetDate);
-        textViewNotificationInfo = findViewById(R.id.itemSession_notificationInfo);
+        //textViewNotificationInfo = findViewById(R.id.itemSession_notificationInfo);
         textViewEditPeriod = findViewById(R.id.itemSession_editPeriod);
         //info
         labelInfo = findViewById(R.id.itemSession_labelInfo);
@@ -283,6 +312,9 @@ public class ItemSession extends AppCompatActivity implements
         textViewTags = findViewById(R.id.itemSession_infoTags);
         textViewCategory = findViewById(R.id.itemSession_infoCategory);
         textViewID = findViewById(R.id.itemSession_infoID);
+        layoutInfo = findViewById(R.id.itemSession_layoutInfo);
+        textViewHasChild = findViewById(R.id.itemSession_infoHasChild);
+        textViewState = findViewById(R.id.itemSession_infoState);
     }
     private void initDefaults(){
         log("...initDefaults()");
@@ -302,7 +334,7 @@ public class ItemSession extends AppCompatActivity implements
                 log("...error updating item, isTemplate");
             }
         });*/
-        textViewTargetTime.setOnClickListener(view->showDateDialog());
+        textViewTargetDate.setOnClickListener(view->showDateDialog());
         textViewTargetTime.setOnClickListener(view->showTimeDialog());
         checkBoxTemplate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -560,7 +592,7 @@ public class ItemSession extends AppCompatActivity implements
         }*/
 
         kronos.reset();
-        Intent intent = new Intent(this, TodayActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(Constants.INTENT_SHOW_CHILD_ITEMS, true);
         Item parent = ItemsWorker.selectItem(currentItem.getParentId(), this);
         intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, parent);
@@ -590,6 +622,7 @@ public class ItemSession extends AppCompatActivity implements
     }
     private void setUserInterface(Estimate estimate){
         log("...setUserInterface(Estimate)");
+        labelEstimate.setText("has estimate");
         long seconds = estimate.getDuration();
         editTextEstimateHours.setText(String.valueOf(seconds / 3600));
         editTextEstimateMinutes.setText(String.valueOf((seconds % 3600) / 60));
@@ -625,9 +658,10 @@ public class ItemSession extends AppCompatActivity implements
             textViewPeriodTargetDate.setVisibility(View.GONE);
         }
         if(item.hasNotification()){
-            textViewNotificationInfo.setText("has notification");
-        }else{
-            textViewNotificationInfo.setText("no notification");
+            labelNotification.setText(item.getNotification().toString());
+        }
+        if( item.hasEstimate()){
+            setUserInterface(item.getEstimate());
         }
         checkBoxTemplate.setChecked(item.isTemplate());
         String textTags = item.hasTags() ? item.getTags(): "no tags";
@@ -640,6 +674,10 @@ public class ItemSession extends AppCompatActivity implements
         textViewCategory.setText(textCategory);
         String textID = String.format(Locale.getDefault(), "id: %d", item.getID());
         textViewID.setText(textID);
+        String textHasChild = String.format(Locale.getDefault(), "hasChild: %b", item.hasChild());
+        textViewHasChild.setText(textHasChild);
+        String textState = String.format(Locale.getDefault(), "state: %s", item.getState().toString());
+        textViewState.setText(textState);
 
     }
     private void setUserInterface(Notification notification){
@@ -825,11 +863,11 @@ public class ItemSession extends AppCompatActivity implements
     }
     private void togglePeriod(){
         log("...togglePeriod()");
-        if( layoutPeriod.getVisibility() == View.VISIBLE){
-            layoutPeriod.setVisibility(View.GONE);
+        if( layoutRepeat.getVisibility() == View.VISIBLE){
+            layoutRepeat.setVisibility(View.GONE);
             textViewEditPeriod.setVisibility(View.GONE);
         }else{
-            layoutPeriod.setVisibility(View.VISIBLE);
+            layoutRepeat.setVisibility(View.VISIBLE);
             if( currentItem.hasPeriod()){
                 textViewEditPeriod.setText("edit");
             }else{

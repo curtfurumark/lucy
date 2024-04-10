@@ -18,8 +18,11 @@ import com.google.android.material.tabs.TabLayout;
 import java.time.LocalDate;
 
 import se.curtrune.lucy.R;
+import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.fragments.CalenderFragment;
-import se.curtrune.lucy.fragments.ItemsFragment;
+import se.curtrune.lucy.fragments.ProjectsFragment;
+import se.curtrune.lucy.fragments.TodoFragment;
+import se.curtrune.lucy.util.Constants;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,7 +42,16 @@ public class MainActivity extends AppCompatActivity {
         initComponents();
         initListeners();
         initDefaultFragment();
-        navigate(new CalenderFragment());
+        Intent intent = getIntent();
+        if( intent.getBooleanExtra(Constants.INTENT_SHOW_CHILD_ITEMS, false)){
+            log("...INTENT_SHOW_CHILD_ITEMS");
+        }
+
+        if(Lucinda.currentFragment == null) {
+            currentFragment = new CalenderFragment();
+        }
+        navigate(currentFragment);
+        setBottomNavigationSelected(currentFragment);
     }
     private void initComponents(){
         log("...initComponents()");
@@ -49,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     }
     private void initDefaultFragment(){
         log("...initDefaultFragment()");
-        currentFragment = new ItemsFragment();
+        currentFragment = new ProjectsFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.mainActivity_fragmentContainer, currentFragment).commit();
 
     }
@@ -62,9 +74,9 @@ public class MainActivity extends AppCompatActivity {
                 if( item.getItemId() == R.id.bottomNavigation_today){
                     navigate(new CalenderFragment());
                 }else if( item.getItemId() == R.id.bottomNavigation_projects){
-                    navigate(new ItemsFragment());
-                }else{
-                    log("...not implemented");
+                    navigate(new ProjectsFragment());
+                }else if( item.getItemId() == R.id.bottomNavigation_todo){
+                    navigate(new TodoFragment());
                 }
                 return true;
             }
@@ -109,7 +121,26 @@ public class MainActivity extends AppCompatActivity {
         log("...onOptionsItemSelected(MenuItem)", item.getTitle().toString());
         if( item.getItemId() == R.id.mainActivity_home){
             startActivity(new Intent(this, HomeActivity.class));
-        }
+        }/*else if( item.getItemId() == R.id.mainActivity_startSequence){
+            startSequence();
+        }*/
         return super.onOptionsItemSelected(item);
+    }
+    private void setBottomNavigationSelected(Fragment fragment){
+        int selectedItemID = 0;
+        if( fragment instanceof ProjectsFragment){
+            selectedItemID = R.id.bottomNavigation_projects;
+        }else if( fragment instanceof TodoFragment){
+            selectedItemID = R.id.bottomNavigation_todo;
+        }else{
+            selectedItemID = R.id.bottomNavigation_today;
+        }
+        bottomNavigation.setSelectedItemId(selectedItemID);
+    }
+    private void startSequence(){
+        log("...startSequence()");
+        Intent intent = new Intent(this, SequenceActivity.class);
+        //intent.putExtra(Constants.INTENT_SEQUENCE_PARENT)
+
     }
 }

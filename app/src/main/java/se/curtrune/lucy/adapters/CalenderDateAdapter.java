@@ -2,9 +2,9 @@ package se.curtrune.lucy.adapters;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,23 +13,24 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.time.LocalDate;
 import java.time.format.TextStyle;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.classes.Item;
-import se.curtrune.lucy.classes.State;
+import se.curtrune.lucy.classes.Week;
 
 
 public class CalenderDateAdapter extends RecyclerView.Adapter<CalenderDateAdapter.ViewHolder>{
     private List<LocalDate> dates;
+    private Week week;
+    //private LocalDate selectedDate;
     public static boolean VERBOSE = false;
 
-    public void setList(List<LocalDate> dates) {
-        if( VERBOSE) log("ItemAdapter.setList(List<Item>) size", dates.size());
-        this.dates = dates;
+    public void setList(Week week) {
+        if( VERBOSE) log("CalenderDateAdapter.setList(List<Item>) size", dates.size());
+        this.dates = week.getDates();
+        this.week = week;
+        //selectedDate = week.getCurrentDate();
         notifyDataSetChanged();
     }
 
@@ -45,15 +46,16 @@ public class CalenderDateAdapter extends RecyclerView.Adapter<CalenderDateAdapte
     }
     private Callback callback;
 
-    public CalenderDateAdapter(List<LocalDate> dates, Callback callback) {
-        if( VERBOSE) log("ItemAdapter(List<Item>, Callback) dates size", dates.size());
-        this.dates = dates;
+    public CalenderDateAdapter(Week week, Callback callback) {
+        if( VERBOSE) log("CalenderDateAdapter(Week, Callback) dates size", dates.size());
+        this.dates = week.getDates();
+        this.week = week;
         this.callback = callback;
     }
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if( VERBOSE) log("ItemAdapter.onCreateViewHolder(...)");
+        if( VERBOSE) log("CalenderDateAdapter.onCreateViewHolder(...)");
         android.view.View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.calender_date_adapter, parent, false);
         return new ViewHolder(itemView);
     }
@@ -62,7 +64,15 @@ public class CalenderDateAdapter extends RecyclerView.Adapter<CalenderDateAdapte
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         if( VERBOSE) log("CalenderDateAdapter.onBindViewHolder() position", position);
         LocalDate date = dates.get(position);
-        String dateName = date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
+        if( date.equals(week.getCurrentDate())){
+            log("...selectedDate true", date.toString());
+            holder.textViewDateNumber.setTextColor(Color.rgb(255,255,255));
+            holder.textViewDateName.setTextColor(Color.rgb(255,255,255));
+        }else{
+            holder.textViewDateNumber.setTextColor(Color.rgb(128,128,128));
+            holder.textViewDateName.setTextColor(Color.rgb(128,128,128));
+        }
+        String dateName = date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.getDefault());
         holder.textViewDateName.setText(dateName);
         holder.textViewDateNumber.setText(String.valueOf(date.getDayOfMonth()));
     }
@@ -74,11 +84,18 @@ public class CalenderDateAdapter extends RecyclerView.Adapter<CalenderDateAdapte
     public class ViewHolder extends RecyclerView.ViewHolder{
         private final TextView textViewDateName;
         private final TextView textViewDateNumber;
+        private final ConstraintLayout layout;
 
         public ViewHolder(@NonNull android.view.View itemView) {
             super(itemView);
             textViewDateName = itemView.findViewById(R.id.calender_date_adapter_dateName);
             textViewDateNumber = itemView.findViewById(R.id.calender_date_adapter_dateNumber);
+            layout = itemView.findViewById(R.id.calenderDateFragment_rootLayout);
+            layout.setOnClickListener(view->{
+                log("...layout onClick");
+                //selectedDate = dates.get(getAdapterPosition());
+                callback.onDateSelected(dates.get(getAdapterPosition()));
+            });
         }
     }
 }

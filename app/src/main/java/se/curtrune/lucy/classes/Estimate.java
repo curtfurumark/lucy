@@ -5,6 +5,9 @@ import static se.curtrune.lucy.util.Logger.log;
 import com.google.gson.Gson;
 
 import java.io.Serializable;
+import java.util.Locale;
+
+import se.curtrune.lucy.util.Converter;
 
 public class Estimate implements Serializable {
     private long duration;
@@ -30,5 +33,10 @@ public class Estimate implements Serializable {
     }
     public String toJson(){
         return new Gson().toJson(this, Estimate.class);
+    }
+
+    @Override
+    public String toString() {
+        return String.format(Locale.getDefault(), "estimated time %s, energy %d", Converter.formatSecondsWithHours(duration), energy);
     }
 }
