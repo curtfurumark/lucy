@@ -31,6 +31,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/mainActivity_panic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:contentDescription="panic button"
+        app:backgroundTint="@color/red"
+        app:srcCompat="@drawable/baseline_electric_bolt_24"
+        app:layout_constraintBottom_toTopOf="@id/mainActivity_bottomNavigation"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/mainActivity_bottomNavigation"
         android:layout_width="0dp"

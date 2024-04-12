@@ -149,6 +149,12 @@ public class Item implements Serializable , Listable {
     public LocalDate getDateUpdated(){
         return getUpdated().toLocalDate();
     }
+    public long getEstimatedDuration(){
+        if( hasEstimate()){
+            return estimate.getDuration();
+        }
+        return 0;
+    }
     public Mental getMental(){
         return mental;
     }
@@ -306,7 +312,11 @@ public class Item implements Serializable , Listable {
         this.notification = notification;
     }
     public void setNotification(String json){
-        //log("Item.setNotification(String)", json);
+        if( json != null && json.startsWith("{")) {
+            log("...setNotification, json", json);
+            notification = new Gson().fromJson(json, Notification.class);
+            log(notification);
+        }
     }
     public void setId(long id) {
         this.id = id;

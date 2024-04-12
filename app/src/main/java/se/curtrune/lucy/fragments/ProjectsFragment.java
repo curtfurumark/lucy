@@ -49,6 +49,7 @@ public class ProjectsFragment extends Fragment implements
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String CURRENT_PARENT = "CURRENT_PARENT";
     private RecyclerView recycler;
     private EditText editTextSearch;
     private ItemAdapter adapter;
@@ -97,7 +98,17 @@ public class ProjectsFragment extends Fragment implements
         View view = inflater.inflate(R.layout.projects_fragment, container, false);
         setHasOptionsMenu(true);
         initComponents(view);
-        currentParent = ItemsWorker.getRootItem(Settings.Root.PROJECTS, getContext());
+        if( savedInstanceState != null){
+            log("...savedInstanceState != null");
+            currentParent = (Item) savedInstanceState.getSerializable(CURRENT_PARENT);
+        }else{
+            currentParent = ItemsWorker.getRootItem(Settings.Root.PROJECTS, getContext());
+        }
+        if( currentParent == null){
+            log("ERROR, currentParent is null");
+            Toast.makeText(getContext(), "ERROR, currentParent is null", Toast.LENGTH_LONG).show();
+            return view;
+        }
         items = ItemsWorker.selectChildren(currentParent, getContext());
         initRecycler(items);
         log("...recycler initialized");
@@ -132,6 +143,13 @@ public class ProjectsFragment extends Fragment implements
             startSequence();
         }
         return true;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        log("ProjectsFragment.onSaveInstanceState(Bundle of joy) ");
+        outState.putSerializable(CURRENT_PARENT, currentParent);
+        super.onSaveInstanceState(outState);
     }
 
     @Override

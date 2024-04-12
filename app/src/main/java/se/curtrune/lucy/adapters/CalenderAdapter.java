@@ -41,6 +41,7 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
     }
 
     public interface Callback{
+        void onEditTime(Item item);
         void onItemClick(Item item);
         void onLongClick(Item item);
         void onCheckboxClicked(Item item, boolean checked);
@@ -103,6 +104,9 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
                 log("...onLongClick");
                 callback.onLongClick(items.get((getAdapterPosition())));
                 return true;
+            });
+            textViewTime.setOnClickListener(view->{
+                callback.onEditTime(items.get(getAdapterPosition()));
             });
         }
     }

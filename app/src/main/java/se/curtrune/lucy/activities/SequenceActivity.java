@@ -13,24 +13,31 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSnapHelper;
+import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SnapHelper;
 
 import java.util.List;
 import java.util.Locale;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.SequenceAdapter;
+import se.curtrune.lucy.classes.CallingActivity;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.util.Constants;
+import se.curtrune.lucy.util.Converter;
 import se.curtrune.lucy.workers.ItemsWorker;
 
 public class SequenceActivity extends AppCompatActivity implements SequenceAdapter.Callback{
 
     //private TextView textViewHeading;
     private TextView textViewParentHeading;
+    private TextView textViewEstimatedTotalDuration;
     //private TextView textViewInfo;
     //private CheckBox checkBoxState;
+    private static final String PARENT_ITEM = "PARENT_ITEM";
     private TextView textViewNumberItems;
     private Item parentItem;
     private Item currentItem;
@@ -44,11 +51,17 @@ public class SequenceActivity extends AppCompatActivity implements SequenceAdapt
         setContentView(R.layout.sequence_activity);
         log("SequenceActivity.onCreate(Bundle)");
         Intent intent = getIntent();
-        parentItem = (Item) intent.getSerializableExtra(Constants.INTENT_SEQUENCE_PARENT);
-        if( parentItem == null){
-            log("...sorry but parentItem is null, i surrender");
-            Toast.makeText(this, "no parentItem", Toast.LENGTH_LONG).show();
-            return;
+
+        if ( savedInstanceState != null){
+            log("...savedInstanceState != null");
+            parentItem = (Item) savedInstanceState.getSerializable(PARENT_ITEM);
+        }else{
+            parentItem = (Item) intent.getSerializableExtra(Constants.INTENT_SEQUENCE_PARENT);
+            if( parentItem == null){
+                log("...sorry but parentItem is null, i surrender");
+                Toast.makeText(this, "no parentItem", Toast.LENGTH_LONG).show();
+                //return;
+            }
         }
         init();
         initComponents();
@@ -71,6 +84,7 @@ public class SequenceActivity extends AppCompatActivity implements SequenceAdapt
         textViewNumberItems = findViewById(R.id.sequenceActivity_nItems);
         textViewParentHeading = findViewById(R.id.sequenceActivity_parentItem);
         recycler = findViewById(R.id.sequenceActivity_recycler);
+        textViewEstimatedTotalDuration = findViewById(R.id.sequenceActivity_estimatedTotalTime);
     }
     private void initListeners(){
         log("...initListeners()");
@@ -92,14 +106,27 @@ public class SequenceActivity extends AppCompatActivity implements SequenceAdapt
         recycler.setLayoutManager(layoutManager);
         recycler.setItemAnimator(new DefaultItemAnimator());
         recycler.setAdapter(adapter);
+        SnapHelper snapHelper = new PagerSnapHelper();
+        snapHelper.attachToRecyclerView(recycler);
 
     }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        log("...onSaveInstanceState(Bundle)");
+        outState.putSerializable(PARENT_ITEM, parentItem);
+        super.onSaveInstanceState(outState);
+    }
+
     private void initUserInterface(){
         log("...initUserInterface()");
         String textNumberItems = String.format(Locale.getDefault(), "number of activities in sequence %d", items.size());
         textViewNumberItems.setText(textNumberItems);
         setUserInterface(items.get(currentItemIndex));
         textViewParentHeading.setText(parentItem.getHeading());
+        long seconds = ItemsWorker.calculateEstimate(items);
+        String textEstimatedDuration = String.format(Locale.getDefault() ,"estimated total duration %s", Converter.formatSecondsWithHours(seconds));
+        textViewEstimatedTotalDuration.setText(textEstimatedDuration);
     }
 
     @Override
@@ -134,11 +161,15 @@ public class SequenceActivity extends AppCompatActivity implements SequenceAdapt
     @Override
     public void onItemClick(Item item) {
         log("...onItemClick(Item)");
+        Intent intent = new Intent(this, ItemSession.class);
+        intent.putExtra(Constants.INTENT_ITEM_SESSION, true);
+        intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, item);
+        intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.SEQUENCE_ACTIVITY);
+        startActivity(intent);
     }
-
     @Override
     public void onLongClick(Item item) {
-
+        log("...onLongClick(Item)");
     }
 
     @Override

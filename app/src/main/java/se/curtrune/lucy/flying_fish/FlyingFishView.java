@@ -1,40 +1,42 @@
-package se.curtrune.lucy.activities;
+package se.curtrune.lucy.flying_fish;
 
 import static se.curtrune.lucy.util.Logger.log;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.MotionEvent;
 import android.view.View;
 
+import se.curtrune.lucy.flying_fish.classes.Background;
+import se.curtrune.lucy.flying_fish.classes.Fish;
+
 
 public class FlyingFishView extends View {
-    //private Bitmap[] bitmap_fish = new Bitmap[2];
-    //private Bitmap bitmap_background;
+    private Bitmap[] bitmap_fish = new Bitmap[2];
+    private Bitmap bitmap_background;
+    private Background background;
+    private Fish fish;
     private Paint  paint_score = new Paint();
-    //private Bitmap[] bitmap_lifes = new Bitmap[2];
+    private Bitmap[] bitmap_lifes = new Bitmap[2];
 
 
 
-    //private Paint yellowBall = new Paint();
-    //private Paint greenBall = new Paint();
-    //private Paint redBall = new Paint();
+    private Paint yellowBall = new Paint();
+    private Paint greenBall = new Paint();
+    private Paint redBall = new Paint();
 
     private int canvas_width;
-    //private int canvas_height;
-    //private boolean touch = false;
+    private int canvas_height;
+    private boolean touch = false;
 
     public FlyingFishView(Context context) {
         super(context);
         log("FlyingFishView(Context)");
-
-/*        background = new Background(getResources());
-
-        fish = new Fish(getResources());*/
-
-
+        background = new Background(getResources());
+        fish = new Fish(getResources());
     }
 
     public boolean hitBallChecker(int x, int y){
@@ -46,9 +48,9 @@ public class FlyingFishView extends View {
     }
     @Override
     protected void onDraw(Canvas canvas) {
-/*        background.draw(canvas);
+        background.draw(canvas);
         fish.update();
-        fish.draw(canvas);*/
+        fish.draw(canvas);
         /*
 
         /*int minFishY = bitmap_fish[0].getHeight();
@@ -110,11 +112,11 @@ public class FlyingFishView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-/*        if( event.getAction() == MotionEvent.ACTION_DOWN){
+        if( event.getAction() == MotionEvent.ACTION_DOWN){
             fish.jump(true);
         }else{
             fish.jump(false);
-        }*/
+        }
         return true;
     }
 }

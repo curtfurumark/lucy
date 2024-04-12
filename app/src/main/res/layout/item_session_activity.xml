@@ -122,27 +122,6 @@
                     android:hint="tags" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                android:id="@+id/itemSession_targetDate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:text="target date"
-                android:textSize="24sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/itemSession_layoutTags" />
-
-            <TextView
-                android:id="@+id/itemSession_targetTime"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:text="target time"
-                android:textSize="24sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/itemSession_targetDate" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -330,13 +309,17 @@
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/dividerEstimate" />
-        <CheckBox
-            android:id="@+id/itemSession_checkBoxEstimate"
+
+        <ImageView
+            android:id="@+id/itemSession_estimateAction"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             android:text="save estimate"
-            app:layout_constraintTop_toBottomOf="@+id/dividerEstimate"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_height="wrap_content"/>
+            app:layout_constraintTop_toBottomOf="@+id/dividerEstimate"
+            app:srcCompat="@drawable/baseline_add_24" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/itemSession_layoutEstimate"
@@ -450,6 +433,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/dividerPeriod" />
 
+        <ImageView
+            android:id="@+id/itemSession_repeatActionIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/divider6"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dividerPeriod"
+            app:srcCompat="@drawable/baseline_add_24" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/itemSession_layoutRepeat"
             android:layout_width="match_parent"
@@ -500,21 +493,22 @@
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider6" />
-        <TextView
-            android:id="@+id/itemSession_addNotification"
+
+        <ImageView
+            android:id="@+id/itemSession_notificationAction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="add"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/itemSession_labelNotifications"
-            android:layout_width="wrap_content"
-            android:text="add"
-            android:textSize="24sp"
-            android:layout_height="wrap_content"
-            />
+            app:srcCompat="@drawable/baseline_add_24" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/itemSession_layoutNotification"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/itemSession_labelNotifications">
 
@@ -578,7 +572,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/itemSession_labelInfo">
 
@@ -637,6 +631,7 @@
                 android:text="id"
                 app:layout_constraintStart_toStartOf="@+id/itemSession_infoCategory"
                 app:layout_constraintTop_toBottomOf="@+id/itemSession_infoCategory" />
+
             <TextView
                 android:id="@+id/itemSession_infoHasChild"
                 android:layout_width="wrap_content"
@@ -645,6 +640,7 @@
                 android:text="id"
                 app:layout_constraintStart_toStartOf="@+id/itemSession_infoID"
                 app:layout_constraintTop_toBottomOf="@+id/itemSession_infoID" />
+
             <TextView
                 android:id="@+id/itemSession_infoState"
                 android:layout_width="wrap_content"
@@ -677,7 +673,50 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/dividerDateTime" />
 
-        <TextView
+        <LinearLayout
+            android:id="@+id/itemSession_layoutDateTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/itemSession_labelDateTime">
+
+            <TextView
+                android:id="@+id/itemSession_targetDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="target date"
+                android:textSize="24sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/itemSession_layoutTags" />
+
+            <TextView
+                android:id="@+id/itemSession_targetTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="target time"
+                android:textSize="24sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/itemSession_targetDate" />
+
+
+        </LinearLayout>
+        <View
+            android:id="@+id/dividerWhatever"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/itemSession_layoutDateTime" />
+
+<!--        <TextView
             android:id="@+id/itemSession_editPeriod"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -686,7 +725,7 @@
             android:textSize="24sp"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/itemSession_labelRepeat" />
+            app:layout_constraintTop_toTopOf="@+id/itemSession_labelRepeat" />-->
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/itemSession_fabAdd"
@@ -696,8 +735,8 @@
             android:clickable="true"
             android:contentDescription="@string/add_child_item"
             android:text="@string/add_child_item"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dividerWhatever"
             app:srcCompat="@drawable/baseline_add_circle_outline_24" />
 
 

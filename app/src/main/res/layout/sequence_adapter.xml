@@ -23,6 +23,16 @@
             android:layout_width="match_parent"
             android:orientation="vertical"
             android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/sequenceAdapter_itemHeading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/heading"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/sequenceAdapter_itemState"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <CheckBox
                 android:id="@+id/sequenceAdapter_itemState"
@@ -32,21 +42,15 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
             <TextView
+                android:id="@+id/sequenceAdapter_estimatedDuration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+            <TextView
                 android:id="@+id/sequenceAdapter_targetTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/time"/>
-
-            <TextView
-                android:id="@+id/sequenceAdapter_itemHeading"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/heading"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/sequenceAdapter_itemState"
-                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/sequenceAdapter_itemInfo"
@@ -66,6 +70,13 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/baseline_access_time_24" />
+            <TextView
+                android:id="@+id/sequenceAdapter_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="edit"
+                android:textSize="34sp"/>
+
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>

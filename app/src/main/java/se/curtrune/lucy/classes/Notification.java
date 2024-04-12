@@ -2,32 +2,35 @@ package se.curtrune.lucy.classes;
 
 import com.google.gson.Gson;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Locale;
 
 import se.curtrune.lucy.util.Converter;
 
-public class Notification {
+public class Notification implements Serializable {
     public enum Type{
         PENDING, ALARM, NOTIFICATION;
     }
     private Type type;
-    private LocalDate date;
-    private LocalTime time;
+    //private LocalDate date;
+    private long date;
+    //private LocalTime time;
+    private int time;
     private String title;
     private String content;
     public String getContent(){
         return this.content;
     }
     public LocalDate getDate(){
-        return this.date;
+        return LocalDate.ofEpochDay(date);
     }
     public String getTitle(){
         return this.title;
     }
     public LocalTime getTime(){
-        return this.time;
+        return LocalTime.ofSecondOfDay(time);
     }
     public Type getType(){
         return this.type;
@@ -36,10 +39,10 @@ public class Notification {
         this.content = content;
     }
     public void setDate(LocalDate date){
-        this.date = date;
+        this.date = date.toEpochDay();
     }
     public void setDate(String string) {
-        date = LocalDate.parse(string);
+        date = LocalDate.parse(string).toEpochDay();
     }
 
 
@@ -47,10 +50,10 @@ public class Notification {
         this.title = title;
     }
     public void setTime(LocalTime time){
-        this.time = time;
+        this.time = time.toSecondOfDay();
     }
     public void setTime(String string) {
-        time = LocalTime.parse(string);
+        time = LocalTime.parse(string).toSecondOfDay();
     }
     public void setType(Type type){
         this.type = type;
@@ -61,6 +64,6 @@ public class Notification {
 
     @Override
     public String toString() {
-        return String.format(Locale.getDefault(), "%s %s %s", type.toString(), date.toString(), Converter.format(time));
+        return String.format(Locale.getDefault(), "%s %s %s", type.toString(), getDate().toString(), Converter.format(getTime()));
     }
 }

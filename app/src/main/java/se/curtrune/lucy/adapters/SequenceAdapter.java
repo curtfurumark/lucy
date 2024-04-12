@@ -11,13 +11,17 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.w3c.dom.Text;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
+import se.curtrune.lucy.util.Converter;
 
 
 public class SequenceAdapter extends RecyclerView.Adapter<SequenceAdapter.ViewHolder>{
@@ -64,6 +68,9 @@ public class SequenceAdapter extends RecyclerView.Adapter<SequenceAdapter.ViewHo
         holder.textView_heading.setText(item.getHeading());
         holder.textView_info.setText(item.getInfo());
         holder.checkBox_state.setChecked(item.getState().equals(State.DONE));
+        holder.textViewTargetTime.setText(Converter.format(item.getTargetTime()));
+        String txtEstimatedDuration = String.format(Locale.getDefault(), "estimated duration %s", Converter.formatSecondsWithHours(item.getEstimatedDuration()));
+        holder.textViewEstimatedDuration.setText(txtEstimatedDuration);
     }
 
     @Override
@@ -78,24 +85,23 @@ public class SequenceAdapter extends RecyclerView.Adapter<SequenceAdapter.ViewHo
         private final TextView textView_heading;
         private final CheckBox checkBox_state;
         private final TextView textView_info;
+        private final TextView textViewTargetTime;
+        private final TextView textViewEstimatedDuration;
+        private final TextView textViewEdit;
 
         public ViewHolder(@NonNull android.view.View itemView) {
             super(itemView);
             textView_heading = itemView.findViewById(R.id.sequenceAdapter_itemHeading);
             textView_info = itemView.findViewById(R.id.sequenceAdapter_itemInfo);
             checkBox_state = itemView.findViewById(R.id.sequenceAdapter_itemState);
+            textViewTargetTime = itemView.findViewById(R.id.sequenceAdapter_targetTime);
+            textViewEstimatedDuration = itemView.findViewById(R.id.sequenceAdapter_estimatedDuration);
+            textViewEdit = itemView.findViewById(R.id.sequenceAdapter_edit);
             checkBox_state.setOnClickListener(view -> {
-                //log("...on checkbox state");
-                Item item = items.get(getAdapterPosition());
-                callback.onCheckboxClicked(items.get(getAdapterPosition()), checkBox_state.isChecked());});
-/*            ConstraintLayout parentLayout = itemView.findViewById(R.id.constraintLayout_todayAdapter);
-            parentLayout.setOnClickListener(view -> {
-                callback.onItemClick(items.get(getAdapterPosition()));
+                callback.onCheckboxClicked(items.get(getAdapterPosition()), checkBox_state.isChecked());
             });
-            parentLayout.setOnLongClickListener(e->{
-                callback.onLongClick(items.get((getAdapterPosition())));
-                return true;
-            });*/
+            textViewEdit.setOnClickListener(view->callback.onItemClick(items.get(getAdapterPosition())));
+
         }
     }
 }

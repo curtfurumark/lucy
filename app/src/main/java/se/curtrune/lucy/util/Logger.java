@@ -90,6 +90,9 @@ public class Logger {
         log("\tdate", notification.getDate());
         log("\ttime", notification.getTime());
         log("\ttype", notification.getType().toString());
+        log("\ttitle", notification.getTitle());
+        log("\tcontent", notification.getContent());
+        log("\ttoJson", notification.toJson());
     }
     public static void log(Period period){
         log("log(Period)");

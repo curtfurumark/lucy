@@ -9,35 +9,37 @@
 
 
     <TextView
-        android:id="@+id/homeActivity_tabs"
+        android:id="@+id/homeActivity_mainActivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="tab layout"
-        android:textSize="24sp"
+        android:text="main"
+        android:textSize="34sp"
+        app:layout_constraintBottom_toTopOf="@+id/homeActivity_swipeableCards"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/homeActivity_swipeableCards"
         app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/homeActivity_swipeableCards"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="swipe the cards"
-        android:textSize="24sp"
+        android:textSize="34sp"
+        app:layout_constraintBottom_toTopOf="@+id/homeActivity_calender"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/homeActivity_tabs"
-        app:layout_constraintBottom_toTopOf="@+id/homeActivity_calender"/>
+        app:layout_constraintTop_toBottomOf="@+id/homeActivity_mainActivity" />
+
     <TextView
         android:id="@+id/homeActivity_calender"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="calender"
-        android:textSize="24sp"
+        android:textSize="34sp"
+        app:layout_constraintBottom_toTopOf="@id/homeActivity_settings"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/homeActivity_swipeableCards"
-        app:layout_constraintBottom_toTopOf="@id/homeActivity_settings"/>
+        app:layout_constraintTop_toBottomOf="@+id/homeActivity_swipeableCards" />
 
     <TextView
         android:id="@+id/homeActivity_settings"
@@ -54,7 +56,7 @@
         android:id="@+id/homeActivity_today"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/today"
+        android:text="old"
         android:textSize="34sp"
         app:layout_constraintBottom_toTopOf="@id/homeActivity_statistics"
         app:layout_constraintEnd_toEndOf="parent"

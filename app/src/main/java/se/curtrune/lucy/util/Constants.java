@@ -28,4 +28,5 @@ public class Constants {
     public static final int ANXIETY_OFFSET = 5;
     public static final int IS_TEMPLATE = 1;
     public static final String INTENT_SEQUENCE_PARENT = "INTENT_SEQUENCE_PARENT";
+    public static final String INTENT_SHOW_FRAGMENT = "INTENT_SHOW_FRAGMENT";
 }

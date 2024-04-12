@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import se.curtrune.lucy.R;
+import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.util.Converter;
 
@@ -38,6 +39,7 @@ public class NotificationDialog extends BottomSheetDialogFragment {
     private LocalDate targetDate;
     private LocalTime targetTime;
     private Notification notification;
+    private Item item;
 
     public interface Callback{
         void onNotification(Notification notification);
@@ -47,8 +49,10 @@ public class NotificationDialog extends BottomSheetDialogFragment {
     private enum Mode{
         CREATE, EDIT
     }
-    public NotificationDialog(){
-        log("AddItemFragment default constructor");
+    public NotificationDialog(Item item)
+    {
+        log("AddItemFragment(Item)");
+        this.item = item;
     }
 
 
@@ -71,6 +75,8 @@ public class NotificationDialog extends BottomSheetDialogFragment {
         notification.setDate(textViewDate.getText().toString());
         notification.setTime(textViewTime.getText().toString());
         notification.setType(Notification.Type.PENDING);
+        notification.setTitle(item.getHeading());
+        notification.setContent(item.getHeading());
         return notification;
     }
 
@@ -92,12 +98,13 @@ public class NotificationDialog extends BottomSheetDialogFragment {
         notification.setDate(targetDate);
         notification.setTime(targetTime);
         notification.setType(Notification.Type.ALARM);
+        notification.setTitle(item.getHeading());
+        notification.setContent(item.getHeading());
 
     }
     private void initListeners(){
         log("...initListeners()");
         buttonSave.setOnClickListener(view1 -> {
-            //Notification notification = getNotification();
             listener.onNotification(notification);
             dismiss();
         });
@@ -113,7 +120,6 @@ public class NotificationDialog extends BottomSheetDialogFragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        //this.listener = (Callback) context;
     }
     public void setListener(Callback callback){
         this.listener = callback;
@@ -134,7 +140,6 @@ public class NotificationDialog extends BottomSheetDialogFragment {
     }
     private void showTimeDialog(){
         log("...showTimeDialog()");
-        //AtomicReference<LocalTime> targetTime = new AtomicReference<>(LocalTime.now());
         int minutes = targetTime.getMinute();
         int hour = targetTime.getHour();
         TimePickerDialog timePicker = new TimePickerDialog(getContext(), (view, hourOfDay, minute) -> {
@@ -144,6 +149,4 @@ public class NotificationDialog extends BottomSheetDialogFragment {
         }, hour, minutes, true);
         timePicker.show();
     }
-
-
 }

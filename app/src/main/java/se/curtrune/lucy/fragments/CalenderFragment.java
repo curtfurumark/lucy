@@ -2,6 +2,7 @@ package se.curtrune.lucy.fragments;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -163,6 +165,12 @@ public class CalenderFragment extends Fragment {
         log("...initRecycler()");
         adapter = new CalenderAdapter(items, new CalenderAdapter.Callback() {
             @Override
+            public void onEditTime(Item item) {
+                log("...onEditTime(Item item");
+                updateTargetTime(item);
+            }
+
+            @Override
             public void onItemClick(Item item) {
                 log("...onItemClick(Item)", item.getHeading());
                 Intent intent = new Intent(getContext(), ItemSession.class);
@@ -261,9 +269,31 @@ public class CalenderFragment extends Fragment {
                 log(item);
                 ItemsWorker.insert(item, getContext());
                 items.add(item);
-                adapter.notifyDataSetChanged();
+                updateAdapter();
             }
         });
         dialog.show(getParentFragmentManager(), "add item");
+    }
+    private void updateTargetTime(Item item){
+        log("...updateTargetTime(Item)");
+        LocalTime oldTime = item.getTargetTime();
+        int minutes = oldTime.getMinute();
+        int hour = oldTime.getHour();
+        TimePickerDialog timePicker = new TimePickerDialog(getContext(), (view, hourOfDay, minute) -> {
+            LocalTime targetTime = LocalTime.of(hourOfDay, minute);
+            item.setTargetTime(targetTime);
+            int rowsAffected = ItemsWorker.update(item, getContext());
+            if(rowsAffected != 1){
+                log("ERROR updating time of item",item.getHeading());
+            }
+            updateAdapter();
+        }, hour, minutes, true);
+        timePicker.show();
+    }
+    private void updateAdapter(){
+        log("...updateAdapter()");
+        items.sort(Comparator.comparingLong(Item::compareTargetTime));
+        adapter.notifyDataSetChanged();
+
     }
 }

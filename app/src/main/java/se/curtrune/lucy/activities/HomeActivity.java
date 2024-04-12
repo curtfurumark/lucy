@@ -60,7 +60,7 @@ public class HomeActivity extends AppCompatActivity {
         initComponents();
         initListeners();
         //randomQuote();
-        randomAffirmation();
+        //randomAffirmation();
         openDB();
     }
 
@@ -71,7 +71,7 @@ public class HomeActivity extends AppCompatActivity {
         textViewQuote = findViewById(R.id.homeActivity_quote);
         textViewQuote.setSelected(true);
         textViewCalender = findViewById(R.id.homeActivity_calender);
-        textViewNewMain = findViewById(R.id.homeActivity_tabs);
+        textViewNewMain = findViewById(R.id.homeActivity_mainActivity);
         textViewSettings = findViewById(R.id.homeActivity_settings);
         textViewSwipeAble = findViewById(R.id.homeActivity_swipeableCards);
     }

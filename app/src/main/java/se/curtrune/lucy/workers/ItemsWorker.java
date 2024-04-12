@@ -38,6 +38,10 @@ public class ItemsWorker {
         return instance;
     }
 
+    public static long  calculateEstimate(List<Item> items) {
+        log("ItemsWorker.calculateEstimate(List<Item>)");
+        return items.stream().mapToLong(Item::getEstimatedDuration).sum();
+    }
 
     private static Item createChildToInfinite(Item parent){
         log("...createChildToInfinite(Item item)");
@@ -196,6 +200,8 @@ public class ItemsWorker {
         LocalDB db = new LocalDB(context);
         return db.insert(child);
     }
+
+
 
     private Mental insert(Mental mental, Context context) throws SQLException {
         log("ItemsWorker.insert(Mental, Context)");

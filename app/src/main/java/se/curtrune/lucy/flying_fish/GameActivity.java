@@ -1,4 +1,6 @@
-package se.curtrune.lucy.activities;
+package se.curtrune.lucy.flying_fish;
+
+import static se.curtrune.lucy.util.Logger.log;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,9 +26,10 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_main);
+        log("GameActivity.onCreate(Bundle)");
         flyingFishView = new FlyingFishView(this);
         //gameView = new GameView(this);
+        setTitle("flying fish");
         setContentView(flyingFishView);
         //setContentView(gameView);
         DisplayMetrics displayMetrics = new DisplayMetrics();
