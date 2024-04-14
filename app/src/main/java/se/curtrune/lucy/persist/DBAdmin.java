@@ -25,6 +25,7 @@ public class DBAdmin {
         db.executeSQL(Queeries.CREATE_TABLE_MENTAL);
         db.executeSQL(Queeries.CREATE_TABLE_CATEGORIES);
         db.executeSQL(Queeries.CREATE_TABLE_ITEMS);
+        db.executeSQL(Queeries.CREATE_TABLE_ECONOMY);
         log("...tables created");
     }
     public static void dropTables(Context context){
@@ -58,8 +59,8 @@ public class DBAdmin {
         //item.setDays(cursor.getInt(14));
         item.setPeriod(cursor.getString(15));
         item.setEstimate(cursor.getString(16));
-        String json = cursor.getString(17);
-        log("...json", json);
+        //String json = cursor.getString(17);
+        //log("...json", json);
         item.setNotification(cursor.getString(17));
         item.setIsTemplate(cursor.getInt(18) == 0? false: true);
         return item;

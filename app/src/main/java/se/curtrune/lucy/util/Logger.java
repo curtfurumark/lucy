@@ -14,6 +14,7 @@ import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.classes.Period;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
+import se.curtrune.lucy.classes.economy.Transaction;
 import se.curtrune.lucy.statistics.CategoryListable;
 import se.curtrune.lucy.statistics.StatisticsPeriod;
 
@@ -183,5 +184,16 @@ public class Logger {
             return;
         }
         log(description, type.toString());
+    }
+    public static void log(Transaction transaction){
+        log("log(Transaction)...");
+        log("\tid", transaction.getID());
+        log("\tgoods", transaction.getHeading());
+        log("\tamount", transaction.getAmount());
+        log("\taccount", transaction.getAccount());
+        log("\tdate", transaction.getDate());
+        log("\ttype", transaction.getType().toString());
+        log("\taccount ordinal", transaction.getAccountOrdinal());
+        System.out.println();
     }
 }

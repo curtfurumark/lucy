@@ -20,6 +20,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import se.curtrune.lucy.R;
+import se.curtrune.lucy.activities.economy.TransactionActivity;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.classes.Quotes;
 import se.curtrune.lucy.persist.DBAdmin;
@@ -73,11 +74,11 @@ public class HomeActivity extends AppCompatActivity {
         textViewCalender = findViewById(R.id.homeActivity_calender);
         textViewNewMain = findViewById(R.id.homeActivity_mainActivity);
         textViewSettings = findViewById(R.id.homeActivity_settings);
-        textViewSwipeAble = findViewById(R.id.homeActivity_swipeableCards);
+        textViewSwipeAble = findViewById(R.id.homeActivity_economy);
     }
     private void initListeners(){
         log("...initListeners()");
-        textViewSwipeAble.setOnClickListener(view->startActivity(new Intent(this,  SwipeAbleCardsActivity.class)));
+        textViewSwipeAble.setOnClickListener(view->startActivity(new Intent(this,  TransactionActivity.class)));
         textViewToday.setOnClickListener(view -> startActivity(new Intent(this, TodayActivity.class)));
         textViewStatistics.setOnClickListener(view->startActivity(new Intent(this, StatisticsMain.class)));
         textViewNewMain.setOnClickListener(view->startActivity(new Intent(this, MainActivity.class)));

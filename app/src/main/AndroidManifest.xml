@@ -23,7 +23,7 @@
             android:name=".activities.MyCalenderActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.SwipeAbleCardsActivity"
+            android:name=".activities.economy.TransactionActivity"
             android:exported="false" />
         <activity
             android:name=".activities.SequenceActivity"

@@ -2,6 +2,7 @@ package se.curtrune.lucy.fragments;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,9 +14,11 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -72,6 +75,8 @@ public class CalenderFragment extends Fragment {
     private TextView textViewMonth;
     private TextView textViewWeek;
     private TextView textViewDate;
+    private ItemTouchHelper itemTouchHelper;
+
     private LocalDate currentDate;
     private List<Item> items;
     private Month month;
@@ -117,6 +122,7 @@ public class CalenderFragment extends Fragment {
         initRecycler();
         initRecyclerDates();
         initListeners();
+        initSwipe();
         setUserInterface(currentDate);
         return view;
     }
@@ -224,6 +230,52 @@ public class CalenderFragment extends Fragment {
         recyclerDates.setAdapter(calenderDateAdapter);
 
     }
+    private void initSwipe() {
+        log("...initSwipe()");
+        itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int index = viewHolder.getAdapterPosition();
+                Item item = items.get(viewHolder.getAdapterPosition());
+                //Item item = items.remove(index);
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("postbone " + item.getHeading());
+                builder.setMessage("are you sure? ");
+                builder.setPositiveButton("postbone", (dialog, which) ->{
+                    log("...on positive button click");
+                    item.setTargetDate(LocalDate.now().plusDays(1));
+                    items.remove(item);
+                    int rowsAffected = ItemsWorker.update(item, getContext());
+                    log(item);
+                    if( rowsAffected != 1){
+                        log("ERROR updating item", item.getHeading());
+                    }else{
+                        adapter.notifyDataSetChanged();
+                    }
+/*
+                        adapter.notifyItemRemoved(index);
+                        Toast.makeText(TodayActivity.this, "item deleted", Toast.LENGTH_LONG).show();
+                    }else{
+                        log("error deleting item");
+                        Toast.makeText(TodayActivity.this, "error deleting item", Toast.LENGTH_LONG).show();
+                    }*/
+                });
+                builder.setNegativeButton("cancel", (dialog, which) -> {log(
+                        "...on negative button click");
+                        adapter.notifyDataSetChanged();
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+            }
+        });
+        itemTouchHelper.attachToRecyclerView(recycler);
+    }
     private void nextMonth(){
         currentDate = currentDate.plusMonths(1);
     }
@@ -243,7 +295,9 @@ public class CalenderFragment extends Fragment {
     }
     private void setUserInterface(LocalDate date){
         log("...setUserInterface()", date.toString());
-        items = ItemsWorker.selectTodayList(currentDate, getContext());
+        getActivity().setTitle(date.toString());
+        items = ItemsWorker.selectTodayList(currentDate, getActivity());
+        //items = ItemsWorker.selectTodayList(LocalDate.now(), this);
         log("...number ot items today", items.size());
         textViewDate.setText(currentDate.toString());
         textViewWeek.setText(getWeekNumber());

@@ -61,7 +61,7 @@ public class Item implements Serializable , Listable {
     public Item() {
         this.created = updated = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
         this.target_time =0;
-        this.target_date = LocalDate.now().toEpochDay();
+        this.target_date = 0;
         this.duration = 0;
         //this.days = 0;
         category = heading = comment = description = tags = "";

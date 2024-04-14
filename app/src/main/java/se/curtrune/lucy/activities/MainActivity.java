@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -146,8 +147,23 @@ public class MainActivity extends AppCompatActivity {
     private void panic(){
         log("...panic()");
         Toast.makeText(this, "DON'T PANIC!", Toast.LENGTH_LONG).show();
-        Intent intent = new Intent(this, GameActivity.class);
+
+        //Intent intent = new Intent(this, GameActivity.class);
+        //startActivity(intent);
+        openWebPage("https://bongo.cat");
+    }
+    private void openWebPage(String url){
+        log("...openWebPage(String url)", url);
+        Uri webPage = Uri.parse(url);
+        Intent intent = new Intent(Intent.ACTION_VIEW, webPage);
         startActivity(intent);
+/*        if( intent.resolveActivity(getPackageManager()) != null){
+            log("...will save activity");
+            startActivity(intent);
+        }else{
+            log("...unable to resolve activity");
+        }*/
+
     }
 
     private void setBottomNavigationSelected(Fragment fragment){

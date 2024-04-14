@@ -16,6 +16,11 @@ public class Queeries {
     public static final String DROP_TABLE_ITEMS = "DROP TABLE items";
     public static final String DROP_TABLE_CATEGORIES = "DROP TABLE categories";
     public static final  String DROP_TABLE_MENTAL = "DROP table mental";
+    //TODO
+    public static final String CREATE_TABLE_ECONOMY = "CREATE TABLE economy " +
+            "(id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "description TEXT, " +
+            "amount INTEGER )";
     public static String CREATE_TABLE_ITEMS =
             "CREATE TABLE items  " +
                     "(id INTEGER PRIMARY KEY AUTOINCREMENT, " +

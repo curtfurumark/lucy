@@ -61,7 +61,6 @@ public class LocalDB extends SQLiteOpenHelper {
             db = null;
         }
     }
-
     public void createTables(SQLiteDatabase database){
         log("LocalDB.createTables()");
         database.execSQL(Queeries.CREATE_TABLE_MENTAL);
@@ -97,6 +96,23 @@ public class LocalDB extends SQLiteOpenHelper {
         log("LocalDB.getParent(Item)");
         return selectItem(item.getParentId());
     }
+    public String[] getCategories() {
+        log("LocalDB.getCategories()");
+        db = this.getReadableDatabase();
+        Cursor cursor= db.rawQuery(Queeries.selectCategories(), null);
+        String[] categoriesArray = new String[cursor.getCount()];
+        int index = 0;
+        if( cursor.moveToFirst()){
+            do {
+                String category = DBAdmin.getCategory(cursor);
+                categoriesArray[index++] = category;
+            }while(cursor.moveToNext());
+        }
+        db.close();
+        cursor.close();
+        return categoriesArray;
+    }
+
     public List<String> getTableNames() {
         log("DBSQLite.getTableNames()");
         List<String> tableNames = new ArrayList<>();
@@ -156,6 +172,12 @@ public class LocalDB extends SQLiteOpenHelper {
         mental.setID(id);
         return mental;
     }
+    public void insertCategory(String category){
+        log("LocalDB.insertCategory(String)", category);
+        db = this.getWritableDatabase();
+        db.insert(TABLE_CATEGORIES, null, DBAdmin.getContentValues(category));
+        db.close();
+    }
     public Item insertChild(Item parent, Item child){
         log("LocalDB.insertChild(Item, Item)");
         child.setParentId(parent.getID());
@@ -181,15 +203,9 @@ public class LocalDB extends SQLiteOpenHelper {
         db.close();
         return child;
     }
-    public void insertCategory(String category){
-        log("LocalDB.insertCategory(String)", category);
-        db = this.getWritableDatabase();
-        db.insert(TABLE_CATEGORIES, null, DBAdmin.getContentValues(category));
-        db.close();
 
-    }
     public void open(){
-        if( VERBOSE) log("LocalDB.open()");
+        log("LocalDB.open()");
         db = this.getReadableDatabase();
     }
     public void populateDatabase(){
@@ -205,12 +221,13 @@ public class LocalDB extends SQLiteOpenHelper {
         db.execSQL(Queeries.DROP_TABLE_ITEMS);
         db.execSQL(Queeries.DROP_TABLE_CATEGORIES);
         db.execSQL(Queeries.DROP_TABLE_MENTAL);
-        //for(String stiv)
     }
 
-
-
-
+    public List<Item> selectChildren(Item parent){
+        log("LocalDB.selectChildren(Item)" , parent != null? parent.getHeading():"parent id: 0" );
+        String queery = Queeries.selectChildren(parent);
+        return selectItems(queery);
+    }
     public List<Item > selectItems(LocalDate date, State state) {
         log("LocalDB.selectItems(LocalDate, State)", date.toString() + ", " + state.toString());
         String queery = Queeries.selectItems(date, state);
@@ -220,7 +237,8 @@ public class LocalDB extends SQLiteOpenHelper {
         return selectItems(Queeries.selectItems(date));
     }
     public List<Item> selectItems(String query){
-        if( VERBOSE) log("LocalDB.selectItems(String query)", query);
+        log("LocalDB.selectItems(String query)");
+        if( VERBOSE) log("...query", query);
         db = this.getReadableDatabase();
         List<Item> items = new ArrayList<>();
         Cursor cursor = db.rawQuery(query,null);
@@ -229,19 +247,12 @@ public class LocalDB extends SQLiteOpenHelper {
                 Item item = DBAdmin.getItem(cursor);
                 item.setMental( selectMental(Queeries.selectMental(item)));
                 items.add(item);
-                //items.add(DBAdmin.getItem(cursor));
-
             }while(cursor.moveToNext());
         }
         db.close();
         return items;
     }
-    public List<Item> selectChildren(Item parent){
-        log("LocalDB.selectChildren(Item)" , parent != null? parent.getHeading():"parent id: 0" );
-        String queery = Queeries.selectChildren(parent);
-        return selectItems(queery);
 
-    }
 
     public List<Mental> selectMentals() {
         if( VERBOSE) log("LocalDB.selectMentals()");
@@ -259,61 +270,9 @@ public class LocalDB extends SQLiteOpenHelper {
         return items;
     }
 
-    public List<Item> selectToday() {
-        log("LocalDB.selectToday()");
-        db = this.getReadableDatabase();
-        List<Item> items = new ArrayList<>();
-        Cursor cursor = db.rawQuery(Queeries.selectItems(),null);
-        if( cursor.moveToFirst()){
-            do{
-                items.add(DBAdmin.getItem(cursor));
-
-            }while(cursor.moveToNext());
-        }
-        db.close();
-        return items;
-    }
 
 
 
-    public int update(Item item) {
-        log("LocalDB.update(Item)", item.getHeading());
-        db = this.getWritableDatabase();
-        String whereClause = String.format("id = %d", item.getID());
-        int rowsAffected = db.update(ITEMS_TABLE, DBAdmin.getContentValues(item),whereClause, null );
-        log("...update ok: ", rowsAffected == 1);
-        db.close();
-        return rowsAffected;
-    }
-
-    public int update(Mental mental) {
-        log("LocalDB.update(Mental)");
-        log(mental);
-        db = this.getWritableDatabase();
-        String whereClause = String.format("id = %d", mental.getID());
-        int rowsAffected = db.update(TABLE_MENTAL,DBAdmin.getContentValues(mental), whereClause, null);
-        log("....rowsAffected", rowsAffected);
-        db.close();
-        return rowsAffected;
-    }
-
-
-    public String[] getCategories() {
-        log("LocalDB.getCategories()");
-        db = this.getReadableDatabase();
-        Cursor cursor= db.rawQuery(Queeries.selectCategories(), null);
-        String[] categoriesArray = new String[cursor.getCount()];
-        int index = 0;
-        if( cursor.moveToFirst()){
-            do {
-                String category = DBAdmin.getCategory(cursor);
-                categoriesArray[index++] = category;
-            }while(cursor.moveToNext());
-        }
-        db.close();
-        cursor.close();
-        return categoriesArray;
-    }
 
     public List<Item> selectItems(LocalDate date, Context context) {
         log("LocalDB.selectItems(LocalDate) ", date.toString());
@@ -426,5 +385,32 @@ public class LocalDB extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * updates item and mental if it has any
+     * @param item
+     * @return
+     */
+    public int update(Item item) {
+        log("LocalDB.update(Item)", item.getHeading());
+        db = this.getWritableDatabase();
+        String whereClause = String.format("id = %d", item.getID());
+        int rowsAffected = db.update(ITEMS_TABLE, DBAdmin.getContentValues(item),whereClause, null );
+        log("...update ok: ", rowsAffected == 1);
+        db.close();
+        if( item.hasMental()){
+            update(item.getMental());
+        }
+        return rowsAffected;
+    }
 
+    public int update(Mental mental) {
+        log("LocalDB.update(Mental)");
+        log(mental);
+        db = this.getWritableDatabase();
+        String whereClause = String.format("id = %d", mental.getID());
+        int rowsAffected = db.update(TABLE_MENTAL,DBAdmin.getContentValues(mental), whereClause, null);
+        log("....rowsAffected", rowsAffected);
+        db.close();
+        return rowsAffected;
+    }
 }

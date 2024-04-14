@@ -78,7 +78,7 @@ public class ListableAdapter extends RecyclerView.Adapter<ListableAdapter.MyView
             super(itemView);
             textViewHeading = itemView.findViewById(R.id.listableAdapter_heading);
             textViewInfo = itemView.findViewById(R.id.listableAdapter_info);
-            ConstraintLayout parentLayout = itemView.findViewById(R.id.constraintLayout_taskAdapter);
+            ConstraintLayout parentLayout = itemView.findViewById(R.id.listableAdapter_rootLayout);
             parentLayout.setOnClickListener(view -> {
                 if( callback != null){
                     callback.onItemClick(items.get(getAdapterPosition()));

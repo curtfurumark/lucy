@@ -4,6 +4,12 @@ import static se.curtrune.lucy.util.Logger.log;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -11,18 +17,10 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.Toast;
-
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
-import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 
 import se.curtrune.lucy.R;
@@ -33,6 +31,8 @@ import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.CallingActivity;
 import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.dialogs.AddTemplateDialog;
+import se.curtrune.lucy.dialogs.OnNewItemCallback;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.workers.ItemsWorker;
 
@@ -52,6 +52,7 @@ public class ProjectsFragment extends Fragment implements
     private static final String CURRENT_PARENT = "CURRENT_PARENT";
     private RecyclerView recycler;
     private EditText editTextSearch;
+    private FloatingActionButton buttonAddItem;
     private ItemAdapter adapter;
     private Item currentParent;
     private List<Item> items;
@@ -98,6 +99,7 @@ public class ProjectsFragment extends Fragment implements
         View view = inflater.inflate(R.layout.projects_fragment, container, false);
         setHasOptionsMenu(true);
         initComponents(view);
+        initListeners();
         if( savedInstanceState != null){
             log("...savedInstanceState != null");
             currentParent = (Item) savedInstanceState.getSerializable(CURRENT_PARENT);
@@ -118,6 +120,7 @@ public class ProjectsFragment extends Fragment implements
         log("...initComponents()");
         recycler = view.findViewById(R.id.projectsFragment_recycler);
         editTextSearch = view.findViewById(R.id.projectsFragment_search);
+        buttonAddItem = view.findViewById(R.id.projectsFragment_addItem);
 
     }
 
@@ -129,12 +132,9 @@ public class ProjectsFragment extends Fragment implements
         recycler.setItemAnimator(new DefaultItemAnimator());
         recycler.setAdapter(adapter);
     }
-
-/*    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.sequence_activity_menu, menu);
-        //super.onCreateOptionsMenu(menu, inflater);
-    }*/
+    private void  initListeners(){
+        buttonAddItem.setOnClickListener(view->showAddItemDialog());
+    }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -195,6 +195,21 @@ public class ProjectsFragment extends Fragment implements
     @Override
     public void onCheckboxClicked(Item item, boolean checked) {
         log("...onCheckboxClicked(Item, boolean)");
+    }
+    private void showAddItemDialog(){
+        log("...showAddItemDialog()");
+        AddTemplateDialog dialog = new AddTemplateDialog(currentParent);
+        dialog.setCallback(new OnNewItemCallback() {
+            @Override
+            public void onNewItem(Item item) {
+                log("...onNewItem(Item)");
+                item = ItemsWorker.insert(item, getContext());
+                items.add(item);
+                items.sort(Comparator.comparingLong(Item::compare));
+                adapter.notifyDataSetChanged();
+            }
+        });
+        dialog.show(getParentFragmentManager(), "add item");
     }
     private void startSequence(){
         log("...startSequence()");

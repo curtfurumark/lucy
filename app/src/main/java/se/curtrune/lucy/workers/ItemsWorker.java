@@ -88,12 +88,7 @@ public class ItemsWorker {
         return db.selectItem(currentParent.getParentId());
     }
 
-    public static Item getTodayParent(Context context) {
-        if( VERBOSE)log("ItemsWorker.getTodayParent(Context context)");
-        LocalDB db = new LocalDB(context);
-        Settings settings = Settings.getInstance(context);
-        return db.selectItem(settings.getRootID(DAILY));
-    }
+
     public static Item getRootItem(Settings.Root root, Context context){
         log("...getRootItem(Settings.Root, Context");
         Settings settings = Settings.getInstance(context);
@@ -116,7 +111,12 @@ public class ItemsWorker {
         return db.selectItem(rootID);
     }
 
-
+    public static Item getTodayParent(Context context) {
+        if( VERBOSE)log("ItemsWorker.getTodayParent(Context context)");
+        LocalDB db = new LocalDB(context);
+        Settings settings = Settings.getInstance(context);
+        return db.selectItem(settings.getRootID(DAILY));
+    }
 
     public static boolean hasChild(long parentId, Context context) {
         log("ItemsWorker.hasChild(long) parentID", parentId );
@@ -241,7 +241,7 @@ public class ItemsWorker {
         return db.selectItems(Queeries.selectChildren(parent));
     }
     public static List<Item> selectTodayList(LocalDate date, Context context){
-        log("...selectTodayList(LocalDate, Context)", date.toString());
+        log("ItemsWorker.selectTodayList(LocalDate, Context)", date.toString());
         String query = Queeries.selectTodayList(date);
         LocalDB db = new LocalDB(context);
         return db.selectItems(query);

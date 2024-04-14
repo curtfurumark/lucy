@@ -81,6 +81,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/itemSession_checkBoxDone" />
 
+        <ImageView
+            android:id="@+id/itemSession_commentTagsAction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/baseline_add_24"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/itemSession_labelCommentEtc" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/itemSession_layoutComment"
             android:layout_width="match_parent"
@@ -146,15 +155,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/divider_mental" />
 
-        <Switch
-            android:id="@+id/itemSession_mentalSwitch"
+        <ImageView
+            android:id="@+id/itemSession_mentalAction"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:minHeight="48dp"
+            android:layout_marginEnd="8dp"
             android:text="@string/save_mental"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/divider_mental" />
+            app:layout_constraintTop_toTopOf="@+id/itemSession_labelMental"
+            app:srcCompat="@drawable/baseline_add_24" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/itemSession_layoutMental"
@@ -437,8 +446,8 @@
             android:id="@+id/itemSession_repeatActionIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/divider6"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/dividerPeriod"
             app:srcCompat="@drawable/baseline_add_24" />
@@ -595,6 +604,14 @@
                 android:text="updated"
                 app:layout_constraintStart_toStartOf="@+id/itemSession_checkBoxTemplate"
                 app:layout_constraintTop_toBottomOf="@+id/itemSession_checkBoxTemplate" />
+            <TextView
+                android:id="@+id/itemSession_infoUpdatedEpoch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="updated epoch"
+                app:layout_constraintStart_toStartOf="@+id/itemSession_infoUpdated"
+                app:layout_constraintTop_toBottomOf="@+id/itemSession_infoUpdated" />
 
             <TextView
                 android:id="@+id/itemSession_infoCreated"
@@ -602,8 +619,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="created"
-                app:layout_constraintStart_toStartOf="@+id/itemSession_infoUpdated"
-                app:layout_constraintTop_toBottomOf="@+id/itemSession_infoUpdated" />
+                app:layout_constraintStart_toStartOf="@+id/itemSession_infoUpdatedEpoch"
+                app:layout_constraintTop_toBottomOf="@+id/itemSession_infoUpdatedEpoch" />
 
             <TextView
                 android:id="@+id/itemSession_infoTags"
@@ -672,6 +689,13 @@
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/dividerDateTime" />
+        <ImageView
+            android:id="@+id/itemSession_dateTimeAction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/itemSession_labelDateTime"
+            android:src="@drawable/baseline_add_24"/>
 
         <LinearLayout
             android:id="@+id/itemSession_layoutDateTime"

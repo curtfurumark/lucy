@@ -12,6 +12,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import se.curtrune.lucy.flying_fish.classes.Fish;
+import se.curtrune.lucy.flying_fish.util.FishConstants;
 
 
 public class GameActivity extends AppCompatActivity {
@@ -34,8 +36,8 @@ public class GameActivity extends AppCompatActivity {
         //setContentView(gameView);
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-/*        Constants.SCREEN_HEIGHT = displayMetrics.heightPixels;
-        Constants.SCREEN_WIDTH = displayMetrics.widthPixels;*/
+        FishConstants.SCREEN_HEIGHT = displayMetrics.heightPixels;
+        FishConstants.SCREEN_WIDTH = displayMetrics.widthPixels;
 
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {

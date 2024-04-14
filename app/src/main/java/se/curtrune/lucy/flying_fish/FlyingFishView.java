@@ -11,6 +11,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import se.curtrune.lucy.flying_fish.classes.Background;
+import se.curtrune.lucy.flying_fish.classes.Ball;
 import se.curtrune.lucy.flying_fish.classes.Fish;
 
 
@@ -23,6 +24,7 @@ public class FlyingFishView extends View {
     private Bitmap[] bitmap_lifes = new Bitmap[2];
 
 
+    private Ball ball = new Ball();
 
     private Paint yellowBall = new Paint();
     private Paint greenBall = new Paint();
@@ -51,6 +53,8 @@ public class FlyingFishView extends View {
         background.draw(canvas);
         fish.update();
         fish.draw(canvas);
+        ball.update();
+        ball.draw(canvas);
         /*
 
         /*int minFishY = bitmap_fish[0].getHeight();

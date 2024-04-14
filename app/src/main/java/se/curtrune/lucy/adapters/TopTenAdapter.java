@@ -99,7 +99,7 @@ public class TopTenAdapter extends RecyclerView.Adapter<TopTenAdapter.MyViewHold
             super(itemView);
             textViewHeading = itemView.findViewById(R.id.listableAdapter_heading);
             textViewInfo = itemView.findViewById(R.id.listableAdapter_info);
-            ConstraintLayout parentLayout = itemView.findViewById(R.id.constraintLayout_taskAdapter);
+            ConstraintLayout parentLayout = itemView.findViewById(R.id.listableAdapter_rootLayout);
             parentLayout.setOnClickListener(view -> {
                 if( callback != null){
                     callback.onItemClick(items.get(getAdapterPosition()));
