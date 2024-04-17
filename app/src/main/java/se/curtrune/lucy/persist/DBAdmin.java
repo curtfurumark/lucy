@@ -107,6 +107,8 @@ public class DBAdmin {
         cv.put("anxiety", mental.getAnxiety());
         cv.put("category", mental.getCategory());
         cv.put("date", mental.getDateEpoch());
+        cv.put("updated", mental.getUpdatedEpoch());
+        cv.put("created", mental.getCreatedEpoch());
         cv.put("time", mental.getTimeSecondOfDay());
         return cv;
     }

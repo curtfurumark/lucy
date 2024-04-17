@@ -36,4 +36,9 @@ public class StatisticsWorker {
         log("...sum energy", sum);
         return sum;
     }
+    public static long getEnergy(LocalDate date, Context context){
+        log("StatisticsWorker.getEnergy(LocalDate)", date.toString());
+        List<Mental> items = MentalWorker.getMentals(date, context);
+        return items.stream().mapToInt(Mental::getEnergy).sum();
+    }
 }

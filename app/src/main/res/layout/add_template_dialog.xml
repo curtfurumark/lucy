@@ -181,12 +181,13 @@
 
     <TextView
         android:id="@+id/addTemplateDialog_labelDateTime"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_dividerDateTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/date_and_time"
         android:textSize="24sp"
-        android:text="@string/date_and_time" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_dividerDateTime" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/addTemplateDialog_layoutDateTime"
@@ -230,7 +231,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
     <View
-        android:id="@+id/addTemplateDialog_dividerButtons"
+        android:id="@+id/addTemplatDialog_dividerInfo"
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:layout_marginTop="8dp"
@@ -247,25 +248,34 @@
         android:inputType="number"
         android:text="parent item"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_dismiss" />
+        app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_layoutDateTime" />
 
 
     <Button
         android:id="@+id/addTemplateDialog_dismiss"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:text="@string/dismiss"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_dividerButtons" />
+        app:layout_constraintTop_toBottomOf="@+id/divider3Buttons"
+        />
 
-    <TextView
-        android:id="@+id/textView6"
+    <Button
+        android:id="@+id/addTemplateDialog_addAndContinue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="add"
+        app:layout_constraintEnd_toStartOf="@+id/addTemplateDialog_button"
+        app:layout_constraintStart_toEndOf="@+id/addTemplateDialog_dismiss"
+        app:layout_constraintTop_toTopOf="@+id/addTemplateDialog_dismiss" />
+
+    <View
+        android:id="@+id/divider3Buttons"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
         android:layout_marginTop="16dp"
-        android:text="TextView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_parent" />
+        android:background="?android:attr/listDivider"
+        app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_parent"
+        tools:layout_editor_absoluteX="1dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

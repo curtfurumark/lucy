@@ -46,6 +46,11 @@ public class SettingsActivity extends AppCompatActivity {
                     String languageCode = summary.equals("svenska") ? "sv": "en";
                     LocaleListCompat localeListCompat = LocaleListCompat.forLanguageTags(languageCode);
                     AppCompatDelegate.setApplicationLocales(localeListCompat);
+                }else if( key.equals("pref_panic_action")){
+                    log("pref_panic_action");
+
+                }else{
+                    log("no action for key", key);
                 }
             }
         };

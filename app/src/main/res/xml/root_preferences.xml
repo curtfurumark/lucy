@@ -16,5 +16,16 @@
         app:key="pref_dark_mode"
         app:title="@string/dark_mode" />
     </PreferenceCategory>
+    <PreferenceCategory
+        app:title="panic">
+        <ListPreference
+            app:defaultValue="panic_list"
+            app:entries="@array/panic_actions"
+            app:entryValues="@array/panic_actions"
+            app:key="pref_panic_action"
+            app:title="panic"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
 
 </PreferenceScreen>

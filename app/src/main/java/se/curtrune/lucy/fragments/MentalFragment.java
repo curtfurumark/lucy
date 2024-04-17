@@ -184,13 +184,9 @@ public class MentalFragment extends Fragment implements MentalAdapter.Callback {
                     break;
                 case CREATE_WITH_ITEM:
                 case CREATE:
-                    try {
-                        mental = MentalWorker.insert(mental, getContext());
-                        mentals.add(0, mental);
-                        adapter.notifyDataSetChanged();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
+                    mental = MentalWorker.insert(mental, getContext());
+                    mentals.add(0, mental);
+                    adapter.notifyDataSetChanged();
                     break;
 
             }
@@ -238,13 +234,9 @@ public class MentalFragment extends Fragment implements MentalAdapter.Callback {
                     break;
                 case CREATE_WITH_ITEM:
                 case CREATE:
-                    try {
-                        MentalWorker.insert(mental, getContext());
-                        mentals.add(0, mental);
-                        adapter.notifyDataSetChanged();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
+                    MentalWorker.insert(mental, getContext());
+                    mentals.add(0, mental);
+                    adapter.notifyDataSetChanged();
 
             }
         });

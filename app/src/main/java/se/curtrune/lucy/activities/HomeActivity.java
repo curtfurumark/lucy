@@ -5,21 +5,25 @@ import static se.curtrune.lucy.util.Logger.log;
 import android.app.UiModeManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.ContextCompat;
 import androidx.core.os.LocaleListCompat;
 
 import java.sql.SQLException;
 import java.util.List;
 
 import se.curtrune.lucy.R;
+import se.curtrune.lucy.activities.economy.EconomyActivity;
 import se.curtrune.lucy.activities.economy.TransactionActivity;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.classes.Quotes;
@@ -62,7 +66,17 @@ public class HomeActivity extends AppCompatActivity {
         initListeners();
         //randomQuote();
         //randomAffirmation();
+        checkNotificationPermission();
         openDB();
+    }
+    private void checkNotificationPermission(){
+        log("...checkNotificationPermission()");
+        if( ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED){
+            log("PERMISSION_GRANTED");
+        }else{
+            log("PERMISSION_DENIED");
+        }
+
     }
 
     private void initComponents(){
@@ -78,7 +92,7 @@ public class HomeActivity extends AppCompatActivity {
     }
     private void initListeners(){
         log("...initListeners()");
-        textViewSwipeAble.setOnClickListener(view->startActivity(new Intent(this,  TransactionActivity.class)));
+        textViewSwipeAble.setOnClickListener(view->startActivity(new Intent(this,  EconomyActivity.class)));
         textViewToday.setOnClickListener(view -> startActivity(new Intent(this, TodayActivity.class)));
         textViewStatistics.setOnClickListener(view->startActivity(new Intent(this, StatisticsMain.class)));
         textViewNewMain.setOnClickListener(view->startActivity(new Intent(this, MainActivity.class)));

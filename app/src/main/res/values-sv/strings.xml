@@ -66,5 +66,7 @@
     <string name="repeat">upprepa</string>
     <string name="time">tid</string>
     <string name="day_of_week">veckodagar</string>
+    <string name="prev">prev</string>
+    <string name="comment_etc">anteckning, sökord</string>
 
 </resources>

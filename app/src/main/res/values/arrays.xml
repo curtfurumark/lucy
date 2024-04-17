@@ -4,7 +4,6 @@
         <item>Reply</item>
         <item>Reply to all</item>
     </string-array>
-
     <string-array name="reply_values">
         <item>reply</item>
         <item>reply_all</item>
@@ -12,5 +11,15 @@
     <string-array name="languages" >
         <item>english</item>
         <item>svenska</item>
+    </string-array>
+    <string-array name="panic_actions" >
+        <item>flying fish</item>
+        <item>panic list</item>
+        <item>url</item>
+    </string-array>
+    <string-array name="panic_values" >
+        <item>flying_fish</item>
+        <item>panic_list</item>
+        <item>url</item>
     </string-array>
 </resources>

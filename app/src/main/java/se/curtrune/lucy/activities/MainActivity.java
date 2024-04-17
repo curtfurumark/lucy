@@ -6,8 +6,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
+import androidx.preference.PreferenceManager;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
@@ -147,10 +149,16 @@ public class MainActivity extends AppCompatActivity {
     private void panic(){
         log("...panic()");
         Toast.makeText(this, "DON'T PANIC!", Toast.LENGTH_LONG).show();
-
-        //Intent intent = new Intent(this, GameActivity.class);
-        //startActivity(intent);
-        openWebPage("https://bongo.cat");
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String panicAction = prefs.getString("pref_panic_action", "");
+        log("....panicAction", panicAction);
+        if( panicAction.equals("flying fish")){
+            startActivity(new Intent(this, GameActivity.class));
+        }else if(panicAction.equals("url")){
+            openWebPage("https://bongo.cat");
+        }else if(panicAction.equals("panic list")){
+            log("not implemented");
+        }
     }
     private void openWebPage(String url){
         log("...openWebPage(String url)", url);

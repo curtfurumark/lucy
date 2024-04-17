@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import se.curtrune.lucy.R;
+import se.curtrune.lucy.activities.economy.TransactionFragment;
 import se.curtrune.lucy.adapters.ListableAdapter;
 import se.curtrune.lucy.classes.Listable;
 import se.curtrune.lucy.fragments.DurationFragment;
@@ -75,7 +76,7 @@ public class StatisticsMain extends AppCompatActivity  {
                 log("...onTabSelected(Tab) position", position);
                 switch (position){
                     case 0:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.statisticsMain_fragmentContainer, new DurationFragment()).commit();
+                        getSupportFragmentManager().beginTransaction().replace(R.id.statisticsMain_fragmentContainer, new TransactionFragment()).commit();
                         break;
                     case 1:
                         getSupportFragmentManager().beginTransaction().replace(R.id.statisticsMain_fragmentContainer, new MentalFragment()).commit();
@@ -96,7 +97,6 @@ public class StatisticsMain extends AppCompatActivity  {
                 log("...onTabReselected(TabLayout)");
             }
         });
-
     }
 /*    private void initRecycler(List<Listable> items){
         if( VERBOSE) log("ItemsActivity.initRecycler(List<Item>)");

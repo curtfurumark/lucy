@@ -65,6 +65,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
     private Spinner spinner;
     private Button buttonSave;
     private Button buttonDismiss;
+    private Button buttonAddAndContinue;
     private ArrayAdapter<String> arrayAdapter;
     private Item parent;
     private LocalDate date;
@@ -112,7 +113,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         if( hasPeriod){
             period = new Period();
             if( mode.equals(Period.Mode.DAYS)){
-                period.setDays(Integer.valueOf(editTextDays.getText().toString()));
+                period.setDays(Integer.parseInt(editTextDays.getText().toString()));
             }else{
                 period.setWeekDays(getWeekDays());
             }
@@ -152,6 +153,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         editTextHeading = view.findViewById(R.id.addTemplateDialog_heading);
         buttonSave = view.findViewById(R.id.addTemplateDialog_button);
         buttonDismiss = view.findViewById(R.id.addTemplateDialog_dismiss);
+        buttonAddAndContinue = view.findViewById(R.id.addTemplateDialog_addAndContinue);
         editTextDays = view.findViewById(R.id.addTemplateDialog_days);
         textViewParent = view.findViewById(R.id.addTemplateDialog_parent);
         spinner = view.findViewById(R.id.addTemplateDialog_spinner);
@@ -178,7 +180,8 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
 
     private void initListeners(){
         log("...initListeners()");
-        buttonSave.setOnClickListener(view->save());
+        buttonSave.setOnClickListener(view->save(true));
+        buttonAddAndContinue.setOnClickListener(view->save(false));
         buttonDismiss.setOnClickListener(view->dismiss());
         labelDays.setOnClickListener(view->toggleDays());
         labelWeekDays.setOnClickListener(view->toggleWeekDays());
@@ -218,14 +221,16 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         textViewParent.setText(parent.getHeading());
         setSpinnerSelection(parent.getCategory());
     }
-    private void save(){
+    private void save(boolean dismiss){
         log("...save()");
         if( !validateInput()){
             log("...missing input");
             return;
         }
         callback.onNewItem(getItem());
-        dismiss();
+        if( dismiss) {
+            dismiss();
+        }
     }
     public void setCallback(OnNewItemCallback callback) {
         this.callback = callback;

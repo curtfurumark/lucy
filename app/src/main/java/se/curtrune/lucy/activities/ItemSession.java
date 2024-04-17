@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -45,9 +44,9 @@ import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.dialogs.AddPeriodDialog;
 import se.curtrune.lucy.dialogs.DurationDialog;
 import se.curtrune.lucy.dialogs.NotificationDialog;
+import se.curtrune.lucy.notifications.EasyAlarm;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.util.Converter;
-import se.curtrune.lucy.util.EasyNotification;
 import se.curtrune.lucy.util.ItemStack;
 import se.curtrune.lucy.util.Kronos;
 import se.curtrune.lucy.workers.ItemsWorker;
@@ -58,6 +57,7 @@ public class ItemSession extends AppCompatActivity implements
         Kronos.Callback,
         AddItemDialog.Callback
 {
+    private TextView textViewCurrentEnergy;
     private EditText editTextHeading;
     //comment etc
     private EditText  editTextComment;
@@ -269,6 +269,7 @@ public class ItemSession extends AppCompatActivity implements
 
     private void initComponents(){
         log("...initComponents()");
+        textViewCurrentEnergy = findViewById(R.id.itemSession_currentEnergy);
         buttonTimer = findViewById(R.id.itemSession_buttonTimer);
         checkBoxDone = findViewById(R.id.itemSession_checkBoxDone);
         editTextComment = findViewById(R.id.itemSession_comment);
@@ -483,6 +484,7 @@ public class ItemSession extends AppCompatActivity implements
     private void mentalAction(){
         log("...mentalAction()");
         if( currentItem.hasMental()){
+            log("...will delete mental");
             int rowsAffected = MentalWorker.delete(currentItem.getMental(), this);
             if( rowsAffected != 1){
                 log("ERROR deleting mental");
@@ -492,8 +494,12 @@ public class ItemSession extends AppCompatActivity implements
 
             setUserInterfaceMental(currentItem.getMental());
         }else{
+            log("will create mental");
             imageViewMentalAction.setImageDrawable(getDrawable(R.drawable.baseline_delete_24));
+            layoutMental.setVisibility(View.VISIBLE);
             mental = new Mental();
+            mentalMode = MentalMode.CREATE;
+            currentItem.setMental(mental);
         }
     }
     /**
@@ -651,7 +657,9 @@ public class ItemSession extends AppCompatActivity implements
         }else{
             ItemsWorker.touchParents(currentItem, this);
         }
-
+        if( currentItem.hasMental()){
+            saveMental();;
+        }
 
         kronos.reset();
         Intent intent = new Intent(this, MainActivity.class);
@@ -669,12 +677,7 @@ public class ItemSession extends AppCompatActivity implements
         }
         mental = getMental();
         if( mentalMode.equals(MentalMode.CREATE)){
-            try {
-                mental = MentalWorker.insert(mental, this);
-            } catch (SQLException e) {
-                Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-                e.printStackTrace();
-            }
+            mental = MentalWorker.insert(mental, this);
         }else {
             int rowsAffected = MentalWorker.update(mental, this);
             if (rowsAffected != 1) {
@@ -868,8 +871,8 @@ public class ItemSession extends AppCompatActivity implements
                 log("...onNotification(Notification)");
                 currentItem.setNotification(notification);
                 log(notification);
-                EasyNotification easyNotification = new EasyNotification(this);
-                easyNotification.sendNotificationCH1(notification);
+                EasyAlarm easyAlarm = new EasyAlarm(notification, this);
+                easyAlarm.setAlarm();
                 setUserInterface(notification);
             });
             dialog.show(getSupportFragmentManager(), "add notification");
@@ -923,7 +926,7 @@ public class ItemSession extends AppCompatActivity implements
     }
     private void toggleMental(){
         log("...toggleMental()");
-        if( layoutMental.getVisibility() == View.GONE){
+        if( layoutMental.getVisibility() == View.GONE && currentItem.hasMental()){
             layoutMental.setVisibility(View.VISIBLE);
         }else{
             layoutMental.setVisibility(View.GONE);

@@ -31,6 +31,21 @@ public class Mental implements Listable, Serializable {
         time = LocalTime.now().toSecondOfDay();
 
     }
+    public Mental(Mental other){
+        this.energy = other.energy;
+        this.mood = other.mood;
+        this.anxiety = other.anxiety;
+        this.stress = other.stress;
+        this.comment = other.comment;
+        this.created = other.created;
+        this.updated = other.updated;
+        this.date = other.date;
+        this.time = other.time;
+        this.category = other.category;
+        this.itemID = other.itemID;
+        this.heading = other.heading;
+
+    }
     public boolean contains(String text) {
         return (heading + comment + category).toLowerCase().contains(text.toLowerCase());
     }
@@ -171,6 +186,9 @@ public class Mental implements Listable, Serializable {
     }
 
 
+    public void setUpdated(LocalDateTime updated){
+        this.updated = updated.toEpochSecond(ZoneOffset.UTC);
+    }
     public void setUpdated(long updated){
         this.updated = updated;
     }

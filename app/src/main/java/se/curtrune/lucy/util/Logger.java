@@ -74,6 +74,7 @@ public class Logger {
             return;
         }
         log("\tid", mental.getID());
+        log("\titemID", mental.getItemID());
         log("\theading", mental.getHeading());
         log("\tcategory", mental.getCategory());
         log("\tgetInfo()", mental.getInfo());

@@ -1,10 +1,10 @@
 package se.curtrune.lucy.workers;
 
 import static se.curtrune.lucy.app.Settings.Root.APPOINTMENTS;
-import static se.curtrune.lucy.util.Logger.log;
 import static se.curtrune.lucy.app.Settings.Root.DAILY;
 import static se.curtrune.lucy.app.Settings.Root.PROJECTS;
 import static se.curtrune.lucy.app.Settings.Root.TODO;
+import static se.curtrune.lucy.util.Logger.log;
 
 import android.content.Context;
 import android.widget.Toast;
@@ -15,15 +15,14 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-import se.curtrune.lucy.activities.ItemSession;
 import se.curtrune.lucy.activities.TodayActivity;
+import se.curtrune.lucy.app.Settings;
+import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.persist.LocalDB;
-import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.persist.Queeries;
-import se.curtrune.lucy.app.Settings;
 
 public class ItemsWorker {
     private static ItemsWorker instance;
@@ -125,7 +124,7 @@ public class ItemsWorker {
     }
     /**
      * sets targetDate of infiniteItem to 'today + item.getDays'
-     * @param item, is an Item with State.INFINITE
+     * @param template, is an Item with State.INFINITE
      * @param context,
      * @throws SQLException
      */
@@ -146,14 +145,32 @@ public class ItemsWorker {
         }
         Item child = new Item();
         child.setState(State.DONE);
+        child.setType(Type.NODE);//TODO , type generated ? .
         child.setHeading(template.getHeading());
         child.setDuration(template.getDuration());
         child.setCategory(template.getCategory());
+        child.setTags(template.getTags());
         child.setMental(template.getMental());
         child.setTargetTime(LocalTime.now());
-        template.setMental(null);
+        child.setMental(template.getMental());
+        //template.setMental(null);
         LocalDB db = new LocalDB(context);
-        db.insertChild(template, child);
+        child = db.insertChild(template, child);
+        if( template.hasMental()){//inherit the template
+            //Mental childMental = new Mental(template.getMental());
+            Mental childMental = new Mental(template.getMental());
+            long itemID = child.getID();
+            log("...itemID", itemID);
+            childMental.setItemID(child.getID());
+            childMental.setDate(LocalDate.now());
+            childMental.setTime(LocalTime.now());
+            childMental.setUpdated(LocalDateTime.now());
+            log(childMental);
+            childMental = MentalWorker.insert(childMental, context);
+            log("...after inserting mental, logging mental again");
+            log(childMental);
+            log("...item id after insert", childMental.getItemID());
+        }
         if( template.hasPeriod()) {
             template.updateTargetDate();
         }
@@ -283,8 +300,10 @@ public class ItemsWorker {
     }
 
     /**
-     *
-     * @param item, the item to be updated
+     * if Item is template, lots of things happen, or should happen, whatever
+     * if Item is not a template, update updates the items updated field, and nothing else
+     * anything else is the responsibility of the caller
+     * @param item, the item to be updated,
      * @param context
      * @return, rows affected
      */
@@ -294,6 +313,8 @@ public class ItemsWorker {
             return handleTemplate(item, context);
         }else {
             LocalDB db = new LocalDB(context);
+            item.setUpdated(LocalDateTime.now());
+            //item.setTargetTime(LocalTime.now());
             return db.update(item);
         }
     }

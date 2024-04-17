@@ -46,10 +46,10 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.transactions_activity);
+        setContentView(R.layout.transactions_fragment);
         setTitle("expenditure");
         log("TransactionActivity.onCreate(Bundle)");
-        setContentView(R.layout.transactions_activity);
+        setContentView(R.layout.transactions_fragment);
         log("EconomyActivity.onCreate(Bundle)");
         initComponents();
         initListeners();

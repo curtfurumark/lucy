@@ -164,10 +164,14 @@ public class LocalDB extends SQLiteOpenHelper {
         insert(child);
     }*/
 
-    public Mental insert(Mental mental) throws SQLException {
+    public Mental insert(Mental mental) {
         log("LocalDB.insert(Mental)");
         db = this.getWritableDatabase();
-        long id = db.insertOrThrow(TABLE_MENTAL, null, DBAdmin.getContentValues(mental));
+        //long id = db.insertOrThrow(TABLE_MENTAL, null, DBAdmin.getContentValues(mental));
+        long id = db.insert(TABLE_MENTAL, null, DBAdmin.getContentValues(mental));
+        if (id == -1) {
+            log("ERROR, inserting mental");
+        }
         db.close();
         mental.setID(id);
         return mental;

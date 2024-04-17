@@ -67,7 +67,7 @@ public class MentalWorker {
 
 
 
-    public static Mental insert(Mental mental, Context context) throws SQLException {
+    public static Mental insert(Mental mental, Context context) {
         log("MentalWorker.insert(Mental, Context)");
         LocalDB db = new LocalDB(context);
         return db.insert(mental);
