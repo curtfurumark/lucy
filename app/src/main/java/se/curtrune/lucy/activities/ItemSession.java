@@ -7,6 +7,7 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -591,6 +592,7 @@ public class ItemSession extends AppCompatActivity implements
                 log("...onPeriod(Period)");
                 currentItem.setPeriod(period);
                 imageViewRepeatAction.setImageDrawable(getDrawable(R.drawable.baseline_delete_24));
+                textViewPeriodDescription.setText(period.toString());
             });
             dialog.show(getSupportFragmentManager(), "add repeat");
         }
@@ -771,6 +773,14 @@ public class ItemSession extends AppCompatActivity implements
     private void setUserInterfaceCurrentEnergy(){
         log("...setUserInterfaceCurrentEnergy()");
         String textEnergy = String.format(Locale.getDefault(), "energy: %d", currentEnergy + energy, this);
+        int energySum = currentEnergy + energy;
+        if( energySum <= -3){
+            textViewCurrentEnergy.setTextColor(Color.parseColor("#ff0000"));
+        }else if( energySum > - 3 && energySum <= 2){
+            textViewCurrentEnergy.setTextColor(Color.parseColor("#ffff00"));
+        }else{
+            textViewCurrentEnergy.setTextColor(Color.parseColor("#00ff00"));
+        }
         textViewCurrentEnergy.setText(textEnergy);
 
     }

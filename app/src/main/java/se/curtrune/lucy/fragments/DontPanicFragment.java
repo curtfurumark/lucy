@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import se.curtrune.lucy.R;
 
@@ -27,6 +28,8 @@ public class DontPanicFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private Button buttonPanic;
+    private Button buttonOK;
 
     public DontPanicFragment() {
         // Required empty public constructor
@@ -64,11 +67,26 @@ public class DontPanicFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.dont_panic_fragment, container, false);
-        initComponents();
+        initComponents(view);
+        initListeners();
         return view;
     }
-    private  void initComponents(){
+    private void goToCalender(){
+
+
+    }
+    private  void initComponents(View view){
         log("...initComponents()");
+        buttonOK = view.findViewById(R.id.dontPanicFragment_buttonOK);
+        buttonPanic = view.findViewById(R.id.dontPanicFragment_buttonStillPanicking);
+    }
+    private void initListeners(){
+        log("....initListeners()");
+        buttonOK.setOnClickListener(view->goToCalender());
+        buttonPanic.setOnClickListener(view->panic());
+    }
+    private void panic(){
+
 
     }
 }

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import se.curtrune.lucy.activities.economy.classes.Asset;
 import se.curtrune.lucy.activities.economy.classes.Transaction;
 import se.curtrune.lucy.activities.economy.persist.ECDBAdmin;
 import se.curtrune.lucy.classes.Item;
@@ -241,6 +242,20 @@ public class LocalDB extends SQLiteOpenHelper {
         db.execSQL(Queeries.DROP_TABLE_CATEGORIES);
         db.execSQL(Queeries.DROP_TABLE_MENTAL);
     }
+    public List<Asset> selectAssets(String queery){
+        log("LocalDB.selectAssets()");
+        db = this.getReadableDatabase();
+        List<Asset> assets = new ArrayList<>();
+        Cursor cursor = db.rawQuery(queery,null);
+        if( cursor.moveToFirst()){
+            do{
+                Asset asset = ECDBAdmin.getAsset(cursor);
+                assets.add(asset);
+            }while(cursor.moveToNext());
+        }
+        db.close();
+        return assets;
+    }
 
     public List<Item> selectChildren(Item parent){
         log("LocalDB.selectChildren(Item)" , parent != null? parent.getHeading():"parent id: 0" );
@@ -446,5 +461,23 @@ public class LocalDB extends SQLiteOpenHelper {
         db.close();
         cursor.close();
         return  transactions;
+    }
+
+    /**
+     *
+     * @param asset
+     * @return asset with db id or null if action for some stupid reason failed
+     */
+    public Asset insert(Asset asset) {
+        log("LocalDB.insert(Asset)");
+        db = this.getWritableDatabase();
+        long id = db.insert(TABLE_ASSETS, null, ECDBAdmin.getContentValues(asset));
+        if( id != -1 ){
+            asset.setID(id);
+        }else {
+            log("ERROR inserting asset", asset.getAccount());
+            asset = null;
+        }
+        return asset;
     }
 }

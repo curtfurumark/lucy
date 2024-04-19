@@ -12,9 +12,10 @@ import se.curtrune.lucy.util.Converter;
 public class Estimate implements Serializable {
     private long duration;
     private int energy;
+    public static boolean VERBOSE = false;
 
     public Estimate() {
-        log("Estimate()");
+        if( VERBOSE) log("Estimate()");
     }
 
     public long getDuration() {

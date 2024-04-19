@@ -20,4 +20,8 @@ public class EcQueeries {
     public static String selectTransactions() {
         return "SELECT * FROM transactions ORDER by date DESC";
     }
+
+    public static String selectAssets() {
+        return "SELECT * FROM assets ORDER BY date DESC";
+    }
 }

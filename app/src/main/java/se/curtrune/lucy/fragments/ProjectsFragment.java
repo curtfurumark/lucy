@@ -31,6 +31,7 @@ import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.CallingActivity;
 import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.AddTemplateDialog;
 import se.curtrune.lucy.dialogs.OnNewItemCallback;
 import se.curtrune.lucy.util.Constants;
@@ -194,7 +195,16 @@ public class ProjectsFragment extends Fragment implements
 
     @Override
     public void onCheckboxClicked(Item item, boolean checked) {
-        log("...onCheckboxClicked(Item, boolean)");
+        log("...onCheckboxClicked(Item, boolean)", checked);
+        item.setState(checked ? State.DONE: State.TODO);
+        int rowsAffected = ItemsWorker.update(item, getContext());
+        if( rowsAffected != 1){
+            log("ERROR updating state of item", item.getHeading());
+        }
+        items = ItemsWorker.selectChildItems(currentParent, getContext());
+        items.sort(Comparator.comparingLong(Item::compare));
+        adapter.notifyDataSetChanged();
+
     }
     private void showAddItemDialog(){
         log("...showAddItemDialog()");

@@ -2,16 +2,27 @@ package se.curtrune.lucy.activities.economy;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.time.LocalDate;
+import java.util.List;
 
 import se.curtrune.lucy.R;
+import se.curtrune.lucy.activities.economy.classes.Asset;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -20,6 +31,11 @@ import se.curtrune.lucy.R;
  */
 public class AssetsFragment extends Fragment {
     private RecyclerView recycler;
+    private List<Asset> assets;
+    private EditText editTextAccount;
+    private EditText editTextAmount;
+    private TextView textViewDate;
+    private LocalDate currentDate;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -68,15 +84,87 @@ public class AssetsFragment extends Fragment {
         View view =  inflater.inflate(R.layout.assets_fragment, container, false);
         initComponents(view);
         initRecycler();
+        initListeners();
+        initData();
+        setUserInterface();
+        setHasOptionsMenu(true);
         return view;
+    }
+    private Asset getAsset(){
+        log("...getAsset()");
+        Asset asset = new Asset();
+        asset.setAmount(Float.parseFloat(editTextAmount.getText().toString()));
+        asset.setDate(currentDate);
+        asset.setAccount(editTextAccount.getText().toString());
+        return asset;
     }
     private void initComponents(View view){
         log("...initComponents()");
         recycler = view.findViewById(R.id.assetsFragment_recycler);
+        editTextAccount = view.findViewById(R.id.assetsFragment_account);
+        editTextAmount = view.findViewById(R.id.assetsFragment_amount);
+        textViewDate = view.findViewById(R.id.assetsFragment_date);
+    }
+    private void initData(){
+        log("...initData()");
+        assets = TransactionWorker.selectAssets(getContext());
+        log("...number of assets", assets.size());
+        currentDate = LocalDate.now();
+    }
+
+    private void initListeners(){
+        log("...initListeners()");
+        textViewDate.setOnClickListener(view->showDateDialog());
 
     }
     private void initRecycler(){
         log("...initRecycler()");
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if( item.getItemId() == R.id.economyActivity_save){
+            saveAsset();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    private void saveAsset(){
+        log("...saveAsset");
+        if( !validateInput()){
+            return;
+        }
+        Asset asset = getAsset();
+        asset = TransactionWorker.insert(asset, getContext());
+
+    }
+
+    private void setUserInterface(){
+        log("...setUserInterface()");
+        textViewDate.setText(currentDate.toString());
+
+    }
+    private void showDateDialog(){
+        log("...showDateDialog()");
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext());
+        datePickerDialog.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                log("...onDateSet(DatePicker, year,month, dayOfMonth)");
+                currentDate = LocalDate.of(year, month +1 , dayOfMonth);
+                textViewDate.setText(currentDate.toString());
+            }
+        });
+        datePickerDialog.show();
+    }
+    private boolean validateInput(){
+        if( editTextAccount.getText().toString().isEmpty()){
+            Toast.makeText(getContext(), "missing account", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        if( editTextAmount.getText().toString().isEmpty()){
+            Toast.makeText(getContext(),"missing amount", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        return true;
     }
 }

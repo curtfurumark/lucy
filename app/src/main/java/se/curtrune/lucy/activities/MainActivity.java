@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.LocaleList;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -21,6 +22,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
 import java.time.LocalDate;
+import java.util.Locale;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.app.Lucinda;
@@ -31,6 +33,7 @@ import se.curtrune.lucy.fragments.EnchildaFragment;
 import se.curtrune.lucy.fragments.ProjectsFragment;
 import se.curtrune.lucy.fragments.TodoFragment;
 import se.curtrune.lucy.util.Constants;
+import se.curtrune.lucy.workers.MentalWorker;
 import se.curtrune.lucy.workers.PanicWorker;
 
 public class MainActivity extends AppCompatActivity {
@@ -49,7 +52,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
         log("MainActivity.onCreate(Bundle)");
-        setTitle(LocalDate.now().toString());
+        int currentEnergy = MentalWorker.getEnergy(LocalDate.now(), this);
+        String energyTitle = String.format(Locale.getDefault(), "energy %d", currentEnergy);
+        setTitle(energyTitle);
         initComponents();
         initListeners();
         initDefaultFragment();

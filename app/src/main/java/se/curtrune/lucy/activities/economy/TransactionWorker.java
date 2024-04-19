@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import se.curtrune.lucy.activities.economy.classes.Asset;
 import se.curtrune.lucy.activities.economy.classes.Transaction;
 import se.curtrune.lucy.activities.economy.persist.EcQueeries;
 import se.curtrune.lucy.persist.LocalDB;
@@ -20,6 +21,11 @@ public class TransactionWorker {
         log("TransactionWorker.insert(Transaction, Context");
         LocalDB db = new LocalDB(context);
         return db.insert(transaction);
+    }
+    public static List<Asset> selectAssets(Context context) {
+        log("TransactionWorker.selectAssets()");
+        LocalDB db = new LocalDB(context);
+        return db.selectAssets(EcQueeries.selectAssets());
     }
     public static List<Transaction> selectTransactions(Context context){
         log("...selectTransactions()");
@@ -47,5 +53,12 @@ public class TransactionWorker {
 
     public static List<Transaction> filterTransactions(LocalDate date, List<Transaction> transactions) {
         return transactions.stream().filter(transaction -> transaction.isDate(date)).collect(Collectors.toList());
+    }
+
+
+    public static Asset insert(Asset asset, Context context) {
+        log("TransactionWorker.insert(Asset, Context)");
+        LocalDB db = new LocalDB(context);
+        return db.insert(asset);
     }
 }

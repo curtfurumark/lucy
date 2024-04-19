@@ -58,6 +58,9 @@ public class Asset implements Listable, Serializable {
     public void setDate(LocalDate date){
         this.epochDay = date.toEpochDay();
     }
+    public void setDateEpoch(long epochDay){
+        this.epochDay = epochDay;
+    }
     public void setAmount(float amount) {
         this.amount = amount;
     }

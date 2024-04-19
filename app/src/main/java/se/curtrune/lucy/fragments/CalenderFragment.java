@@ -295,7 +295,7 @@ public class CalenderFragment extends Fragment {
     }
     private void setUserInterface(LocalDate date){
         log("...setUserInterface()", date.toString());
-        getActivity().setTitle(date.toString());
+        //getActivity().setTitle(date.toString());
         items = ItemsWorker.selectTodayList(currentDate, getActivity());
         //items = ItemsWorker.selectTodayList(LocalDate.now(), this);
         log("...number ot items today", items.size());
