@@ -1,10 +1,10 @@
-package se.curtrune.lucy.flying_fish.util;
+package se.curtrune.lucy.activities.flying_fish.util;
 
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 
-import se.curtrune.lucy.flying_fish.classes.DrawAble;
-import se.curtrune.lucy.flying_fish.classes.Fish;
+import se.curtrune.lucy.activities.flying_fish.classes.DrawAble;
+import se.curtrune.lucy.activities.flying_fish.classes.Fish;
 import se.curtrune.lucy.util.Logger;
 
 

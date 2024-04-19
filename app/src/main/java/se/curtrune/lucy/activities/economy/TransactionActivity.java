@@ -3,17 +3,14 @@ package se.curtrune.lucy.activities.economy;
 import static se.curtrune.lucy.util.Logger.log;
 
 import android.app.DatePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,13 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.activities.HomeActivity;
 import se.curtrune.lucy.adapters.TransactionAdapter;
-import se.curtrune.lucy.classes.economy.EcMoney;
-import se.curtrune.lucy.classes.economy.Transaction;
-import se.curtrune.lucy.workers.TransactionWorker;
+import se.curtrune.lucy.activities.economy.classes.Transaction;
 
-public class TransactionActivity extends AppCompatActivity implements TransactionAdapter.Callback {
+public class TransactionActivity extends AppCompatActivity{
 
     private TransactionAdapter adapter;
     private Transaction currentTransaction;
@@ -40,7 +34,7 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
     private RecyclerView recycler;
     private LocalDate date = LocalDate.now();
     private String account;
-    private EcMoney.Type type;
+    private Transaction.Type type;
     public static boolean VERBOSE = true;
     private List<Transaction> items = new ArrayList<>();
     @Override
@@ -60,17 +54,16 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
         initSpinnerAccounts();
 
     }
-    private void filterTransactions(){
+/*    private void filterTransactions(){
         log("...filterTransactions()");
         adapter.setList(TransactionWorker.filterTransactions(items, account, type));
         adapter.notifyDataSetChanged();
-
     }
     private void filterTransactions(LocalDate date){
         log("...filterTransactions(LocalDate)", date.toString());
         adapter.setList(TransactionWorker.filterTransactions(date, items));
 
-    }
+    }*/
     private Transaction getTransaction(){
         log("...getTransaction()");
         currentTransaction = new Transaction();
@@ -78,7 +71,7 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
         String strAmount = editTextAmount.getText().toString();
         currentTransaction.setAmount(Float.parseFloat(strAmount));
         //currentTransaction.setAccount(account);
-        currentTransaction.setDate(textViewDate.getText().toString());
+        //currentTransaction.setDate(textViewDate.getText().toString());
         //currentTransaction.setType(type);
         return currentTransaction;
 
@@ -109,16 +102,16 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
     }
     private void initRecycler(List<Transaction> items){
         if( VERBOSE) log("...initRecycler(List<Listable>)", items.size());
-        adapter = new TransactionAdapter(items, this);
+/*        adapter = new TransactionAdapter(items, this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         recycler.setLayoutManager(layoutManager);
         recycler.setItemAnimator(new DefaultItemAnimator());
-        recycler.setAdapter(adapter);
+        recycler.setAdapter(adapter);*/
     }
     private void initSpinnerTypes(){
         log("...initSpinnerTypes()");
 /*        //String[] types  = Accountant.getTypes();
-        adapterTypes = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, EcMoney.Type.values());
+        adapterTypes = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, Transaction.Type.values());
         adapterTypes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
         spinnerTypes.setAdapter(adapterTypes);
         spinnerTypes.setSelection(type.ordinal());
@@ -165,35 +158,16 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
         menuInflater.inflate(R.menu.economy_activity, menu);
         return true;
     }
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if( item.getItemId() == R.id.transactionActivity_home) {
-            startActivity(new Intent(this, HomeActivity.class));
-        }else if(item.getItemId() == R.id.transactionActivity_save){
-            save();
-        }
-
-/*            case R.id.economyActivity_clear:
-                setUserInterface();
-                break*/
-        return super.onOptionsItemSelected(item);
-    }
-
 
     public void onDateClick(View view){
         showDatePickerDialog();
     }
 
-
-
-
-    @Override
     public void onItemClick(Transaction item) {
         log("...onItemClick(Transaction) ");
         setUserInterface(item);
     }
 
-    @Override
     public void onItemLongClick(Transaction item) {
 
     }
@@ -214,11 +188,11 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
     }
     private void setUserInterface(Transaction transaction){
         log("...setUserInterface(Transaction)");
-        log(transaction);
+        //log(transaction);
         editTextDescription.setText(transaction.getDescription());
         editTextAmount.setText(String.valueOf(transaction.getAmount()));
-        date = transaction.getLocalDate();
-        textViewDate.setText(transaction.getDate());
+        //date = transaction.getLocalDate();
+        //textViewDate.setText(transaction.getDate());
         //spinnerAccounts.setSelection(transaction.getAccountOrdinal());
         //spinnerTypes.setSelection(transaction.getType().ordinal());
     }
@@ -231,7 +205,7 @@ public class TransactionActivity extends AppCompatActivity implements Transactio
                 log("...onDateSet(DatePicker, year,month, dayOfMonth)");
                 date = LocalDate.of(year, month +1 , dayOfMonth);
                 textViewDate.setText(date.toString());
-                filterTransactions(date);
+                //filterTransactions(date);
             }
         });
         datePickerDialog.show();

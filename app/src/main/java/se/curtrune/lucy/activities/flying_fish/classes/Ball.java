@@ -1,6 +1,6 @@
-package se.curtrune.lucy.flying_fish.classes;
+package se.curtrune.lucy.activities.flying_fish.classes;
 
-import static se.curtrune.lucy.flying_fish.util.FishLogger.log;
+import static se.curtrune.lucy.activities.flying_fish.util.FishLogger.log;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -9,7 +9,8 @@ import android.graphics.Rect;
 
 import java.util.Random;
 
-import se.curtrune.lucy.flying_fish.util.FishConstants;
+import se.curtrune.lucy.activities.flying_fish.util.FishConstants;
+import se.curtrune.lucy.activities.flying_fish.util.FishLogger;
 
 public class Ball extends DrawAble {
     private int color;
@@ -36,6 +37,7 @@ public class Ball extends DrawAble {
     @Override
     public void draw(Canvas canvas) {
         canvas.drawCircle(x, y, 30, paint);
+
     }
 
     public int getRadius() {
@@ -98,7 +100,7 @@ public class Ball extends DrawAble {
         //width = 50;
         //height = 50;
         rect.set((int)this.x, (int)this.y, (int) this.x + width, (int)this.y + height);
-        log(rect);
+        FishLogger.log(rect);
         return rect.contains((int)x, (int) y);
         //return super.contains(x, y);
     }
@@ -106,5 +108,9 @@ public class Ball extends DrawAble {
         this.radius = radius;
         width = radius;
         height = radius;
+    }
+
+    public void explode() {
+        FishLogger.log("Ball.explode()");
     }
 }

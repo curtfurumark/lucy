@@ -17,10 +17,7 @@ public class Queeries {
     public static final String DROP_TABLE_CATEGORIES = "DROP TABLE categories";
     public static final  String DROP_TABLE_MENTAL = "DROP table mental";
     //TODO
-    public static final String CREATE_TABLE_ECONOMY = "CREATE TABLE economy " +
-            "(id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            "description TEXT, " +
-            "amount INTEGER )";
+
     public static String CREATE_TABLE_ITEMS =
             "CREATE TABLE items  " +
                     "(id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -183,5 +180,9 @@ public class Queeries {
 
     public static String selectMentalTopTen(TopTenFragment.Mode mode) {
         return String.format( "SELECT * FROM mental ORDER BY %s DESC LIMIT 10", mode.toString().toLowerCase());
+    }
+
+    public static String selectChildren(long id) {
+        return String.format(Locale.getDefault(), "SELECT * FROM items WHERE parentID = %d", id);
     }
 }

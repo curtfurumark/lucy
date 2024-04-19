@@ -35,7 +35,7 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".flying_fish.GameActivity"
+            android:name=".activities.flying_fish.GameActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity

@@ -1,11 +1,13 @@
-package se.curtrune.lucy.flying_fish.classes;
+package se.curtrune.lucy.activities.flying_fish.classes;
 
-import static se.curtrune.lucy.flying_fish.util.FishLogger.log;
+import static se.curtrune.lucy.activities.flying_fish.util.FishLogger.log;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Rect;
+
+import se.curtrune.lucy.activities.flying_fish.util.FishLogger;
 
 
 public class Star extends DrawAble {
@@ -44,7 +46,7 @@ public class Star extends DrawAble {
         System.out.println("...x_center: " + x_center + ", y_center: " +  y_center);
         bitmap = Bitmap.createBitmap(bitmap, 0,0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
         System.out.println("...new height: " + bitmap.getHeight() + ", new width " + bitmap.getWidth());
-        log(bitmap, "rotated");
+        FishLogger.log(bitmap, "rotated");
     }
     public void setBitmap(Bitmap bitmap){
         this.bitmap = bitmap;

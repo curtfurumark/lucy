@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -63,15 +64,16 @@ public class SequenceActivity extends AppCompatActivity implements SequenceAdapt
                 //return;
             }
         }
-        init();
         initComponents();
+        initSequence();
         initRecycler();
         initUserInterface();
         initListeners();
     }
-    private void init(){
+    private void initSequence(){
         log("...init()");
         items = ItemsWorker.selectChildren(parentItem, this);
+        items.sort(Comparator.comparingLong(Item::getTargetTimeSecondOfDay));
         log("...number of items in sequence", items.size());
         if( items.size() < 1){
             Toast.makeText(this, "need at least one item for this thing to make sense", Toast.LENGTH_LONG).show();

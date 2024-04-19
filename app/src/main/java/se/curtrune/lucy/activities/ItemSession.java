@@ -134,11 +134,13 @@ public class ItemSession extends AppCompatActivity implements
     private CallingActivity callingActivity = CallingActivity.ITEMS_ACTIVITY;
     //variables
     private Item currentItem;
+    //MENTAL STUFF
     private Mental mental;
     private int anxiety;
     private int mood;
     private int stress;
-    private int energy;
+    private int energy; //from seekbar
+    private int currentEnergy; //from db
     private long duration;
 
     private final boolean VERBOSE = false;
@@ -244,9 +246,7 @@ public class ItemSession extends AppCompatActivity implements
         }
         setTitle(currentItem.getHeading());
         if( VERBOSE) log(currentItem);
-        //if(currentItem.isWIP()){
         kronos.setElapsedTime(currentItem.getDuration());
-        //}
 
         callingActivity = (CallingActivity) intent.getSerializableExtra(Constants.INTENT_CALLING_ACTIVITY);
         if( callingActivity == null){
@@ -254,7 +254,6 @@ public class ItemSession extends AppCompatActivity implements
             return;
         }
         if ( VERBOSE) log("...return to calling activity: ", callingActivity.toString());
-        //mental = MentalWorker.getMental(currentItem, this);
         if(!currentItem.hasMental()){
             log("...currentItem has no mental");
             mentalMode = MentalMode.CREATE;
@@ -265,6 +264,8 @@ public class ItemSession extends AppCompatActivity implements
             setUserInterfaceMental(mental);
         }
         setUserInterface(currentItem);
+        currentEnergy = MentalWorker.getEnergy(LocalDate.now(), this);
+        setUserInterfaceCurrentEnergy();
     }
 
     private void initComponents(){
@@ -407,6 +408,7 @@ public class ItemSession extends AppCompatActivity implements
                 if( currentItem.hasMental()){
                     currentItem.getMental().setEnergy(energy);
                 }
+                setUserInterfaceCurrentEnergy();
             }
 
             @Override
@@ -733,6 +735,7 @@ public class ItemSession extends AppCompatActivity implements
         if( item.hasEstimate()){
             setUserInterface(item.getEstimate());
         }
+
         checkBoxTemplate.setChecked(item.isTemplate());
         String textTags = item.hasTags() ? item.getTags(): "no tags";
         textViewTags.setText(textTags);
@@ -750,6 +753,7 @@ public class ItemSession extends AppCompatActivity implements
         textViewHasChild.setText(textHasChild);
         String textState = String.format(Locale.getDefault(), "state: %s", item.getState().toString());
         textViewState.setText(textState);
+        setUserInterfaceCurrentEnergy();
 
     }
     private void setUserInterface(Notification notification){
@@ -758,6 +762,17 @@ public class ItemSession extends AppCompatActivity implements
         textViewNotificationDate.setText(notification.getDate().toString());
         textViewNotificationTime.setText(Converter.format(notification.getTime()));
         textViewNotificationType.setText(notification.getType().toString());
+    }
+
+    /**
+     * currentEnergy is the sum of energy today as gotten from the db
+     * energy is the input from the user using the seekbar
+     */
+    private void setUserInterfaceCurrentEnergy(){
+        log("...setUserInterfaceCurrentEnergy()");
+        String textEnergy = String.format(Locale.getDefault(), "energy: %d", currentEnergy + energy, this);
+        textViewCurrentEnergy.setText(textEnergy);
+
     }
     private void setUserInterfaceMental(Mental mental){
         log("...setUserInterface(Mental)", mentalMode.toString());

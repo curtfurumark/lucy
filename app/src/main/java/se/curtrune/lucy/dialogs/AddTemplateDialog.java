@@ -35,6 +35,7 @@ import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Period;
 import se.curtrune.lucy.classes.State;
+import se.curtrune.lucy.util.Converter;
 import se.curtrune.lucy.workers.UtilWorker;
 
 public class AddTemplateDialog extends BottomSheetDialogFragment {
@@ -62,6 +63,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
     private TextView labelDateTime;
     private TextView textViewDate;
     private TextView textViewTime;
+    private TextView textViewNow;
     private Spinner spinner;
     private Button buttonSave;
     private Button buttonDismiss;
@@ -176,6 +178,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         textViewDate = view.findViewById(R.id.addTemplateDialog_date);
         textViewTime = view.findViewById(R.id.addTemplateDialog_time);
         labelRepeat = view.findViewById(R.id.addTemplateDialog_repeat);
+        textViewNow = view.findViewById(R.id.addTemplateDialog_now);
     }
 
     private void initListeners(){
@@ -189,6 +192,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         labelRepeat.setOnClickListener(view->toggleRepeat());
         textViewDate.setOnClickListener(view->showDateDialog());
         textViewTime.setOnClickListener(view->showTimeDialog());
+        textViewNow.setOnClickListener(view->setDateAndTime(LocalDate.now(), LocalTime.now().plusMinutes(5)));
     }
 
     /**
@@ -234,6 +238,16 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
     }
     public void setCallback(OnNewItemCallback callback) {
         this.callback = callback;
+    }
+    public void setDateAndTime(LocalDate date, LocalTime time){
+        log("...setDateAndTime()");
+        this.date = date;
+        this.time = time;
+        item.setTargetTime(time);
+        item.setTargetDate(date);
+        textViewDate.setText(date.toString());
+        textViewTime.setText(Converter.format(time));
+
     }
     private void setSpinnerSelection(String category){
         log("..setSpinnerSelection(String)", category);

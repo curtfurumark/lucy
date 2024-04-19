@@ -10,7 +10,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -18,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import se.curtrune.lucy.activities.economy.classes.Transaction;
+import se.curtrune.lucy.activities.economy.persist.ECDBAdmin;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.State;
@@ -29,6 +30,8 @@ public class LocalDB extends SQLiteOpenHelper {
     private static final String ITEMS_TABLE = "items";
     private static final String TABLE_MENTAL = "mental";
     private static final String TABLE_CATEGORIES = "categories";
+    private static final String TABLE_TRANSACTIONS ="transactions";
+    private static final String TABLE_ASSETS = "assets";
     private static final int DB_VERSION = 1;
     public static boolean VERBOSE = false;
 
@@ -175,6 +178,18 @@ public class LocalDB extends SQLiteOpenHelper {
         db.close();
         mental.setID(id);
         return mental;
+    }
+    public Transaction insert(Transaction transaction){
+        log("LocalDB.insert(Transaction)");
+        db = this.getWritableDatabase();
+        long id = db.insert(TABLE_TRANSACTIONS, null, DBAdmin.getContentValues(transaction));
+        if(id != -1){
+            transaction.setID(id);
+        }else{
+            log("ERROR inserting transaction");
+            return null;
+        }
+        return transaction;
     }
     public void insertCategory(String category){
         log("LocalDB.insertCategory(String)", category);
@@ -413,8 +428,23 @@ public class LocalDB extends SQLiteOpenHelper {
         db = this.getWritableDatabase();
         String whereClause = String.format("id = %d", mental.getID());
         int rowsAffected = db.update(TABLE_MENTAL,DBAdmin.getContentValues(mental), whereClause, null);
-        log("....rowsAffected", rowsAffected);
+        log("...rowsAffected", rowsAffected);
         db.close();
         return rowsAffected;
+    }
+
+    public List<Transaction> selectTransactions(String queery) {
+        log("LocalDB.selectTransactions(String)", queery);
+        db = this.getReadableDatabase();
+        List<Transaction> transactions = new ArrayList<>();
+        Cursor cursor = db.rawQuery(queery, null);
+        if( cursor.moveToFirst()){
+            do {
+                transactions.add(ECDBAdmin.getTransaction(cursor));
+            }while(cursor.moveToNext());
+        }
+        db.close();
+        cursor.close();
+        return  transactions;
     }
 }

@@ -27,6 +27,11 @@ public class MentalWorker {
         }
         return instance;
     }
+    public static int getEnergy(LocalDate date, Context context){
+        log("MentalWorker.getEnergy(LocalDate)", date.toString());
+        List<Mental> mentals = getMentals(date, context);
+        return mentals.stream().mapToInt(Mental::getEnergy).sum();
+    }
     public static Mental getMental(Item item, Context context){
         log("...getMental(Item)", item.getHeading());
         LocalDB db = new LocalDB(context);
@@ -60,24 +65,13 @@ public class MentalWorker {
         return null;
 
     }
-    public boolean hasMental(Item item){
-        log("MentalWorker(Item)");
-        return false;
-    }
-
-
-
     public static Mental insert(Mental mental, Context context) {
         log("MentalWorker.insert(Mental, Context)");
         LocalDB db = new LocalDB(context);
         return db.insert(mental);
     }
 
-    public static int update(Mental mental, Context context) {
-        log("MentalWorker.update(Mental, Context)");
-        LocalDB db = new LocalDB(context);
-        return db.update(mental);
-    }
+
 
     public static List<Mental> getLatestMentals(int limit, Context context){
         log("...getLatestMentals(int, Context) limit", limit );
@@ -99,5 +93,10 @@ public class MentalWorker {
         LocalDB db = new LocalDB(context);
         List<Mental> items = db.selectMentals();
         return items;
+    }
+    public static int update(Mental mental, Context context) {
+        log("MentalWorker.update(Mental, Context)");
+        LocalDB db = new LocalDB(context);
+        return db.update(mental);
     }
 }

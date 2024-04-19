@@ -1,0 +1,34 @@
+package se.curtrune.lucy.activities.economy.persist;
+
+import static se.curtrune.lucy.util.Logger.log;
+
+import android.content.Context;
+import android.database.Cursor;
+
+import se.curtrune.lucy.activities.economy.classes.Transaction;
+import se.curtrune.lucy.persist.LocalDB;
+import se.curtrune.lucy.persist.Queeries;
+
+public class ECDBAdmin {
+    public static void dropTables(Context context){
+        log("ECDBAdmin.dropTables()");
+        LocalDB db = new LocalDB(context);
+        db.executeSQL(EcQueeries.DROP_TABLE_TRANSACTIONS);
+        db.executeSQL(EcQueeries.DROP_TABLE_ASSETS);
+    }
+    public static void createEconomyTables(Context context) {
+        log("DBAdmin.createEconomyTables()");
+        LocalDB db = new LocalDB(context);
+        db.executeSQL(EcQueeries.CREATE_TABLE_TRANSACTIONS);
+        db.executeSQL(EcQueeries.CREATE_TABLE_ASSETS);
+    }
+
+    public static Transaction getTransaction(Cursor cursor) {
+        Transaction transaction = new Transaction();
+        transaction.setID(cursor.getLong(0));
+        transaction.setDescription(cursor.getString(1));
+        transaction.setDateEpoch(cursor.getLong(2));
+        transaction.setAmount(cursor.getFloat(3));
+        return  transaction;
+    }
+}

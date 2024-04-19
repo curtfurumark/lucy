@@ -1,4 +1,4 @@
-package se.curtrune.lucy.flying_fish.classes;
+package se.curtrune.lucy.activities.flying_fish.classes;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;

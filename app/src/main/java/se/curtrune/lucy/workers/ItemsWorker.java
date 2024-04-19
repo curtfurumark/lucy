@@ -257,6 +257,11 @@ public class ItemsWorker {
         LocalDB db = new LocalDB(context);
         return db.selectItems(Queeries.selectChildren(parent));
     }
+    public static List<Item> selectChildren(long id, Context context) {
+        log("...selectChildren(long, Context)", id);
+        LocalDB db = new LocalDB(context);
+        return db.selectItems(Queeries.selectChildren(id));
+    }
     public static List<Item> selectTodayList(LocalDate date, Context context){
         log("ItemsWorker.selectTodayList(LocalDate, Context)", date.toString());
         String query = Queeries.selectTodayList(date);

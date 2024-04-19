@@ -24,12 +24,14 @@ import java.time.LocalDate;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.app.Lucinda;
-import se.curtrune.lucy.flying_fish.GameActivity;
+import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.activities.flying_fish.GameActivity;
 import se.curtrune.lucy.fragments.CalenderFragment;
 import se.curtrune.lucy.fragments.EnchildaFragment;
 import se.curtrune.lucy.fragments.ProjectsFragment;
 import se.curtrune.lucy.fragments.TodoFragment;
 import se.curtrune.lucy.util.Constants;
+import se.curtrune.lucy.workers.PanicWorker;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -157,7 +159,10 @@ public class MainActivity extends AppCompatActivity {
         }else if(panicAction.equals("url")){
             openWebPage("https://bongo.cat");
         }else if(panicAction.equals("panic list")){
-            log("not implemented");
+            Item panicRoot = PanicWorker.getPanicRoot(this);
+            Intent intent = new Intent(this, SequenceActivity.class);
+            intent.putExtra(Constants.INTENT_SEQUENCE_PARENT, panicRoot);
+            startActivity(intent);
         }
     }
     private void openWebPage(String url){

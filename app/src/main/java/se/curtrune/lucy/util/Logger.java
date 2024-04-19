@@ -7,6 +7,7 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Locale;
 
+import se.curtrune.lucy.activities.economy.classes.Transaction;
 import se.curtrune.lucy.classes.Estimate;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
@@ -14,7 +15,6 @@ import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.classes.Period;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
-import se.curtrune.lucy.classes.economy.Transaction;
 import se.curtrune.lucy.statistics.CategoryListable;
 import se.curtrune.lucy.statistics.StatisticsPeriod;
 

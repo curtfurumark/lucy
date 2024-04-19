@@ -1,4 +1,4 @@
-package se.curtrune.lucy.classes.economy;
+package se.curtrune.lucy.activities.economy.classes;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -8,12 +8,12 @@ import java.util.Locale;
 import se.curtrune.lucy.classes.Listable;
 
 
-public class EcMoney implements Serializable, Listable {
+public class Transaction implements Serializable, Listable {
     private long id;
     private float amount;
     private String type;
-    private String goods;
-    protected String date;
+    private String description;
+    protected long date;
     protected String account;
     public enum Type{
         PENDING, RUNNING, MONTHLY, HEALTH, CHILDREN, INCOME, UNSPECIFIED, OTHER,EVERYTHING
@@ -28,12 +28,12 @@ public class EcMoney implements Serializable, Listable {
 
     @Override
     public long compare() {
-        return LocalDate.parse(date).toEpochDay();
+        return date;
     }
 
     @Override
     public boolean contains(String str) {
-        return goods.contains(str);
+        return description.contains(str);
     }
     public String getAccount(){
         return  account;
@@ -57,15 +57,15 @@ public class EcMoney implements Serializable, Listable {
     public float getAmount() {
         return amount;
     }
-    public String getDate(){
-        return date;
+    public LocalDate getDate(){
+        return LocalDate.ofEpochDay(date);
     }
     public String getDescription(){
-        return goods;
+        return description;
     }
     @Override
     public String getHeading() {
-        return goods;
+        return description;
     }
 
     public long getID() {
@@ -75,9 +75,7 @@ public class EcMoney implements Serializable, Listable {
     public String getInfo() {
         return String.format("%.2fkr, %s", amount, date);
     }
-    public LocalDate getLocalDate() throws DateTimeParseException {
-        return LocalDate.parse(date);
-    }
+
 
     public Type getType() {
         return Type.valueOf(type.toUpperCase());
@@ -86,8 +84,10 @@ public class EcMoney implements Serializable, Listable {
         return this.account.equalsIgnoreCase(account) || account.equalsIgnoreCase("all");
     }
     public boolean isBetween(LocalDate firstDate, LocalDate lastDate){
-        long epochDate = getLocalDate().toEpochDay();
-        return epochDate >= firstDate.toEpochDay() && epochDate <= lastDate.toEpochDay();
+        return date >= firstDate.toEpochDay() && date <= lastDate.toEpochDay();
+    }
+    public boolean isDate(LocalDate date){
+        return getDate().equals(date);
     }
     public boolean isType(Type type){
         return getType().equals(type) || type.equals(Type.EVERYTHING);
@@ -102,13 +102,14 @@ public class EcMoney implements Serializable, Listable {
         this.amount = Float.parseFloat(amount);
     }
     public void setDate(LocalDate date){
-        this.date = date.toString();
+        this.date = date.toEpochDay();
     }
-    public void setDate(String date){
-        this.date = date;
+    public void setDateEpoch(long epoch){
+        this.date = epoch;
     }
+
     public void setDescription(String description){
-        this.goods = description;
+        this.description = description;
     }
     public void setID(long id){
         this.id = id;
@@ -122,6 +123,6 @@ public class EcMoney implements Serializable, Listable {
 
     @Override
     public String toString() {
-        return String.format(Locale.ENGLISH, "%s, %s, %.2fkr", date, goods, amount);
+        return String.format(Locale.ENGLISH, "%s, %s, %.2fkr", date, description, amount);
     }
 }

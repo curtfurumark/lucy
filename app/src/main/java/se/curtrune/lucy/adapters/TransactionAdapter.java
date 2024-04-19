@@ -14,13 +14,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.classes.economy.Transaction;
+import se.curtrune.lucy.activities.economy.classes.Transaction;
 
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.MyViewHolder>{
     private List<Transaction> transactions;
-    public boolean VERBOSE = false;
-
+    public boolean VERBOSE = true;
     public void setList(List<Transaction> items) {
         if( items == null){
             log("ERROR,, TransactionAdapter.setList(List<Transaction>) called with null items");
@@ -39,7 +38,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     private final Callback callback;
 
     public TransactionAdapter(List<Transaction> items, Callback callback) {
-        if( VERBOSE) log("ItemsAdapter(List<Item>, Context, Callback");
+        if( VERBOSE) log("ItemsAdapter(List<Item>, Context, Callback) size", items.size());
         if (items == null){
             log("WARNING, taskList is null");
         }

@@ -1,4 +1,4 @@
-package se.curtrune.lucy.flying_fish;
+package se.curtrune.lucy.activities.flying_fish;
 
 import static se.curtrune.lucy.util.Logger.log;
 
@@ -12,8 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import se.curtrune.lucy.flying_fish.classes.Fish;
-import se.curtrune.lucy.flying_fish.util.FishConstants;
+import se.curtrune.lucy.activities.flying_fish.util.FishConstants;
 
 
 public class GameActivity extends AppCompatActivity {

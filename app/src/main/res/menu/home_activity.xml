@@ -20,7 +20,6 @@
     <item
         android:id="@+id/homeActivity_createTodoList"
         android:title="create todo list" />
-
-    <item android:title="toggle dark mode"
-        android:id="@+id/homeActivity_toggleDarkMode"/>
+    <item android:title="create economy tables"
+        android:id="@+id/homeActivity_createEconomyTables"/>
 </menu>

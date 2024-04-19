@@ -1,10 +1,10 @@
-package se.curtrune.lucy.flying_fish.classes;
+package se.curtrune.lucy.activities.flying_fish.classes;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
-import se.curtrune.lucy.flying_fish.util.FishConstants;
+import se.curtrune.lucy.activities.flying_fish.util.FishConstants;
 
 public abstract class DrawAble {
     protected int x;
@@ -27,8 +27,7 @@ public abstract class DrawAble {
         this.x = x;
     }
     public boolean contains(float x, float y){
-        rect.contains((int) x, (int) y);
-        return false;
+        return rect.contains((int) x, (int) y);
     }
 
     public int getY() {

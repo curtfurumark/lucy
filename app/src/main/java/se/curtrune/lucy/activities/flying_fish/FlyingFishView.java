@@ -1,18 +1,17 @@
-package se.curtrune.lucy.flying_fish;
+package se.curtrune.lucy.activities.flying_fish;
 
 import static se.curtrune.lucy.util.Logger.log;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.MotionEvent;
 import android.view.View;
 
-import se.curtrune.lucy.flying_fish.classes.Background;
-import se.curtrune.lucy.flying_fish.classes.Ball;
-import se.curtrune.lucy.flying_fish.classes.Fish;
+import se.curtrune.lucy.activities.flying_fish.classes.Background;
+import se.curtrune.lucy.activities.flying_fish.classes.Ball;
+import se.curtrune.lucy.activities.flying_fish.classes.Fish;
 
 
 public class FlyingFishView extends View {
@@ -50,11 +49,16 @@ public class FlyingFishView extends View {
     }
     @Override
     protected void onDraw(Canvas canvas) {
+        //log("...onDraw(Canvas)");
         background.draw(canvas);
         fish.update();
         fish.draw(canvas);
         ball.update();
         ball.draw(canvas);
+        if( fish.contains(ball.getX(), ball.getY())){
+            log("...collision");
+            ball.explode();
+        }
         /*
 
         /*int minFishY = bitmap_fish[0].getHeight();

@@ -6,13 +6,12 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
-import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.LocalTime;
-
+import se.curtrune.lucy.activities.economy.classes.Asset;
+import se.curtrune.lucy.activities.economy.classes.Transaction;
+import se.curtrune.lucy.activities.economy.persist.EcQueeries;
+import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
-import se.curtrune.lucy.app.Settings;
 
 public class DBAdmin {
 
@@ -25,15 +24,19 @@ public class DBAdmin {
         db.executeSQL(Queeries.CREATE_TABLE_MENTAL);
         db.executeSQL(Queeries.CREATE_TABLE_CATEGORIES);
         db.executeSQL(Queeries.CREATE_TABLE_ITEMS);
-        db.executeSQL(Queeries.CREATE_TABLE_ECONOMY);
+        db.executeSQL(EcQueeries.CREATE_TABLE_TRANSACTIONS);
+        db.executeSQL(EcQueeries.CREATE_TABLE_ASSETS);
         log("...tables created");
     }
+
     public static void dropTables(Context context){
         log("DBAdmin.dropTables()");
         LocalDB db = new LocalDB(context);
         db.executeSQL(Queeries.DROP_TABLE_CATEGORIES);
         db.executeSQL(Queeries.DROP_TABLE_ITEMS);
         db.executeSQL(Queeries.DROP_TABLE_MENTAL);
+        db.executeSQL(EcQueeries.DROP_TABLE_ASSETS);
+        db.executeSQL(EcQueeries.DROP_TABLE_TRANSACTIONS);
 
     }
 
@@ -53,17 +56,21 @@ public class DBAdmin {
         item.setCategory(cursor.getString(8));
         item.setType(cursor.getInt(9));
         item.setState(cursor.getInt(10));
-        item.setHasChild(cursor.getInt(11) == 1 ? true: false);
+        item.setHasChild(cursor.getInt(11) == 1);
         item.setDuration(cursor.getLong(12));
         item.setParentId(cursor.getInt(13));
-        //item.setDays(cursor.getInt(14));
         item.setPeriod(cursor.getString(15));
         item.setEstimate(cursor.getString(16));
-        //String json = cursor.getString(17);
-        //log("...json", json);
         item.setNotification(cursor.getString(17));
-        item.setIsTemplate(cursor.getInt(18) == 0? false: true);
+        item.setIsTemplate(cursor.getInt(18) != 0);
         return item;
+    }
+    public static ContentValues getContentValues(Asset asset){
+        ContentValues cv = new ContentValues();
+        cv.put("account", asset.getAccount());
+        cv.put("amount", asset.getAmount());
+        cv.put("date", asset.getDate().toEpochDay());
+        return cv;
     }
 
     public static ContentValues getContentValues(Item item) {
@@ -112,6 +119,13 @@ public class DBAdmin {
         cv.put("time", mental.getTimeSecondOfDay());
         return cv;
     }
+    public static ContentValues getContentValues(Transaction transaction){
+        ContentValues cv = new ContentValues();
+        cv.put("description", transaction.getDescription());
+        cv.put("amount", transaction.getAmount());
+        cv.put("date", transaction.getDate().toEpochDay());
+        return cv;
+    }
 
     public static Mental getMental(Cursor cursor) {
         if( VERBOSE) log("DBAdmin.getMental(Cursor)");
@@ -149,7 +163,7 @@ public class DBAdmin {
         }
     }
 
-    public static void insertRootItems(Context context) throws SQLException {
+    public static void insertRootItems(Context context) {
         log("...insertRootItems(Context)");
         Settings settings = Settings.getInstance(context);
         LocalDB db = new LocalDB(context);
@@ -167,9 +181,11 @@ public class DBAdmin {
         settings.addRootID(Settings.Root.TODO, todoRoot.getID(), context);
     }
 
-    private static Item getRemember(String heading, LocalDate date, LocalTime time){
-        Item item = new Item(heading);
-        return item;
+    public static void listTables(Context context) {
+        log("DBAdmin.listTables()");
+        LocalDB db = new LocalDB(context);
+        db.getTableNames().forEach(System.out::println);
     }
-
 }
+
+

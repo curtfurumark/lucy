@@ -83,9 +83,9 @@ public class Item implements Serializable , Listable {
     }
 
     public long compareTargetTime(){
-        if (state == State.DONE.ordinal() ){
-            return Long.MIN_VALUE + target_time * -1;
-        }
+        //if (state == State.DONE.ordinal() ){
+        //    return Long.MIN_VALUE + target_time * -1;
+        //}
         return target_time;
     }
     public String getCategory() {

@@ -1,4 +1,4 @@
-package se.curtrune.lucy.classes.economy;
+package se.curtrune.lucy.activities.economy.classes;
 
 
 import java.io.Serializable;
@@ -12,7 +12,7 @@ public class Asset implements Listable, Serializable {
     private String account;
 
     private float amount;
-    private String date;
+    private long epochDay;
 
 
     @Override
@@ -28,8 +28,8 @@ public class Asset implements Listable, Serializable {
         return account;
     }
 
-    public String getDate(){
-        return date;
+    public LocalDate getDate(){
+        return LocalDate.ofEpochDay(epochDay);
     }
     @Override
     public String getHeading() {
@@ -38,7 +38,7 @@ public class Asset implements Listable, Serializable {
 
     @Override
     public String getInfo() {
-        return  date;
+        return  LocalDate.ofEpochDay(epochDay).toString();
     }
 
     public long getID() {
@@ -51,17 +51,13 @@ public class Asset implements Listable, Serializable {
 
     @Override
     public String toString() {
-        return String.format(Locale.ENGLISH, "%.2f kr, %s %s", amount, account, date);
+        return String.format(Locale.ENGLISH, "%.2f kr, %s %s", amount, account, getDate().toString());
     }
 
-    public void setDate(String date) {
-        this.date = date;
-    }
+
     public void setDate(LocalDate date){
-        this.date = date.toString();
-
+        this.epochDay = date.toEpochDay();
     }
-
     public void setAmount(float amount) {
         this.amount = amount;
     }

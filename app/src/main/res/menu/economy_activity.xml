@@ -2,21 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/menu_stats"
-        android:title="statistics"/>
-    <item
     android:title="save"
         android:icon="@drawable/baseline_save_24"
         app:showAsAction="always"
-    android:id="@+id/transactionActivity_save"/>
+    android:id="@+id/economyActivity_save"/>
     <item android:title="home"
-        android:id="@+id/transactionActivity_home"
+        android:id="@+id/economyActivity_home"
         android:icon="@drawable/baseline_home_24"
         app:showAsAction="always"/>
-    <item
-        android:title="assets"
-        android:id="@+id/menu_item_assets"/>
     <item android:title="clear"
         android:id="@+id/economyActivity_clear"/>
+    <item android:id="@+id/economyActivity_dropTables"
+        android:title="drop tables"/>
+    <item android:id="@+id/economyActivity_createTables"
+        android:title="create tables"/>
 
 </menu>

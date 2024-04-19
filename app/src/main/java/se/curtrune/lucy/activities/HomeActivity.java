@@ -24,10 +24,10 @@ import java.util.List;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.activities.economy.EconomyActivity;
-import se.curtrune.lucy.activities.economy.TransactionActivity;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.classes.Quotes;
 import se.curtrune.lucy.persist.DBAdmin;
+import se.curtrune.lucy.activities.economy.persist.ECDBAdmin;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
 import se.curtrune.lucy.util.Logger;
@@ -77,6 +77,12 @@ public class HomeActivity extends AppCompatActivity {
             log("PERMISSION_DENIED");
         }
 
+    }
+    private void createEconomyTables(){
+        log("...createEconomyTables()");
+        ECDBAdmin.createEconomyTables(this);
+        Toast.makeText(this, "tables created, possibly", Toast.LENGTH_LONG).show();
+        DBAdmin.listTables(this);
     }
 
     private void initComponents(){
@@ -137,8 +143,9 @@ public class HomeActivity extends AppCompatActivity {
             resetApp();
         }else if( item.getItemId() == R.id.homeActivity_createTableCategories){
             createTableCategories();
-        }else if( item.getItemId() == R.id.homeActivity_toggleDarkMode){
-            toggleDarkMode();
+        }else if( item.getItemId() == R.id.homeActivity_createEconomyTables){
+            // toggleDarkMode();
+            createEconomyTables();
         }
         return true;
     }

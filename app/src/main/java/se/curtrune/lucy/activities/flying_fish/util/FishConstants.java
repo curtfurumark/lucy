@@ -1,4 +1,4 @@
-package se.curtrune.lucy.flying_fish.util;
+package se.curtrune.lucy.activities.flying_fish.util;
 
 public class FishConstants {
     public static final String INTENT_SCORE = "intent_score";

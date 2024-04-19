@@ -1,10 +1,12 @@
-package se.curtrune.lucy.flying_fish.classes;
+package se.curtrune.lucy.activities.flying_fish.classes;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Rect;
 
 import se.curtrune.lucy.R;
@@ -25,12 +27,18 @@ public class Fish extends DrawAble {
         bitmaps[1] = BitmapFactory.decodeResource(resources, R.drawable.fish2);
         width = bitmaps[0].getWidth();
         height = bitmaps[0].getHeight();
+        rect = new Rect(x,y, x + width, y + height);
     }
 
     @Override
     public void draw(Canvas canvas) {
         canvas.drawBitmap(bitmaps[bm_index], x, y, null);
-        if( jump){jump = false;}
+        if( jump){
+            jump = false;}
+/*        Paint paint = new Paint();
+        paint.setColor(Color.RED);
+        canvas.drawRect(rect, paint);*/
+        //updateRect();
         /*
         if( x > Constants.SCREEN_WIDTH){
             x = 0 - bitmap.getWidth();
@@ -73,13 +81,17 @@ public class Fish extends DrawAble {
     public void update() {
         //if( y < Constants.SCREEN_HEIGHT + height) {
             y += 10;
+            updateRect();
         //}
+    }
+    private void updateRect(){
+        rect.set(x, y, x + width, y + height);
 
     }
 
     @Override
     public Rect getRect() {
-        return null;
+        return rect;
     }
 
 
