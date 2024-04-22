@@ -44,6 +44,7 @@ import se.curtrune.lucy.dialogs.AddTemplateDialog;
 import se.curtrune.lucy.dialogs.OnNewItemCallback;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.workers.ItemsWorker;
+import se.curtrune.lucy.workers.WebWorker;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -201,9 +202,21 @@ public class CalenderFragment extends Fragment {
                     Toast.makeText(getContext(),"error updating item", Toast.LENGTH_LONG).show();
                     return;
                 }
+                if(item.hasReward()){
+                    switch (item.getReward().getType()){
+                        case AFFIRMATION:
+                            //log("...AFFIRMATION");
+                            showAffirmation();
+                            break;
+                        case USER_DEFINED:
+                            log("...USER_DEFINED");
+                            break;
+                        case CONFETTI:
+                            log("...CONFETTI");
+                            break;
+                    }
+                }
                 setUserInterface(currentDate);
-                //items = ItemsWorker.selectTodayList(currentDate, getContext());
-                //adapter.setList(items);
             }
         });
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -295,10 +308,6 @@ public class CalenderFragment extends Fragment {
     }
     private void setUserInterface(LocalDate date){
         log("...setUserInterface()", date.toString());
-        //getActivity().setTitle(date.toString());
-        items = ItemsWorker.selectTodayList(currentDate, getActivity());
-        //items = ItemsWorker.selectTodayList(LocalDate.now(), this);
-        log("...number ot items today", items.size());
         textViewDate.setText(currentDate.toString());
         textViewWeek.setText(getWeekNumber());
         textViewMonth.setText(currentDate.getMonth().toString());
@@ -307,7 +316,7 @@ public class CalenderFragment extends Fragment {
         if( currentDate.equals(LocalDate.now())) {
             items = ItemsWorker.selectTodayList(currentDate, getContext());
         }else{
-            items = ItemsWorker.selectItems(currentDate, getContext(), State.TODO);
+            items = ItemsWorker.selectAppointments( currentDate, getContext());
         }
         items.sort(Comparator.comparingLong(Item::compareTargetTime));
         //items.sort(Comparator.comparingLong(Item::getTargetTimeSecondOfDay));
@@ -327,6 +336,13 @@ public class CalenderFragment extends Fragment {
             }
         });
         dialog.show(getParentFragmentManager(), "add item");
+    }
+    private void showAffirmation(){
+        log("...showAffirmation");
+        WebWorker.requestAffirmation(affirmation -> {
+            log("...onRequest(Affirmation)", affirmation.getAffirmation());
+            Toast.makeText(getContext(), affirmation.getAffirmation(), Toast.LENGTH_LONG).show();
+        });
     }
     private void updateTargetTime(Item item){
         log("...updateTargetTime(Item)");

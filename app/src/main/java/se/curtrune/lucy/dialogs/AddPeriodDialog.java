@@ -26,7 +26,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.classes.Period;
+import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.util.Converter;
 
 
@@ -53,20 +53,20 @@ public class AddPeriodDialog extends BottomSheetDialogFragment {
     private TextView textViewTime;
 
     public interface Callback{
-        void onPeriod(Period period);
+        void onPeriod(Repeat repeat);
     }
 
     private Callback listener;
-    private Period period;
+    private Repeat repeat;
     private enum Mode{
         DAYS, WEEKDAYS, PENDING
     }
     private Mode mode = Mode.PENDING;
 
-    private Period.Mode periodMode = Period.Mode.DAY_OF_WEEKS;
+    private Repeat.Mode periodMode = Repeat.Mode.DAY_OF_WEEKS;
     public AddPeriodDialog(){
         log("AddItemFragment default constructor");
-        period = new Period();
+        repeat = new Repeat();
     }
 
 
@@ -81,23 +81,23 @@ public class AddPeriodDialog extends BottomSheetDialogFragment {
         setUserInterface();
         return view;
     }
-    private Period getPeriod(){
+    private Repeat getPeriod(){
         log("...getPeriod()", mode.toString());
         if( mode.equals(Mode.DAYS)) {
             if (editTextDays.getText().toString().isEmpty()){
                 Toast.makeText(getContext(), "missing value days", Toast.LENGTH_LONG).show();
             }else{
-                period.setDays(Integer.parseInt(editTextDays.getText().toString()));
-                //period.setTime();
+                repeat.setDays(Integer.parseInt(editTextDays.getText().toString()));
+                //repeat.setTime();
             }
         }
         if( firstDate != null){
-            period.setFirstDate(firstDate);
+            repeat.setFirstDate(firstDate);
         }
         if( lastDate != null){
-            period.setLastDate(lastDate);
+            repeat.setLastDate(lastDate);
         }
-        return period;
+        return repeat;
     }
     private void initComponents(View view){
         log("...initComponents(View)");
@@ -200,9 +200,9 @@ public class AddPeriodDialog extends BottomSheetDialogFragment {
     private void setDayOfWeek(DayOfWeek dayOfWeek, boolean checked){
         log("...setDayOfWeek(DayOfWeek, boolean)", dayOfWeek.toString());
         if( checked){
-            period.add(dayOfWeek);
+            repeat.add(dayOfWeek);
         }else{
-            period.remove(dayOfWeek);
+            repeat.remove(dayOfWeek);
         }
     }
     public void setListener(Callback callback){

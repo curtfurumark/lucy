@@ -28,6 +28,7 @@ import se.curtrune.lucy.R;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.activities.flying_fish.GameActivity;
+import se.curtrune.lucy.fragments.AppointmentsFragment;
 import se.curtrune.lucy.fragments.CalenderFragment;
 import se.curtrune.lucy.fragments.EnchildaFragment;
 import se.curtrune.lucy.fragments.ProjectsFragment;
@@ -57,17 +58,18 @@ public class MainActivity extends AppCompatActivity {
         setTitle(energyTitle);
         initComponents();
         initListeners();
-        initDefaultFragment();
+        //initDefaultFragment();
         Intent intent = getIntent();
-        if( intent.getBooleanExtra(Constants.INTENT_SHOW_CHILD_ITEMS, false)){
+/*        if( intent.getBooleanExtra(Constants.INTENT_SHOW_CHILD_ITEMS, false)){
             log("...INTENT_SHOW_CHILD_ITEMS");
-        }
+        }*/
         if( Lucinda.currentFragment != null){
+            log("...currentFragment != null");
             currentFragment = Lucinda.currentFragment;
         }else{
             currentFragment = new CalenderFragment();
         }
-        navigate(currentFragment);
+        //navigate(currentFragment);
         setBottomNavigationSelected(currentFragment);
     }
     private void initComponents(){
@@ -81,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
         log("...initDefaultFragment()");
         currentFragment = new ProjectsFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.mainActivity_fragmentContainer, currentFragment).commit();
-
     }
     private void initListeners(){
         log("...initListeners()");
@@ -98,6 +99,8 @@ public class MainActivity extends AppCompatActivity {
                     navigate(new TodoFragment());
                 }else if( item.getItemId() == R.id.bottomNavigation_enchilada){
                     navigate(new EnchildaFragment());
+                }else if( item.getItemId() == R.id.bottomNavigation_appointments){
+                    navigate(new AppointmentsFragment());
                 }
                 return true;
             }
@@ -125,7 +128,11 @@ public class MainActivity extends AppCompatActivity {
         });*/
     }
     private void navigate(Fragment fragment){
-        log("navigate(Fragment) ");
+        log("...navigate(Fragment) ");
+        if(fragment instanceof AppointmentsFragment)log("AppointmentsFragment");
+        if(fragment instanceof ProjectsFragment)log("AppointmentsFragment");
+        if(fragment instanceof CalenderFragment)log("AppointmentsFragment");
+        if(fragment instanceof TodoFragment)log("AppointmentsFragment");
         currentFragment = fragment;
         getSupportFragmentManager().beginTransaction().replace(R.id.mainActivity_fragmentContainer, currentFragment).commit();
 
@@ -148,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
-        log("...onSaveInstanceState(Bundle of joy)");
+        log("MainActivity.onSaveInstanceState(Bundle of joy)");
         Lucinda.currentFragment = currentFragment;
         //outState.putParcelable(CURRENT_FRAGMENT, (Parcelable) currentFragment);
         super.onSaveInstanceState(outState);
@@ -192,6 +199,8 @@ public class MainActivity extends AppCompatActivity {
             selectedItemID = R.id.bottomNavigation_todo;
         }else if ( fragment instanceof EnchildaFragment){
             selectedItemID = R.id.bottomNavigation_enchilada;
+        }else if( fragment instanceof  AppointmentsFragment) {
+            selectedItemID = R.id.bottomNavigation_appointments;
         }else{
             selectedItemID = R.id.bottomNavigation_today;
         }

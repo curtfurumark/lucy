@@ -595,6 +595,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/itemSession_labelInfo">
 
+            <CheckBox
+                android:id="@+id/itemSession_checkBoxAppointment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="is appointment"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <CheckBox
                 android:id="@+id/itemSession_checkBoxTemplate"
@@ -602,7 +609,7 @@
                 android:layout_height="wrap_content"
                 android:text="is template"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/itemSession_checkBoxAppointment"
                 tools:layout_editor_absoluteX="49dp"
                 tools:layout_editor_absoluteY="9dp" />
 
@@ -614,6 +621,7 @@
                 android:text="updated"
                 app:layout_constraintStart_toStartOf="@+id/itemSession_checkBoxTemplate"
                 app:layout_constraintTop_toBottomOf="@+id/itemSession_checkBoxTemplate" />
+
             <TextView
                 android:id="@+id/itemSession_infoUpdatedEpoch"
                 android:layout_width="wrap_content"
@@ -741,7 +749,7 @@
 
         </LinearLayout>
         <View
-            android:id="@+id/dividerWhatever"
+            android:id="@+id/dividerReward"
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_marginTop="8dp"
@@ -749,17 +757,23 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/itemSession_layoutDateTime" />
-
-<!--        <TextView
-            android:id="@+id/itemSession_editPeriod"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/itemSession_labelReward"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:text="edit"
+            android:text="@string/reward"
             android:textSize="24sp"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/itemSession_labelRepeat" />-->
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dividerReward"/>
+        <LinearLayout
+            android:id="@+id/itemSession_layoutReward"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/itemSession_labelReward">
+
+        </LinearLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/itemSession_fabAdd"
@@ -770,7 +784,7 @@
             android:contentDescription="@string/add_child_item"
             android:text="@string/add_child_item"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dividerWhatever"
+            app:layout_constraintTop_toBottomOf="@+id/dividerReward"
             app:srcCompat="@drawable/baseline_add_circle_outline_24" />
 
 

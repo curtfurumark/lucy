@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class Period implements Serializable {
+public class Repeat implements Serializable {
 
 
     public static boolean   VERBOSE = false;
@@ -27,8 +27,8 @@ public class Period implements Serializable {
     private LocalDate firstDate;
     private LocalDate lastDate;
     private List<DayOfWeek> dayOfWeeks = new ArrayList<>();
-    public Period(){
-        //log("Period() constructor");
+    public Repeat(){
+        //log("Repeat() constructor");
     }
 
     public int getDays() {
@@ -94,13 +94,13 @@ public class Period implements Serializable {
         this.dayOfWeeks = weekDays;
     }
     public void remove(DayOfWeek dayOfWeek){
-        if( VERBOSE) log("Period.remove(DayOfWeek)", dayOfWeek.toString());
+        if( VERBOSE) log("Repeat.remove(DayOfWeek)", dayOfWeek.toString());
         boolean found = dayOfWeeks.remove(dayOfWeek);
         log("...dayOfWeek removed? ", found);
     }
     public String toJson(){
-        if( VERBOSE) log("Period.toJson()");
-        return new Gson().toJson(this, Period.class);
+        if( VERBOSE) log("Repeat.toJson()");
+        return new Gson().toJson(this, Repeat.class);
     }
 
     @Override

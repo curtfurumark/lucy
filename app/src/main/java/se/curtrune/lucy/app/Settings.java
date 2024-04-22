@@ -45,7 +45,7 @@ public class Settings {
      * @param context, forever context
      */
     private void init(Context context){
-        log("...init()");
+        log("...init(Context)");
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
         todoID = sharedPreferences.getLong(Root.TODO.toString(), -1);
         dailyID = sharedPreferences.getLong(Root.DAILY.toString(), -1);
@@ -130,6 +130,4 @@ public class Settings {
             editor.putBoolean(IS_INITIALIZED, isInitialized);
             editor.commit();
     }
-
-
 }

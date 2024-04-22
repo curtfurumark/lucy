@@ -1,5 +1,8 @@
 package se.curtrune.lucy.activities.economy.persist;
 
+import java.time.LocalDate;
+import java.util.Locale;
+
 public class EcQueeries {
     public static final String CREATE_TABLE_TRANSACTIONS =
             "CREATE TABLE transactions " +
@@ -23,5 +26,9 @@ public class EcQueeries {
 
     public static String selectAssets() {
         return "SELECT * FROM assets ORDER BY date DESC";
+    }
+
+    public static String selectTransactions(LocalDate firstDate, LocalDate lastDate) {
+        return String.format(Locale.getDefault(),"SELECT * FROM transactions WHERE date >= %d AND date <= lastDate ORDER BY date DESC");
     }
 }

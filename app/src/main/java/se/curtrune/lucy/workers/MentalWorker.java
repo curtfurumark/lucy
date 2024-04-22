@@ -14,6 +14,7 @@ import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.fragments.TopTenFragment;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
+import se.curtrune.lucy.util.Logger;
 
 public class MentalWorker {
     private static MentalWorker instance;
@@ -27,9 +28,29 @@ public class MentalWorker {
         }
         return instance;
     }
+
+    /**
+     * the latest ten entries, notwithstanding date
+     * @param context
+     * @return
+     */
+    public static long getCurrentEnergy(Context context) {
+        log("StatisticsWorker.getCurrentEnergy(Context)");
+        String query = "SELECT * FROM mental ORDER BY updated DESC LIMIT 10";
+        LocalDB db = new LocalDB(context);
+        List<Mental> items = db.selectMentals(query);
+        if (items.size() == 0) {
+            log("...no mental items in database");
+            return 0;
+        }
+        items.forEach(Logger::log);
+        long sum = items.stream().mapToLong(Mental::getEnergy).sum();
+        log("...sum energy", sum);
+        return sum;
+    }
     public static int getEnergy(LocalDate date, Context context){
         log("MentalWorker.getEnergy(LocalDate)", date.toString());
-        List<Mental> mentals = getMentals(date, context);
+        List<Mental> mentals = getMentals(date,false,  context);
         return mentals.stream().mapToInt(Mental::getEnergy).sum();
     }
     public static Mental getMental(Item item, Context context){
@@ -80,13 +101,14 @@ public class MentalWorker {
         return db.selectMentals(query);
     }
 
-    public static List<Mental> getMentals(LocalDate date, Context context) {
+    public static List<Mental> getMentals(LocalDate date, boolean includeTemplates, Context context) {
         log("StatisticsWorker.getMentals(LocalDate)", date.toString());
         if( context == null){
             log("...CONTEXT IS NULL, getMentals");
         }
+        String queery = Queeries.selectMentals(date, false);
         LocalDB db = new LocalDB(context);
-        return db.selectMentals(date);
+        return db.selectMentals(queery);
     }
     public List<Mental> selectMentals(Context context) {
         log("MentalWorker.selectMentals()");

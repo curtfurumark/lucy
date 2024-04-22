@@ -118,7 +118,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:ems="6"
-            android:text="period"
+            android:text="repeat"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView2" />
@@ -193,7 +193,7 @@
             android:id="@+id/itemEditor_labelPersiod"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="click to set period"
+            android:text="click to set repeat"
             android:textSize="16sp"
             app:layout_constraintStart_toEndOf="@+id/labelPeriod"
             app:layout_constraintTop_toTopOf="@+id/labelPeriod" />

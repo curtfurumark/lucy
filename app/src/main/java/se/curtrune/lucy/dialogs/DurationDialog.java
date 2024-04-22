@@ -18,7 +18,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import java.time.Duration;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.classes.Period;
 
 
 public class DurationDialog extends BottomSheetDialogFragment {

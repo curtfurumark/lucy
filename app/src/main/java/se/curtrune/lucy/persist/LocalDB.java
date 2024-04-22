@@ -358,13 +358,6 @@ public class LocalDB extends SQLiteOpenHelper {
         return mental;
     }
 
-    public List<Mental> selectMentals(LocalDate date) {
-        log("...selectMentals(LocalDate)", date.toString());
-        String query = Queeries.selectMentals(date);
-        return selectMentals(query);
-    }
-
-
     public List<Mental> selectMentals(String query) {
         log("...selectMentals(String)", query);
         List<Mental> items = new ArrayList<>();

@@ -39,10 +39,11 @@ public class Item implements Serializable , Listable {
     protected List<Item> children;
     //protected int days;
     protected int energy;
-    protected  Period period;
+    protected Repeat repeat;
     protected Estimate estimate;
     protected Notification notification;
     protected Mental mental;
+    protected Reward reward;
     /**
      * 0 = not a template in anyway
      * templateRoot, has templateChildren
@@ -83,10 +84,11 @@ public class Item implements Serializable , Listable {
     }
 
     public long compareTargetTime(){
-        //if (state == State.DONE.ordinal() ){
-        //    return Long.MIN_VALUE + target_time * -1;
-        //}
         return target_time;
+    }
+    @Override
+    public boolean contains(String str) {
+        return (heading + description + comment + tags).contains(str);
     }
     public String getCategory() {
         return category;
@@ -134,18 +136,9 @@ public class Item implements Serializable , Listable {
         }else if( isTemplate()){
             return String.format("template, %s", Converter.epochToDate(target_date));
         }
-
-        /*else if( state == State.INFINITE.ordinal()){
-            return String.format("%s, %s", getState().toString(), Converter.epochToDate(target_date));
-        }*/
         return String.format("%s", Converter.formatDateTimeUI(updated));
     }
 
-
-    @Override
-    public boolean contains(String str) {
-        return (heading + description + comment + tags).contains(str);
-    }
     public LocalDate getDateUpdated(){
         return getUpdated().toLocalDate();
     }
@@ -169,8 +162,11 @@ public class Item implements Serializable , Listable {
         return parent_id;
     }
 
-    public Period getPeriod(){
-        return period;
+    public Repeat getPeriod(){
+        return repeat;
+    }
+    public Reward getReward(){
+        return reward;
     }
     public State getState() {
         return State.values()[state];
@@ -215,10 +211,11 @@ public class Item implements Serializable , Listable {
         return parent != null;
     }
     public boolean hasPeriod(){
-        return period != null;
+        return repeat != null;
     }
     public boolean hasMental() {return mental != null;}
     public boolean hasNotification(){return notification != null;}
+    public boolean hasReward(){return reward != null;}
     public boolean hasTags(){
         return !this.tags.isEmpty();
     }
@@ -337,24 +334,18 @@ public class Item implements Serializable , Listable {
 
     public void setPeriod(String strPeriod){
         if( strPeriod != null && !strPeriod.isEmpty()){
-            period = new Gson().fromJson(strPeriod, Period.class);
+            repeat = new Gson().fromJson(strPeriod, Repeat.class);
         }
     }
-    public void setPeriod(Period period){
-        this.period = period;
+    public void setPeriod(Repeat repeat){
+        this.repeat = repeat;
     }
 
-    /**
-     * sets the next targetDate,
-     * to be called when item is done
-     */
-    public void updateTargetDate(){
-        log("...updateTargetDate()");
-        if( hasPeriod()){
-            target_date = period.getNextDate().toEpochDay();
-        }/*else{
-            target_date = LocalDate.now().plusDays(days).toEpochDay();
-        }*/
+    public void setReward(Reward reward){
+        this.reward = reward;
+    }
+    public void setReward(String json){
+        this.reward = new Gson().fromJson(json, Reward.class);
     }
 
     public void setState(int state){
@@ -395,5 +386,17 @@ public class Item implements Serializable , Listable {
     @Override
     public String toString() {
         return String.format("%s (%d), parent: %d, has child: %b", heading,id, parent_id, hasChild());
+    }
+    /**
+     * sets the next targetDate,
+     * to be called when item is done
+     */
+    public void updateTargetDate(){
+        log("...updateTargetDate()");
+        if( hasPeriod()){
+            target_date = repeat.getNextDate().toEpochDay();
+        }/*else{
+            target_date = LocalDate.now().plusDays(days).toEpochDay();
+        }*/
     }
 }

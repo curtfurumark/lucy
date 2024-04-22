@@ -49,7 +49,7 @@
     <string name="date">datum</string>
     <string name="created">skapad</string>
     <string name="minutes">minuter</string>
-    <string name="add_period">add period</string>
+    <string name="add_period">add repeat</string>
     <string name="show_estimate">visa uppskattning</string>
     <string name="hours">timmar</string>
     <string name="seconds">sekunder</string>

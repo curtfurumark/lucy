@@ -12,8 +12,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.time.LocalDate;
@@ -21,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import se.curtrune.lucy.R;
+import se.curtrune.lucy.activities.economy.workers.TransactionWorker;
 import se.curtrune.lucy.adapters.TransactionAdapter;
 import se.curtrune.lucy.activities.economy.classes.Transaction;
 
@@ -48,7 +47,7 @@ public class TransactionActivity extends AppCompatActivity{
         initComponents();
         initListeners();
         initDefaults();
-        items = TransactionWorker.selectTransactions(LocalDate.now(), LocalDate.now());
+        items = TransactionWorker.selectTransactions(LocalDate.now(), LocalDate.now(), this);
         initRecycler(items);
         initSpinnerTypes();
         initSpinnerAccounts();

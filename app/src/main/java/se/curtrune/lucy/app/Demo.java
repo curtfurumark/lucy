@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import se.curtrune.lucy.classes.Item;
-import se.curtrune.lucy.classes.Period;
+import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.workers.ItemsWorker;
@@ -26,9 +26,9 @@ public class Demo {
         Item item = new Item(heading);
         item.setState(State.INFINITE);
         item.setIsTemplate(true);
-        Period period = new Period();
-        period.setDays(1);
-        item.setPeriod(period);
+        Repeat repeat = new Repeat();
+        repeat.setDays(1);
+        item.setPeriod(repeat);
         item.setParentId(settings.getRootID(Settings.Root.DAILY));
         return item;
     }

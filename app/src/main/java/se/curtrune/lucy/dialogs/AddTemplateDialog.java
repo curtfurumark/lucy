@@ -23,7 +23,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.chip.Chip;
-import com.google.android.material.textfield.TextInputLayout;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -33,7 +32,7 @@ import java.util.List;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Item;
-import se.curtrune.lucy.classes.Period;
+import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.util.Converter;
 import se.curtrune.lucy.workers.UtilWorker;
@@ -78,7 +77,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
     private Item item;
     private boolean hasPeriod = false;
 
-    private Period.Mode mode = Period.Mode.DAYS;
+    private Repeat.Mode mode = Repeat.Mode.DAYS;
 
     public AddTemplateDialog(Item parent) {
         log("AddTemplateDialog(Item)");
@@ -109,19 +108,19 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         item.setPeriod(getPeriod());
         return item;
     }
-    private Period getPeriod(){
+    private Repeat getPeriod(){
         log("...getPeriod() hasPeriod", hasPeriod);
-        Period period = null;
+        Repeat repeat = null;
         if( hasPeriod){
-            period = new Period();
-            if( mode.equals(Period.Mode.DAYS)){
-                period.setDays(Integer.parseInt(editTextDays.getText().toString()));
+            repeat = new Repeat();
+            if( mode.equals(Repeat.Mode.DAYS)){
+                repeat.setDays(Integer.parseInt(editTextDays.getText().toString()));
             }else{
-                period.setWeekDays(getWeekDays());
+                repeat.setWeekDays(getWeekDays());
             }
 
         }
-        return period;
+        return repeat;
     }
     private List<DayOfWeek> getWeekDays(){
         log("...getWeekDays()");
@@ -283,7 +282,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         log("...toggleDays()");
         if( layoutDays.getVisibility() == View.GONE){
             log("...setting visibility to visible");
-            mode = Period.Mode.DAYS;
+            mode = Repeat.Mode.DAYS;
             layoutDays.setVisibility(View.VISIBLE);
             layoutWeekDays.setVisibility(View.GONE);
         }else{
@@ -310,7 +309,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
     private void toggleWeekDays(){
         log("...toggleWeekDays()");
         if( layoutWeekDays.getVisibility() == View.GONE){
-            mode = Period.Mode.DAY_OF_WEEKS;
+            mode = Repeat.Mode.DAY_OF_WEEKS;
             layoutWeekDays.setVisibility(View.VISIBLE);
             layoutDays.setVisibility(View.GONE);
         }else{
@@ -325,7 +324,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
             log("...item requires heading, and no heading is supplied...");
             return false;
         }
-/*        if( mode.equals(Period.Mode.DAYS)) {
+/*        if( mode.equals(Repeat.Mode.DAYS)) {
             if (editTextDays.getText().toString().isEmpty()) {
                 Toast.makeText(getContext(), "missing days", Toast.LENGTH_LONG).show();
                 log("...missing days");

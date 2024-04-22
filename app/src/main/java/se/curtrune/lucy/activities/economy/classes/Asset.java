@@ -38,7 +38,7 @@ public class Asset implements Listable, Serializable {
 
     @Override
     public String getInfo() {
-        return  LocalDate.ofEpochDay(epochDay).toString();
+        return String.format(Locale.getDefault(), "%.2fkr %s", amount, getDate().toString());
     }
 
     public long getID() {

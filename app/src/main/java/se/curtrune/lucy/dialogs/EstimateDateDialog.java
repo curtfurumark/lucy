@@ -22,10 +22,9 @@ import java.util.List;
 import java.util.Locale;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.classes.EstimateDate;
 import se.curtrune.lucy.classes.EstimateItems;
 import se.curtrune.lucy.classes.Item;
-import se.curtrune.lucy.classes.Period;
+import se.curtrune.lucy.classes.Repeat;
 
 
 public class EstimateDateDialog extends BottomSheetDialogFragment {
@@ -41,7 +40,7 @@ public class EstimateDateDialog extends BottomSheetDialogFragment {
         CREATE, EDIT
     }
 
-    private Period.Mode periodMode = Period.Mode.DAY_OF_WEEKS;
+    private Repeat.Mode periodMode = Repeat.Mode.DAY_OF_WEEKS;
     public EstimateDateDialog(LocalDate date){
         log("EstimateDateDialog(LocalDate)");
         this.date = date;

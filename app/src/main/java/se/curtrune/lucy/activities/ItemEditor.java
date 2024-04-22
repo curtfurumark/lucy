@@ -30,7 +30,7 @@ import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.CallingActivity;
 import se.curtrune.lucy.classes.Categories;
 import se.curtrune.lucy.classes.Item;
-import se.curtrune.lucy.classes.Period;
+import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.dialogs.AddCategoryDialog;
@@ -453,15 +453,15 @@ public class ItemEditor extends AppCompatActivity implements
 
     }
 
-    private void setUserInterface(Period period){
-        log("...setUserInterface(Period)");
-        textViewPeriod.setText(String.valueOf(period.getDays()));
+    private void setUserInterface(Repeat repeat){
+        log("...setUserInterface(Repeat)");
+        textViewPeriod.setText(String.valueOf(repeat.getDays()));
     }
     private void showPeriodDialog(){
         log("...showPeriodDialog()");
         AddPeriodDialog dialog = new AddPeriodDialog();
         dialog.setListener(period -> {
-            log("...onPeriod(Period)");
+            log("...onPeriod(Repeat)");
             log(period);
             currentItem.setPeriod(period);
             int res = ItemsWorker.update(currentItem, this);
@@ -471,10 +471,10 @@ public class ItemEditor extends AppCompatActivity implements
     }
 
 /*    @Override
-    public void onPeriod(Period period) {
-        log("...onPeriod(Period)", period.toString());
-        currentItem.setDays(period.getDays());
-        setUserInterface(period);
+    public void onPeriod(Repeat repeat) {
+        log("...onPeriod(Repeat)", repeat.toString());
+        currentItem.setDays(repeat.getDays());
+        setUserInterface(repeat);
     }*/
     private void showProjectIdDialog(){
         log("...showProjectIdDialog()");

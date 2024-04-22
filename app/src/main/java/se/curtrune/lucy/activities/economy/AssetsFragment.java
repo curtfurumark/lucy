@@ -7,6 +7,8 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -23,6 +25,8 @@ import java.util.List;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.activities.economy.classes.Asset;
+import se.curtrune.lucy.activities.economy.workers.TransactionWorker;
+import se.curtrune.lucy.adapters.AssetAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,11 +35,13 @@ import se.curtrune.lucy.activities.economy.classes.Asset;
  */
 public class AssetsFragment extends Fragment {
     private RecyclerView recycler;
+    private AssetAdapter adapter;
     private List<Asset> assets;
     private EditText editTextAccount;
     private EditText editTextAmount;
     private TextView textViewDate;
     private LocalDate currentDate;
+    private Asset currentAsset;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -83,9 +89,9 @@ public class AssetsFragment extends Fragment {
         log("AssetsFragment.onCreateView(LayoutInflater, ViewGroup, Bundle)");
         View view =  inflater.inflate(R.layout.assets_fragment, container, false);
         initComponents(view);
+        initData();
         initRecycler();
         initListeners();
-        initData();
         setUserInterface();
         setHasOptionsMenu(true);
         return view;
@@ -119,8 +125,24 @@ public class AssetsFragment extends Fragment {
     }
     private void initRecycler(){
         log("...initRecycler()");
-    }
+        adapter = new AssetAdapter(assets, new AssetAdapter.Callback() {
+            @Override
+            public void onItemClick(Asset asset) {
+                log("...onItemClick(Transaction)");
+                currentAsset = asset;
+                setUserInterface(asset);
+            }
 
+            @Override
+            public void onItemLongClick(Asset asset) {
+                log("...onItemLongClick(Asset)");
+            }
+        });
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        recycler.setLayoutManager(layoutManager);
+        recycler.setItemAnimator(new DefaultItemAnimator());
+        recycler.setAdapter(adapter);
+    }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if( item.getItemId() == R.id.economyActivity_save){
@@ -135,13 +157,23 @@ public class AssetsFragment extends Fragment {
         }
         Asset asset = getAsset();
         asset = TransactionWorker.insert(asset, getContext());
+        if( asset == null){
+            log("ERROR inserting asset");
+        }else{
+            assets.add(asset);
+            adapter.notifyDataSetChanged();
+        }
 
     }
 
     private void setUserInterface(){
         log("...setUserInterface()");
         textViewDate.setText(currentDate.toString());
-
+    }
+    private void setUserInterface(Asset asset){
+        editTextAmount.setText(String.valueOf(asset.getAmount()));
+        editTextAccount.setText(asset.getAccount());
+        textViewDate.setText(asset.getDate().toString());
     }
     private void showDateDialog(){
         log("...showDateDialog()");

@@ -162,14 +162,15 @@ public class ItemsWorker {
             long itemID = child.getID();
             log("...itemID", itemID);
             childMental.setItemID(child.getID());
+            childMental.setHeading(template.getHeading());
             childMental.setDate(LocalDate.now());
             childMental.setTime(LocalTime.now());
             childMental.setUpdated(LocalDateTime.now());
-            log(childMental);
+            //log(childMental);
             childMental = MentalWorker.insert(childMental, context);
-            log("...after inserting mental, logging mental again");
+            //log("...after inserting mental, logging mental again");
             log(childMental);
-            log("...item id after insert", childMental.getItemID());
+            //log("...item id after insert", childMental.getItemID());
         }
         if( template.hasPeriod()) {
             template.updateTargetDate();
@@ -218,12 +219,17 @@ public class ItemsWorker {
         return db.insert(child);
     }
 
-
-
-    private Mental insert(Mental mental, Context context) throws SQLException {
-        log("ItemsWorker.insert(Mental, Context)");
+    public static List<Item> selectAppointments(Context context) {
+        log("ItemsWorker.selectAppointments(Context)");
+        String query = Queeries.selectAppointments();
         LocalDB db = new LocalDB(context);
-        return db.insert(mental);
+        return db.selectItems(query);
+    }
+    public static List<Item> selectAppointments(LocalDate date, Context context) {
+        log("ItemsWorker.selectAppointments(LocalDate, Context)", date.toString());
+        String queery = Queeries.selectAppointments(date);
+        LocalDB db = new LocalDB(context);
+        return db.selectItems(queery);
     }
     public static List<Item> selectChildren(Item item, Context context){
         log("ItemsWorker.selectChildren(Item, Context)");
@@ -292,6 +298,8 @@ public class ItemsWorker {
             log("...rowsAffected", rowsAffected);
         }
     }
+
+
 
     public void touch(Item currentItem, Context context) {
         log("ItemsWorker.touch(Item, Context)");

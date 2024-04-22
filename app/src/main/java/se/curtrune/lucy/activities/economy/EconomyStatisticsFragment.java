@@ -1,5 +1,7 @@
 package se.curtrune.lucy.activities.economy;
 
+import static se.curtrune.lucy.util.Logger.log;
+
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -7,6 +9,9 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import java.time.LocalDate;
 
 import se.curtrune.lucy.R;
 
@@ -16,6 +21,10 @@ import se.curtrune.lucy.R;
  * create an instance of this fragment.
  */
 public class EconomyStatisticsFragment extends Fragment {
+    private TextView textViewFirstDate;
+    private TextView textViewLastDate;
+    private LocalDate firstDate;
+    private LocalDate lastDate;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -61,6 +70,27 @@ public class EconomyStatisticsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.economy_statistics_fragment, container, false);
+        View view =  inflater.inflate(R.layout.economy_statistics_fragment, container, false);
+        initDefaults();
+        initComponents(view);
+        setUserInterface();
+        return view;
+    }
+    private void initComponents(View view){
+        log("...initComponents()");
+        textViewFirstDate = view.findViewById(R.id.ecStatistics_firstDate);
+        textViewLastDate = view.findViewById(R.id.ecStatistics_lastDate);
+    }
+    private void initDefaults(){
+        log("...initDefaults()");
+        lastDate = LocalDate.now();
+        firstDate = lastDate.minusDays(7);
+    }
+    private void setUserInterface(){
+        log("...setUserInterfaceU()");
+        textViewFirstDate.setText(firstDate.toString());
+        textViewLastDate.setText(lastDate.toString());
+
+
     }
 }

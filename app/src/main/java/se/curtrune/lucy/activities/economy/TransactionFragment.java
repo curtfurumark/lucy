@@ -24,6 +24,7 @@ import java.util.List;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.activities.economy.classes.Transaction;
+import se.curtrune.lucy.activities.economy.workers.TransactionWorker;
 import se.curtrune.lucy.adapters.TransactionAdapter;
 
 /**

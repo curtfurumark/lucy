@@ -24,7 +24,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -38,7 +37,6 @@ import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.CallingActivity;
 import se.curtrune.lucy.classes.Item;
-import se.curtrune.lucy.classes.Period;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.AddAppointmentDialog;
 import se.curtrune.lucy.dialogs.AddItemDialog;
@@ -475,7 +473,6 @@ public class TodayActivity extends AppCompatActivity implements
             log("...onRequest(Affirmation)", affirmation.getAffirmation());
             Toast.makeText(this, affirmation.getAffirmation(), Toast.LENGTH_LONG).show();
         });
-
     }
 
     private void showChildren(Item parent){
@@ -507,10 +504,10 @@ public class TodayActivity extends AppCompatActivity implements
         log("...showPeriodDialog()");
         AddPeriodDialog dialog = new AddPeriodDialog();
         dialog.setListener(period -> {
-            log("...onPeriod(Period)", period.toString());
+            log("...onPeriod(Repeat)", period.toString());
             log(period);
         });
-        dialog.show(getSupportFragmentManager(), "add period");
+        dialog.show(getSupportFragmentManager(), "add repeat");
     }
     private void showStatistics(){
         log("...showStatistics()");

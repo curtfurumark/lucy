@@ -26,7 +26,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -38,13 +37,16 @@ import se.curtrune.lucy.classes.Estimate;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.Notification;
-import se.curtrune.lucy.classes.Period;
+import se.curtrune.lucy.classes.Repeat;
+import se.curtrune.lucy.classes.Reward;
 import se.curtrune.lucy.classes.State;
+import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.dialogs.AddEstimateDialog;
 import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.dialogs.AddPeriodDialog;
 import se.curtrune.lucy.dialogs.DurationDialog;
 import se.curtrune.lucy.dialogs.NotificationDialog;
+import se.curtrune.lucy.fragments.AppointmentsFragment;
 import se.curtrune.lucy.notifications.EasyAlarm;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.util.Converter;
@@ -78,12 +80,13 @@ public class ItemSession extends AppCompatActivity implements
     private TextView labelNotification;
     private TextView labelMental;
     //INFO
+    private CheckBox checkBoxAppointment;
     private TextView labelInfo;
     private TextView textViewUpdateEpoch;
     private TextView textViewHasChild;
     private TextView textViewState;
     private TextView labelComment;
-    //repeat
+    //REPEAT
     private ImageView imageViewRepeatAction;
     private TextView textViewPeriodDescription;
     private TextView textViewPeriodTargetDate;
@@ -112,6 +115,9 @@ public class ItemSession extends AppCompatActivity implements
     private LinearLayout layoutDateTime;
     private TextView textViewTargetDate;
     private TextView textViewTargetTime;
+    //REWARD
+    private TextView labelReward;
+    private LinearLayout layoutReward;
 
     private SeekBar seekBarStress;
     private SeekBar seekBarAnxiety;
@@ -217,6 +223,7 @@ public class ItemSession extends AppCompatActivity implements
         if( currentItem.hasMental()){
             currentItem.getMental().setComment(editTextMentalComment.getText().toString());
         }
+        currentItem.setType(checkBoxAppointment.isChecked()? Type.APPOINTMENT: Type.NODE);
         return currentItem;
     }
     private Mental getMental(){
@@ -326,6 +333,7 @@ public class ItemSession extends AppCompatActivity implements
         textViewPeriodTargetDate = findViewById(R.id.itemSession_periodTargetDate);
         //INFO
         labelInfo = findViewById(R.id.itemSession_labelInfo);
+        checkBoxAppointment = findViewById(R.id.itemSession_checkBoxAppointment);
         checkBoxTemplate = findViewById(R.id.itemSession_checkBoxTemplate);
         textViewUpdated = findViewById(R.id.itemSession_infoUpdated);
         textViewUpdateEpoch = findViewById(R.id.itemSession_infoUpdatedEpoch);
@@ -342,6 +350,9 @@ public class ItemSession extends AppCompatActivity implements
         labelDateTime = findViewById(R.id.itemSession_labelDateTime);
         textViewTargetDate = findViewById(R.id.itemSession_targetDate);
         textViewTargetTime = findViewById(R.id.itemSession_targetTime);
+        //REWARD
+        labelReward = findViewById(R.id.itemSession_labelReward);
+        layoutReward = findViewById(R.id.itemSession_layoutReward);
     }
     private void initDefaults(){
         log("...initDefaults()");
@@ -358,6 +369,9 @@ public class ItemSession extends AppCompatActivity implements
         imageViewRepeatAction.setOnClickListener(view->repeatAction());
         textViewTargetDate.setOnClickListener(view->showDateDialog());
         textViewTargetTime.setOnClickListener(view->showTimeDialog());
+        checkBoxAppointment.setOnClickListener(view->{
+            log("...checkBox appointment clicked");
+        });
         checkBoxTemplate.setOnClickListener(v -> {
             log("...checkBox onClick(View)");
             if( checkBoxTemplate.isChecked()){
@@ -584,12 +598,12 @@ public class ItemSession extends AppCompatActivity implements
     private void repeatAction(){
         log("...repeatAction()");
         if( currentItem.hasPeriod()){
-            currentItem.setPeriod((Period) null);
+            currentItem.setPeriod((Repeat) null);
             imageViewRepeatAction.setImageDrawable(getDrawable(R.drawable.baseline_add_24));
         }else{
             AddPeriodDialog dialog = new AddPeriodDialog();
             dialog.setListener(period -> {
-                log("...onPeriod(Period)");
+                log("...onPeriod(Repeat)");
                 currentItem.setPeriod(period);
                 imageViewRepeatAction.setImageDrawable(getDrawable(R.drawable.baseline_delete_24));
                 textViewPeriodDescription.setText(period.toString());
@@ -615,6 +629,7 @@ public class ItemSession extends AppCompatActivity implements
                 Intent todayIntent = new Intent(this, TodayActivity.class);
                 startActivity(todayIntent);
                 break;
+            case APPOINTMENTS_FRAGMENT:
             case CALENDER_FRAGMENT:
                 Intent mainIntent = new Intent(this, MainActivity.class);
                 startActivity(mainIntent);
@@ -701,10 +716,10 @@ public class ItemSession extends AppCompatActivity implements
     private void setUserInterface(Item item){
         log("...setUserInterface(Item item)");
         if( item == null){
-            log("...called with item == null");
+            log("VERY UNEXPECTED ERROR, set userInterface(Item) called with item == null");
             return;
         }
-        log(item);
+        if( VERBOSE) log(item);
         textViewDuration.setText(Converter.formatSecondsWithHours(item.getDuration()));
         editTextHeading.setText(item.getHeading());
         editTextComment.setText(item.getComment());
@@ -714,7 +729,7 @@ public class ItemSession extends AppCompatActivity implements
 
 
         checkBoxDone.setChecked(item.isDone());
-        log("...after setting checkbox to ", item.isDone());
+        if( VERBOSE) log("...after setting checkbox to ", item.isDone());
         if( item.getDuration() > 0){
             buttonTimer.setText(getString(R.string.ui_resume));
         }
@@ -728,7 +743,7 @@ public class ItemSession extends AppCompatActivity implements
         if( item.hasPeriod()){
             setUserInterface(item.getPeriod());
         }else{
-            textViewPeriodDescription.setText("no period set");
+            textViewPeriodDescription.setText("no repeat set");
             textViewPeriodTargetDate.setVisibility(View.GONE);
         }
         if(item.hasNotification()){
@@ -736,6 +751,9 @@ public class ItemSession extends AppCompatActivity implements
         }
         if( item.hasEstimate()){
             setUserInterface(item.getEstimate());
+        }
+        if( item.hasReward()){
+            setUserInterface(item.getReward());
         }
 
         checkBoxTemplate.setChecked(item.isTemplate());
@@ -809,11 +827,15 @@ public class ItemSession extends AppCompatActivity implements
             textViewEnergy.setText(String.format(Locale.ENGLISH, "%s 0", getString(R.string.energy)));
         }
     }
-    private void setUserInterface(Period period){
-        log("...setUserInterface(Period)");
+    private void setUserInterface(Repeat repeat){
+        log("...setUserInterface(Repeat)");
         imageViewRepeatAction.setImageDrawable(getDrawable(R.drawable.baseline_delete_24));
-        textViewPeriodDescription.setText(period.toString());
+        textViewPeriodDescription.setText(repeat.toString());
         textViewPeriodTargetDate.setText(currentItem.getTargetDate().toString());
+    }
+    private void setUserInterface(Reward reward){
+        log("...setUserInterface(Reward)");
+
     }
     private void showDateDialog(){
         log("...showDateDialog()");
@@ -847,7 +869,7 @@ public class ItemSession extends AppCompatActivity implements
         log("...showPeriodDialog()");
         AddPeriodDialog dialog = new AddPeriodDialog();
         dialog.setListener(period -> {
-            log("...onPeriod(Period)", period.toString());
+            log("...onPeriod(Repeat)", period.toString());
             log(period);
             setUserInterface(period);
             currentItem.setPeriod(period);
@@ -856,7 +878,7 @@ public class ItemSession extends AppCompatActivity implements
                 Toast.makeText(this, "error updating item", Toast.LENGTH_LONG).show();
             }
         });
-        dialog.show(getSupportFragmentManager(), "add edit period");
+        dialog.show(getSupportFragmentManager(), "add edit repeat");
 
     }
 

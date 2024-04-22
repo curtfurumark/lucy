@@ -12,7 +12,7 @@ import se.curtrune.lucy.classes.Estimate;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.Notification;
-import se.curtrune.lucy.classes.Period;
+import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.statistics.CategoryListable;
@@ -60,9 +60,9 @@ public class Logger {
             log("\t\tduration", item.getEstimate().getDuration());
             log("\t\tenergy", item.getEstimate().getEnergy());
         }
-        log("\thas period", item.hasPeriod());
+        log("\thas repeat", item.hasPeriod());
         if( item.hasPeriod()){
-            log("\t\tperiod.toString", item.getPeriod().toString());
+            log("\t\trepeat.toString", item.getPeriod().toString());
         }
         log("\thas mental", item.hasMental());
         log("\thas notification", item.hasNotification());
@@ -96,24 +96,24 @@ public class Logger {
         log("\tcontent", notification.getContent());
         log("\ttoJson", notification.toJson());
     }
-    public static void log(Period period){
-        log("log(Period)");
-        if( period == null){
-            log("...period is null, i surrender");
+    public static void log(Repeat repeat){
+        log("log(Repeat)");
+        if( repeat == null){
+            log("...repeat is null, i surrender");
             return;
         }
-        log("\tmode", period.getMode().toString());
-        if( period.isMode(Period.Mode.DAYS)){
-            log("\tdays", period.getDays());
+        log("\tmode", repeat.getMode().toString());
+        if( repeat.isMode(Repeat.Mode.DAYS)){
+            log("\tdays", repeat.getDays());
         }else{
-            List<DayOfWeek> dayOfWeeks = period.getWeekDays();
+            List<DayOfWeek> dayOfWeeks = repeat.getWeekDays();
             dayOfWeeks.forEach(System.out::println);
         }
-        log("\tnextDate", period.getNextDate());
-        log("\ttime", period.getTime());
-        log("\ttoJson", period.toJson());
-        log("\tfirstDate", period.getFirstDate());
-        log("\tlastDate", period.getLastDate());
+        log("\tnextDate", repeat.getNextDate());
+        log("\ttime", repeat.getTime());
+        log("\ttoJson", repeat.toJson());
+        log("\tfirstDate", repeat.getFirstDate());
+        log("\tlastDate", repeat.getLastDate());
     }
     public static void log(StatisticsPeriod statisticsPeriod){
         log("log StatisticsPeriod...");
