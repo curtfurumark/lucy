@@ -73,9 +73,8 @@ public class Transaction implements Serializable, Listable {
     }
     @Override
     public String getInfo() {
-        return String.format("%.2fkr, %s", amount, date);
+        return String.format("%.2fkr, %s", amount, LocalDate.ofEpochDay(date).toString());
     }
-
 
     public Type getType() {
         return Type.valueOf(type.toUpperCase());

@@ -46,7 +46,6 @@ import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.dialogs.AddPeriodDialog;
 import se.curtrune.lucy.dialogs.DurationDialog;
 import se.curtrune.lucy.dialogs.NotificationDialog;
-import se.curtrune.lucy.fragments.AppointmentsFragment;
 import se.curtrune.lucy.notifications.EasyAlarm;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.util.Converter;
@@ -67,7 +66,7 @@ public class ItemSession extends AppCompatActivity implements
     private EditText editTextTags;
 
     //MENTAL
-    private ImageView imageViewMentalAction;
+    //private ImageView imageViewMentalAction;
     private EditText editTextMentalComment;
 
 
@@ -79,13 +78,7 @@ public class ItemSession extends AppCompatActivity implements
     private TextView labelRepeat;
     private TextView labelNotification;
     private TextView labelMental;
-    //INFO
-    private CheckBox checkBoxAppointment;
-    private TextView labelInfo;
-    private TextView textViewUpdateEpoch;
-    private TextView textViewHasChild;
-    private TextView textViewState;
-    private TextView labelComment;
+
     //REPEAT
     private ImageView imageViewRepeatAction;
     private TextView textViewPeriodDescription;
@@ -108,6 +101,14 @@ public class ItemSession extends AppCompatActivity implements
     private TextView textViewStress;
     private TextView textViewAnxiety;
     private TextView textViewMood;
+    //INFO
+    private TextView textViewParentID;
+    private CheckBox checkBoxAppointment;
+    private TextView labelInfo;
+    private TextView textViewUpdateEpoch;
+    private TextView textViewHasChild;
+    private TextView textViewState;
+    private TextView labelComment;
 
     //DATE AND TIME
     private TextView labelDateTime;
@@ -150,7 +151,7 @@ public class ItemSession extends AppCompatActivity implements
     private int currentEnergy; //from db
     private long duration;
 
-    private final boolean VERBOSE = false;
+    private final boolean VERBOSE = true;
 
     private Kronos kronos;
 
@@ -176,8 +177,11 @@ public class ItemSession extends AppCompatActivity implements
     private void addChildItem(){
         log("ItemSession.addChildItem()");
         AddItemDialog dialog = new AddItemDialog(currentItem);
-        dialog.setHeading(currentItem.getHeading());
-        dialog.setCategory(currentItem.getCategory());
+        dialog.setCallback(item -> {
+            log("...onAddItem(Item)");
+            log(item);
+            item = ItemsWorker.insertChild(currentItem, item, this);
+        });
         dialog.show(getSupportFragmentManager(), "new assignment");
 
     }
@@ -262,15 +266,8 @@ public class ItemSession extends AppCompatActivity implements
             return;
         }
         if ( VERBOSE) log("...return to calling activity: ", callingActivity.toString());
-        if(!currentItem.hasMental()){
-            log("...currentItem has no mental");
-            mentalMode = MentalMode.CREATE;
-        }else{
-            log("...currentItem has mental");
-            mental = currentItem.getMental();
-            mentalMode = MentalMode.EDIT;
-            setUserInterfaceMental(mental);
-        }
+        mental = currentItem.getMental();
+        mentalMode = MentalMode.EDIT;
         setUserInterface(currentItem);
         currentEnergy = MentalWorker.getEnergy(LocalDate.now(), this);
         setUserInterfaceCurrentEnergy();
@@ -306,7 +303,7 @@ public class ItemSession extends AppCompatActivity implements
 
         //mental
         labelMental = findViewById(R.id.itemSession_labelMental);
-        imageViewMentalAction = findViewById(R.id.itemSession_mentalAction);
+        //imageViewMentalAction = findViewById(R.id.itemSession_mentalAction);
         layoutMental = findViewById(R.id.itemSession_layoutMental);
 
         layoutNotification = findViewById(R.id.itemSession_layoutNotification);
@@ -341,6 +338,7 @@ public class ItemSession extends AppCompatActivity implements
         textViewTags = findViewById(R.id.itemSession_infoTags);
         textViewCategory = findViewById(R.id.itemSession_infoCategory);
         textViewID = findViewById(R.id.itemSession_infoID);
+        textViewParentID = findViewById(R.id.itemSession_infoParentID);
         layoutInfo = findViewById(R.id.itemSession_layoutInfo);
         textViewHasChild = findViewById(R.id.itemSession_infoHasChild);
         textViewState = findViewById(R.id.itemSession_infoState);
@@ -364,7 +362,7 @@ public class ItemSession extends AppCompatActivity implements
     }
     private void initListeners(){
         log("...initListeners()");
-        imageViewMentalAction.setOnClickListener(view->mentalAction());
+        //imageViewMentalAction.setOnClickListener(view->mentalAction());
         imageViewEstimateAction.setOnClickListener(view->estimateAction());
         imageViewRepeatAction.setOnClickListener(view->repeatAction());
         textViewTargetDate.setOnClickListener(view->showDateDialog());
@@ -498,27 +496,6 @@ public class ItemSession extends AppCompatActivity implements
         });
     }
 
-    private void mentalAction(){
-        log("...mentalAction()");
-        if( currentItem.hasMental()){
-            log("...will delete mental");
-            int rowsAffected = MentalWorker.delete(currentItem.getMental(), this);
-            if( rowsAffected != 1){
-                log("ERROR deleting mental");
-            }
-            currentItem.setMental((Mental) null);
-            imageViewMentalAction.setImageDrawable(getDrawable(R.drawable.baseline_add_24));
-
-            setUserInterfaceMental(currentItem.getMental());
-        }else{
-            log("will create mental");
-            imageViewMentalAction.setImageDrawable(getDrawable(R.drawable.baseline_delete_24));
-            layoutMental.setVisibility(View.VISIBLE);
-            mental = new Mental();
-            mentalMode = MentalMode.CREATE;
-            currentItem.setMental(mental);
-        }
-    }
     /**
      * callback for AddItemFragment
      * @param childItem, the new bare bones item
@@ -529,7 +506,7 @@ public class ItemSession extends AppCompatActivity implements
 
         childItem = ItemsWorker.insertChild(currentItem, childItem, this);
         log(childItem);
-        Intent intent = new Intent(this, TodayActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(Constants.INTENT_SHOW_CHILD_ITEMS, true);
         intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, currentItem);
         startActivity(intent);
@@ -624,11 +601,6 @@ public class ItemSession extends AppCompatActivity implements
                 Intent statsIntent = new Intent(this, StatisticsMain.class);
                 startActivity(statsIntent);
                 break;
-            case TODAY_ACTIVITY:
-                log("return to today activity");
-                Intent todayIntent = new Intent(this, TodayActivity.class);
-                startActivity(todayIntent);
-                break;
             case APPOINTMENTS_FRAGMENT:
             case CALENDER_FRAGMENT:
                 Intent mainIntent = new Intent(this, MainActivity.class);
@@ -676,9 +648,6 @@ public class ItemSession extends AppCompatActivity implements
         }else{
             ItemsWorker.touchParents(currentItem, this);
         }
-        if( currentItem.hasMental()){
-            saveMental();;
-        }
 
         kronos.reset();
         Intent intent = new Intent(this, MainActivity.class);
@@ -688,7 +657,7 @@ public class ItemSession extends AppCompatActivity implements
         startActivity(intent);
 
     }
-    private void saveMental(){
+/*    private void saveMental(){
         log("...saveMental()");
         if( mental == null){
             log("...mental == null");
@@ -703,7 +672,7 @@ public class ItemSession extends AppCompatActivity implements
                 Toast.makeText(this, "error updating mental", Toast.LENGTH_LONG).show();
             }
         }
-    }
+    }*/
     private void setUserInterface(Estimate estimate){
         log("...setUserInterface(Estimate)");
         imageViewEstimateAction.setImageDrawable(getDrawable(R.drawable.baseline_delete_24));
@@ -733,12 +702,8 @@ public class ItemSession extends AppCompatActivity implements
         if( item.getDuration() > 0){
             buttonTimer.setText(getString(R.string.ui_resume));
         }
-        if( item.hasMental()){
-            imageViewMentalAction.setImageDrawable(getDrawable(R.drawable.baseline_delete_24));
-        }
         if( item.hasEstimate()){
             setUserInterface(item.getEstimate());
-            setUserInterfaceMental(item.getMental());
         }
         if( item.hasPeriod()){
             setUserInterface(item.getPeriod());
@@ -755,9 +720,13 @@ public class ItemSession extends AppCompatActivity implements
         if( item.hasReward()){
             setUserInterface(item.getReward());
         }
+        if( item.hasMental()){
+            setUserInterface(item.getMental());
+        }
 
         checkBoxTemplate.setChecked(item.isTemplate());
         String textTags = item.hasTags() ? item.getTags(): "no tags";
+        checkBoxAppointment.setChecked(item.getType().equals(Type.APPOINTMENT));
         textViewTags.setText(textTags);
         String textCreated = String.format(Locale.getDefault(), "created %s", Converter.format(item.getCreated()));
         textViewCreated.setText(textCreated);
@@ -769,6 +738,9 @@ public class ItemSession extends AppCompatActivity implements
         textViewCategory.setText(textCategory);
         String textID = String.format(Locale.getDefault(), "id: %d", item.getID());
         textViewID.setText(textID);
+
+        String textParentID = String.format(Locale.getDefault(), "parent id %d", item.getParentId());
+        textViewParentID.setText(textParentID);
         String textHasChild = String.format(Locale.getDefault(), "hasChild: %b", item.hasChild());
         textViewHasChild.setText(textHasChild);
         String textState = String.format(Locale.getDefault(), "state: %s", item.getState().toString());
@@ -800,31 +772,26 @@ public class ItemSession extends AppCompatActivity implements
             textViewCurrentEnergy.setTextColor(Color.parseColor("#00ff00"));
         }
         textViewCurrentEnergy.setText(textEnergy);
-
     }
-    private void setUserInterfaceMental(Mental mental){
+    private void setUserInterface(Mental mental){
         log("...setUserInterface(Mental)", mentalMode.toString());
         if( currentItem.hasMental()){
-            //TODO
-            seekBarAnxiety.setProgress(mental.getAnxiety() + Constants.ANXIETY_OFFSET);
-            textViewAnxiety.setText(String.format(Locale.getDefault(), "%s %d",getString(R.string.anxiety), mental.getAnxiety()));
-            seekBarEnergy.setProgress(mental.getEnergy() + Constants.ENERGY_OFFSET);
-            textViewEnergy.setText(String.format(Locale.getDefault(), "%s %d",getString(R.string.energy), mental.getEnergy()));
-            seekBarMood.setProgress(mental.getMood() + Constants.MOOD_OFFSET);
-            textViewMood.setText(String.format(Locale.getDefault(), "%s %d",getString(R.string.mood) ,mental.getMood()));
-            seekBarStress.setProgress(mental.getStress() + Constants.STRESS_OFFSET);
-            textViewStress.setText(String.format(Locale.getDefault(), "%s %d",getString(R.string.stress), mental.getStress()));
+            anxiety = Constants.ANXIETY_OFFSET + mental.getAnxiety();
+            energy =  Constants.ENERGY_OFFSET + mental.getEnergy();
+            mood =  Constants.MOOD_OFFSET + mental.getMood();
+            stress =  Constants.STRESS_OFFSET + mental.getStress();
+            seekBarAnxiety.setProgress(anxiety);
+            textViewAnxiety.setText(String.format(Locale.getDefault(),"%s %d",getString(R.string.anxiety), mental.getAnxiety() ));
+            seekBarMood.setProgress(mood);
+            textViewMood.setText(String.format(Locale.getDefault(), "%s %d",getString(R.string.mood), mental.getMood()));
+            seekBarStress.setProgress(stress);
+            textViewStress.setText(String.format(Locale.ENGLISH, "%s %d", getString(R.string.stress), mental.getStress()));
+            seekBarEnergy.setProgress(energy);
+            textViewEnergy.setText(String.format(Locale.ENGLISH, "%s %d", getString(R.string.energy), mental.getEnergy()));
             editTextMentalComment.setText(mental.getComment());
-
         }else{
-            seekBarAnxiety.setProgress(Constants.ANXIETY_OFFSET);
-            textViewAnxiety.setText(String.format(Locale.getDefault(),"%s 0",getString(R.string.anxiety) ));
-            seekBarMood.setProgress(Constants.MOOD_OFFSET);
-            textViewMood.setText(String.format(Locale.getDefault(), "%s 0",getString(R.string.mood)));
-            seekBarStress.setProgress(Constants.STRESS_OFFSET);
-            textViewStress.setText(String.format(Locale.ENGLISH, "%s 0", getString(R.string.stress)));
-            seekBarEnergy.setProgress(Constants.ENERGY_OFFSET);
-            textViewEnergy.setText(String.format(Locale.ENGLISH, "%s 0", getString(R.string.energy)));
+            log("ERROR, item without mental");
+            Toast.makeText(this, "item without mental", Toast.LENGTH_LONG).show();
         }
     }
     private void setUserInterface(Repeat repeat){
@@ -973,7 +940,7 @@ public class ItemSession extends AppCompatActivity implements
     }
     private void toggleMental(){
         log("...toggleMental()");
-        if( layoutMental.getVisibility() == View.GONE && currentItem.hasMental()){
+        if( layoutMental.getVisibility() == View.GONE){
             layoutMental.setVisibility(View.VISIBLE);
         }else{
             layoutMental.setVisibility(View.GONE);

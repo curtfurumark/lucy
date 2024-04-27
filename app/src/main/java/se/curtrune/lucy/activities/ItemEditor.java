@@ -331,7 +331,7 @@ public class ItemEditor extends AppCompatActivity implements
         switch(callingActivity){
             case ITEMS_ACTIVITY:
             case TODAY_ACTIVITY:
-                startActivity(new Intent(this, TodayActivity.class));
+                startActivity(new Intent(this, MainActivity.class));
                 break;
             case STATISTICS_ACTIVITY:
                 startActivity(new Intent(this, StatisticsMain.class));
@@ -429,10 +429,6 @@ public class ItemEditor extends AppCompatActivity implements
         textViewTargetDate.setText(targetDate.toString());
         targetTime = item.getTargetTime();
         textViewTargetTime.setText(targetTime.toString());
-        if( item.isInfinite()) {
-            log("...isInfinite()");
-            //textViewPeriod.setText(String.valueOf(item.getDays()));
-        }
         textViewParentId.setText(String.valueOf(item.getParentId()));
         textViewHasChild.setText(String.valueOf(item.hasChild()));
         String category = item.getCategory();
@@ -495,6 +491,6 @@ public class ItemEditor extends AppCompatActivity implements
         }else{
             log("item updated");
         }
-        startActivity(new Intent(this, TodayActivity.class));
+        startActivity(new Intent(this, MainActivity.class));
     }
 }

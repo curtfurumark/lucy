@@ -2,6 +2,8 @@ package se.curtrune.lucy.classes;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import com.google.gson.Gson;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,13 +27,15 @@ public class Mental implements Listable, Serializable {
     private int time;
     private long created;
     private long updated;
-    public Mental(){
+
+    public Mental() {
         created = updated = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
         date = LocalDate.now().toEpochDay();
         time = LocalTime.now().toSecondOfDay();
 
     }
-    public Mental(Mental other){
+
+    public Mental(Mental other) {
         this.energy = other.energy;
         this.mood = other.mood;
         this.anxiety = other.anxiety;
@@ -46,20 +50,24 @@ public class Mental implements Listable, Serializable {
         this.heading = other.heading;
 
     }
+
     public boolean contains(String text) {
         return (heading + comment + category).toLowerCase().contains(text.toLowerCase());
     }
+
     @Override
     public long compare() {
-        return (date *  3600 * 24 + time) * -1;
+        return (date * 3600 * 24 + time) * -1;
     }
 
     public int getAnxiety() {
         return anxiety;
     }
+
     public String getCategory() {
         return category;
     }
+
     public String getComment() {
         return comment;
     }
@@ -71,9 +79,11 @@ public class Mental implements Listable, Serializable {
     public long getCreatedEpoch() {
         return created;
     }
-    public LocalDate getDate(){
+
+    public LocalDate getDate() {
         return LocalDate.ofEpochDay(date);
     }
+
     public long getDateEpoch() {
         return date;
     }
@@ -81,6 +91,7 @@ public class Mental implements Listable, Serializable {
     public int getEnergy() {
         return energy;
     }
+
     @Override
     public String getHeading() {
         return heading;
@@ -89,21 +100,24 @@ public class Mental implements Listable, Serializable {
     public long getID() {
         return id;
     }
+
     @Override
     public String getInfo() {
         return "no info as of yet";
     }
+
     public long getItemID() {
         return itemID;
     }
 
     public String getLabel() {
-        if( LocalDate.now().toEpochDay() == date){
-            return  Converter.formatTime(time);
+        if (LocalDate.now().toEpochDay() == date) {
+            return Converter.formatTime(time);
         }
         return Converter.formatDate(date);
     }
-    public int getMood(){
+
+    public int getMood() {
         return mood;
     }
 
@@ -114,28 +128,32 @@ public class Mental implements Listable, Serializable {
     public LocalTime getTime() {
         return LocalTime.ofSecondOfDay(time);
     }
-    public int getTimeSecondOfDay(){
+
+    public int getTimeSecondOfDay() {
         return time;
     }
 
-    public long getUpdatedEpoch(){
+    public long getUpdatedEpoch() {
         return updated;
     }
 
-    public boolean isCategory(String category){
+    public boolean isCategory(String category) {
         //log("Mental.isCategory(String) ", category);
-        if( this.category == null){
+        if (this.category == null) {
             log("this.category == null returning false");
             return false;
         }
         return this.category.equalsIgnoreCase(category);
     }
+
     public void setAnxiety(int anxiety) {
         this.anxiety = anxiety;
     }
-    public void setCategory(String category){
+
+    public void setCategory(String category) {
         this.category = category;
     }
+
     public void setComment(String comment) {
 
         this.comment = comment;
@@ -144,7 +162,8 @@ public class Mental implements Listable, Serializable {
     public void setDate(LocalDate date) {
         this.date = date.toEpochDay();
     }
-    public void setCreated(long created){
+
+    public void setCreated(long created) {
         this.created = created;
     }
 
@@ -155,6 +174,7 @@ public class Mental implements Listable, Serializable {
     public void setEnergy(int energy) {
         this.energy = energy;
     }
+
     public void setHeading(String heading) {
         this.heading = heading;
     }
@@ -162,10 +182,12 @@ public class Mental implements Listable, Serializable {
     public void setID(long id) {
         this.id = id;
     }
-    public void setItemID(long itemID){
+
+    public void setItemID(long itemID) {
         this.itemID = itemID;
     }
-    public void setMood(int mood){
+
+    public void setMood(int mood) {
         this.mood = mood;
     }
 
@@ -175,27 +197,28 @@ public class Mental implements Listable, Serializable {
     }
 
     /**
-     *
      * @param time second of day
      */
     public void setTime(int time) {
         this.time = time;
     }
+
     public void setTime(LocalTime time) {
         this.time = time.toSecondOfDay();
     }
 
 
-    public void setUpdated(LocalDateTime updated){
+    public void setUpdated(LocalDateTime updated) {
         this.updated = updated.toEpochSecond(ZoneOffset.UTC);
     }
-    public void setUpdated(long updated){
+
+    public void setUpdated(long updated) {
         this.updated = updated;
     }
 
-
-
-
-
-
+    public String toJson() {
+        return new Gson().toJson(this);
+    }
 }
+
+

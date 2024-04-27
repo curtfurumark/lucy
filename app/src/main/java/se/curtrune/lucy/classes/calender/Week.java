@@ -1,4 +1,4 @@
-package se.curtrune.lucy.classes;
+package se.curtrune.lucy.classes.calender;
 
 import java.time.LocalDate;
 import java.time.temporal.TemporalField;

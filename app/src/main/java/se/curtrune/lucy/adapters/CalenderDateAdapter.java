@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Locale;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.classes.Week;
+import se.curtrune.lucy.classes.calender.Week;
 
 
 public class CalenderDateAdapter extends RecyclerView.Adapter<CalenderDateAdapter.ViewHolder>{

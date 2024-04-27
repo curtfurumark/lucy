@@ -109,7 +109,11 @@ public class AppointmentsFragment extends Fragment implements
             @Override
             public void onNewAppointment(Item item) {
                 log("...onNewAppointment(Item item");
+                item = ItemsWorker.insert(item, getContext());
                 log(item);
+                items.add(item);
+                adapter.notifyDataSetChanged();
+
             }
         });
         dialog.show(getParentFragmentManager(), "add appointment");

@@ -6,12 +6,16 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import com.google.gson.Gson;
+
 import se.curtrune.lucy.activities.economy.classes.Asset;
 import se.curtrune.lucy.activities.economy.classes.Transaction;
 import se.curtrune.lucy.activities.economy.persist.EcQueeries;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
+import se.curtrune.lucy.classes.Type;
+import se.curtrune.lucy.workers.ItemsWorker;
 
 public class DBAdmin {
 
@@ -37,7 +41,6 @@ public class DBAdmin {
         db.executeSQL(Queeries.DROP_TABLE_MENTAL);
         db.executeSQL(EcQueeries.DROP_TABLE_ASSETS);
         db.executeSQL(EcQueeries.DROP_TABLE_TRANSACTIONS);
-
     }
 
     public static String getCategory(Cursor cursor) {
@@ -59,10 +62,12 @@ public class DBAdmin {
         item.setHasChild(cursor.getInt(11) == 1);
         item.setDuration(cursor.getLong(12));
         item.setParentId(cursor.getInt(13));
+        item.setIsCalenderItem(cursor.getInt(14) == 1);
         item.setPeriod(cursor.getString(15));
         item.setEstimate(cursor.getString(16));
         item.setNotification(cursor.getString(17));
         item.setIsTemplate(cursor.getInt(18) != 0);
+        item.setMentalJson(cursor.getString(19));
         return item;
     }
     public static ContentValues getContentValues(Asset asset){
@@ -87,11 +92,11 @@ public class DBAdmin {
         cv.put("state", item.getState().ordinal());
         cv.put("hasChild", item.hasChild() ? 1: 0);
         cv.put("duration", item.getDuration());
-        //cv.put("days", item.getDays());
+        cv.put("isCalenderItem", item.isCalenderItem()? 1:0);
         cv.put("category", item.getCategory());
         cv.put("parentID", item.getParentId());
         if( item.getPeriod() != null) {
-            cv.put("period", item.getPeriod().toJson());
+            cv.put("repeat", item.getPeriod().toJson());
         }
         if( item.getEstimate() != null){
             cv.put("estimate", item.getEstimate().toJson());
@@ -100,6 +105,7 @@ public class DBAdmin {
             cv.put("notification", item.getNotification().toJson());
         }
         cv.put("template", item.isTemplate()? 1:0);
+        cv.put("mental", item.getMental().toJson());
         return cv;
     }
     public static ContentValues getContentValues(Mental mental){
@@ -145,9 +151,27 @@ public class DBAdmin {
         mental.setUpdated(cursor.getLong(12));
         return mental;
     }
+    public static Mental getMentalFromItem(Cursor cursor) {
+        if( VERBOSE) log("DBAdmin.getMentalFromItem(Cursor)");
+        Mental mental = new Gson().fromJson(cursor.getString(0), Mental.class);
+/*        mental.setID(cursor.getLong(0));
+        mental.setItemID(cursor.getLong(1));
+        mental.setHeading(cursor.getString(2));
+        mental.setComment(cursor.getString(3));
+        mental.setCategory(cursor.getString(4));
+        mental.setDate(cursor.getLong(5));
+        mental.setTime(cursor.getInt(6));
+        mental.setEnergy(cursor.getInt(7));
+        mental.setMood(cursor.getInt(8));
+        mental.setAnxiety(cursor.getInt(9));
+        mental.setStress(cursor.getInt(10));
+        mental.setCreated(cursor.getLong(11));
+        mental.setUpdated(cursor.getLong(12));*/
+        return mental;
+    }
 
     public static ContentValues getContentValues(String category) {
-        log("DBAdmin.getContentValues(String category) ", category);
+        if(VERBOSE)log("DBAdmin.getContentValues(String category) ", category);
         ContentValues cv = new ContentValues();
         cv.put("name", category);
         return cv;
@@ -162,23 +186,32 @@ public class DBAdmin {
             db.insertCategory(category);
         }
     }
-
     public static void insertRootItems(Context context) {
         log("...insertRootItems(Context)");
         Settings settings = Settings.getInstance(context);
         LocalDB db = new LocalDB(context);
+        //create the root item
+        Item root = new Item("root");
+        root.setType(Type.ROOT);
+        root = db.insert(root);
+        settings.addRootID(Settings.Root.THE_ROOT, root.getID(), context);
+
         Item todayRoot = Settings.getTodayRoot();
         Item todoRoot = Settings.getTodoRoot();
         Item projectsRoot = Settings.getProjectsRoot();
         Item appointmentsRoot = Settings.getAppointmentsRoot();
-        appointmentsRoot = db.insert(appointmentsRoot);
+        Item panicRoot = Settings.getPanicRoot();
+
+        appointmentsRoot = db.insertChild(root, appointmentsRoot);
         settings.addRootID(Settings.Root.APPOINTMENTS, appointmentsRoot.getID(), context);
-        todayRoot = db.insert(todayRoot);
+        todayRoot = db.insertChild(root, todayRoot);
         settings.addRootID(Settings.Root.DAILY, todayRoot.getID(), context);
-        projectsRoot = db.insert(projectsRoot);
+        projectsRoot = db.insertChild(root, projectsRoot);
         settings.addRootID(Settings.Root.PROJECTS, projectsRoot.getID(), context);
-        todoRoot = db.insert(todoRoot);
+        todoRoot = db.insertChild(root, todoRoot);
         settings.addRootID(Settings.Root.TODO, todoRoot.getID(), context);
+        panicRoot = db.insertChild(root, panicRoot);
+        settings.addRootID(Settings.Root.PANIC, panicRoot.getID(), context);
     }
 
     public static void listTables(Context context) {

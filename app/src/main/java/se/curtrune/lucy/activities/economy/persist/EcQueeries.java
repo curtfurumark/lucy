@@ -17,8 +17,8 @@ public class EcQueeries {
                     "date INTEGER, " +
                     "amount REAL )";
     //TODO change drop to economy
-    public static final String DROP_TABLE_TRANSACTIONS = "DROP TABLE economy";
-    public static final String DROP_TABLE_ASSETS = "DROP TABLE assets";
+    public static final String DROP_TABLE_TRANSACTIONS = "DROP TABLE IF EXISTS transactions";
+    public static final String DROP_TABLE_ASSETS = "DROP TABLE  IF EXISTS assets";
 
     public static String selectTransactions() {
         return "SELECT * FROM transactions ORDER by date DESC";

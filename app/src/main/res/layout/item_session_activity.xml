@@ -165,16 +165,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/divider_mental" />
 
-        <ImageView
-            android:id="@+id/itemSession_mentalAction"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:text="@string/save_mental"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/itemSession_labelMental"
-            app:srcCompat="@drawable/baseline_add_24" />
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/itemSession_layoutMental"
             android:layout_width="0dp"
@@ -591,7 +581,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/itemSession_labelInfo">
 
@@ -666,22 +656,29 @@
                 android:text="id"
                 app:layout_constraintStart_toStartOf="@+id/itemSession_infoCategory"
                 app:layout_constraintTop_toBottomOf="@+id/itemSession_infoCategory" />
+            <TextView
+                android:id="@+id/itemSession_infoParentID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="parent id"
+                app:layout_constraintTop_toBottomOf="@+id/itemSession_infoID"
+                app:layout_constraintStart_toStartOf="parent"/>
 
             <TextView
                 android:id="@+id/itemSession_infoHasChild"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="id"
-                app:layout_constraintStart_toStartOf="@+id/itemSession_infoID"
-                app:layout_constraintTop_toBottomOf="@+id/itemSession_infoID" />
+                android:text="has child"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/itemSession_infoParentID" />
 
             <TextView
                 android:id="@+id/itemSession_infoState"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="id"
+                android:text="state"
                 app:layout_constraintStart_toStartOf="@+id/itemSession_infoHasChild"
                 app:layout_constraintTop_toBottomOf="@+id/itemSession_infoHasChild" />
 

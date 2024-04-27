@@ -35,6 +35,7 @@ public class Item implements Serializable , Listable {
     protected int state;
     protected  String category;
     protected int has_child;
+    protected boolean isCalenderItem;
     protected Item parent;
     protected List<Item> children;
     //protected int days;
@@ -51,9 +52,6 @@ public class Item implements Serializable , Listable {
      */
     protected int templateType;
 
-
-
-
     public enum ItemClass{
         ITEM, PERIODITEM, APPOINTMENT,
     }
@@ -66,8 +64,9 @@ public class Item implements Serializable , Listable {
         this.duration = 0;
         //this.days = 0;
         category = heading = comment = description = tags = "";
+        mental = new Mental();
         state = State.TODO.ordinal();
-        type = Type.PENDING.ordinal();
+        type = Type.NODE.ordinal();
         has_child = 0;
         children = new ArrayList<>();
     }
@@ -219,6 +218,9 @@ public class Item implements Serializable , Listable {
     public boolean hasTags(){
         return !this.tags.isEmpty();
     }
+    public boolean isCalenderItem(){
+        return isCalenderItem;
+    }
     public boolean isCategory(String category){
         //log("Item.isCategory(Category)", category);
         if( this.category == null){
@@ -227,12 +229,13 @@ public class Item implements Serializable , Listable {
         }
         return this.category.equalsIgnoreCase(category);
     }
+    public boolean isDate(LocalDate date){
+        return this.target_date == date.toEpochDay();
+    }
     public boolean isDone(){
         return state == State.DONE.ordinal();
     }
-    public  boolean isInfinite(){
-        return state == State.INFINITE.ordinal();
-    }
+
     public boolean isRoot(){
         return parent_id < 1;
     }
@@ -247,9 +250,7 @@ public class Item implements Serializable , Listable {
         long epoch = localDateTime.toEpochSecond(ZoneOffset.UTC);
         return updated >= epoch && updated <= epoch + (3600 * 24);
     }
-    public boolean isWIP(){
-        return state == State.WIP.ordinal();
-    }
+
     public void setChildren(List<Item> children){
         for(Item item: children){
             item.setParent(this);
@@ -305,6 +306,15 @@ public class Item implements Serializable , Listable {
     public void setMental(Mental mental){
         this.mental = mental;
     }
+    public void setMentalJson(String json){
+        if( json == null || json.isEmpty()){
+            log("ERROR, setMentalJson, json is null or empty");
+            return;
+        }else{
+            log("...mental json", json);
+        }
+        this.mental = new Gson().fromJson(json, Mental.class);
+    }
     public void setNotification(Notification notification){
         this.notification = notification;
     }
@@ -317,6 +327,9 @@ public class Item implements Serializable , Listable {
     }
     public void setId(long id) {
         this.id = id;
+    }
+    public void setIsCalenderItem(boolean calenderItem){
+        this.isCalenderItem = calenderItem;
     }
     public void setHasChild(boolean hasChild){
         this.has_child = hasChild? 1:0;
@@ -352,7 +365,7 @@ public class Item implements Serializable , Listable {
         this.state = state;
     }
     public void setState(State state) {
-        this.state = state != null ? state.ordinal(): State.PENDING.ordinal();
+        this.state = state.ordinal();
     }
     public void setTargetDate(LocalDate localDate) {
         this.target_date = localDate != null? localDate.toEpochDay() : 0;

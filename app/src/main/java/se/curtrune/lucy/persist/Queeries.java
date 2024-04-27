@@ -13,32 +13,34 @@ import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.fragments.TopTenFragment;
 
 public class Queeries {
-    public static final String DROP_TABLE_ITEMS = "DROP TABLE items";
-    public static final String DROP_TABLE_CATEGORIES = "DROP TABLE categories";
-    public static final String DROP_TABLE_MENTAL = "DROP table mental";
+    public static final String DROP_TABLE_ITEMS = "DROP TABLE IF EXISTS items ";
+    public static final String DROP_TABLE_CATEGORIES = "DROP TABLE IF EXISTS categories";
+    public static final String DROP_TABLE_MENTAL = "DROP TABLE IF EXISTS mental";
     //TODO
 
     public static String CREATE_TABLE_ITEMS =
             "CREATE TABLE items  " +
                     "(id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "heading TEXT, " +
-                    "comment TEXT, " +
-                    "tags TEXT, " +
-                    "created INTEGER, " +
-                    "updated INTEGER, " +
-                    "targetDate INTEGER, " +
-                    "targetTime INTEGER, " +
-                    "category INTEGER, " +
-                    "type INTEGER, " +
-                    "state INTEGER, " +
-                    "hasChild INTEGER, " +
-                    "duration INTEGER, " +
-                    "parentID INTEGER," +
-                    "days INTEGER, " +
-                    "repeat STRING, " +
-                    "estimate STRING," +
-                    "notification STRING," +
-                    "template INTEGER default 0)";
+                    "heading TEXT, " +          //1
+                    "comment TEXT, " +          //2
+                    "tags TEXT, " +             //3
+                    "created INTEGER, " +       //4
+                    "updated INTEGER, " +       //5
+                    "targetDate INTEGER, " +    //6
+                    "targetTime INTEGER, " +    //7
+                    "category INTEGER, " +      //8
+                    "type INTEGER, " +          //9
+                    "state INTEGER, " +         //10
+                    "hasChild INTEGER, " +      //11
+                    "duration INTEGER, " +      //12
+                    "parentID INTEGER," +       //13
+                    "isCalenderItem INTEGER, " +          //14
+                    "repeat STRING, " +         //15
+                    "estimate STRING," +        //16
+                    "notification STRING," +    //17
+                    "template INTEGER default 0, " +  //18
+                    "mental STRING, " +         //19
+                    "reward STRING)";           //20
     public static String CREATE_TABLE_MENTAL =
             "CREATE TABLE mental (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "itemID INTEGER, " +
@@ -67,7 +69,7 @@ public class Queeries {
                 Type.APPOINTMENT.ordinal());
     }
     public static String selectAppointments(LocalDate date) {
-        return String.format(Locale.getDefault(), "SELECT * FROM items WHERE type = %d AND targetDate = %d ORDER BY targetDate DESC",
+        return String.format(Locale.getDefault(), "SELECT * FROM items WHERE (type = %d  OR isCalenderItem = 1)  AND targetDate = %d ORDER BY targetDate DESC",
                 Type.APPOINTMENT.ordinal(),date.toEpochDay());
     }
 
@@ -117,7 +119,7 @@ public class Queeries {
         long endEpoch = startEpoch + (3600 * 24);
         //AND (updated)
         return String.format(Locale.ENGLISH, "SELECT * FROM items WHERE " +
-                        "(template = %d AND targetDate <= %d)  OR " +      //INFINITE today or earlier
+                        "(template = %d AND targetDate <= %d AND targetDate > 0)  OR " +      //INFINITE today or earlier
                         //"(state = %d AND targetDate = %d) OR " +        //items done today
                         "(targetDate = %d AND hasChild = 0 AND state = %d) OR " +   //items todo today
                         "(state = %d AND updated >= %d AND updated <= %d)", //items done today, but targetDate not today
@@ -165,6 +167,10 @@ public class Queeries {
         String query = String.format(Locale.ENGLISH, "SELECT * FROM items WHERE ()");
         return null;
     }
+    public static String selectItems(LocalDate firstDate, LocalDate lastDate, Type type) {
+        return String.format(Locale.getDefault(), "SELECT * FROM items WHERE targetDate >= %d AND targetDate <= %d AND type = %d ORDER by targetDate DESC",
+                firstDate.toEpochDay(), lastDate.toEpochDay(), type.ordinal());
+    }
 
     public static String selectItems(LocalDate firstDate, LocalDate lastDate, State state) {
         LocalDateTime localDateTimeFirst = firstDate.atStartOfDay();
@@ -201,6 +207,17 @@ public class Queeries {
                 date.toEpochDay());
         //return String.format(Locale.getDefault(),"SELECT * FROM mental WHERE date = %d AND template = %d ORDER BY date DESC",
         //         date.toEpochDay(), includeTemplates ? 1:0);
+    }
+
+
+    public static String selectMentals2() {
+        return String.format(Locale.getDefault(), "SELECT mental FROM items ORDER BY date DESC");
+    }
+
+    public static String selectMentalsFromItem(LocalDate firstDate, LocalDate lastDate) {
+        return String.format(Locale.getDefault(), "SELECT mental FROM items WHERE date >= %d AND date <= %d ORDER BY date DESC",
+                firstDate.toEpochDay(), lastDate.toEpochDay());
+
     }
 
 

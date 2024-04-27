@@ -76,7 +76,7 @@ public class StatisticsMain extends AppCompatActivity  {
                 log("...onTabSelected(Tab) position", position);
                 switch (position){
                     case 0:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.statisticsMain_fragmentContainer, new TransactionFragment()).commit();
+                        getSupportFragmentManager().beginTransaction().replace(R.id.statisticsMain_fragmentContainer, new DurationFragment()).commit();
                         break;
                     case 1:
                         getSupportFragmentManager().beginTransaction().replace(R.id.statisticsMain_fragmentContainer, new MentalFragment()).commit();

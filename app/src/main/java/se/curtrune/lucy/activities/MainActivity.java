@@ -10,11 +10,13 @@ import androidx.preference.PreferenceManager;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.LocaleList;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -28,9 +30,11 @@ import se.curtrune.lucy.R;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.activities.flying_fish.GameActivity;
+import se.curtrune.lucy.dialogs.BoostDialog;
 import se.curtrune.lucy.fragments.AppointmentsFragment;
 import se.curtrune.lucy.fragments.CalenderFragment;
 import se.curtrune.lucy.fragments.EnchildaFragment;
+import se.curtrune.lucy.fragments.MentalFragment;
 import se.curtrune.lucy.fragments.ProjectsFragment;
 import se.curtrune.lucy.fragments.TodoFragment;
 import se.curtrune.lucy.util.Constants;
@@ -44,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
     private final static String CURRENT_FRAGMENT = "CURRENT_FRAGMENT";
     private BottomNavigationView bottomNavigation;
     private FloatingActionButton fapPanic;
+    private FloatingActionButton fapBoost;
+    private TextView textViewEnergy;
     private FragmentContainerView fragmentContainerView;
     public interface OnTabSelected{
         void onSelected(TabLayout.Tab tab);
@@ -60,17 +66,18 @@ public class MainActivity extends AppCompatActivity {
         initListeners();
         //initDefaultFragment();
         Intent intent = getIntent();
-/*        if( intent.getBooleanExtra(Constants.INTENT_SHOW_CHILD_ITEMS, false)){
-            log("...INTENT_SHOW_CHILD_ITEMS");
-        }*/
         if( Lucinda.currentFragment != null){
             log("...currentFragment != null");
             currentFragment = Lucinda.currentFragment;
         }else{
             currentFragment = new CalenderFragment();
         }
-        //navigate(currentFragment);
         setBottomNavigationSelected(currentFragment);
+        setUserInterfaceCurrentEnergy();
+    }
+    private void boostMe(){
+        log("...boostMe()");
+        new BoostDialog().show(getSupportFragmentManager(), "boost me");
     }
     private void initComponents(){
         log("...initComponents()");
@@ -78,6 +85,8 @@ public class MainActivity extends AppCompatActivity {
         fragmentContainerView = findViewById(R.id.mainActivity_fragmentContainer);
         bottomNavigation = findViewById(R.id.mainActivity_bottomNavigation);
         fapPanic = findViewById(R.id.mainActivity_panic);
+        fapBoost = findViewById(R.id.mainActivity_buttonBoost);
+        textViewEnergy = findViewById(R.id.mainActivity_energy);
     }
     private void initDefaultFragment(){
         log("...initDefaultFragment()");
@@ -86,6 +95,8 @@ public class MainActivity extends AppCompatActivity {
     }
     private void initListeners(){
         log("...initListeners()");
+        textViewEnergy.setOnClickListener(view->showMentalDay());
+        fapBoost.setOnClickListener(view->boostMe());
         fapPanic.setOnClickListener(view->panic());
         bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -130,9 +141,9 @@ public class MainActivity extends AppCompatActivity {
     private void navigate(Fragment fragment){
         log("...navigate(Fragment) ");
         if(fragment instanceof AppointmentsFragment)log("AppointmentsFragment");
-        if(fragment instanceof ProjectsFragment)log("AppointmentsFragment");
-        if(fragment instanceof CalenderFragment)log("AppointmentsFragment");
-        if(fragment instanceof TodoFragment)log("AppointmentsFragment");
+        if(fragment instanceof ProjectsFragment)log("ProjectsFragment");
+        if(fragment instanceof CalenderFragment)log("CalenderFragment");
+        if(fragment instanceof TodoFragment)log("TodoFragment");
         currentFragment = fragment;
         getSupportFragmentManager().beginTransaction().replace(R.id.mainActivity_fragmentContainer, currentFragment).commit();
 
@@ -205,6 +216,23 @@ public class MainActivity extends AppCompatActivity {
             selectedItemID = R.id.bottomNavigation_today;
         }
         bottomNavigation.setSelectedItemId(selectedItemID);
+    }
+    private void setUserInterfaceCurrentEnergy(){
+        log("...setUserInterfaceCurrentEnergy()");
+        int energy = MentalWorker.getEnergy(LocalDate.now(), this);
+        String textEnergy = String.format(Locale.getDefault(), "energy: %d", energy);
+        if( energy <= -3){
+            textViewEnergy.setTextColor(Color.parseColor("#ff0000"));
+        }else if( energy > - 3 && energy <= 2){
+            textViewEnergy.setTextColor(Color.parseColor("#ffff00"));
+        }else{
+            textViewEnergy.setTextColor(Color.parseColor("#00ff00"));
+        }
+        textViewEnergy.setText(textEnergy);
+    }
+    private void showMentalDay(){
+        log("...showMentalDay");
+        navigate(new MentalFragment());
     }
 
 }

@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -53,6 +54,7 @@ public class ProjectsFragment extends Fragment implements
     private static final String CURRENT_PARENT = "CURRENT_PARENT";
     private RecyclerView recycler;
     private EditText editTextSearch;
+    private TextView textViewGoToParentList;
     private FloatingActionButton buttonAddItem;
     private ItemAdapter adapter;
     private Item currentParent;
@@ -105,7 +107,7 @@ public class ProjectsFragment extends Fragment implements
             log("...savedInstanceState != null");
             currentParent = (Item) savedInstanceState.getSerializable(CURRENT_PARENT);
         }else{
-            currentParent = ItemsWorker.getRootItem(Settings.Root.PROJECTS, getContext());
+            currentParent = ItemsWorker.getRootItem(Settings.Root.THE_ROOT, getContext());
         }
         if( currentParent == null){
             log("ERROR, currentParent is null");
@@ -122,6 +124,7 @@ public class ProjectsFragment extends Fragment implements
         recycler = view.findViewById(R.id.projectsFragment_recycler);
         editTextSearch = view.findViewById(R.id.projectsFragment_search);
         buttonAddItem = view.findViewById(R.id.projectsFragment_addItem);
+        textViewGoToParentList = view.findViewById(R.id.projectsFragment_parentList);
 
     }
 
@@ -134,9 +137,23 @@ public class ProjectsFragment extends Fragment implements
         recycler.setAdapter(adapter);
     }
     private void  initListeners(){
+        log("...initListeners()");
         buttonAddItem.setOnClickListener(view->showAddItemDialog());
+        textViewGoToParentList.setOnClickListener(view->navigateUp());
     }
+    private void navigateUp(){
+        log("...navigateUp()");
+        Item itemTmp  = ItemsWorker.getParent(currentParent, getContext());
+        if( itemTmp == null){
+            log("...you've reached the top!, congrats!");
+            Toast.makeText(getContext(), "top of the world", Toast.LENGTH_LONG).show();
+        }else{
+            currentParent = itemTmp;
+            items = ItemsWorker.selectChildItems(currentParent, getContext());
+            adapter.setList(items);
+        }
 
+    }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         log("...onOptionsItemSelected(MenuItem) ", item.getTitle().toString());

@@ -4,7 +4,7 @@
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
+
     <string name="previous">Previous</string>
     <string-array name="quotes">
         <item>be happy</item>
@@ -124,11 +124,13 @@
     <string name="repeat">repeat</string>
     <string name="time">time</string>
     <string name="day_of_week">day of week</string>
-    <string name="prev">prev</string>
+    <string name="next" translatable="false"><![CDATA[>]]></string>
+    <string name="prev" translatable="false"><![CDATA[<]]></string>
     <string name="comment_etc">comment etc</string>
     <string name="sum">sum</string>
     <string name="average">average</string>
     <string name="first_date">first date</string>
     <string name="last_date">last date</string>
     <string name="reward">reward</string>
+    <string name="go_to_parent_list"><![CDATA[< go to parent list]]></string>
 </resources>

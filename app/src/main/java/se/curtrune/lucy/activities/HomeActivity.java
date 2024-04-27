@@ -99,10 +99,10 @@ public class HomeActivity extends AppCompatActivity {
     private void initListeners(){
         log("...initListeners()");
         textViewSwipeAble.setOnClickListener(view->startActivity(new Intent(this,  EconomyActivity.class)));
-        textViewToday.setOnClickListener(view -> startActivity(new Intent(this, TodayActivity.class)));
+        //textViewToday.setOnClickListener(view -> startActivity(new Intent(this, TodayActivity.class)));
         textViewStatistics.setOnClickListener(view->startActivity(new Intent(this, StatisticsMain.class)));
         textViewNewMain.setOnClickListener(view->startActivity(new Intent(this, MainActivity.class)));
-        textViewCalender.setOnClickListener(view->startActivity(new Intent(this, MyCalenderActivity.class)));
+        textViewCalender.setOnClickListener(view->startActivity(new Intent(this, MonthCalenderActivity.class)));
         textViewQuote.setOnClickListener(view->randomQuote());
         textViewSettings.setOnClickListener(view->startActivity(new Intent(this, SettingsActivity.class)));
     }

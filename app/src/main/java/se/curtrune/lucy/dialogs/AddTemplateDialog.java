@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -67,6 +68,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
     private Button buttonSave;
     private Button buttonDismiss;
     private Button buttonAddAndContinue;
+    private CheckBox checkBoxShowInCalender;
     private ArrayAdapter<String> arrayAdapter;
     private Item parent;
     private LocalDate date;
@@ -105,6 +107,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
     private Item getItem(){
         log("...getItem()");
         item.setHeading(editTextHeading.getText().toString());
+        item.setIsCalenderItem(checkBoxShowInCalender.isChecked());
         item.setPeriod(getPeriod());
         return item;
     }
@@ -178,6 +181,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         textViewTime = view.findViewById(R.id.addTemplateDialog_time);
         labelRepeat = view.findViewById(R.id.addTemplateDialog_repeat);
         textViewNow = view.findViewById(R.id.addTemplateDialog_now);
+        checkBoxShowInCalender = view.findViewById(R.id.addTemplateDialog_showInCalender);
     }
 
     private void initListeners(){

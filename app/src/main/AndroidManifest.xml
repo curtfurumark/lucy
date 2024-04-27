@@ -25,7 +25,7 @@
             android:name=".activities.StartActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.MyCalenderActivity"
+            android:name=".activities.MonthCalenderActivity"
             android:exported="false" />
         <activity
             android:name=".activities.economy.TransactionActivity"

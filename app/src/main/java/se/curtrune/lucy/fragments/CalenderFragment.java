@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -39,7 +38,7 @@ import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.CallingActivity;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
-import se.curtrune.lucy.classes.Week;
+import se.curtrune.lucy.classes.calender.Week;
 import se.curtrune.lucy.dialogs.AddTemplateDialog;
 import se.curtrune.lucy.dialogs.OnNewItemCallback;
 import se.curtrune.lucy.util.Constants;
@@ -196,11 +195,16 @@ public class CalenderFragment extends Fragment {
             public void onCheckboxClicked(Item item, boolean checked) {
                 log("...onCheckboxClicked(Item, boolean)", checked);
                 item.setState(checked ? State.DONE: State.TODO);
+                //item.setTargetDate(LocalDate.now());
+                item.setTargetTime(LocalTime.now());
                 log(item);
                 int rowsAffected = ItemsWorker.update(item, getContext());
                 if( rowsAffected != 1){
                     Toast.makeText(getContext(),"error updating item", Toast.LENGTH_LONG).show();
                     return;
+                }else{
+                    items.sort(Comparator.comparingLong(Item::getTargetTimeSecondOfDay));
+                    adapter.notifyDataSetChanged();
                 }
                 if(item.hasReward()){
                     switch (item.getReward().getType()){
@@ -319,7 +323,6 @@ public class CalenderFragment extends Fragment {
             items = ItemsWorker.selectAppointments( currentDate, getContext());
         }
         items.sort(Comparator.comparingLong(Item::compareTargetTime));
-        //items.sort(Comparator.comparingLong(Item::getTargetTimeSecondOfDay));
         adapter.setList(items);
     }
     private void showAddItemDialog(){
@@ -330,7 +333,7 @@ public class CalenderFragment extends Fragment {
             public void onNewItem(Item item) {
                 log("...onNewItem(Item)");
                 log(item);
-                ItemsWorker.insert(item, getContext());
+                item = ItemsWorker.insert(item, getContext());
                 items.add(item);
                 updateAdapter();
             }
@@ -363,7 +366,8 @@ public class CalenderFragment extends Fragment {
     private void updateAdapter(){
         log("...updateAdapter()");
         items.sort(Comparator.comparingLong(Item::compareTargetTime));
-        adapter.notifyDataSetChanged();
+        adapter.setList(items);
+        //adapter.notifyDataSetChanged();
 
     }
 }

@@ -16,6 +16,8 @@ public class Settings {
     private long dailyID;
     private long projectsID;
     private long appointmentsID;
+    private long panicID;
+    private long theRootID;
     private boolean isInitialized = false;
     private SharedPreferences.Editor editor;
     private static Settings instance;
@@ -28,7 +30,7 @@ public class Settings {
     }
 
     public enum Root{
-        TODO, DAILY, PROJECTS, APPOINTMENTS, WHATEVER
+        TODO, DAILY, PROJECTS, APPOINTMENTS, PANIC, THE_ROOT
     }
     private Settings(Context context){
         init(context);
@@ -51,6 +53,8 @@ public class Settings {
         dailyID = sharedPreferences.getLong(Root.DAILY.toString(), -1);
         projectsID = sharedPreferences.getLong(Root.PROJECTS.toString(), -1);
         appointmentsID = sharedPreferences.getLong(Root.APPOINTMENTS.toString(), -1);
+        panicID = sharedPreferences.getLong(Root.PANIC.toString(), -1);
+        theRootID = sharedPreferences.getLong(Root.THE_ROOT.toString(), 1);
     }
 
     private void addToPrefs(String key, String value, Context context){
@@ -83,6 +87,11 @@ public class Settings {
     public static String[] getCategories() {
         return new String[]{"household", "work", "leisure", "read", "health"};
     }
+    public static Item getPanicRoot(){
+        Item item  = new Item("panic");
+        item.setType(Type.ROOT);
+        return item;
+    }
 
     public static Item getTodayRoot() {
         Item item = new Item("today");
@@ -109,6 +118,10 @@ public class Settings {
                 return projectsID;
             case APPOINTMENTS:
                 return appointmentsID;
+            case THE_ROOT:
+                return theRootID;
+            case PANIC:
+                return panicID;
             default:
                 return todoID;
         }

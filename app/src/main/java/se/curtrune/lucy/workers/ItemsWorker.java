@@ -2,20 +2,21 @@ package se.curtrune.lucy.workers;
 
 import static se.curtrune.lucy.app.Settings.Root.APPOINTMENTS;
 import static se.curtrune.lucy.app.Settings.Root.DAILY;
+import static se.curtrune.lucy.app.Settings.Root.PANIC;
 import static se.curtrune.lucy.app.Settings.Root.PROJECTS;
+import static se.curtrune.lucy.app.Settings.Root.THE_ROOT;
 import static se.curtrune.lucy.app.Settings.Root.TODO;
 import static se.curtrune.lucy.util.Logger.log;
 
 import android.content.Context;
 import android.widget.Toast;
 
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.YearMonth;
 import java.util.List;
 
-import se.curtrune.lucy.activities.TodayActivity;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
@@ -42,8 +43,8 @@ public class ItemsWorker {
         return items.stream().mapToLong(Item::getEstimatedDuration).sum();
     }
 
-    private static Item createChildToInfinite(Item parent){
-        log("...createChildToInfinite(Item item)");
+    private static Item createTemplateChild(Item parent){
+        log("...createTemplateChild(Item item)");
         Item child = new Item();
         child.setParentId(parent.getID());
         child.setHeading(parent.getHeading());
@@ -89,7 +90,7 @@ public class ItemsWorker {
 
 
     public static Item getRootItem(Settings.Root root, Context context){
-        log("...getRootItem(Settings.Root, Context");
+        log("ItemsWorker.getRootItem(Settings.Root, Context)");
         Settings settings = Settings.getInstance(context);
         long rootID = -1;
         switch (root){
@@ -105,7 +106,14 @@ public class ItemsWorker {
             case PROJECTS:
                 rootID = settings.getRootID(PROJECTS);
                 break;
+            case PANIC:
+                rootID = settings.getRootID(PANIC);
+                break;
+            case THE_ROOT:
+                rootID = settings.getRootID(THE_ROOT);
+                break;
         }
+        log("root id ", rootID);
         LocalDB db = new LocalDB(context);
         return db.selectItem(rootID);
     }
@@ -122,62 +130,9 @@ public class ItemsWorker {
         LocalDB db = new LocalDB(context);
         return  db.selectItem(parentId).hasChild();
     }
-    /**
-     * sets targetDate of infiniteItem to 'today + item.getDays'
-     * @param template, is an Item with State.INFINITE
-     * @param context,
-     * @throws SQLException
-     */
-    public static void handleInfinite(Item template, Context context) throws SQLException {
-        log("...handleInfinite(Item, Context)", template.getHeading());
-        Item child = createChildToInfinite(template);
-        child = insert(child, context);
-        template.setDuration(0);
-        template.updateTargetDate();
-        update(template, context);
-    }
 
-    public static int handleTemplate(Item template, Context context) {
-        log("...handleTemplate(Item, Context)", template.getHeading());
-        if(template.isDone()){
-            log("...do not set templates to done");
-            template.setState(State.TODO);
-        }
-        Item child = new Item();
-        child.setState(State.DONE);
-        child.setType(Type.NODE);//TODO , type generated ? .
-        child.setHeading(template.getHeading());
-        child.setDuration(template.getDuration());
-        child.setCategory(template.getCategory());
-        child.setTags(template.getTags());
-        child.setMental(template.getMental());
-        child.setTargetTime(LocalTime.now());
-        child.setMental(template.getMental());
-        //template.setMental(null);
-        LocalDB db = new LocalDB(context);
-        child = db.insertChild(template, child);
-        if( template.hasMental()){//inherit the template
-            //Mental childMental = new Mental(template.getMental());
-            Mental childMental = new Mental(template.getMental());
-            long itemID = child.getID();
-            log("...itemID", itemID);
-            childMental.setItemID(child.getID());
-            childMental.setHeading(template.getHeading());
-            childMental.setDate(LocalDate.now());
-            childMental.setTime(LocalTime.now());
-            childMental.setUpdated(LocalDateTime.now());
-            //log(childMental);
-            childMental = MentalWorker.insert(childMental, context);
-            //log("...after inserting mental, logging mental again");
-            log(childMental);
-            //log("...item id after insert", childMental.getItemID());
-        }
-        if( template.hasPeriod()) {
-            template.updateTargetDate();
-        }
-        template.setDuration(0);
-        return db.update(template);
-    }
+
+
     public static Item selectItem(long parentId, Context context) {
         log("...selectItem(long, Context");
         LocalDB db = new LocalDB(context);
@@ -212,6 +167,7 @@ public class ItemsWorker {
     public  static Item insertChild(Item parent, Item child, Context context)  {
         log("ItemsWorker.insertChild(Item, Item, Context)");
         if( !parent.hasChild()){
+            log("....not children for this parent, yet");
             setHasChild(parent, true, context);
         }
         child.setParentId(parent.getID());
@@ -246,7 +202,7 @@ public class ItemsWorker {
         LocalDB db = new LocalDB(context);
         return db.selectItems(Queeries.selectItems(state));
     }
-    public static List<Item> selectItems(Type type, TodayActivity context) {
+    public static List<Item> selectItems(Type type, Context context) {
         LocalDB db = new LocalDB(context);
         return db.selectItems(type);
     }
@@ -275,7 +231,7 @@ public class ItemsWorker {
         return db.selectItems(query);
     }
     public static void setHasChild(Item item, boolean hasChild, Context context) {
-        log("ItemsWorker.setHasChild(Item, Context)");
+        log("ItemsWorker.setHasChild(Item, Context)", item.getHeading());
         LocalDB db = new LocalDB(context);
         db.setItemHasChild(item.getID(), hasChild);
     }
@@ -285,20 +241,47 @@ public class ItemsWorker {
         db.setItemHasChild(id, hasChild);
     }
 
-    public static void setItemState(Item item, State state, Context context) throws SQLException {
-        log("ItemsWorker.setItemState(Item, State, Context)");
-        if( item.isInfinite()){
-            handleInfinite(item, context);
-        }else {
-            log("...item is not infinite");
-            item.setState(state);
-            item.setUpdated(LocalDateTime.now());
-            LocalDB db = new LocalDB(context);
-            int rowsAffected = db.update(item);
-            log("...rowsAffected", rowsAffected);
-        }
+    public static Item getAppointmentsRoot(Context context){
+        Settings settings = Settings.getInstance(context);
+        long id = settings.getRootID(APPOINTMENTS);
+        LocalDB db = new LocalDB( context);
+        return db.selectItem(id);
     }
 
+    public static Item getPanicRoot(Context context) {
+        Settings settings = Settings.getInstance(context);
+        long id = settings.getRootID(PANIC);
+        LocalDB db = new LocalDB( context);
+        return db.selectItem(id);
+    }
+    public static Item getProjectsRoot(Context context){
+        Settings settings = Settings.getInstance(context);
+        long id = settings.getRootID(PROJECTS);
+        LocalDB db = new LocalDB( context);
+        return db.selectItem(id);
+    }
+
+    public static Item getTodoRoot(Context context){
+        Settings settings = Settings.getInstance(context);
+        long id = settings.getRootID(TODO);
+        LocalDB db = new LocalDB( context);
+        return db.selectItem(id);
+    }
+    public static Item getDailyRoot(Context context){
+        Settings settings = Settings.getInstance(context);
+        long id = settings.getRootID(DAILY);
+        LocalDB db = new LocalDB( context);
+        return db.selectItem(id);
+    }
+
+    public static List<Item> selectCalenderItems(YearMonth yearMonth, Context context) {
+        log("...selectCalenderItems(YearMonth)");
+        LocalDate firstDate = yearMonth.atDay(1);
+        LocalDate lastDate = yearMonth.atEndOfMonth();
+        LocalDB db = new LocalDB(context);
+        String queery = Queeries.selectItems(firstDate, lastDate,Type.APPOINTMENT);
+        return db.selectItems(queery);
+    }
 
 
     public void touch(Item currentItem, Context context) {
@@ -323,12 +306,47 @@ public class ItemsWorker {
     public static int update(Item item, Context context) {
         log("ItemsWorker.update(Item, Context)");
         if(item.isTemplate() && item.isDone()){
-            return handleTemplate(item, context);
+            return updateTemplate(item, context);
         }else {
             LocalDB db = new LocalDB(context);
             item.setUpdated(LocalDateTime.now());
-            //item.setTargetTime(LocalTime.now());
             return db.update(item);
         }
+    }
+    private static int updateTemplate(Item template, Context context) {
+        log("...updateTemplate(Item, Context)", template.getHeading());
+        if(template.isDone()){
+            log("...do not set templates to done");
+            template.setState(State.TODO);
+        }
+        Item child = new Item();
+        child.setState(State.DONE);
+        child.setType(Type.NODE);//TODO , type generated ? .
+        child.setHeading(template.getHeading());
+        child.setDuration(template.getDuration());
+        child.setCategory(template.getCategory());
+        child.setTags(template.getTags());
+        child.setMental(template.getMental());
+        child.setTargetTime(LocalTime.now());
+        child.setMental(template.getMental());
+        LocalDB db = new LocalDB(context);
+        child = db.insertChild(template, child);
+        if( template.hasMental()){//inherit the template
+            Mental childMental = new Mental(template.getMental());
+            long itemID = child.getID();
+            log("...itemID", itemID);
+            childMental.setItemID(child.getID());
+            childMental.setHeading(template.getHeading());
+            childMental.setDate(LocalDate.now());
+            childMental.setTime(LocalTime.now());
+            childMental.setUpdated(LocalDateTime.now());
+            childMental = MentalWorker.insert(childMental, context);
+            log(childMental);
+        }
+        if( template.hasPeriod()) {
+            template.updateTargetDate();
+        }
+        template.setDuration(0);
+        return db.update(template);
     }
 }
