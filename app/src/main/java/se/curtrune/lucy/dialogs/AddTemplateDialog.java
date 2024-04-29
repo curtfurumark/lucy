@@ -82,10 +82,10 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
     private Repeat.Mode mode = Repeat.Mode.DAYS;
 
     public AddTemplateDialog(Item parent) {
-        log("AddTemplateDialog(Item)");
+        assert  parent != null;
+        log("AddTemplateDialog(Item) parent", parent.getHeading());
         this.parent = parent;
     }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -101,7 +101,6 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         log("...createItem()");
         item = new Item();
         item.setState(State.TODO);
-        //item.setIsTemplate(true);
         item.setParent(parent);
     }
     private Item getItem(){
@@ -121,7 +120,6 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
             }else{
                 repeat.setWeekDays(getWeekDays());
             }
-
         }
         return repeat;
     }
@@ -221,7 +219,6 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
 
             }
         });
-
     }
     private void initUserInterface(){
         log("...initUserInterface()");
@@ -253,7 +250,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
 
     }
     private void setSpinnerSelection(String category){
-        log("..setSpinnerSelection(String)", category);
+        log("...setSpinnerSelection(String)", category);
         spinner.setSelection(arrayAdapter.getPosition(category));
     }
     private void showDateDialog(){

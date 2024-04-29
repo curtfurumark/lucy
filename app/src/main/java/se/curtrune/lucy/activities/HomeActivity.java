@@ -20,17 +20,20 @@ import androidx.core.content.ContextCompat;
 import androidx.core.os.LocaleListCompat;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.activities.economy.EconomyActivity;
 import se.curtrune.lucy.app.Lucinda;
+import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.Quotes;
 import se.curtrune.lucy.persist.DBAdmin;
 import se.curtrune.lucy.activities.economy.persist.ECDBAdmin;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
 import se.curtrune.lucy.util.Logger;
+import se.curtrune.lucy.workers.MentalWorker;
 import se.curtrune.lucy.workers.WebWorker;
 
 public class HomeActivity extends AppCompatActivity {
@@ -41,7 +44,9 @@ public class HomeActivity extends AppCompatActivity {
     private TextView textViewCalender;
     private TextView textViewStatistics;
     private TextView textViewQuote;
+    private TextView textViewGraph;
     private Lucinda lucinda;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,7 +56,7 @@ public class HomeActivity extends AppCompatActivity {
         log("HomeActivity.onCreate(Bundle)");
         lucinda = Lucinda.getInstance(this);
         //lucinda.setIsInitialized(true, this);
-        if( !lucinda.isInitialized(this)){
+        if (!lucinda.isInitialized(this)) {
             log("...lucinda not initialized");
             try {
                 lucinda.initialize(this);
@@ -59,7 +64,7 @@ public class HomeActivity extends AppCompatActivity {
                 Toast.makeText(this, "serious, failure to initialize the app", Toast.LENGTH_LONG).show();
                 return;
             }
-        }else{
+        } else {
             log("Lucinda is initialized!");
         }
         initComponents();
@@ -68,26 +73,29 @@ public class HomeActivity extends AppCompatActivity {
         //randomAffirmation();
         checkNotificationPermission();
         openDB();
+        testMentals();
     }
-    private void checkNotificationPermission(){
+
+    private void checkNotificationPermission() {
         log("...checkNotificationPermission()");
-        if( ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED){
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
             log("PERMISSION_GRANTED");
-        }else{
+        } else {
             log("PERMISSION_DENIED");
         }
 
     }
-    private void createEconomyTables(){
+
+    private void createEconomyTables() {
         log("...createEconomyTables()");
         ECDBAdmin.createEconomyTables(this);
         Toast.makeText(this, "tables created, possibly", Toast.LENGTH_LONG).show();
         DBAdmin.listTables(this);
     }
 
-    private void initComponents(){
+    private void initComponents() {
         log("...initComponents()");
-        textViewToday = findViewById(R.id.homeActivity_today);
+        textViewGraph = findViewById(R.id.homeActivity_graph);
         textViewStatistics = findViewById(R.id.homeActivity_statistics);
         textViewQuote = findViewById(R.id.homeActivity_quote);
         textViewQuote.setSelected(true);
@@ -96,23 +104,26 @@ public class HomeActivity extends AppCompatActivity {
         textViewSettings = findViewById(R.id.homeActivity_settings);
         textViewSwipeAble = findViewById(R.id.homeActivity_economy);
     }
-    private void initListeners(){
+
+    private void initListeners() {
         log("...initListeners()");
-        textViewSwipeAble.setOnClickListener(view->startActivity(new Intent(this,  EconomyActivity.class)));
-        //textViewToday.setOnClickListener(view -> startActivity(new Intent(this, TodayActivity.class)));
-        textViewStatistics.setOnClickListener(view->startActivity(new Intent(this, StatisticsMain.class)));
-        textViewNewMain.setOnClickListener(view->startActivity(new Intent(this, MainActivity.class)));
-        textViewCalender.setOnClickListener(view->startActivity(new Intent(this, MonthCalenderActivity.class)));
-        textViewQuote.setOnClickListener(view->randomQuote());
-        textViewSettings.setOnClickListener(view->startActivity(new Intent(this, SettingsActivity.class)));
+        textViewSwipeAble.setOnClickListener(view -> startActivity(new Intent(this, EconomyActivity.class)));
+        textViewGraph.setOnClickListener(view -> startActivity(new Intent(this, GraphActivity.class)));
+        textViewStatistics.setOnClickListener(view -> startActivity(new Intent(this, StatisticsMain.class)));
+        textViewNewMain.setOnClickListener(view -> startActivity(new Intent(this, MainActivity.class)));
+        textViewCalender.setOnClickListener(view -> startActivity(new Intent(this, MonthCalenderActivity.class)));
+        textViewQuote.setOnClickListener(view -> randomQuote());
+        textViewSettings.setOnClickListener(view -> startActivity(new Intent(this, SettingsActivity.class)));
     }
-    private void randomQuote(){
+
+    private void randomQuote() {
         log("...randomQuote()");
         String quote = Quotes.getRandomQuote(this);
         textViewQuote.setText(quote);
 
     }
-    private void listTables(){
+
+    private void listTables() {
         log("...listTables()");
         LocalDB db = new LocalDB(this);
         List<String> tables = db.getTableNames();
@@ -127,41 +138,42 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if( item.getItemId() == R.id.homeActivity_openDB){
+        if (item.getItemId() == R.id.homeActivity_openDB) {
             openDB();
-        }else if( item.getItemId() == R.id.homeActivity_createTableItems){
+        } else if (item.getItemId() == R.id.homeActivity_createTableItems) {
             createItemsTable();
-        }else if( item.getItemId() == R.id.homeActivity_dropTableItems){
+        } else if (item.getItemId() == R.id.homeActivity_dropTableItems) {
             deleteItemsTable();
-        }else if( item.getItemId() == R.id.homeActivity_createTableMental){
+        } else if (item.getItemId() == R.id.homeActivity_createTableMental) {
             createTableMental();
-        }else if( item.getItemId() == R.id.homeActivity_listTables){
+        } else if (item.getItemId() == R.id.homeActivity_listTables) {
             listTables();
-        }else if( item.getItemId() == R.id.homeActivity_dropTableMental){
+        } else if (item.getItemId() == R.id.homeActivity_dropTableMental) {
             dropTableMental();
-        }else if( item.getItemId() == R.id.homeActivity_resetApp){
+        } else if (item.getItemId() == R.id.homeActivity_resetApp) {
             resetApp();
-        }else if( item.getItemId() == R.id.homeActivity_createTableCategories){
+        } else if (item.getItemId() == R.id.homeActivity_createTableCategories) {
             createTableCategories();
-        }else if( item.getItemId() == R.id.homeActivity_createEconomyTables){
+        } else if (item.getItemId() == R.id.homeActivity_createEconomyTables) {
             // toggleDarkMode();
             createEconomyTables();
         }
         return true;
     }
 
-    private void openDB(){
+    private void openDB() {
         log("...openDB");
         LocalDB db = new LocalDB(this);
         db.open();
     }
-    private void deleteItemsTable(){
+
+    private void deleteItemsTable() {
         log("...deleteItemsTable()");
         LocalDB db = new LocalDB(this);
         db.executeSQL(Queeries.DROP_TABLE_ITEMS);
     }
 
-    private void changeLanguage(){
+    private void changeLanguage() {
         log("...changeLanguage()");
 /*        Locale locale = new Locale("en GB");
         Locale.setDefault(locale);
@@ -170,25 +182,29 @@ public class HomeActivity extends AppCompatActivity {
         getResources().updateConfiguration(config, getResources().getDisplayMetrics());*/
 
 
-        LocaleListCompat  localeListCompat = LocaleListCompat.forLanguageTags("en");
+        LocaleListCompat localeListCompat = LocaleListCompat.forLanguageTags("en");
         AppCompatDelegate.setApplicationLocales(localeListCompat);
     }
-    private void createItemsTable(){
+
+    private void createItemsTable() {
         log("...createItemsTable()");
         LocalDB db = new LocalDB(this);
         db.executeSQL(Queeries.CREATE_TABLE_ITEMS);
     }
-    private void createTableMental(){
+
+    private void createTableMental() {
         log("...createTableMental()");
         LocalDB db = new LocalDB(this);
         db.executeSQL(Queeries.CREATE_TABLE_MENTAL);
     }
-    private void dropTableMental(){
+
+    private void dropTableMental() {
         log("...dropTableMental()");
         LocalDB db = new LocalDB(this);
         db.executeSQL(Queeries.DROP_TABLE_MENTAL);
     }
-    private void createTableCategories(){
+
+    private void createTableCategories() {
         log("...createTableCategories()");
         LocalDB db = new LocalDB(this);
         db.executeSQL(Queeries.CREATE_TABLE_CATEGORIES);
@@ -201,14 +217,15 @@ public class HomeActivity extends AppCompatActivity {
         //changeLanguage();
     }
 
-    private void populateCategories(){
+    private void populateCategories() {
         log("...populateCategories()");
         LocalDB db = new LocalDB(this);
-        for(String category : Lucinda.CATEGORIES){
+        for (String category : Lucinda.CATEGORIES) {
             db.executeSQL(Queeries.insertCategory(category));
         }
     }
-    private void randomAffirmation(){
+
+    private void randomAffirmation() {
         log("...randomAffirmation()");
         WebWorker.requestAffirmation(affirmation -> {
             textViewQuote.setText(affirmation.getAffirmation());
@@ -220,7 +237,8 @@ public class HomeActivity extends AppCompatActivity {
         });
 
     }
-    private void resetApp(){
+
+    private void resetApp() {
         log("...resetApp()");
         try {
             lucinda.reset(this);
@@ -230,17 +248,18 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    private void testCategories(){
+    private void testCategories() {
         log("...testCategories()");
         DBAdmin.insertCategories(this);
     }
-    private void toggleDarkMode(){
+
+    private void toggleDarkMode() {
         log("...toggleDarkMode()");
         UiModeManager uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
         //uiModeManager.getCurrentModeType();
         int currentMode = uiModeManager.getNightMode();
         log("...currentMode");
-        switch (currentMode){
+        switch (currentMode) {
             case UiModeManager.MODE_NIGHT_NO:
                 log("MODE_NIGHT_NO");
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
@@ -255,8 +274,16 @@ public class HomeActivity extends AppCompatActivity {
             case UiModeManager.MODE_NIGHT_CUSTOM:
                 log("MODE_NIGHT_CUSTOM");
                 break;
-
         }
+    }
+
+    private void testMentals() {
+        log("...testMentals()");
+        List<Mental> mentals = MentalWorker.selectMentalsFromItems(LocalDate.now(), this);
+        log("number of mentals", mentals.size());
+        mentals.forEach(System.out::println);
+    }
+}
 /*        int currentNightMode = Configuration.uiMode & Configuration.UI_MODE_NIGHT_MASK;
         switch (currentNightMode) {
             case Configuration.UI_MODE_NIGHT_NO:
@@ -265,5 +292,3 @@ public class HomeActivity extends AppCompatActivity {
             case Configuration.UI_MODE_NIGHT_YES:
                 // Night mode is active, we're using dark theme
                 break;*/
-    }
-}

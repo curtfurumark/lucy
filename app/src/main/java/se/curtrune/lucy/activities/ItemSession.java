@@ -266,9 +266,13 @@ public class ItemSession extends AppCompatActivity implements
             return;
         }
         if ( VERBOSE) log("...return to calling activity: ", callingActivity.toString());
-        mental = currentItem.getMental();
-        mentalMode = MentalMode.EDIT;
+
         setUserInterface(currentItem);
+        mental = MentalWorker.getMental(currentItem, this);
+        if( mental == null){
+            Toast.makeText(this, "Mental is null", Toast.LENGTH_LONG).show();
+        }
+        setUserInterface(mental);
         currentEnergy = MentalWorker.getEnergy(LocalDate.now(), this);
         setUserInterfaceCurrentEnergy();
     }
@@ -745,8 +749,6 @@ public class ItemSession extends AppCompatActivity implements
         textViewHasChild.setText(textHasChild);
         String textState = String.format(Locale.getDefault(), "state: %s", item.getState().toString());
         textViewState.setText(textState);
-        setUserInterfaceCurrentEnergy();
-
     }
     private void setUserInterface(Notification notification){
         log("...setUserInterface(Notification) ");

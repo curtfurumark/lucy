@@ -221,6 +221,13 @@ public class Queeries {
     }
 
 
+    public static String selectMentalsFromItems(LocalDate date, State state) {
+        log("...selectMentalsFromItems(LocalDate");
+        long startOfDay = date.atStartOfDay().toEpochSecond(ZoneOffset.UTC);
+        long endOfDay = startOfDay + ( 3600 * 24);
+        return String.format(Locale.getDefault(), "SELECT mental FROM items WHERE updated >= %d AND updated <= %d  AND state = %d",
+                startOfDay, endOfDay, state.ordinal());
+    }
 }
 
 

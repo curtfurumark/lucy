@@ -72,7 +72,6 @@ public class AssetAdapter extends RecyclerView.Adapter<AssetAdapter.MyViewHolder
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
         private final TextView textView_heading;
-        //private final CheckBox checkBox_state;
         private final TextView textView_info;
 
         public MyViewHolder(@androidx.annotation.NonNull android.view.View itemView) {

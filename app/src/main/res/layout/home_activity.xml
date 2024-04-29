@@ -47,16 +47,16 @@
         android:layout_height="wrap_content"
         android:text="@string/settings"
         android:textSize="34sp"
-        app:layout_constraintBottom_toTopOf="@+id/homeActivity_today"
+        app:layout_constraintBottom_toTopOf="@+id/homeActivity_graph"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/homeActivity_calender" />
 
     <TextView
-        android:id="@+id/homeActivity_today"
+        android:id="@+id/homeActivity_graph"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="old"
+        android:text="mental graph"
         android:textSize="34sp"
         app:layout_constraintBottom_toTopOf="@id/homeActivity_statistics"
         app:layout_constraintEnd_toEndOf="parent"
@@ -72,7 +72,7 @@
         app:layout_constraintBottom_toTopOf="@id/homeActivity_quote"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/homeActivity_today" />
+        app:layout_constraintTop_toBottomOf="@+id/homeActivity_graph" />
 
     <TextView
         android:id="@+id/homeActivity_quote"

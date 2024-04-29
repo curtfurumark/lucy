@@ -43,18 +43,18 @@ public class MonthCalenderActivity extends AppCompatActivity {
         log("MonthCalenderActivity.onCreate(Bundle)");
         initComponents();
         selectedDate = LocalDate.now();
-        calenderDates = getCalenderDates();
+        calenderDates = getCalenderDates(selectedDate);
         initRecycler(calenderDates);
         initListeners();
         //setMonthView();
         //getCalenderDates();
     }
-    private List<CalenderDate> getCalenderDates(){
+    private List<CalenderDate> getCalenderDates(LocalDate date){
         log("getCalenderDate()");
         List<CalenderDate> calenderDates = new ArrayList<>();
-        YearMonth yearMonth = YearMonth.from(selectedDate);
+        YearMonth yearMonth = YearMonth.from(date);
         log("...yearMonth", yearMonth.toString());
-        LocalDate firstDateOfMonth =  selectedDate.withDayOfMonth( 1);
+        LocalDate firstDateOfMonth =  date.withDayOfMonth( 1);
         log("...firstDateOfMonth", firstDateOfMonth.toString());
         int lengthOfMonth = yearMonth.lengthOfMonth();
         log("...lengthOfMonth", lengthOfMonth);
@@ -96,16 +96,14 @@ public class MonthCalenderActivity extends AppCompatActivity {
         monthYearText = findViewById(R.id.myCalender_month);
     }
     private void initListeners(){
-
+        log("...initListeners()");
 
     }
     private void initRecycler(List<CalenderDate> calenderDates){
         log("...initRecycler()");
-        adapter = new MonthAdapter(calenderDates, new MonthAdapter.OnDateListener() {
-            @Override
-            public void onDateClick(CalenderDate calenderDate) {
-                log("onDateClick(CalenderDate)", calenderDate.getDate().toString());
-            }
+        adapter = new MonthAdapter(calenderDates, calenderDate -> {
+            log("onDateClick(CalenderDate)", calenderDate.getDate().toString());
+            Toast.makeText(this, calenderDate.toString(), Toast.LENGTH_LONG).show();
         });
 
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(), 7);
@@ -124,14 +122,15 @@ public class MonthCalenderActivity extends AppCompatActivity {
     public void nextMonthAction(View view){
         log("...nextMonthAction(View)");
         selectedDate = selectedDate.plusMonths(1);
-        //setMonthView();
+        adapter.setList(getCalenderDates(selectedDate));
+        monthYearText.setText(monthYearFromDate(selectedDate));
 
     }
     public void previousMonthAction(View view){
         log("...previousMonthAction(View)");
         selectedDate = selectedDate.minusMonths(1);
-        //setMonthView();
-
+        adapter.setList(getCalenderDates(selectedDate));
+        monthYearText.setText(monthYearFromDate(selectedDate));
     }
 /*    private void setMonthView(){
         log("...setMonthView()");

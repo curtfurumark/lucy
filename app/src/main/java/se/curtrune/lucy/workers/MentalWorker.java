@@ -11,6 +11,7 @@ import java.util.Locale;
 
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
+import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.fragments.TopTenFragment;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
@@ -110,10 +111,11 @@ public class MentalWorker {
         LocalDB db = new LocalDB(context);
         return db.selectMentals(queery);
     }
-    public List<Mental> selectMentals(Context context) {
-        log("MentalWorker.selectMentals()");
+    public static List<Mental> selectMentalsFromItems(LocalDate date, Context context) {
+        log("MentalWorker.selectMentalsFromItems()");
         LocalDB db = new LocalDB(context);
-        List<Mental> items = db.selectMentals();
+        String queery = Queeries.selectMentalsFromItems(date, State.DONE);
+        List<Mental> items = db.selectMentalsFromItem(queery);
         return items;
     }
     public static int update(Mental mental, Context context) {

@@ -154,19 +154,6 @@ public class DBAdmin {
     public static Mental getMentalFromItem(Cursor cursor) {
         if( VERBOSE) log("DBAdmin.getMentalFromItem(Cursor)");
         Mental mental = new Gson().fromJson(cursor.getString(0), Mental.class);
-/*        mental.setID(cursor.getLong(0));
-        mental.setItemID(cursor.getLong(1));
-        mental.setHeading(cursor.getString(2));
-        mental.setComment(cursor.getString(3));
-        mental.setCategory(cursor.getString(4));
-        mental.setDate(cursor.getLong(5));
-        mental.setTime(cursor.getInt(6));
-        mental.setEnergy(cursor.getInt(7));
-        mental.setMood(cursor.getInt(8));
-        mental.setAnxiety(cursor.getInt(9));
-        mental.setStress(cursor.getInt(10));
-        mental.setCreated(cursor.getLong(11));
-        mental.setUpdated(cursor.getLong(12));*/
         return mental;
     }
 

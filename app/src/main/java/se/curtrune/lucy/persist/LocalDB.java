@@ -151,29 +151,23 @@ public class LocalDB extends SQLiteOpenHelper {
         log("LocalDB.insert(Item)", item.getHeading());
         if (VERBOSE) log(item);
         db = this.getWritableDatabase();
-        //long id = db.insertOrThrow(ITEMS_TABLE, null,DBAdmin.getContentValues(item));
         long id = db.insert(ITEMS_TABLE, null, DBAdmin.getContentValues(item));
         if (id == -1) {
-            log("...return id -1, not good enough");
+            log("ERROR: return id -1, not good enough");
         } else {
             log("...item inserted with id ", id);
         }
         item.setId((int) id);
+        Mental mental = item.getMental();
+        mental.setItemID(id);
+        insert(mental);
         db.close();
         return item;
     }
-/*    public Item insertChild(Item parent, Item child){
-        log("...insertChild(Item, Item, Context");
-        if( !parent.hasChild()){
-            setItemHasChild(parent.getID(), true);
-        }
-        insert(child);
-    }*/
 
     public Mental insert(Mental mental) {
         log("LocalDB.insert(Mental)");
         db = this.getWritableDatabase();
-        //long id = db.insertOrThrow(TABLE_MENTAL, null, DBAdmin.getContentValues(mental));
         long id = db.insert(TABLE_MENTAL, null, DBAdmin.getContentValues(mental));
         if (id == -1) {
             log("ERROR, inserting mental");
@@ -205,20 +199,13 @@ public class LocalDB extends SQLiteOpenHelper {
 
     public Item insertChild(Item parent, Item child) {
         log("LocalDB.insertChild(Item, Item)");
-        log("\tparent", parent.getHeading());
-        log("\tchild", child.getHeading());
+        if(VERBOSE) log("\tparent", parent.getHeading());
+        if( VERBOSE) log("\tchild", child.getHeading());
         child.setParentId(parent.getID());
         db = this.getWritableDatabase();
-        long res = db.insert(ITEMS_TABLE, null, DBAdmin.getContentValues(child));
-        if (res == -1) {
-            log("ERROR inserting child");
-            db.close();
-            return null;
-        } else {
-            child.setId(res);
-        }
+        child = insert(child);
         if (!parent.hasChild()) {
-            log("...parent has no child");
+            log("...parent has no child, will set parent has child to true");
             setItemHasChild(parent.getID(), true);
         }
         db.close();
@@ -378,7 +365,7 @@ public class LocalDB extends SQLiteOpenHelper {
     }
 
     public List<Mental> selectMentalsFromItem(String query) {
-        log("...selectMentalsFromItem(String)", query);
+        log("LocalDB.selectMentalsFromItem(String)", query);
         List<Mental> items = new ArrayList<>();
         db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query, null);

@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
+import java.util.Locale;
 
 import se.curtrune.lucy.util.Converter;
 
@@ -218,6 +219,11 @@ public class Mental implements Listable, Serializable {
 
     public String toJson() {
         return new Gson().toJson(this);
+    }
+
+    @Override
+    public String toString() {
+        return String.format(Locale.getDefault(), "Mental{energy=%d, date: %s}", energy, LocalDate.ofEpochDay(date).toString());
     }
 }
 
