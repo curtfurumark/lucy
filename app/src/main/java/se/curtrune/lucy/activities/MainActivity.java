@@ -38,6 +38,7 @@ import se.curtrune.lucy.fragments.MentalFragment;
 import se.curtrune.lucy.fragments.ProjectsFragment;
 import se.curtrune.lucy.fragments.TodoFragment;
 import se.curtrune.lucy.util.Constants;
+import se.curtrune.lucy.workers.ItemsWorker;
 import se.curtrune.lucy.workers.MentalWorker;
 import se.curtrune.lucy.workers.PanicWorker;
 
@@ -146,7 +147,6 @@ public class MainActivity extends AppCompatActivity {
         if(fragment instanceof TodoFragment)log("TodoFragment");
         currentFragment = fragment;
         getSupportFragmentManager().beginTransaction().replace(R.id.mainActivity_fragmentContainer, currentFragment).commit();
-
     }
 
     @Override
@@ -182,10 +182,14 @@ public class MainActivity extends AppCompatActivity {
         }else if(panicAction.equals("url")){
             openWebPage("https://bongo.cat");
         }else if(panicAction.equals("panic list")){
-            Item panicRoot = PanicWorker.getPanicRoot(this);
-            Intent intent = new Intent(this, SequenceActivity.class);
-            intent.putExtra(Constants.INTENT_SEQUENCE_PARENT, panicRoot);
-            startActivity(intent);
+            Item panicRoot = ItemsWorker.getPanicRoot(this);
+            if( panicRoot == null){
+                log("ERROR...panicRoot == null");
+            }else {
+                Intent intent = new Intent(this, SequenceActivity.class);
+                intent.putExtra(Constants.INTENT_SEQUENCE_PARENT, panicRoot);
+                startActivity(intent);
+            }
         }
     }
     private void openWebPage(String url){

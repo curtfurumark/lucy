@@ -55,7 +55,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 />
-
+            <TextView
+                android:id="@+id/sequenceAdapter_estimatedEnergy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
             <TextView
                 android:id="@+id/sequenceAdapter_itemInfo"
                 android:layout_width="match_parent"

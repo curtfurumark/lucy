@@ -304,7 +304,7 @@ public class ItemsWorker {
      * @return, rows affected
      */
     public static int update(Item item, Context context) {
-        log("ItemsWorker.update(Item, Context)");
+        log("ItemsWorker.update(Item, Context)", item.getHeading());
         if(item.isTemplate() && item.isDone()){
             return updateTemplate(item, context);
         }else {

@@ -114,7 +114,7 @@ public class Item implements Serializable , Listable {
         return duration;
     }
     public int getEnergy(){
-        return energy;
+        return mental != null? mental.getEnergy():0;
     }
     public Estimate getEstimate(){
         return estimate;

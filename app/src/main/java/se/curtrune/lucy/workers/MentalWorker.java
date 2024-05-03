@@ -4,8 +4,12 @@ import static se.curtrune.lucy.util.Logger.log;
 
 import android.content.Context;
 
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
+
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -21,8 +25,11 @@ public class MentalWorker {
     private static MentalWorker instance;
     private MentalWorker(){
 
-
     }
+    public static  int calculateEnergy(List<Mental> mentals){
+        return mentals.stream().mapToInt(Mental::getEnergy).sum();
+    }
+
     public static MentalWorker getInstance() {
         if( instance == null){
             instance = new MentalWorker();
@@ -110,6 +117,19 @@ public class MentalWorker {
         String queery = Queeries.selectMentals(date, false);
         LocalDB db = new LocalDB(context);
         return db.selectMentals(queery);
+    }
+    public static DataPoint[] getMentalsAsDataPoints(LocalDate date, Context context){
+        log("MentalWorker.gettMentalAdDataPoints(LocalDate, Context)", date.toString());
+        List<Mental> mentals = getMentals(date,false, context);
+        log("...number of mentals", mentals.size());
+        DataPoint[] dataPoints = new DataPoint[mentals.size()];
+        int currentEnergy = 0;
+        for(int i = 0; i < mentals.size(); i++){
+            currentEnergy +=  mentals.get(i).getEnergy();
+            log(String.format(Locale.getDefault(), "adding point %d,%d", i, currentEnergy));
+            dataPoints[i]  = new DataPoint(i, currentEnergy);
+        }
+        return dataPoints;
     }
     public static List<Mental> selectMentalsFromItems(LocalDate date, Context context) {
         log("MentalWorker.selectMentalsFromItems()");

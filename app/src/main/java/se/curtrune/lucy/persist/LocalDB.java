@@ -159,6 +159,8 @@ public class LocalDB extends SQLiteOpenHelper {
         }
         item.setId((int) id);
         Mental mental = item.getMental();
+        mental.setHeading(item.getHeading());
+        mental.setCategory(item.getCategory());
         mental.setItemID(id);
         insert(mental);
         db.close();
@@ -432,9 +434,6 @@ public class LocalDB extends SQLiteOpenHelper {
         int rowsAffected = db.update(ITEMS_TABLE, DBAdmin.getContentValues(item), whereClause, null);
         log("...update ok: ", rowsAffected == 1);
         db.close();
-        if (item.hasMental()) {
-            update(item.getMental());
-        }
         return rowsAffected;
     }
 

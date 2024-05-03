@@ -64,11 +64,12 @@ public class ItemSession extends AppCompatActivity implements
     //comment etc
     private EditText  editTextComment;
     private EditText editTextTags;
-
     //MENTAL
-    //private ImageView imageViewMentalAction;
     private EditText editTextMentalComment;
-
+    private SeekBar seekBarAnxiety;
+    private SeekBar seekBarMood;
+    private SeekBar seekBarEnergy;
+    private SeekBar seekBarStress;
 
     //ESTIMATE
     private TextView labelEstimate;    private EditText editTextEstimateHours;
@@ -120,11 +121,7 @@ public class ItemSession extends AppCompatActivity implements
     private TextView labelReward;
     private LinearLayout layoutReward;
 
-    private SeekBar seekBarStress;
-    private SeekBar seekBarAnxiety;
-    private SeekBar seekBarMood;
-    private SeekBar seekBarEnergy;
-    //private Switch switchSaveMental;
+
     //ESTIMATE
     private ImageView imageViewEstimateAction;
     private ConstraintLayout layoutEstimate;
@@ -135,10 +132,6 @@ public class ItemSession extends AppCompatActivity implements
     private ConstraintLayout layoutComment;
     private FloatingActionButton fabAdd;
 
-    private enum MentalMode{
-        EDIT, CREATE
-    }
-    private MentalMode mentalMode = MentalMode.CREATE;
     private CallingActivity callingActivity = CallingActivity.ITEMS_ACTIVITY;
     //variables
     private Item currentItem;
@@ -147,8 +140,7 @@ public class ItemSession extends AppCompatActivity implements
     private int anxiety;
     private int mood;
     private int stress;
-    private int energy; //from seekbar
-    private int currentEnergy; //from db
+    private int energy; //seekbar
     private long duration;
 
     private final boolean VERBOSE = true;
@@ -163,7 +155,6 @@ public class ItemSession extends AppCompatActivity implements
         setTitle("item session");
         initComponents();
         initListeners();
-        //worker = ItemsWorker.getInstance();
         Intent intent = getIntent();
         kronos = Kronos.getInstance(this);
         if( intent.getBooleanExtra(Constants.INTENT_ITEM_SESSION, false)){
@@ -270,10 +261,11 @@ public class ItemSession extends AppCompatActivity implements
         setUserInterface(currentItem);
         mental = MentalWorker.getMental(currentItem, this);
         if( mental == null){
-            Toast.makeText(this, "Mental is null", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "Mental is null", Toast.LENGTH_LONG).show();
+            mental = new Mental(currentItem);
+            mental = MentalWorker.insert(mental, this);
         }
         setUserInterface(mental);
-        currentEnergy = MentalWorker.getEnergy(LocalDate.now(), this);
         setUserInterfaceCurrentEnergy();
     }
 
@@ -356,14 +348,6 @@ public class ItemSession extends AppCompatActivity implements
         labelReward = findViewById(R.id.itemSession_labelReward);
         layoutReward = findViewById(R.id.itemSession_layoutReward);
     }
-    private void initDefaults(){
-        log("...initDefaults()");
-        mood = 0;
-        anxiety = 0;
-        energy = 0;
-        stress = 0;
-
-    }
     private void initListeners(){
         log("...initListeners()");
         //imageViewMentalAction.setOnClickListener(view->mentalAction());
@@ -420,9 +404,9 @@ public class ItemSession extends AppCompatActivity implements
         seekBarEnergy.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                energy = progress - Constants.ENERGY_OFFSET;
+                int energy = progress - Constants.ENERGY_OFFSET;
                 textViewEnergy.setText(String.format(Locale.getDefault(), "%s %d", getString(R.string.energy), energy));
-                if( currentItem.hasMental()){
+                if( mental != null){
                     currentItem.getMental().setEnergy(energy);
                 }
                 setUserInterfaceCurrentEnergy();
@@ -532,7 +516,7 @@ public class ItemSession extends AppCompatActivity implements
         } else if (item.getItemId() == R.id.itemSession_addPeriod) {
             showAddPeriodDialog();
         } else if (item.getItemId() == R.id.itemSession_save) {
-            saveItem();
+            updateItem();
         } else if (item.getItemId() == R.id.itemSession_home)  {
             returnToCallingActivity();
         } else if( item.getItemId() == R.id.itemSession_addEstimate){
@@ -639,28 +623,8 @@ public class ItemSession extends AppCompatActivity implements
 
         }
     }
-    private void saveItem() {
-        log("...saveItem()");
-        if(!validateInput()){
-            return;
-        }
-        currentItem = getItem();
-        int rowsAffected = ItemsWorker.update(currentItem, this);
-        if(rowsAffected != 1){
-            Toast.makeText(this, "error updating item", Toast.LENGTH_LONG).show();
-            return;
-        }else{
-            ItemsWorker.touchParents(currentItem, this);
-        }
 
-        kronos.reset();
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra(Constants.INTENT_SHOW_CHILD_ITEMS, true);
-        Item parent = ItemsWorker.selectItem(currentItem.getParentId(), this);
-        intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, parent);
-        startActivity(intent);
 
-    }
 /*    private void saveMental(){
         log("...saveMental()");
         if( mental == null){
@@ -764,37 +728,37 @@ public class ItemSession extends AppCompatActivity implements
      */
     private void setUserInterfaceCurrentEnergy(){
         log("...setUserInterfaceCurrentEnergy()");
-        String textEnergy = String.format(Locale.getDefault(), "energy: %d", currentEnergy + energy, this);
-        int energySum = currentEnergy + energy;
-        if( energySum <= -3){
+        int previousEnergy  = MentalWorker.getEnergy(LocalDate.now(), this);
+        int estimatedCurrent = previousEnergy + seekBarEnergy.getProgress() - Constants.ENERGY_OFFSET;
+        if( estimatedCurrent <= -3){
             textViewCurrentEnergy.setTextColor(Color.parseColor("#ff0000"));
-        }else if( energySum > - 3 && energySum <= 2){
+        }else if( estimatedCurrent> - 3 && estimatedCurrent <= 2){
             textViewCurrentEnergy.setTextColor(Color.parseColor("#ffff00"));
         }else{
             textViewCurrentEnergy.setTextColor(Color.parseColor("#00ff00"));
         }
+        String textEnergy = String.format(Locale.getDefault(), "energy: %d",estimatedCurrent, this);
         textViewCurrentEnergy.setText(textEnergy);
     }
     private void setUserInterface(Mental mental){
-        log("...setUserInterface(Mental)", mentalMode.toString());
-        if( currentItem.hasMental()){
-            anxiety = Constants.ANXIETY_OFFSET + mental.getAnxiety();
-            energy =  Constants.ENERGY_OFFSET + mental.getEnergy();
-            mood =  Constants.MOOD_OFFSET + mental.getMood();
-            stress =  Constants.STRESS_OFFSET + mental.getStress();
-            seekBarAnxiety.setProgress(anxiety);
-            textViewAnxiety.setText(String.format(Locale.getDefault(),"%s %d",getString(R.string.anxiety), mental.getAnxiety() ));
-            seekBarMood.setProgress(mood);
-            textViewMood.setText(String.format(Locale.getDefault(), "%s %d",getString(R.string.mood), mental.getMood()));
-            seekBarStress.setProgress(stress);
-            textViewStress.setText(String.format(Locale.ENGLISH, "%s %d", getString(R.string.stress), mental.getStress()));
-            seekBarEnergy.setProgress(energy);
-            textViewEnergy.setText(String.format(Locale.ENGLISH, "%s %d", getString(R.string.energy), mental.getEnergy()));
-            editTextMentalComment.setText(mental.getComment());
-        }else{
-            log("ERROR, item without mental");
-            Toast.makeText(this, "item without mental", Toast.LENGTH_LONG).show();
+        log("...setUserInterface(Mental)");
+        if(mental == null){
+            log("ERROR mental is null, i surrender");
+            return;
         }
+        anxiety = Constants.ANXIETY_OFFSET + mental.getAnxiety();
+        energy =  Constants.ENERGY_OFFSET + mental.getEnergy();
+        mood =  Constants.MOOD_OFFSET + mental.getMood();
+        stress =  Constants.STRESS_OFFSET + mental.getStress();
+        seekBarAnxiety.setProgress(anxiety);
+        textViewAnxiety.setText(String.format(Locale.getDefault(),"%s %d",getString(R.string.anxiety), mental.getAnxiety() ));
+        seekBarMood.setProgress(mood);
+        textViewMood.setText(String.format(Locale.getDefault(), "%s %d",getString(R.string.mood), mental.getMood()));
+        seekBarStress.setProgress(stress);
+        textViewStress.setText(String.format(Locale.ENGLISH, "%s %d", getString(R.string.stress), mental.getStress()));
+        seekBarEnergy.setProgress(energy);
+        textViewEnergy.setText(String.format(Locale.ENGLISH, "%s %d", getString(R.string.energy), mental.getEnergy()));
+        editTextMentalComment.setText(mental.getComment());
     }
     private void setUserInterface(Repeat repeat){
         log("...setUserInterface(Repeat)");
@@ -965,6 +929,36 @@ public class ItemSession extends AppCompatActivity implements
             layoutRepeat.setVisibility(View.VISIBLE);
             //textViewEditPeriod.setVisibility(View.VISIBLE);
         }
+    }
+    /**
+     * update item and mental
+     */
+    private void updateItem() {
+        log("...updateItem()");
+        if(!validateInput()){
+            return;
+        }
+        currentItem = getItem();
+        int rowsAffected = ItemsWorker.update(currentItem, this);
+        if(rowsAffected != 1){
+            Toast.makeText(this, "error updating item", Toast.LENGTH_LONG).show();
+            return;
+        }else{
+            ItemsWorker.touchParents(currentItem, this);
+        }
+        if( mental != null) {
+            rowsAffected = MentalWorker.update(mental, this);
+            if( rowsAffected != 1){
+                log("ERROR updating mental");
+            }
+        }
+        kronos.reset();
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra(Constants.INTENT_SHOW_CHILD_ITEMS, true);
+        Item parent = ItemsWorker.selectItem(currentItem.getParentId(), this);
+        intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, parent);
+        startActivity(intent);
+
     }
 
     private boolean validateInput(){

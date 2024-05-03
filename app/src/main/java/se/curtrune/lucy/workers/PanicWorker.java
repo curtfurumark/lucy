@@ -24,15 +24,5 @@ public class PanicWorker {
         return ItemsWorker.selectChildren(741, context);
     }
 
-    /**
-     * TODO fix hardcoded panic root
-     * @param context
-     * @return panic Item
-     */
-    public static Item getPanicRoot(Context context){
-        log("...getPanicRoot()");
-        LocalDB db = new LocalDB(context);
-        return db.selectItem(741);
 
-    }
 }

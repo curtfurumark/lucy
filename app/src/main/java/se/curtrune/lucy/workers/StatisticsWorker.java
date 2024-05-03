@@ -21,5 +21,7 @@ import se.curtrune.lucy.util.Logger;
 public class StatisticsWorker {
 
 
-
+    public static void getEstimate(LocalDate currentDate, Context context) {
+        //List<Item> items = ItemsWorker.selectItems(currentDate, context);
+    }
 }

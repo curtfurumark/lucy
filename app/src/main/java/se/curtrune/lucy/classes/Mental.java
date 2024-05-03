@@ -33,9 +33,13 @@ public class Mental implements Listable, Serializable {
         created = updated = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
         date = LocalDate.now().toEpochDay();
         time = LocalTime.now().toSecondOfDay();
-
     }
-
+    public Mental(Item item){
+        this();
+        this.heading = item.getHeading();
+        this.category = item.getCategory();
+        this.itemID = item.getID();
+    }
     public Mental(Mental other) {
         this.energy = other.energy;
         this.mood = other.mood;

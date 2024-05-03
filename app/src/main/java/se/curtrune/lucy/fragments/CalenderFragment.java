@@ -43,6 +43,7 @@ import se.curtrune.lucy.dialogs.AddTemplateDialog;
 import se.curtrune.lucy.dialogs.OnNewItemCallback;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.workers.ItemsWorker;
+import se.curtrune.lucy.workers.StatisticsWorker;
 import se.curtrune.lucy.workers.WebWorker;
 
 /**
@@ -124,7 +125,13 @@ public class CalenderFragment extends Fragment {
         initListeners();
         initSwipe();
         setUserInterface(currentDate);
+        calculateEstimate();
         return view;
+    }
+    private void calculateEstimate(){
+        log("...calculateEstimate()");
+        StatisticsWorker.getEstimate(currentDate, getContext());
+
     }
     private String getMonthYear(LocalDate date){
         log("...getMonthYear(LocalDate)");

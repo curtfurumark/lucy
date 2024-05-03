@@ -26,6 +26,7 @@ public class DurationDialog extends BottomSheetDialogFragment {
     private EditText editTextSeconds;
     private Button buttonSave;
     private Button buttonDismiss;
+    public static boolean VERBOSE = false;
 
     public interface Callback{
         void onDurationDialog(Duration duration);
@@ -36,21 +37,22 @@ public class DurationDialog extends BottomSheetDialogFragment {
         CREATE, EDIT
     }
     public DurationDialog(){
-        log("DurationDialog constructor");
+
+        if( VERBOSE) log("DurationDialog constructor");
     }
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        log("AddItemDialog.onCreateView(...)");
+        log("DurationDialog.onCreateView(...)");
         View view = inflater.inflate(R.layout.duration_dialog, container, false);
         initComponents(view);
         initListeners();
         return view;
     }
     private Duration getDuration(){
-        log("...getDuration()");
+        if( VERBOSE) log("...getDuration()");
         long hours = Integer.parseInt(editTextHours.getText().toString());
         long minutes = Integer.parseInt(editTextMinutes.getText().toString());
         long seconds = Integer.parseInt(editTextSeconds.getText().toString());
@@ -61,23 +63,22 @@ public class DurationDialog extends BottomSheetDialogFragment {
 
     }
     private void initComponents(View view){
-        log("...initComponents(View)");
+        if( VERBOSE) log("...initComponents(View)");
         editTextHours = view.findViewById(R.id.durationDialog_hours);
         editTextMinutes = view.findViewById(R.id.durationDialog_minutes);
         editTextSeconds = view.findViewById(R.id.durationDialog_seconds);
         buttonSave = view.findViewById(R.id.durationDialog_save);
         buttonDismiss = view.findViewById(R.id.durationDialog_dismiss);
-        log("...buttonDismiss is null", buttonDismiss == null ? "true": "false");
+        //log("...buttonDismiss is null", buttonDismiss == null ? "true": "false");
     }
     private void initListeners(){
-        log("...initListeners()");
+        if( VERBOSE) log("...initListeners()");
         buttonSave.setOnClickListener(view1 -> {
             Duration duration = getDuration();
             listener.onDurationDialog(duration);
             dismiss();
         });
         buttonDismiss.setOnClickListener(view->dismiss());
-
     }
     @Override
     public void onAttach(@NonNull Context context) {
