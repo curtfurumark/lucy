@@ -43,7 +43,7 @@ public class MentalWorker {
      * @return
      */
     public static long getCurrentEnergy(Context context) {
-        log("StatisticsWorker.getCurrentEnergy(Context)");
+        log("MentalWorker.getCurrentEnergy(Context)");
         String query = "SELECT * FROM mental ORDER BY updated DESC LIMIT 10";
         LocalDB db = new LocalDB(context);
         List<Mental> items = db.selectMentals(query);
@@ -110,7 +110,7 @@ public class MentalWorker {
     }
 
     public static List<Mental> getMentals(LocalDate date, boolean includeTemplates, Context context) {
-        log("StatisticsWorker.getMentals(LocalDate)", date.toString());
+        log("MentalWorker.getMentals(LocalDate)", date.toString());
         if( context == null){
             log("...CONTEXT IS NULL, getMentals");
         }
@@ -131,13 +131,13 @@ public class MentalWorker {
         }
         return dataPoints;
     }
-    public static List<Mental> selectMentalsFromItems(LocalDate date, Context context) {
+/*    public static List<Mental> selectMentalsFromItems(LocalDate date, Context context) {
         log("MentalWorker.selectMentalsFromItems()");
         LocalDB db = new LocalDB(context);
         String queery = Queeries.selectMentalsFromItems(date, State.DONE);
         List<Mental> items = db.selectMentalsFromItem(queery);
         return items;
-    }
+    }*/
     public static int update(Mental mental, Context context) {
         log("MentalWorker.update(Mental, Context)");
         LocalDB db = new LocalDB(context);

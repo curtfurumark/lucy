@@ -41,7 +41,7 @@ import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.classes.Reward;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
-import se.curtrune.lucy.dialogs.AddEstimateDialog;
+import se.curtrune.lucy.dialogs.EstimateDialog;
 import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.dialogs.AddPeriodDialog;
 import se.curtrune.lucy.dialogs.DurationDialog;
@@ -53,6 +53,7 @@ import se.curtrune.lucy.util.ItemStack;
 import se.curtrune.lucy.util.Kronos;
 import se.curtrune.lucy.workers.ItemsWorker;
 import se.curtrune.lucy.workers.MentalWorker;
+import se.curtrune.lucy.workers.StatisticsWorker;
 
 
 public class ItemSession extends AppCompatActivity implements
@@ -132,7 +133,7 @@ public class ItemSession extends AppCompatActivity implements
     private ConstraintLayout layoutComment;
     private FloatingActionButton fabAdd;
 
-    private CallingActivity callingActivity = CallingActivity.ITEMS_ACTIVITY;
+    private CallingActivity callingActivity = CallingActivity.CALENDER_FRAGMENT;
     //variables
     private Item currentItem;
     //MENTAL STUFF
@@ -141,9 +142,10 @@ public class ItemSession extends AppCompatActivity implements
     private int mood;
     private int stress;
     private int energy; //seekbar
+    private boolean itemIsDone= false;
     private long duration;
 
-    private final boolean VERBOSE = true;
+    private final boolean VERBOSE = false;
 
     private Kronos kronos;
 
@@ -194,6 +196,13 @@ public class ItemSession extends AppCompatActivity implements
         }
 
     }
+    private Estimate getEstimate(){
+        log("...getEstimate()");
+        Estimate estimate = new Estimate();
+        estimate.setDuration(getEstimatedDuration());
+        estimate.setEnergy(getEstimatedEnergy());
+        return estimate;
+    }
 
     private long getEstimatedDuration(){
         log("...getEstimatedDuration()");
@@ -203,7 +212,10 @@ public class ItemSession extends AppCompatActivity implements
         int duration = (hours * 3600) + (minutes * 60);
         log("...estimated duration", duration);
         return duration;
-
+    }
+    private int getEstimatedEnergy(){
+        //TODO, estimated energy
+        return 0;
     }
 
     private Item getItem(){
@@ -215,27 +227,12 @@ public class ItemSession extends AppCompatActivity implements
         currentItem.setTags(editTextTags.getText().toString());
         currentItem.setIsTemplate(checkBoxTemplate.isChecked());
         currentItem.setState(checkBoxDone.isChecked() ? State.DONE: State.TODO);
-        if( currentItem.hasMental()){
-            currentItem.getMental().setComment(editTextMentalComment.getText().toString());
-        }
+        itemIsDone = checkBoxDone.isChecked();
         currentItem.setType(checkBoxAppointment.isChecked()? Type.APPOINTMENT: Type.NODE);
+        currentItem.setEstimate(getEstimate());
         return currentItem;
     }
-    private Mental getMental(){
-        log("...getMental()");
-        if( mental == null){
-            mental = new Mental();
-        }
-        mental.setEnergy(seekBarEnergy.getProgress() - Constants.ENERGY_OFFSET);
-        mental.setMood(seekBarMood.getProgress() - Constants.MOOD_OFFSET);
-        mental.setAnxiety(seekBarAnxiety.getProgress() - Constants.ANXIETY_OFFSET);
-        mental.setStress(seekBarStress.getProgress() - Constants.STRESS_OFFSET);
-        mental.setComment(editTextMentalComment.getText().toString());
-        mental.setHeading(currentItem.getHeading());
-        mental.setCategory(currentItem.getCategory());
-        mental.setItemID(currentItem.getID());
-        return mental;
-    }
+
     private void handleItemSession(Intent intent){
         log("\thandleItemSession(Intent)");
         if( intent.getBooleanExtra(Constants.CURRENT_ITEM_IS_IN_STACK, false)){
@@ -261,7 +258,7 @@ public class ItemSession extends AppCompatActivity implements
         setUserInterface(currentItem);
         mental = MentalWorker.getMental(currentItem, this);
         if( mental == null){
-            //Toast.makeText(this, "Mental is null", Toast.LENGTH_LONG).show();
+            log("...no mental associated with currentItem, creating a new one");
             mental = new Mental(currentItem);
             mental = MentalWorker.insert(mental, this);
         }
@@ -270,7 +267,7 @@ public class ItemSession extends AppCompatActivity implements
     }
 
     private void initComponents(){
-        log("...initComponents()");
+        if( VERBOSE) log("...initComponents()");
         textViewCurrentEnergy = findViewById(R.id.itemSession_currentEnergy);
         buttonTimer = findViewById(R.id.itemSession_buttonTimer);
         checkBoxDone = findViewById(R.id.itemSession_checkBoxDone);
@@ -349,8 +346,7 @@ public class ItemSession extends AppCompatActivity implements
         layoutReward = findViewById(R.id.itemSession_layoutReward);
     }
     private void initListeners(){
-        log("...initListeners()");
-        //imageViewMentalAction.setOnClickListener(view->mentalAction());
+        if( VERBOSE) log("...initListeners()");
         imageViewEstimateAction.setOnClickListener(view->estimateAction());
         imageViewRepeatAction.setOnClickListener(view->repeatAction());
         textViewTargetDate.setOnClickListener(view->showDateDialog());
@@ -407,7 +403,7 @@ public class ItemSession extends AppCompatActivity implements
                 int energy = progress - Constants.ENERGY_OFFSET;
                 textViewEnergy.setText(String.format(Locale.getDefault(), "%s %d", getString(R.string.energy), energy));
                 if( mental != null){
-                    currentItem.getMental().setEnergy(energy);
+                    mental.setEnergy(energy);
                 }
                 setUserInterfaceCurrentEnergy();
             }
@@ -427,8 +423,8 @@ public class ItemSession extends AppCompatActivity implements
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 stress = progress - Constants.STRESS_OFFSET;
                 textViewStress.setText(String.format(Locale.getDefault(), "%s %d", getString(R.string.stress),stress));
-                if( currentItem.hasMental()){
-                    currentItem.getMental().setStress(stress);
+                if( mental != null){
+                    mental.setStress(stress);
                 }
             }
 
@@ -447,8 +443,8 @@ public class ItemSession extends AppCompatActivity implements
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 anxiety = progress - Constants.ANXIETY_OFFSET;
                 textViewAnxiety.setText(String.format(Locale.getDefault(), "%s %d", getString(R.string.anxiety), anxiety));
-                if( currentItem.hasMental()){
-                    currentItem.getMental().setAnxiety(anxiety);
+                if( mental != null){
+                    mental.setAnxiety(anxiety);
                 }
             }
 
@@ -467,8 +463,8 @@ public class ItemSession extends AppCompatActivity implements
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 mood = progress - Constants.MOOD_OFFSET;
                 textViewMood.setText(String.format(Locale.getDefault(), "%s %d",getString(R.string.mood), mood));
-                if( currentItem.hasMental()){
-                    currentItem.getMental().setMood(mood);
+                if( mental != null){
+                    mental.setMood(mood);
                 }
             }
 
@@ -516,7 +512,7 @@ public class ItemSession extends AppCompatActivity implements
         } else if (item.getItemId() == R.id.itemSession_addPeriod) {
             showAddPeriodDialog();
         } else if (item.getItemId() == R.id.itemSession_save) {
-            updateItem();
+            update();
         } else if (item.getItemId() == R.id.itemSession_home)  {
             returnToCallingActivity();
         } else if( item.getItemId() == R.id.itemSession_addEstimate){
@@ -581,9 +577,6 @@ public class ItemSession extends AppCompatActivity implements
     private void returnToCallingActivity(){
         log("...returnToCallingActivity()", callingActivity.toString());
         switch (callingActivity){
-            case ITEMS_ACTIVITY:
-                Toast.makeText(this, "no more items activity", Toast.LENGTH_LONG).show();
-                break;
             case STATISTICS_ACTIVITY:
                 log("return to statistics activity");
                 Intent statsIntent = new Intent(this, StatisticsMain.class);
@@ -591,13 +584,11 @@ public class ItemSession extends AppCompatActivity implements
                 break;
             case APPOINTMENTS_FRAGMENT:
             case CALENDER_FRAGMENT:
+            case PROJECTS_FRAGMENT:
+            case TODO_FRAGMENT:
+            case ENCHILADA_FRAGMENT:
                 Intent mainIntent = new Intent(this, MainActivity.class);
                 startActivity(mainIntent);
-                break;
-            case ENCHILADA_FRAGMENT:
-                Intent intent = new Intent(this, MainActivity.class);
-                intent.putExtra(Constants.INTENT_SHOW_FRAGMENT, CallingActivity.ENCHILADA_FRAGMENT);
-                startActivity(intent);
                 break;
             case SEQUENCE_ACTIVITY:
                 Intent intentSequence = new Intent(this, SequenceActivity.class);
@@ -608,7 +599,7 @@ public class ItemSession extends AppCompatActivity implements
         }
     }
     private void setButtonText() {
-        if(VERBOSE) log("MusicSession.setButtonText");
+        if(VERBOSE) log("...setButtonText");
         Kronos.State state = kronos.getState();
         switch (state){
             case RUNNING:
@@ -624,23 +615,6 @@ public class ItemSession extends AppCompatActivity implements
         }
     }
 
-
-/*    private void saveMental(){
-        log("...saveMental()");
-        if( mental == null){
-            log("...mental == null");
-            mentalMode = MentalMode.CREATE;
-        }
-        mental = getMental();
-        if( mentalMode.equals(MentalMode.CREATE)){
-            mental = MentalWorker.insert(mental, this);
-        }else {
-            int rowsAffected = MentalWorker.update(mental, this);
-            if (rowsAffected != 1) {
-                Toast.makeText(this, "error updating mental", Toast.LENGTH_LONG).show();
-            }
-        }
-    }*/
     private void setUserInterface(Estimate estimate){
         log("...setUserInterface(Estimate)");
         imageViewEstimateAction.setImageDrawable(getDrawable(R.drawable.baseline_delete_24));
@@ -651,12 +625,12 @@ public class ItemSession extends AppCompatActivity implements
     }
 
     private void setUserInterface(Item item){
-        log("...setUserInterface(Item item)");
+        log("...setUserInterface(Item item)", item.getHeading());
         if( item == null){
             log("VERY UNEXPECTED ERROR, set userInterface(Item) called with item == null");
             return;
         }
-        if( VERBOSE) log(item);
+        //if( VERBOSE) log(item);
         textViewDuration.setText(Converter.formatSecondsWithHours(item.getDuration()));
         editTextHeading.setText(item.getHeading());
         editTextComment.setText(item.getComment());
@@ -670,9 +644,6 @@ public class ItemSession extends AppCompatActivity implements
         if( item.getDuration() > 0){
             buttonTimer.setText(getString(R.string.ui_resume));
         }
-        if( item.hasEstimate()){
-            setUserInterface(item.getEstimate());
-        }
         if( item.hasPeriod()){
             setUserInterface(item.getPeriod());
         }else{
@@ -682,15 +653,20 @@ public class ItemSession extends AppCompatActivity implements
         if(item.hasNotification()){
             setUserInterface(currentItem.getNotification());
         }
-        if( item.hasEstimate()){
+        if( item.isTemplate()){
+            log("...item is template");
+            setUserInterface(StatisticsWorker.getEstimate(item, this));
+        }else{
             setUserInterface(item.getEstimate());
+            log("...will calculate estimate");
+
         }
         if( item.hasReward()){
             setUserInterface(item.getReward());
         }
-        if( item.hasMental()){
+/*        if( item.hasMental()){
             setUserInterface(item.getMental());
-        }
+        }*/
 
         checkBoxTemplate.setChecked(item.isTemplate());
         String textTags = item.hasTags() ? item.getTags(): "no tags";
@@ -817,12 +793,13 @@ public class ItemSession extends AppCompatActivity implements
 
     private void showEstimateDialog(){
         log("...showEstimateDialog()");
-        AddEstimateDialog dialog = new AddEstimateDialog();
+        EstimateDialog dialog = new EstimateDialog();
         dialog.setCallback((estimate, mode) -> {
-            log("...onEstimate(Estimate)");
+            log("...onEstimate(Estimate)", mode.toString());
+            log(estimate);
             currentItem.setEstimate(estimate);
             int rowsAffected = ItemsWorker.update(currentItem, this);
-            log("...rowsAffected", rowsAffected);
+            //log("...rowsAffected", rowsAffected);
             if( rowsAffected != 1){
                 Toast.makeText(this, "error updating item", Toast.LENGTH_LONG).show();
             }
@@ -930,6 +907,13 @@ public class ItemSession extends AppCompatActivity implements
             //textViewEditPeriod.setVisibility(View.VISIBLE);
         }
     }
+    private void update(){
+        log("...update()");
+        updateItem();
+        updateMental();
+        kronos.reset();
+
+    }
     /**
      * update item and mental
      */
@@ -946,19 +930,32 @@ public class ItemSession extends AppCompatActivity implements
         }else{
             ItemsWorker.touchParents(currentItem, this);
         }
-        if( mental != null) {
-            rowsAffected = MentalWorker.update(mental, this);
-            if( rowsAffected != 1){
-                log("ERROR updating mental");
-            }
-        }
         kronos.reset();
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(Constants.INTENT_SHOW_CHILD_ITEMS, true);
         Item parent = ItemsWorker.selectItem(currentItem.getParentId(), this);
         intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, parent);
         startActivity(intent);
-
+    }
+    private void updateMental(){
+        log("...updateMental()");
+        if(mental == null){
+            log("ERROR mental is null, i surrender");
+            return;
+        }
+        if( currentItem.isTemplate() && itemIsDone) {
+            log("...current item is template and done, will spawn a mental child");
+            Mental tmp = new Mental(mental);
+            tmp.setDate(LocalDate.now());
+            tmp.setTime(LocalTime.now());
+            tmp = MentalWorker.insert(tmp, this);
+        }else{
+            log("...will simply update mental");
+            int rowsAffected = MentalWorker.update(mental, this);
+            if( rowsAffected != 1){
+                log("ERROR updating mental");
+            }
+        }
     }
 
     private boolean validateInput(){

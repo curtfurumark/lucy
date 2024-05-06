@@ -44,13 +44,13 @@ public class MentalFragment2 extends Fragment implements MentalAdapter.Callback 
     private MentalAdapter adapter;
     private TextView textViewMentalLabel;
     private TextView textViewMentalTotal;
-    private TextView textViewFirstDate;
-    private TextView textViewLastDate;
+    private TextView textViewDate;
+    //private TextView textViewLastDate;
     private FloatingActionButton buttonAddMental;
     private List<Mental> mentals = new ArrayList<>();
 
-    private LocalDate firstDate;
-    private LocalDate lastDate;
+    private LocalDate date;
+    //private LocalDate lastDate;
     private MentalStatistics mentalStatistics;
     private MentalAdapter.Mode mode;
     @Override
@@ -61,8 +61,8 @@ public class MentalFragment2 extends Fragment implements MentalAdapter.Callback 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.mental_fragment, container, false);
-        log("MentalFragment.onCreateView(...)");
+        View view = inflater.inflate(R.layout.mental_fragment2, container, false);
+        log("MentalFragment2.onCreateView(...)");
         initComponents(view);
         initRecycler();
         initListeners();
@@ -103,8 +103,8 @@ public class MentalFragment2 extends Fragment implements MentalAdapter.Callback 
         textViewMentalLabel = view.findViewById(R.id.mentalFragment_mentalLabel);
         textViewMentalTotal = view.findViewById(R.id.mentalFragment__mentalTotal);
         buttonAddMental = view.findViewById(R.id.mentalFragment_addMentalButton);
-        textViewFirstDate = view.findViewById(R.id.mentalFragment_firstDate);
-        textViewLastDate = view.findViewById(R.id.mentalFragment_lastDate);
+        textViewDate = view.findViewById(R.id.mentalFragment_firstDate);
+        //textViewLastDate = view.findViewById(R.id.mentalFragment_lastDate);
     }
     private void initRecycler(){
         log("...initRecycler()");
@@ -133,8 +133,8 @@ public class MentalFragment2 extends Fragment implements MentalAdapter.Callback 
             mode = MentalAdapter.Mode.STRESS;
             updateUserInterface();
         });
-        textViewFirstDate.setOnClickListener(view->showDateDialog(true));
-        textViewLastDate.setOnClickListener(view->showDateDialog(false));
+        textViewDate.setOnClickListener(view->showDateDialog(true));
+        //textViewLastDate.setOnClickListener(view->showDateDialog(false));
         buttonAddMental.setOnClickListener(view->showMentalDialog());
         editTextSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -156,9 +156,9 @@ public class MentalFragment2 extends Fragment implements MentalAdapter.Callback 
     }
     private void initStuff(){
         log("...initStuff()");
-        lastDate = LocalDate.now();
-        firstDate = lastDate.minusDays(7);
-        mentalStatistics = new MentalStatistics(firstDate, lastDate, getContext());
+        date = LocalDate.now();
+        //firstDate = lastDate.minusDays(7);
+        mentalStatistics = new MentalStatistics(date, date, getContext());
         mentals = mentalStatistics.getMentalList();
         mode = MentalAdapter.Mode.ENERGY;
         radioButtonEnergy.setChecked(true);
@@ -198,8 +198,6 @@ public class MentalFragment2 extends Fragment implements MentalAdapter.Callback 
     @Override
     public void onItemLongClick(Mental item) {
         log("...onItemLongClick(Mental)");
-
-        log("...after show dialog");
         log(item);
     }
     private void showDateDialog(boolean setFirstDate){
@@ -207,15 +205,12 @@ public class MentalFragment2 extends Fragment implements MentalAdapter.Callback 
         DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext());
         datePickerDialog.setOnDateSetListener((view, year, month, dayOfMonth) ->
         {
-            log("...onDateSet()");
-            if( setFirstDate) {
-                firstDate = LocalDate.of(year, month + 1, dayOfMonth);
-            }else{
-                lastDate = LocalDate.of(year, month +1, dayOfMonth);
-            }
+
+            date = LocalDate.of(year, month + 1, dayOfMonth);
+            log("...onDateSet()", date.toString());
+            updateStatistics();
         });
         datePickerDialog.show();
-        updateStatistics();
     }
     private void showMentalDialog(){
         log("...showMentalDialog()");
@@ -265,8 +260,8 @@ public class MentalFragment2 extends Fragment implements MentalAdapter.Callback 
         adapter.show(mode);
         textViewMentalLabel.setText(mode.toString());
         textViewMentalTotal.setText(String.valueOf(total));
-        textViewLastDate.setText(lastDate.toString());
-        textViewFirstDate.setText(firstDate.toString());
+        textViewDate.setText(date.toString());
+        //textViewFirstDate.setText(firstDate.toString());
 
     }
 /*    @Override
@@ -274,9 +269,11 @@ public class MentalFragment2 extends Fragment implements MentalAdapter.Callback 
         log("MentalFragment.onMental, MentalDialog.Mode");
     }*/
     private void updateStatistics(){
-        log("...updateStatistics()");
-        mentalStatistics = new MentalStatistics(firstDate, lastDate, getContext());
+        log("...updateStatistics()", date.toString());
+        mentalStatistics = new MentalStatistics(date, date, getContext());
         mentals = mentalStatistics.getMentalList();
+        log("...number of mentals", mentals.size());
+        adapter.setList(mentals);
         updateUserInterface();
     }
 

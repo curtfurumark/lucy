@@ -1,5 +1,8 @@
 package se.curtrune.lucy.classes.calender;
 
+import androidx.annotation.NonNull;
+
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
@@ -23,6 +26,7 @@ public class CalenderDate {
         this.items = items;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return String.format(Locale.getDefault(), "%s, %d events", date.toString(), items.size());
@@ -30,5 +34,9 @@ public class CalenderDate {
 
     public boolean hasEvents() {
         return items.size() > 0;
+    }
+    public DayOfWeek getFirstDayOfMonth(){
+        LocalDate firstDate = date.withDayOfMonth(1);
+        return firstDate.getDayOfWeek();
     }
 }

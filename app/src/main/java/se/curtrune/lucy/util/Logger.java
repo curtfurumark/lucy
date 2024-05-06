@@ -64,10 +64,7 @@ public class Logger {
         if( item.hasPeriod()){
             log("\t\trepeat.toString", item.getPeriod().toString());
         }
-        log("\thas mental", item.hasMental());
-        if( item.hasMental()){
-            log("\tmental to json", item.getMental().toJson());
-        }
+        //log("\thas mental", item.hasMental());
         log("\thas notification", item.hasNotification());
     }
     public static void log(Mental mental){

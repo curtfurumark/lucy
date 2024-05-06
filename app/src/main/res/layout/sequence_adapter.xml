@@ -19,74 +19,84 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:orientation="vertical"
             android:layout_height="match_parent">
-
-            <TextView
-                android:id="@+id/sequenceAdapter_targetTime"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/time"
-                android:textSize="34sp"
-                android:textStyle="bold" />
-            <TextView
-                android:id="@+id/sequenceAdapter_itemHeading"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/heading"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/sequenceAdapter_itemState"
-                app:layout_constraintTop_toTopOf="parent" />
-
             <CheckBox
                 android:id="@+id/sequenceAdapter_itemState"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/done"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/sequenceAdapter_targetTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/time"
+                android:textSize="34sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/sequenceAdapter_itemState"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/sequenceAdapter_itemHeading"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/heading"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/sequenceAdapter_itemState" />
 
             <TextView
                 android:id="@+id/sequenceAdapter_estimatedDuration"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                />
+                android:layout_marginTop="8dp"
+                android:text="estimated duration"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/sequenceAdapter_itemHeading" />
+
             <TextView
                 android:id="@+id/sequenceAdapter_estimatedEnergy"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                />
+                android:layout_marginTop="8dp"
+                android:text="estimated energy"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/sequenceAdapter_estimatedDuration" />
+
             <TextView
                 android:id="@+id/sequenceAdapter_itemInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="@string/info"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/sequenceAdapter_itemHeading"
-                app:layout_constraintTop_toBottomOf="@id/sequenceAdapter_itemHeading" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/sequenceAdapter_estimatedEnergy" />
             <ImageView
                 android:id="@+id/sequenceAdapter_clock"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_marginEnd="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/sequenceAdapter_itemInfo"
+                app:layout_constraintStart_toStartOf="parent"
                 app:srcCompat="@drawable/baseline_access_time_24" />
             <TextView
                 android:id="@+id/sequenceAdapter_edit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/sequenceAdapter_clock"
+                app:layout_constraintStart_toStartOf="parent"
                 android:text="edit"
                 android:textSize="34sp"/>
 
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
 

@@ -97,11 +97,11 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
                 callback.onCheckboxClicked(items.get(getAdapterPosition()), checkBox_state.isChecked());});
             layout = itemView.findViewById(R.id.calenderAdapter_mainLayout);
             layout.setOnClickListener(view -> {
-                log("...layout onClick");
+                //log("...layout onClick");
                 callback.onItemClick(items.get(getAdapterPosition()));
             });
             layout.setOnLongClickListener(e->{
-                log("...onLongClick");
+                //log("...onLongClick");
                 callback.onLongClick(items.get((getAdapterPosition())));
                 return true;
             });

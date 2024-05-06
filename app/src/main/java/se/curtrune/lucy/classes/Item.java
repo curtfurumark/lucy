@@ -62,17 +62,26 @@ public class Item implements Serializable , Listable {
         this.target_time =0;
         this.target_date = 0;
         this.duration = 0;
-        //this.days = 0;
         category = heading = comment = description = tags = "";
-        mental = new Mental();
         state = State.TODO.ordinal();
         type = Type.NODE.ordinal();
         has_child = 0;
         children = new ArrayList<>();
+        estimate = new Estimate();
     }
     public Item(String heading){
         this();
         this.heading = heading;
+    }
+    public Item(Item item){
+        this();
+        this.type = item.getType().ordinal();
+        this.heading = item.getHeading();
+        this.duration = item.getDuration();
+        this.category = item.getCategory();
+        this.tags = item.getTags();
+        this.target_time = LocalTime.now().toSecondOfDay();
+        this.target_date = LocalDate.now().toEpochDay();
     }
     public void addChild(Item item){
         children.add(0, item);
@@ -147,9 +156,9 @@ public class Item implements Serializable , Listable {
         }
         return 0;
     }
-    public Mental getMental(){
+    /*public Mental getMental(){
         return mental;
-    }
+    }*/
     public Notification getNotification(){
         return this.notification;
     }
@@ -212,7 +221,7 @@ public class Item implements Serializable , Listable {
     public boolean hasPeriod(){
         return repeat != null;
     }
-    public boolean hasMental() {return mental != null;}
+    //public boolean hasMental() {return mental != null;}
     public boolean hasNotification(){return notification != null;}
     public boolean hasReward(){return reward != null;}
     public boolean hasTags(){
@@ -290,11 +299,9 @@ public class Item implements Serializable , Listable {
         duration  = now.toEpochSecond(ZoneOffset.UTC) - updated;
     }
     public void setEstimate(Estimate estimate){
-        //log("Item.setEstimate(Estimate)");
         this.estimate = estimate;
     }
     public void setEstimate(String json){
-        //log("Item.setEstimate(String)", json);
         if( json != null){
             this.estimate = new Gson().fromJson(json, Estimate.class);
         }
@@ -306,6 +313,7 @@ public class Item implements Serializable , Listable {
     public void setMental(Mental mental){
         this.mental = mental;
     }
+    /*
     public void setMentalJson(String json){
         if( json == null || json.isEmpty()){
             log("ERROR, setMentalJson, json is null or empty");
@@ -314,7 +322,7 @@ public class Item implements Serializable , Listable {
             log("...mental json", json);
         }
         this.mental = new Gson().fromJson(json, Mental.class);
-    }
+    }*/
     public void setNotification(Notification notification){
         this.notification = notification;
     }

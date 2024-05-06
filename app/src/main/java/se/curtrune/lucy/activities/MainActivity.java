@@ -35,6 +35,7 @@ import se.curtrune.lucy.fragments.AppointmentsFragment;
 import se.curtrune.lucy.fragments.CalenderFragment;
 import se.curtrune.lucy.fragments.EnchildaFragment;
 import se.curtrune.lucy.fragments.MentalFragment;
+import se.curtrune.lucy.fragments.MentalFragment2;
 import se.curtrune.lucy.fragments.ProjectsFragment;
 import se.curtrune.lucy.fragments.TodoFragment;
 import se.curtrune.lucy.util.Constants;
@@ -236,7 +237,7 @@ public class MainActivity extends AppCompatActivity {
     }
     private void showMentalDay(){
         log("...showMentalDay");
-        navigate(new MentalFragment());
+        navigate(new MentalFragment2());
     }
 
 }

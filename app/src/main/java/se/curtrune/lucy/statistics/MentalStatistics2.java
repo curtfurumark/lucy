@@ -35,10 +35,10 @@ public class MentalStatistics2 {
     }
 
     private void init(Context context){
-        log("MentalStatistics.init()");
-        LocalDB db = new LocalDB(context);
-        String queery = Queeries.selectMentalsFromItem(firstDate, lastDate);
-        filtered = mentals = db.selectMentalsFromItem(queery);
+        log("MentalStatistics2.init()");
+//        LocalDB db = new LocalDB(context);
+//        String queery = Queeries.selectMentalsFromItem(firstDate, lastDate);
+//        filtered = mentals = db.selectMentalsFromItem(queery);
     }
     public List<Mental> filter(String str){
         filtered = mentals.stream().filter(mental -> mental.contains(str)).collect(Collectors.toList());

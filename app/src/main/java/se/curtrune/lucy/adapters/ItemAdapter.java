@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -45,6 +46,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
     private Callback callback;
 
     public ItemAdapter(List<Item> items, Callback callback) {
+        if( items == null){
+            log("...ItemAdapter called with null list, creating and empty list");
+            items = new ArrayList<>();
+        }
         if( VERBOSE) log("ItemAdapter(List<Item>, Callback) items size", items.size());
         this.items = items;
         this.callback = callback;

@@ -158,11 +158,11 @@ public class LocalDB extends SQLiteOpenHelper {
             log("...item inserted with id ", id);
         }
         item.setId((int) id);
-        Mental mental = item.getMental();
+/*        Mental mental = item.getMental();
         mental.setHeading(item.getHeading());
         mental.setCategory(item.getCategory());
         mental.setItemID(id);
-        insert(mental);
+        insert(mental);*/
         db.close();
         return item;
     }
@@ -251,6 +251,11 @@ public class LocalDB extends SQLiteOpenHelper {
         return selectItems(Queeries.selectItems(date));
     }
 
+    /**
+     * this is the one, that actually gets a list of items
+     * @param query, the query to be executed
+     * @return a list of items, matched by the query
+     */
     public List<Item> selectItems(String query) {
         log("LocalDB.selectItems(String query)", query);
         db = this.getReadableDatabase();
@@ -259,6 +264,7 @@ public class LocalDB extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Item item = DBAdmin.getItem(cursor);
+                item.setMental(selectMental(Queeries.selectMental(item)));
                 items.add(item);
             } while (cursor.moveToNext());
         }
@@ -352,7 +358,7 @@ public class LocalDB extends SQLiteOpenHelper {
     }
 
     public List<Mental> selectMentals(String query) {
-        log("...selectMentals(String)", query);
+        if( VERBOSE) log("LocalDB.selectMentals(String)", query);
         List<Mental> items = new ArrayList<>();
         db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query, null);
@@ -365,7 +371,7 @@ public class LocalDB extends SQLiteOpenHelper {
         cursor.close();
         return items;
     }
-
+/*
     public List<Mental> selectMentalsFromItem(String query) {
         log("LocalDB.selectMentalsFromItem(String)", query);
         List<Mental> items = new ArrayList<>();
@@ -379,7 +385,7 @@ public class LocalDB extends SQLiteOpenHelper {
         db.close();
         cursor.close();
         return items;
-    }
+    }*/
 
     /**
      * @param id, of the item which to set field hasChild

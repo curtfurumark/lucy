@@ -64,9 +64,9 @@ public class SequenceActivity extends AppCompatActivity implements SequenceAdapt
         }else{
             parentItem = (Item) intent.getSerializableExtra(Constants.INTENT_SEQUENCE_PARENT);
             if( parentItem == null){
-                log("...sorry but parentItem is null, i surrender");
+                log("ERROR iam deeply sorry but parentItem is null, i surrender");
                 Toast.makeText(this, "no parentItem", Toast.LENGTH_LONG).show();
-                //return;
+                return;
             }
         }
         initComponents();
@@ -224,16 +224,12 @@ public class SequenceActivity extends AppCompatActivity implements SequenceAdapt
     @Override
     public void onCheckboxClicked(Item item, boolean checked) {
         log("...onCheckboxClicked(Item, boolean)", checked);
-        if( checked){
-            currentItem.setState(State.DONE);
-            int rowsAffected = ItemsWorker.update(item, this);
-            if( rowsAffected != 1){
-                log("WARNING, error updating state of item");
-            }
-            setNextItem();
-        }else{
-            Toast.makeText(this, "unCheck not implemented", Toast.LENGTH_LONG).show();
+        item.setState(checked ? State.DONE: State.TODO);
+        int rowsAffected = ItemsWorker.update(item, this);
+        if( rowsAffected != 1){
+            log("ERROR, error updating state of item");
         }
+        updateUserInterface();
     }
     private void update(Item item){
         log("...update(Item)", item.getHeading());
@@ -246,7 +242,7 @@ public class SequenceActivity extends AppCompatActivity implements SequenceAdapt
      * update the dynamic parts of the ui, ie number done items
      * */
     private void updateUserInterface(){
-        log("...updateInterface() index");
+        log("...updateInterface()");
         long numberDone  = items.stream().filter(item->item.isDone()).count();
         String textInfo = String.format(Locale.getDefault(), "%d/%d done", numberDone, items.size());
         textViewNumberItems.setText(textInfo);

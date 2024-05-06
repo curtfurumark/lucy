@@ -13,13 +13,11 @@ import android.widget.Toast;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.YearMonth;
 import java.util.List;
 
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Item;
-import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.persist.LocalDB;
@@ -43,15 +41,6 @@ public class ItemsWorker {
         return items.stream().mapToLong(Item::getEstimatedDuration).sum();
     }
 
-    private static Item createTemplateChild(Item parent){
-        log("...createTemplateChild(Item item)");
-        Item child = new Item();
-        child.setParentId(parent.getID());
-        child.setHeading(parent.getHeading());
-        child.setState(State.DONE);
-        return child;
-    }
-
     public static boolean delete(Item item, Context context) {
         log("LocalDB.delete(Item, Context)");
         boolean res = false;
@@ -67,15 +56,6 @@ public class ItemsWorker {
             }
         }
         return res;
-    }
-    public static List<Item> getAllChildren(Item parent, Context context){
-        List<Item> items;
-        List<Item> children = selectChildren(parent, context);
-        for(Item item: children){
-
-
-        }
-        return children;
     }
 
     public static Item getParent(Item currentParent, Context context) {
@@ -315,38 +295,18 @@ public class ItemsWorker {
     }
     private static int updateTemplate(Item template, Context context) {
         log("...updateTemplate(Item, Context)", template.getHeading());
-        if(template.isDone()){
-            log("...do not set templates to done");
-            template.setState(State.TODO);
-        }
-        Item child = new Item();
-        child.setState(State.DONE);
-        child.setType(Type.NODE);//TODO , type generated ? .
-        child.setHeading(template.getHeading());
-        child.setDuration(template.getDuration());
-        child.setCategory(template.getCategory());
-        child.setTags(template.getTags());
-        child.setMental(template.getMental());
-        child.setTargetTime(LocalTime.now());
-        child.setMental(template.getMental());
         LocalDB db = new LocalDB(context);
-        child = db.insertChild(template, child);
-        if( template.hasMental()){//inherit the template
-            Mental childMental = new Mental(template.getMental());
-            long itemID = child.getID();
-            log("...itemID", itemID);
-            childMental.setItemID(child.getID());
-            childMental.setHeading(template.getHeading());
-            childMental.setDate(LocalDate.now());
-            childMental.setTime(LocalTime.now());
-            childMental.setUpdated(LocalDateTime.now());
-            childMental = MentalWorker.insert(childMental, context);
-            log(childMental);
+        if(template.isDone()){
+            if( VERBOSE) log("...template is done, will spawn a child");
+            template.setState(State.TODO);
+            Item child = new Item(template);
+            child.setState(State.DONE);
+            child = db.insertChild(template, child);
+            if( template.hasPeriod()) {
+                template.updateTargetDate();
+            }
+            template.setDuration(0);
         }
-        if( template.hasPeriod()) {
-            template.updateTargetDate();
-        }
-        template.setDuration(0);
         return db.update(template);
     }
 }

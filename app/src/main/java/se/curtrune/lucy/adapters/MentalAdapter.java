@@ -52,7 +52,7 @@ public class MentalAdapter extends RecyclerView.Adapter<MentalAdapter.MyViewHold
     public void onBindViewHolder(@androidx.annotation.NonNull final MyViewHolder holder, int position) {
         if( VERBOSE) log("MentalAdapter.onBindViewHolder() mode", mode.toString());
         final Mental item = items.get(position);
-        log(item);
+        //log(item);
         switch (mode){
             case MOOD:
                 holder.seekBar.setProgress(item.getMood() + Constants.MOOD_OFFSET);

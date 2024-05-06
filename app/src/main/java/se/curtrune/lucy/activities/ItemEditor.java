@@ -129,8 +129,8 @@ public class ItemEditor extends AppCompatActivity implements
         }
         callingActivity = (CallingActivity) intent.getSerializableExtra(Constants.INTENT_CALLING_ACTIVITY);
         if( callingActivity == null){
-            log("...callingActivity is null, defaulting to 'TODAY_ACTIVITY'");
-            callingActivity = CallingActivity.TODAY_ACTIVITY;
+            log("...callingActivity is null, defaulting to CALENDER_FRAGMENT");
+            callingActivity = CallingActivity.CALENDER_FRAGMENT;
         }
         if( VERBOSE) log(currentItem);
         setUserInterface(currentItem);
@@ -329,8 +329,8 @@ public class ItemEditor extends AppCompatActivity implements
     private void returnToCallingActivity(){
         log("...returnToCallingActivity()");
         switch(callingActivity){
-            case ITEMS_ACTIVITY:
-            case TODAY_ACTIVITY:
+            case TODO_FRAGMENT:
+            case CALENDER_FRAGMENT:
                 startActivity(new Intent(this, MainActivity.class));
                 break;
             case STATISTICS_ACTIVITY:

@@ -198,7 +198,7 @@ public class ProjectsFragment extends Fragment implements
             Lucinda.currentFragment = this;
             Intent intent = new Intent(getContext(), ItemSession.class);
             intent.putExtra(Constants.INTENT_ITEM_SESSION, true);
-            intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.TODAY_ACTIVITY);
+            intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.PROJECTS_FRAGMENT);
             intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, item);
             //Lucinda.currentViewMode = mode;
             startActivity(intent);

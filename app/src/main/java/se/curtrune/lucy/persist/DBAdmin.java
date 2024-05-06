@@ -67,7 +67,7 @@ public class DBAdmin {
         item.setEstimate(cursor.getString(16));
         item.setNotification(cursor.getString(17));
         item.setIsTemplate(cursor.getInt(18) != 0);
-        item.setMentalJson(cursor.getString(19));
+        //item.setMentalJson(cursor.getString(19));
         return item;
     }
     public static ContentValues getContentValues(Asset asset){
@@ -105,7 +105,7 @@ public class DBAdmin {
             cv.put("notification", item.getNotification().toJson());
         }
         cv.put("template", item.isTemplate()? 1:0);
-        cv.put("mental", item.getMental().toJson());
+        //cv.put("mental", item.getMental().toJson());
         return cv;
     }
     public static ContentValues getContentValues(Mental mental){

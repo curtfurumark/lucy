@@ -23,17 +23,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import se.curtrune.lucy.R;
+import se.curtrune.lucy.adapters.ItemAdapter;
 import se.curtrune.lucy.adapters.MonthAdapter;
-import se.curtrune.lucy.adapters.SequenceAdapter;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.calender.CalenderDate;
 import se.curtrune.lucy.workers.ItemsWorker;
 
 public class MonthCalenderActivity extends AppCompatActivity {
     private TextView monthYearText;
-    private RecyclerView recycler;
+    private RecyclerView recyclerCalender;
+    private RecyclerView recyclerDay;
+
     private LocalDate selectedDate;
-    private MonthAdapter adapter;
+    private MonthAdapter monthDayAdapter;
+    private ItemAdapter itemAdapter;
     private List<CalenderDate> calenderDates;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +95,7 @@ public class MonthCalenderActivity extends AppCompatActivity {
         return daysInMonthArray;
     }
     private void initComponents(){
-        recycler = findViewById(R.id.myCalender_recycler);
+        recyclerCalender = findViewById(R.id.myCalender_recycler);
         monthYearText = findViewById(R.id.myCalender_month);
     }
     private void initListeners(){
@@ -101,17 +104,39 @@ public class MonthCalenderActivity extends AppCompatActivity {
     }
     private void initRecycler(List<CalenderDate> calenderDates){
         log("...initRecycler()");
-        adapter = new MonthAdapter(calenderDates, calenderDate -> {
+        monthDayAdapter = new MonthAdapter(calenderDates, calenderDate -> {
             log("onDateClick(CalenderDate)", calenderDate.getDate().toString());
             Toast.makeText(this, calenderDate.toString(), Toast.LENGTH_LONG).show();
         });
 
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(), 7);
-        recycler.setLayoutManager(layoutManager);
-        recycler.setItemAnimator(new DefaultItemAnimator());
-        recycler.setAdapter(adapter);
+        recyclerCalender.setLayoutManager(layoutManager);
+        recyclerCalender.setItemAnimator(new DefaultItemAnimator());
+        recyclerCalender.setAdapter(monthDayAdapter);
         SnapHelper snapHelper = new PagerSnapHelper();
-        snapHelper.attachToRecyclerView(recycler);
+        snapHelper.attachToRecyclerView(recyclerCalender);
+    }
+    private void initRecyclerDay(){
+        log("...initRecyclerDay()");
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerDay.setLayoutManager(layoutManager);
+        itemAdapter = new ItemAdapter(null, new ItemAdapter.Callback() {
+            @Override
+            public void onItemClick(Item item) {
+                log("...onItemClick(Item)", item.getHeading());
+            }
+
+            @Override
+            public void onLongClick(Item item) {
+
+            }
+
+            @Override
+            public void onCheckboxClicked(Item item, boolean checked) {
+
+            }
+        });
+        recyclerDay.setAdapter(itemAdapter);
 
     }
     private String monthYearFromDate(LocalDate date){
@@ -122,28 +147,28 @@ public class MonthCalenderActivity extends AppCompatActivity {
     public void nextMonthAction(View view){
         log("...nextMonthAction(View)");
         selectedDate = selectedDate.plusMonths(1);
-        adapter.setList(getCalenderDates(selectedDate));
+        monthDayAdapter.setList(getCalenderDates(selectedDate));
         monthYearText.setText(monthYearFromDate(selectedDate));
 
     }
     public void previousMonthAction(View view){
         log("...previousMonthAction(View)");
         selectedDate = selectedDate.minusMonths(1);
-        adapter.setList(getCalenderDates(selectedDate));
+        monthDayAdapter.setList(getCalenderDates(selectedDate));
         monthYearText.setText(monthYearFromDate(selectedDate));
     }
 /*    private void setMonthView(){
         log("...setMonthView()");
         monthYearText.setText(monthYearFromDate(selectedDate));
         List<String> daysInMonth = daysInMonthArray(selectedDate);
-        MonthAdapter adapter = new MonthAdapter(daysInMonth, (position, dayText) -> {
+        MonthAdapter monthDayAdapter = new MonthAdapter(daysInMonth, (position, dayText) -> {
             log("onItemClick(int position, String dayText)", dayText);
             if( !dayText.equals("")){
                 Toast.makeText(this, "selected date "+  dayText + " " + monthYearFromDate(selectedDate), Toast.LENGTH_LONG  ).show();
             }
         });
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(), 7);
-        recycler.setLayoutManager(layoutManager);
-        recycler.setAdapter(adapter);
+        recyclerCalender.setLayoutManager(layoutManager);
+        recyclerCalender.setAdapter(monthDayAdapter);
     }*/
 }

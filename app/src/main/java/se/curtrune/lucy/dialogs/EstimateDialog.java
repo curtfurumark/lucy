@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
+import java.time.Duration;
 import java.util.Locale;
 
 import se.curtrune.lucy.R;
@@ -23,14 +24,18 @@ import se.curtrune.lucy.classes.Estimate;
 import se.curtrune.lucy.util.Constants;
 
 
-public class AddEstimateDialog extends BottomSheetDialogFragment {
+public class EstimateDialog extends BottomSheetDialogFragment {
     private TextView textViewEnergy;
     private SeekBar seekBarEnergy;
-    private TextView textViewDuration;
+    //private TextView textViewDuration;
     private Button buttonDismiss;
+    private TextView textViewHours;
+    private TextView textViewMinutes;
+    private TextView textViewSeconds;
     private Button buttonSave;
     private Estimate estimate;
 
+    public static boolean VERBOSE = false;
     private int energy;
     public  enum Mode{
         CREATE, EDIT
@@ -40,46 +45,51 @@ public class AddEstimateDialog extends BottomSheetDialogFragment {
         void onEstimate(Estimate estimate, Mode mode);
     }
     private Callback callback;
-    public AddEstimateDialog(){
-        log("AddEstimateDialog()");
+    public EstimateDialog(){
+        if( VERBOSE) log("EstimateDialog()");
         this.estimate = new Estimate();
     }
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        log("EstimateDateDialog.onCreateView(...)");
+        if(VERBOSE)log("EstimateDateDialog.onCreateView(...)");
         View view = inflater.inflate(R.layout.add_estimate_dialog, container, false);
         initComponents(view);
-       //initDefaults();
         initListeners();
         setUserInterface();
         return view;
     }
     private Estimate getEstimate(){
-        log("...getEstimate()");
-        estimate.setDuration(Long.valueOf(textViewDuration.getText().toString()));
-        estimate.setEnergy(Integer.valueOf(energy));
+        if( VERBOSE) log("...getEstimate()");
+        estimate = new Estimate();
+        long hours = Integer.parseInt(textViewHours.getText().toString());
+        long minutes = Integer.parseInt(textViewMinutes.getText().toString());
+        long seconds = Integer.parseInt(textViewSeconds.getText().toString());
+        Duration duration = Duration.ofHours(hours);
+        duration = duration.plusMinutes(minutes);
+        duration = duration.plusSeconds(seconds);
+        estimate.setDuration(duration.getSeconds());
+        estimate.setEnergy(seekBarEnergy.getProgress() - Constants.ENERGY_OFFSET);
         return estimate;
     }
 
     private void initComponents(View view){
-        log("...initComponents(View)");
-        //editTextDays = view.findViewById(R.id.periodDialog_days);
+        if( VERBOSE) log("...initComponents(View)");
         buttonSave = view.findViewById(R.id.estimateItemDialog_buttonSave);
         buttonDismiss = view.findViewById(R.id.estimateItemDialog_buttonDismiss);
-        textViewDuration = view.findViewById(R.id.estimateItemDialog_duration);
+        textViewHours = view.findViewById(R.id.estimateDialog_hours);
+        textViewMinutes = view.findViewById(R.id.estimateDialog_minutes);
+        textViewSeconds = view.findViewById(R.id.estimateDialog_seconds);
         textViewEnergy = view.findViewById(R.id.estimateItemDialog_labelEnergy);
         seekBarEnergy = view.findViewById(R.id.estimateItemDialog_energySeekbar);
     }
 
     private void initListeners(){
-        log("...initListeners()");
+        if( VERBOSE) log("...initListeners()");
         buttonDismiss.setOnClickListener(view1 -> {
-            log("...dismiss please");
             dismiss();
         });
         buttonSave.setOnClickListener(view->{
-            log("...save please");
             callback.onEstimate(getEstimate(), mode);
             dismiss();
         });
@@ -113,13 +123,15 @@ public class AddEstimateDialog extends BottomSheetDialogFragment {
     }
 
     private void setUserInterface(){
-        log("...setUserInterface()", mode.toString());
+        if(VERBOSE )log("...setUserInterface()", mode.toString());
         if( mode.equals(Mode.EDIT)) {
             String strEnergyEstimate = String.format(Locale.getDefault(), "%s %d",getString(R.string.energy), estimate.getEnergy());
             textViewEnergy.setText(strEnergyEstimate);
             String strDurationEstimate = String.format(Locale.getDefault(), "%d", estimate.getDuration());
-            textViewDuration.setText(strDurationEstimate);
             seekBarEnergy.setProgress(Constants.ENERGY_OFFSET);
+        }else{
+            String strEnergyEstimate = String.format(Locale.getDefault(), "%s %d",getString(R.string.energy), 0);
+            textViewEnergy.setText(strEnergyEstimate);
         }
     }
     private void updateUserInterface(int energy){

@@ -45,6 +45,7 @@ public class HomeActivity extends AppCompatActivity {
     private TextView textViewStatistics;
     private TextView textViewQuote;
     private TextView textViewGraph;
+    private TextView textViewNavDrawer;
     private Lucinda lucinda;
 
     @Override
@@ -103,6 +104,7 @@ public class HomeActivity extends AppCompatActivity {
         textViewNewMain = findViewById(R.id.homeActivity_mainActivity);
         textViewSettings = findViewById(R.id.homeActivity_settings);
         textViewSwipeAble = findViewById(R.id.homeActivity_economy);
+        textViewNavDrawer = findViewById(R.id.homeActivity_navigationDrawer);
     }
 
     private void initListeners() {
@@ -114,6 +116,8 @@ public class HomeActivity extends AppCompatActivity {
         textViewCalender.setOnClickListener(view -> startActivity(new Intent(this, MonthCalenderActivity.class)));
         textViewQuote.setOnClickListener(view -> randomQuote());
         textViewSettings.setOnClickListener(view -> startActivity(new Intent(this, SettingsActivity.class)));
+        textViewNavDrawer.setOnClickListener(view->startActivity(new Intent(this, NavigationActivity2.class)));
+
     }
 
     private void randomQuote() {
@@ -278,10 +282,10 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void testMentals() {
-        log("...testMentals()");
+/*        log("...testMentals()");
         List<Mental> mentals = MentalWorker.selectMentalsFromItems(LocalDate.now(), this);
         log("number of mentals", mentals.size());
-        mentals.forEach(System.out::println);
+        mentals.forEach(System.out::println);*/
     }
 }
 /*        int currentNightMode = Configuration.uiMode & Configuration.UI_MODE_NIGHT_MASK;

@@ -13,9 +13,23 @@ public class Estimate implements Serializable {
     private long duration;
     private int energy;
     public static boolean VERBOSE = false;
+    public enum Type{
+        USER, CALCULATED
+    }
+    private Type type =Type.USER;
 
     public Estimate() {
         if( VERBOSE) log("Estimate()");
+    }
+    public Estimate divide(int denominator){
+        Estimate estimate = new Estimate();
+        estimate.setType(Type.CALCULATED);
+        if( denominator == 0){
+            return estimate;
+        }
+        estimate.setEnergy(this.energy / denominator);
+        estimate.setDuration(this.duration / denominator);
+        return estimate;
     }
 
     public long getDuration() {
@@ -25,12 +39,29 @@ public class Estimate implements Serializable {
     public int getEnergy() {
         return energy;
     }
+    public Type getType(){
+        return type;
+    }
+
+    public void plusDuration(long duration){
+        this.duration += duration;
+    }
+    public void plusEnergy(int energy){
+        this.energy += energy;
+    }
+    public void plus(Estimate other){
+        this.duration += other.duration;
+        this.energy += other.energy;
+    }
     public void setDuration(long duration) {
         this.duration = duration;
     }
 
     public void setEnergy(int energy) {
         this.energy = energy;
+    }
+    public void setType(Type type){
+        this.type = type;
     }
     public String toJson(){
         return new Gson().toJson(this, Estimate.class);

@@ -40,8 +40,7 @@ public class SequenceAdapter extends RecyclerView.Adapter<SequenceAdapter.ViewHo
 
     public void sort() {
         if(VERBOSE)log("SequenceAdapter.sort()");
-        items.sort(Comparator.comparingLong(Item::compare));
-        Collections.reverse(items);
+        items.sort(Comparator.comparingLong(Item::compare).reversed());
         notifyDataSetChanged();
     }
 

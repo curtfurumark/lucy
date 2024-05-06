@@ -6,50 +6,62 @@
     android:padding="8dp"
     android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/estimateItemDialog_buttonDismiss"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="@string/dismiss"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/estimateItemDialog_labelEnergy" />
-
-    <Button
-        android:id="@+id/estimateItemDialog_buttonSave"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/save"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/estimateItemDialog_buttonDismiss" />
-
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout8duration"
+        android:id="@+id/estimateDialog_textInputLayoutHours"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="2dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:hint="@string/hours"
+        android:minEms="4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/estimateItemDialog_duration"
+            android:id="@+id/estimateDialog_hours"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/duration" />
+            android:inputType="number"
+            android:text="00" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <SeekBar
-        android:id="@+id/estimateItemDialog_energySeekbar"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/estimateDialog_textInputLayoutMinutes"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:max="10"
-        app:layout_constraintBottom_toBottomOf="@+id/estimateItemDialog_labelEnergy"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/estimateItemDialog_labelEnergy"
-        app:layout_constraintTop_toTopOf="@+id/estimateItemDialog_labelEnergy" />
+        android:layout_marginStart="8dp"
+        android:minEms="4"
+        android:hint="@string/minutes"
+        app:layout_constraintStart_toEndOf="@+id/estimateDialog_textInputLayoutHours"
+        app:layout_constraintTop_toTopOf="@+id/estimateDialog_textInputLayoutHours">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/estimateDialog_minutes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:text="00" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:minEms="4"
+        android:hint="@string/seconds"
+        app:layout_constraintStart_toEndOf="@+id/estimateDialog_textInputLayoutMinutes"
+        app:layout_constraintTop_toTopOf="@+id/estimateDialog_textInputLayoutMinutes">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/estimateDialog_seconds"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:text="00" />
+    </com.google.android.material.textfield.TextInputLayout>
+
 
     <TextView
         android:id="@+id/estimateItemDialog_labelEnergy"
@@ -60,6 +72,36 @@
         android:text="@string/energy"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout8duration" />
+        app:layout_constraintTop_toBottomOf="@+id/estimateDialog_textInputLayoutHours" />
+
+    <SeekBar
+        android:id="@+id/estimateItemDialog_energySeekbar"
+        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:max="10"
+        android:progress="5"
+        app:layout_constraintBottom_toBottomOf="@+id/estimateItemDialog_labelEnergy"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/estimateItemDialog_labelEnergy"
+        app:layout_constraintTop_toTopOf="@+id/estimateItemDialog_labelEnergy" />
+
+    <Button
+        android:id="@+id/estimateItemDialog_buttonSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/save"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/estimateItemDialog_buttonDismiss" />
+
+
+    <Button
+        android:id="@+id/estimateItemDialog_buttonDismiss"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/dismiss"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/estimateItemDialog_labelEnergy" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
