@@ -68,6 +68,9 @@ public class DBAdmin {
         item.setNotification(cursor.getString(17));
         item.setIsTemplate(cursor.getInt(18) != 0);
         //item.setMentalJson(cursor.getString(19));
+        item.setContent(cursor.getString(19));
+        item.setReward(cursor.getString(20));
+        item.setColor(cursor.getInt(21));
         return item;
     }
     public static ContentValues getContentValues(Asset asset){
@@ -105,6 +108,8 @@ public class DBAdmin {
             cv.put("notification", item.getNotification().toJson());
         }
         cv.put("template", item.isTemplate()? 1:0);
+        cv.put("color", item.getColor());
+        //cv.put("content", item.getContent());
         //cv.put("mental", item.getMental().toJson());
         return cv;
     }
@@ -123,6 +128,7 @@ public class DBAdmin {
         cv.put("updated", mental.getUpdatedEpoch());
         cv.put("created", mental.getCreatedEpoch());
         cv.put("time", mental.getTimeSecondOfDay());
+        cv.put("isTemplate", mental.isTemplate());
         return cv;
     }
     public static ContentValues getContentValues(Transaction transaction){
@@ -149,6 +155,7 @@ public class DBAdmin {
         mental.setStress(cursor.getInt(10));
         mental.setCreated(cursor.getLong(11));
         mental.setUpdated(cursor.getLong(12));
+        mental.setIsTemplate(cursor.getInt(13) == 1);
         return mental;
     }
     public static Mental getMentalFromItem(Cursor cursor) {

@@ -438,7 +438,11 @@ public class LocalDB extends SQLiteOpenHelper {
         db = this.getWritableDatabase();
         String whereClause = String.format("id = %d", item.getID());
         int rowsAffected = db.update(ITEMS_TABLE, DBAdmin.getContentValues(item), whereClause, null);
-        log("...update ok: ", rowsAffected == 1);
+        log("...update item ok: ", rowsAffected == 1);
+        Mental mental = item.getMental();
+        log(mental);
+        rowsAffected = update(item.getMental());
+        log("...update mental ok: ", rowsAffected == 1);
         db.close();
         return rowsAffected;
     }

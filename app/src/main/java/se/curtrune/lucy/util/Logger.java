@@ -66,6 +66,7 @@ public class Logger {
         }
         //log("\thas mental", item.hasMental());
         log("\thas notification", item.hasNotification());
+        log("\tcolor", item.getColor());
     }
     public static void log(Mental mental){
         log("log(Mental)");
@@ -86,6 +87,7 @@ public class Logger {
         log("\tmood", mental.getMood());
         log("\tenergy", mental.getEnergy());
         log("\tstress", mental.getStress());
+        log("\tisTemplate", mental.isTemplate());
     }
     public static void log(Notification notification){
         log("log(Notification)");

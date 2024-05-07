@@ -62,18 +62,24 @@ public class MentalWorker {
         return mentals.stream().mapToInt(Mental::getEnergy).sum();
     }
     public static Mental getMental(Item item, Context context){
-        log("...getMental(Item)", item.getHeading());
+        log("MentalWorker.getMental(Item)", item.getHeading());
         LocalDB db = new LocalDB(context);
         String query = String.format(Locale.ENGLISH,"SELECT * FROM mental WHERE itemID = %d", item.getID());
         return db.selectMental(query);
     }
 
+    public static List<Mental> select(LocalDate date, boolean isTemplate, Context context) {
+        log("MentalWorker.select(LocalDate, LocalDate, Context");
+        String queery = Queeries.selectMentals(date, isTemplate);
+        //String query = String.format("SELECT * FROM mental WHERE date >= %d AND date <= %d", firstDate.toEpochDay(), lastDate.toEpochDay());
+        LocalDB db = new LocalDB(context);
+        return db.selectMentals(queery);
+    }
     public static List<Mental> select(LocalDate firstDate, LocalDate lastDate, Context context) {
         log("MentalWorker.select(LocalDate, LocalDate, Context");
         String query = String.format("SELECT * FROM mental WHERE date >= %d AND date <= %d", firstDate.toEpochDay(), lastDate.toEpochDay());
         LocalDB db = new LocalDB(context);
         return db.selectMentals(query);
-
     }
 
     public static List<Mental> selectTopTen(TopTenFragment.Mode mode, Context context) {

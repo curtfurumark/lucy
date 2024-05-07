@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fapBoost;
     private TextView textViewEnergy;
     private FragmentContainerView fragmentContainerView;
+    public static boolean VERBOSE = false;
     public interface OnTabSelected{
         void onSelected(TabLayout.Tab tab);
     }
@@ -66,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
         setTitle(energyTitle);
         initComponents();
         initListeners();
-        //initDefaultFragment();
         Intent intent = getIntent();
         if( Lucinda.currentFragment != null){
             log("...currentFragment != null");
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         new BoostDialog().show(getSupportFragmentManager(), "boost me");
     }
     private void initComponents(){
-        log("...initComponents()");
+        if( VERBOSE) log("...initComponents()");
         //tabLayout = findViewById(R.id.mainActivity_tabLayout);
         fragmentContainerView = findViewById(R.id.mainActivity_fragmentContainer);
         bottomNavigation = findViewById(R.id.mainActivity_bottomNavigation);
@@ -96,14 +96,14 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.mainActivity_fragmentContainer, currentFragment).commit();
     }
     private void initListeners(){
-        log("...initListeners()");
+        if( VERBOSE) log("...initListeners()");
         textViewEnergy.setOnClickListener(view->showMentalDay());
         fapBoost.setOnClickListener(view->boostMe());
         fapPanic.setOnClickListener(view->panic());
         bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                log("...onNavigationItemSelected(MenuItem)");
+                log("...onNavigationItemSelected(MenuItem)", item.getTitle().toString());
                 if( item.getItemId() == R.id.bottomNavigation_today){
                     navigate(new CalenderFragment());
                 }else if( item.getItemId() == R.id.bottomNavigation_projects){

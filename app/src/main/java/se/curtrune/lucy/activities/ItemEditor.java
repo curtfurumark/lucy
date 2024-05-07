@@ -37,7 +37,6 @@ import se.curtrune.lucy.dialogs.AddCategoryDialog;
 import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.dialogs.AddPeriodDialog;
 import se.curtrune.lucy.dialogs.EditParentIdDialog;
-import se.curtrune.lucy.enums.ViewMode;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.util.Converter;
@@ -88,7 +87,6 @@ public class ItemEditor extends AppCompatActivity implements
     private CallingActivity callingActivity;
     private Item currentItem;
     private Categories categories;
-    private ViewMode viewMode;
     private Kronos kronos;
     @Override
     protected void onCreate(android.os.Bundle savedInstanceState) {

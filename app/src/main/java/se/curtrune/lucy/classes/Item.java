@@ -44,6 +44,8 @@ public class Item implements Serializable , Listable {
     protected Estimate estimate;
     protected Notification notification;
     protected Mental mental;
+    protected  int color;
+    //protected Content content;
     protected Reward reward;
     /**
      * 0 = not a template in anyway
@@ -82,6 +84,7 @@ public class Item implements Serializable , Listable {
         this.tags = item.getTags();
         this.target_time = LocalTime.now().toSecondOfDay();
         this.target_date = LocalDate.now().toEpochDay();
+        this.estimate = item.getEstimate();
     }
     public void addChild(Item item){
         children.add(0, item);
@@ -103,6 +106,9 @@ public class Item implements Serializable , Listable {
     }
     public List<Item> getChildren(){
         return children;
+    }
+    public int getColor(){
+        return color;
     }
     public String getComment() {
         return comment;
@@ -156,9 +162,9 @@ public class Item implements Serializable , Listable {
         }
         return 0;
     }
-    /*public Mental getMental(){
+    public Mental getMental(){
         return mental;
-    }*/
+    }
     public Notification getNotification(){
         return this.notification;
     }
@@ -272,6 +278,12 @@ public class Item implements Serializable , Listable {
         if( category != null) {
             this.category = category;
         }
+    }
+    public void setColor(int color){
+        this.color = color;
+    }
+    public void setContent(String json){
+
     }
     public void setComment(String comment) {
         this.comment = comment;

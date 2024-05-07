@@ -91,19 +91,11 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/itemSession_checkBoxDone" />
 
-        <ImageView
-            android:id="@+id/itemSession_commentTagsAction"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:src="@drawable/baseline_add_24"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/itemSession_labelCommentEtc" />
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/itemSession_layoutComment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -114,7 +106,6 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -130,7 +121,6 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textInputLayout8comment">
 
@@ -140,6 +130,17 @@
                     android:layout_height="wrap_content"
                     android:hint="tags" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <Spinner
+                android:id="@+id/itemSession_categorySpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:minHeight="48dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/itemSession_layoutTags" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -319,17 +320,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/dividerEstimate" />
 
-        <ImageView
-            android:id="@+id/itemSession_estimateAction"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:text="save estimate"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dividerEstimate"
-            app:srcCompat="@drawable/baseline_add_24" />
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/itemSession_layoutEstimate"
             android:layout_width="0dp"
@@ -408,13 +398,13 @@
                 app:layout_constraintTop_toBottomOf="@+id/itemSession_textInputLayout_hours" />
 
             <SeekBar
-                android:id="@+id/seekBar"
+                android:id="@+id/itemSession_estimateEnergySeekBar"
                 style="@style/Widget.AppCompat.SeekBar.Discrete"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:max="10"
-                android:progress="3"
+                android:progress="5"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/textView10"
                 app:layout_constraintTop_toTopOf="@+id/textView10" />
@@ -581,7 +571,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/itemSession_labelInfo">
 
@@ -656,13 +646,14 @@
                 android:text="id"
                 app:layout_constraintStart_toStartOf="@+id/itemSession_infoCategory"
                 app:layout_constraintTop_toBottomOf="@+id/itemSession_infoCategory" />
+
             <TextView
                 android:id="@+id/itemSession_infoParentID"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="parent id"
-                app:layout_constraintTop_toBottomOf="@+id/itemSession_infoID"
-                app:layout_constraintStart_toStartOf="parent"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/itemSession_infoID" />
 
             <TextView
                 android:id="@+id/itemSession_infoHasChild"

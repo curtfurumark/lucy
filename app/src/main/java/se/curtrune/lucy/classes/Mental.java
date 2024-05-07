@@ -28,31 +28,42 @@ public class Mental implements Listable, Serializable {
     private int time;
     private long created;
     private long updated;
+    private boolean isTemplate;
 
     public Mental() {
         created = updated = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
         date = LocalDate.now().toEpochDay();
         time = LocalTime.now().toSecondOfDay();
+        isTemplate = false;
+        stress = mood = energy = anxiety = 0;
     }
     public Mental(Item item){
         this();
         this.heading = item.getHeading();
         this.category = item.getCategory();
         this.itemID = item.getID();
+        this.isTemplate = item.isTemplate();
     }
+
+    /**
+     * DOES NOT COPY ALL FIELDS, just "content"
+     * @param other
+     */
     public Mental(Mental other) {
+        this();
         this.energy = other.energy;
         this.mood = other.mood;
         this.anxiety = other.anxiety;
         this.stress = other.stress;
         this.comment = other.comment;
-        this.created = other.created;
-        this.updated = other.updated;
-        this.date = other.date;
-        this.time = other.time;
+        //this.created = other.created;
+        //this.updated = other.updated;
+        //this.date = other.date;
+        //this.time = other.time;
         this.category = other.category;
-        this.itemID = other.itemID;
+        //this.itemID = other.itemID;
         this.heading = other.heading;
+        //this.isTemplate = other.isTemplate;
 
     }
 
@@ -150,6 +161,9 @@ public class Mental implements Listable, Serializable {
         }
         return this.category.equalsIgnoreCase(category);
     }
+    public boolean isTemplate(){
+        return isTemplate;
+    }
 
     public void setAnxiety(int anxiety) {
         this.anxiety = anxiety;
@@ -188,6 +202,9 @@ public class Mental implements Listable, Serializable {
         this.id = id;
     }
 
+    public void setIsTemplate(boolean isTemplate){
+        this.isTemplate = isTemplate;
+    }
     public void setItemID(long itemID) {
         this.itemID = itemID;
     }
@@ -228,6 +245,10 @@ public class Mental implements Listable, Serializable {
     @Override
     public String toString() {
         return String.format(Locale.getDefault(), "Mental{energy=%d, date: %s}", energy, LocalDate.ofEpochDay(date).toString());
+    }
+
+    public void setCreated(LocalDateTime created) {
+        this.created = created.toEpochSecond(ZoneOffset.UTC);
     }
 }
 

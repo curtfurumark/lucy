@@ -81,7 +81,7 @@ public class CalenderFragment extends Fragment {
     private LocalDate currentDate;
     private List<Item> items;
     private Month month;
-
+    public static boolean VERBOSE = false;
     public CalenderFragment() {
         // Required empty public constructor
     }
@@ -116,7 +116,7 @@ public class CalenderFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        log("CalenderFragment.onCreateView(...)");
         View view = inflater.inflate(R.layout.calender_fragment, container, false);
         initDefaults();
         initComponents(view);
@@ -146,7 +146,7 @@ public class CalenderFragment extends Fragment {
 
     }
     private void initComponents(View view){
-        log("...initComponents(View)");
+        if( VERBOSE) log("...initComponents(View)");
         buttonNext = view.findViewById(R.id.calenderFragment_buttonNext);
         buttonPrev = view.findViewById(R.id.calenderFragment_buttonPrev);
         labelMonthYear = view.findViewById(R.id.calenderFragment_labelMonthYear);
@@ -159,23 +159,23 @@ public class CalenderFragment extends Fragment {
         buttonAddItem = view.findViewById(R.id.calenderFragment_addItem);
     }
     private void initDefaults(){
-        log("...initDefaults()");
+        if( VERBOSE) log("...initDefaults()");
         currentDate = LocalDate.now();
         currentWeek = new Week(currentDate);
         items = new ArrayList<>();
-        Item item = new Item("medicin lunch");
+/*        Item item = new Item("medicin lunch");
         item.setTargetTime(LocalTime.of(12, 0));
-        item.setTargetDate(LocalDate.now());
-        items.add(item);
-
+        item.setTargetDate(LocalDate.now());*/
+        //items.add(item);
     }
     private void initListeners(){
+        if( VERBOSE) log("...initListeners()");
         buttonPrev.setOnClickListener(view->prevWeek());
         buttonNext.setOnClickListener(view->nextWeek());
         buttonAddItem.setOnClickListener(view->showAddItemDialog());
     }
     private void initRecycler(){
-        log("...initRecycler()");
+        if( VERBOSE) log("...initRecycler()");
         adapter = new CalenderAdapter(items, new CalenderAdapter.Callback() {
             @Override
             public void onEditTime(Item item) {
@@ -236,7 +236,7 @@ public class CalenderFragment extends Fragment {
 
     }
     private void initRecyclerDates(){
-        log("...initRecyclerDates()");
+        if( VERBOSE) log("...initRecyclerDates()");
         calenderDateAdapter = new CalenderDateAdapter(currentWeek, new CalenderDateAdapter.Callback() {
             @Override
             public void onDateSelected(LocalDate date) {
@@ -255,7 +255,7 @@ public class CalenderFragment extends Fragment {
 
     }
     private void initSwipe() {
-        log("...initSwipe()");
+        if( VERBOSE) log("...initSwipe()");
         itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {

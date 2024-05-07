@@ -39,22 +39,27 @@ public class Queeries {
                     "estimate STRING," +        //16
                     "notification STRING," +    //17
                     "template INTEGER default 0, " +  //18
-                    "mental STRING, " +         //19
-                    "reward STRING)";           //20
+                    //"mental STRING, " +         //19
+                    "content STRING, " +         //19
+                    "reward STRING, " +         //20
+                    "color INTEGER default -1 " + //21
+                    ")";           //20
     public static String CREATE_TABLE_MENTAL =
             "CREATE TABLE mental (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "itemID INTEGER, " +
-                    "heading TEXT, " +
-                    "comment TEXT, " +
-                    "category TEXT," +
-                    "date INTEGER, " +
-                    "time  INTEGER, " +
-                    "energy INTEGER, " +
-                    "mood INTEGER, " +
-                    "anxiety INTEGER, " +
-                    "stress INTEGER, " +
-                    "created INTEGER, " +
-                    "updated INTEGER)";
+                    "itemID INTEGER, " +        //1
+                    "heading TEXT, " +          //2
+                    "comment TEXT, " +          //3
+                    "category TEXT," +          //4
+                    "date INTEGER, " +          //5
+                    "time  INTEGER, " +         //6
+                    "energy INTEGER, " +        //7
+                    "mood INTEGER, " +          //8
+                    "anxiety INTEGER, " +       //9
+                    "stress INTEGER, " +        //10
+                    "created INTEGER, " +       //11
+                    "updated INTEGER, " +       //12
+                    "isTemplate INTEGER" +      //13
+                    ")";
     public static String CREATE_TABLE_CATEGORIES = "CREATE TABLE categories " +
             "(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)";
 
@@ -186,8 +191,11 @@ public class Queeries {
         return String.format("SELECT * FROM mental WHERE itemID = %d", item.getID());
     }
 
-    public static String selectMentals(LocalDate firstDate, LocalDate lastDate) {
-        return String.format("SELECT * FROM mental WHERE date >= %d AND date <= %d ORDER BY date DESC", firstDate.toEpochDay(), lastDate.toEpochDay());
+    public static String selectMentals(LocalDate firstDate, LocalDate lastDate, boolean includeTemplates) {
+        return String.format("SELECT * FROM mental WHERE date >= %d AND date <= %d AND isTemplate = %d ORDER BY date DESC",
+                firstDate.toEpochDay(),
+                lastDate.toEpochDay(),
+                includeTemplates ? 1: 0);
     }
 
     public static String selectTopTen() {
@@ -202,11 +210,9 @@ public class Queeries {
         return String.format(Locale.getDefault(), "SELECT * FROM items WHERE parentID = %d", id);
     }
 
-    public static String selectMentals(LocalDate date, boolean includeTemplates) {
-        return String.format(Locale.getDefault(), "SELECT * FROM mental WHERE date = %d  ORDER BY date DESC",
-                date.toEpochDay());
-        //return String.format(Locale.getDefault(),"SELECT * FROM mental WHERE date = %d AND template = %d ORDER BY date DESC",
-        //         date.toEpochDay(), includeTemplates ? 1:0);
+    public static String selectMentals(LocalDate date, boolean isTemplate) {
+        return String.format(Locale.getDefault(), "SELECT * FROM mental WHERE date = %d   AND isTemplate = %d ORDER BY date DESC",
+                date.toEpochDay(), isTemplate ? 1:0);
     }
 
 

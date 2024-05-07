@@ -45,14 +45,13 @@ public class MentalFragment2 extends Fragment implements MentalAdapter.Callback 
     private TextView textViewMentalLabel;
     private TextView textViewMentalTotal;
     private TextView textViewDate;
-    //private TextView textViewLastDate;
     private FloatingActionButton buttonAddMental;
     private List<Mental> mentals = new ArrayList<>();
 
     private LocalDate date;
-    //private LocalDate lastDate;
     private MentalStatistics mentalStatistics;
     private MentalAdapter.Mode mode;
+    public static boolean VERBOSE = false;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,7 +87,6 @@ public class MentalFragment2 extends Fragment implements MentalAdapter.Callback 
     }
 
     private void filter(String str){
-        //List<Mental> filtered = mentals.stream().filter(mental-> mental.contains(str)).collect(Collectors.toList());
         adapter.setList(mentalStatistics.filter(str));
         updateUserInterface();
     }
@@ -104,7 +102,6 @@ public class MentalFragment2 extends Fragment implements MentalAdapter.Callback 
         textViewMentalTotal = view.findViewById(R.id.mentalFragment__mentalTotal);
         buttonAddMental = view.findViewById(R.id.mentalFragment_addMentalButton);
         textViewDate = view.findViewById(R.id.mentalFragment_firstDate);
-        //textViewLastDate = view.findViewById(R.id.mentalFragment_lastDate);
     }
     private void initRecycler(){
         log("...initRecycler()");
@@ -155,16 +152,14 @@ public class MentalFragment2 extends Fragment implements MentalAdapter.Callback 
 
     }
     private void initStuff(){
-        log("...initStuff()");
+        if( VERBOSE) log("...initStuff()");
         date = LocalDate.now();
-        //firstDate = lastDate.minusDays(7);
-        mentalStatistics = new MentalStatistics(date, date, getContext());
+        mentalStatistics = new MentalStatistics(date, getContext());
         mentals = mentalStatistics.getMentalList();
         mode = MentalAdapter.Mode.ENERGY;
         radioButtonEnergy.setChecked(true);
         adapter.setList(mentals);
         updateUserInterface();
-
     }
 
     @Override
@@ -187,10 +182,7 @@ public class MentalFragment2 extends Fragment implements MentalAdapter.Callback 
                     mentals.add(0, mental);
                     adapter.notifyDataSetChanged();
                     break;
-
             }
-
-
         });
         dialog.show(requireActivity().getSupportFragmentManager(), "hello mental");
     }

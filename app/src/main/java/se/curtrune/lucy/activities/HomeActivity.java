@@ -37,7 +37,6 @@ import se.curtrune.lucy.workers.MentalWorker;
 import se.curtrune.lucy.workers.WebWorker;
 
 public class HomeActivity extends AppCompatActivity {
-    private TextView textViewToday;
     private TextView textViewSettings;
     private TextView textViewSwipeAble;
     private TextView textViewNewMain;
@@ -47,6 +46,7 @@ public class HomeActivity extends AppCompatActivity {
     private TextView textViewGraph;
     private TextView textViewNavDrawer;
     private Lucinda lucinda;
+    public static boolean VERBOSE = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +56,6 @@ public class HomeActivity extends AppCompatActivity {
         //changeLanguage();
         log("HomeActivity.onCreate(Bundle)");
         lucinda = Lucinda.getInstance(this);
-        //lucinda.setIsInitialized(true, this);
         if (!lucinda.isInitialized(this)) {
             log("...lucinda not initialized");
             try {
@@ -70,8 +69,6 @@ public class HomeActivity extends AppCompatActivity {
         }
         initComponents();
         initListeners();
-        //randomQuote();
-        //randomAffirmation();
         checkNotificationPermission();
         openDB();
         testMentals();
@@ -84,7 +81,6 @@ public class HomeActivity extends AppCompatActivity {
         } else {
             log("PERMISSION_DENIED");
         }
-
     }
 
     private void createEconomyTables() {
@@ -95,7 +91,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void initComponents() {
-        log("...initComponents()");
+        if( VERBOSE) log("...initComponents()");
         textViewGraph = findViewById(R.id.homeActivity_graph);
         textViewStatistics = findViewById(R.id.homeActivity_statistics);
         textViewQuote = findViewById(R.id.homeActivity_quote);
@@ -108,7 +104,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void initListeners() {
-        log("...initListeners()");
+        if( VERBOSE) log("...initListeners()");
         textViewSwipeAble.setOnClickListener(view -> startActivity(new Intent(this, EconomyActivity.class)));
         textViewGraph.setOnClickListener(view -> startActivity(new Intent(this, GraphActivity.class)));
         textViewStatistics.setOnClickListener(view -> startActivity(new Intent(this, StatisticsMain.class)));
@@ -116,7 +112,7 @@ public class HomeActivity extends AppCompatActivity {
         textViewCalender.setOnClickListener(view -> startActivity(new Intent(this, MonthCalenderActivity.class)));
         textViewQuote.setOnClickListener(view -> randomQuote());
         textViewSettings.setOnClickListener(view -> startActivity(new Intent(this, SettingsActivity.class)));
-        textViewNavDrawer.setOnClickListener(view->startActivity(new Intent(this, NavigationActivity2.class)));
+        textViewNavDrawer.setOnClickListener(view->startActivity(new Intent(this, NavigationDrawerActivity.class)));
 
     }
 
@@ -124,7 +120,6 @@ public class HomeActivity extends AppCompatActivity {
         log("...randomQuote()");
         String quote = Quotes.getRandomQuote(this);
         textViewQuote.setText(quote);
-
     }
 
     private void listTables() {

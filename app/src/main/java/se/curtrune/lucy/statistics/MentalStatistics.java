@@ -26,6 +26,12 @@ public class MentalStatistics {
         this.lastDate = lastDate;
         init(context);
     }
+    public MentalStatistics( LocalDate date, Context context){
+        this.firstDate = date;
+        this.lastDate = date;
+        init(context);
+
+    }
     public List<Mental> getMentalList(){
         return mentals;
     }
@@ -33,7 +39,7 @@ public class MentalStatistics {
     private void init(Context context){
         log("MentalStatistics.init()");
         LocalDB db = new LocalDB(context);
-        String queery = Queeries.selectMentals(firstDate, lastDate);
+        String queery = Queeries.selectMentals(firstDate, lastDate, false);
         filtered = mentals = db.selectMentals(queery);
     }
     public List<Mental> filter(String str){

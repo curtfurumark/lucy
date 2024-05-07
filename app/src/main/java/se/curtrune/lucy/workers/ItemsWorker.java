@@ -13,11 +13,13 @@ import android.widget.Toast;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.YearMonth;
 import java.util.List;
 
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.persist.LocalDB;
@@ -306,6 +308,15 @@ public class ItemsWorker {
                 template.updateTargetDate();
             }
             template.setDuration(0);
+            Mental childMental = new Mental(template.getMental());
+            assert  childMental != null;
+            childMental.setDate(LocalDate.now());
+            childMental.setTime(LocalTime.now());
+            childMental.setUpdated(LocalDateTime.now());
+            childMental.setCreated(LocalDateTime.now());
+            childMental.setIsTemplate(false);
+            childMental.setItemID(child.getID());
+            childMental = MentalWorker.insert(childMental, context);
         }
         return db.update(template);
     }

@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -55,6 +56,7 @@ public class MentalDialog extends BottomSheetDialogFragment {
     private TextView labelAnxiety;
     private TextView labelStress;
     private TextView labelMood;
+    private CheckBox checkBoxIsTemplate;
 
     private Spinner spinnerCategory;
     private Mental mental;
@@ -175,6 +177,7 @@ public class MentalDialog extends BottomSheetDialogFragment {
         labelStress = view.findViewById(R.id.mentalDialog_labelStress);
         labelMood = view.findViewById(R.id.mentalDialog_labelMood);
         buttonDelete = view.findViewById(R.id.mentalDialog_delete);
+        checkBoxIsTemplate = view.findViewById(R.id.mentalDialog_checkboxIsTemplate);
     }
     private void initDefaults(){
         log("...initDefaults()");
@@ -347,6 +350,7 @@ public class MentalDialog extends BottomSheetDialogFragment {
             textViewItemID.setText(strItemID);
             String strMentalID = String.format(Locale.ENGLISH, "mental id: %d", mental.getID());
             textViewMentalID.setText(strMentalID);
+            checkBoxIsTemplate.setChecked(mental.isTemplate());
         }else {
             energy = 0;
             anxiety = 0;

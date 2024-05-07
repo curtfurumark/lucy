@@ -12,12 +12,15 @@ import android.os.Bundle;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +54,7 @@ import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.util.Converter;
 import se.curtrune.lucy.util.ItemStack;
 import se.curtrune.lucy.util.Kronos;
+import se.curtrune.lucy.workers.CategoryWorker;
 import se.curtrune.lucy.workers.ItemsWorker;
 import se.curtrune.lucy.workers.MentalWorker;
 import se.curtrune.lucy.workers.StatisticsWorker;
@@ -65,6 +69,7 @@ public class ItemSession extends AppCompatActivity implements
     //comment etc
     private EditText  editTextComment;
     private EditText editTextTags;
+    private Spinner spinnerCategories;
     //MENTAL
     private EditText editTextMentalComment;
     private SeekBar seekBarAnxiety;
@@ -76,6 +81,7 @@ public class ItemSession extends AppCompatActivity implements
     private TextView labelEstimate;    private EditText editTextEstimateHours;
     private EditText editTextEstimateMinutes;
     private EditText editTextEstimateSeconds;
+    private SeekBar seekBarEstimatedEnergy;
 
     private TextView labelRepeat;
     private TextView labelNotification;
@@ -124,7 +130,7 @@ public class ItemSession extends AppCompatActivity implements
 
 
     //ESTIMATE
-    private ImageView imageViewEstimateAction;
+    //private ImageView imageViewEstimateAction;
     private ConstraintLayout layoutEstimate;
     private ConstraintLayout layoutNotification;
     private ConstraintLayout layoutRepeat;
@@ -142,6 +148,7 @@ public class ItemSession extends AppCompatActivity implements
     private int mood;
     private int stress;
     private int energy; //seekbar
+    private String category;
     private boolean itemIsDone= false;
     private long duration;
 
@@ -156,6 +163,7 @@ public class ItemSession extends AppCompatActivity implements
         log("ItemSession.onCreate()");
         setTitle("item session");
         initComponents();
+        initSpinnerCategories();
         initListeners();
         Intent intent = getIntent();
         kronos = Kronos.getInstance(this);
@@ -186,16 +194,7 @@ public class ItemSession extends AppCompatActivity implements
         ItemsWorker.delete(currentItem, this);
         returnToCallingActivity();
     }
-    private void estimateAction(){
-        log("...estimateAction() hasEstimate", currentItem.hasEstimate());
-        if( currentItem.hasEstimate()){
-            currentItem.setEstimate((Estimate) null);
-            imageViewEstimateAction.setImageDrawable(getDrawable(R.drawable.baseline_add_24));
-        }else{
-            showEstimateDialog();
-        }
 
-    }
     private Estimate getEstimate(){
         log("...getEstimate()");
         Estimate estimate = new Estimate();
@@ -219,7 +218,7 @@ public class ItemSession extends AppCompatActivity implements
     }
 
     private Item getItem(){
-        log("...getItem()");
+        if( VERBOSE) log("...getItem()");
         currentItem.setUpdated(LocalDateTime.now());
         currentItem.setComment(editTextComment.getText().toString());
         currentItem.setHeading(editTextHeading.getText().toString());
@@ -262,6 +261,7 @@ public class ItemSession extends AppCompatActivity implements
             mental = new Mental(currentItem);
             mental = MentalWorker.insert(mental, this);
         }
+        currentItem.setMental(mental);
         setUserInterface(mental);
         setUserInterfaceCurrentEnergy();
     }
@@ -273,7 +273,13 @@ public class ItemSession extends AppCompatActivity implements
         checkBoxDone = findViewById(R.id.itemSession_checkBoxDone);
         editTextComment = findViewById(R.id.itemSession_comment);
         editTextHeading = findViewById(R.id.itemSession_heading);
+        //COMMENT SECTION
         editTextMentalComment = findViewById(R.id.itemSession_mentalComment);
+        spinnerCategories = findViewById(R.id.itemSession_categorySpinner);
+        layoutComment = findViewById(R.id.itemSession_layoutComment);
+        labelComment = findViewById(R.id.itemSession_labelCommentEtc);
+        editTextTags = findViewById(R.id.itemSession_tags);
+
         textViewDuration = findViewById(R.id.itemSession_duration);
         seekBarAnxiety = findViewById(R.id.itemSession_anxietySeekbar);
         seekBarMood = findViewById(R.id.itemSession_seekBarMood);
@@ -287,7 +293,8 @@ public class ItemSession extends AppCompatActivity implements
         fabAdd = findViewById(R.id.itemSession_fabAdd);
 
         //estimate
-        imageViewEstimateAction = findViewById(R.id.itemSession_estimateAction);
+        //imageViewEstimateAction = findViewById(R.id.itemSession_estimateAction);
+        seekBarEstimatedEnergy = findViewById(R.id.itemSession_estimateEnergySeekBar);
         layoutEstimate = findViewById(R.id.itemSession_layoutEstimate);
         editTextEstimateHours = findViewById(R.id.itemSession_estimateHours);
         editTextEstimateMinutes = findViewById(R.id.itemSession_estimateMinutes);
@@ -306,10 +313,7 @@ public class ItemSession extends AppCompatActivity implements
         labelRepeat = findViewById(R.id.itemSession_labelRepeat);
 
 
-        //COMMENT
-        layoutComment = findViewById(R.id.itemSession_layoutComment);
-        labelComment = findViewById(R.id.itemSession_labelCommentEtc);
-        editTextTags = findViewById(R.id.itemSession_tags);
+
 
         //NOTIFICATION
         textViewNotificationDate = findViewById(R.id.itemSession_notificationDate);
@@ -347,7 +351,7 @@ public class ItemSession extends AppCompatActivity implements
     }
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
-        imageViewEstimateAction.setOnClickListener(view->estimateAction());
+        //imageViewEstimateAction.setOnClickListener(view->estimateAction());
         imageViewRepeatAction.setOnClickListener(view->repeatAction());
         textViewTargetDate.setOnClickListener(view->showDateDialog());
         textViewTargetTime.setOnClickListener(view->showTimeDialog());
@@ -479,6 +483,27 @@ public class ItemSession extends AppCompatActivity implements
             }
         });
     }
+    private void initSpinnerCategories(){
+        log("...initSpinnerCategories()");
+        String[] categories = CategoryWorker.getCategories(this);
+        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+        spinnerCategories.setAdapter(categoryAdapter);
+        spinnerCategories.setSelection(0);
+        spinnerCategories.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                category = (String) spinnerCategories.getSelectedItem();
+                log("...category", category);
+                currentItem.setCategory(category);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+    }
 
     /**
      * callback for AddItemFragment
@@ -501,12 +526,23 @@ public class ItemSession extends AppCompatActivity implements
         menuInflater.inflate(R.menu.item_session_menu, menu);
         return true;
     }
+    /**
+     * callback to AddCategoryDialog
+     * @param category, the category to be added to the relevant db table
+     */
+    public void onNewCategory(String category) {
+        log("ItemEditor.onNewCategory(String)", category);
+        CategoryWorker.insertCategory(category, this);
+        String[] categories = CategoryWorker.getCategories(this);
+        //categoryAdapter.clear();
+        //categoryAdapter.addAll(categories);
+    }
 
 
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@androidx.annotation.NonNull MenuItem item) {
-        log("...onOptionsItemSelected(MenuItem)", item.getTitle().toString());
+        if( VERBOSE) log("...onOptionsItemSelected(MenuItem)", item.getTitle().toString());
         if (item.getItemId() == R.id.itemSession_delete) {
             deleteItem();
         } else if (item.getItemId() == R.id.itemSession_addPeriod) {
@@ -617,7 +653,8 @@ public class ItemSession extends AppCompatActivity implements
 
     private void setUserInterface(Estimate estimate){
         log("...setUserInterface(Estimate)");
-        imageViewEstimateAction.setImageDrawable(getDrawable(R.drawable.baseline_delete_24));
+        log(estimate);
+        //imageViewEstimateAction.setImageDrawable(getDrawable(R.drawable.baseline_delete_24));
         long seconds = estimate.getDuration();
         editTextEstimateHours.setText(String.valueOf(seconds / 3600));
         editTextEstimateMinutes.setText(String.valueOf((seconds % 3600) / 60));
@@ -637,9 +674,8 @@ public class ItemSession extends AppCompatActivity implements
         editTextTags.setText(item.getTags());
         textViewTargetDate.setText(item.getTargetDate().toString());
         textViewTargetTime.setText(Converter.format(item.getTargetTime()));
-
-
         checkBoxDone.setChecked(item.isDone());
+
         if( VERBOSE) log("...after setting checkbox to ", item.isDone());
         if( item.getDuration() > 0){
             buttonTimer.setText(getString(R.string.ui_resume));
@@ -664,9 +700,6 @@ public class ItemSession extends AppCompatActivity implements
         if( item.hasReward()){
             setUserInterface(item.getReward());
         }
-/*        if( item.hasMental()){
-            setUserInterface(item.getMental());
-        }*/
 
         checkBoxTemplate.setChecked(item.isTemplate());
         String textTags = item.hasTags() ? item.getTags(): "no tags";
@@ -910,7 +943,7 @@ public class ItemSession extends AppCompatActivity implements
     private void update(){
         log("...update()");
         updateItem();
-        updateMental();
+        //updateMental();
         kronos.reset();
 
     }
@@ -959,7 +992,7 @@ public class ItemSession extends AppCompatActivity implements
     }
 
     private boolean validateInput(){
-        log("...validateInput()");
+        if( VERBOSE) log("...validateInput()");
         String heading = editTextHeading.getText().toString();
         if ( heading.isEmpty()){
             Toast.makeText(this, "a heading is required", Toast.LENGTH_LONG).show();

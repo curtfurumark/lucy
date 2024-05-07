@@ -70,7 +70,7 @@ public class DurationStatistics {
         items =  db.selectItems(queery);
         log("...items on parade");
         items.forEach(Logger::log);
-        queery = Queeries.selectMentals(firstDate, lastDate);
+        queery = Queeries.selectMentals(firstDate, lastDate, false);
         mentals = db.selectMentals(queery);
     }
 

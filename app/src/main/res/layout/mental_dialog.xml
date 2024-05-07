@@ -41,6 +41,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mentalDialog_labelEnergy" />
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout4"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:hint="@string/heading"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/mentalDialog_heading"
+            android:layout_width="match_parent"
+
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+
     <SeekBar
         android:id="@+id/mentalDialog_mood"
         style="@style/Widget.AppCompat.SeekBar.Discrete"
@@ -52,6 +70,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/mentalDialog_labelMood"
         app:layout_constraintTop_toTopOf="@+id/mentalDialog_labelMood" />
+
+    <TextView
+        android:id="@+id/mentalDialog_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="date"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout4" />
+
+    <TextView
+        android:id="@+id/mentalDialog_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="time"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/mentalDialog_date" />
 
     <Button
         android:id="@+id/mentalDialog_button"
@@ -103,6 +138,35 @@
         app:layout_constraintStart_toEndOf="@+id/mentalDialog_labelAnxiety"
         app:layout_constraintTop_toTopOf="@+id/mentalDialog_labelAnxiety" />
 
+    <Spinner
+        android:id="@+id/mentalDialog_spinnerCategories"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:minHeight="48dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutComment" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutComment"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="@string/comment"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mentalDialog_anxiety">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/mentalDialog_comment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:lines="4" />
+    </com.google.android.material.textfield.TextInputLayout>
+
     <TextView
         android:id="@+id/mentalDialog_mentalID"
         android:layout_width="wrap_content"
@@ -122,70 +186,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/mentalDialog_mentalID" />
 
-    <Spinner
-        android:id="@+id/mentalDialog_spinnerCategories"
-        android:layout_width="0dp"
+    <CheckBox
+        android:id="@+id/mentalDialog_checkboxIsTemplate"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:minHeight="48dp"
+        android:layout_marginTop="8dp"
+        android:checked="false"
+        android:text="is template"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutComment" />
-
-    <TextView
-        android:id="@+id/mentalDialog_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="date"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout4" />
-
-    <TextView
-        android:id="@+id/mentalDialog_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="time"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/mentalDialog_date" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout4"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:hint="@string/heading"
-        android:layout_gravity="top"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/mentalDialog_heading"
-            android:layout_width="match_parent"
-
-            android:layout_height="wrap_content"
-            />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayoutComment"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:hint="@string/comment"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mentalDialog_anxiety">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/mentalDialog_comment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:lines="4" />
-    </com.google.android.material.textfield.TextInputLayout>
+        app:layout_constraintTop_toBottomOf="@+id/mentalDialog_itemID" />
 
     <Button
         android:id="@+id/mentalDialog_delete"
@@ -195,6 +205,6 @@
         android:layout_marginTop="16dp"
         android:text="@string/delete"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mentalDialog_itemID" />
+        app:layout_constraintTop_toBottomOf="@+id/mentalDialog_checkboxIsTemplate" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
