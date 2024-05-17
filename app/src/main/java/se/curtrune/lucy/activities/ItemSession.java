@@ -78,7 +78,8 @@ public class ItemSession extends AppCompatActivity implements
     private SeekBar seekBarStress;
 
     //ESTIMATE
-    private TextView labelEstimate;    private EditText editTextEstimateHours;
+    private TextView labelEstimate;
+    private EditText editTextEstimateHours;
     private EditText editTextEstimateMinutes;
     private EditText editTextEstimateSeconds;
     private SeekBar seekBarEstimatedEnergy;
@@ -138,7 +139,10 @@ public class ItemSession extends AppCompatActivity implements
     private ConstraintLayout layoutInfo;
     private ConstraintLayout layoutComment;
     private FloatingActionButton fabAdd;
+    //REWARD, AND OTHER STUFF
+    private CheckBox checkBoxPrioritized;
 
+    private EditText editTextColorCode;
     private CallingActivity callingActivity = CallingActivity.CALENDER_FRAGMENT;
     //variables
     private Item currentItem;
@@ -228,6 +232,7 @@ public class ItemSession extends AppCompatActivity implements
         itemIsDone = checkBoxDone.isChecked();
         currentItem.setType(checkBoxAppointment.isChecked()? Type.APPOINTMENT: Type.NODE);
         currentItem.setEstimate(getEstimate());
+        currentItem.setPriority(checkBoxPrioritized.isChecked()? 1:0);
         return currentItem;
     }
 
@@ -291,8 +296,7 @@ public class ItemSession extends AppCompatActivity implements
 
         fabAdd = findViewById(R.id.itemSession_fabAdd);
 
-        //estimate
-        //imageViewEstimateAction = findViewById(R.id.itemSession_estimateAction);
+        //ESTIMATE
         seekBarEstimatedEnergy = findViewById(R.id.itemSession_estimateEnergySeekBar);
         layoutEstimate = findViewById(R.id.itemSession_layoutEstimate);
         editTextEstimateHours = findViewById(R.id.itemSession_estimateHours);
@@ -300,19 +304,15 @@ public class ItemSession extends AppCompatActivity implements
         editTextEstimateSeconds = findViewById(R.id.itemSession_estimateSeconds);
         labelEstimate = findViewById(R.id.itemSession_labelEstimate);
 
-        //mental
+        //MENTAL
         labelMental = findViewById(R.id.itemSession_labelMental);
-        //imageViewMentalAction = findViewById(R.id.itemSession_mentalAction);
         layoutMental = findViewById(R.id.itemSession_layoutMental);
 
         layoutNotification = findViewById(R.id.itemSession_layoutNotification);
-        //repeat
+        //REPEAT
         layoutRepeat = findViewById(R.id.itemSession_layoutRepeat);
         imageViewRepeatAction = findViewById(R.id.itemSession_repeatActionIcon);
         labelRepeat = findViewById(R.id.itemSession_labelRepeat);
-
-
-
 
         //NOTIFICATION
         textViewNotificationDate = findViewById(R.id.itemSession_notificationDate);
@@ -347,10 +347,11 @@ public class ItemSession extends AppCompatActivity implements
         //REWARD
         labelReward = findViewById(R.id.itemSession_labelReward);
         layoutReward = findViewById(R.id.itemSession_layoutReward);
+        checkBoxPrioritized = findViewById(R.id.itemSession_isPrioritized);
+        editTextColorCode = findViewById(R.id.itemSession_colorCode);
     }
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
-        //imageViewEstimateAction.setOnClickListener(view->estimateAction());
         imageViewRepeatAction.setOnClickListener(view->repeatAction());
         textViewTargetDate.setOnClickListener(view->showDateDialog());
         textViewTargetTime.setOnClickListener(view->showTimeDialog());
@@ -366,13 +367,13 @@ public class ItemSession extends AppCompatActivity implements
             }
         });
         imageViewNotificationAction.setOnClickListener(view->showNotificationDialog());
-        //textViewEditPeriod.setOnClickListener(view->showAddPeriodDialog());
         labelComment.setOnClickListener(view->toggleComment());
         labelMental.setOnClickListener(view->toggleMental());
         labelRepeat.setOnClickListener(view->togglePeriod());
         labelEstimate.setOnClickListener(view->toggleEstimate());
         labelNotification.setOnClickListener(view->toggleNotifications());
         labelInfo.setOnClickListener(view->toggleInfo());
+        labelReward.setOnClickListener(view->toggleAward());
         labelDateTime.setOnClickListener(view->toggleDateTime());
         buttonTimer.setOnClickListener(view -> {
             switch(kronos.getState()){
@@ -513,7 +514,7 @@ public class ItemSession extends AppCompatActivity implements
 
         childItem = ItemsWorker.insertChild(currentItem, childItem, this);
         log(childItem);
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, MainActivityOld.class);
         intent.putExtra(Constants.INTENT_SHOW_CHILD_ITEMS, true);
         intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, currentItem);
         startActivity(intent);
@@ -623,7 +624,7 @@ public class ItemSession extends AppCompatActivity implements
             case PROJECTS_FRAGMENT:
             case TODO_FRAGMENT:
             case ENCHILADA_FRAGMENT:
-                Intent mainIntent = new Intent(this, NavigationDrawerActivity.class);
+                Intent mainIntent = new Intent(this, MainActivity.class);
                 startActivity(mainIntent);
                 break;
             case SEQUENCE_ACTIVITY:
@@ -663,11 +664,6 @@ public class ItemSession extends AppCompatActivity implements
 
     private void setUserInterface(Item item){
         log("...setUserInterface(Item item)", item.getHeading());
-        if( item == null){
-            log("VERY UNEXPECTED ERROR, set userInterface(Item) called with item == null");
-            return;
-        }
-        //if( VERBOSE) log(item);
         textViewDuration.setText(Converter.formatSecondsWithHours(item.getDuration()));
         editTextHeading.setText(item.getHeading());
         editTextComment.setText(item.getComment());
@@ -675,6 +671,7 @@ public class ItemSession extends AppCompatActivity implements
         textViewTargetDate.setText(item.getTargetDate().toString());
         textViewTargetTime.setText(Converter.format(item.getTargetTime()));
         checkBoxDone.setChecked(item.isDone());
+        checkBoxPrioritized.setChecked(item.getPriority() == 1);
 
         if( VERBOSE) log("...after setting checkbox to ", item.isDone());
         if( item.getDuration() > 0){
@@ -741,12 +738,12 @@ public class ItemSession extends AppCompatActivity implements
         int estimatedCurrent = previousEnergy + seekBarEnergy.getProgress() - Constants.ENERGY_OFFSET;
         if( estimatedCurrent <= -3){
             textViewCurrentEnergy.setTextColor(Color.parseColor("#ff0000"));
-        }else if( estimatedCurrent> - 3 && estimatedCurrent <= 2){
+        }else if(estimatedCurrent <= 2){
             textViewCurrentEnergy.setTextColor(Color.parseColor("#ffff00"));
         }else{
             textViewCurrentEnergy.setTextColor(Color.parseColor("#00ff00"));
         }
-        String textEnergy = String.format(Locale.getDefault(), "energy: %d",estimatedCurrent, this);
+        String textEnergy = String.format(Locale.getDefault(), "energy: %d",estimatedCurrent);
         textViewCurrentEnergy.setText(textEnergy);
     }
     private void setUserInterface(Mental mental){
@@ -940,6 +937,13 @@ public class ItemSession extends AppCompatActivity implements
             //textViewEditPeriod.setVisibility(View.VISIBLE);
         }
     }
+    private void toggleAward(){
+        if( layoutReward.getVisibility() == View.VISIBLE){
+            layoutReward.setVisibility(View.GONE);
+        }else{
+            layoutReward.setVisibility(View.VISIBLE);
+        }
+    }
     private void update(){
         log("...update()");
         updateItem();
@@ -964,7 +968,7 @@ public class ItemSession extends AppCompatActivity implements
             ItemsWorker.touchParents(currentItem, this);
         }
         kronos.reset();
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, MainActivityOld.class);
         intent.putExtra(Constants.INTENT_SHOW_CHILD_ITEMS, true);
         Item parent = ItemsWorker.selectItem(currentItem.getParentId(), this);
         intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, parent);

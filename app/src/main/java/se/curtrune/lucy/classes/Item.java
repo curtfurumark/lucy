@@ -47,6 +47,7 @@ public class Item implements Serializable , Listable {
     protected  int color;
     //protected Content content;
     protected Reward reward;
+    protected int priority;
     /**
      * 0 = not a template in anyway
      * templateRoot, has templateChildren
@@ -174,6 +175,9 @@ public class Item implements Serializable , Listable {
     }
     public long getParentId() {
         return parent_id;
+    }
+    public int getPriority(){
+        return priority;
     }
 
     public Repeat getPeriod(){
@@ -377,6 +381,9 @@ public class Item implements Serializable , Listable {
         this.repeat = repeat;
     }
 
+    public void setPriority(int priority){
+        this.priority = priority;
+    }
     public void setReward(Reward reward){
         this.reward = reward;
     }

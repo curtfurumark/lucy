@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 
@@ -225,7 +228,7 @@ public class ProjectsFragment extends Fragment implements
     }
     private void showAddItemDialog(){
         log("...showAddItemDialog()");
-        AddTemplateDialog dialog = new AddTemplateDialog(currentParent);
+        AddTemplateDialog dialog = new AddTemplateDialog(currentParent, LocalDate.now());
         dialog.setCallback(new OnNewItemCallback() {
             @Override
             public void onNewItem(Item item) {
@@ -245,9 +248,14 @@ public class ProjectsFragment extends Fragment implements
             Toast.makeText(getContext(), "current parent is null", Toast.LENGTH_LONG).show();
             return;
         }
-        Toast.makeText(getContext(), "start sequence", Toast.LENGTH_LONG).show();
-        Intent intent = new Intent(getContext(), SequenceActivity.class);
+        SequenceFragment    sequenceFragment = new SequenceFragment();
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.mainActivity_fragmentContainer, sequenceFragment);
+        fragmentTransaction.commit();
+/*        Toast.makeText(getContext(), "start sequence", Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(getContext(), SequenceFragment.class);
         intent.putExtra(Constants.INTENT_SEQUENCE_PARENT, currentParent);
-        startActivity(intent);
+        startActivity(intent);*/
     }
 }

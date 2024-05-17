@@ -7,6 +7,7 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -167,10 +168,6 @@ public class CalenderFragment extends Fragment {
         currentDate = LocalDate.now();
         currentWeek = new Week(currentDate);
         items = new ArrayList<>();
-/*        Item item = new Item("medicin lunch");
-        item.setTargetTime(LocalTime.of(12, 0));
-        item.setTargetDate(LocalDate.now());*/
-        //items.add(item);
     }
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
@@ -255,7 +252,6 @@ public class CalenderFragment extends Fragment {
         recyclerDates.setLayoutManager(new GridLayoutManager(getContext(), 7));
         recyclerDates.setItemAnimator(new DefaultItemAnimator());
         recyclerDates.setAdapter(calenderDateAdapter);
-
     }
     private void initSwipe() {
         if( VERBOSE) log("...initSwipe()");
@@ -318,6 +314,13 @@ public class CalenderFragment extends Fragment {
         setUserInterface(currentDate);
         calenderDateAdapter.setList(currentWeek);
     }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        log("CalenderFragment.onOptionsItemSelected(MenuItem) ", item.getTitle().toString());
+        return super.onOptionsItemSelected(item);
+    }
+
     private void prevWeek(){
         log("...prevWeek()");
         currentDate = currentDate.minusWeeks(1);
@@ -344,7 +347,7 @@ public class CalenderFragment extends Fragment {
     }
     private void showAddItemDialog(){
         log("...showAddItemDialog()");
-        AddTemplateDialog dialog = new AddTemplateDialog(ItemsWorker.getRootItem(Settings.Root.DAILY, getContext()));
+        AddTemplateDialog dialog = new AddTemplateDialog(ItemsWorker.getRootItem(Settings.Root.DAILY, getContext()), currentDate);
         dialog.setCallback(new OnNewItemCallback() {
             @Override
             public void onNewItem(Item item) {

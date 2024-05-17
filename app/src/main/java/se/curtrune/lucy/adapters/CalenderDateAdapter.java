@@ -24,7 +24,7 @@ public class CalenderDateAdapter extends RecyclerView.Adapter<CalenderDateAdapte
     private List<LocalDate> dates;
     private Week week;
     //private LocalDate selectedDate;
-    public static boolean VERBOSE = false;
+    public static boolean VERBOSE = true;
 
     public void setList(Week week) {
         if( VERBOSE) log("CalenderDateAdapter.setList(List<Item>) size", dates.size());
@@ -47,7 +47,7 @@ public class CalenderDateAdapter extends RecyclerView.Adapter<CalenderDateAdapte
     private Callback callback;
 
     public CalenderDateAdapter(Week week, Callback callback) {
-        if( VERBOSE) log("CalenderDateAdapter(Week, Callback) dates size", dates.size());
+        if( VERBOSE) log("CalenderDateAdapter(Week, Callback)");
         this.dates = week.getDates();
         this.week = week;
         this.callback = callback;

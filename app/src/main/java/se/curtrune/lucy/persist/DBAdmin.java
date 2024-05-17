@@ -71,6 +71,7 @@ public class DBAdmin {
         item.setContent(cursor.getString(19));
         item.setReward(cursor.getString(20));
         item.setColor(cursor.getInt(21));
+        item.setPriority(cursor.getInt(22));
         return item;
     }
     public static ContentValues getContentValues(Asset asset){
@@ -109,6 +110,7 @@ public class DBAdmin {
         }
         cv.put("template", item.isTemplate()? 1:0);
         cv.put("color", item.getColor());
+        cv.put("priority", item.getPriority());
         //cv.put("content", item.getContent());
         //cv.put("mental", item.getMental().toJson());
         return cv;
@@ -172,8 +174,6 @@ public class DBAdmin {
         cv.put("name", category);
         return cv;
     }
-
-
 
     public static void insertCategories(Context context) {
         log("...insertCategories(Context)");

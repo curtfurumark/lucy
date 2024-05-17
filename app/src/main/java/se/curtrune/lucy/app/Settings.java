@@ -9,7 +9,6 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Type;
 
 public class Settings {
-    //root ids
     private static final String PREFERENCES_NAME =  "PREFERENCES_NAME";
     private static final String IS_INITIALIZED = "IS_INITIALIZED";
     private long todoID;
@@ -21,8 +20,6 @@ public class Settings {
     private boolean isInitialized = false;
     private SharedPreferences.Editor editor;
     private static Settings instance;
-
-
 
     public void reload(Context context) {
         log("...reload(Context)");

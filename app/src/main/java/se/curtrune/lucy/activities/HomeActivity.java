@@ -2,8 +2,7 @@ package se.curtrune.lucy.activities;
 
 import static se.curtrune.lucy.util.Logger.log;
 
-import android.app.UiModeManager;
-import android.content.Context;
+
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -15,9 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
-import androidx.core.os.LocaleListCompat;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -31,17 +28,14 @@ import se.curtrune.lucy.activities.economy.persist.ECDBAdmin;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
 import se.curtrune.lucy.util.Logger;
-import se.curtrune.lucy.workers.AffirmationWorker;
 
 public class HomeActivity extends AppCompatActivity {
     private TextView textViewSettings;
     private TextView textViewSwipeAble;
     private TextView textViewNewMain;
-    private TextView textViewCalender;
-    private TextView textViewStatistics;
+
     private TextView textViewQuote;
-    private TextView textViewGraph;
-    private TextView textViewNavDrawer;
+
     private Lucinda lucinda;
     public static boolean VERBOSE = false;
 
@@ -50,7 +44,6 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_activity);
         setTitle("lucinda");
-        //changeLanguage();
         log("HomeActivity.onCreate(Bundle)");
         lucinda = Lucinda.getInstance(this);
         if (!lucinda.isInitialized(this)) {
@@ -68,7 +61,6 @@ public class HomeActivity extends AppCompatActivity {
         initListeners();
         checkNotificationPermission();
         openDB();
-        testMentals();
     }
 
     private void checkNotificationPermission() {
@@ -89,28 +81,20 @@ public class HomeActivity extends AppCompatActivity {
 
     private void initComponents() {
         if( VERBOSE) log("...initComponents()");
-        textViewGraph = findViewById(R.id.homeActivity_graph);
-        textViewStatistics = findViewById(R.id.homeActivity_statistics);
+
         textViewQuote = findViewById(R.id.homeActivity_quote);
         textViewQuote.setSelected(true);
-        textViewCalender = findViewById(R.id.homeActivity_calender);
         textViewNewMain = findViewById(R.id.homeActivity_mainActivity);
         textViewSettings = findViewById(R.id.homeActivity_settings);
         textViewSwipeAble = findViewById(R.id.homeActivity_economy);
-        textViewNavDrawer = findViewById(R.id.homeActivity_navigationDrawer);
     }
 
     private void initListeners() {
         if( VERBOSE) log("...initListeners()");
         textViewSwipeAble.setOnClickListener(view -> startActivity(new Intent(this, EconomyActivity.class)));
-        textViewGraph.setOnClickListener(view -> startActivity(new Intent(this, GraphActivity.class)));
-        textViewStatistics.setOnClickListener(view -> startActivity(new Intent(this, StatisticsMain.class)));
         textViewNewMain.setOnClickListener(view -> startActivity(new Intent(this, MainActivity.class)));
-        textViewCalender.setOnClickListener(view -> startActivity(new Intent(this, MonthCalenderActivity.class)));
         textViewQuote.setOnClickListener(view -> randomQuote());
         textViewSettings.setOnClickListener(view -> startActivity(new Intent(this, SettingsActivity.class)));
-        textViewNavDrawer.setOnClickListener(view->startActivity(new Intent(this, NavigationDrawerActivity.class)));
-
     }
 
     private void randomQuote() {
@@ -121,9 +105,10 @@ public class HomeActivity extends AppCompatActivity {
 
     private void listTables() {
         log("...listTables()");
-        LocalDB db = new LocalDB(this);
-        List<String> tables = db.getTableNames();
-        tables.forEach(Logger::log);
+        try(LocalDB db = new LocalDB(this)) {
+            List<String> tables = db.getTableNames();
+            tables.forEach(Logger::log);
+        }
     }
 
     @Override
@@ -159,79 +144,61 @@ public class HomeActivity extends AppCompatActivity {
 
     private void openDB() {
         log("...openDB");
-        LocalDB db = new LocalDB(this);
-        db.open();
+        try (LocalDB db = new LocalDB(this)) {
+            db.open();
+        }catch (Exception e){
+            log(e.getMessage());
+        }
     }
 
     private void deleteItemsTable() {
         log("...deleteItemsTable()");
-        LocalDB db = new LocalDB(this);
-        db.executeSQL(Queeries.DROP_TABLE_ITEMS);
-    }
-
-    private void changeLanguage() {
-        log("...changeLanguage()");
-/*        Locale locale = new Locale("en GB");
-        Locale.setDefault(locale);
-        Configuration config = new Configuration();
-        config.locale = locale;
-        getResources().updateConfiguration(config, getResources().getDisplayMetrics());*/
-
-
-        LocaleListCompat localeListCompat = LocaleListCompat.forLanguageTags("en");
-        AppCompatDelegate.setApplicationLocales(localeListCompat);
+        try(LocalDB db = new LocalDB(this)) {
+            db.executeSQL(Queeries.DROP_TABLE_ITEMS);
+        }
     }
 
     private void createItemsTable() {
         log("...createItemsTable()");
-        LocalDB db = new LocalDB(this);
-        db.executeSQL(Queeries.CREATE_TABLE_ITEMS);
+        try(LocalDB db = new LocalDB(this)) {
+            db.executeSQL(Queeries.CREATE_TABLE_ITEMS);
+        }
     }
 
     private void createTableMental() {
         log("...createTableMental()");
-        LocalDB db = new LocalDB(this);
-        db.executeSQL(Queeries.CREATE_TABLE_MENTAL);
+        try(LocalDB db = new LocalDB(this)) {
+            db.executeSQL(Queeries.CREATE_TABLE_MENTAL);
+        }
     }
 
     private void dropTableMental() {
         log("...dropTableMental()");
-        LocalDB db = new LocalDB(this);
-        db.executeSQL(Queeries.DROP_TABLE_MENTAL);
+        try(LocalDB db = new LocalDB(this)){
+            db.executeSQL(Queeries.DROP_TABLE_MENTAL);
+        }
     }
 
     private void createTableCategories() {
         log("...createTableCategories()");
-        LocalDB db = new LocalDB(this);
-        db.executeSQL(Queeries.CREATE_TABLE_CATEGORIES);
-        populateCategories();
+        try(LocalDB db = new LocalDB(this)) {
+            db.executeSQL(Queeries.CREATE_TABLE_CATEGORIES);
+            populateCategories();
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        //changeLanguage();
     }
 
     private void populateCategories() {
         log("...populateCategories()");
-        LocalDB db = new LocalDB(this);
-        for (String category : Lucinda.CATEGORIES) {
-            db.executeSQL(Queeries.insertCategory(category));
+        try(LocalDB db = new LocalDB(this)) {
+            for (String category : Lucinda.CATEGORIES) {
+                db.executeSQL(Queeries.insertCategory(category));
+            }
         }
-    }
-
-    private void randomAffirmation() {
-        log("...randomAffirmation()");
-        AffirmationWorker.requestAffirmation(affirmation -> {
-            textViewQuote.setText(affirmation.getAffirmation());
-/*            new Handler().postDelayed(() -> {
-                log("...run()");
-                startActivity(new Intent(this, TodayActivity.class));
-
-            },2000);*/
-        });
-
     }
 
     private void resetApp() {
@@ -243,48 +210,4 @@ public class HomeActivity extends AppCompatActivity {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
-
-    private void testCategories() {
-        log("...testCategories()");
-        DBAdmin.insertCategories(this);
-    }
-
-    private void toggleDarkMode() {
-        log("...toggleDarkMode()");
-        UiModeManager uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
-        //uiModeManager.getCurrentModeType();
-        int currentMode = uiModeManager.getNightMode();
-        log("...currentMode");
-        switch (currentMode) {
-            case UiModeManager.MODE_NIGHT_NO:
-                log("MODE_NIGHT_NO");
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                break;
-            case UiModeManager.MODE_NIGHT_YES:
-                log("MODE_NIGHT_YES");
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                break;
-            case UiModeManager.MODE_NIGHT_AUTO:
-                log("MODE_NIGHT_AUTO");
-                break;
-            case UiModeManager.MODE_NIGHT_CUSTOM:
-                log("MODE_NIGHT_CUSTOM");
-                break;
-        }
-    }
-
-    private void testMentals() {
-/*        log("...testMentals()");
-        List<Mental> mentals = MentalWorker.selectMentalsFromItems(LocalDate.now(), this);
-        log("number of mentals", mentals.size());
-        mentals.forEach(System.out::println);*/
-    }
 }
-/*        int currentNightMode = Configuration.uiMode & Configuration.UI_MODE_NIGHT_MASK;
-        switch (currentNightMode) {
-            case Configuration.UI_MODE_NIGHT_NO:
-                // Night mode is not active, we're using the light theme
-                break;
-            case Configuration.UI_MODE_NIGHT_YES:
-                // Night mode is active, we're using dark theme
-                break;*/

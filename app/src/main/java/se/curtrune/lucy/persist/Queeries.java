@@ -43,6 +43,7 @@ public class Queeries {
                     "content STRING, " +         //19
                     "reward STRING, " +         //20
                     "color INTEGER default -1 " + //21
+                    "priority INTEGER default 0" + //22
                     ")";           //20
     public static String CREATE_TABLE_MENTAL =
             "CREATE TABLE mental (id INTEGER PRIMARY KEY AUTOINCREMENT, " +

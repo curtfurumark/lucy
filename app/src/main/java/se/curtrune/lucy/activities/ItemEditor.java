@@ -329,7 +329,7 @@ public class ItemEditor extends AppCompatActivity implements
         switch(callingActivity){
             case TODO_FRAGMENT:
             case CALENDER_FRAGMENT:
-                startActivity(new Intent(this, MainActivity.class));
+                startActivity(new Intent(this, MainActivityOld.class));
                 break;
             case STATISTICS_ACTIVITY:
                 startActivity(new Intent(this, StatisticsMain.class));
@@ -489,6 +489,6 @@ public class ItemEditor extends AppCompatActivity implements
         }else{
             log("item updated");
         }
-        startActivity(new Intent(this, MainActivity.class));
+        startActivity(new Intent(this, MainActivityOld.class));
     }
 }

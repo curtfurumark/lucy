@@ -14,7 +14,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,12 +36,10 @@ import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.classes.State;
-import se.curtrune.lucy.util.Converter;
 import se.curtrune.lucy.workers.UtilWorker;
 
 public class AddTemplateDialog extends BottomSheetDialogFragment {
-    //private ConstraintLayout layoutDays;
-   // private TextInputLayout layoutDays;
+
     private Chip chipMonday;
     private Chip chipTuesday;
     private Chip chipWednesday;
@@ -54,6 +52,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
     private ConstraintLayout layoutDateTime;
     private ConstraintLayout layoutRepeat;
     private ConstraintLayout layoutDays;
+    private LinearLayout layoutOther;
     private EditText editTextHeading;
     private EditText editTextDays;
 
@@ -61,17 +60,19 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
     private TextView labelDays;
     private TextView labelWeekDays;
     private TextView labelRepeat;
+    private TextView labelOther;
     private TextView labelDateTime;
     private TextView textViewDate;
     private TextView textViewTime;
-    private TextView textViewNow;
+    //private TextView textViewNow;
     private Spinner spinner;
     private Button buttonSave;
     private Button buttonDismiss;
     private Button buttonAddAndContinue;
+    private Button buttonRightNow;
     private CheckBox checkBoxShowInCalender;
     private ArrayAdapter<String> arrayAdapter;
-    private Item parent;
+    private final Item parent;
     private LocalDate date;
     private LocalTime time;
 
@@ -83,10 +84,12 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
 
     private Repeat.Mode mode = Repeat.Mode.DAYS;
 
-    public AddTemplateDialog(Item parent) {
+    public AddTemplateDialog(Item parent, LocalDate date) {
         assert  parent != null;
+        //if( date == null)
         log("AddTemplateDialog(Item) parent", parent.getHeading());
         this.parent = parent;
+        this.date = date;
     }
     @Nullable
     @Override
@@ -99,18 +102,21 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         createItem();
         return view;
     }
-    private void createItem(){
-        log("...createItem()");
+    private Item createItem(){
+        if( VERBOSE) log("...createItem()");
         item = new Item();
         item.setState(State.TODO);
+        item.setTargetDate(date);
         item.setParent(parent);
+        return item;
     }
     private Item getItem(){
-        log("...getItem()");
+        if( VERBOSE) log("...getItem()");
         item.setHeading(editTextHeading.getText().toString());
         item.setParentId(parent.getID());
         item.setIsCalenderItem(checkBoxShowInCalender.isChecked());
         item.setPeriod(getPeriod());
+        item.setCategory(category);
         return item;
     }
     private Repeat getPeriod(){
@@ -156,12 +162,10 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
     private void initComponents(View view){
         if( VERBOSE) log("...initComponents(View view");
         editTextHeading = view.findViewById(R.id.addTemplateDialog_heading);
-        buttonSave = view.findViewById(R.id.addTemplateDialog_button);
-        buttonDismiss = view.findViewById(R.id.addTemplateDialog_dismiss);
-        buttonAddAndContinue = view.findViewById(R.id.addTemplateDialog_addAndContinue);
+
         editTextDays = view.findViewById(R.id.addTemplateDialog_days);
         textViewParent = view.findViewById(R.id.addTemplateDialog_parent);
-        spinner = view.findViewById(R.id.addTemplateDialog_spinner);
+
         //repeat
         layoutRepeat = view.findViewById(R.id.addTemplateDialog_layoutRepeat);
         labelDays = view.findViewById(R.id.addTemplateDialog_labelDays);
@@ -181,8 +185,17 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         textViewDate = view.findViewById(R.id.addTemplateDialog_date);
         textViewTime = view.findViewById(R.id.addTemplateDialog_time);
         labelRepeat = view.findViewById(R.id.addTemplateDialog_repeat);
-        textViewNow = view.findViewById(R.id.addTemplateDialog_now);
+        //textViewNow = view.findViewById(R.id.addTemplateDialog_now);
+        //other
+        labelOther = view.findViewById(R.id.addTemplateDialog_labelOther);
+        layoutOther = view.findViewById(R.id.addTemplateDialog_layoutOther);
+        spinner = view.findViewById(R.id.addTemplateDialog_spinner);
         checkBoxShowInCalender = view.findViewById(R.id.addTemplateDialog_showInCalender);
+        //buttons
+        buttonRightNow = view.findViewById(R.id.addTemplateDialog_buttonRightNow);
+        buttonSave = view.findViewById(R.id.addTemplateDialog_button);
+        buttonDismiss = view.findViewById(R.id.addTemplateDialog_dismiss);
+        buttonAddAndContinue = view.findViewById(R.id.addTemplateDialog_addAndContinue);
     }
 
     private void initListeners(){
@@ -196,8 +209,8 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         labelRepeat.setOnClickListener(view->toggleRepeat());
         textViewDate.setOnClickListener(view->showDateDialog());
         textViewTime.setOnClickListener(view->showTimeDialog());
-        //textViewNow.setOnClickListener(view->setDateAndTime(LocalDate.now(), LocalTime.now().plusMinutes(5)));
-        textViewNow.setOnClickListener(view->rightNow());
+        labelOther.setOnClickListener(view->toggleOther());
+        buttonRightNow.setOnClickListener(view->rightNow());
     }
 
     /**
@@ -206,7 +219,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
     private void initSpinner(){
         log("...initSpinner()");
         String[] categories = UtilWorker.getCategories(getContext());
-        arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, categories);
+        arrayAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, categories);
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
         spinner.setAdapter(arrayAdapter);
         spinner.setSelection(0);
@@ -228,6 +241,10 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         if( VERBOSE) log("...initUserInterface()");
         textViewParent.setText(parent.getHeading());
         setSpinnerSelection(parent.getCategory());
+        if( date != null) {
+            textViewDate.setText(date.toString());
+        }
+        checkBoxShowInCalender.setChecked(true);
     }
     private void rightNow(){
         log("...rightNow()");
@@ -249,21 +266,13 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         }
         callback.onNewItem(getItem());
         if( dismiss) {
+            editTextHeading.setText("");
+            item = createItem();
             dismiss();
         }
     }
     public void setCallback(OnNewItemCallback callback) {
         this.callback = callback;
-    }
-    public void setDateAndTime(LocalDate date, LocalTime time){
-        log("...setDateAndTime()");
-        this.date = date;
-        this.time = time;
-        item.setTargetTime(time);
-        item.setTargetDate(date);
-        textViewDate.setText(date.toString());
-        textViewTime.setText(Converter.format(time));
-
     }
     private void setSpinnerSelection(String category){
         log("...setSpinnerSelection(String)", category);
@@ -271,15 +280,12 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
     }
     private void showDateDialog(){
         if( VERBOSE) log("...showDateDialog()");
-        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext());
-        datePickerDialog.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                log("...onDateSet(DatePicker, int, int , int)");
-                date = LocalDate.of(year, month +1, dayOfMonth);
-                item.setTargetDate(date);
-                textViewDate.setText(date.toString());
-            }
+        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext());
+        datePickerDialog.setOnDateSetListener((view, year, month, dayOfMonth) -> {
+            log("...onDateSet(DatePicker, int, int , int)");
+            date = LocalDate.of(year, month +1, dayOfMonth);
+            item.setTargetDate(date);
+            textViewDate.setText(date.toString());
         });
         datePickerDialog.show();
     }
@@ -312,6 +318,14 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
             layoutDateTime.setVisibility(View.VISIBLE);
         }else{
             layoutDateTime.setVisibility(View.GONE);
+        }
+    }
+    private void toggleOther(){
+        log("...toggleOther()");
+        if( layoutOther.getVisibility() == View.GONE){
+            layoutOther.setVisibility(View.VISIBLE);
+        }else{
+            layoutOther.setVisibility(View.GONE);
         }
     }
     private void toggleRepeat(){

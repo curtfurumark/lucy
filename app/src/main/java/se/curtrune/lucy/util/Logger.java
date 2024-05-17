@@ -75,6 +75,7 @@ public class Logger {
         //log("\thas mental", item.hasMental());
         log("\thas notification", item.hasNotification());
         log("\tcolor", item.getColor());
+        log("\tpriority", item.getPriority());
     }
     public static void log(Mental mental){
         log("log(Mental)");
