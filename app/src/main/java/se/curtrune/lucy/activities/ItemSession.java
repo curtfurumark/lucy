@@ -213,8 +213,7 @@ public class ItemSession extends AppCompatActivity implements
         return duration;
     }
     private int getEstimatedEnergy(){
-        //TODO, estimated energy
-        return 0;
+        return seekBarEstimatedEnergy.getProgress() - Constants.ENERGY_OFFSET;
     }
 
     private Item getItem(){
@@ -502,7 +501,6 @@ public class ItemSession extends AppCompatActivity implements
 
             }
         });
-
     }
 
     /**
@@ -553,6 +551,8 @@ public class ItemSession extends AppCompatActivity implements
             returnToCallingActivity();
         } else if( item.getItemId() == R.id.itemSession_addEstimate){
             showEstimateDialog();
+        } else if( item.getItemId() == R.id.itemSession_addCategory){
+            log("...addCategory");
         }
         return super.onOptionsItemSelected(item);
     }
@@ -623,7 +623,7 @@ public class ItemSession extends AppCompatActivity implements
             case PROJECTS_FRAGMENT:
             case TODO_FRAGMENT:
             case ENCHILADA_FRAGMENT:
-                Intent mainIntent = new Intent(this, MainActivity.class);
+                Intent mainIntent = new Intent(this, NavigationDrawerActivity.class);
                 startActivity(mainIntent);
                 break;
             case SEQUENCE_ACTIVITY:
@@ -654,11 +654,11 @@ public class ItemSession extends AppCompatActivity implements
     private void setUserInterface(Estimate estimate){
         log("...setUserInterface(Estimate)");
         log(estimate);
-        //imageViewEstimateAction.setImageDrawable(getDrawable(R.drawable.baseline_delete_24));
         long seconds = estimate.getDuration();
         editTextEstimateHours.setText(String.valueOf(seconds / 3600));
         editTextEstimateMinutes.setText(String.valueOf((seconds % 3600) / 60));
         editTextEstimateSeconds.setText(String.valueOf(seconds % 60));
+        seekBarEstimatedEnergy.setProgress(estimate.getEnergy() + Constants.ENERGY_OFFSET);
     }
 
     private void setUserInterface(Item item){

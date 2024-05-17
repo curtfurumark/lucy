@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:title="save item"
+    <item android:title="@string/save_item"
         android:id="@+id/itemSession_save"
         android:icon="@drawable/baseline_save_24"
         app:showAsAction="always"/>
     <item android:id="@+id/itemSession_addEstimate"
         android:title="add estimate"/>
-    <item android:title="home"
+    <item android:title="@string/home"
         android:icon="@drawable/baseline_home_24"
         android:id="@+id/itemSession_home"
         app:showAsAction="always"/>
-    <item android:title="delete item"
+    <item android:title="@string/delete_item"
         android:id="@+id/itemSession_delete"/>
     <item android:title="@string/add_period"
         android:id="@+id/itemSession_addPeriod"/>
+    <item android:title="@string/add_category"
+        android:id="@+id/itemSession_addCategory"/>
 </menu>

@@ -27,7 +27,6 @@ public class MentalAdapter extends RecyclerView.Adapter<MentalAdapter.MyViewHold
     private Mode mode = Mode.ENERGY;
     public interface Callback{
         void onItemClick(Mental item);
-        void onItemLongClick(Mental item);
     }
     private final Callback callback;
 
@@ -115,13 +114,6 @@ public class MentalAdapter extends RecyclerView.Adapter<MentalAdapter.MyViewHold
                 if( callback != null){
                     callback.onItemClick(items.get(getAdapterPosition()));
                 }
-            });
-            parentLayout.setOnLongClickListener(v -> {
-                if( callback == null){
-                    return false;
-                }
-                callback.onItemLongClick(items.get(getAdapterPosition()));
-                return true;
             });
         }
     }

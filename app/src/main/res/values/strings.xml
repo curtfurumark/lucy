@@ -146,4 +146,7 @@
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
+    <string name="delete_item">delete item</string>
+    <string name="save_item">save item</string>
+    <string name="add_category">add category</string>
 </resources>

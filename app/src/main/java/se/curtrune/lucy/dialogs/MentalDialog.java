@@ -76,7 +76,7 @@ public class MentalDialog extends BottomSheetDialogFragment {
     private int anxiety;
 
     private long itemID = -1;
-    public static boolean VERBOSE = true;
+    public static boolean VERBOSE = false;
     private String category;
 
     public  enum Mode {
@@ -136,11 +136,11 @@ public class MentalDialog extends BottomSheetDialogFragment {
         return view;
     }
     private void delete(){
-        log("MentalDialog.delete()", mental.getHeading());
+        if( VERBOSE) log("MentalDialog.delete()", mental.getHeading());
         listener.onMental(mental, Mode.DELETE);
     }
     private Mental getMental(){
-        log("...getMental()");
+        if( VERBOSE) log("...getMental()");
         if( !mode.equals(Mode.EDIT)){
             mental = new Mental();
         }
@@ -159,7 +159,7 @@ public class MentalDialog extends BottomSheetDialogFragment {
     }
 
     private void initComponents(View view){
-        log("...initComponents()");
+        if( VERBOSE) log("...initComponents()");
         buttonSave = view.findViewById(R.id.mentalDialog_button);
         seekBarEnergy = view.findViewById(R.id.mentalDialog_energy);
         seekBarMood = view.findViewById(R.id.mentalDialog_mood);
@@ -180,14 +180,14 @@ public class MentalDialog extends BottomSheetDialogFragment {
         checkBoxIsTemplate = view.findViewById(R.id.mentalDialog_checkboxIsTemplate);
     }
     private void initDefaults(){
-        log("...initDefaults()");
+        if( VERBOSE) log("...initDefaults()");
         categories = CategoryWorker.getCategories(getContext());
         assert categories.length > 0;
         category = categories[0];
 
     }
     private void initListeners(){
-        log("...initListeners()");
+        if( VERBOSE) log("...initListeners()");
         buttonSave.setOnClickListener(view1 -> {
             mental = getMental();
             listener.onMental(mental, mode);
@@ -269,7 +269,7 @@ public class MentalDialog extends BottomSheetDialogFragment {
         });
     }
     private void initSpinnerCategory(){
-        log("...initSpinnerCategory()");
+        if( VERBOSE) log("...initSpinnerCategory()");
         arrayAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, categories);
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
         spinnerCategory.setAdapter(arrayAdapter);
@@ -300,7 +300,7 @@ public class MentalDialog extends BottomSheetDialogFragment {
         this.listener = callback;
     }
     private void setMentalLabels(){
-        log("...setMentalLabels()");
+        if( VERBOSE) log("...setMentalLabels()");
         String strEnergy = String.format(Locale.ENGLISH,"%s %d", getString(R.string.energy), energy);
         labelEnergy.setText(strEnergy);
 
@@ -313,14 +313,14 @@ public class MentalDialog extends BottomSheetDialogFragment {
         labelStress.setText(strStress);
     }
     private void setSeekBars(){
-        log("...setSeekBars()");
+        if( VERBOSE) log("...setSeekBars()");
         seekBarEnergy.setProgress(energy + Constants.ENERGY_OFFSET);
         seekBarStress.setProgress(stress + Constants.STRESS_OFFSET);
         seekBarMood.setProgress(mood + Constants.MOOD_OFFSET);
         seekBarAnxiety.setProgress(anxiety + Constants.ANXIETY_OFFSET);
     }
     private void setUserInterface(){
-        log("...setUserInterface()", mode.toString());
+        if( VERBOSE) log("...setUserInterface()", mode.toString());
         if( mode.equals(Mode.CREATE_WITH_ITEM)) {
             editTextHeading.setText(heading);
             textViewTime.setText(Converter.format(time));
@@ -363,11 +363,11 @@ public class MentalDialog extends BottomSheetDialogFragment {
         updateUserInterface();
     }
     private void setSpinnerCategory(String category){
-        log("...setSpinnerCategory(String) ", category);
+        if(  VERBOSE) log("...setSpinnerCategory(String) ", category);
         spinnerCategory.setSelection(arrayAdapter.getPosition(category));
     }
     private void showDateDialog(){
-        log("...showDateDialog()");
+        if( VERBOSE) log("...showDateDialog()");
         DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext());
         datePickerDialog.setOnDateSetListener((view, year, month, dayOfMonth) -> {
             date = LocalDate.of(year, month +1, dayOfMonth);
@@ -376,7 +376,7 @@ public class MentalDialog extends BottomSheetDialogFragment {
         datePickerDialog.show();
     }
     private void showTimeDialog(){
-        log("...showTimeDialog()");
+        if( VERBOSE) log("...showTimeDialog()");
         int minutes = time.getMinute();
         int hour = time.getHour();
         TimePickerDialog timePicker = new TimePickerDialog(getContext(), (view, hourOfDay, minute) -> {
@@ -390,7 +390,7 @@ public class MentalDialog extends BottomSheetDialogFragment {
      * sets labels to current progress
      */
     private void updateUserInterface(){
-        log("...updateUserInterface()");
+        if( VERBOSE) log("...updateUserInterface()");
         setMentalLabels();
     }
 }

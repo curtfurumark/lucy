@@ -58,7 +58,7 @@ public class MentalWorker {
     }
     public static int getEnergy(LocalDate date, Context context){
         log("MentalWorker.getEnergy(LocalDate)", date.toString());
-        List<Mental> mentals = getMentals(date,false,  context);
+        List<Mental> mentals = getMentals(date,false, true,  context);
         return mentals.stream().mapToInt(Mental::getEnergy).sum();
     }
     public static Mental getMental(Item item, Context context){
@@ -70,8 +70,7 @@ public class MentalWorker {
 
     public static List<Mental> select(LocalDate date, boolean isTemplate, Context context) {
         log("MentalWorker.select(LocalDate, LocalDate, Context");
-        String queery = Queeries.selectMentals(date, isTemplate);
-        //String query = String.format("SELECT * FROM mental WHERE date >= %d AND date <= %d", firstDate.toEpochDay(), lastDate.toEpochDay());
+        String queery = Queeries.selectMentals(date, isTemplate, true);
         LocalDB db = new LocalDB(context);
         return db.selectMentals(queery);
     }
@@ -115,18 +114,18 @@ public class MentalWorker {
         return db.selectMentals(query);
     }
 
-    public static List<Mental> getMentals(LocalDate date, boolean includeTemplates, Context context) {
-        log("MentalWorker.getMentals(LocalDate)", date.toString());
+    public static List<Mental> getMentals(LocalDate date, boolean includeTemplates, boolean done, Context context) {
+        log("MentalWorker.getMentals(LocalDate,boolean, boolean)", date.toString());
         if( context == null){
             log("...CONTEXT IS NULL, getMentals");
         }
-        String queery = Queeries.selectMentals(date, false);
+        String queery = Queeries.selectMentals(date, false, true);
         LocalDB db = new LocalDB(context);
         return db.selectMentals(queery);
     }
     public static DataPoint[] getMentalsAsDataPoints(LocalDate date, Context context){
         log("MentalWorker.gettMentalAdDataPoints(LocalDate, Context)", date.toString());
-        List<Mental> mentals = getMentals(date,false, context);
+        List<Mental> mentals = getMentals(date,false, true, context);
         log("...number of mentals", mentals.size());
         DataPoint[] dataPoints = new DataPoint[mentals.size()];
         int currentEnergy = 0;

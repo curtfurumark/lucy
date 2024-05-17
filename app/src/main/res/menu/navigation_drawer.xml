@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="@string/today"
+        android:id="@+id/bottomNavigation_today"
+        android:icon="@drawable/baseline_checklist_24"/>
+    <item android:title="week"
+        android:id="@+id/navigationDrawer_weekly"/>
+    <item
+        android:id="@+id/bottomNavigation_todo"
+        android:icon="@drawable/baseline_checklist_24"
+        android:title="@string/todo"/>
+    <item android:title="@string/projects"
+        android:id="@+id/bottomNavigation_projects"
+        android:icon="@drawable/baseline_checklist_24"/>
+    <item android:title="@string/appointments"
+        android:id="@+id/bottomNavigation_appointments"
+        android:icon="@drawable/baseline_checklist_24"
+        />
+    <item android:id="@+id/navigationDrawer_durationFragment"
+        android:title="duration"/>
+    <item android:title="top ten"
+        android:id="@+id/navigationDrawer_topTen"/>
+    <item android:title="month calender"
+        android:id="@+id/navigationDrawer_monthCalender"
+        />
+    <item android:id="@+id/bottomNavigation_enchilada"
+        android:title="enchilda"
+        android:icon="@drawable/baseline_checklist_24"/>
+    <item android:id="@+id/navigationDrawer_graphFragment"
+        android:title="graph today"/>
+    <item android:id="@+id/navigationDrawer_estimateFragment"
+        android:title="estimate fragment"/>
+    <item android:title="customize"
+        android:id="@+id/navigationDrawer_customizeFragment"/>
+    <item android:id="@+id/navigationDrawer_contactDef"
+        android:title="contact curt rune"/>
+</menu>

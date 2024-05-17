@@ -20,21 +20,18 @@ import androidx.core.content.ContextCompat;
 import androidx.core.os.LocaleListCompat;
 
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.List;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.activities.economy.EconomyActivity;
 import se.curtrune.lucy.app.Lucinda;
-import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.Quotes;
 import se.curtrune.lucy.persist.DBAdmin;
 import se.curtrune.lucy.activities.economy.persist.ECDBAdmin;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
 import se.curtrune.lucy.util.Logger;
-import se.curtrune.lucy.workers.MentalWorker;
-import se.curtrune.lucy.workers.WebWorker;
+import se.curtrune.lucy.workers.AffirmationWorker;
 
 public class HomeActivity extends AppCompatActivity {
     private TextView textViewSettings;
@@ -226,7 +223,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private void randomAffirmation() {
         log("...randomAffirmation()");
-        WebWorker.requestAffirmation(affirmation -> {
+        AffirmationWorker.requestAffirmation(affirmation -> {
             textViewQuote.setText(affirmation.getAffirmation());
 /*            new Handler().postDelayed(() -> {
                 log("...run()");

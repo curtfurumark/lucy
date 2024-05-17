@@ -12,6 +12,9 @@ import se.curtrune.lucy.util.Converter;
 public class Estimate implements Serializable {
     private long duration;
     private int energy;
+    private int anxiety;
+    private int stress;
+    private int mood;
     public static boolean VERBOSE = false;
     public enum Type{
         USER, CALCULATED
@@ -29,15 +32,25 @@ public class Estimate implements Serializable {
         }
         estimate.setEnergy(this.energy / denominator);
         estimate.setDuration(this.duration / denominator);
+        estimate.setAnxiety(this.anxiety / denominator);
+        //estimate.setMood
         return estimate;
     }
-
+    public int getAnxiety(){
+        return anxiety;
+    }
     public long getDuration() {
         return duration;
     }
 
     public int getEnergy() {
         return energy;
+    }
+    public int getMood(){
+        return mood;
+    }
+    public int getStress(){
+        return stress;
     }
     public Type getType(){
         return type;
@@ -59,6 +72,9 @@ public class Estimate implements Serializable {
 
     public void setEnergy(int energy) {
         this.energy = energy;
+    }
+    public void setAnxiety(int anxiety){
+        this.anxiety = anxiety;
     }
     public void setType(Type type){
         this.type = type;

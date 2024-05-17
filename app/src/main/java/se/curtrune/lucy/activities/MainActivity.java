@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
 import android.content.Intent;
@@ -28,6 +29,8 @@ import java.util.Locale;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.app.Lucinda;
+import se.curtrune.lucy.classes.Affirmation;
+import se.curtrune.lucy.classes.EstimateDate;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.activities.flying_fish.GameActivity;
 import se.curtrune.lucy.dialogs.BoostDialog;
@@ -39,13 +42,15 @@ import se.curtrune.lucy.fragments.MentalFragment2;
 import se.curtrune.lucy.fragments.ProjectsFragment;
 import se.curtrune.lucy.fragments.TodoFragment;
 import se.curtrune.lucy.util.Constants;
+import se.curtrune.lucy.viewmodel.LucindaViewModel;
+import se.curtrune.lucy.workers.AffirmationWorker;
 import se.curtrune.lucy.workers.ItemsWorker;
 import se.curtrune.lucy.workers.MentalWorker;
 import se.curtrune.lucy.workers.PanicWorker;
 
 public class MainActivity extends AppCompatActivity {
 
-    //private TabLayout tabLayout;
+    private LucindaViewModel viewModel;
     private Fragment currentFragment;
     private final static String CURRENT_FRAGMENT = "CURRENT_FRAGMENT";
     private BottomNavigationView bottomNavigation;
@@ -67,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         setTitle(energyTitle);
         initComponents();
         initListeners();
+        initViewModel();
         Intent intent = getIntent();
         if( Lucinda.currentFragment != null){
             log("...currentFragment != null");
@@ -79,7 +85,19 @@ public class MainActivity extends AppCompatActivity {
     }
     private void boostMe(){
         log("...boostMe()");
-        new BoostDialog().show(getSupportFragmentManager(), "boost me");
+        AffirmationWorker.requestAffirmation(new AffirmationWorker.RequestAffirmationCallback() {
+            @Override
+            public void onRequest(Affirmation affirmation) {
+                log("...onRequest(Affirmation)");
+                BoostDialog boostDialog = new BoostDialog(affirmation.getAffirmation());
+                boostDialog.show(getSupportFragmentManager(), "boost me");
+            }
+        });
+    }
+    private void calculateEstimate(){
+        log("...calculateEstimate()");
+        //EstimateDate estimateDate = new EstimateDate(items)
+
     }
     private void initComponents(){
         if( VERBOSE) log("...initComponents()");
@@ -115,30 +133,22 @@ public class MainActivity extends AppCompatActivity {
                 }else if( item.getItemId() == R.id.bottomNavigation_appointments){
                     navigate(new AppointmentsFragment());
                 }
+                setUserInterfaceCurrentEnergy();
                 return true;
             }
         });
-/*        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                log("...onTabSelected(Tab)");
-                if( tab.getText().toString().equals("projects")){
-                    log("...load projects");
-                }else if( tab.getText().toString().equals("today")){
-                    navigate(new CalenderFragment());
-                }
-            }*/
-
-/*            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });*/
+    }
+    private void initViewModel(){
+        log("...initViewModel()");
+        viewModel = new ViewModelProvider(this ).get(LucindaViewModel.class);
+        viewModel.getEnergy().observe(this, energy->{
+            log("...energy updated", energy);
+            setUserInterfaceCurrentEnergy();
+        });
+        viewModel.getUpdateEnergy().observe(this , update->{
+            log("...getUpdateEnergy().observe");
+            setUserInterfaceCurrentEnergy();
+        });
     }
     private void navigate(Fragment fragment){
         log("...navigate(Fragment) ");

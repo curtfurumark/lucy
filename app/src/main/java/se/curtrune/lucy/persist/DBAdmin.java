@@ -129,6 +129,7 @@ public class DBAdmin {
         cv.put("created", mental.getCreatedEpoch());
         cv.put("time", mental.getTimeSecondOfDay());
         cv.put("isTemplate", mental.isTemplate());
+        cv.put("isDone", mental.isDone() ? 1:0);
         return cv;
     }
     public static ContentValues getContentValues(Transaction transaction){
@@ -156,6 +157,7 @@ public class DBAdmin {
         mental.setCreated(cursor.getLong(11));
         mental.setUpdated(cursor.getLong(12));
         mental.setIsTemplate(cursor.getInt(13) == 1);
+        mental.isDone(cursor.getInt(14) ==1);
         return mental;
     }
     public static Mental getMentalFromItem(Cursor cursor) {

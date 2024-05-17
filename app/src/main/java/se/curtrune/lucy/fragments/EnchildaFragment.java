@@ -50,6 +50,19 @@ public class EnchildaFragment extends Fragment implements
 
     // TODO: Rename and change types of parameters
     private String mParam1;
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        log("EnchiladaFragment.onCreateView(LayoutInflater, ViewGroup, Bundle)");
+        View view = inflater.inflate(R.layout.todo_fragment, container, false);
+        initComponents(view);
+        items = ItemsWorker.selectItems(getContext());
+        initRecycler(items);
+        log("...recycler initialized");
+        initListeners();
+        return view;
+    }
+
     private String mParam2;
 
     public EnchildaFragment() {
@@ -81,19 +94,6 @@ public class EnchildaFragment extends Fragment implements
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        log("EnchiladaFragment.onCreateView(LayoutInflater, ViewGroup, Bundle)");
-        View view = inflater.inflate(R.layout.todo_fragment, container, false);
-        initComponents(view);
-        items = ItemsWorker.selectItems(getContext());
-        initRecycler(items);
-        log("...recycler initialized");
-        initListeners();
-        return view;
     }
     private void filter(String str){
         List<Item> filteredItems = items.stream().filter(item->item.contains(str)).collect(Collectors.toList());

@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -76,6 +77,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
 
     private OnNewItemCallback callback;
     private String category;
+    public static boolean VERBOSE = false;
     private Item item;
     private boolean hasPeriod = false;
 
@@ -106,6 +108,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
     private Item getItem(){
         log("...getItem()");
         item.setHeading(editTextHeading.getText().toString());
+        item.setParentId(parent.getID());
         item.setIsCalenderItem(checkBoxShowInCalender.isChecked());
         item.setPeriod(getPeriod());
         return item;
@@ -151,7 +154,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
     }
 
     private void initComponents(View view){
-        log("...initComponents(View view");
+        if( VERBOSE) log("...initComponents(View view");
         editTextHeading = view.findViewById(R.id.addTemplateDialog_heading);
         buttonSave = view.findViewById(R.id.addTemplateDialog_button);
         buttonDismiss = view.findViewById(R.id.addTemplateDialog_dismiss);
@@ -183,7 +186,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
     }
 
     private void initListeners(){
-        log("...initListeners()");
+        if( VERBOSE) log("...initListeners()");
         buttonSave.setOnClickListener(view->save(true));
         buttonAddAndContinue.setOnClickListener(view->save(false));
         buttonDismiss.setOnClickListener(view->dismiss());
@@ -193,7 +196,8 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         labelRepeat.setOnClickListener(view->toggleRepeat());
         textViewDate.setOnClickListener(view->showDateDialog());
         textViewTime.setOnClickListener(view->showTimeDialog());
-        textViewNow.setOnClickListener(view->setDateAndTime(LocalDate.now(), LocalTime.now().plusMinutes(5)));
+        //textViewNow.setOnClickListener(view->setDateAndTime(LocalDate.now(), LocalTime.now().plusMinutes(5)));
+        textViewNow.setOnClickListener(view->rightNow());
     }
 
     /**
@@ -221,9 +225,21 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         });
     }
     private void initUserInterface(){
-        log("...initUserInterface()");
+        if( VERBOSE) log("...initUserInterface()");
         textViewParent.setText(parent.getHeading());
         setSpinnerSelection(parent.getCategory());
+    }
+    private void rightNow(){
+        log("...rightNow()");
+        if( !validateInput()){
+            return;
+        }
+        item = getItem();
+        item.setTargetTime(LocalTime.now());
+        item.setTargetDate(LocalDate.now());
+        callback.onNewItem(item);
+        dismiss();
+
     }
     private void save(boolean dismiss){
         log("...save()");
@@ -254,7 +270,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         spinner.setSelection(arrayAdapter.getPosition(category));
     }
     private void showDateDialog(){
-        log("...showDateDialog()");
+        if( VERBOSE) log("...showDateDialog()");
         DatePickerDialog datePickerDialog = new DatePickerDialog(getContext());
         datePickerDialog.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -268,7 +284,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         datePickerDialog.show();
     }
     private void showTimeDialog(){
-        log("...showTimeDialog()");
+        if( VERBOSE) log("...showTimeDialog()");
         int minutes = LocalTime.now().getMinute();
         int hour = LocalTime.now().getHour();
         TimePickerDialog timePicker = new TimePickerDialog(getContext(), (view, hourOfDay, minute) -> {
@@ -280,7 +296,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
 
     }
     private void toggleDays(){
-        log("...toggleDays()");
+        if( VERBOSE) log("...toggleDays()");
         if( layoutDays.getVisibility() == View.GONE){
             log("...setting visibility to visible");
             mode = Repeat.Mode.DAYS;
@@ -305,10 +321,10 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         }else{
             layoutRepeat.setVisibility(View.GONE);
         }
-
     }
+
     private void toggleWeekDays(){
-        log("...toggleWeekDays()");
+        if( VERBOSE) log("...toggleWeekDays()");
         if( layoutWeekDays.getVisibility() == View.GONE){
             mode = Repeat.Mode.DAY_OF_WEEKS;
             layoutWeekDays.setVisibility(View.VISIBLE);
@@ -325,13 +341,6 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
             log("...item requires heading, and no heading is supplied...");
             return false;
         }
-/*        if( mode.equals(Repeat.Mode.DAYS)) {
-            if (editTextDays.getText().toString().isEmpty()) {
-                Toast.makeText(getContext(), "missing days", Toast.LENGTH_LONG).show();
-                log("...missing days");
-                return false;
-            }
-        }*/
         return true;
     }
 }

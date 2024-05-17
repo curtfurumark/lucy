@@ -196,13 +196,7 @@ public class MentalFragment extends Fragment implements MentalAdapter.Callback {
         dialog.show(requireActivity().getSupportFragmentManager(), "hello mental");
     }
 
-    @Override
-    public void onItemLongClick(Mental item) {
-        log("...onItemLongClick(Mental)");
 
-        log("...after show dialog");
-        log(item);
-    }
     private void showDateDialog(boolean setFirstDate){
         log("...showDateDialog");
         DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext());

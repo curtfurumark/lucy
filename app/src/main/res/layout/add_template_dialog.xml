@@ -6,13 +6,47 @@
     android:layout_height="match_parent"
     android:padding="8dp">
 
-    <Button
-        android:id="@+id/addTemplateDialog_button"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/addTemplateDialog_layoutDateTime"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/save"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/addTemplateDialog_dismiss" />
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_labelDateTime">
+
+        <TextView
+            android:id="@+id/addTemplateDialog_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/date"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/addTemplateDialog_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/time"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_date" />
+
+        <Spinner
+            android:id="@+id/addTemplateDialog_spinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_time" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout6heading"
@@ -34,11 +68,11 @@
         android:id="@+id/addTemplateDialog_repeat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="@string/repeat"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textInputLayout6heading" />
+        app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_now" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/addTemplateDialog_layoutRepeat"
@@ -189,47 +223,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_dividerDateTime" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/addTemplateDialog_layoutDateTime"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_labelDateTime">
-
-        <TextView
-            android:id="@+id/addTemplateDialog_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/date"
-            android:textSize="20sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/addTemplateDialog_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/time"
-            android:textSize="20sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_date" />
-
-        <Spinner
-            android:id="@+id/addTemplateDialog_spinner"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_time" />
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
     <View
         android:id="@+id/addTemplatDialog_dividerInfo"
         android:layout_width="0dp"
@@ -239,37 +232,70 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_layoutDateTime" />
+
+    <TextView
+        android:id="@+id/addTemplateDialog_now"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="now"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout6heading" />
+
     <TextView
         android:id="@+id/addTemplateDialog_labelNotification"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="24sp"
         android:text="@string/notification"
         app:layout_constraintTop_toBottomOf="@+id/addTemplatDialog_dividerInfo"
         app:layout_constraintStart_toStartOf="parent"
         />
+    <View
+        android:id="@+id/addTemplateDialog_dividerOther"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_labelNotification" />
+
+    <TextView
+        android:id="@+id/addTemplateDialog_labelOther"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="other"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_dividerOther">
+    </TextView>
 
     <LinearLayout
         android:id="@+id/addTemplateDialog_layoutOther"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_labelNotification">
-    <TextView
-        android:id="@+id/addTemplateDialog_parent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:inputType="number"
-        android:text="parent item"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/addTemplateDialog_labelOther">
+
+        <TextView
+            android:id="@+id/addTemplateDialog_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:inputType="number"
+            android:text="parent item"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <CheckBox
             android:id="@+id/addTemplateDialog_showInCalender"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="show in calender"
-            />
+            android:text="show in calender" />
     </LinearLayout>
     <View
         android:id="@+id/divider3Buttons"
@@ -285,10 +311,18 @@
         android:id="@+id/addTemplateDialog_dismiss"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="@string/dismiss"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider3Buttons" />
+
+    <Button
+        android:id="@+id/addTemplateDialog_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/save"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/addTemplateDialog_dismiss" />
 
     <Button
         android:id="@+id/addTemplateDialog_addAndContinue"
@@ -299,16 +333,5 @@
         app:layout_constraintStart_toEndOf="@+id/addTemplateDialog_dismiss"
         app:layout_constraintTop_toTopOf="@+id/addTemplateDialog_dismiss" />
 
-
-
-    <TextView
-        android:id="@+id/addTemplateDialog_now"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:text="in 5 minutes"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/addTemplateDialog_labelDateTime" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

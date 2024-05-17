@@ -113,7 +113,24 @@ public class ItemsWorker {
         return  db.selectItem(parentId).hasChild();
     }
 
+    public static Item insert(Item item, Context context)  {
+        log("ItemsWorker.insert(Item, Context)", item.getHeading());
+        LocalDB db = new LocalDB(context);
+        item = db.insert(item);
+        db.close();
+        return item;
+    }
 
+    public  static Item insertChild(Item parent, Item child, Context context)  {
+        log("ItemsWorker.insertChild(Item, Item, Context)");
+        if( !parent.hasChild()){
+            log("....not children for this parent, yet");
+            setHasChild(parent, true, context);
+        }
+        child.setParentId(parent.getID());
+        LocalDB db = new LocalDB(context);
+        return db.insert(child);
+    }
 
     public static Item selectItem(long parentId, Context context) {
         log("...selectItem(long, Context");
@@ -139,23 +156,7 @@ public class ItemsWorker {
 
 
 
-    public static Item insert(Item item, Context context)  {
-        log("ItemsWorker.insert(Item, Context)", item.getHeading());
-        LocalDB db = new LocalDB(context);
-        item = db.insert(item);
-        db.close();
-        return item;
-    }
-    public  static Item insertChild(Item parent, Item child, Context context)  {
-        log("ItemsWorker.insertChild(Item, Item, Context)");
-        if( !parent.hasChild()){
-            log("....not children for this parent, yet");
-            setHasChild(parent, true, context);
-        }
-        child.setParentId(parent.getID());
-        LocalDB db = new LocalDB(context);
-        return db.insert(child);
-    }
+
 
     public static List<Item> selectAppointments(Context context) {
         log("ItemsWorker.selectAppointments(Context)");
@@ -303,12 +304,17 @@ public class ItemsWorker {
             template.setState(State.TODO);
             Item child = new Item(template);
             child.setState(State.DONE);
-            child = db.insertChild(template, child);
+            Mental mental = new Mental(template.getMental());
+            mental.isDone(true);
+            mental.setDate(LocalDate.now());
+            mental.setTime(LocalTime.now());
+            child.setMental(mental);
+            child = db.insertChild(template, child);//creates and inserts mental, or rather insert(Item) does
             if( template.hasPeriod()) {
                 template.updateTargetDate();
             }
             template.setDuration(0);
-            Mental childMental = new Mental(template.getMental());
+/*            Mental childMental = new Mental(template.getMental());
             assert  childMental != null;
             childMental.setDate(LocalDate.now());
             childMental.setTime(LocalTime.now());
@@ -316,7 +322,7 @@ public class ItemsWorker {
             childMental.setCreated(LocalDateTime.now());
             childMental.setIsTemplate(false);
             childMental.setItemID(child.getID());
-            childMental = MentalWorker.insert(childMental, context);
+            childMental = MentalWorker.insert(childMental, context);*/
         }
         return db.update(template);
     }

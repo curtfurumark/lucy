@@ -30,16 +30,18 @@ public class MentalStatistics {
         this.firstDate = date;
         this.lastDate = date;
         init(context);
-
     }
     public List<Mental> getMentalList(){
         return mentals;
     }
 
+    public void add(Mental mental){
+        mentals.add(mentals.size(), mental);
+    }
     private void init(Context context){
         log("MentalStatistics.init()");
         LocalDB db = new LocalDB(context);
-        String queery = Queeries.selectMentals(firstDate, lastDate, false);
+        String queery = Queeries.selectMentals(firstDate, lastDate, false, true);
         filtered = mentals = db.selectMentals(queery);
     }
     public List<Mental> filter(String str){

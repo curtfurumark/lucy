@@ -29,12 +29,14 @@ public class Mental implements Listable, Serializable {
     private long created;
     private long updated;
     private boolean isTemplate;
+    private boolean isDone;
 
     public Mental() {
         created = updated = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
         date = LocalDate.now().toEpochDay();
         time = LocalTime.now().toSecondOfDay();
         isTemplate = false;
+        isDone = false;
         stress = mood = energy = anxiety = 0;
     }
     public Mental(Item item){
@@ -43,6 +45,7 @@ public class Mental implements Listable, Serializable {
         this.category = item.getCategory();
         this.itemID = item.getID();
         this.isTemplate = item.isTemplate();
+        this.isDone = item.getState().equals(State.DONE);
     }
 
     /**
@@ -161,6 +164,9 @@ public class Mental implements Listable, Serializable {
         }
         return this.category.equalsIgnoreCase(category);
     }
+    public boolean isDone(){
+        return isDone;
+    }
     public boolean isTemplate(){
         return isTemplate;
     }
@@ -202,6 +208,9 @@ public class Mental implements Listable, Serializable {
         this.id = id;
     }
 
+    public void isDone(boolean isDone){
+        this.isDone = isDone;
+    }
     public void setIsTemplate(boolean isTemplate){
         this.isTemplate = isTemplate;
     }

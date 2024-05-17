@@ -17,6 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,9 +33,10 @@ import se.curtrune.lucy.adapters.MentalAdapter;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.dialogs.MentalDialog;
 import se.curtrune.lucy.statistics.MentalStatistics;
+import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.MentalWorker;
 
-public class MentalFragment2 extends Fragment implements MentalAdapter.Callback {
+public class MentalFragment2 extends Fragment implements MentalAdapter.Callback, MentalDialog.Callback{
     private RecyclerView recycler;
     private EditText editTextSearch;
     private RadioButton radioButtonMood;
@@ -47,6 +49,7 @@ public class MentalFragment2 extends Fragment implements MentalAdapter.Callback 
     private TextView textViewDate;
     private FloatingActionButton buttonAddMental;
     private List<Mental> mentals = new ArrayList<>();
+    private LucindaViewModel viewModel;
 
     private LocalDate date;
     private MentalStatistics mentalStatistics;
@@ -65,6 +68,7 @@ public class MentalFragment2 extends Fragment implements MentalAdapter.Callback 
         initComponents(view);
         initRecycler();
         initListeners();
+        initViewModel();
         initStuff();
         return view;
     }
@@ -91,7 +95,7 @@ public class MentalFragment2 extends Fragment implements MentalAdapter.Callback 
         updateUserInterface();
     }
     private void initComponents(View view){
-        log("...initComponents(View)");
+        if( VERBOSE) log("...initComponents(View)");
         recycler = view.findViewById(R.id.mentalList_recycler);
         editTextSearch = view.findViewById(R.id.mentalFragment_filter);
         radioButtonAnxiety = view.findViewById(R.id.mentalList_radioButtonAnxiety);
@@ -104,8 +108,8 @@ public class MentalFragment2 extends Fragment implements MentalAdapter.Callback 
         textViewDate = view.findViewById(R.id.mentalFragment_firstDate);
     }
     private void initRecycler(){
-        log("...initRecycler()");
-        adapter = new MentalAdapter(mentals, this);
+        if( VERBOSE)log("...initRecycler()");
+        adapter = new MentalAdapter(new ArrayList<>(), this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recycler.setLayoutManager(layoutManager);
         recycler.setItemAnimator(new DefaultItemAnimator());
@@ -113,7 +117,7 @@ public class MentalFragment2 extends Fragment implements MentalAdapter.Callback 
 
     }
     private void initListeners(){
-        log("...initListeners()");
+        if( VERBOSE) log("...initListeners()");
         radioButtonEnergy.setOnClickListener(view->{
             mode = MentalAdapter.Mode.ENERGY;
             updateUserInterface();
@@ -149,7 +153,6 @@ public class MentalFragment2 extends Fragment implements MentalAdapter.Callback 
 
             }
         });
-
     }
     private void initStuff(){
         if( VERBOSE) log("...initStuff()");
@@ -161,36 +164,43 @@ public class MentalFragment2 extends Fragment implements MentalAdapter.Callback 
         adapter.setList(mentals);
         updateUserInterface();
     }
+    private void initViewModel(){
+        log("...initViewModel()");
+        viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
+
+    }
 
     @Override
     public void onItemClick(Mental item) {
-        log("...onItemClick(Mental)");
+        if( VERBOSE) log("...onItemClick(Mental)", item.getHeading());
         MentalDialog dialog = new MentalDialog(item);
-        dialog.setCallback((mental, mode) ->{
-            log("...mental dialog callback ", mode.toString());
-            switch (mode){
-                case DELETE:
-                    delete(mental);
-                    break;
-                case EDIT:
-                    MentalWorker.update(mental, getContext());
-                    adapter.notifyDataSetChanged();
-                    break;
-                case CREATE_WITH_ITEM:
-                case CREATE:
-                    mental = MentalWorker.insert(mental, getContext());
-                    mentals.add(0, mental);
-                    adapter.notifyDataSetChanged();
-                    break;
-            }
-        });
+        dialog.setCallback(this);
         dialog.show(requireActivity().getSupportFragmentManager(), "hello mental");
     }
 
     @Override
-    public void onItemLongClick(Mental item) {
-        log("...onItemLongClick(Mental)");
-        log(item);
+    public void onMental(Mental mental, MentalDialog.Mode mode) {
+        log("MentalFragment2.onMental(Mental, Mode", mode.toString());
+        log("...onMental()", mode.toString());
+        log(mental);
+        switch (mode){
+            case DELETE:
+                delete(mental);
+                mentalStatistics.remove(mental);
+                updateUserInterface();
+                break;
+            case EDIT:
+                MentalWorker.update(mental, getContext());
+                adapter.notifyDataSetChanged();
+                updateUserInterface();
+                break;
+            case CREATE_WITH_ITEM:
+            case CREATE:
+                MentalWorker.insert(mental, getContext());
+                mentalStatistics.add(mental);
+                adapter.notifyDataSetChanged();
+                updateUserInterface();
+        }
     }
     private void showDateDialog(boolean setFirstDate){
         log("...showDateDialog");
@@ -207,37 +217,19 @@ public class MentalFragment2 extends Fragment implements MentalAdapter.Callback 
     private void showMentalDialog(){
         log("...showMentalDialog()");
         MentalDialog dialog = new MentalDialog();
-        dialog.setCallback((mental, mode) -> {
-            log("...onMental()", mode.toString());
-            log(mental);
-            switch (mode){
-                case DELETE:
-                    delete(mental);
-                    break;
-                case EDIT:
-                    MentalWorker.update(mental, getContext());
-                    adapter.notifyDataSetChanged();
-                    break;
-                case CREATE_WITH_ITEM:
-                case CREATE:
-                    MentalWorker.insert(mental, getContext());
-                    mentals.add(0, mental);
-                    adapter.notifyDataSetChanged();
-
-            }
-        });
+        dialog.setCallback(this);
         dialog.show(getChildFragmentManager(), "mental dialog");
-
     }
 
     /**
      */
     private void updateUserInterface(){
-        log("...updateUserInterface()");
+        log("...updateUserInterface()", mode.toString());
         int total = 0;
         switch (mode){
             case ENERGY:
                 total = mentalStatistics.getTotalEnergy();
+                viewModel.setEnergy(total);
                 break;
             case STRESS:
                 total = mentalStatistics.getTotalStress();
@@ -253,20 +245,13 @@ public class MentalFragment2 extends Fragment implements MentalAdapter.Callback 
         textViewMentalLabel.setText(mode.toString());
         textViewMentalTotal.setText(String.valueOf(total));
         textViewDate.setText(date.toString());
-        //textViewFirstDate.setText(firstDate.toString());
-
     }
-/*    @Override
-    public void onMental(Mental mental, MentalDialog.Mode mode) {
-        log("MentalFragment.onMental, MentalDialog.Mode");
-    }*/
     private void updateStatistics(){
         log("...updateStatistics()", date.toString());
         mentalStatistics = new MentalStatistics(date, date, getContext());
-        mentals = mentalStatistics.getMentalList();
-        log("...number of mentals", mentals.size());
-        adapter.setList(mentals);
+        adapter.setList(mentalStatistics.getMentalList());
         updateUserInterface();
     }
+
 
 }

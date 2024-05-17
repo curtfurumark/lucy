@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -42,9 +43,10 @@ import se.curtrune.lucy.classes.calender.Week;
 import se.curtrune.lucy.dialogs.AddTemplateDialog;
 import se.curtrune.lucy.dialogs.OnNewItemCallback;
 import se.curtrune.lucy.util.Constants;
+import se.curtrune.lucy.viewmodel.LucindaViewModel;
+import se.curtrune.lucy.workers.AffirmationWorker;
 import se.curtrune.lucy.workers.ItemsWorker;
 import se.curtrune.lucy.workers.StatisticsWorker;
-import se.curtrune.lucy.workers.WebWorker;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -82,6 +84,7 @@ public class CalenderFragment extends Fragment {
     private List<Item> items;
     private Month month;
     public static boolean VERBOSE = false;
+    private LucindaViewModel viewModel;
     public CalenderFragment() {
         // Required empty public constructor
     }
@@ -124,6 +127,7 @@ public class CalenderFragment extends Fragment {
         initRecyclerDates();
         initListeners();
         initSwipe();
+        initViewModel();
         setUserInterface(currentDate);
         calculateEstimate();
         return view;
@@ -202,7 +206,6 @@ public class CalenderFragment extends Fragment {
             public void onCheckboxClicked(Item item, boolean checked) {
                 log("...onCheckboxClicked(Item, boolean)", checked);
                 item.setState(checked ? State.DONE: State.TODO);
-                //item.setTargetDate(LocalDate.now());
                 item.setTargetTime(LocalTime.now());
                 log(item);
                 int rowsAffected = ItemsWorker.update(item, getContext());
@@ -300,6 +303,11 @@ public class CalenderFragment extends Fragment {
         });
         itemTouchHelper.attachToRecyclerView(recycler);
     }
+    private void initViewModel(){
+        log("...initViewModel()");
+        viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
+
+    }
     private void nextMonth(){
         currentDate = currentDate.plusMonths(1);
     }
@@ -331,6 +339,8 @@ public class CalenderFragment extends Fragment {
         }
         items.sort(Comparator.comparingLong(Item::compareTargetTime));
         adapter.setList(items);
+        //getActivity().
+        viewModel.updateEnergy(true);
     }
     private void showAddItemDialog(){
         log("...showAddItemDialog()");
@@ -349,7 +359,7 @@ public class CalenderFragment extends Fragment {
     }
     private void showAffirmation(){
         log("...showAffirmation");
-        WebWorker.requestAffirmation(affirmation -> {
+        AffirmationWorker.requestAffirmation(affirmation -> {
             log("...onRequest(Affirmation)", affirmation.getAffirmation());
             Toast.makeText(getContext(), affirmation.getAffirmation(), Toast.LENGTH_LONG).show();
         });
@@ -374,7 +384,6 @@ public class CalenderFragment extends Fragment {
         log("...updateAdapter()");
         items.sort(Comparator.comparingLong(Item::compareTargetTime));
         adapter.setList(items);
-        //adapter.notifyDataSetChanged();
-
+        viewModel.updateEnergy(true);
     }
 }

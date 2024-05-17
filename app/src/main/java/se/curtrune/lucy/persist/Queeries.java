@@ -58,7 +58,8 @@ public class Queeries {
                     "stress INTEGER, " +        //10
                     "created INTEGER, " +       //11
                     "updated INTEGER, " +       //12
-                    "isTemplate INTEGER" +      //13
+                    "isTemplate INTEGER, " +      //13
+                    "isDone DEFAULT 0" +        //14
                     ")";
     public static String CREATE_TABLE_CATEGORIES = "CREATE TABLE categories " +
             "(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)";
@@ -191,11 +192,11 @@ public class Queeries {
         return String.format("SELECT * FROM mental WHERE itemID = %d", item.getID());
     }
 
-    public static String selectMentals(LocalDate firstDate, LocalDate lastDate, boolean includeTemplates) {
-        return String.format("SELECT * FROM mental WHERE date >= %d AND date <= %d AND isTemplate = %d ORDER BY date DESC",
+    public static String selectMentals(LocalDate firstDate, LocalDate lastDate, boolean includeTemplates, boolean isDone) {
+        return String.format("SELECT * FROM mental WHERE date >= %d AND date <= %d AND isDone = 1 ORDER BY date DESC",
                 firstDate.toEpochDay(),
-                lastDate.toEpochDay(),
-                includeTemplates ? 1: 0);
+                lastDate.toEpochDay());
+        //includeTemplates ? 1: 0);
     }
 
     public static String selectTopTen() {
@@ -210,9 +211,9 @@ public class Queeries {
         return String.format(Locale.getDefault(), "SELECT * FROM items WHERE parentID = %d", id);
     }
 
-    public static String selectMentals(LocalDate date, boolean isTemplate) {
-        return String.format(Locale.getDefault(), "SELECT * FROM mental WHERE date = %d   AND isTemplate = %d ORDER BY date DESC",
-                date.toEpochDay(), isTemplate ? 1:0);
+    public static String selectMentals(LocalDate date, boolean isTemplate, boolean isDone) {
+        return String.format(Locale.getDefault(), "SELECT * FROM mental WHERE date = %d   AND  isDone = %d ORDER BY date DESC",
+                date.toEpochDay(), 1);
     }
 
 

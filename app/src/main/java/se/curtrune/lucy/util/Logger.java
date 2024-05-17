@@ -9,6 +9,7 @@ import java.util.Locale;
 
 import se.curtrune.lucy.activities.economy.classes.Transaction;
 import se.curtrune.lucy.classes.Estimate;
+import se.curtrune.lucy.classes.EstimateDate;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.Notification;
@@ -28,6 +29,13 @@ public class Logger {
         log("Logger.log(Estimate");
         log("\tenergy", estimate.getEnergy());
         log("\tduration", estimate.getDuration());
+    }
+    public static void log(EstimateDate estimateDate){
+        log("log(EstimateDate)");
+        log("...date", estimateDate.getDate().toString());
+        log("...duration", estimateDate.getDurationEstimate());
+        log("...energy", estimateDate.getEnergyEstimate());
+        log("...anxiety", estimateDate.getAnxiety());
 
     }
     public static void log(Item item){

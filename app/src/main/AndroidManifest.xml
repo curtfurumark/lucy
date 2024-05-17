@@ -25,7 +25,9 @@
             android:theme="@style/Theme.Lucy.NoActionBar" />
         <activity
             android:name=".activities.NavigationDrawerActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.Lucy.NoActionBar" />
+            />
         <activity
             android:name=".activities.GraphActivity"
             android:exported="false" />
