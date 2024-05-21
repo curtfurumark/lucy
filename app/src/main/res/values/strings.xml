@@ -149,4 +149,5 @@
     <string name="delete_item">delete item</string>
     <string name="save_item">save item</string>
     <string name="add_category">add category</string>
+    <string name="color">color</string>
 </resources>

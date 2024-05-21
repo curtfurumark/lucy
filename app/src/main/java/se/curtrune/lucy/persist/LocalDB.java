@@ -318,8 +318,11 @@ public class LocalDB extends SQLiteOpenHelper {
 
     public List<Item> selectItems(LocalDate date, Context context) {
         log("LocalDB.selectItems(LocalDate) ", date.toString());
-        LocalDB db = new LocalDB(context);
-        return db.selectItems(Queeries.selectItems(date));
+        List<Item> items;
+        try(LocalDB db = new LocalDB(context)){
+            items = db.selectItems(Queeries.selectItems(date));
+        }
+        return items;
     }
 
     public List<Item> selectItems(Type type) {
@@ -421,7 +424,7 @@ public class LocalDB extends SQLiteOpenHelper {
         db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put("updated", LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
-        String whereClause = String.format("id = %d", item.getID());
+        String whereClause = String.format(Locale.getDefault(), "id = %d", item.getID());
         int rowsAffected = db.update(ITEMS_TABLE, cv, whereClause, null);
         log("...rowsAffected", rowsAffected);
     }
@@ -446,7 +449,7 @@ public class LocalDB extends SQLiteOpenHelper {
         log("LocalDB.update( Item)", item.getHeading());
         log(item);
         db = this.getWritableDatabase();
-        String whereClause = String.format("id = %d", item.getID());
+        String whereClause = String.format(Locale.getDefault(), "id = %d", item.getID());
         int rowsAffected = db.update(ITEMS_TABLE, DBAdmin.getContentValues(item), whereClause, null);
         log("...update item ok: ", rowsAffected == 1);
         Mental mental = item.getMental();
@@ -462,7 +465,7 @@ public class LocalDB extends SQLiteOpenHelper {
         log("LocalDB.update(Mental)");
         log(mental);
         db = this.getWritableDatabase();
-        String whereClause = String.format("id = %d", mental.getID());
+        String whereClause = String.format(Locale.getDefault(), "id = %d", mental.getID());
         int rowsAffected = db.update(TABLE_MENTAL, DBAdmin.getContentValues(mental), whereClause, null);
         log("...rowsAffected", rowsAffected);
         db.close();

@@ -23,6 +23,7 @@ import se.curtrune.lucy.R;
 import se.curtrune.lucy.activities.economy.EconomyActivity;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.classes.Quotes;
+import se.curtrune.lucy.notifications.EasyNotification;
 import se.curtrune.lucy.persist.DBAdmin;
 import se.curtrune.lucy.activities.economy.persist.ECDBAdmin;
 import se.curtrune.lucy.persist.LocalDB;
@@ -60,6 +61,7 @@ public class HomeActivity extends AppCompatActivity {
         initComponents();
         initListeners();
         checkNotificationPermission();
+        EasyNotification.createNotificationChannel(this);
         openDB();
     }
 

@@ -61,8 +61,7 @@ public class NotificationDialog extends BottomSheetDialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         log("AddItemDialog.onCreateView(...)");
         View view = inflater.inflate(R.layout.notification_dialog, container, false);
-
-        initDefaults();
+        initDefaults(item);
         initComponents(view);
         initListeners();
         initUserInterface();
@@ -80,6 +79,11 @@ public class NotificationDialog extends BottomSheetDialogFragment {
         return notification;
     }
 
+    private void init(Item item){
+        log("...init()");
+
+
+    }
     private void initComponents(View view){
         log("...initComponents(View)");
         textViewTime = view.findViewById(R.id.notificationDialog_time);
@@ -90,10 +94,10 @@ public class NotificationDialog extends BottomSheetDialogFragment {
         buttonDismiss = view.findViewById(R.id.notificationDialog_dismiss);
         log("...buttonDismiss is null", buttonDismiss == null ? "true": "false");
     }
-    private  void initDefaults(){
-        log("...initDefaults()");
-        targetDate = LocalDate.now();
-        targetTime = LocalTime.now();
+    private  void initDefaults(Item item){
+        log("...initDefaults(Item)");
+        targetDate = item.getTargetDate();
+        targetTime = item.getTargetTime();
         notification = new Notification();
         notification.setDate(targetDate);
         notification.setTime(targetTime);

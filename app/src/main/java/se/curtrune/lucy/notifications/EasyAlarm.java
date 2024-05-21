@@ -13,90 +13,59 @@ import android.content.Intent;
 import java.util.Calendar;
 import java.util.Locale;
 
+import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Notification;
 
-public class EasyAlarm extends BroadcastReceiver {
+public class EasyAlarm  {
     private static final int UNIQUE_ID = 2;
-    private int hour;
-    private int minutes;
-    private String message;
-    private String title;
-    private Context context;
-    private boolean repeat = false;
-    private long repeatMilliSeconds;
-    private EasyNotification easyNotification;
+
     public static final String INTENT_MESSAGE ="message";
     public static final String INTENT_TITLE="title";
+    public static final String INTENT_ITEM_ID = "INTENT_ITEM_ID";
+    private Calendar calendar;
+    private Item item;
 
-    public EasyAlarm(Notification notification, Context context){
-        log("EasyAlarm(Notification)");
-        this.hour = notification.getTime().getHour();
-        this.minutes = notification.getTime().getMinute();
-        this.message = notification.getContent();
-        this.title = notification.getTitle();
-        this.context = context;
-
+    public EasyAlarm(Item item){
+        log("EasyAlarm(Item)", item.getHeading());
+        this.item = item;
+        this.calendar = Calendar.getInstance();
     }
-    public void setAlarm(){
+    public void  setAlarm(Context context){
         log("...setAlarm");
-        setAlarm(hour, minutes);
-
+        if( !item.hasNotification()){
+            log("...item without notification");
+            return;
+        }
+        Notification notification = item.getNotification();
+        calendar.set(Calendar.HOUR_OF_DAY,notification.getTime().getHour() );
+        calendar.set(Calendar.MINUTE, notification.getTime().getMinute());
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        setAlarm(calendar, context);
     }
     public static void cancelAlarm(int alarmID, Context context){
         log("...cancelAlarm(int)", alarmID);
         Intent intent = new Intent(context, AlarmReceiver.class);
-        PendingIntent sender = PendingIntent.getBroadcast(context, alarmID, intent, PendingIntent.FLAG_MUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmID, intent, PendingIntent.FLAG_MUTABLE);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
-        alarmManager.cancel(sender);
-    }
-    public void setRepeat(boolean repeat, long intervalMilliSeconds){
-        log("...setRepeat(boolean)", repeat);
-        this.repeat = repeat;
-        this.repeatMilliSeconds = intervalMilliSeconds;
+        alarmManager.cancel(pendingIntent);
     }
 
-    private void setAlarm(int hour, int minute){
-        log("EasyAlarm.setAlarm()" + hour + ":" + minute);
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, hour);
-        calendar.set(Calendar.MINUTE, minute);
-        calendar.set(Calendar.SECOND, 0);
-        startAlarm(calendar);
-    }
-    public void setRepeatingAlarm(int hour, int minute){
-        log("...setRepeatingAlarm(int, int)");
-    }
-
-    private void startAlarm(Calendar calendar){
-        log("EasyAlarm.startAlarm(Calender)");
+    private void setAlarm(Calendar calendar, Context context){
+        log("EasyAlarm.setAlarm(Calender, Context)");
+        log(calendar);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        intent.putExtra(INTENT_MESSAGE,item.getInfo());
+        intent.putExtra(INTENT_TITLE, item.getHeading());
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, UNIQUE_ID, intent, PendingIntent.FLAG_MUTABLE);
         if( alarmManager.canScheduleExactAlarms()) {
-            Intent intent = new Intent(context, EasyAlarm.class);
-            intent.putExtra(INTENT_MESSAGE, message);
-            intent.putExtra(INTENT_TITLE, title);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, UNIQUE_ID, intent, PendingIntent.FLAG_MUTABLE);
+            log("...canScheduleExactAlarm");
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
         }else{
             log("...cant schedule exact alarm");
-            log("...missing permission perhaps, doing it anyway");
-            Intent intent = new Intent(context, EasyAlarm.class);
-            intent.putExtra(INTENT_MESSAGE, message);
-            intent.putExtra(INTENT_TITLE, title);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, UNIQUE_ID, intent, PendingIntent.FLAG_MUTABLE);
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+            log("...using nonExact");
+            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
         }
-    }
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        log("EasyAlarm.onReceive(Context, Intent)");
-        String message = intent.getStringExtra(INTENT_MESSAGE);
-        String title = intent.getStringExtra(INTENT_TITLE);
-        easyNotification = new EasyNotification(context);
-        easyNotification.sendNotificationCH1(title, message);
-    }
-
-    @Override
-    public String toString() {
-        return String.format(Locale.getDefault(), "alarm set %d:%d repeat: %b", hour, minutes, repeat);
     }
 }

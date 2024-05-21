@@ -92,7 +92,6 @@ public class ItemSession extends AppCompatActivity implements
     private ImageView imageViewRepeatAction;
     private TextView textViewPeriodDescription;
     private TextView textViewPeriodTargetDate;
-    private TextView textViewNotificationType;
     private TextView textViewCategory;
     private TextView textViewUpdated;
     private TextView textViewCreated;
@@ -121,7 +120,7 @@ public class ItemSession extends AppCompatActivity implements
 
     //DATE AND TIME
     private TextView labelDateTime;
-    private ImageView imageViewDateTimeAction;
+    //private ImageView imageViewDateTimeAction;
     private LinearLayout layoutDateTime;
     private TextView textViewTargetDate;
     private TextView textViewTargetTime;
@@ -184,8 +183,12 @@ public class ItemSession extends AppCompatActivity implements
         AddItemDialog dialog = new AddItemDialog(currentItem);
         dialog.setCallback(item -> {
             log("...onAddItem(Item)");
-            log(item);
             item = ItemsWorker.insertChild(currentItem, item, this);
+            log(item);
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra(Constants.INTENT_SHOW_CHILD_ITEMS, true);
+            intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, currentItem);
+            startActivity(intent);
         });
         dialog.show(getSupportFragmentManager(), "new assignment");
 
@@ -193,7 +196,9 @@ public class ItemSession extends AppCompatActivity implements
     private void deleteItem(){
         log("...deleteItem()");
         if(currentItem.hasChild()) {
+            log("...trying to delete item that has at least one child, fix this");
             Toast.makeText(this, "delete item with child not implemented", Toast.LENGTH_LONG).show();
+            return;
         }
         ItemsWorker.delete(currentItem, this);
         returnToCallingActivity();
@@ -318,7 +323,7 @@ public class ItemSession extends AppCompatActivity implements
         textViewNotificationDate = findViewById(R.id.itemSession_notificationDate);
         textViewNotificationTime = findViewById(R.id.itemSession_notificationTime);
         imageViewNotificationAction = findViewById(R.id.itemSession_notificationAction);
-        textViewNotificationType = findViewById(R.id.itemSession_notificationType);
+        //textViewNotificationType = findViewById(R.id.itemSession_notificationType);
         labelNotification = findViewById(R.id.itemSession_labelNotifications);
 
         //REPEAT
@@ -340,7 +345,7 @@ public class ItemSession extends AppCompatActivity implements
         textViewState = findViewById(R.id.itemSession_infoState);
         //DATE AND TIME
         layoutDateTime = findViewById(R.id.itemSession_layoutDateTime);
-        imageViewDateTimeAction = findViewById(R.id.itemSession_dateTimeAction);
+        //imageViewDateTimeAction = findViewById(R.id.itemSession_dateTimeAction);
         labelDateTime = findViewById(R.id.itemSession_labelDateTime);
         textViewTargetDate = findViewById(R.id.itemSession_targetDate);
         textViewTargetTime = findViewById(R.id.itemSession_targetTime);
@@ -725,7 +730,6 @@ public class ItemSession extends AppCompatActivity implements
         imageViewNotificationAction.setImageDrawable(getDrawable(R.drawable.baseline_delete_24));
         textViewNotificationDate.setText(notification.getDate().toString());
         textViewNotificationTime.setText(Converter.format(notification.getTime()));
-        textViewNotificationType.setText(notification.getType().toString());
     }
 
     /**
@@ -774,7 +778,6 @@ public class ItemSession extends AppCompatActivity implements
     }
     private void setUserInterface(Reward reward){
         log("...setUserInterface(Reward)");
-
     }
     private void showDateDialog(){
         log("...showDateDialog()");
@@ -818,7 +821,6 @@ public class ItemSession extends AppCompatActivity implements
             }
         });
         dialog.show(getSupportFragmentManager(), "add edit repeat");
-
     }
 
     private void showEstimateDialog(){
@@ -829,8 +831,8 @@ public class ItemSession extends AppCompatActivity implements
             log(estimate);
             currentItem.setEstimate(estimate);
             int rowsAffected = ItemsWorker.update(currentItem, this);
-            //log("...rowsAffected", rowsAffected);
             if( rowsAffected != 1){
+                log("ERROR updating currentItem");
                 Toast.makeText(this, "error updating item", Toast.LENGTH_LONG).show();
             }
             setUserInterface(estimate);
@@ -849,17 +851,20 @@ public class ItemSession extends AppCompatActivity implements
             currentItem.setNotification((Notification)null );
             textViewNotificationDate.setText("");
             textViewNotificationTime.setText("");
-            textViewNotificationType.setText("");
             imageViewNotificationAction.setImageDrawable(getDrawable( R.drawable.baseline_add_24));
-
         }else {
             NotificationDialog dialog = new NotificationDialog(currentItem);
             dialog.setListener(notification -> {
                 log("...onNotification(Notification)");
                 currentItem.setNotification(notification);
+                int rowsAffected = ItemsWorker.update(currentItem, this);
+                if( rowsAffected != 1){
+                    log("ERROR updating item with new notification, surrendering");
+                    Toast.makeText(this, "error updating item", Toast.LENGTH_LONG).show();
+                }
                 log(notification);
-                EasyAlarm easyAlarm = new EasyAlarm(notification, this);
-                easyAlarm.setAlarm();
+                EasyAlarm easyAlarm = new EasyAlarm(currentItem);
+                easyAlarm.setAlarm(this);
                 setUserInterface(notification);
             });
             dialog.show(getSupportFragmentManager(), "add notification");
@@ -968,11 +973,7 @@ public class ItemSession extends AppCompatActivity implements
             ItemsWorker.touchParents(currentItem, this);
         }
         kronos.reset();
-        Intent intent = new Intent(this, MainActivityOld.class);
-        intent.putExtra(Constants.INTENT_SHOW_CHILD_ITEMS, true);
-        Item parent = ItemsWorker.selectItem(currentItem.getParentId(), this);
-        intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, parent);
-        startActivity(intent);
+        returnToCallingActivity();
     }
     private void updateMental(){
         log("...updateMental()");

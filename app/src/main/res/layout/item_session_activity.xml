@@ -508,6 +508,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"
+            android:padding="24sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/itemSession_labelNotifications">
 
@@ -515,8 +516,6 @@
                 android:id="@+id/itemSession_notificationDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
                 android:text="notification date"
                 android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -526,23 +525,12 @@
                 android:id="@+id/itemSession_notificationTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:text="notification time"
                 android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/itemSession_notificationDate" />
 
-            <TextView
-                android:id="@+id/itemSession_notificationType"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:text="notification date"
-                android:textSize="20sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/itemSession_notificationTime" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View
@@ -733,8 +721,6 @@
                 android:textSize="24sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/itemSession_targetDate" />
-
-
         </LinearLayout>
         <View
             android:id="@+id/dividerReward"
@@ -771,13 +757,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <TextView
-                    android:text="color"
+                    android:text="@string/color"
                     android:layout_weight="1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
                 <EditText
                     android:id="@+id/itemSession_colorCode"
                     android:layout_weight="3"
+                    android:inputType="number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>

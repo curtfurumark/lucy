@@ -72,6 +72,11 @@ public class MainActivity extends AppCompatActivity {
         initComponents();
         initListeners();
         initViewModel();
+        Intent intent = getIntent();
+        if( intent.getBooleanExtra(Constants.INTENT_SHOW_CHILD_ITEMS, false)){
+            log("...INTENT_SHOW_CHILD_ITEMS");
+            Item currentParent = (Item) intent.getSerializableExtra(Constants.INTENT_SERIALIZED_ITEM);
+        }
         if( Lucinda.currentFragment != null){
             log("...currentFragment != null");
             currentFragment = Lucinda.currentFragment;

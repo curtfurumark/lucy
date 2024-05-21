@@ -4,6 +4,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -21,6 +22,12 @@ import se.curtrune.lucy.statistics.StatisticsPeriod;
 
 public class Logger {
 
+    public static void log(Calendar calendar){
+        log("log(Calendar)");
+        log("\thour", calendar.get(Calendar.HOUR_OF_DAY));
+        log("\tminute", calendar.get(Calendar.MINUTE));
+
+    }
     public static void log(CategoryListable listable){
         log("log(CategoryListable)");
         log("\tcategory", listable.getCategory());

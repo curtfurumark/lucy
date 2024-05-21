@@ -15,7 +15,6 @@ import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.Type;
-import se.curtrune.lucy.workers.ItemsWorker;
 
 public class DBAdmin {
 
@@ -24,23 +23,25 @@ public class DBAdmin {
 
     public static void createTables(Context context) {
         log("DBAdmin.createTables()");
-        LocalDB  db = new LocalDB(context);
-        db.executeSQL(Queeries.CREATE_TABLE_MENTAL);
-        db.executeSQL(Queeries.CREATE_TABLE_CATEGORIES);
-        db.executeSQL(Queeries.CREATE_TABLE_ITEMS);
-        db.executeSQL(EcQueeries.CREATE_TABLE_TRANSACTIONS);
-        db.executeSQL(EcQueeries.CREATE_TABLE_ASSETS);
-        log("...tables created");
+        try(LocalDB  db = new LocalDB(context)) {
+            db.executeSQL(Queeries.CREATE_TABLE_MENTAL);
+            db.executeSQL(Queeries.CREATE_TABLE_CATEGORIES);
+            db.executeSQL(Queeries.CREATE_TABLE_ITEMS);
+            db.executeSQL(EcQueeries.CREATE_TABLE_TRANSACTIONS);
+            db.executeSQL(EcQueeries.CREATE_TABLE_ASSETS);
+            log("...tables created");
+        }
     }
 
     public static void dropTables(Context context){
         log("DBAdmin.dropTables()");
-        LocalDB db = new LocalDB(context);
-        db.executeSQL(Queeries.DROP_TABLE_CATEGORIES);
-        db.executeSQL(Queeries.DROP_TABLE_ITEMS);
-        db.executeSQL(Queeries.DROP_TABLE_MENTAL);
-        db.executeSQL(EcQueeries.DROP_TABLE_ASSETS);
-        db.executeSQL(EcQueeries.DROP_TABLE_TRANSACTIONS);
+        try(LocalDB db = new LocalDB(context)) {
+            db.executeSQL(Queeries.DROP_TABLE_CATEGORIES);
+            db.executeSQL(Queeries.DROP_TABLE_ITEMS);
+            db.executeSQL(Queeries.DROP_TABLE_MENTAL);
+            db.executeSQL(EcQueeries.DROP_TABLE_ASSETS);
+            db.executeSQL(EcQueeries.DROP_TABLE_TRANSACTIONS);
+        }
     }
 
     public static String getCategory(Cursor cursor) {
@@ -177,43 +178,46 @@ public class DBAdmin {
 
     public static void insertCategories(Context context) {
         log("...insertCategories(Context)");
-        LocalDB db = new LocalDB(context);
-        for( String category: Settings.getCategories()){
-            db.insertCategory(category);
+        try(LocalDB db = new LocalDB(context)) {
+            for (String category : Settings.getCategories()) {
+                db.insertCategory(category);
+            }
         }
     }
     public static void insertRootItems(Context context) {
         log("...insertRootItems(Context)");
         Settings settings = Settings.getInstance(context);
-        LocalDB db = new LocalDB(context);
-        //create the root item
-        Item root = new Item("root");
-        root.setType(Type.ROOT);
-        root = db.insert(root);
-        settings.addRootID(Settings.Root.THE_ROOT, root.getID(), context);
+        try(LocalDB db = new LocalDB(context)) {
+            //create the root item
+            Item root = new Item("root");
+            root.setType(Type.ROOT);
+            root = db.insert(root);
+            settings.addRootID(Settings.Root.THE_ROOT, root.getID(), context);
 
-        Item todayRoot = Settings.getTodayRoot();
-        Item todoRoot = Settings.getTodoRoot();
-        Item projectsRoot = Settings.getProjectsRoot();
-        Item appointmentsRoot = Settings.getAppointmentsRoot();
-        Item panicRoot = Settings.getPanicRoot();
+            Item todayRoot = Settings.getTodayRoot();
+            Item todoRoot = Settings.getTodoRoot();
+            Item projectsRoot = Settings.getProjectsRoot();
+            Item appointmentsRoot = Settings.getAppointmentsRoot();
+            Item panicRoot = Settings.getPanicRoot();
 
-        appointmentsRoot = db.insertChild(root, appointmentsRoot);
-        settings.addRootID(Settings.Root.APPOINTMENTS, appointmentsRoot.getID(), context);
-        todayRoot = db.insertChild(root, todayRoot);
-        settings.addRootID(Settings.Root.DAILY, todayRoot.getID(), context);
-        projectsRoot = db.insertChild(root, projectsRoot);
-        settings.addRootID(Settings.Root.PROJECTS, projectsRoot.getID(), context);
-        todoRoot = db.insertChild(root, todoRoot);
-        settings.addRootID(Settings.Root.TODO, todoRoot.getID(), context);
-        panicRoot = db.insertChild(root, panicRoot);
-        settings.addRootID(Settings.Root.PANIC, panicRoot.getID(), context);
+            appointmentsRoot = db.insertChild(root, appointmentsRoot);
+            settings.addRootID(Settings.Root.APPOINTMENTS, appointmentsRoot.getID(), context);
+            todayRoot = db.insertChild(root, todayRoot);
+            settings.addRootID(Settings.Root.DAILY, todayRoot.getID(), context);
+            projectsRoot = db.insertChild(root, projectsRoot);
+            settings.addRootID(Settings.Root.PROJECTS, projectsRoot.getID(), context);
+            todoRoot = db.insertChild(root, todoRoot);
+            settings.addRootID(Settings.Root.TODO, todoRoot.getID(), context);
+            panicRoot = db.insertChild(root, panicRoot);
+            settings.addRootID(Settings.Root.PANIC, panicRoot.getID(), context);
+        }
     }
 
     public static void listTables(Context context) {
         log("DBAdmin.listTables()");
-        LocalDB db = new LocalDB(context);
-        db.getTableNames().forEach(System.out::println);
+        try(LocalDB db = new LocalDB(context)) {
+            db.getTableNames().forEach(System.out::println);
+        }
     }
 }
 
