@@ -150,4 +150,8 @@
     <string name="save_item">save item</string>
     <string name="add_category">add category</string>
     <string name="color">color</string>
+    <string name="week">week</string>
+    <string name="month">month</string>
+    <string name="send">send</string>
+    <string name="lucinda">lucinda</string>
 </resources>

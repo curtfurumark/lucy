@@ -74,5 +74,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:menu="@menu/navigation_drawer" />
+        app:headerLayout="@layout/navigation_header"
+        app:menu="@menu/navigation_drawer"/>
 </androidx.drawerlayout.widget.DrawerLayout>

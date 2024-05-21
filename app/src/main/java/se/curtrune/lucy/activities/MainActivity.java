@@ -36,6 +36,7 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.dialogs.BoostDialog;
 import se.curtrune.lucy.fragments.AppointmentsFragment;
 import se.curtrune.lucy.fragments.CalenderFragment;
+import se.curtrune.lucy.fragments.ContactFragment;
 import se.curtrune.lucy.fragments.DurationFragment;
 import se.curtrune.lucy.fragments.EnchildaFragment;
 import se.curtrune.lucy.fragments.EstimateFragment;
@@ -138,6 +139,8 @@ public class MainActivity extends AppCompatActivity {
                 navigate(new EstimateFragment());
             }else if( item.getItemId() == R.id.navigationDrawer_weekly){
                 navigate(new WeeklyCalenderFragment());
+            }else if( item.getItemId() == R.id.navigationDrawer_contactFragment){
+                navigate(new ContactFragment());
             }
             drawerLayout.close();
             return true;

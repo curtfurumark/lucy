@@ -61,7 +61,7 @@ public class MainActivityOld extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_activity);
+        setContentView(R.layout.main_activity_old);
         log("MainActivityOld.onCreate(Bundle)");
         int currentEnergy = MentalWorker.getEnergy(LocalDate.now(), this);
         String energyTitle = String.format(Locale.getDefault(), "energy %d", currentEnergy);
