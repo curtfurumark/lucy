@@ -11,12 +11,14 @@ import static se.curtrune.lucy.util.Logger.log;
 
 public class Week {
     private final LocalDate firstDate;
+    private final  LocalDate lastDate;
     private LocalDate currentDate;
     private List<LocalDate> dates;
     public Week(LocalDate date){
         log("Week(LocalDate)", date.toString());
         this.currentDate = date;
         firstDate = calculateFirstDateOfTheWeek(currentDate);
+        lastDate = firstDate.plusDays(6);
         dates = getDates();
     }
     private LocalDate calculateFirstDateOfTheWeek(LocalDate date){
@@ -37,6 +39,7 @@ public class Week {
     public LocalDate getFirstDateOfWeek(){
         return firstDate;
     }
+    public LocalDate getLastDateOfWeek(){return lastDate;}
     public LocalDate getMonday(){
         return firstDate;
     }

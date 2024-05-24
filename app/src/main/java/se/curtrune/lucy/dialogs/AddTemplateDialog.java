@@ -12,7 +12,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -34,6 +33,7 @@ import java.util.List;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.workers.UtilWorker;
@@ -61,6 +61,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
     private TextView labelWeekDays;
     private TextView labelRepeat;
     private TextView labelOther;
+    private TextView labelNotification;
     private TextView labelDateTime;
     private TextView textViewDate;
     private TextView textViewTime;
@@ -78,6 +79,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
 
     private OnNewItemCallback callback;
     private String category;
+    private Notification notification;
     public static boolean VERBOSE = false;
     private Item item;
     private boolean hasPeriod = false;
@@ -86,7 +88,6 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
 
     public AddTemplateDialog(Item parent, LocalDate date) {
         assert  parent != null;
-        //if( date == null)
         log("AddTemplateDialog(Item) parent", parent.getHeading());
         this.parent = parent;
         this.date = date;
@@ -101,6 +102,20 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         initUserInterface();
         createItem();
         return view;
+    }
+    private void addNotification(){
+        log("...addNotification");
+        LocalTime rightNow = LocalTime.now();
+        int minutes = rightNow.getMinute();
+        int hour = rightNow.getHour();
+        TimePickerDialog timePicker = new TimePickerDialog(getContext(), (view, hourOfDay, minute) -> {
+            LocalTime notificationTime = LocalTime.of(hourOfDay, minute);
+            labelNotification.setText(notificationTime.toString());
+            notification = new Notification();
+            notification.setTime(notificationTime);
+        }, hour, minutes, true);
+        timePicker.show();
+
     }
     private Item createItem(){
         if( VERBOSE) log("...createItem()");
@@ -117,6 +132,10 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         item.setIsCalenderItem(checkBoxShowInCalender.isChecked());
         item.setPeriod(getPeriod());
         item.setCategory(category);
+        if( notification != null){
+            log("...notification != null");
+            item.setNotification(notification);
+        }
         return item;
     }
     private Repeat getPeriod(){
@@ -185,7 +204,8 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         textViewDate = view.findViewById(R.id.addTemplateDialog_date);
         textViewTime = view.findViewById(R.id.addTemplateDialog_time);
         labelRepeat = view.findViewById(R.id.addTemplateDialog_repeat);
-        //textViewNow = view.findViewById(R.id.addTemplateDialog_now);
+        //NOTIFICATION
+        labelNotification = view.findViewById(R.id.addTemplateDialog_labelNotification);
         //other
         labelOther = view.findViewById(R.id.addTemplateDialog_labelOther);
         layoutOther = view.findViewById(R.id.addTemplateDialog_layoutOther);
@@ -211,6 +231,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         textViewTime.setOnClickListener(view->showTimeDialog());
         labelOther.setOnClickListener(view->toggleOther());
         buttonRightNow.setOnClickListener(view->rightNow());
+        labelNotification.setOnClickListener(view->addNotification());
     }
 
     /**

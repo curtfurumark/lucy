@@ -1,5 +1,9 @@
 package se.curtrune.lucy.classes;
 
+import static se.curtrune.lucy.util.Logger.log;
+
+import androidx.annotation.NonNull;
+
 import com.google.gson.Gson;
 
 import java.io.Serializable;
@@ -11,15 +15,17 @@ import se.curtrune.lucy.util.Converter;
 
 public class Notification implements Serializable {
     public enum Type{
-        PENDING, ALARM, NOTIFICATION;
+        PENDING, ALARM, NOTIFICATION
     }
     private Type type;
-    //private LocalDate date;
     private long date;
-    //private LocalTime time;
     private int time;
     private String title;
     private String content;
+    public  Notification(){
+        log("Notification()");
+        type = Type.NOTIFICATION;
+    }
     public String getContent(){
         return this.content;
     }
@@ -62,6 +68,7 @@ public class Notification implements Serializable {
         return new Gson().toJson(this);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return String.format(Locale.getDefault(), "%s %s %s", type.toString(), getDate().toString(), Converter.format(getTime()));

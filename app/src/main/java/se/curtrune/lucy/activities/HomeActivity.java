@@ -2,33 +2,37 @@ package se.curtrune.lucy.activities;
 
 import static se.curtrune.lucy.util.Logger.log;
 
-
+import android.app.UiModeManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.activities.economy.EconomyActivity;
+import se.curtrune.lucy.activities.economy.persist.ECDBAdmin;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.classes.Quotes;
 import se.curtrune.lucy.notifications.EasyNotification;
 import se.curtrune.lucy.persist.DBAdmin;
-import se.curtrune.lucy.activities.economy.persist.ECDBAdmin;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
 import se.curtrune.lucy.util.Logger;
+import se.curtrune.lucy.workers.NotificationsWorker;
 
 public class HomeActivity extends AppCompatActivity {
     private TextView textViewSettings;
@@ -44,6 +48,7 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_activity);
+        initCatchAllExceptionsHandler();
         setTitle("lucinda");
         log("HomeActivity.onCreate(Bundle)");
         lucinda = Lucinda.getInstance(this);
@@ -64,6 +69,25 @@ public class HomeActivity extends AppCompatActivity {
         EasyNotification.createNotificationChannel(this);
         openDB();
     }
+    private void initCatchAllExceptionsHandler(){
+        Thread.setDefaultUncaughtExceptionHandler((paramThread, paramThrowable) -> {
+
+            new Thread() {
+                @Override
+                public void run() {
+                    Looper.prepare();
+                    Toast.makeText(HomeActivity.this,paramThrowable.getMessage(), Toast.LENGTH_LONG).show();
+                    Looper.loop();
+                }
+            }.start();
+            try
+            {
+                Thread.sleep(4000); // Let the Toast display before app will get shutdown
+            }
+            catch (InterruptedException e) {    }
+            System.exit(2);
+        });
+    }
 
     private void checkNotificationPermission() {
         log("...checkNotificationPermission()");
@@ -79,6 +103,11 @@ public class HomeActivity extends AppCompatActivity {
         ECDBAdmin.createEconomyTables(this);
         Toast.makeText(this, "tables created, possibly", Toast.LENGTH_LONG).show();
         DBAdmin.listTables(this);
+    }
+    private void createLoggerTable(){
+        log("...createLoggerTable()");
+        String queery = Queeries.CREATE_TABLE_LOGGER;
+
     }
 
     private void initComponents() {
@@ -140,6 +169,8 @@ public class HomeActivity extends AppCompatActivity {
         } else if (item.getItemId() == R.id.homeActivity_createEconomyTables) {
             // toggleDarkMode();
             createEconomyTables();
+        }else if (item.getItemId() == R.id.homeActivity_setNotifications){
+            setNotifications();
         }
         return true;
     }
@@ -210,6 +241,34 @@ public class HomeActivity extends AppCompatActivity {
             Toast.makeText(this, "lucinda reset", Toast.LENGTH_LONG).show();
         } catch (SQLException e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+    private void setNotifications(){
+        log("...setNotifications()");
+        NotificationsWorker.setNotifications(LocalDate.now(), this);
+    }
+    private void toggleDarkMode() {
+        log("...toggleDarkMode()");
+        UiModeManager uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
+        //uiModeManager.getCurrentModeType();
+        int currentMode = uiModeManager.getNightMode();
+        log("...currentMode");
+        switch (currentMode) {
+            case UiModeManager.MODE_NIGHT_NO:
+                log("MODE_NIGHT_NO");
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                break;
+            case UiModeManager.MODE_NIGHT_YES:
+                log("MODE_NIGHT_YES");
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                break;
+            case UiModeManager.MODE_NIGHT_AUTO:
+                log("MODE_NIGHT_AUTO");
+                break;
+            case UiModeManager.MODE_NIGHT_CUSTOM:
+                log("MODE_NIGHT_CUSTOM");
+                break;
+
         }
     }
 }

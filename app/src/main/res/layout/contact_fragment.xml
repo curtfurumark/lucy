@@ -29,6 +29,8 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/contactFragment_content"
                 android:layout_width="match_parent"
+                android:gravity="top"
+                android:lines="6"
                 android:layout_height="wrap_content"
                 android:hint="content" />
 
@@ -44,6 +46,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textEmailAddress"
+                android:enabled="false"
                 android:hint="email" />
         </com.google.android.material.textfield.TextInputLayout>
         <Button

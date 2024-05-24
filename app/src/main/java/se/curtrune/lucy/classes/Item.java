@@ -55,11 +55,6 @@ public class Item implements Serializable , Listable {
      */
     protected int templateType;
 
-    public enum ItemClass{
-        ITEM, PERIODITEM, APPOINTMENT,
-    }
-    protected ItemClass itemClass;
-
     public Item() {
         this.created = updated = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
         this.target_time =0;

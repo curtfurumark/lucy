@@ -22,4 +22,6 @@
         android:title="create todo list" />
     <item android:title="create economy tables"
         android:id="@+id/homeActivity_createEconomyTables"/>
+    <item android:id="@+id/homeActivity_setNotifications"
+        android:title="set notifications"/>
 </menu>

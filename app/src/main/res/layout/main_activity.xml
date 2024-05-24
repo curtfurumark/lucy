@@ -19,6 +19,7 @@
             android:layout_height="56dp"
             android:elevation="4dp"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:navigationIcon="@drawable/baseline_menu_24"
             android:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/mainActivity_layoutTop"
@@ -58,7 +59,6 @@
                 app:srcCompat="@drawable/baseline_emoji_emotions_24"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
-
 
         </androidx.constraintlayout.widget.ConstraintLayout>
         <FrameLayout

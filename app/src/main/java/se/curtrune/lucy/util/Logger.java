@@ -1,5 +1,6 @@
 package se.curtrune.lucy.util;
 
+import java.net.URL;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -7,6 +8,7 @@ import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import se.curtrune.lucy.activities.economy.classes.Transaction;
 import se.curtrune.lucy.classes.Estimate;
@@ -19,6 +21,7 @@ import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.statistics.CategoryListable;
 import se.curtrune.lucy.statistics.StatisticsPeriod;
+import se.curtrune.lucy.web.HTTPRequest;
 
 public class Logger {
 
@@ -44,6 +47,19 @@ public class Logger {
         log("...energy", estimateDate.getEnergyEstimate());
         log("...anxiety", estimateDate.getAnxiety());
 
+    }
+    public static void log(HTTPRequest request){
+        log("log HTTPRequest...");
+        if( request == null){
+            log("...request is null");
+            return;
+        }
+        log("...url", request.getUrl());
+        log("...http method", request.getHttpMethod().toString());
+        Map<String, String> params = request.getParams();
+        for( String key: params.keySet()){
+            log("......"  +key, params.get(key));
+        }
     }
     public static void log(Item item){
         log("Logger.log(Item)");
@@ -214,5 +230,15 @@ public class Logger {
         log("\ttype", transaction.getType().toString());
         log("\taccount ordinal", transaction.getAccountOrdinal());
         System.out.println();
+    }
+    public static void log(URL url) {
+        log("log(URL)");
+        log("...getHost", url.getHost());
+        log("...getPort", url.getPort());
+        log("...getProtocol", url.getProtocol());
+        log("...getQuery", url.getQuery());
+        log("...getUserInfo", url.getUserInfo());
+        log("...getAuthority", url.getAuthority());
+        log("...toExternalForm", url.toExternalForm());
     }
 }

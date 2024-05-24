@@ -22,6 +22,7 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
+import se.curtrune.lucy.classes.calender.Week;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
 
@@ -49,8 +50,10 @@ public class ItemsWorker {
         if( item.hasChild()){
             Toast.makeText(context, "unlink not implemented", Toast.LENGTH_LONG).show();
         }else{
-            LocalDB db = new LocalDB(context);
-            int rowsAffected = db.delete(item);
+            int rowsAffected;
+            try (LocalDB db = new LocalDB(context)) {
+                rowsAffected = db.delete(item);
+            }
             if( rowsAffected != 1){
                 Toast.makeText(context, "error deleting item", Toast.LENGTH_LONG).show();
             }else{
@@ -66,8 +69,9 @@ public class ItemsWorker {
             log("...currentParent is null, returning null");
             return null;
         }
-        LocalDB db = new LocalDB(context);
-        return db.selectItem(currentParent.getParentId());
+        try (LocalDB db = new LocalDB(context)) {
+            return db.selectItem(currentParent.getParentId());
+        }
     }
 
 
@@ -96,21 +100,9 @@ public class ItemsWorker {
                 break;
         }
         log("root id ", rootID);
-        LocalDB db = new LocalDB(context);
-        return db.selectItem(rootID);
-    }
-
-    public static Item getTodayParent(Context context) {
-        if( VERBOSE)log("ItemsWorker.getTodayParent(Context context)");
-        LocalDB db = new LocalDB(context);
-        Settings settings = Settings.getInstance(context);
-        return db.selectItem(settings.getRootID(DAILY));
-    }
-
-    public static boolean hasChild(long parentId, Context context) {
-        log("ItemsWorker.hasChild(long) parentID", parentId );
-        LocalDB db = new LocalDB(context);
-        return  db.selectItem(parentId).hasChild();
+        try (LocalDB db = new LocalDB(context)) {
+            return db.selectItem(rootID);
+        }
     }
 
     public static Item insert(Item item, Context context)  {
@@ -128,100 +120,105 @@ public class ItemsWorker {
             setHasChild(parent, true, context);
         }
         child.setParentId(parent.getID());
-        LocalDB db = new LocalDB(context);
-        return db.insert(child);
+        try (LocalDB db = new LocalDB(context)) {
+            return db.insert(child);
+        }
     }
 
-    public static Item selectItem(long parentId, Context context) {
-        log("...selectItem(long, Context");
-        LocalDB db = new LocalDB(context);
-        return db.selectItem(parentId);
-    }
 
     public static List<Item> selectItems(Context context) {
         log("ItemsWorker.selectItems(Context");
-        LocalDB db = new LocalDB(context);
-        return db.selectItems();
+        try (LocalDB db = new LocalDB(context)) {
+            return db.selectItems();
+        }
     }
 
-
-
+    /**
+     * select done items as specified by argument
+     * @param firstDate first date inclusive
+     * @param lastDate last date inclusive
+     * @param context just the frigging context
+     * @return a list as specified
+     */
     public static List<Item> selectItems(LocalDate firstDate, LocalDate lastDate, Context context) {
         log("...selectItems(LocalDate, LocalDate, Context");
-        LocalDB db = new LocalDB(context);
-        String query = Queeries.selectItems(firstDate, lastDate, State.DONE);
-        return db.selectItems(query);
+        try (LocalDB db = new LocalDB(context)) {
+            String query = Queeries.selectItems(firstDate, lastDate, State.DONE);
+            return db.selectItems(query);
+        }
     }
-
-
-
-
-
 
     public static List<Item> selectAppointments(Context context) {
         log("ItemsWorker.selectAppointments(Context)");
         String query = Queeries.selectAppointments();
-        LocalDB db = new LocalDB(context);
-        return db.selectItems(query);
+        try (LocalDB db = new LocalDB(context)) {
+            return db.selectItems(query);
+        }
     }
     public static List<Item> selectAppointments(LocalDate date, Context context) {
         log("ItemsWorker.selectAppointments(LocalDate, Context)", date.toString());
         String queery = Queeries.selectAppointments(date);
-        LocalDB db = new LocalDB(context);
-        return db.selectItems(queery);
+        try (LocalDB db = new LocalDB(context)) {
+            return db.selectItems(queery);
+        }
     }
     public static List<Item> selectChildren(Item item, Context context){
         log("ItemsWorker.selectChildren(Item, Context)");
-        LocalDB db = new LocalDB(context);
-        return db.selectChildren(item);
+        try (LocalDB db = new LocalDB(context)) {
+            return db.selectChildren(item);
+        }
     }
     public static List<Item> selectDateState(LocalDate date, State state, Context context){
         log("ItemsWorker.selectDateState()");
-        LocalDB db = new LocalDB(context);
-        return  db.selectItems(Queeries.selectItems(date, state));
+        try (LocalDB db = new LocalDB(context)) {
+            return db.selectItems(Queeries.selectItems(date, state));
+        }
     }
     public static List<Item> selectItems(State state, Context context) {
         log("ItemsWorker.selectItems(State state)", state.toString());
-        LocalDB db = new LocalDB(context);
-        return db.selectItems(Queeries.selectItems(state));
+        try (LocalDB db = new LocalDB(context)) {
+            return db.selectItems(Queeries.selectItems(state));
+        }
     }
     public static List<Item> selectItems(Type type, Context context) {
-        LocalDB db = new LocalDB(context);
-        return db.selectItems(type);
+        try (LocalDB db = new LocalDB(context)) {
+            return db.selectItems(type);
+        }
     }
 
     public static List<Item> selectItems(LocalDate date, Context context, State state){
         log("ItemsWorker.selectItems(LocalDate, Context, State");
-        LocalDB db = new LocalDB(context);
-        List<Item> items = db.selectItems(date, state);
+        List<Item> items;
+        try (LocalDB db = new LocalDB(context)) {
+            items = db.selectItems(date, state);
+        }
         return items;
     }
 
     public static List<Item> selectChildItems(Item parent, Context context) {
         log("ItemsWorker.selectChildItems(Item, Context)", parent.getHeading());
-        LocalDB db = new LocalDB(context);
-        return db.selectItems(Queeries.selectChildren(parent));
+        try (LocalDB db = new LocalDB(context)) {
+            return db.selectItems(Queeries.selectChildren(parent));
+        }
     }
     public static List<Item> selectChildren(long id, Context context) {
         log("...selectChildren(long, Context)", id);
-        LocalDB db = new LocalDB(context);
-        return db.selectItems(Queeries.selectChildren(id));
+        try (LocalDB db = new LocalDB(context)) {
+            return db.selectItems(Queeries.selectChildren(id));
+        }
     }
     public static List<Item> selectTodayList(LocalDate date, Context context){
         log("ItemsWorker.selectTodayList(LocalDate, Context)", date.toString());
         String query = Queeries.selectTodayList(date);
-        LocalDB db = new LocalDB(context);
-        return db.selectItems(query);
+        try (LocalDB db = new LocalDB(context)) {
+            return db.selectItems(query);
+        }
     }
     public static void setHasChild(Item item, boolean hasChild, Context context) {
         log("ItemsWorker.setHasChild(Item, Context)", item.getHeading());
-        LocalDB db = new LocalDB(context);
-        db.setItemHasChild(item.getID(), hasChild);
-    }
-    public static void setHasChild(long id, boolean hasChild, Context context){
-        log("ItemsWorker.setHasChild(long, boolean, Context");
-        LocalDB db = new LocalDB(context);
-        db.setItemHasChild(id, hasChild);
+        try (LocalDB db = new LocalDB(context)) {
+            db.setItemHasChild(item.getID(), hasChild);
+        }
     }
 
     public static Item getAppointmentsRoot(Context context){
@@ -247,14 +244,16 @@ public class ItemsWorker {
     public static Item getTodoRoot(Context context){
         Settings settings = Settings.getInstance(context);
         long id = settings.getRootID(TODO);
-        LocalDB db = new LocalDB( context);
-        return db.selectItem(id);
+        try (LocalDB db = new LocalDB(context)) {
+            return db.selectItem(id);
+        }
     }
     public static Item getDailyRoot(Context context){
         Settings settings = Settings.getInstance(context);
         long id = settings.getRootID(DAILY);
-        LocalDB db = new LocalDB( context);
-        return db.selectItem(id);
+        try (LocalDB db = new LocalDB(context)) {
+            return db.selectItem(id);
+        }
     }
 
     public static List<Item> selectCalenderItems(YearMonth yearMonth, Context context) {
@@ -266,16 +265,28 @@ public class ItemsWorker {
         return db.selectItems(queery);
     }
 
+    public static List<Item> selectItems(Week week, Context context) {
+        log("ItemsWorker.selectItems(Week, Context)");
+        String queery = Queeries.selectItems(week);
+        List<Item> items;
+        try(LocalDB db = new LocalDB(context)){
+            items = db.selectItems(queery);
+        }
+        return items;
+    }
+
 
     public void touch(Item currentItem, Context context) {
         log("ItemsWorker.touch(Item, Context)");
-        LocalDB db = new LocalDB(context);
-        db.touch(currentItem);
+        try (LocalDB db = new LocalDB(context)) {
+            db.touch(currentItem);
+        }
     }
     public  static void touchParents(Item item, Context context){
         log("...touchParents()");
-        LocalDB db = new LocalDB(context);
-        db.touchParents(item);
+        try (LocalDB db = new LocalDB(context)) {
+            db.touchParents(item);
+        }
     }
 
     /**
@@ -283,47 +294,49 @@ public class ItemsWorker {
      * if Item is not a template, update updates the items updated field, and nothing else
      * anything else is the responsibility of the caller
      * @param item, the item to be updated,
-     * @param context
-     * @return, rows affected
+     * @param context you guessed it
+     * @return rows affected
      */
     public static int update(Item item, Context context) {
         log("ItemsWorker.update(Item, Context)", item.getHeading());
         if(item.isTemplate() && item.isDone()){
             return updateTemplate(item, context);
         }else {
-            LocalDB db = new LocalDB(context);
-            item.setUpdated(LocalDateTime.now());
-            return db.update(item);
+            try (LocalDB db = new LocalDB(context)) {
+                item.setUpdated(LocalDateTime.now());
+                return db.update(item);
+            }
         }
     }
     private static int updateTemplate(Item template, Context context) {
         log("...updateTemplate(Item, Context)", template.getHeading());
-        LocalDB db = new LocalDB(context);
-        if(template.isDone()){
-            if( VERBOSE) log("...template is done, will spawn a child");
-            template.setState(State.TODO);
-            Item child = new Item(template);
-            child.setState(State.DONE);
-            Mental mental = new Mental(template.getMental());
-            mental.isDone(true);
-            mental.setDate(LocalDate.now());
-            mental.setTime(LocalTime.now());
-            child.setMental(mental);
-            child = db.insertChild(template, child);//creates and inserts mental, or rather insert(Item) does
-            if( template.hasPeriod()) {
-                template.updateTargetDate();
+        try (LocalDB db = new LocalDB(context)) {
+            if (template.isDone()) {
+                if (VERBOSE) log("...template is done, will spawn a child");
+                template.setState(State.TODO);
+                Item child = new Item(template);
+                child.setState(State.DONE);
+                Mental mental = new Mental(template.getMental());
+                mental.isDone(true);
+                mental.setDate(LocalDate.now());
+                mental.setTime(LocalTime.now());
+                child.setMental(mental);
+                child = db.insertChild(template, child);//creates and inserts mental, or rather insert(Item) does
+                if (template.hasPeriod()) {
+                    template.updateTargetDate();
+                }
+                template.setDuration(0);
+    /*            Mental childMental = new Mental(template.getMental());
+                assert  childMental != null;
+                childMental.setDate(LocalDate.now());
+                childMental.setTime(LocalTime.now());
+                childMental.setUpdated(LocalDateTime.now());
+                childMental.setCreated(LocalDateTime.now());
+                childMental.setIsTemplate(false);
+                childMental.setItemID(child.getID());
+                childMental = MentalWorker.insert(childMental, context);*/
             }
-            template.setDuration(0);
-/*            Mental childMental = new Mental(template.getMental());
-            assert  childMental != null;
-            childMental.setDate(LocalDate.now());
-            childMental.setTime(LocalTime.now());
-            childMental.setUpdated(LocalDateTime.now());
-            childMental.setCreated(LocalDateTime.now());
-            childMental.setIsTemplate(false);
-            childMental.setItemID(child.getID());
-            childMental = MentalWorker.insert(childMental, context);*/
+            return db.update(template);
         }
-        return db.update(template);
     }
 }

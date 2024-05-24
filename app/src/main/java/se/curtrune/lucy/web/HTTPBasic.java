@@ -35,8 +35,6 @@ public class HTTPBasic {
             connection.setDoInput(true);
             connection.setConnectTimeout(TIMEOUT);
             connection.setDoOutput(false);
-
-            //if (VERBOSE )log(connection);
             InputStream inputStream = connection.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.ISO_8859_1));
             String line;
@@ -54,6 +52,45 @@ public class HTTPBasic {
             result = new StringBuilder(e.toString());
             if( VERBOSE) log("res (mysqld.post(): " + result);
         }
+        return result.toString();
+    }
+
+    public static String send(HTTPRequest request) throws IOException {
+        log("DBOneBasic.send(HTTPRequest) method: ", request.getHttpMethod().toString() );
+        if (VERBOSE) log(request);
+        StringBuilder result = new StringBuilder();
+        URL url = new URL(request.getUrl());
+        if (VERBOSE) log(url);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        if (VERBOSE) log("...connection open");
+        connection.setRequestMethod(request.getHttpMethod().toString());
+        connection.setDoInput(true);
+        connection.setDoOutput(true);
+        OutputStream outputStream = null;
+        outputStream = connection.getOutputStream();
+        if (VERBOSE) log("...got outputStream()");
+        assert outputStream != null;
+        BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
+        if (VERBOSE) log("...before");
+        if (VERBOSE) log("...will send request", request.toPostString());
+        bufferedWriter.write(request.toPostString(false));
+        bufferedWriter.flush();
+        if (VERBOSE) log("...request sent");
+        bufferedWriter.close();
+        outputStream.close();
+        if( VERBOSE) log("...will get inputStream");
+        InputStream inputStream = connection.getInputStream();
+        if( VERBOSE) log("...got inputStream");
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.ISO_8859_1));
+        if(VERBOSE) log("...got buffered reader");
+        String line;
+        while ((line = bufferedReader.readLine()) != null) {
+            if (VERBOSE) log("...read line: " + line);
+            result.append(line);
+        }
+        bufferedReader.close();
+        inputStream.close();
+        connection.disconnect();
         return result.toString();
     }
 }

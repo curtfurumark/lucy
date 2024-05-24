@@ -14,6 +14,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import se.curtrune.lucy.R;
+import se.curtrune.lucy.workers.SettingsWorker;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -49,6 +50,9 @@ public class SettingsActivity extends AppCompatActivity {
                 }else if( key.equals("pref_panic_action")){
                     log("pref_panic_action");
 
+                }else if( key.equals("pref_dark_mode")){
+                    log("key pref_dark_mode");
+                    SettingsWorker.toggleDarkMode(requireContext());
                 }else{
                     log("no action for key", key);
                 }

@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_navigation_drawer_actvity);
+        setContentView(R.layout.main_activity);
         log("MainActivity.onCreate(Bundle of joy)");
         initComponents();
         initListeners();

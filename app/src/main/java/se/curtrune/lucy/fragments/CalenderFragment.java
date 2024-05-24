@@ -47,6 +47,7 @@ import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.AffirmationWorker;
 import se.curtrune.lucy.workers.ItemsWorker;
+import se.curtrune.lucy.workers.NotificationsWorker;
 import se.curtrune.lucy.workers.StatisticsWorker;
 
 /**
@@ -75,10 +76,10 @@ public class CalenderFragment extends Fragment {
 
     //for debugging
     private TextView labelMonthYear;
-    private TextView textViewYear;
+    /*private TextView textViewYear;
     private TextView textViewMonth;
     private TextView textViewWeek;
-    private TextView textViewDate;
+    private TextView textViewDate;*/
     private ItemTouchHelper itemTouchHelper;
 
     private LocalDate currentDate;
@@ -155,10 +156,10 @@ public class CalenderFragment extends Fragment {
         buttonNext = view.findViewById(R.id.calenderFragment_buttonNext);
         buttonPrev = view.findViewById(R.id.calenderFragment_buttonPrev);
         labelMonthYear = view.findViewById(R.id.calenderFragment_labelMonthYear);
-        textViewDate = view.findViewById(R.id.calenderFragment_currentDate);
+/*        textViewDate = view.findViewById(R.id.calenderFragment_currentDate);
         textViewWeek = view.findViewById(R.id.calenderFragment_currentWeek);
         textViewMonth = view.findViewById(R.id.calenderFragment_currentMonth);
-        textViewYear = view.findViewById(R.id.calenderFragment_currentYear);
+        textViewYear = view.findViewById(R.id.calenderFragment_currentYear);*/
         recycler = view.findViewById(R.id.calenderFragment_recycler);
         recyclerDates = view.findViewById(R.id.calenderFragment_recyclerDates);
         buttonAddItem = view.findViewById(R.id.calenderFragment_addItem);
@@ -330,10 +331,10 @@ public class CalenderFragment extends Fragment {
     }
     private void setUserInterface(LocalDate date){
         log("...setUserInterface()", date.toString());
-        textViewDate.setText(currentDate.toString());
+  /*      textViewDate.setText(currentDate.toString());
         textViewWeek.setText(getWeekNumber());
         textViewMonth.setText(currentDate.getMonth().toString());
-        textViewYear.setText(String.valueOf(currentDate.getYear()));
+        textViewYear.setText(String.valueOf(currentDate.getYear()));*/
         labelMonthYear.setText(getMonthYear(currentDate));
         if( currentDate.equals(LocalDate.now())) {
             items = ItemsWorker.selectTodayList(currentDate, getContext());
@@ -355,6 +356,10 @@ public class CalenderFragment extends Fragment {
                 log(item);
                 item = ItemsWorker.insert(item, getContext());
                 items.add(item);
+                if(item.hasNotification()){
+                    log("...item has notification");
+                    NotificationsWorker.setNotification(item, getContext());
+                }
                 updateAdapter();
             }
         });

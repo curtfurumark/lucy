@@ -57,6 +57,7 @@ import se.curtrune.lucy.util.Kronos;
 import se.curtrune.lucy.workers.CategoryWorker;
 import se.curtrune.lucy.workers.ItemsWorker;
 import se.curtrune.lucy.workers.MentalWorker;
+import se.curtrune.lucy.workers.NotificationsWorker;
 import se.curtrune.lucy.workers.StatisticsWorker;
 
 
@@ -184,6 +185,9 @@ public class ItemSession extends AppCompatActivity implements
         dialog.setCallback(item -> {
             log("...onAddItem(Item)");
             item = ItemsWorker.insertChild(currentItem, item, this);
+            if( item.hasNotification()){
+                NotificationsWorker.setNotification(item, this);
+            }
             log(item);
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra(Constants.INTENT_SHOW_CHILD_ITEMS, true);
@@ -863,8 +867,7 @@ public class ItemSession extends AppCompatActivity implements
                     Toast.makeText(this, "error updating item", Toast.LENGTH_LONG).show();
                 }
                 log(notification);
-                EasyAlarm easyAlarm = new EasyAlarm(currentItem);
-                easyAlarm.setAlarm(this);
+                NotificationsWorker.setNotification(currentItem, this);
                 setUserInterface(notification);
             });
             dialog.show(getSupportFragmentManager(), "add notification");

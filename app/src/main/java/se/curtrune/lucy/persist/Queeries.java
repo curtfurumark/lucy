@@ -10,12 +10,18 @@ import java.util.Locale;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
+import se.curtrune.lucy.classes.calender.Week;
 import se.curtrune.lucy.fragments.TopTenFragment;
 
 public class Queeries {
     public static final String DROP_TABLE_ITEMS = "DROP TABLE IF EXISTS items ";
     public static final String DROP_TABLE_CATEGORIES = "DROP TABLE IF EXISTS categories";
+    public static final String DROP_TABLE_LOGGER = "DROP TABLE IF EXISTS logger";
     public static final String DROP_TABLE_MENTAL = "DROP TABLE IF EXISTS mental";
+    public static final String CREATE_TABLE_LOGGER = " CREATE TABLE logger " +
+            "(id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "created INTEGER, " +
+            "message TEXT)";
     //TODO
 
     public static String CREATE_TABLE_ITEMS =
@@ -109,11 +115,11 @@ public class Queeries {
 
     public static String selectItems(State state) {
         if (VERBOSE) log("Queeries.selectItems(State)", state.toString());
-        return String.format("SELECT * FROM items WHERE state = %d  AND type != %d AND hasChild = 0 ORDER BY targetDate DESC", state.ordinal(), Type.ROOT.ordinal());
+        return String.format(Locale.getDefault(), "SELECT * FROM items WHERE state = %d  AND type != %d AND hasChild = 0 ORDER BY targetDate DESC", state.ordinal(), Type.ROOT.ordinal());
     }
 
     public static String selectItems(State state, LocalDate date) {
-        return String.format("SELECT * FROM items WHERE state = %d  AND date = %d ORDER BY targetDate DESC",
+        return String.format(Locale.getDefault(), "SELECT * FROM items WHERE state = %d  AND date = %d ORDER BY targetDate DESC",
                 state.ordinal(),
                 date.toEpochDay());
     }
@@ -136,23 +142,6 @@ public class Queeries {
                 State.DONE.ordinal(), startEpoch, endEpoch);
     }
 
-    public static String selectTodayList2(LocalDate date) {
-        LocalDateTime.now().toLocalDate();
-        LocalDateTime startLocalDateTime = date.atStartOfDay();
-        long startEpoch = startLocalDateTime.toEpochSecond(ZoneOffset.UTC);
-        long endEpoch = startEpoch + (3600 * 24);
-        //AND (updated)
-        return String.format(Locale.ENGLISH, "SELECT * FROM items WHERE " +
-                        "(template = %d AND targetDate <= %d)  OR " +      //INFINITE today or earlier
-                        "(state = %d AND targetDate = %d) OR " +        //items done today
-                        "(targetDate = %d AND hasChild = 0 AND state = %d) OR " +   //items todo today
-                        "(state = %d AND updated >= %d AND updated <= %d)", //items done today, but targetDate not today
-                1, date.toEpochDay(),
-                State.DONE.ordinal(), date.toEpochDay(),
-                date.toEpochDay(), State.TODO.ordinal(),
-                State.DONE.ordinal(), startEpoch, endEpoch);
-    }
-
     public static String selectItems(Type type) {
         return String.format(Locale.ENGLISH, "SELECT * FROM items WHERE type = %d ORDER BY updated", type.ordinal());
     }
@@ -163,16 +152,16 @@ public class Queeries {
 
 
     public static String selectLatestMentals(int limit) {
-        return String.format("SELECT * FROM mental ORDER BY updated LIMIT 10");
+        return String.format(Locale.getDefault(), "SELECT * FROM mental ORDER BY updated LIMIT %d", limit);
     }
 
     public static String selectItem(long id) {
-        return String.format("SELECT  *  FROM items WHERE id = %d", id);
+        return String.format(Locale.getDefault(), "SELECT  *  FROM items WHERE id = %d", id);
     }
 
     public static String selectItems(LocalDate firstDate, LocalDate lastDate) {
-        String query = String.format(Locale.ENGLISH, "SELECT * FROM items WHERE ()");
-        return null;
+        return String.format(Locale.ENGLISH, "SELECT * FROM items WHERE targetDate >= %d AND targetDate <= %d",
+                firstDate.toEpochDay(), lastDate.toEpochDay());
     }
     public static String selectItems(LocalDate firstDate, LocalDate lastDate, Type type) {
         return String.format(Locale.getDefault(), "SELECT * FROM items WHERE targetDate >= %d AND targetDate <= %d AND type = %d ORDER by targetDate DESC",
@@ -183,18 +172,17 @@ public class Queeries {
         LocalDateTime localDateTimeFirst = firstDate.atStartOfDay();
         long startEpoch = localDateTimeFirst.toEpochSecond(ZoneOffset.UTC);
         long endEpoch = lastDate.atStartOfDay().toEpochSecond(ZoneOffset.UTC) + (3600 * 24);
-        //long endEpoch = startEpoch + (3600 * 24);
         return String.format(Locale.ENGLISH, "SELECT * FROM items WHERE " +
                         "(state = %d AND  updated >= %d AND updated <= %d) ORDER BY updated DESC",
                 state.ordinal(), startEpoch, endEpoch);
     }
 
     public static String selectMental(Item item) {
-        return String.format("SELECT * FROM mental WHERE itemID = %d", item.getID());
+        return String.format(Locale.getDefault(), "SELECT * FROM mental WHERE itemID = %d", item.getID());
     }
 
     public static String selectMentals(LocalDate firstDate, LocalDate lastDate, boolean includeTemplates, boolean isDone) {
-        return String.format("SELECT * FROM mental WHERE date >= %d AND date <= %d AND isDone = 1 ORDER BY date DESC",
+        return String.format(Locale.getDefault(), "SELECT * FROM mental WHERE date >= %d AND date <= %d AND isDone = 1 ORDER BY date DESC",
                 firstDate.toEpochDay(),
                 lastDate.toEpochDay());
         //includeTemplates ? 1: 0);
@@ -235,6 +223,11 @@ public class Queeries {
         long endOfDay = startOfDay + ( 3600 * 24);
         return String.format(Locale.getDefault(), "SELECT mental FROM items WHERE updated >= %d AND updated <= %d  AND state = %d",
                 startOfDay, endOfDay, state.ordinal());
+    }
+
+    public static String selectItems(Week week) {
+        return String.format(Locale.getDefault(), "SELECT * FROM items WHERE targetDate >= %d AND targetDate <= %d ORDER by targetDate DESC",
+                week.getMonday().toEpochDay(), week.getLastDateOfWeek().toEpochDay());
     }
 }
 

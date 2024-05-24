@@ -24,10 +24,15 @@ public class DBAdmin {
     public static void createTables(Context context) {
         log("DBAdmin.createTables()");
         try(LocalDB  db = new LocalDB(context)) {
+            db.executeSQL(Queeries.DROP_TABLE_MENTAL);
             db.executeSQL(Queeries.CREATE_TABLE_MENTAL);
+            db.executeSQL(Queeries.DROP_TABLE_CATEGORIES);
             db.executeSQL(Queeries.CREATE_TABLE_CATEGORIES);
+            db.executeSQL(Queeries.DROP_TABLE_ITEMS);
             db.executeSQL(Queeries.CREATE_TABLE_ITEMS);
+            db.executeSQL(EcQueeries.DROP_TABLE_TRANSACTIONS);
             db.executeSQL(EcQueeries.CREATE_TABLE_TRANSACTIONS);
+            db.executeSQL(EcQueeries.DROP_TABLE_ASSETS);
             db.executeSQL(EcQueeries.CREATE_TABLE_ASSETS);
             log("...tables created");
         }

@@ -24,7 +24,6 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
-import se.curtrune.lucy.app.Lucinda;
 
 public class LocalDB extends SQLiteOpenHelper {
     private static final String DB_NAME = "lucy.db";
@@ -135,7 +134,7 @@ public class LocalDB extends SQLiteOpenHelper {
     }
 
     public List<Item> getChildren(Item item) {
-        return null;
+        return selectItems(Queeries.selectChildren(item));
     }
 
     public Item getTree(Item root) {
@@ -143,6 +142,9 @@ public class LocalDB extends SQLiteOpenHelper {
         if (root.hasChild()) {
             List<Item> children = getChildren(root);
             root.setChildren(getChildren(root));
+            for( Item item : children){
+                item.setChildren(getChildren(item));
+            }
         }
         return null;
     }
@@ -283,39 +285,6 @@ public class LocalDB extends SQLiteOpenHelper {
     }
 
 
-    public List<Mental> selectMentals() {
-        if (VERBOSE) log("LocalDB.selectMentals()");
-        String query = Queeries.selectMentals();
-        List<Mental> items = new ArrayList<>();
-        db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-        if (cursor.moveToFirst()) {
-            do {
-                items.add(DBAdmin.getMental(cursor));
-            } while (cursor.moveToNext());
-        }
-        db.close();
-        cursor.close();
-        return items;
-    }
-
-    public List<Mental> selectMentals2() {
-        if (VERBOSE) log("LocalDB.selectMentals2()");
-        String query = Queeries.selectMentals2();
-        List<Mental> items = new ArrayList<>();
-        db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-        if (cursor.moveToFirst()) {
-            do {
-                items.add(DBAdmin.getMental(cursor));
-            } while (cursor.moveToNext());
-        }
-        db.close();
-        cursor.close();
-        return items;
-    }
-
-
     public List<Item> selectItems(LocalDate date, Context context) {
         log("LocalDB.selectItems(LocalDate) ", date.toString());
         List<Item> items;
@@ -384,21 +353,6 @@ public class LocalDB extends SQLiteOpenHelper {
         cursor.close();
         return items;
     }
-/*
-    public List<Mental> selectMentalsFromItem(String query) {
-        log("LocalDB.selectMentalsFromItem(String)", query);
-        List<Mental> items = new ArrayList<>();
-        db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-        if (cursor.moveToFirst()) {
-            do {
-                items.add(DBAdmin.getMentalFromItem(cursor));
-            } while (cursor.moveToNext());
-        }
-        db.close();
-        cursor.close();
-        return items;
-    }*/
 
     /**
      * @param id, of the item which to set field hasChild
@@ -441,9 +395,8 @@ public class LocalDB extends SQLiteOpenHelper {
 
     /**
      * updates item and mental if it has any
-     *
-     * @param item
-     * @return
+     * @param item, the item to be updated
+     * @return returns 1 if successful
      */
     public int update(Item item) {
         log("LocalDB.update( Item)", item.getHeading());
@@ -454,9 +407,9 @@ public class LocalDB extends SQLiteOpenHelper {
         log("...update item ok: ", rowsAffected == 1);
         Mental mental = item.getMental();
         mental.isDone(item.isDone());
-        log(mental);
+        if( VERBOSE) log(mental);
         rowsAffected = update(item.getMental());
-        log("...update mental ok: ", rowsAffected == 1);
+        if( VERBOSE) log("...update mental ok: ", rowsAffected == 1);
         db.close();
         return rowsAffected;
     }
@@ -488,7 +441,7 @@ public class LocalDB extends SQLiteOpenHelper {
     }
 
     /**
-     * @param asset
+     * @param asset the asset to be inserted into the database
      * @return asset with db id or null if action for some stupid reason failed
      */
     public Asset insert(Asset asset) {

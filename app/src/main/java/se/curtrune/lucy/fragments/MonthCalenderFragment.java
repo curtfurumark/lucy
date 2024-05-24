@@ -92,30 +92,44 @@ public class MonthCalenderFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.my_calender_activity, container, false);
         initComponents(view);
         selectedDate = LocalDate.now();
         calenderDates = getCalenderDates(selectedDate);
         initRecycler(calenderDates);
         initListeners();
+        setMonthYearLabel();
         return view;
     }
     private List<CalenderDate> getCalenderDates(LocalDate date){
-        log("getCalenderDate()");
+        log("...getCalenderDate(LocalDate)", date.toString());
         List<CalenderDate> calenderDates = new ArrayList<>();
         YearMonth yearMonth = YearMonth.from(date);
         log("...yearMonth", yearMonth.toString());
         LocalDate firstDateOfMonth =  date.withDayOfMonth( 1);
         log("...firstDateOfMonth", firstDateOfMonth.toString());
-        int lengthOfMonth = yearMonth.lengthOfMonth();
-        log("...lengthOfMonth", lengthOfMonth);
+        int daysInMonth = yearMonth.lengthOfMonth();
+        log("...daysInMonth", daysInMonth);
         List<Item> itemsMonth = ItemsWorker.selectCalenderItems(yearMonth, getContext());
         log("...number of events this month", itemsMonth.size());
-        itemsMonth.forEach(System.out::println);
+        //itemsMonth.forEach(System.out::println);
         LocalDate currentDate = firstDateOfMonth;
-        int numberDays = lengthOfMonth;
-        for(int i = 0; i < numberDays; i++ ){
+        int numberDays = daysInMonth;
+        int firstDate = firstDateOfMonth.getDayOfWeek().getValue();
+        int offset = firstDate;
+        currentDate = currentDate.minusDays(offset - 1);
+        log("firstDate", firstDate);
+        for( int i = 1; i <= 42; i++){
+            CalenderDate calenderDate = new CalenderDate();
+            calenderDate.setDate(currentDate);
+            //calenderDate.setItems(new ArrayList<>());
+            LocalDate finalCurrentDate = currentDate;
+            calenderDate.setItems(itemsMonth.stream().filter(item -> item.isDate(finalCurrentDate)).collect(Collectors.toList()));
+            calenderDates.add(calenderDate);
+            currentDate = currentDate.plusDays(1);
+        }
+
+/*        for(int i = 0; i < numberDays; i++ ){
             CalenderDate calenderDate = new CalenderDate();
             //log("...currentDate", currentDate.toString());
             calenderDate.setDate(currentDate);
@@ -123,7 +137,7 @@ public class MonthCalenderFragment extends Fragment {
             calenderDate.setItems(itemsMonth.stream().filter(item -> item.isDate(finalCurrentDate)).collect(Collectors.toList()));
             calenderDates.add(calenderDate);
             currentDate = currentDate.plusDays(1);
-        }
+        }*/
         return calenderDates;
     }
     private List<String> daysInMonthArray(LocalDate date){
@@ -200,13 +214,16 @@ public class MonthCalenderFragment extends Fragment {
         log("...nextMonthAction()");
         selectedDate = selectedDate.plusMonths(1);
         monthDayAdapter.setList(getCalenderDates(selectedDate));
-        monthYearText.setText(monthYearFromDate(selectedDate));
+        setMonthYearLabel();
 
     }
     public void previousMonthAction(){
         log("...previousMonthAction()");
         selectedDate = selectedDate.minusMonths(1);
         monthDayAdapter.setList(getCalenderDates(selectedDate));
+        setMonthYearLabel();
+    }
+    private void setMonthYearLabel(){
         monthYearText.setText(monthYearFromDate(selectedDate));
     }
 }

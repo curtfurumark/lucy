@@ -16,6 +16,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import se.curtrune.lucy.R;
+import se.curtrune.lucy.classes.Message;
+import se.curtrune.lucy.persist.DB1Result;
+import se.curtrune.lucy.util.Settings;
+import se.curtrune.lucy.workers.MessageWorker;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -75,7 +79,15 @@ public class ContactFragment extends Fragment {
         View view =  inflater.inflate(R.layout.contact_fragment, container, false);
         initComponents(view);
         initListeners();
+        setUserInterface();
         return view;
+    }
+    private Message getMessage(){
+        log("...getMessage()");
+        Message message = new Message();
+        message.setSubject(editTextSubject.getText().toString());
+        message.setContent(editTextSubject.getText().toString());
+        return message;
     }
     private void initComponents(View view){
         log("...initComponents(View)");
@@ -109,6 +121,21 @@ public class ContactFragment extends Fragment {
         //}else{
         //    log("ERROR, intent.resolveActivity");
         //}
+        insert(getMessage());
+    }
+    private void insert(Message message){
+        log("...insert(Message)");
+        MessageWorker.insert(message, new MessageWorker.OnInsertedCallback() {
+            @Override
+            public void onInserted(Message message, DB1Result db1Result) {
+                log("...onInserted(Message, DB1Result)");
+            }
+        });
+    }
+    private void setUserInterface(){
+        log("...setUserInterface()");
+        editTextMailAddress.setText(Settings.DEV_EMAIL);
+
     }
     private boolean validateInput(){
         if( editTextSubject.getText().toString().isEmpty()){
@@ -121,4 +148,5 @@ public class ContactFragment extends Fragment {
         }
         return true;
     }
+
 }
