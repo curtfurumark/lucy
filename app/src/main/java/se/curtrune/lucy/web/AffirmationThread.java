@@ -34,7 +34,7 @@ public class AffirmationThread extends Thread{
     @Override
     public void run() {
         log("AffirmationThread.run()");
-        String json = HTTPBasic.get(GET_AFFIRMATION_URL);
+        String json = HTTPClient.get(GET_AFFIRMATION_URL);
         Affirmation affirmation = new Gson().fromJson(json, Affirmation.class);
         callback(affirmation);
     }

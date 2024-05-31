@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -33,6 +34,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Locale;
+import java.util.Objects;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.CallingActivity;
@@ -44,12 +46,12 @@ import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.classes.Reward;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
+import se.curtrune.lucy.dialogs.AddCategoryDialog;
 import se.curtrune.lucy.dialogs.EstimateDialog;
 import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.dialogs.AddPeriodDialog;
 import se.curtrune.lucy.dialogs.DurationDialog;
 import se.curtrune.lucy.dialogs.NotificationDialog;
-import se.curtrune.lucy.notifications.EasyAlarm;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.util.Converter;
 import se.curtrune.lucy.util.ItemStack;
@@ -111,6 +113,7 @@ public class ItemSession extends AppCompatActivity implements
     private TextView textViewAnxiety;
     private TextView textViewMood;
     //INFO
+    private LinearLayout layoutInfo;
     private TextView textViewParentID;
     private CheckBox checkBoxAppointment;
     private TextView labelInfo;
@@ -136,11 +139,15 @@ public class ItemSession extends AppCompatActivity implements
     private ConstraintLayout layoutNotification;
     private ConstraintLayout layoutRepeat;
     private ConstraintLayout layoutMental;
-    private ConstraintLayout layoutInfo;
+
     private ConstraintLayout layoutComment;
     private FloatingActionButton fabAdd;
-    //REWARD, AND OTHER STUFF
+    //SETTINGS
     private CheckBox checkBoxPrioritized;
+    //SEARCH
+    private TextView labelSearch;
+    ArrayAdapter<String> categoryAdapter;
+    private LinearLayout layoutSearch;
 
     private EditText editTextColorCode;
     private CallingActivity callingActivity = CallingActivity.CALENDER_FRAGMENT;
@@ -153,7 +160,7 @@ public class ItemSession extends AppCompatActivity implements
     private int stress;
     private int energy; //seekbar
     private String category;
-    private boolean itemIsDone= false;
+    //private boolean itemIsDone= false;
     private long duration;
 
     private final boolean VERBOSE = false;
@@ -169,14 +176,8 @@ public class ItemSession extends AppCompatActivity implements
         initComponents();
         initSpinnerCategories();
         initListeners();
-        Intent intent = getIntent();
         kronos = Kronos.getInstance(this);
-        if( intent.getBooleanExtra(Constants.INTENT_ITEM_SESSION, false)){
-            handleItemSession(intent);
-        }else {
-            log("INTENT_ITEM_SESSION false...!!");
-            Toast.makeText(this, "error intent", Toast.LENGTH_LONG).show();
-        }
+        handleIntent(getIntent());
     }
 
     private void addChildItem(){
@@ -238,15 +239,15 @@ public class ItemSession extends AppCompatActivity implements
         currentItem.setTags(editTextTags.getText().toString());
         currentItem.setIsTemplate(checkBoxTemplate.isChecked());
         currentItem.setState(checkBoxDone.isChecked() ? State.DONE: State.TODO);
-        itemIsDone = checkBoxDone.isChecked();
+        //itemIsDone = checkBoxDone.isChecked();
         currentItem.setType(checkBoxAppointment.isChecked()? Type.APPOINTMENT: Type.NODE);
         currentItem.setEstimate(getEstimate());
         currentItem.setPriority(checkBoxPrioritized.isChecked()? 1:0);
         return currentItem;
     }
 
-    private void handleItemSession(Intent intent){
-        log("\thandleItemSession(Intent)");
+    private void handleIntent(Intent intent){
+        log("\thandleItent(Intent)");
         if( intent.getBooleanExtra(Constants.CURRENT_ITEM_IS_IN_STACK, false)){
             currentItem = ItemStack.currentItem;
         }else {
@@ -288,10 +289,10 @@ public class ItemSession extends AppCompatActivity implements
         editTextHeading = findViewById(R.id.itemSession_heading);
         //COMMENT SECTION
         editTextMentalComment = findViewById(R.id.itemSession_mentalComment);
-        spinnerCategories = findViewById(R.id.itemSession_categorySpinner);
+
         layoutComment = findViewById(R.id.itemSession_layoutComment);
         labelComment = findViewById(R.id.itemSession_labelCommentEtc);
-        editTextTags = findViewById(R.id.itemSession_tags);
+
 
         textViewDuration = findViewById(R.id.itemSession_duration);
         seekBarAnxiety = findViewById(R.id.itemSession_anxietySeekbar);
@@ -354,10 +355,15 @@ public class ItemSession extends AppCompatActivity implements
         textViewTargetDate = findViewById(R.id.itemSession_targetDate);
         textViewTargetTime = findViewById(R.id.itemSession_targetTime);
         //REWARD
-        labelReward = findViewById(R.id.itemSession_labelReward);
-        layoutReward = findViewById(R.id.itemSession_layoutReward);
+        labelReward = findViewById(R.id.itemSession_labelSettings);
+        layoutReward = findViewById(R.id.itemSession_layoutSettings);
         checkBoxPrioritized = findViewById(R.id.itemSession_isPrioritized);
         editTextColorCode = findViewById(R.id.itemSession_colorCode);
+        //SEARCH, OR RATHER META
+        labelSearch = findViewById(R.id.itemSession_labelSearchable);
+        layoutSearch = findViewById(R.id.itemSession_layoutSearch);
+        editTextTags = findViewById(R.id.itemSession_tags);
+        spinnerCategories = findViewById(R.id.itemSession_categorySpinner);
     }
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
@@ -384,6 +390,7 @@ public class ItemSession extends AppCompatActivity implements
         labelInfo.setOnClickListener(view->toggleInfo());
         labelReward.setOnClickListener(view->toggleAward());
         labelDateTime.setOnClickListener(view->toggleDateTime());
+        labelSearch.setOnClickListener(view->toggleMeta());
         buttonTimer.setOnClickListener(view -> {
             switch(kronos.getState()){
                 case PENDING:
@@ -493,9 +500,9 @@ public class ItemSession extends AppCompatActivity implements
         });
     }
     private void initSpinnerCategories(){
-        log("...initSpinnerCategories()");
+        if( VERBOSE) log("...initSpinnerCategories()");
         String[] categories = CategoryWorker.getCategories(this);
-        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
+        categoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
         spinnerCategories.setAdapter(categoryAdapter);
         spinnerCategories.setSelection(0);
@@ -519,7 +526,7 @@ public class ItemSession extends AppCompatActivity implements
      */
     @Override
     public void onAddItem(Item childItem) {
-        log("MusicSessionActivity.onAddItem(Item)");
+        log("ItemSession.onAddItem(Item)");
 
         childItem = ItemsWorker.insertChild(currentItem, childItem, this);
         log(childItem);
@@ -542,15 +549,15 @@ public class ItemSession extends AppCompatActivity implements
         log("ItemEditor.onNewCategory(String)", category);
         CategoryWorker.insertCategory(category, this);
         String[] categories = CategoryWorker.getCategories(this);
-        //categoryAdapter.clear();
-        //categoryAdapter.addAll(categories);
+        categoryAdapter.clear();
+        categoryAdapter.addAll(categories);
     }
 
 
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@androidx.annotation.NonNull MenuItem item) {
-        if( VERBOSE) log("...onOptionsItemSelected(MenuItem)", item.getTitle().toString());
+        if( VERBOSE) log("...onOptionsItemSelected(MenuItem)", Objects.requireNonNull(item.getTitle()).toString());
         if (item.getItemId() == R.id.itemSession_delete) {
             deleteItem();
         } else if (item.getItemId() == R.id.itemSession_addPeriod) {
@@ -563,6 +570,7 @@ public class ItemSession extends AppCompatActivity implements
             showEstimateDialog();
         } else if( item.getItemId() == R.id.itemSession_addCategory){
             log("...addCategory");
+            showCategoryDialog();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -606,13 +614,13 @@ public class ItemSession extends AppCompatActivity implements
         log("...repeatAction()");
         if( currentItem.hasPeriod()){
             currentItem.setPeriod((Repeat) null);
-            imageViewRepeatAction.setImageDrawable(getDrawable(R.drawable.baseline_add_24));
+            imageViewRepeatAction.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.baseline_add_24));
         }else{
             AddPeriodDialog dialog = new AddPeriodDialog();
             dialog.setListener(period -> {
                 log("...onPeriod(Repeat)");
                 currentItem.setPeriod(period);
-                imageViewRepeatAction.setImageDrawable(getDrawable(R.drawable.baseline_delete_24));
+                imageViewRepeatAction.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.baseline_delete_24));
                 textViewPeriodDescription.setText(period.toString());
             });
             dialog.show(getSupportFragmentManager(), "add repeat");
@@ -701,10 +709,14 @@ public class ItemSession extends AppCompatActivity implements
         }else{
             setUserInterface(item.getEstimate());
             log("...will calculate estimate");
-
         }
         if( item.hasReward()){
             setUserInterface(item.getReward());
+        }
+        if( !item.getCategory().isEmpty()){
+            log("...hasCategory()");
+            int position = categoryAdapter.getPosition(item.getCategory());
+            spinnerCategories.setSelection(position, true);
         }
 
         checkBoxTemplate.setChecked(item.isTemplate());
@@ -731,7 +743,8 @@ public class ItemSession extends AppCompatActivity implements
     }
     private void setUserInterface(Notification notification){
         log("...setUserInterface(Notification) ");
-        imageViewNotificationAction.setImageDrawable(getDrawable(R.drawable.baseline_delete_24));
+        labelNotification.setText(notification.toString());
+        imageViewNotificationAction.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.baseline_delete_24));
         textViewNotificationDate.setText(notification.getDate().toString());
         textViewNotificationTime.setText(Converter.format(notification.getTime()));
     }
@@ -776,7 +789,8 @@ public class ItemSession extends AppCompatActivity implements
     }
     private void setUserInterface(Repeat repeat){
         log("...setUserInterface(Repeat)");
-        imageViewRepeatAction.setImageDrawable(getDrawable(R.drawable.baseline_delete_24));
+        imageViewRepeatAction.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.baseline_delete_24));
+        labelRepeat.setText(repeat.toString());
         textViewPeriodDescription.setText(repeat.toString());
         textViewPeriodTargetDate.setText(currentItem.getTargetDate().toString());
     }
@@ -793,6 +807,17 @@ public class ItemSession extends AppCompatActivity implements
             textViewTargetDate.setText(targetDate.toString());
         });
         datePickerDialog.show();
+
+    }
+    private void showCategoryDialog(){
+        log("...showCategoryDialog()");
+        AddCategoryDialog dialog = new AddCategoryDialog();
+        dialog.setListener(category -> {
+            log("...onNewCategory(String)", category);
+            CategoryWorker.insertCategory(category, this);
+            updateSpinnerCategories();
+        });
+        dialog.show(getSupportFragmentManager(), "add category");
 
     }
 
@@ -854,8 +879,9 @@ public class ItemSession extends AppCompatActivity implements
         if( currentItem.hasNotification()){
             currentItem.setNotification((Notification)null );
             textViewNotificationDate.setText("");
+            labelNotification.setText(getString(R.string.notification));//TODO
             textViewNotificationTime.setText("");
-            imageViewNotificationAction.setImageDrawable(getDrawable( R.drawable.baseline_add_24));
+            imageViewNotificationAction.setImageDrawable(AppCompatResources.getDrawable(this,  R.drawable.baseline_add_24));
         }else {
             NotificationDialog dialog = new NotificationDialog(currentItem);
             dialog.setListener(notification -> {
@@ -927,6 +953,14 @@ public class ItemSession extends AppCompatActivity implements
             layoutMental.setVisibility(View.GONE);
         }
     }
+    private void toggleMeta(){
+        log("...toggleMeta()");
+        if( layoutSearch.getVisibility() == View.GONE){
+            layoutSearch.setVisibility(View.VISIBLE);
+        }else{
+            layoutSearch.setVisibility(View.GONE);
+        }
+    }
     private void toggleNotifications(){
         log("...toggleNotifications");
         if( layoutNotification.getVisibility() == View.GONE){
@@ -978,7 +1012,7 @@ public class ItemSession extends AppCompatActivity implements
         kronos.reset();
         returnToCallingActivity();
     }
-    private void updateMental(){
+/*    private void updateMental(){
         log("...updateMental()");
         if(mental == null){
             log("ERROR mental is null, i surrender");
@@ -997,6 +1031,13 @@ public class ItemSession extends AppCompatActivity implements
                 log("ERROR updating mental");
             }
         }
+    }*/
+    private void updateSpinnerCategories(){
+        log("...updateSpinnerCategories()");
+        initSpinnerCategories();
+        //spinnerCategories.setAdapter(null);
+        //spinnerCategories.setAdapter(new ArrayAdapter<>());
+        //categoryAdapter.addAll(CategoryWorker.getCategories(this));
     }
 
     private boolean validateInput(){

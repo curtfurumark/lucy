@@ -155,7 +155,7 @@ public class EnchildaFragment extends Fragment implements
     public void onItemClick(Item item) {
         log("...onItemClick(Item)", item.getHeading());
         Intent intent = new Intent(getContext(), ItemSession.class);
-        intent.putExtra(Constants.INTENT_ITEM_SESSION, true);
+        //intent.putExtra(Constants.INTENT_ITEM_SESSION, true);
         intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.ENCHILADA_FRAGMENT);
         intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, item);
         startActivity(intent);

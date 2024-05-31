@@ -15,10 +15,12 @@ import se.curtrune.lucy.classes.Estimate;
 import se.curtrune.lucy.classes.EstimateDate;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
+import se.curtrune.lucy.classes.Message;
 import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
+import se.curtrune.lucy.persist.DB1Result;
 import se.curtrune.lucy.statistics.CategoryListable;
 import se.curtrune.lucy.statistics.StatisticsPeriod;
 import se.curtrune.lucy.web.HTTPRequest;
@@ -34,6 +36,20 @@ public class Logger {
     public static void log(CategoryListable listable){
         log("log(CategoryListable)");
         log("\tcategory", listable.getCategory());
+    }
+    public static void log(DB1Result result){
+        log("CRBLogger.log(DB1Result)...");
+        log("\tid", result.getID());
+        log("\tphp_file", result.getPhpFile());
+        log("\tis ok", result.isOK());
+        log("\tsql", result.getSql());
+        log("\tjson", result.getJson());
+        log("\tmessage count: ", result.getMessages() == null? 0: result.getMessages().length);
+        if( null != result.getMessages()) {
+            for (String message : result.getMessages()) {
+                log("\t\tmessage", message);
+            }
+        }
     }
     public static void log(Estimate estimate){
         log("Logger.log(Estimate");
@@ -120,6 +136,13 @@ public class Logger {
         log("\tenergy", mental.getEnergy());
         log("\tstress", mental.getStress());
         log("\tisTemplate", mental.isTemplate());
+    }
+    public static void log(Message message){
+        log("Logger.log(Message)");
+        log("\tsubject", message.getSubject());
+        log("\tcontent", message.getContent());
+        log("\tuser", message.getUser());
+        log("\tcreated", message.getCreated());
     }
     public static void log(Notification notification){
         log("log(Notification)");

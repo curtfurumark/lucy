@@ -187,7 +187,7 @@ public class AppointmentsFragment extends Fragment implements
         log("...onItemClick(Item)", item.getHeading());
         Lucinda.currentFragment = this;
         Intent intent = new Intent(getContext(), ItemSession.class);
-        intent.putExtra(Constants.INTENT_ITEM_SESSION, true);
+        //intent.putExtra(Constants.INTENT_ITEM_SESSION, true);
         intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, item);
         intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.APPOINTMENTS_FRAGMENT);
         startActivity(intent);

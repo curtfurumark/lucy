@@ -23,8 +23,12 @@
         android:id="@+id/bottomNavigation_appointments"
         android:icon="@drawable/baseline_event_24"
         />
-    <group>
-    <item android:id="@+id/navigationDrawer_durationFragment"
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/navigationDrawer_estimateFragment"
+            android:title="estimate fragment" />
+        <item android:id="@+id/navigationDrawer_durationFragment"
+            android:icon="@drawable/baseline_access_time_24"
         android:title="duration"/>
     <item android:title="top ten"
         android:id="@+id/navigationDrawer_topTen"/>
@@ -34,11 +38,14 @@
     <item android:id="@+id/navigationDrawer_graphFragment"
         android:title="graph today"/>
     </group>
-    <item android:id="@+id/navigationDrawer_estimateFragment"
-        android:title="estimate fragment"/>
     <item android:title="customize"
         android:id="@+id/navigationDrawer_customizeFragment"/>
 
     <item android:id="@+id/navigationDrawer_contactFragment"
+        android:icon="@drawable/baseline_email_24"
         android:title="contact curt rune"/>
+    <item android:id="@+id/navigationDrawer_messageBoardFragment"
+        android:title="message board"/>
+    <item android:id="@+id/navigationDrawer_countDownTimer"
+        android:title="timer"/>
 </menu>

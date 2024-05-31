@@ -14,9 +14,8 @@ import java.time.LocalDate;
 import java.util.Locale;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.classes.Estimate;
 import se.curtrune.lucy.classes.EstimateDate;
-import se.curtrune.lucy.workers.ItemsWorker;
+import se.curtrune.lucy.util.Converter;
 
 public class EstimateFragment extends Fragment {
 
@@ -59,7 +58,7 @@ public class EstimateFragment extends Fragment {
     }
     private void setUserInterface(EstimateDate estimateDate){
         log("...setUserInterface(EstimateDate)");
-        String textTotalDuration = String.format(Locale.getDefault(), "total duration %d seconds",estimateDate.getDurationEstimate());
+        String textTotalDuration = String.format(Locale.getDefault(), "total duration %s", Converter.formatSecondsWithHours(estimateDate.getDurationEstimate()));
         textViewDuration.setText(textTotalDuration );
         estimateDate.getEnergyEstimate();
         String textEnergy =String.format(Locale.getDefault(), "energy: %d", estimateDate.getEnergyEstimate());

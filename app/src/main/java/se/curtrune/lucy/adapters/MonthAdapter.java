@@ -17,9 +17,6 @@ import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.calender.CalenderDate;
 
 public class MonthAdapter extends RecyclerView.Adapter<MonthAdapter.ViewHolder> {
-    public interface OnItemListener{
-        void onItemClick(int position, String dayText);
-    }
     public interface OnDateListener{
         void onDateClick(CalenderDate calenderDate);
     }

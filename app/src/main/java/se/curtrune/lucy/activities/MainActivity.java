@@ -42,6 +42,7 @@ import se.curtrune.lucy.fragments.EnchildaFragment;
 import se.curtrune.lucy.fragments.EstimateFragment;
 import se.curtrune.lucy.fragments.GraphFragment;
 import se.curtrune.lucy.fragments.MentalFragment2;
+import se.curtrune.lucy.fragments.MessageBoardFragment;
 import se.curtrune.lucy.fragments.MonthCalenderFragment;
 import se.curtrune.lucy.fragments.ProjectsFragment;
 import se.curtrune.lucy.fragments.TodoFragment;
@@ -88,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         setUserInterfaceCurrentEnergy();
     }
     private void boostMe(){
-        log("...boostMe()");
+        if( VERBOSE) log("...boostMe()");
         AffirmationWorker.requestAffirmation(affirmation -> {
             log("...onRequest(Affirmation)");
             BoostDialog boostDialog = new BoostDialog(affirmation.getAffirmation());
@@ -96,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     private void initComponents(){
-        log("...initComponents()");
+        if( VERBOSE) log("...initComponents()");
         toolbar = findViewById(R.id.navigationDrawer_toolbar);
         setSupportActionBar(toolbar);
         navigationView = findViewById(R.id.navigationDrawerActivity_navigationView);
@@ -141,6 +142,8 @@ public class MainActivity extends AppCompatActivity {
                 navigate(new WeeklyCalenderFragment());
             }else if( item.getItemId() == R.id.navigationDrawer_contactFragment){
                 navigate(new ContactFragment());
+            }else if( item.getItemId() == R.id.navigationDrawer_messageBoardFragment){
+                navigate(new MessageBoardFragment());
             }
             drawerLayout.close();
             return true;
@@ -153,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
         fapPanic.setOnClickListener(view->panic());
     }
     private void initViewModel(){
-        log("...initViewModel()");
+        if( VERBOSE) log("...initViewModel()");
         viewModel = new ViewModelProvider(this ).get(LucindaViewModel.class);
         viewModel.getEnergy().observe(this, energy->{
             log("...energy updated", energy);

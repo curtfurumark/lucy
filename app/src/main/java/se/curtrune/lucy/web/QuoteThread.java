@@ -9,6 +9,6 @@ public class QuoteThread extends Thread{
     }
     @Override
     public void run() {
-        HTTPBasic.get(URL);
+        HTTPClient.get(URL);
     }
 }

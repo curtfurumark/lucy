@@ -8,6 +8,7 @@ import java.time.ZoneOffset;
 import java.util.Locale;
 
 import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.Message;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.classes.calender.Week;
@@ -228,6 +229,11 @@ public class Queeries {
     public static String selectItems(Week week) {
         return String.format(Locale.getDefault(), "SELECT * FROM items WHERE targetDate >= %d AND targetDate <= %d ORDER by targetDate DESC",
                 week.getMonday().toEpochDay(), week.getLastDateOfWeek().toEpochDay());
+    }
+
+    public static String insert(Message message) {
+        return String.format(Locale.getDefault(), "INSERT INTO messages(subject, content, user, created) values " +
+                "('%s', '%s', '%s', %d)", message.getSubject(), message.getContent(), message.getUser(), message.getCreatedEpoch());
     }
 }
 

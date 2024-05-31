@@ -5,7 +5,7 @@ public class Constants {
     public static final String INTENT_SERIALIZED_ITEM = "INTENT_SERIALIZED_ITEM";
 
 
-    public static final String INTENT_ITEM_SESSION = "INTENT_ITEM_SESSION" ;
+    //public static final String INTENT_ITEM_SESSION = "INTENT_ITEM_SESSION" ;
     public static final String INTENT_EDIT_ITEM = "INTENT_EDIT_ITEM";
 
 

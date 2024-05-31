@@ -9,6 +9,7 @@ import java.util.List;
 import se.curtrune.lucy.persist.LocalDB;
 
 public class CategoryWorker {
+    public static boolean VERBOSE = false;
     public static void insertCategory(String category, Context context){
         log("...insertCategory(String category)", category);
         LocalDB db = new LocalDB(context);
@@ -16,7 +17,7 @@ public class CategoryWorker {
     }
 
     public static String[] getCategories(Context context) {
-        log("...getCategories()");
+        if(VERBOSE )log("CategoryWorker.getCategories(Context)");
         LocalDB db = new LocalDB(context);
         return db.getCategories();
     }

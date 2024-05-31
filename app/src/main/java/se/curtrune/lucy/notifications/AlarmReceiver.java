@@ -16,6 +16,7 @@ import androidx.core.app.NotificationManagerCompat;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.activities.MainActivity;
+import se.curtrune.lucy.workers.NotificationsWorker;
 
 
 public class AlarmReceiver extends BroadcastReceiver {
@@ -33,8 +34,9 @@ public class AlarmReceiver extends BroadcastReceiver {
         destinationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, destinationIntent, PendingIntent.FLAG_IMMUTABLE);
-        NotificationCompat.Builder nb = new NotificationCompat.Builder(context, EasyNotification.CHANNEL_ONE)
-                .setSmallIcon(R.drawable.ic_launcher_background)
+        NotificationCompat.Builder nb = new NotificationCompat.Builder(context, NotificationsWorker.CHANNEL_ONE)
+                //.setSmallIcon(R.drawable.ic_launcher_background)
+                .setSmallIcon(R.mipmap.ic_launcher_round) //wait and see
                 .setContentTitle(title)
                 .setContentText(message)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)

@@ -185,7 +185,7 @@ public class TodoFragment extends Fragment implements
         }else{
             Intent intent = new Intent(getContext(), ItemSession.class);
             intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.TODO_FRAGMENT);
-            intent.putExtra(Constants.INTENT_ITEM_SESSION, true);
+            //intent.putExtra(Constants.INTENT_ITEM_SESSION, true);
             intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, item);
             startActivity(intent);
         }

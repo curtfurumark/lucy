@@ -14,8 +14,9 @@ public class Week {
     private final  LocalDate lastDate;
     private LocalDate currentDate;
     private List<LocalDate> dates;
+    public static boolean VERBOSE = false;
     public Week(LocalDate date){
-        log("Week(LocalDate)", date.toString());
+        if( VERBOSE) log("Week(LocalDate)", date.toString());
         this.currentDate = date;
         firstDate = calculateFirstDateOfTheWeek(currentDate);
         lastDate = firstDate.plusDays(6);

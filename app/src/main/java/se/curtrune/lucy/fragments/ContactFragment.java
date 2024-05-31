@@ -19,6 +19,7 @@ import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Message;
 import se.curtrune.lucy.persist.DB1Result;
 import se.curtrune.lucy.util.Settings;
+import se.curtrune.lucy.web.InsertThread;
 import se.curtrune.lucy.workers.MessageWorker;
 
 /**
@@ -125,10 +126,12 @@ public class ContactFragment extends Fragment {
     }
     private void insert(Message message){
         log("...insert(Message)");
-        MessageWorker.insert(message, new MessageWorker.OnInsertedCallback() {
+        MessageWorker.insert(message, new InsertThread.Callback() {
             @Override
-            public void onInserted(Message message, DB1Result db1Result) {
-                log("...onInserted(Message, DB1Result)");
+            public void onItemInserted(DB1Result result) {
+                if(result.isOK()){
+                    log("...error inserting messagee");
+                }
             }
         });
     }

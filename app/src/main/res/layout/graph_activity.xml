@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
     tools:context=".activities.GraphActivity">
+    <TextView
+        android:id="@+id/graphFragment_date"
+        android:layout_width="match_parent"
+        android:textSize="26sp"
+        android:gravity="center"
+        android:text="2024-05-30"
+        android:layout_height="wrap_content"/>
     <com.jjoe64.graphview.GraphView
         android:id="@+id/graphActivity_graphView"
+        android:layout_marginTop="24dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

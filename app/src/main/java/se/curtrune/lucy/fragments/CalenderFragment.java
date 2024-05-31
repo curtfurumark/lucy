@@ -135,7 +135,7 @@ public class CalenderFragment extends Fragment {
         return view;
     }
     private void calculateEstimate(){
-        log("...calculateEstimate()");
+        if( VERBOSE)  log("...calculateEstimate()");
         StatisticsWorker.getEstimate(currentDate, getContext());
 
     }
@@ -190,7 +190,6 @@ public class CalenderFragment extends Fragment {
                 log("...onItemClick(Item)", item.getHeading());
                 Intent intent = new Intent(getContext(), ItemSession.class);
                 intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.CALENDER_FRAGMENT);
-                intent.putExtra(Constants.INTENT_ITEM_SESSION, true);
                 intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, item);
                 startActivity(intent);
             }
@@ -301,7 +300,7 @@ public class CalenderFragment extends Fragment {
         itemTouchHelper.attachToRecyclerView(recycler);
     }
     private void initViewModel(){
-        log("...initViewModel()");
+        if( VERBOSE)  log("...initViewModel()");
         viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
 
     }
@@ -330,11 +329,7 @@ public class CalenderFragment extends Fragment {
         calenderDateAdapter.setList(currentWeek);
     }
     private void setUserInterface(LocalDate date){
-        log("...setUserInterface()", date.toString());
-  /*      textViewDate.setText(currentDate.toString());
-        textViewWeek.setText(getWeekNumber());
-        textViewMonth.setText(currentDate.getMonth().toString());
-        textViewYear.setText(String.valueOf(currentDate.getYear()));*/
+        if( VERBOSE) log("...setUserInterface()", date.toString());
         labelMonthYear.setText(getMonthYear(currentDate));
         if( currentDate.equals(LocalDate.now())) {
             items = ItemsWorker.selectTodayList(currentDate, getContext());
@@ -343,7 +338,6 @@ public class CalenderFragment extends Fragment {
         }
         items.sort(Comparator.comparingLong(Item::compareTargetTime));
         adapter.setList(items);
-        //getActivity().
         viewModel.updateEnergy(true);
     }
     private void showAddItemDialog(){

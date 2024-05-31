@@ -7,6 +7,7 @@ public class Message {
     private String subject;
     private String content;
     private String user;
+    private long id;
     private long created;
 
     public Message(){
@@ -19,6 +20,22 @@ public class Message {
         this.subject = subject;
         this.content = content;
         this.user = user;
+        this.created = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+    }
+    public String getContent(){
+        return content;
+    }
+    public LocalDateTime getCreated(){
+        return LocalDateTime.ofEpochSecond(created, 0, ZoneOffset.UTC);
+    }
+    public long getCreatedEpoch(){
+        return created;
+    }
+    public String getSubject(){
+        return subject;
+    }
+    public String getUser(){
+        return user;
     }
     public void setContent(String content){
         this.content = content;
@@ -34,4 +51,7 @@ public class Message {
         this.user = user;
     }
 
+    public void setID(long id) {
+        this.id = id;
+    }
 }

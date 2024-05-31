@@ -197,7 +197,7 @@ public class SequenceFragment extends Fragment implements SequenceAdapter.Callba
     public void onItemClick(Item item) {
         log("...onItemClick(Item)");
         Intent intent = new Intent(getContext(), ItemSession.class);
-        intent.putExtra(Constants.INTENT_ITEM_SESSION, true);
+       // intent.putExtra(Constants.INTENT_ITEM_SESSION, true);
         intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, item);
         intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.SEQUENCE_ACTIVITY);
         startActivity(intent);

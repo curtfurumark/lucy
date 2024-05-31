@@ -53,6 +53,9 @@ public class AddCategoryDialog extends BottomSheetDialogFragment {
         });
         return view;
     }
+    public void setListener(Callback callback){
+        this.listener = callback;
+    }
     private boolean validateInput(){
         if( textViewCategory.getText().toString().isEmpty()){
             Toast.makeText(getContext(), "missing category", Toast.LENGTH_LONG).show();
@@ -63,6 +66,5 @@ public class AddCategoryDialog extends BottomSheetDialogFragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        this.listener = (Callback) context;
     }
 }

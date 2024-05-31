@@ -6,6 +6,7 @@ import android.app.UiModeManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.view.Menu;
@@ -27,7 +28,6 @@ import se.curtrune.lucy.activities.economy.EconomyActivity;
 import se.curtrune.lucy.activities.economy.persist.ECDBAdmin;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.classes.Quotes;
-import se.curtrune.lucy.notifications.EasyNotification;
 import se.curtrune.lucy.persist.DBAdmin;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
@@ -51,6 +51,7 @@ public class HomeActivity extends AppCompatActivity {
         initCatchAllExceptionsHandler();
         setTitle("lucinda");
         log("HomeActivity.onCreate(Bundle)");
+        printSystemInfo();
         lucinda = Lucinda.getInstance(this);
         if (!lucinda.isInitialized(this)) {
             log("...lucinda not initialized");
@@ -66,7 +67,7 @@ public class HomeActivity extends AppCompatActivity {
         initComponents();
         initListeners();
         checkNotificationPermission();
-        EasyNotification.createNotificationChannel(this);
+        NotificationsWorker.createNotificationChannel(this);
         openDB();
     }
     private void initCatchAllExceptionsHandler(){
@@ -127,6 +128,15 @@ public class HomeActivity extends AppCompatActivity {
         textViewQuote.setOnClickListener(view -> randomQuote());
         textViewSettings.setOnClickListener(view -> startActivity(new Intent(this, SettingsActivity.class)));
     }
+    private void printSystemInfo(){
+        log("...printSystemInfo()");
+        log("\tSDK_INT", Build.VERSION.SDK_INT);
+        log("\tDEVICE", Build.DEVICE);
+        log("\tUSER", Build.USER);
+        log("\tHARDWARE", Build.HARDWARE);
+        log("\tBRAND", Build.BRAND);
+
+    }
 
     private void randomQuote() {
         log("...randomQuote()");
@@ -170,7 +180,8 @@ public class HomeActivity extends AppCompatActivity {
             // toggleDarkMode();
             createEconomyTables();
         }else if (item.getItemId() == R.id.homeActivity_setNotifications){
-            setNotifications();
+            //setNotifications();
+            testNotification();
         }
         return true;
     }
@@ -246,6 +257,14 @@ public class HomeActivity extends AppCompatActivity {
     private void setNotifications(){
         log("...setNotifications()");
         NotificationsWorker.setNotifications(LocalDate.now(), this);
+    }
+    private void testNotification(){
+        log("...testNotification()");
+/*        Notification notification = new Notification();
+        notification.setTime(LocalTime.now().plusMinutes(5));
+        notification.setDate(LocalDate.now());
+        NotificationsWorker.setNotification(notification, this);*/
+
     }
     private void toggleDarkMode() {
         log("...toggleDarkMode()");

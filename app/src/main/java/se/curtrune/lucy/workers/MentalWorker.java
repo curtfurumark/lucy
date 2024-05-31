@@ -23,6 +23,7 @@ import se.curtrune.lucy.util.Logger;
 
 public class MentalWorker {
     private static MentalWorker instance;
+    public static boolean VERBOSE = false;
     private MentalWorker(){
 
     }
@@ -57,25 +58,19 @@ public class MentalWorker {
         return sum;
     }
     public static int getEnergy(LocalDate date, Context context){
-        log("MentalWorker.getEnergy(LocalDate)", date.toString());
+        if( VERBOSE) log("MentalWorker.getEnergy(LocalDate)", date.toString());
         List<Mental> mentals = getMentals(date,false, true,  context);
         return mentals.stream().mapToInt(Mental::getEnergy).sum();
     }
     public static Mental getMental(Item item, Context context){
-        log("MentalWorker.getMental(Item)", item.getHeading());
+        if( VERBOSE) log("MentalWorker.getMental(Item)", item.getHeading());
         LocalDB db = new LocalDB(context);
         String query = String.format(Locale.ENGLISH,"SELECT * FROM mental WHERE itemID = %d", item.getID());
         return db.selectMental(query);
     }
 
-    public static List<Mental> select(LocalDate date, boolean isTemplate, Context context) {
-        log("MentalWorker.select(LocalDate, LocalDate, Context");
-        String queery = Queeries.selectMentals(date, isTemplate, true);
-        LocalDB db = new LocalDB(context);
-        return db.selectMentals(queery);
-    }
     public static List<Mental> select(LocalDate firstDate, LocalDate lastDate, Context context) {
-        log("MentalWorker.select(LocalDate, LocalDate, Context");
+        if( VERBOSE) log("MentalWorker.select(LocalDate, LocalDate, Context");
         String query = String.format("SELECT * FROM mental WHERE date >= %d AND date <= %d", firstDate.toEpochDay(), lastDate.toEpochDay());
         LocalDB db = new LocalDB(context);
         return db.selectMentals(query);
@@ -88,19 +83,13 @@ public class MentalWorker {
     }
 
     public static int delete(Mental mental, Context context) {
-        log("MentalWorker.delete(Mental, Context");
+        if( VERBOSE) log("MentalWorker.delete(Mental, Context");
         LocalDB db = new LocalDB(context);
         return db.delete(mental);
     }
 
-    public Mental getMental(String query, Context context){
-        log("...getMental(String, Context)", query);
-        LocalDB db = new LocalDB(context);
-        return null;
-
-    }
     public static Mental insert(Mental mental, Context context) {
-        log("MentalWorker.insert(Mental, Context)");
+        if( VERBOSE) log("MentalWorker.insert(Mental, Context)");
         LocalDB db = new LocalDB(context);
         return db.insert(mental);
     }
@@ -108,14 +97,14 @@ public class MentalWorker {
 
 
     public static List<Mental> getLatestMentals(int limit, Context context){
-        log("...getLatestMentals(int, Context) limit", limit );
+        if( VERBOSE) log("...getLatestMentals(int, Context) limit", limit );
         LocalDB db = new LocalDB(context);
         String query = Queeries.selectLatestMentals(limit);
         return db.selectMentals(query);
     }
 
     public static List<Mental> getMentals(LocalDate date, boolean includeTemplates, boolean done, Context context) {
-        log("MentalWorker.getMentals(LocalDate,boolean, boolean)", date.toString());
+        if( VERBOSE) log("MentalWorker.getMentals(LocalDate,boolean, boolean)", date.toString());
         if( context == null){
             log("...CONTEXT IS NULL, getMentals");
         }
@@ -136,15 +125,9 @@ public class MentalWorker {
         }
         return dataPoints;
     }
-/*    public static List<Mental> selectMentalsFromItems(LocalDate date, Context context) {
-        log("MentalWorker.selectMentalsFromItems()");
-        LocalDB db = new LocalDB(context);
-        String queery = Queeries.selectMentalsFromItems(date, State.DONE);
-        List<Mental> items = db.selectMentalsFromItem(queery);
-        return items;
-    }*/
+
     public static int update(Mental mental, Context context) {
-        log("MentalWorker.update(Mental, Context)");
+        if( VERBOSE) log("MentalWorker.update(Mental, Context)");
         LocalDB db = new LocalDB(context);
         return db.update(mental);
     }

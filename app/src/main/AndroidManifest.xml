@@ -41,9 +41,7 @@
         <activity
             android:name=".activities.economy.EconomyActivity"
             android:exported="false" />
-        <activity
-            android:name=".activities.StartActivity"
-            android:exported="false" />
+
         <activity
             android:name=".activities.MonthCalenderActivity"
             android:exported="false" />

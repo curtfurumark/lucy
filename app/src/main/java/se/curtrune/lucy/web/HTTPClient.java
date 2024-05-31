@@ -9,9 +9,11 @@ import java.nio.charset.StandardCharsets;
 import static se.curtrune.lucy.util.Logger.log;
 
 
-public class HTTPBasic {
+public class HTTPClient {
 
     public static int TIMEOUT = 10000;
+    public static final String SELECT_URL = "https://curtfurumark.se/projects/select.php";
+    public static final String INSERT_URL = "https://curtfurumark.se/projects/insert.php";
     private static final String VERSION = "0.7";
     public  static  boolean VERBOSE = false;
 
@@ -24,7 +26,7 @@ public class HTTPBasic {
      * @return response as a string
      */
     public static String get(String getUrl) {
-        log("HTTPBasic.get(String) ", getUrl );
+        log("HTTPClient.get(String) ", getUrl );
         StringBuilder result = new StringBuilder();
         try {
             URL url = new URL(getUrl);

@@ -130,17 +130,7 @@ public class NotificationDialog extends BottomSheetDialogFragment {
     }
     private void showDateDialog(){
         log("...showDateDialog()");
-        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext());
-        datePickerDialog.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                log("...onDateSet(DatePicker, year, month, dayOfMonth");
-                targetDate = LocalDate.of(year, month +1, dayOfMonth);
-                textViewDate.setText(targetDate.toString());
-                notification.setDate(targetDate);
-            }
-        });
-        datePickerDialog.show();
+
     }
     private void showTimeDialog(){
         log("...showTimeDialog()");

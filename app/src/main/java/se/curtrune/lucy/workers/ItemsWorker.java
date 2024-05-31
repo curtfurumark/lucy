@@ -208,7 +208,7 @@ public class ItemsWorker {
         }
     }
     public static List<Item> selectTodayList(LocalDate date, Context context){
-        log("ItemsWorker.selectTodayList(LocalDate, Context)", date.toString());
+        if( VERBOSE) log("ItemsWorker.selectTodayList(LocalDate, Context)", date.toString());
         String query = Queeries.selectTodayList(date);
         try (LocalDB db = new LocalDB(context)) {
             return db.selectItems(query);

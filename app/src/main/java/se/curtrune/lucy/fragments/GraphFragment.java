@@ -2,6 +2,7 @@ package se.curtrune.lucy.fragments;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -9,6 +10,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jjoe64.graphview.GraphView;
@@ -35,9 +38,11 @@ public class GraphFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private GraphView graphView;
 
+    private TextView textViewDate;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private LocalDate currentDate;
 
     public GraphFragment() {
         // Required empty public constructor
@@ -75,12 +80,30 @@ public class GraphFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.graph_activity, container, false);
         initComponents(view);
-        initMentalGraph(LocalDate.now());
+        initListeners();
+        currentDate = LocalDate.now();
+        setUserInterface(currentDate);
         return view;
+    }
+    private void chooseDate(){
+        log("...chooseDate()");
+        DatePickerDialog dialog = new DatePickerDialog(getContext());
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext());
+        datePickerDialog.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                log("...onDateSet(DatePicker, year, month, dayOfMonth");
+                currentDate = LocalDate.of(year, month +1, dayOfMonth);
+                textViewDate.setText(currentDate.toString());
+                setUserInterface(currentDate);
+            }
+        });
+        datePickerDialog.show();
     }
     private void initComponents(View view){
         log("...initComponents()");
         graphView = view.findViewById(R.id.graphActivity_graphView);
+        textViewDate = view.findViewById(R.id.graphFragment_date);
     }
     private void initGraph(){
         log("...initGraph()");
@@ -115,8 +138,12 @@ public class GraphFragment extends Fragment {
         // data series to our graph view.
         graphView.addSeries(series);
     }
-    private void initMentalGraph(LocalDate date){
-        log("...initMentalGraph()");
+    private void initListeners(){
+        log("...initListeners()");
+        textViewDate.setOnClickListener(view->chooseDate());
+    }
+    private void setUserInterface(LocalDate date){
+        log("...setUserInterface(LocalDate) ", date);
         List<Mental> mentals = MentalWorker.getMentals(date, false, true, getContext());
         DataPoint[] dataPoints = MentalWorker.getMentalsAsDataPoints(date, getContext());
         LineGraphSeries<DataPoint> lineGraphSeries = new LineGraphSeries<>(dataPoints);
@@ -125,8 +152,9 @@ public class GraphFragment extends Fragment {
             Mental mental = mentals.get((int) dataPoint.getX());
             Toast.makeText(getContext(), mental.getHeading(), Toast.LENGTH_LONG).show();
         });
-        graphView.setTitle(date.toString());
-        graphView.setTitleTextSize(72);
+        graphView.setTitle("energy");
+        graphView.setTitleTextSize(56);
+        graphView.removeAllSeries();
         graphView.addSeries(lineGraphSeries);
         graphView.getViewport().setMinY(-8);
         graphView.getViewport().setMaxY(5);
@@ -134,5 +162,6 @@ public class GraphFragment extends Fragment {
         graphView.getViewport().setMaxX(dataPoints.length > 12? dataPoints.length: 12);
         graphView.getViewport().setYAxisBoundsManual(true);
         graphView.getViewport().setXAxisBoundsManual(true);
+        textViewDate.setText(date.toString());
     }
 }
