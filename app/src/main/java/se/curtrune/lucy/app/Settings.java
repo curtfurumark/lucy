@@ -5,12 +5,19 @@ import static se.curtrune.lucy.util.Logger.log;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Type;
 
 public class Settings {
     private static final String PREFERENCES_NAME =  "PREFERENCES_NAME";
     private static final String IS_INITIALIZED = "IS_INITIALIZED";
+
+    public static final String USER = "USER";
+    public static final String PWD = "PWD";
+
     private long todoID;
     private long dailyID;
     private long projectsID;
@@ -20,6 +27,40 @@ public class Settings {
     private boolean isInitialized = false;
     private SharedPreferences.Editor editor;
     private static Settings instance;
+
+    public static void addString(String key, String value, Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(key, value);
+        editor.commit();
+
+    }
+
+    public static void addInt(String key, int value, Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(key, value);
+        editor.commit();
+    }
+
+    public static void addBoolean(String key, boolean value, Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(key, value);
+        editor.commit();
+    }
+
+    public static Set<String> getList(String key, Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+        return new HashSet<>(sharedPreferences.getStringSet(key , new HashSet<>()));
+    }
+
+    public static void saveList(String key,Set<String> list,  Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putStringSet(key, list);
+        editor.commit();
+    }
 
     public void reload(Context context) {
         log("...reload(Context)");
@@ -70,11 +111,19 @@ public class Settings {
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getBoolean(IS_INITIALIZED,  false);
     }
+    public static boolean getBoolean(String key, boolean defaultValue, Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean(key,  defaultValue);
+    }
 
     public static Item getAppointmentsRoot() {
         Item item = new Item("appointments");
         item.setType(Type.ROOT);
         return item;
+    }
+    public static String getString(String key, String defaultValue, Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(key, defaultValue);
     }
 
     /**

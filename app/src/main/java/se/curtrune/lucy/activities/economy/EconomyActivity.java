@@ -13,12 +13,8 @@ import android.view.MenuItem;
 import com.google.android.material.tabs.TabLayout;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.activities.HomeActivity;
+import se.curtrune.lucy.activities.DevActivity;
 import se.curtrune.lucy.activities.economy.persist.ECDBAdmin;
-import se.curtrune.lucy.fragments.DurationFragment;
-import se.curtrune.lucy.fragments.MentalFragment;
-import se.curtrune.lucy.fragments.TopTenFragment;
-import se.curtrune.lucy.persist.DBAdmin;
 
 public class EconomyActivity extends AppCompatActivity {
     private TabLayout tabLayout;
@@ -85,7 +81,7 @@ public class EconomyActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         log("...onOptionsItemSelected(MenuItem)");
         if( item.getItemId() == R.id.economyActivity_home){
-            startActivity(new Intent(this, HomeActivity.class));
+            startActivity(new Intent(this, DevActivity.class));
         }else if (item.getItemId() == R.id.economyActivity_dropTables){
             dropTables();
         }else if( item.getItemId() == R.id.economyActivity_createTables){

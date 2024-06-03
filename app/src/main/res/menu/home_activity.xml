@@ -24,4 +24,6 @@
         android:id="@+id/homeActivity_createEconomyTables"/>
     <item android:id="@+id/homeActivity_setNotifications"
         android:title="set notifications"/>
+    <item android:id="@+id/homeActivity_logInActivity"
+        android:title="log in activity"/>
 </menu>

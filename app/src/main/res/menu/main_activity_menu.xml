@@ -3,10 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/mainActivity_home"
-        android:icon="@drawable/baseline_home_24"
-        android:title="main"
-        app:showAsAction="always" />
+        android:id="@+id/mainActivity_dev"
+        android:title="dev activity" />
     <item android:id="@+id/mainActivity_startSequence"
         android:title="@string/start_sequence"/>
 </menu>

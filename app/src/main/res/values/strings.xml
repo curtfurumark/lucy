@@ -153,6 +153,32 @@
     <string name="week">week</string>
     <string name="month">month</string>
     <string name="send">send</string>
-    <string name="lucinda">lucinda</string>
+    <string name="lucinda" translatable="false">lucinda</string>
     <string name="add_message">add message</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="create_password">create password</string>
+    <string name="use_password">use password</string>
+    <string name="user">user</string>
+    <string name="mental">Mental</string>
+    <string name="is_appointment">is appointment</string>
+    <string name="is_template">is template</string>
+    <string name="_00_00_00">00:00:00</string>
+    <string name="updated">updated</string>
+    <string name="state">state</string>
+    <string name="is_prioritized">is prioritized</string>
+    <string name="updated_epoch">updated epoch</string>
+    <string name="target_time">target time</string>
+    <string name="target_date">target date</string>
+    <string name="next_date">next date</string>
+    <string name="notification_date">notification date</string>
+    <string name="notification_time">notification time</string>
+    <string name="description">description</string>
 </resources>

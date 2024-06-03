@@ -48,4 +48,7 @@
         android:title="message board"/>
     <item android:id="@+id/navigationDrawer_countDownTimer"
         android:title="timer"/>
+    <item android:id="@+id/navigationDrawer_settings"
+        android:title="@string/settings"
+        />
 </menu>

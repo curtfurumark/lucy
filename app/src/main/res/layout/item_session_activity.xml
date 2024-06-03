@@ -56,7 +56,7 @@
             android:layout_marginStart="16dp"
             android:inputType="time"
             android:minHeight="48dp"
-            android:text="00:00:00"
+            android:text="@string/_00_00_00"
             android:textSize="28sp"
             app:layout_constraintEnd_toStartOf="@+id/itemSession_checkBoxDone"
             app:layout_constraintStart_toEndOf="@+id/itemSession_buttonTimer"
@@ -114,7 +114,7 @@
                     android:id="@+id/itemSession_comment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="comment" />
+                    android:hint="@string/comment" />
             </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -147,7 +147,8 @@
             android:layout_height="wrap_content"
             android:src="@drawable/baseline_add_24"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/itemSession_labelDateTime" />
+            app:layout_constraintTop_toTopOf="@+id/itemSession_labelDateTime"
+            android:contentDescription="add or delete" />
 
         <LinearLayout
             android:id="@+id/itemSession_layoutDateTime"
@@ -164,7 +165,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:text="target date"
+                android:text="@string/target_date"
                 android:textSize="24sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/itemSession_layoutTags" />
@@ -175,7 +176,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:text="target time"
+                android:text="@string/target_time"
                 android:textSize="24sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/itemSession_targetDate" />
@@ -197,7 +198,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="mental"
+            android:text="@string/mental"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/divider_mental" />
@@ -491,7 +492,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="16dp"
-                android:text="description"
+                android:text="@string/description"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -500,7 +501,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="next date"
+                android:text="@string/next_date"
                 app:layout_constraintStart_toStartOf="@+id/itemSession_periodDescription"
                 app:layout_constraintTop_toBottomOf="@+id/itemSession_periodDescription" />
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -551,7 +552,7 @@
                 android:id="@+id/itemSession_notificationDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="notification date"
+                android:text="@string/notification_date"
                 android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -561,7 +562,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="notification time"
+                android:text="@string/notification_time"
                 android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/itemSession_notificationDate" />
@@ -605,7 +606,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="updated"
+                android:text="@string/updated"
                 app:layout_constraintStart_toStartOf="@+id/itemSession_checkBoxTemplate"
                 app:layout_constraintTop_toBottomOf="@+id/itemSession_checkBoxTemplate" />
 
@@ -614,7 +615,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="updated epoch"
+                android:text="@string/updated_epoch"
                 app:layout_constraintStart_toStartOf="@+id/itemSession_infoUpdated"
                 app:layout_constraintTop_toBottomOf="@+id/itemSession_infoUpdated" />
 
@@ -623,7 +624,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="created"
+                android:text="@string/created"
                 app:layout_constraintStart_toStartOf="@+id/itemSession_infoUpdatedEpoch"
                 app:layout_constraintTop_toBottomOf="@+id/itemSession_infoUpdatedEpoch" />
 
@@ -641,7 +642,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="category"
+                android:text="@string/category"
                 app:layout_constraintStart_toStartOf="@+id/itemSession_infoTags"
                 app:layout_constraintTop_toBottomOf="@+id/itemSession_infoTags" />
 
@@ -676,7 +677,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="state"
+                android:text="@string/state"
                 app:layout_constraintStart_toStartOf="@+id/itemSession_infoHasChild"
                 app:layout_constraintTop_toBottomOf="@+id/itemSession_infoHasChild" />
 
@@ -715,13 +716,13 @@
                 android:id="@+id/itemSession_isPrioritized"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="is prioritized" />
+                android:text="@string/is_prioritized" />
 
             <CheckBox
                 android:id="@+id/itemSession_checkBoxAppointment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="is appointment"
+                android:text="@string/is_appointment"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -729,7 +730,7 @@
                 android:id="@+id/itemSession_checkBoxTemplate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="is template"
+                android:text="@string/is_template"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/itemSession_checkBoxAppointment"
                 tools:layout_editor_absoluteX="49dp"

@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
-import java.time.Duration;
 import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
@@ -161,7 +160,7 @@ public class SequenceActivity extends AppCompatActivity implements SequenceAdapt
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if( item.getItemId() == R.id.sequenceActivity_home){
-            startActivity(new Intent(this, HomeActivity.class));
+            startActivity(new Intent(this, DevActivity.class));
         }
         return super.onOptionsItemSelected(item);
     }

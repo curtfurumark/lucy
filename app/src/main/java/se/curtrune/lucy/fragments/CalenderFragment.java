@@ -123,6 +123,7 @@ public class CalenderFragment extends Fragment {
                              Bundle savedInstanceState) {
         log("CalenderFragment.onCreateView(...)");
         View view = inflater.inflate(R.layout.calender_fragment, container, false);
+        getActivity().setTitle("");
         initDefaults();
         initComponents(view);
         initRecycler();

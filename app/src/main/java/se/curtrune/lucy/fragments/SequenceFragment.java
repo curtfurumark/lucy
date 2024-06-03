@@ -6,8 +6,6 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -15,7 +13,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -29,7 +26,6 @@ import java.util.List;
 import java.util.Locale;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.activities.HomeActivity;
 import se.curtrune.lucy.activities.ItemSession;
 import se.curtrune.lucy.adapters.SequenceAdapter;
 import se.curtrune.lucy.classes.CallingActivity;
@@ -179,7 +175,7 @@ public class SequenceFragment extends Fragment implements SequenceAdapter.Callba
 /*    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if( item.getItemId() == R.id.sequenceActivity_home){
-            startActivity(new Intent(this, HomeActivity.class));
+            startActivity(new Intent(this, DevActivity.class));
         }
         return super.onOptionsItemSelected(item);
     }*/

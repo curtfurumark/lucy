@@ -165,8 +165,8 @@ public class MainActivityOld extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         log("...onOptionsItemSelected(MenuItem)", item.getTitle().toString());
-        if( item.getItemId() == R.id.mainActivity_home) {
-            startActivity(new Intent(this, HomeActivity.class));
+        if( item.getItemId() == R.id.mainActivity_dev) {
+            startActivity(new Intent(this, DevActivity.class));
         }
         return super.onOptionsItemSelected(item);
     }

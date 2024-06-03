@@ -37,6 +37,7 @@ import se.curtrune.lucy.dialogs.BoostDialog;
 import se.curtrune.lucy.fragments.AppointmentsFragment;
 import se.curtrune.lucy.fragments.CalenderFragment;
 import se.curtrune.lucy.fragments.ContactFragment;
+import se.curtrune.lucy.fragments.CustomizeFragment;
 import se.curtrune.lucy.fragments.DurationFragment;
 import se.curtrune.lucy.fragments.EnchildaFragment;
 import se.curtrune.lucy.fragments.EstimateFragment;
@@ -45,6 +46,7 @@ import se.curtrune.lucy.fragments.MentalFragment2;
 import se.curtrune.lucy.fragments.MessageBoardFragment;
 import se.curtrune.lucy.fragments.MonthCalenderFragment;
 import se.curtrune.lucy.fragments.ProjectsFragment;
+import se.curtrune.lucy.fragments.TimerFragment;
 import se.curtrune.lucy.fragments.TodoFragment;
 import se.curtrune.lucy.fragments.TopTenFragment;
 import se.curtrune.lucy.fragments.WeeklyCalenderFragment;
@@ -144,6 +146,12 @@ public class MainActivity extends AppCompatActivity {
                 navigate(new ContactFragment());
             }else if( item.getItemId() == R.id.navigationDrawer_messageBoardFragment){
                 navigate(new MessageBoardFragment());
+            }else if( item.getItemId() == R.id.navigationDrawer_settings){
+                startActivity(new Intent(this, SettingsActivity.class));
+            }else if( item.getItemId() == R.id.navigationDrawer_countDownTimer){
+                navigate(new TimerFragment());
+            }else if ( item.getItemId() == R.id.navigationDrawer_customizeFragment){
+                navigate(new CustomizeFragment());
             }
             drawerLayout.close();
             return true;
@@ -184,8 +192,8 @@ public class MainActivity extends AppCompatActivity {
         log("...onOptionsItemSelected(MenuItem item)", Objects.requireNonNull(item.getTitle()).toString());
         if( item.getItemId() == R.id.navigationDrawer_graphFragment){
             navigate( new GraphFragment());
-        }else if( item.getItemId() == R.id.mainActivity_home){
-            startActivity(new Intent(this, HomeActivity.class));
+        }else if( item.getItemId() == R.id.mainActivity_dev){
+            startActivity(new Intent(this, DevActivity.class));
         }
         return super.onOptionsItemSelected(item);
     }
@@ -224,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
     private void setUserInterfaceCurrentEnergy(){
         log("...setUserInterfaceCurrentEnergy()");
         int energy = MentalWorker.getEnergy(LocalDate.now(), this);
-        String textEnergy = String.format(Locale.getDefault(), "energy: %d", energy);
+        String textEnergy = String.format(Locale.getDefault(), "%s: %d",getString(R.string.energy) ,energy);
         if( energy <= -3){
             textViewEnergy.setTextColor(Color.parseColor("#ff0000"));
         }else if(energy <= 2){

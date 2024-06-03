@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.activities.economy.TransactionFragment;
 import se.curtrune.lucy.adapters.ListableAdapter;
 import se.curtrune.lucy.classes.Listable;
 import se.curtrune.lucy.fragments.DurationFragment;
@@ -147,7 +146,7 @@ public class StatisticsMain extends AppCompatActivity  {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if( item.getItemId() == R.id.statistics_home){
-            startActivity(new Intent(this, HomeActivity.class));
+            startActivity(new Intent(this, DevActivity.class));
         }
         return super.onOptionsItemSelected(item);
     }

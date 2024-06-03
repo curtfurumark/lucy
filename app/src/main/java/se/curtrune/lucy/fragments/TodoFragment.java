@@ -95,6 +95,7 @@ public class TodoFragment extends Fragment implements
                              Bundle savedInstanceState) {
         log("ToDoFragment.onCreateView(LayoutInflater, ViewGroup, Bundle)");
         View view = inflater.inflate(R.layout.todo_fragment, container, false);
+        requireActivity().setTitle("todo");
         initComponents(view);
         items = ItemsWorker.selectItems(State.TODO, getContext());
         items.sort(Comparator.comparingLong(Item::compare));
