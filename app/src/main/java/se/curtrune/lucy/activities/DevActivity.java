@@ -52,7 +52,7 @@ public class DevActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.home_activity);
+        setContentView(R.layout.dev_activity);
         initCatchAllExceptionsHandler();
         setTitle("lucinda");
         log("DevActivity.onCreate(Bundle)");
@@ -158,7 +158,7 @@ public class DevActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.home_activity, menu);
+        getMenuInflater().inflate(R.menu.dev_activity, menu);
         return true;
     }
 

@@ -181,11 +181,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     private void navigate(Fragment fragment){
-        log("...navigate(Fragment) ");
-        if(fragment instanceof AppointmentsFragment)log("AppointmentsFragment");
-        if(fragment instanceof ProjectsFragment)log("ProjectsFragment");
-        if(fragment instanceof CalenderFragment)log("CalenderFragment");
-        if(fragment instanceof TodoFragment)log("TodoFragment");
+        if( fragment == null){
+            log("...navigate(Fragment) called with null fragment, i surrender");
+            return;
+        }
+        log("...navigate(Fragment) ", fragment.getClass().getName());
         currentFragment = fragment;
         getSupportFragmentManager().beginTransaction().replace(R.id.navigationDrawer_frameContainer, currentFragment).commit();
     }

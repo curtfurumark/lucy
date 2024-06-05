@@ -47,6 +47,7 @@ public class DBAdmin {
             db.executeSQL(EcQueeries.DROP_TABLE_ASSETS);
             db.executeSQL(EcQueeries.DROP_TABLE_TRANSACTIONS);
         }
+        log("...tables dropped");
     }
 
     public static String getCategory(Cursor cursor) {

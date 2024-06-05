@@ -36,6 +36,7 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.classes.State;
+import se.curtrune.lucy.workers.ItemsWorker;
 import se.curtrune.lucy.workers.UtilWorker;
 
 public class AddTemplateDialog extends BottomSheetDialogFragment {
@@ -65,7 +66,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
     private TextView labelDateTime;
     private TextView textViewDate;
     private TextView textViewTime;
-    //private TextView textViewNow;
+
     private Spinner spinner;
     private Button buttonSave;
     private Button buttonDismiss;
@@ -104,7 +105,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         return view;
     }
     private void addNotification(){
-        log("...addNotification");
+        if( VERBOSE) log("...addNotification");
         LocalTime rightNow = LocalTime.now();
         int minutes = rightNow.getMinute();
         int hour = rightNow.getHour();
@@ -139,7 +140,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         return item;
     }
     private Repeat getPeriod(){
-        log("...getPeriod() hasPeriod", hasPeriod);
+        if( VERBOSE) log("...getPeriod() hasPeriod", hasPeriod);
         Repeat repeat = null;
         if( hasPeriod){
             repeat = new Repeat();
@@ -152,7 +153,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         return repeat;
     }
     private List<DayOfWeek> getWeekDays(){
-        log("...getWeekDays()");
+        if( VERBOSE) log("...getWeekDays()");
         List<DayOfWeek> weekDays = new ArrayList<>();
         if( chipMonday.isChecked()){
             weekDays.add(DayOfWeek.MONDAY);
@@ -238,8 +239,8 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
      * sets default category to the first in the category array
      */
     private void initSpinner(){
-        log("...initSpinner()");
-        String[] categories = UtilWorker.getCategories(getContext());
+        if(VERBOSE)log("...initSpinner()");
+        String[] categories = ItemsWorker.getCategories(getContext());
         arrayAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, categories);
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
         spinner.setAdapter(arrayAdapter);
@@ -268,7 +269,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         checkBoxShowInCalender.setChecked(true);
     }
     private void rightNow(){
-        log("...rightNow()");
+        if( VERBOSE) log("...rightNow()");
         if( !validateInput()){
             return;
         }
@@ -280,7 +281,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
 
     }
     private void save(boolean dismiss){
-        log("...save()");
+        if( VERBOSE) log("...save()");
         if( !validateInput()){
             log("...missing input");
             return;
@@ -296,7 +297,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         this.callback = callback;
     }
     private void setSpinnerSelection(String category){
-        log("...setSpinnerSelection(String)", category);
+        if( VERBOSE) log("...setSpinnerSelection(String)", category);
         spinner.setSelection(arrayAdapter.getPosition(category));
     }
     private void showDateDialog(){
@@ -334,7 +335,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         }
     }
     private void toggleDateTime(){
-        log("...toggleDateTime()");
+        if( VERBOSE) log("...toggleDateTime()");
         if(layoutDateTime.getVisibility() == View.GONE){
             layoutDateTime.setVisibility(View.VISIBLE);
         }else{
@@ -342,7 +343,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         }
     }
     private void toggleOther(){
-        log("...toggleOther()");
+        if( VERBOSE) log("...toggleOther()");
         if( layoutOther.getVisibility() == View.GONE){
             layoutOther.setVisibility(View.VISIBLE);
         }else{
@@ -350,7 +351,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         }
     }
     private void toggleRepeat(){
-        log("...toggleRepeat()");
+        if(VERBOSE)log("...toggleRepeat()");
         if ( layoutRepeat.getVisibility() == View.GONE){
             layoutRepeat.setVisibility(View.VISIBLE);
         }else{
@@ -370,7 +371,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
     }
 
     public boolean validateInput(){
-        log("...validateInput()");
+        if( VERBOSE) log("...validateInput()");
         if( editTextHeading.getText().toString().isEmpty()){
             Toast.makeText(getContext(), "missing heading", Toast.LENGTH_LONG).show();
             log("...item requires heading, and no heading is supplied...");

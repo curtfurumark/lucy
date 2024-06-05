@@ -131,7 +131,6 @@ public class Queeries {
         LocalDateTime startLocalDateTime = date.atStartOfDay();
         long startEpoch = startLocalDateTime.toEpochSecond(ZoneOffset.UTC);
         long endEpoch = startEpoch + (3600 * 24);
-        //AND (updated)
         return String.format(Locale.ENGLISH, "SELECT * FROM items WHERE " +
                         "(template = %d AND targetDate <= %d AND targetDate > 0)  OR " +      //INFINITE today or earlier
                         //"(state = %d AND targetDate = %d) OR " +        //items done today

@@ -255,7 +255,8 @@ public class ProjectsFragment extends Fragment implements
         SequenceFragment    sequenceFragment = new SequenceFragment();
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.mainActivity_fragmentContainer, sequenceFragment);
+        //TODO
+        //fragmentTransaction.replace(R.layout.main_activity, sequenceFragment);
         fragmentTransaction.commit();
 /*        Toast.makeText(getContext(), "start sequence", Toast.LENGTH_LONG).show();
         Intent intent = new Intent(getContext(), SequenceFragment.class);

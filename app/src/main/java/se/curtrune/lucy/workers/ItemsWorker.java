@@ -62,6 +62,12 @@ public class ItemsWorker {
         }
         return res;
     }
+    public static String[] getCategories(Context context){
+        log("ItemsWorker.getCategories(Context)");
+        try(LocalDB db = new LocalDB(context)){
+            return  db.getCategories();
+        }
+    }
 
     public static Item getParent(Item currentParent, Context context) {
         if( VERBOSE) log("ItemsWorker.getParent(Item, Context)");
@@ -224,21 +230,24 @@ public class ItemsWorker {
     public static Item getAppointmentsRoot(Context context){
         Settings settings = Settings.getInstance(context);
         long id = settings.getRootID(APPOINTMENTS);
-        LocalDB db = new LocalDB( context);
-        return db.selectItem(id);
+        try(LocalDB db = new LocalDB( context)) {
+            return db.selectItem(id);
+        }
     }
 
     public static Item getPanicRoot(Context context) {
         Settings settings = Settings.getInstance(context);
         long id = settings.getRootID(PANIC);
-        LocalDB db = new LocalDB( context);
-        return db.selectItem(id);
+        try(LocalDB db = new LocalDB( context)) {
+            return db.selectItem(id);
+        }
     }
     public static Item getProjectsRoot(Context context){
         Settings settings = Settings.getInstance(context);
         long id = settings.getRootID(PROJECTS);
-        LocalDB db = new LocalDB( context);
-        return db.selectItem(id);
+        try(LocalDB db = new LocalDB( context)) {
+            return db.selectItem(id);
+        }
     }
 
     public static Item getTodoRoot(Context context){
@@ -257,12 +266,13 @@ public class ItemsWorker {
     }
 
     public static List<Item> selectCalenderItems(YearMonth yearMonth, Context context) {
-        if(VERBOSE) log("ItemsWorker.selectCalenderItems(YearMonth)");
+        if (VERBOSE) log("ItemsWorker.selectCalenderItems(YearMonth)");
         LocalDate firstDate = yearMonth.atDay(1);
         LocalDate lastDate = yearMonth.atEndOfMonth();
-        LocalDB db = new LocalDB(context);
-        String queery = Queeries.selectItems(firstDate, lastDate,Type.APPOINTMENT);
-        return db.selectItems(queery);
+        try (LocalDB db = new LocalDB(context)) {
+            String queery = Queeries.selectItems(firstDate, lastDate, Type.APPOINTMENT);
+            return db.selectItems(queery);
+        }
     }
 
     public static List<Item> selectItems(Week week, Context context) {

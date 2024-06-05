@@ -33,16 +33,6 @@
             android:name=".activities.LoggerActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.MainActivityOld"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.Lucy" />
-        <activity
-            android:name=".activities.NavigationActivity2"
-            android:exported="false"
-            android:label="@string/title_activity_navigation2"
-            android:theme="@style/Theme.Lucy.NoActionBar" />
-        <activity
             android:name=".activities.MainActivity"
             android:exported="false"
             android:theme="@style/Theme.Lucy.NoActionBar" />
@@ -69,17 +59,9 @@
             android:label="@string/title_activity_settings"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".dev.NewItemEditor"
-            android:exported="false"
-            android:label="@string/title_activity_item_editor"
-            android:theme="@style/Theme.Lucy" />
-        <activity
             android:name=".activities.ItemSession"
             android:exported="false"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".activities.ItemEditor"
-            android:exported="false" />
         <activity
             android:name=".activities.StatisticsMain"
             android:exported="false"

@@ -26,7 +26,7 @@ public class Lucinda {
     public static String[] CATEGORIES = new String[] {"household", "work", "health", "play"};
 
     private Lucinda(Context context){
-        log("Lucinda(Context)");
+        if( VERBOSE) log("Lucinda(Context)");
         settings = Settings.getInstance(context);
     }
     public static Lucinda getInstance(Context context){
@@ -44,7 +44,7 @@ public class Lucinda {
 
 
     public boolean isInitialized(Context context){
-        log("Lucinda.isInitialized(Context)");
+        if( VERBOSE) log("Lucinda.isInitialized(Context)");
         return settings.isInitialized(context);
     }
     public void initTheApp(Context context) {
@@ -63,13 +63,13 @@ public class Lucinda {
         DBAdmin.insertCategories(context);
         DBAdmin.insertRootItems(context);
         Demo.insertDemo(context);
-        log("..almost done, possibly maybe");
+        //log("will setDefaultUserSettings(");
         setDefaultUserSettings(context);
         settings.setLucyIsInitialized(true, context);
         settings.reload(context);
     }
     public static void setDefaultUserSettings(Context context){
-        log("...setUserSettings()");
+        log("Lucinda.setDefaultUserSettings()");
         User.setPanicUrls(context.getResources().getStringArray(R.array.panicUrls), context);
         User.setUsesPassword(false, context);
         User.setUseDarkMode(true, context);

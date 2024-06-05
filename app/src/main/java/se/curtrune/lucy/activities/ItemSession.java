@@ -530,7 +530,7 @@ public class ItemSession extends AppCompatActivity implements
 
         childItem = ItemsWorker.insertChild(currentItem, childItem, this);
         log(childItem);
-        Intent intent = new Intent(this, MainActivityOld.class);
+        Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(Constants.INTENT_SHOW_CHILD_ITEMS, true);
         intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, currentItem);
         startActivity(intent);

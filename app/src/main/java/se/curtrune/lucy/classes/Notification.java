@@ -22,8 +22,9 @@ public class Notification implements Serializable {
     private int time;
     private String title;
     private String content;
+    public static boolean VERBOSE = false;
     public  Notification(){
-        log("Notification()");
+        if( VERBOSE) log("Notification()");
         type = Type.NOTIFICATION;
     }
     public String getContent(){

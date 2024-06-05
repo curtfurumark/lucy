@@ -74,12 +74,8 @@ public class CalenderFragment extends Fragment {
     private CalenderDateAdapter calenderDateAdapter;
     private FloatingActionButton buttonAddItem;
 
-    //for debugging
     private TextView labelMonthYear;
-    /*private TextView textViewYear;
-    private TextView textViewMonth;
-    private TextView textViewWeek;
-    private TextView textViewDate;*/
+
     private ItemTouchHelper itemTouchHelper;
 
     private LocalDate currentDate;
@@ -141,7 +137,7 @@ public class CalenderFragment extends Fragment {
 
     }
     private String getMonthYear(LocalDate date){
-        log("...getMonthYear(LocalDate)");
+        if( VERBOSE) log("...getMonthYear(LocalDate)");
         return String.format("%s, %d", date.getMonth().toString(), date.getYear());
     }
     private String getWeekNumber(){
@@ -157,10 +153,6 @@ public class CalenderFragment extends Fragment {
         buttonNext = view.findViewById(R.id.calenderFragment_buttonNext);
         buttonPrev = view.findViewById(R.id.calenderFragment_buttonPrev);
         labelMonthYear = view.findViewById(R.id.calenderFragment_labelMonthYear);
-/*        textViewDate = view.findViewById(R.id.calenderFragment_currentDate);
-        textViewWeek = view.findViewById(R.id.calenderFragment_currentWeek);
-        textViewMonth = view.findViewById(R.id.calenderFragment_currentMonth);
-        textViewYear = view.findViewById(R.id.calenderFragment_currentYear);*/
         recycler = view.findViewById(R.id.calenderFragment_recycler);
         recyclerDates = view.findViewById(R.id.calenderFragment_recyclerDates);
         buttonAddItem = view.findViewById(R.id.calenderFragment_addItem);
@@ -182,13 +174,13 @@ public class CalenderFragment extends Fragment {
         adapter = new CalenderAdapter(items, new CalenderAdapter.Callback() {
             @Override
             public void onEditTime(Item item) {
-                log("...onEditTime(Item item");
+                if( VERBOSE) log("...onEditTime(Item item");
                 updateTargetTime(item);
             }
 
             @Override
             public void onItemClick(Item item) {
-                log("...onItemClick(Item)", item.getHeading());
+                if(VERBOSE)log("...onItemClick(Item)", item.getHeading());
                 Intent intent = new Intent(getContext(), ItemSession.class);
                 intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.CALENDER_FRAGMENT);
                 intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, item);
@@ -202,7 +194,7 @@ public class CalenderFragment extends Fragment {
 
             @Override
             public void onCheckboxClicked(Item item, boolean checked) {
-                log("...onCheckboxClicked(Item, boolean)", checked);
+                if( VERBOSE) log("...onCheckboxClicked(Item, boolean)", checked);
                 item.setState(checked ? State.DONE: State.TODO);
                 item.setTargetTime(LocalTime.now());
                 log(item);
@@ -242,8 +234,6 @@ public class CalenderFragment extends Fragment {
             @Override
             public void onDateSelected(LocalDate date) {
                 log("...onDateSelected(LocalDate)", date.toString());
-                //items = ItemsWorker.selectItems(date, getContext(), State.TODO);
-                //adapter.setList(items);
                 currentDate = date;
                 currentWeek.setCurrentDate(currentDate);
                 calenderDateAdapter.setList(currentWeek);

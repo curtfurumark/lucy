@@ -14,6 +14,7 @@ import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import se.curtrune.lucy.util.Converter;
 
@@ -46,6 +47,7 @@ public class Item implements Serializable , Listable {
     protected Mental mental;
     protected  int color;
     //protected Content content;
+    public static boolean VERBOSE = false;
     protected Reward reward;
     protected int priority;
     /**
@@ -115,9 +117,7 @@ public class Item implements Serializable , Listable {
     public long getCreatedEpoch(){
         return created;
     }
-/*    public int getDays(){
-        return days;
-    }*/
+
     public String getDescription() {
         return description;
     }
@@ -236,7 +236,6 @@ public class Item implements Serializable , Listable {
         return isCalenderItem;
     }
     public boolean isCategory(String category){
-        //log("Item.isCategory(Category)", category);
         if( this.category == null){
             log("Item this.category == null, returning false");
             return false;
@@ -342,9 +341,9 @@ public class Item implements Serializable , Listable {
     }
     public void setNotification(String json){
         if( json != null && json.startsWith("{")) {
-            log("...setNotification, json", json);
+            if( VERBOSE) log("...setNotification, json", json);
             notification = new Gson().fromJson(json, Notification.class);
-            log(notification);
+            if( VERBOSE) log(notification);
         }
     }
     public void setId(long id) {
@@ -423,7 +422,7 @@ public class Item implements Serializable , Listable {
     @NonNull
     @Override
     public String toString() {
-        return String.format("%s (%d), parent: %d, has child: %b", heading,id, parent_id, hasChild());
+        return String.format(Locale.getDefault(), "%s (%d), parent: %d, has child: %b", heading,id, parent_id, hasChild());
     }
     /**
      * sets the next targetDate,
@@ -433,8 +432,6 @@ public class Item implements Serializable , Listable {
         log("...updateTargetDate()");
         if( hasPeriod()){
             target_date = repeat.getNextDate().toEpochDay();
-        }/*else{
-            target_date = LocalDate.now().plusDays(days).toEpochDay();
-        }*/
+        }
     }
 }
