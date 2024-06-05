@@ -23,23 +23,15 @@ import se.curtrune.lucy.classes.calender.Week;
 public class CalenderDateAdapter extends RecyclerView.Adapter<CalenderDateAdapter.ViewHolder>{
     private List<LocalDate> dates;
     private Week week;
-    //private LocalDate selectedDate;
     public static boolean VERBOSE = false;
 
     public void setList(Week week) {
         if( VERBOSE) log("CalenderDateAdapter.setList(List<Item>) size", dates.size());
         this.dates = week.getDates();
         this.week = week;
-        //selectedDate = week.getCurrentDate();
         notifyDataSetChanged();
     }
 
-    public void sort() {
-        if(VERBOSE)log("TodayAdapter.sort()");
-/*        items.sort(Comparator.comparingLong(Item::compare));
-        Collections.reverse(items);
-        notifyDataSetChanged();*/
-    }
 
     public interface Callback{
         void onDateSelected(LocalDate date);
@@ -65,9 +57,9 @@ public class CalenderDateAdapter extends RecyclerView.Adapter<CalenderDateAdapte
         if( VERBOSE) log("CalenderDateAdapter.onBindViewHolder() position", position);
         LocalDate date = dates.get(position);
         if( date.equals(week.getCurrentDate())){
-            log("...selectedDate true", date.toString());
-            holder.textViewDateNumber.setTextColor(Color.rgb(255,255,255));
-            holder.textViewDateName.setTextColor(Color.rgb(255,255,255));
+            //log("...selectedDate true", date.toString());
+            holder.textViewDateNumber.setTextColor(Color.rgb(160,32,240));
+            holder.textViewDateName.setTextColor(Color.rgb(160,32,240));
         }else{
             holder.textViewDateNumber.setTextColor(Color.rgb(128,128,128));
             holder.textViewDateName.setTextColor(Color.rgb(128,128,128));

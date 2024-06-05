@@ -218,7 +218,7 @@ public class CalenderFragment extends Fragment {
                     switch (item.getReward().getType()){
                         case AFFIRMATION:
                             //log("...AFFIRMATION");
-                            showAffirmation();
+                            //showAffirmation();
                             break;
                         case USER_DEFINED:
                             log("...USER_DEFINED");
@@ -305,9 +305,6 @@ public class CalenderFragment extends Fragment {
         viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
 
     }
-    private void nextMonth(){
-        currentDate = currentDate.plusMonths(1);
-    }
     private void nextWeek(){
         log("...nextWeek()");
         currentDate = currentDate.plusWeeks(1);
@@ -360,13 +357,13 @@ public class CalenderFragment extends Fragment {
         });
         dialog.show(getParentFragmentManager(), "add item");
     }
-    private void showAffirmation(){
+/*    private void showAffirmation(){
         log("...showAffirmation");
         AffirmationWorker.requestAffirmation(affirmation -> {
             log("...onRequest(Affirmation)", affirmation.getAffirmation());
             Toast.makeText(getContext(), affirmation.getAffirmation(), Toast.LENGTH_LONG).show();
         });
-    }
+    }*/
     private void updateTargetTime(Item item){
         log("...updateTargetTime(Item)");
         LocalTime oldTime = item.getTargetTime();

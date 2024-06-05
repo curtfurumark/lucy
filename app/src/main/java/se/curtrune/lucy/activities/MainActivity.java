@@ -32,6 +32,7 @@ import se.curtrune.lucy.R;
 import se.curtrune.lucy.activities.flying_fish.GameActivity;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.User;
+import se.curtrune.lucy.classes.Affirmation;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.dialogs.BoostDialog;
 import se.curtrune.lucy.fragments.AppointmentsFragment;
@@ -92,10 +93,18 @@ public class MainActivity extends AppCompatActivity {
     }
     private void boostMe(){
         if( VERBOSE) log("...boostMe()");
-        AffirmationWorker.requestAffirmation(affirmation -> {
-            log("...onRequest(Affirmation)");
-            BoostDialog boostDialog = new BoostDialog(affirmation.getAffirmation());
-            boostDialog.show(getSupportFragmentManager(), "boost me");
+        AffirmationWorker.requestAffirmation(new AffirmationWorker.RequestAffirmationCallback() {
+            @Override
+            public void onRequest(Affirmation affirmation) {
+                log("...onRequest(Affirmation)");
+                BoostDialog boostDialog = new BoostDialog(affirmation.getAffirmation());
+                boostDialog.show(getSupportFragmentManager(), "boost me");
+            }
+
+            @Override
+            public void onError(String message) {
+                Toast.makeText( MainActivity.this, message, Toast.LENGTH_LONG).show();
+            }
         });
     }
     private void initComponents(){
@@ -200,8 +209,13 @@ public class MainActivity extends AppCompatActivity {
     private void openWebPage(String url){
         log("...openWebPage(String url)", url);
         Uri webPage = Uri.parse(url);
-        Intent intent = new Intent(Intent.ACTION_VIEW, webPage);
-        startActivity(intent);
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW, webPage);
+            startActivity(intent);
+        }catch (Exception e){
+            log("EXCEPTION, probably not valid ur");
+            Toast.makeText(this,"page not found", Toast.LENGTH_LONG).show();
+        }
     }
     private void panic(){
         log("...panic()");
@@ -214,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, GameActivity.class));
                 break;
             case "url":
-                String url = User.getRandomPanicUrl();
+                String url = User.getRandomPanicUrl(this);
                 openWebPage(url);
                 break;
             case "panic list":

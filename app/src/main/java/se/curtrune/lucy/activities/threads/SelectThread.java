@@ -36,7 +36,7 @@ public class SelectThread extends Thread {
             return;
 
         }
-        new Handler(Looper.getMainLooper()).post(() -> callback.onRequestSelectDone(json));
+        new Handler(Looper.getMainLooper()).post(() -> callback.onRequestSelectError(json));;
 
     }
 
@@ -51,7 +51,7 @@ public class SelectThread extends Thread {
             if( VERBOSE) log("...json", json);
             callback(json);
         } catch (IOException e) {
-            callback.onRequestSelectError(e.toString());
+            new Handler(Looper.getMainLooper()).post(() -> callback.onRequestSelectError(e.toString()));
         }
     }
     private boolean validateJson(String json){

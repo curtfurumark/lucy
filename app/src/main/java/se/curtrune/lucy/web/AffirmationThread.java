@@ -14,18 +14,10 @@ public class AffirmationThread extends Thread{
     private static String GET_AFFIRMATION_URL = "https://www.affirmations.dev";
     public interface AffirmationThreadCallback{
         void onRequestCompleted(Affirmation affirmation);
+        void onError(String message);
     }
     private AffirmationThreadCallback callback;
-    private void callback(Affirmation affirmation) {
-        if (callback != null) {
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    callback.onRequestCompleted(affirmation);
-                }
-            });
-        }
-    }
+
 
     public AffirmationThread(AffirmationThreadCallback callback) {
         this.callback = callback;
@@ -34,8 +26,17 @@ public class AffirmationThread extends Thread{
     @Override
     public void run() {
         log("AffirmationThread.run()");
-        String json = HTTPClient.get(GET_AFFIRMATION_URL);
-        Affirmation affirmation = new Gson().fromJson(json, Affirmation.class);
-        callback(affirmation);
+        try {
+            String json = HTTPClient.get(GET_AFFIRMATION_URL);
+            log("...json", json);
+            if( !json.startsWith("{")){
+                new Handler(Looper.getMainLooper()).post(() -> callback.onError(json));
+                return;
+            }
+            Affirmation affirmation = new Gson().fromJson(json, Affirmation.class);
+            new Handler(Looper.getMainLooper()).post(() -> callback.onRequestCompleted(affirmation));
+        }catch (Exception e){
+            new Handler(Looper.getMainLooper()).post(() -> callback.onError(e.getMessage()));
+        }
     }
 }

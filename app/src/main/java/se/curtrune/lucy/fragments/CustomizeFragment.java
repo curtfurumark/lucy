@@ -81,9 +81,7 @@ public class CustomizeFragment extends Fragment {
     }
     private void addPanicUrl(){
         log("...addPanicUrl()");
-        //User.getPanicUrls(getContext()).forEach(System.out::println);
         User.addPanicUrl(editTextUrl.getText().toString(), getContext());
-        //User.getPanicUrls(getContext()).forEach(System.out::println
         editTextUrl.setText("");
         initListView();
     }

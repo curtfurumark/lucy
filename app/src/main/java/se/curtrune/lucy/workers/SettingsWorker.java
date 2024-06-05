@@ -35,6 +35,11 @@ public class SettingsWorker {
                 break;
 
         }
+    }
+    public static void setDarkMode(){
+        log("SettingsWorker.setDarkMode()");
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        //UiModeManager uiModeManager = (UiModeManager) context.getSystemService(Context.UI_MODE_SERVICE);
 
     }
 }

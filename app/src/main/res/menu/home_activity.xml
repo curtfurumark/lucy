@@ -26,4 +26,7 @@
         android:title="set notifications"/>
     <item android:id="@+id/homeActivity_logInActivity"
         android:title="log in activity"/>
+    <item android:id="@+id/devActivity_userSettings"
+        android:title="set default user settings"
+        />
 </menu>

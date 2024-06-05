@@ -21,17 +21,22 @@ import androidx.core.content.ContextCompat;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.activities.economy.EconomyActivity;
 import se.curtrune.lucy.activities.economy.persist.ECDBAdmin;
 import se.curtrune.lucy.app.Lucinda;
+import se.curtrune.lucy.app.Settings;
+import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.classes.Quotes;
 import se.curtrune.lucy.persist.DBAdmin;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
 import se.curtrune.lucy.util.Logger;
+import se.curtrune.lucy.workers.ItemsWorker;
 import se.curtrune.lucy.workers.NotificationsWorker;
 
 public class DevActivity extends AppCompatActivity {
@@ -183,6 +188,8 @@ public class DevActivity extends AppCompatActivity {
             testNotification();
         }else if( item.getItemId() == R.id.homeActivity_logInActivity){
             startActivity(new Intent(this, LogInActivity.class));
+        }else if ( item.getItemId() == R.id.devActivity_userSettings){
+            setDefaultUserSettings();
         }
         return true;
     }
@@ -255,17 +262,32 @@ public class DevActivity extends AppCompatActivity {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
+    private void setDefaultUserSettings(){
+        log("...setDefaultUserSettings");
+        Lucinda.setDefaultUserSettings(this);
+
+    }
     private void setNotifications(){
         log("...setNotifications()");
         NotificationsWorker.setNotifications(LocalDate.now(), this);
     }
     private void testNotification(){
         log("...testNotification()");
-/*        Notification notification = new Notification();
-        notification.setTime(LocalTime.now().plusMinutes(5));
+        Notification notification = new Notification();
+        LocalTime targetTime = LocalTime.now().plusMinutes(5);
+        notification.setTime(targetTime);
         notification.setDate(LocalDate.now());
-        NotificationsWorker.setNotification(notification, this);*/
-
+        Item item = new Item();
+        String heading = String.format("notify me %s", notification.getTime().toString());
+        item.setHeading(heading);
+        item.setTargetDate(LocalDate.now());
+        item.setTargetTime(targetTime);
+        Item todoParent = ItemsWorker.getRootItem(Settings.Root.TODO, this);
+        item.setParentId(todoParent.getID());
+        item = ItemsWorker.insertChild(todoParent, item, this);
+        item.setNotification(notification);
+        log(item);
+        NotificationsWorker.setNotification(item, this);
     }
     private void toggleDarkMode() {
         log("...toggleDarkMode()");

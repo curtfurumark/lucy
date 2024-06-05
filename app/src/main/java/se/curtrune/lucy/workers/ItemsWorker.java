@@ -40,12 +40,12 @@ public class ItemsWorker {
     }
 
     public static long  calculateEstimate(List<Item> items) {
-        log("ItemsWorker.calculateEstimate(List<Item>)");
+        if( VERBOSE) log("ItemsWorker.calculateEstimate(List<Item>)");
         return items.stream().mapToLong(Item::getEstimatedDuration).sum();
     }
 
     public static boolean delete(Item item, Context context) {
-        log("LocalDB.delete(Item, Context)");
+        if( VERBOSE) log("ItemsWorker.delete(Item, Context)");
         boolean res = false;
         if( item.hasChild()){
             Toast.makeText(context, "unlink not implemented", Toast.LENGTH_LONG).show();
@@ -64,7 +64,7 @@ public class ItemsWorker {
     }
 
     public static Item getParent(Item currentParent, Context context) {
-        log("ItemsWorker.getParent(Item, Context)");
+        if( VERBOSE) log("ItemsWorker.getParent(Item, Context)");
         if( currentParent == null){
             log("...currentParent is null, returning null");
             return null;
@@ -76,7 +76,7 @@ public class ItemsWorker {
 
 
     public static Item getRootItem(Settings.Root root, Context context){
-        log("ItemsWorker.getRootItem(Settings.Root, Context)");
+        if( VERBOSE) log("ItemsWorker.getRootItem(Settings.Root, Context)");
         Settings settings = Settings.getInstance(context);
         long rootID = -1;
         switch (root){
@@ -99,14 +99,14 @@ public class ItemsWorker {
                 rootID = settings.getRootID(THE_ROOT);
                 break;
         }
-        log("root id ", rootID);
+        if( VERBOSE) log("root id ", rootID);
         try (LocalDB db = new LocalDB(context)) {
             return db.selectItem(rootID);
         }
     }
 
     public static Item insert(Item item, Context context)  {
-        log("ItemsWorker.insert(Item, Context)", item.getHeading());
+        if( VERBOSE) log("ItemsWorker.insert(Item, Context)", item.getHeading());
         LocalDB db = new LocalDB(context);
         item = db.insert(item);
         db.close();
@@ -114,7 +114,7 @@ public class ItemsWorker {
     }
 
     public  static Item insertChild(Item parent, Item child, Context context)  {
-        log("ItemsWorker.insertChild(Item, Item, Context)");
+        if(VERBOSE)log("ItemsWorker.insertChild(Item, Item, Context)");
         if( !parent.hasChild()){
             log("....not children for this parent, yet");
             setHasChild(parent, true, context);
@@ -127,7 +127,7 @@ public class ItemsWorker {
 
 
     public static List<Item> selectItems(Context context) {
-        log("ItemsWorker.selectItems(Context");
+        if(VERBOSE) log("ItemsWorker.selectItems(Context");
         try (LocalDB db = new LocalDB(context)) {
             return db.selectItems();
         }
@@ -141,7 +141,7 @@ public class ItemsWorker {
      * @return a list as specified
      */
     public static List<Item> selectItems(LocalDate firstDate, LocalDate lastDate, Context context) {
-        log("...selectItems(LocalDate, LocalDate, Context");
+        if(VERBOSE)log("ItemsWorker.selectItems(LocalDate, LocalDate, Context");
         try (LocalDB db = new LocalDB(context)) {
             String query = Queeries.selectItems(firstDate, lastDate, State.DONE);
             return db.selectItems(query);
@@ -149,7 +149,7 @@ public class ItemsWorker {
     }
 
     public static List<Item> selectAppointments(Context context) {
-        log("ItemsWorker.selectAppointments(Context)");
+        if(VERBOSE) log("ItemsWorker.selectAppointments(Context)");
         String query = Queeries.selectAppointments();
         try (LocalDB db = new LocalDB(context)) {
             return db.selectItems(query);
@@ -163,19 +163,19 @@ public class ItemsWorker {
         }
     }
     public static List<Item> selectChildren(Item item, Context context){
-        log("ItemsWorker.selectChildren(Item, Context)");
+        if(VERBOSE) log("ItemsWorker.selectChildren(Item, Context)");
         try (LocalDB db = new LocalDB(context)) {
             return db.selectChildren(item);
         }
     }
     public static List<Item> selectDateState(LocalDate date, State state, Context context){
-        log("ItemsWorker.selectDateState()");
+        if(VERBOSE) log("ItemsWorker.selectDateState()");
         try (LocalDB db = new LocalDB(context)) {
             return db.selectItems(Queeries.selectItems(date, state));
         }
     }
     public static List<Item> selectItems(State state, Context context) {
-        log("ItemsWorker.selectItems(State state)", state.toString());
+        if(VERBOSE) log("ItemsWorker.selectItems(State state)", state.toString());
         try (LocalDB db = new LocalDB(context)) {
             return db.selectItems(Queeries.selectItems(state));
         }
@@ -187,7 +187,7 @@ public class ItemsWorker {
     }
 
     public static List<Item> selectItems(LocalDate date, Context context, State state){
-        log("ItemsWorker.selectItems(LocalDate, Context, State");
+        if(VERBOSE) log("ItemsWorker.selectItems(LocalDate, Context, State");
         List<Item> items;
         try (LocalDB db = new LocalDB(context)) {
             items = db.selectItems(date, state);
@@ -196,13 +196,13 @@ public class ItemsWorker {
     }
 
     public static List<Item> selectChildItems(Item parent, Context context) {
-        log("ItemsWorker.selectChildItems(Item, Context)", parent.getHeading());
+        if(VERBOSE) log("ItemsWorker.selectChildItems(Item, Context)", parent.getHeading());
         try (LocalDB db = new LocalDB(context)) {
             return db.selectItems(Queeries.selectChildren(parent));
         }
     }
     public static List<Item> selectChildren(long id, Context context) {
-        log("...selectChildren(long, Context)", id);
+        if(VERBOSE) log("...selectChildren(long, Context)", id);
         try (LocalDB db = new LocalDB(context)) {
             return db.selectItems(Queeries.selectChildren(id));
         }
@@ -215,7 +215,7 @@ public class ItemsWorker {
         }
     }
     public static void setHasChild(Item item, boolean hasChild, Context context) {
-        log("ItemsWorker.setHasChild(Item, Context)", item.getHeading());
+        if(VERBOSE) log("ItemsWorker.setHasChild(Item, Context)", item.getHeading());
         try (LocalDB db = new LocalDB(context)) {
             db.setItemHasChild(item.getID(), hasChild);
         }
@@ -257,7 +257,7 @@ public class ItemsWorker {
     }
 
     public static List<Item> selectCalenderItems(YearMonth yearMonth, Context context) {
-        log("...selectCalenderItems(YearMonth)");
+        if(VERBOSE) log("ItemsWorker.selectCalenderItems(YearMonth)");
         LocalDate firstDate = yearMonth.atDay(1);
         LocalDate lastDate = yearMonth.atEndOfMonth();
         LocalDB db = new LocalDB(context);
@@ -266,7 +266,7 @@ public class ItemsWorker {
     }
 
     public static List<Item> selectItems(Week week, Context context) {
-        log("ItemsWorker.selectItems(Week, Context)");
+        if(VERBOSE) log("ItemsWorker.selectItems(Week, Context)");
         String queery = Queeries.selectItems(week);
         List<Item> items;
         try(LocalDB db = new LocalDB(context)){
@@ -283,7 +283,7 @@ public class ItemsWorker {
         }
     }
     public  static void touchParents(Item item, Context context){
-        log("...touchParents()");
+        if(VERBOSE) log("ItemsWorker.touchParents()");
         try (LocalDB db = new LocalDB(context)) {
             db.touchParents(item);
         }

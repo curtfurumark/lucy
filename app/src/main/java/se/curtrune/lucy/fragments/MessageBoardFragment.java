@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -114,10 +115,19 @@ public class MessageBoardFragment extends Fragment {
     }
     private void selectMessages(){
         log("...selectMessages()");
-        MessageWorker.selectMessages(messages -> {
-            log("...onMessages(List<Message>) size",messages.size() );
-            this.messages = messages;
-            setUserInterface(messages);
+        MessageWorker.selectMessages(new MessageWorker.OnMessagesSelected() {
+            @Override
+            public void onMessages(List<Message> messageList) {
+                log("...onMessages(List<Message>) size",messages.size() );
+                messages = messageList;
+                setUserInterface(messages);
+            }
+
+            @Override
+            public void onError(String message) {
+                log("...onError(String message)");
+                Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+            }
         });
     }
     private void setUserInterface(List<Message> messageList){

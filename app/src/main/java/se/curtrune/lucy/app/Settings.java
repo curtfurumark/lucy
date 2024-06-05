@@ -62,6 +62,7 @@ public class Settings {
         editor.commit();
     }
 
+
     public void reload(Context context) {
         log("...reload(Context)");
         init(context);

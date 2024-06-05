@@ -81,14 +81,19 @@ public class MainActivityOld extends AppCompatActivity {
     }
     private void boostMe(){
         log("...boostMe()");
-        AffirmationWorker.requestAffirmation(new AffirmationWorker.RequestAffirmationCallback() {
+/*        AffirmationWorker.requestAffirmation(new AffirmationWorker.RequestAffirmationCallback() {
             @Override
             public void onRequest(Affirmation affirmation) {
                 log("...onRequest(Affirmation)");
                 BoostDialog boostDialog = new BoostDialog(affirmation.getAffirmation());
                 boostDialog.show(getSupportFragmentManager(), "boost me");
             }
-        });
+
+            @Override
+            public void onException(Exception e) {
+                //Toast.makeText()
+            }
+        });*/
     }
     private void calculateEstimate(){
         log("...calculateEstimate()");

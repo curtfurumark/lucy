@@ -18,6 +18,7 @@ public class MessageWorker {
 
     public interface OnMessagesSelected{
         void onMessages(List<Message> messageList);
+        void onError(String message);
     }
 
     public interface OnInsertedCallback{
@@ -34,6 +35,7 @@ public class MessageWorker {
             @Override
             public void onRequestSelectError(String errMessage) {
                 log("...onRequestSelectError(String)", errMessage);
+                callback.onError(errMessage);
             }
 
             @Override

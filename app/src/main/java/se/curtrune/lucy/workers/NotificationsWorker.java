@@ -19,7 +19,7 @@ public class NotificationsWorker {
     private static final String CHANNEL_ONE_NAME = "lucinda notifications";
 
     public static void createNotificationChannel(Context context){
-        log("EasyNotification.createNotificationChannel(Context)");
+        log("NotificationsWorker.createNotificationChannel(Context)");
         NotificationChannel notificationChannel1 = new NotificationChannel(CHANNEL_ONE, CHANNEL_ONE_NAME, NotificationManager.IMPORTANCE_HIGH);
         notificationChannel1.enableLights(true);
         notificationChannel1.enableVibration(true);
