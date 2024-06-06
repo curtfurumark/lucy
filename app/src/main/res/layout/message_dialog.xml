@@ -1,31 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:padding="16dp"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
     <EditText
         android:id="@+id/messageDialog_subject"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="subject" />
+        android:hint="@string/subject"
+        android:inputType="text"
+        android:minHeight="48dp" />
 
     <EditText
         android:id="@+id/messageDialog_content"
         android:layout_width="match_parent"
-        android:lines="4"
-        android:gravity="top"
         android:layout_height="wrap_content"
-        android:hint="content" />
+        android:gravity="top"
+        android:hint="@string/content"
+        android:inputType="text"
+        android:lines="4"
+        android:minHeight="48dp" />
+
     <EditText
         android:id="@+id/messageDialog_user"
-        android:hint="user"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <Button
-        android:id="@+id/messageDialog_publish"
-        android:text="publish"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:hint="@string/user"
+        android:inputType="text"
+        android:minHeight="48dp" />
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/messageDialog_publish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:text="@string/publish" />
+
+        <Button
+            android:id="@+id/messageDialog_dismiss"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="@string/dismiss" />
+    </RelativeLayout>
 </LinearLayout>

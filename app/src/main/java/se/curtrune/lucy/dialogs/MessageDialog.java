@@ -15,7 +15,6 @@ import androidx.annotation.Nullable;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 
 import se.curtrune.lucy.R;
@@ -67,7 +66,7 @@ public class MessageDialog extends BottomSheetDialogFragment {
         editTextContent = view.findViewById(R.id.messageDialog_content);
         editTextUser = view.findViewById(R.id.messageDialog_user);
         buttonSave = view.findViewById(R.id.messageDialog_publish);
-        buttonDismiss = view.findViewById(R.id.durationDialog_dismiss);
+        buttonDismiss = view.findViewById(R.id.messageDialog_dismiss);
     }
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
@@ -76,7 +75,7 @@ public class MessageDialog extends BottomSheetDialogFragment {
             listener.onNewMessage(message);
             dismiss();
         });
-        //buttonDismiss.setOnClickListener(view->dismiss());
+        buttonDismiss.setOnClickListener(view->dismiss());
     }
     @Override
     public void onAttach(@NonNull Context context) {

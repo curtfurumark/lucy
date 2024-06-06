@@ -14,7 +14,8 @@
         android:id="@+id/durationFragment_firstDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="firstDate"
+        android:text="@string/firstdate"
+        android:minHeight="48dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -23,8 +24,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="lastDate"
+        android:minHeight="48dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="HardcodedText" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/durationFragment_recycler"
@@ -42,7 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:ems="6"
-        android:text="total duration: "
+        android:text="@string/total_duration"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/durationFragment_firstDate" />
 
@@ -68,14 +71,14 @@
             android:id="@+id/durationFragment_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="category"
+            android:text="@string/category"
             tools:layout_editor_absoluteY="37dp" />
 
         <RadioButton
             android:id="@+id/durationFragment_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="date"
+            android:text="@string/date"
             tools:layout_editor_absoluteX="19dp"
             tools:layout_editor_absoluteY="52dp" />
     </RadioGroup>

@@ -62,9 +62,10 @@ public class ProjectsFragment extends Fragment implements
     private ItemAdapter adapter;
     private Item currentParent;
     private List<Item> items;
+    public static boolean VERBOSE = false;
 
     public ProjectsFragment() {
-        log("ProjectsFragment()");
+        if( VERBOSE) log("ProjectsFragment()");
     }
 
     /**
@@ -117,11 +118,10 @@ public class ProjectsFragment extends Fragment implements
         }
         items = ItemsWorker.selectChildren(currentParent, getContext());
         initRecycler(items);
-        log("...recycler initialized");
         return view;
     }
     private void initComponents(View view){
-        log("...initComponents()");
+        if(VERBOSE)log("...initComponents()");
         recycler = view.findViewById(R.id.projectsFragment_recycler);
         editTextSearch = view.findViewById(R.id.projectsFragment_search);
         buttonAddItem = view.findViewById(R.id.projectsFragment_addItem);
@@ -130,7 +130,7 @@ public class ProjectsFragment extends Fragment implements
     }
 
     private void initRecycler(List<Item> items){
-        log("...initRecycler(List<Item>)", items.size());
+        if( VERBOSE) log("...initRecycler(List<Item>)", items.size());
         adapter = new ItemAdapter(this.items, this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recycler.setLayoutManager(layoutManager);
@@ -138,7 +138,7 @@ public class ProjectsFragment extends Fragment implements
         recycler.setAdapter(adapter);
     }
     private void  initListeners(){
-        log("...initListeners()");
+        if(VERBOSE) log("...initListeners()");
         buttonAddItem.setOnClickListener(view->showAddItemDialog());
         textViewGoToParentList.setOnClickListener(view->navigateUp());
     }
@@ -157,7 +157,7 @@ public class ProjectsFragment extends Fragment implements
     }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        log("...onOptionsItemSelected(MenuItem) ", item.getTitle().toString());
+        if( VERBOSE) log("...onOptionsItemSelected(MenuItem) ", item.getTitle().toString());
         if( item.getItemId() == R.id.mainActivity_startSequence){
             startSequence();
         }
@@ -196,7 +196,6 @@ public class ProjectsFragment extends Fragment implements
     public void onItemClick(Item item) {
         log("...onItemClick(Item)", item.getHeading());
         if(item.hasChild() && !item.isTemplate()){
-            //setTitle(item.getHeading());
             items = ItemsWorker.selectChildItems(item, getContext());
             Lucinda.currentParent = item;
             currentParent = item;
@@ -204,10 +203,8 @@ public class ProjectsFragment extends Fragment implements
         }else {
             Lucinda.currentFragment = this;
             Intent intent = new Intent(getContext(), ItemSession.class);
-            //intent.putExtra(Constants.INTENT_ITEM_SESSION, true);
             intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.PROJECTS_FRAGMENT);
             intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, item);
-            //Lucinda.currentViewMode = mode;
             startActivity(intent);
         }
     }
@@ -219,7 +216,7 @@ public class ProjectsFragment extends Fragment implements
 
     @Override
     public void onCheckboxClicked(Item item, boolean checked) {
-        log("...onCheckboxClicked(Item, boolean)", checked);
+        if( VERBOSE) log("...onCheckboxClicked(Item, boolean)", checked);
         item.setState(checked ? State.DONE: State.TODO);
         int rowsAffected = ItemsWorker.update(item, getContext());
         if( rowsAffected != 1){
@@ -231,7 +228,7 @@ public class ProjectsFragment extends Fragment implements
 
     }
     private void showAddItemDialog(){
-        log("...showAddItemDialog()");
+        if(VERBOSE) log("...showAddItemDialog()");
         AddTemplateDialog dialog = new AddTemplateDialog(currentParent, LocalDate.now());
         dialog.setCallback(new OnNewItemCallback() {
             @Override

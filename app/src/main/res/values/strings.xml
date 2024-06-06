@@ -148,4 +148,24 @@
     <string name="notification_date">notification date</string>
     <string name="notification_time">notification time</string>
     <string name="description">description</string>
+    <string name="add">add</string>
+    <string name="add_appointment">add appointment</string>
+    <string name="add_or_delete">add or delete</string>
+    <string name="has_child">has child</string>
+    <string name="id">id</string>
+    <string name="add_notification">add notification</string>
+    <string name="tags">tags</string>
+    <string name="add_or_delete_notification">add or delete notification</string>
+    <string name="mood_level">mood level</string>
+    <string name="anxiety_level">anxiety level</string>
+    <string name="add_or_delete_repeat">add or delete repeat</string>
+    <string name="energy_level">energy level</string>
+    <string name="estimated_energy_level">estimated energy level</string>
+    <string name="parent_id">parent id</string>
+    <string name="content">content</string>
+    <string name="publish">publish</string>
+    <string name="subject">subject</string>
+    <string name="firstdate">firstDate</string>
+    <string name="total_duration">total duration:</string>
+    <string name="stress_level">stress level</string>
 </resources>

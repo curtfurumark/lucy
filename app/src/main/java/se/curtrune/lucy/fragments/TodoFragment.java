@@ -54,13 +54,14 @@ public class TodoFragment extends Fragment implements
     private ItemAdapter adapter;
     private List<Item> items;
     private Item currentParent;
+    public static boolean VERBOSE = false;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
     public TodoFragment() {
-        log("ProjectsFragment()");
+        if( VERBOSE) log("ToDoFragment()");
     }
 
     /**
@@ -104,7 +105,7 @@ public class TodoFragment extends Fragment implements
         return view;
     }
     private void addItemDialog(){
-        log("...addItemDialog()");
+        if( VERBOSE) log("...addItemDialog()");
         AddItemDialog dialog = new AddItemDialog(ItemsWorker.getRootItem(Settings.Root.TODO, getContext()));
         dialog.setCallback(new AddItemDialog.Callback() {
             @Override
@@ -123,13 +124,13 @@ public class TodoFragment extends Fragment implements
         adapter.setList(filteredItems);
     }
     private void initComponents(View view){
-        log("...initComponents()");
+        if( VERBOSE) log("...initComponents()");
         recycler = view.findViewById(R.id.todoFragment_recycler);
         editTextSearch = view.findViewById(R.id.todoFragment_search);
         buttonAdd = view.findViewById(R.id.todoFragment_buttonAdd);
     }
     private void initListeners(){
-        log("...initListeners()");
+        if( VERBOSE) log("...initListeners()");
         buttonAdd.setOnClickListener(view->addItemDialog());
         editTextSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -153,7 +154,7 @@ public class TodoFragment extends Fragment implements
     }
 
     private void initRecycler(List<Item> items){
-        log("...initRecycler(List<Item>)", items.size());
+        if( VERBOSE) log("...initRecycler(List<Item>)", items.size());
         adapter = new ItemAdapter(this.items, this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recycler.setLayoutManager(layoutManager);

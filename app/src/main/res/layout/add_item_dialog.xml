@@ -47,8 +47,7 @@
             android:id="@+id/periodDialog_days"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/heading"
-            android:textColorHint="#757575" />
+            android:hint="@string/heading" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button

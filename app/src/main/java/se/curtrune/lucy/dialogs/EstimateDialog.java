@@ -27,7 +27,6 @@ import se.curtrune.lucy.util.Constants;
 public class EstimateDialog extends BottomSheetDialogFragment {
     private TextView textViewEnergy;
     private SeekBar seekBarEnergy;
-    //private TextView textViewDuration;
     private Button buttonDismiss;
     private TextView textViewHours;
     private TextView textViewMinutes;
@@ -86,9 +85,7 @@ public class EstimateDialog extends BottomSheetDialogFragment {
 
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
-        buttonDismiss.setOnClickListener(view1 -> {
-            dismiss();
-        });
+        buttonDismiss.setOnClickListener(view1 -> dismiss());
         buttonSave.setOnClickListener(view->{
             callback.onEstimate(getEstimate(), mode);
             dismiss();
@@ -127,7 +124,7 @@ public class EstimateDialog extends BottomSheetDialogFragment {
         if( mode.equals(Mode.EDIT)) {
             String strEnergyEstimate = String.format(Locale.getDefault(), "%s %d",getString(R.string.energy), estimate.getEnergy());
             textViewEnergy.setText(strEnergyEstimate);
-            String strDurationEstimate = String.format(Locale.getDefault(), "%d", estimate.getDuration());
+            //String strDurationEstimate = String.format(Locale.getDefault(), "%d", estimate.getDuration());
             seekBarEnergy.setProgress(Constants.ENERGY_OFFSET);
         }else{
             String strEnergyEstimate = String.format(Locale.getDefault(), "%s %d",getString(R.string.energy), 0);

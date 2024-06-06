@@ -4,12 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".activities.ItemEditor">
+    tools:context=".activities.ItemSession">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/itemSession_rootLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:padding="8dp"
         tools:context=".activities.ItemEditor">
 
@@ -148,7 +148,7 @@
             android:src="@drawable/baseline_add_24"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/itemSession_labelDateTime"
-            android:contentDescription="add or delete" />
+            android:contentDescription="@string/add_or_delete" />
 
         <LinearLayout
             android:id="@+id/itemSession_layoutDateTime"
@@ -200,6 +200,7 @@
             android:layout_marginTop="8dp"
             android:text="@string/mental"
             android:textSize="24sp"
+            android:minHeight="48dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/divider_mental" />
 
@@ -233,6 +234,7 @@
                 android:max="10"
                 android:progress="5"
                 android:visibility="visible"
+                android:contentDescription="@string/energy_level"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/itemSession_labelEnergy"
                 app:layout_constraintTop_toTopOf="@+id/itemSession_labelEnergy" />
@@ -257,6 +259,7 @@
                 android:max="10"
                 android:progress="5"
                 android:visibility="visible"
+                android:contentDescription="@string/anxiety_level"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/itemSession_labelAnxiety"
                 app:layout_constraintTop_toTopOf="@+id/itemSession_labelAnxiety" />
@@ -281,6 +284,7 @@
                 android:max="10"
                 android:progress="5"
                 android:visibility="visible"
+                android:contentDescription="@string/mood_level"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/itemSession_labelMood"
                 app:layout_constraintTop_toTopOf="@+id/itemSession_labelMood" />
@@ -305,6 +309,7 @@
                 android:max="10"
                 android:progress="5"
                 android:visibility="visible"
+                android:contentDescription="@string/stress_level"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/itemSession_labelStress"
                 app:layout_constraintTop_toTopOf="@+id/itemSession_labelStress" />
@@ -352,6 +357,7 @@
             android:layout_marginTop="8dp"
             android:text="@string/estimate"
             android:textSize="24sp"
+            android:minHeight="48dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/dividerEstimate" />
 
@@ -381,7 +387,8 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/hours"
                     android:inputType="number"
-                    android:text="00" />
+                    android:text="00"
+                    tools:ignore="HardcodedText" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -399,7 +406,8 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/minutes"
                     android:inputType="number"
-                    android:text="00" />
+                    android:text="00"
+                    tools:ignore="HardcodedText" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -417,7 +425,8 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/seconds"
                     android:inputType="number"
-                    android:text="00" />
+                    android:text="00"
+                    tools:ignore="HardcodedText" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
@@ -440,6 +449,7 @@
                 android:layout_marginEnd="16dp"
                 android:max="10"
                 android:progress="5"
+                android:contentDescription="@string/estimated_energy_level"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/textView10"
                 app:layout_constraintTop_toTopOf="@+id/textView10" />
@@ -462,11 +472,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:drawableLeft="@drawable/baseline_repeat_24"
             android:text="@string/repeat"
             android:textSize="24sp"
+            android:minHeight="48dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dividerRepeat" />
+            app:layout_constraintTop_toBottomOf="@+id/dividerRepeat"
+            app:drawableStartCompat="@drawable/baseline_repeat_24" />
 
         <ImageView
             android:id="@+id/itemSession_repeatActionIcon"
@@ -475,6 +486,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toEndOf="parent"
+            android:contentDescription="@string/add_or_delete_repeat"
             app:layout_constraintTop_toBottomOf="@+id/dividerRepeat"
             app:srcCompat="@drawable/baseline_add_24" />
 
@@ -526,6 +538,7 @@
             android:layout_marginTop="8dp"
             android:text="@string/notification"
             android:textSize="24sp"
+            android:minHeight="48dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider_notification" />
 
@@ -534,10 +547,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:text="add"
+            android:text="@string/add_notification"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/itemSession_labelNotifications"
-            app:srcCompat="@drawable/baseline_add_24" />
+            app:srcCompat="@drawable/baseline_add_24"
+            android:contentDescription="@string/add_or_delete_notification" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/itemSession_layoutNotification"
@@ -554,6 +568,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/notification_date"
                 android:textSize="20sp"
+                android:minHeight="48dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -586,6 +601,7 @@
             android:layout_marginTop="8dp"
             android:text="@string/info"
             android:textSize="24sp"
+            android:minHeight="48dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/dividerInfo" />
 
@@ -633,7 +649,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="tags"
+                android:text="@string/tags"
                 app:layout_constraintStart_toStartOf="@+id/itemSession_infoCreated"
                 app:layout_constraintTop_toBottomOf="@+id/itemSession_infoCreated" />
 
@@ -651,7 +667,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="id"
+                android:text="@string/id"
                 app:layout_constraintStart_toStartOf="@+id/itemSession_infoCategory"
                 app:layout_constraintTop_toBottomOf="@+id/itemSession_infoCategory" />
 
@@ -659,7 +675,7 @@
                 android:id="@+id/itemSession_infoParentID"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="parent id"
+                android:text="@string/parent_id"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/itemSession_infoID" />
 
@@ -668,7 +684,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="has child"
+                android:text="@string/has_child"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/itemSession_infoParentID" />
 
@@ -700,6 +716,7 @@
             android:layout_height="wrap_content"
             android:text="@string/settings"
             android:textSize="24sp"
+            android:minHeight="48dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/dividerSettings" />
 
@@ -775,6 +792,7 @@
             android:layout_height="wrap_content"
             android:text="@string/search"
             android:textSize="24sp"
+            android:minHeight="48dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/dividerSearch" />
 
@@ -800,7 +818,7 @@
                     android:id="@+id/itemSession_tags"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="tags" />
+                    android:hint="@string/tags" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <Spinner

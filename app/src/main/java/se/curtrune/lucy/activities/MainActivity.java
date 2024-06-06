@@ -122,14 +122,12 @@ public class MainActivity extends AppCompatActivity {
         actionBarDrawerToggle.syncState();
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(v -> {
-            log("... toolbar on click");
+            if( VERBOSE) log("... toolbar on click");
             drawerLayout.open();
         });
         navigationView.setNavigationItemSelectedListener(item -> {
             log("...onNavigationItemSelected(MenuItem) ", Objects.requireNonNull(item.getTitle()).toString());
             if( item.getItemId() == R.id.navigationDrawer_graphFragment){
-                navigate(new GraphFragment());
-            }else if( item.getItemId() == R.id.navigationDrawer_graphFragment){
                 navigate(new GraphFragment());
             }else if( item.getItemId() == R.id.navigationDrawer_monthCalender){
                 navigate(new MonthCalenderFragment());

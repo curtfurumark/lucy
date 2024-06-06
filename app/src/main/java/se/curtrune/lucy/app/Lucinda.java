@@ -63,7 +63,6 @@ public class Lucinda {
         DBAdmin.insertCategories(context);
         DBAdmin.insertRootItems(context);
         Demo.insertDemo(context);
-        //log("will setDefaultUserSettings(");
         setDefaultUserSettings(context);
         settings.setLucyIsInitialized(true, context);
         settings.reload(context);

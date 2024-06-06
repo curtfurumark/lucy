@@ -72,7 +72,7 @@ public class Queeries {
     public static String CREATE_TABLE_CATEGORIES = "CREATE TABLE categories " +
             "(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)";
 
-    public static boolean VERBOSE = true;
+    public static boolean VERBOSE = false;
 
     public static String insertCategory(String category) {
         return String.format("INSERT INTO categories (name) values ('%s')", category);
