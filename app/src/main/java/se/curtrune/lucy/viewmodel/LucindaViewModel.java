@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import se.curtrune.lucy.classes.Item;
-import se.curtrune.lucy.dialogs.BoostDialog;
 
 public class LucindaViewModel extends ViewModel {
     private final MutableLiveData<Integer> energy = new MutableLiveData<>();

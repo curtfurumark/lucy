@@ -62,15 +62,16 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:ems="5"
-        android:text="TextView"
+        android:text="mental label"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroup2" />
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup2"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/mentalFragment__mentalTotal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
+        android:text="@string/mental_sum"
         app:layout_constraintStart_toEndOf="@+id/mentalFragment_mentalLabel"
         app:layout_constraintTop_toTopOf="@+id/mentalFragment_mentalLabel" />
 
@@ -81,6 +82,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:clickable="true"
+        android:contentDescription="@string/add_mental"
         android:src="@android:drawable/ic_input_add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -92,6 +94,7 @@
         android:layout_marginTop="8dp"
         android:text="date"
         android:textSize="24sp"
+        android:minHeight="48dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

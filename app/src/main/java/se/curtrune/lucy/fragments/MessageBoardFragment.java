@@ -118,7 +118,7 @@ public class MessageBoardFragment extends Fragment {
         MessageWorker.selectMessages(new MessageWorker.OnMessagesSelected() {
             @Override
             public void onMessages(List<Message> messageList) {
-                log("...onMessages(List<Message>) size",messages.size() );
+                log("...onMessages(List<Message>) size",messageList.size() );
                 messages = messageList;
                 setUserInterface(messages);
             }

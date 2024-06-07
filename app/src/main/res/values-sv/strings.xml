@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="add_message">Lägg till meddelande</string>
     <string name="statistics">Statistik</string>
     <string name="today">Idag</string>
     <string name="search">Sök</string>

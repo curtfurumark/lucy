@@ -49,7 +49,7 @@ public class MentalFragment2 extends Fragment implements MentalAdapter.Callback,
     private TextView textViewDate;
     private FloatingActionButton buttonAddMental;
     private List<Mental> mentals = new ArrayList<>();
-    private LucindaViewModel viewModel;
+    private LucindaViewModel viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
 
     private LocalDate date;
     private MentalStatistics mentalStatistics;
@@ -166,7 +166,6 @@ public class MentalFragment2 extends Fragment implements MentalAdapter.Callback,
     }
     private void initViewModel(){
         log("...initViewModel()");
-        viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
 
     }
 

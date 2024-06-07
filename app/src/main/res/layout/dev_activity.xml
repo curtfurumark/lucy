@@ -10,23 +10,25 @@
 
 
     <TextView
-        android:id="@+id/homeActivity_mainActivity"
+        android:id="@+id/devActivity_mainActivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="main"
+        android:minHeight="48dp"
         android:layout_marginTop="24sp"
         android:textSize="34sp" />
 
     <TextView
-        android:id="@+id/homeActivity_economy"
+        android:id="@+id/devActivity_economy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="economy"
+        android:text="@string/economy"
+        android:minHeight="48dp"
         android:layout_marginTop="24sp"
         android:textSize="34sp" />
 
     <TextView
-        android:id="@+id/homeActivity_settings"
+        android:id="@+id/devActivity_settings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/settings"
@@ -34,16 +36,17 @@
         android:textSize="34sp" />
 
     <TextView
-        android:id="@+id/homeActivity_quote"
+        android:id="@+id/devActivity_quote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ellipsize="marquee"
         android:layout_marginTop="24sp"
         android:focusable="true"
         android:marqueeRepeatLimit="marquee_forever"
+        android:minHeight="48dp"
         android:scrollHorizontally="true"
         android:singleLine="true"
-        android:text="quotes"
+        android:text="@string/quotes"
         android:textSize="24sp" />
 
     <TextView
@@ -52,7 +55,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:gravity="center"
-        android:text="navigation drawer"
+        android:text="@string/navigation_drawer"
         android:textSize="24sp" />
 
 </LinearLayout>

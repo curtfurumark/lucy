@@ -13,7 +13,9 @@
         android:textSize="26sp"
         android:gravity="center"
         android:text="2024-05-30"
-        android:layout_height="wrap_content"/>
+        android:minHeight="48dp"
+        android:layout_height="wrap_content"
+        tools:ignore="HardcodedText" />
     <com.jjoe64.graphview.GraphView
         android:id="@+id/graphActivity_graphView"
         android:layout_marginTop="24dp"

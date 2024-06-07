@@ -36,7 +36,7 @@ public class SelectThread extends Thread {
             return;
 
         }
-        new Handler(Looper.getMainLooper()).post(() -> callback.onRequestSelectError(json));;
+        new Handler(Looper.getMainLooper()).post(() -> callback.onRequestSelectDone(json));;
 
     }
 

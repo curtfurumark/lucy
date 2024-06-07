@@ -40,7 +40,7 @@ public class MessageWorker {
 
             @Override
             public void onRequestSelectDone(String json) {
-                log("...onRequestSelectDone(String json)");
+                log("...onRequestSelectDone(String json)", json);
                 List<Message> messages = new ArrayList<>(Arrays.asList(new Gson().fromJson(json, Message[].class)));
                 callback.onMessages(messages);
             }

@@ -168,4 +168,9 @@
     <string name="firstdate">firstDate</string>
     <string name="total_duration">total duration:</string>
     <string name="stress_level">stress level</string>
+    <string name="add_mental">add mental</string>
+    <string name="mental_sum">mental sum</string>
+    <string name="economy">economy</string>
+    <string name="quotes">quotes</string>
+    <string name="navigation_drawer">navigation drawer</string>
 </resources>

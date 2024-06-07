@@ -39,8 +39,7 @@ public class SequenceActivity extends AppCompatActivity implements SequenceAdapt
     private TextView textViewParentHeading;
     private TextView textViewEstimatedTotalDuration;
     private TextView textViewEstimatedEnergy;
-    //private TextView textViewInfo;
-    //private CheckBox checkBoxState;
+
     private static final String PARENT_ITEM = "PARENT_ITEM";
     private TextView textViewNumberItems;
     private Item parentItem;

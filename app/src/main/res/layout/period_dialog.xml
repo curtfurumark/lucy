@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:text="day of week"
         android:textSize="26sp"
+        android:minHeight="48dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
@@ -93,6 +94,7 @@
         android:layout_marginTop="16dp"
         android:text="@string/days"
         android:textSize="26sp"
+        android:minHeight="48dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/periodDialog_layoutWeekDays" />
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -106,9 +108,10 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/periodDialog_textInputLayoutDays"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="379dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="@string/days"
+            android:minHeight="48dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 

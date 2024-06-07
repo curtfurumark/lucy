@@ -119,11 +119,11 @@ public class DevActivity extends AppCompatActivity {
     private void initComponents() {
         if( VERBOSE) log("...initComponents()");
 
-        textViewQuote = findViewById(R.id.homeActivity_quote);
+        textViewQuote = findViewById(R.id.devActivity_quote);
         textViewQuote.setSelected(true);
-        textViewNewMain = findViewById(R.id.homeActivity_mainActivity);
-        textViewSettings = findViewById(R.id.homeActivity_settings);
-        textViewSwipeAble = findViewById(R.id.homeActivity_economy);
+        textViewNewMain = findViewById(R.id.devActivity_mainActivity);
+        textViewSettings = findViewById(R.id.devActivity_settings);
+        textViewSwipeAble = findViewById(R.id.devActivity_economy);
     }
 
     private void initListeners() {

@@ -49,7 +49,6 @@ public class SettingsActivity extends AppCompatActivity {
                     AppCompatDelegate.setApplicationLocales(localeListCompat);
                 }else if( key.equals("pref_panic_action")){
                     log("pref_panic_action");
-
                 }else if( key.equals("pref_dark_mode")){
                     log("key pref_dark_mode");
                     SettingsWorker.toggleDarkMode(requireContext());
