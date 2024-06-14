@@ -6,10 +6,13 @@ import android.app.UiModeManager;
 import android.content.Context;
 
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.os.LocaleListCompat;
+
+import java.util.Locale;
 
 public class SettingsWorker {
     public static void toggleDarkMode(Context context){
-        log("...toggleDarkMode()");
+        log("SettingsWorker.toggleDarkMode(Context)");
         if(context == null){
             log("...called with Context == null");
             return;
@@ -39,7 +42,18 @@ public class SettingsWorker {
     public static void setDarkMode(){
         log("SettingsWorker.setDarkMode()");
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        //UiModeManager uiModeManager = (UiModeManager) context.getSystemService(Context.UI_MODE_SERVICE);
-
+    }
+    public static void setLightMode(){
+        log("SettingsWorker.setLightMode()");
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+    }
+    public static void setLanguage(String languageCode){
+        log("SettingsWorker.setLanguage(String)", languageCode);
+        LocaleListCompat localeListCompat = LocaleListCompat.forLanguageTags(languageCode);
+        AppCompatDelegate.setApplicationLocales(localeListCompat);
+    }
+    public static String getLanguage() {
+        Locale locale = Locale.getDefault();
+        return locale.getLanguage();
     }
 }

@@ -13,6 +13,7 @@
         android:text="@string/lucinda"
         />
     <TextView
+        android:id="@+id/navigationHeader_lucindaHome"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="www.curt.furumark.se/lucinda"

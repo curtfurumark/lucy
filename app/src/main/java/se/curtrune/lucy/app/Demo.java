@@ -69,19 +69,54 @@ public class Demo {
     }
     public static void insertProjects(Context context){
         log("...insertProjects(Context)");
+        createReadingList(context);
+        createShoppingList(context);
+    }
+    public static void createReadingList(Context context){
         LocalDB db = new LocalDB(context);
         Item projectsRoot = ItemsWorker.getRootItem(Settings.Root.PROJECTS, context);
-        Item readStuff = getProjectItem("read stuff");
-        readStuff = db.insertChild(projectsRoot, readStuff);
+        Item readingList = getProjectItem("reading list");
+        readingList = db.insertChild(projectsRoot, readingList);
         Item wodehouse = new Item("wodehouse");
-        wodehouse.setParentId(readStuff.getID());
-        db.insertChild(readStuff, wodehouse);
+        wodehouse.setParentId(readingList.getID());
+        db.insertChild(readingList, wodehouse);
         Item ukbridge = new Item("ukbridge");
         ukbridge.setParentId(wodehouse.getID());
         db.insertChild(wodehouse, ukbridge);
         Item moneyForNothing = new Item("money for nothing");
         moneyForNothing.setParentId(wodehouse.getID());
         db.insertChild(wodehouse, moneyForNothing);
+
+        Item douglas = getProjectItem("douglas adams");
+        db.insertChild(readingList, douglas);
+        Item hitchHiker = getProjectItem("hitch hikers guide to the galaxy");
+        db.insertChild(douglas, hitchHiker);
+        Item fish = getProjectItem("so long and thanks for all the fish");
+        db.insertChild(douglas, fish);
+        Item restaurant = getProjectItem("the restaurant at the end of the universe");
+        db.insertChild(douglas, restaurant);
+    }
+    public static void createShoppingList(Context context){
+        log("Demo.createShoppingList()");
+        try(LocalDB db = new LocalDB(context)){
+            Item projects = ItemsWorker.getProjectsRoot(context);
+            Item shoppingList = getProjectItem("shopping list");
+            db.insertChild(projects, shoppingList);
+            Item snus = getProjectItem("snus");
+            Item eggs = getProjectItem("ägg");
+            Item flour =  getProjectItem("mjöl");
+            Item milk = getProjectItem("mjölk");
+            Item butter = getProjectItem("smör");
+            Item salt = getProjectItem("salt");
+            Item jam = getProjectItem("sylt");
+            db.insertChild(shoppingList, snus);
+            db.insertChild(shoppingList, eggs);
+            db.insertChild(shoppingList, flour);
+            db.insertChild(shoppingList, milk);
+            db.insertChild(shoppingList, butter);
+            db.insertChild(shoppingList, salt);
+            db.insertChild(shoppingList, jam);
+        }
     }
     public static void insertPanic(Context context){
         log("...insertPanic(Context)");
@@ -109,12 +144,5 @@ public class Demo {
         insertProjects(context);
         insertPanic(context);
         insertAppointments(context);
-        //***********  insert project read stuff *************
-
-        //*********** PANIC *********************
-
-        //**********insert appointments*************//
-/*        Item misaAdam =  getAppointment("misa workshop", LocalDate.of(2024, 4, 26), LocalTime.of(13, 0));
-        db.insert(misaAdam);*/
     }
 }

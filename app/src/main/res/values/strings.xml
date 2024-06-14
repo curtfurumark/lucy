@@ -173,4 +173,10 @@
     <string name="economy">economy</string>
     <string name="quotes">quotes</string>
     <string name="navigation_drawer">navigation drawer</string>
+    <string name="web_page">web page</string>
+    <string name="sequence">sequence</string>
+    <string name="game">game</string>
+    <string name="panic_action">panic action</string>
+    <string name="swedish">swedish</string>
+    <string name="english">english</string>
 </resources>

@@ -23,11 +23,13 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import java.sql.SQLException;
+import java.util.Locale;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.User;
 import se.curtrune.lucy.workers.NotificationsWorker;
+import se.curtrune.lucy.workers.SettingsWorker;
 
 public class LogInActivity extends AppCompatActivity {
     private EditText editTextUser;
@@ -36,22 +38,7 @@ public class LogInActivity extends AppCompatActivity {
     private CheckBox checkBoxUsePassword;
     private Lucinda lucinda;
     private boolean createPassword = false;
-/*    private ActivityResultLauncher<String> requestPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-                if (isGranted) {
-                    log("....PERMISSION POST NOTIFICATIONS GRANTED");
-                    // Permission is granted. Continue the action or workflow in your
-                    // app.
-                } else {
-                    log("...PERMISSION POST NOTIFICATIONS DENIED");
-                    //User.setNotificationsAllowed();
-                    // Explain to the user that the feature is unavailable because the
-                    // feature requires a permission that the user has denied. At the
-                    // same time, respect the user's decision. Don't link to system
-                    // settings in an effort to convince the user to change their
-                    // decision.
-                }
-            });*/
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +46,6 @@ public class LogInActivity extends AppCompatActivity {
         setContentView(R.layout.log_in_activity);
         initCatchAllExceptionsHandler();
         setTitle("lucinda");
-        log("LogInActivity.onCreate(Bundle)");
         printSystemInfo();
         lucinda = Lucinda.getInstance(this);
         if (!lucinda.isInitialized(this)) {
@@ -77,8 +63,7 @@ public class LogInActivity extends AppCompatActivity {
         initListeners();
         NotificationsWorker.createNotificationChannel(this);
         checkNotificationPermission();
-        setDarkMode();
-
+        //setDarkMode();
         startActivity(new Intent( this, MainActivity.class));
 
 
@@ -177,10 +162,14 @@ public class LogInActivity extends AppCompatActivity {
             int versionCode = packageInfo.versionCode;
             log("\tversionName", versionName);
             log("\tversionCode", versionCode);
+            log("\tlanguage", SettingsWorker.getLanguage());
         } catch (PackageManager.NameNotFoundException e) {
             log("....EXCEPTION getting  packageInfo");
             log(e.getMessage());
         }
+        Locale locale = Locale.getDefault();
+        log("...language" , locale.getLanguage());
+        log("...country", locale.getCountry());
     }
     private void validateUser(){
         log("...validateUser()");
@@ -226,7 +215,7 @@ public class LogInActivity extends AppCompatActivity {
     }
     private void setDarkMode(){
         log("...setDarkMode()");
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        SettingsWorker.setDarkMode();
 
     }
     private boolean validateInput(){

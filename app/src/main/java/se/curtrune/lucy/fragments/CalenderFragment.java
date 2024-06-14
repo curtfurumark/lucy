@@ -31,6 +31,8 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.activities.ItemSession;
@@ -42,10 +44,8 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.calender.Week;
 import se.curtrune.lucy.dialogs.AddTemplateDialog;
-import se.curtrune.lucy.dialogs.OnNewItemCallback;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
-import se.curtrune.lucy.workers.AffirmationWorker;
 import se.curtrune.lucy.workers.ItemsWorker;
 import se.curtrune.lucy.workers.NotificationsWorker;
 import se.curtrune.lucy.workers.StatisticsWorker;
@@ -57,14 +57,7 @@ import se.curtrune.lucy.workers.StatisticsWorker;
  */
 public class CalenderFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
     private Button buttonPrev;
     private Button buttonNext;
     private Week currentWeek;
@@ -90,27 +83,19 @@ public class CalenderFragment extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment CalenderFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static CalenderFragment newInstance(String param1, String param2) {
-        CalenderFragment fragment = new CalenderFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    public static CalenderFragment newInstance() {
+        return  new CalenderFragment();
+
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            log("...getArguments != null!");
         }
     }
 
@@ -119,7 +104,7 @@ public class CalenderFragment extends Fragment {
                              Bundle savedInstanceState) {
         log("CalenderFragment.onCreateView(...)");
         View view = inflater.inflate(R.layout.calender_fragment, container, false);
-        getActivity().setTitle("");
+        requireActivity().setTitle("");
         initDefaults();
         initComponents(view);
         initRecycler();
@@ -138,7 +123,7 @@ public class CalenderFragment extends Fragment {
     }
     private String getMonthYear(LocalDate date){
         if( VERBOSE) log("...getMonthYear(LocalDate)");
-        return String.format("%s, %d", date.getMonth().toString(), date.getYear());
+        return String.format(Locale.getDefault(), "%s, %d", date.getMonth().toString(), date.getYear());
     }
     private String getWeekNumber(){
         log("...getWeekNumber()");
@@ -230,15 +215,12 @@ public class CalenderFragment extends Fragment {
     }
     private void initRecyclerDates(){
         if( VERBOSE) log("...initRecyclerDates()");
-        calenderDateAdapter = new CalenderDateAdapter(currentWeek, new CalenderDateAdapter.Callback() {
-            @Override
-            public void onDateSelected(LocalDate date) {
-                log("...onDateSelected(LocalDate)", date.toString());
-                currentDate = date;
-                currentWeek.setCurrentDate(currentDate);
-                calenderDateAdapter.setList(currentWeek);
-                setUserInterface(date);
-            }
+        calenderDateAdapter = new CalenderDateAdapter(currentWeek, date -> {
+            log("...onDateSelected(LocalDate)", date.toString());
+            currentDate = date;
+            currentWeek.setCurrentDate(currentDate);
+            calenderDateAdapter.setList(currentWeek);
+            setUserInterface(date);
         });
         recyclerDates.setLayoutManager(new GridLayoutManager(getContext(), 7));
         recyclerDates.setItemAnimator(new DefaultItemAnimator());
@@ -256,21 +238,43 @@ public class CalenderFragment extends Fragment {
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int index = viewHolder.getAdapterPosition();
                 Item item = items.get(viewHolder.getAdapterPosition());
-                //Item item = items.remove(index);
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setTitle("postbone " + item.getHeading());
-                builder.setMessage("are you sure? ");
-                builder.setPositiveButton("postbone", (dialog, which) ->{
-                    log("...on positive button click");
-                    item.setTargetDate(LocalDate.now().plusDays(1));
-                    items.remove(item);
-                    int rowsAffected = ItemsWorker.update(item, getContext());
-                    log(item);
-                    if( rowsAffected != 1){
-                        log("ERROR updating item", item.getHeading());
-                    }else{
-                        adapter.notifyDataSetChanged();
-                    }
+                if( direction == ItemTouchHelper.LEFT){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle("delete" + item.getHeading());
+                    builder.setMessage("are you sure? ");
+                    builder.setPositiveButton("delete", (dialog, which) -> {
+                        log("...on positive button click");
+                        boolean deleted = ItemsWorker.delete(item, getContext());
+                        if( !deleted){
+                            log("...error deleting item");
+                            Toast.makeText(getContext(), "error deleting item", Toast.LENGTH_LONG).show();
+                        }else {
+                            items.remove(item);
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+                    builder.setNegativeButton("cancel", (dialog, which) -> {
+                        log("...on negative button click");
+                        //adapter.notifyDataSetChanged();
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+
+                }else if( direction == ItemTouchHelper.RIGHT) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle("postpone" + item.getHeading());
+                    builder.setMessage("are you sure? ");
+                    builder.setPositiveButton("postpone", (dialog, which) -> {
+                        log("...on positive button click");
+                        item.setTargetDate(LocalDate.now().plusDays(1));
+                        items.remove(item);
+                        int rowsAffected = ItemsWorker.update(item, getContext());
+                        log(item);
+                        if (rowsAffected != 1) {
+                            log("ERROR updating item", item.getHeading());
+                        } else {
+                            adapter.notifyDataSetChanged();
+                        }
 /*
                         adapter.notifyItemRemoved(index);
                         Toast.makeText(TodayActivity.this, "item deleted", Toast.LENGTH_LONG).show();
@@ -278,16 +282,18 @@ public class CalenderFragment extends Fragment {
                         log("error deleting item");
                         Toast.makeText(TodayActivity.this, "error deleting item", Toast.LENGTH_LONG).show();
                     }*/
-                });
-                builder.setNegativeButton("cancel", (dialog, which) -> {log(
-                        "...on negative button click");
+                    });
+                    builder.setNegativeButton("cancel", (dialog, which) -> {
+                        log(
+                                "...on negative button click");
                         adapter.notifyDataSetChanged();
-                });
-                AlertDialog dialog = builder.create();
-                dialog.show();
-
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
             }
         });
+
         itemTouchHelper.attachToRecyclerView(recycler);
     }
     private void initViewModel(){
@@ -305,7 +311,7 @@ public class CalenderFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        log("CalenderFragment.onOptionsItemSelected(MenuItem) ", item.getTitle().toString());
+        log("CalenderFragment.onOptionsItemSelected(MenuItem) ", Objects.requireNonNull(item.getTitle()).toString());
         return super.onOptionsItemSelected(item);
     }
 
@@ -331,19 +337,16 @@ public class CalenderFragment extends Fragment {
     private void showAddItemDialog(){
         log("...showAddItemDialog()");
         AddTemplateDialog dialog = new AddTemplateDialog(ItemsWorker.getRootItem(Settings.Root.DAILY, getContext()), currentDate);
-        dialog.setCallback(new OnNewItemCallback() {
-            @Override
-            public void onNewItem(Item item) {
-                log("...onNewItem(Item)");
-                log(item);
-                item = ItemsWorker.insert(item, getContext());
-                items.add(item);
-                if(item.hasNotification()){
-                    log("...item has notification");
-                    NotificationsWorker.setNotification(item, getContext());
-                }
-                updateAdapter();
+        dialog.setCallback(item -> {
+            log("...onNewItem(Item)");
+            log(item);
+            item = ItemsWorker.insert(item, getContext());
+            items.add(item);
+            if(item.hasNotification()){
+                log("...item has notification");
+                NotificationsWorker.setNotification(item, getContext());
             }
+            updateAdapter();
         });
         dialog.show(getParentFragmentManager(), "add item");
     }

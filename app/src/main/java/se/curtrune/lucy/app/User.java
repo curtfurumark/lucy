@@ -13,6 +13,7 @@ import java.util.Random;
 import java.util.Set;
 
 import se.curtrune.lucy.fragments.CustomizeFragment;
+import se.curtrune.lucy.workers.SettingsWorker;
 
 public class User {
     public static boolean VERBOSE = false;
@@ -21,7 +22,9 @@ public class User {
     public static final String USER_NAME = "USER_NAME";
     public static final String USES_PASSWORD = "USES_PASSWORD";
     public static final String KEY_PASSWORD = "KEY_PASSWORD";
+    public static final String KEY_PANIC_ACTION = "KEY_PANIC_ACTION";
     public static final String KEY_PANIC_URLS = "KEY_PANIC_URLS";
+    public static final String KEY_LANGUAGE = "KEY_LANGUAGE";
     public static String getRandomPanicUrl(Context context){
         log("User.getRandomPanicUrl(Context) ");
         List<String> urls = new ArrayList<String>(getPanicUrls(context));
@@ -30,7 +33,9 @@ public class User {
         Random random = new Random();
         return urls.get(random.nextInt(urls.size()));
     }
-
+    public static String getLanguage(Context context) {
+        return Settings.getString(KEY_LANGUAGE, "sv", context);
+    }
 
     public static Set<String> getPanicUrls(Context context){
         return Settings.getList(KEY_PANIC_URLS, context);
@@ -54,7 +59,7 @@ public class User {
     }
     public static boolean usesPassword(Context context) {
         log("User.usesPassword()");
-        return Settings.getBoolean( USES_PASSWORD, true, context);
+        return Settings.getBoolean( USES_PASSWORD, false, context);
     }
     public static boolean validatePassword(String user, String pwd, Context context){
         log("...validatePassword(String, String)");
@@ -66,6 +71,9 @@ public class User {
     public static void savePassword(String pwd, Context context) {
         log("User.savePassword(String, Context)");
         Settings.addString(KEY_PASSWORD, pwd, context);
+    }
+    public static Settings.PanicAction getPanicActions(Context context){
+        return Settings.PanicAction.valueOf(Settings.getString(KEY_PANIC_ACTION, Settings.PanicAction.PENDING.toString(), context));
     }
 
     public static String getPassword(Context context) {
@@ -89,5 +97,21 @@ public class User {
         log("User.setPanicUrls()");
         Set<String> urlSet = new HashSet<>(Arrays.asList(urlArray));
         Settings.saveList(KEY_PANIC_URLS,urlSet, context );
+    }
+
+    public static boolean getDarkMode(Context context) {
+        log("User.getDarkMode(Context)");
+        return Settings.getBoolean(USE_DARK_MODE, false, context);
+    }
+
+    public static void setPanicActions(Settings.PanicAction panicAction, Context context) {
+        Settings.addString(KEY_PANIC_ACTION, panicAction.toString(), context);
+    }
+
+
+    public static void setLanguage(String language, Context context) {
+        log("User.setLanguage(String, Context)");
+        Settings.addString(KEY_LANGUAGE, language , context);
+        SettingsWorker.setLanguage(language);
     }
 }

@@ -47,11 +47,12 @@ public class Lucinda {
         if( VERBOSE) log("Lucinda.isInitialized(Context)");
         return settings.isInitialized(context);
     }
-    public void initTheApp(Context context) {
+    public void initTheApp(Context context) throws SQLException {
         log("Lucinda.initTheApp(Context)");
         DBAdmin.createTables(context);
         DBAdmin.insertCategories(context);
         DBAdmin.insertRootItems(context);
+        Demo.insertDemo(context);
         setDefaultUserSettings(context);
     }
 

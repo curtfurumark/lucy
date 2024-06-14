@@ -5,6 +5,7 @@ import static se.curtrune.lucy.util.Logger.log;
 import android.app.UiModeManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,8 +22,11 @@ import androidx.core.content.ContextCompat;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Locale;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.activities.economy.EconomyActivity;
@@ -31,20 +35,25 @@ import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Notification;
-import se.curtrune.lucy.classes.Quotes;
 import se.curtrune.lucy.persist.DBAdmin;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
 import se.curtrune.lucy.util.Logger;
 import se.curtrune.lucy.workers.ItemsWorker;
 import se.curtrune.lucy.workers.NotificationsWorker;
+import se.curtrune.lucy.workers.SettingsWorker;
 
 public class DevActivity extends AppCompatActivity {
-    private TextView textViewSettings;
     private TextView textViewSwipeAble;
     private TextView textViewNewMain;
+    private TextView textViewVersionName;
+    private TextView textViewLucindaVersion;
+    private  TextView textViewAndroidVersion;
+    private TextView textViewLanguage;
+    private TextView textViewFirstInstalled;
+    private TextView textViewUpdated;
+    private TextView textViewModel;
 
-    private TextView textViewQuote;
 
     private Lucinda lucinda;
     public static boolean VERBOSE = false;
@@ -72,6 +81,7 @@ public class DevActivity extends AppCompatActivity {
         initComponents();
         initListeners();
         checkNotificationPermission();
+        setUserInterface();
         NotificationsWorker.createNotificationChannel(this);
         openDB();
     }
@@ -119,19 +129,21 @@ public class DevActivity extends AppCompatActivity {
     private void initComponents() {
         if( VERBOSE) log("...initComponents()");
 
-        textViewQuote = findViewById(R.id.devActivity_quote);
-        textViewQuote.setSelected(true);
         textViewNewMain = findViewById(R.id.devActivity_mainActivity);
-        textViewSettings = findViewById(R.id.devActivity_settings);
+        textViewLucindaVersion = findViewById(R.id.devActivity_lucindaVersionCode);
+        textViewAndroidVersion = findViewById(R.id.devActivity_androidVersion);
         textViewSwipeAble = findViewById(R.id.devActivity_economy);
+        textViewLanguage = findViewById(R.id.devActivity_language);
+        textViewFirstInstalled = findViewById(R.id.devActivity_firstInstalled);
+        textViewVersionName = findViewById(R.id.devActivity_lucindaVersionName);
+        textViewModel = findViewById(R.id.devActivity_model);
+        textViewUpdated = findViewById(R.id.devActivity_updated);
     }
 
     private void initListeners() {
         if( VERBOSE) log("...initListeners()");
         textViewSwipeAble.setOnClickListener(view -> startActivity(new Intent(this, EconomyActivity.class)));
         textViewNewMain.setOnClickListener(view -> startActivity(new Intent(this, MainActivity.class)));
-        textViewQuote.setOnClickListener(view -> randomQuote());
-        textViewSettings.setOnClickListener(view -> startActivity(new Intent(this, SettingsActivity.class)));
     }
     private void printSystemInfo(){
         log("...printSystemInfo()");
@@ -140,12 +152,17 @@ public class DevActivity extends AppCompatActivity {
         log("\tUSER", Build.USER);
         log("\tHARDWARE", Build.HARDWARE);
         log("\tBRAND", Build.BRAND);
-    }
-
-    private void randomQuote() {
-        log("...randomQuote()");
-        String quote = Quotes.getRandomQuote(this);
-        textViewQuote.setText(quote);
+        log("\tMANUFACTURER", Build.MANUFACTURER);
+        log("\tMODEL", Build.MODEL);
+        try {
+            PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            String version = pInfo.versionName;
+            log("...versionName", pInfo.versionName);
+            log("...versionCode", pInfo.versionCode);
+            log("...packageName", pInfo.packageName);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     private void listTables() {
@@ -184,12 +201,13 @@ public class DevActivity extends AppCompatActivity {
             // toggleDarkMode();
             createEconomyTables();
         }else if (item.getItemId() == R.id.homeActivity_setNotifications){
-            //setNotifications();
             testNotification();
         }else if( item.getItemId() == R.id.homeActivity_logInActivity){
             startActivity(new Intent(this, LogInActivity.class));
         }else if ( item.getItemId() == R.id.devActivity_userSettings){
             setDefaultUserSettings();
+        }else if( item.getItemId() == R.id.devActivity_clearSettings){
+            Settings.removeAll(this);
         }
         return true;
     }
@@ -265,11 +283,40 @@ public class DevActivity extends AppCompatActivity {
     private void setDefaultUserSettings(){
         log("...setDefaultUserSettings");
         Lucinda.setDefaultUserSettings(this);
-
     }
     private void setNotifications(){
         log("...setNotifications()");
         NotificationsWorker.setNotifications(LocalDate.now(), this);
+    }
+    private void setUserInterface(){
+        log("...setUserInterface()");
+        try {
+            PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            String stringVersionCode = String.format(Locale.getDefault(), "VERSION_CODE: %d", pInfo.versionCode );
+            textViewLucindaVersion.setText(stringVersionCode);
+            String stringVersionName = String.format(Locale.getDefault(), "VERSION NAME: %s", pInfo.versionName);
+            textViewVersionName.setText(stringVersionName);
+            String stringAndroidVersion = String.format(Locale.getDefault(), "SDK_INT: %d",Build.VERSION.SDK_INT );
+            textViewAndroidVersion.setText(stringAndroidVersion);
+            String stringLanguage = String.format(Locale.getDefault(), "LANGUAGE: %s", SettingsWorker.getLanguage());
+            textViewLanguage.setText(stringLanguage);
+
+            long firstInstallTime = pInfo.firstInstallTime;
+            LocalDateTime installTime = LocalDateTime.ofEpochSecond(firstInstallTime /1000 , 0, ZoneOffset.UTC);
+            String stringFirstInstalled = String.format(Locale.getDefault(), "FIRST INSTALLED: %s", installTime.toString());
+            textViewFirstInstalled.setText(stringFirstInstalled);
+
+            LocalDateTime updated = LocalDateTime.ofEpochSecond(pInfo.lastUpdateTime /1000, 0, ZoneOffset.UTC);
+            String stringUpdated = String.format(Locale.getDefault(), "UPDATED: %s",updated.toString());
+            textViewUpdated.setText(stringUpdated);
+
+            String stringModel = String.format(Locale.getDefault(), "MODEL: %s",Build.MODEL);
+            textViewModel.setText(stringModel);
+
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
     private void testNotification(){
         log("...testNotification()");

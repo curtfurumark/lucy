@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fapPanic;
     private FloatingActionButton fapBoost;
     private TextView textViewEnergy;
+    private TextView textViewLucindaHome;
     public static boolean VERBOSE = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +119,9 @@ public class MainActivity extends AppCompatActivity {
         textViewEnergy = findViewById(R.id.mainActivity_energy);
         drawerLayout = findViewById(R.id.navigationDrawer_drawerLayout);
         navigationView = findViewById(R.id.navigationDrawerActivity_navigationView);
+        //textViewLucindaHome = findViewById(R.id.navigationHeader_lucindaHome);
+        View view = navigationView.inflateHeaderView(R.layout.navigation_header);
+        textViewLucindaHome = view.findViewById(R.id.navigationHeader_lucindaHome);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
@@ -169,6 +174,7 @@ public class MainActivity extends AppCompatActivity {
         textViewEnergy.setOnClickListener(view->showMentalDay());
         fapBoost.setOnClickListener(view->boostMe());
         fapPanic.setOnClickListener(view->panic());
+        textViewLucindaHome.setOnClickListener(view->openWebPage("https://curtfurumark.se/lucinda"));
     }
     private void initViewModel(){
         if( VERBOSE) log("...initViewModel()");
@@ -238,6 +244,9 @@ public class MainActivity extends AppCompatActivity {
                     intent.putExtra(Constants.INTENT_SEQUENCE_PARENT, panicRoot);
                     startActivity(intent);
                 }
+                break;
+            default:
+                Toast.makeText(this, "go to settings and set preferred panic action", Toast.LENGTH_LONG).show();
                 break;
         }
     }

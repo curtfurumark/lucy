@@ -22,6 +22,7 @@ import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.MessageAdapter;
 import se.curtrune.lucy.classes.Message;
 import se.curtrune.lucy.dialogs.MessageDialog;
+import se.curtrune.lucy.workers.HttpsTrustManager;
 import se.curtrune.lucy.workers.MessageWorker;
 
 /**
@@ -85,6 +86,9 @@ public class MessageBoardFragment extends Fragment {
         initComponents(view);
         initListeners();
         initRecycler();
+        log("...will allowAllSSL");
+        HttpsTrustManager.allowAllSSL();
+        log("...after allowing ssl");
         selectMessages();
         return view;
     }

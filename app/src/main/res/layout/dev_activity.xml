@@ -7,8 +7,6 @@
     android:orientation="vertical"
     android:padding="8dp"
     tools:context=".activities.DevActivity">
-
-
     <TextView
         android:id="@+id/devActivity_mainActivity"
         android:layout_width="wrap_content"
@@ -28,34 +26,50 @@
         android:textSize="34sp" />
 
     <TextView
-        android:id="@+id/devActivity_settings"
-        android:layout_width="wrap_content"
+        android:id="@+id/devActivity_lucindaVersionCode"
+        android:layout_marginTop="16dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/settings"
-        android:layout_marginTop="24sp"
-        android:textSize="34sp" />
+        android:textSize="18sp"
+        android:text="lucinda version code" />
+    <TextView
+        android:id="@+id/devActivity_lucindaVersionName"
+        android:layout_marginTop="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:text="lucinda version name" />
 
     <TextView
-        android:id="@+id/devActivity_quote"
-        android:layout_width="wrap_content"
+        android:id="@+id/devActivity_androidVersion"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ellipsize="marquee"
-        android:layout_marginTop="24sp"
-        android:focusable="true"
-        android:marqueeRepeatLimit="marquee_forever"
-        android:minHeight="48dp"
-        android:scrollHorizontally="true"
-        android:singleLine="true"
-        android:text="@string/quotes"
-        android:textSize="24sp" />
+        android:layout_marginTop="8dp"
+        android:text="android version" />
 
     <TextView
-        android:id="@+id/homeActivity_navigationDrawer"
-        android:layout_width="0dp"
+        android:id="@+id/devActivity_language"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:gravity="center"
-        android:text="@string/navigation_drawer"
-        android:textSize="24sp" />
+        android:layout_marginTop="8dp"
+        android:text="@string/language" />
+    <TextView
+        android:id="@+id/devActivity_firstInstalled"
+        android:layout_marginTop="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="first installed" />
+    <TextView
+        android:id="@+id/devActivity_updated"
+        android:layout_marginTop="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="updated" />
+    <TextView
+        android:id="@+id/devActivity_model"
+        android:layout_marginTop="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="model" />
 
 </LinearLayout>

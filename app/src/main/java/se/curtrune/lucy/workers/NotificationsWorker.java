@@ -20,14 +20,18 @@ public class NotificationsWorker {
 
     public static void createNotificationChannel(Context context){
         log("NotificationsWorker.createNotificationChannel(Context)");
-        NotificationChannel notificationChannel1 = new NotificationChannel(CHANNEL_ONE, CHANNEL_ONE_NAME, NotificationManager.IMPORTANCE_HIGH);
-        notificationChannel1.enableLights(true);
-        notificationChannel1.enableVibration(true);
-        notificationChannel1.setLightColor(R.color.purple_200);
-        notificationChannel1.setLockscreenVisibility(android.app.Notification.VISIBILITY_PRIVATE);
-
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.createNotificationChannel(notificationChannel1);
+        NotificationChannel notificationChannel1 = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            notificationChannel1 = new NotificationChannel(CHANNEL_ONE, CHANNEL_ONE_NAME, NotificationManager.IMPORTANCE_HIGH);
+            notificationChannel1.enableLights(true);
+            notificationChannel1.enableVibration(true);
+            notificationChannel1.setLightColor(R.color.purple_200);
+            notificationChannel1.setLockscreenVisibility(android.app.Notification.VISIBILITY_PRIVATE);
+            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.createNotificationChannel(notificationChannel1);
+        }else{
+            log("SDK_INT lower");
+        }
     }
 
     public static void setNotifications(LocalDate date, Context context){

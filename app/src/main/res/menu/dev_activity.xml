@@ -29,4 +29,6 @@
     <item android:id="@+id/devActivity_userSettings"
         android:title="set default user settings"
         />
+    <item android:id="@+id/devActivity_clearSettings"
+        android:title="clear settings"/>
 </menu>

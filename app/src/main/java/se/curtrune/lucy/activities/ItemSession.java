@@ -239,7 +239,6 @@ public class ItemSession extends AppCompatActivity implements
         currentItem.setTags(editTextTags.getText().toString());
         currentItem.setIsTemplate(checkBoxTemplate.isChecked());
         currentItem.setState(checkBoxDone.isChecked() ? State.DONE: State.TODO);
-        //itemIsDone = checkBoxDone.isChecked();
         currentItem.setType(checkBoxAppointment.isChecked()? Type.APPOINTMENT: Type.NODE);
         currentItem.setEstimate(getEstimate());
         currentItem.setPriority(checkBoxPrioritized.isChecked()? 1:0);
@@ -247,7 +246,7 @@ public class ItemSession extends AppCompatActivity implements
     }
 
     private void handleIntent(Intent intent){
-        log("\thandleItent(Intent)");
+        log("\thandleIntent(Intent)");
         if( intent.getBooleanExtra(Constants.CURRENT_ITEM_IS_IN_STACK, false)){
             currentItem = ItemStack.currentItem;
         }else {

@@ -19,7 +19,7 @@
     <PreferenceCategory
         app:title="panic">
         <ListPreference
-            app:defaultValue="panic_list"
+            app:defaultValue="1"
             app:entries="@array/panic_actions"
             app:entryValues="@array/panic_actions"
             app:key="pref_panic_action"
