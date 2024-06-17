@@ -101,8 +101,8 @@ public class AddPeriodDialog extends BottomSheetDialogFragment {
     }
     private void initComponents(View view){
         log("...initComponents(View)");
-        editTextDays = view.findViewById(R.id.periodDialog_days);
-        buttonSave = view.findViewById(R.id.periodDialog_save);
+        editTextDays = view.findViewById(R.id.addItemDialog_heading);
+        buttonSave = view.findViewById(R.id.addItemDialog_buttonOK);
         buttonDismiss = view.findViewById(R.id.periodDialog_buttonDismiss);
         chipMonday = view.findViewById(R.id.periodDialog_monday);
         chipTuesday = view.findViewById(R.id.periodDialog__tuesday);

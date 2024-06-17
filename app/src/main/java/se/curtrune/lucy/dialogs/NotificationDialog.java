@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -40,18 +39,19 @@ public class NotificationDialog extends BottomSheetDialogFragment {
     private LocalTime targetTime;
     private Notification notification;
     private Item item;
+    public static boolean VERBOSE = false;
+
 
     public interface Callback{
         void onNotification(Notification notification);
     }
 
     private Callback listener;
-    private enum Mode{
-        CREATE, EDIT
-    }
+
     public NotificationDialog(Item item)
     {
-        log("AddItemFragment(Item)");
+        assert item != null;
+        log("NotificationDialog(Item)", item.getHeading());
         this.item = item;
     }
 
@@ -59,7 +59,7 @@ public class NotificationDialog extends BottomSheetDialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        log("AddItemDialog.onCreateView(...)");
+        log("NotificationDialog.onCreateView(...)");
         View view = inflater.inflate(R.layout.notification_dialog, container, false);
         initDefaults(item);
         initComponents(view);
@@ -79,13 +79,8 @@ public class NotificationDialog extends BottomSheetDialogFragment {
         return notification;
     }
 
-    private void init(Item item){
-        log("...init()");
-
-
-    }
     private void initComponents(View view){
-        log("...initComponents(View)");
+        if( VERBOSE) log("...initComponents(View)");
         textViewTime = view.findViewById(R.id.notificationDialog_time);
         textViewDate = view.findViewById(R.id.notificationDialog_date);
         radioButtonAlarm = view.findViewById(R.id.notificationDialog_alarm);
@@ -95,19 +90,18 @@ public class NotificationDialog extends BottomSheetDialogFragment {
         log("...buttonDismiss is null", buttonDismiss == null ? "true": "false");
     }
     private  void initDefaults(Item item){
-        log("...initDefaults(Item)");
+        if( VERBOSE )log("...initDefaults(Item)");
         targetDate = item.getTargetDate();
         targetTime = item.getTargetTime();
         notification = new Notification();
         notification.setDate(targetDate);
         notification.setTime(targetTime);
-        notification.setType(Notification.Type.ALARM);
+        notification.setType(Notification.Type.NOTIFICATION);
         notification.setTitle(item.getHeading());
         notification.setContent(item.getHeading());
-
     }
     private void initListeners(){
-        log("...initListeners()");
+        if( VERBOSE) log("...initListeners()");
         buttonSave.setOnClickListener(view1 -> {
             listener.onNotification(notification);
             dismiss();
@@ -117,7 +111,7 @@ public class NotificationDialog extends BottomSheetDialogFragment {
         textViewDate.setOnClickListener(view->showDateDialog());
     }
     private void initUserInterface(){
-        log("...initUserInterface()");
+        if( VERBOSE) log("...initUserInterface()");
         textViewTime.setText(Converter.format(targetTime));
         textViewDate.setText(targetDate.toString());
     }
@@ -130,6 +124,14 @@ public class NotificationDialog extends BottomSheetDialogFragment {
     }
     private void showDateDialog(){
         log("...showDateDialog()");
+        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext());
+        datePickerDialog.setOnDateSetListener((view, year, month, dayOfMonth) -> {
+            if( VERBOSE) log("...onDateSet(DatePicker, int, int, int)");
+            LocalDate targetDate = LocalDate.of(year, month +1, dayOfMonth);
+            notification.setDate(targetDate);
+            textViewDate.setText(targetDate.toString());
+        });
+        datePickerDialog.show();
 
     }
     private void showTimeDialog(){

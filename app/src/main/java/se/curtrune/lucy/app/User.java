@@ -104,7 +104,7 @@ public class User {
         return Settings.getBoolean(USE_DARK_MODE, false, context);
     }
 
-    public static void setPanicActions(Settings.PanicAction panicAction, Context context) {
+    public static void setPanicAction(Settings.PanicAction panicAction, Context context) {
         Settings.addString(KEY_PANIC_ACTION, panicAction.toString(), context);
     }
 
@@ -113,5 +113,14 @@ public class User {
         log("User.setLanguage(String, Context)");
         Settings.addString(KEY_LANGUAGE, language , context);
         SettingsWorker.setLanguage(language);
+    }
+
+    public static void setPassword(String password, Context context) {
+        log("User.setPassword(String, Context)");
+        Settings.addString(KEY_PASSWORD, password, context);
+    }
+
+    public static Settings.PanicAction getPanicAction(Context context) {
+        return Settings.PanicAction.valueOf(Settings.getString(KEY_PANIC_ACTION, Settings.PanicAction.SEQUENCE.toString(), context));
     }
 }

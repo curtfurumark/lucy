@@ -27,7 +27,7 @@
         android:text="done" />
 
     <Button
-        android:id="@+id/periodDialog_save"
+        android:id="@+id/addItemDialog_buttonOK"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="add" />

@@ -2,7 +2,7 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 <item android:id="@+id/homeActivity_openDB"
-    android:title="open db"/>
+    android:title="@string/open_db"/>
     <item android:id="@+id/homeActivity_dropTableItems"
         android:title="drop table items"/>
     <item android:id="@+id/homeActivity_createTableItems"
@@ -31,4 +31,6 @@
         />
     <item android:id="@+id/devActivity_clearSettings"
         android:title="clear settings"/>
+    <item android:id="@+id/devActivity_repeatDialog"
+        android:title="repeat dialog"/>
 </menu>

@@ -7,28 +7,10 @@
 
     <LinearLayout
         android:orientation="vertical"
+        android:padding="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/customizeFragment_url"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="url" />
-        </com.google.android.material.textfield.TextInputLayout>
-        <Button
-            android:id="@+id/customizeFragment_buttonAddUrl"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="add panic url"/>
-        <ListView
-            android:id="@+id/customizeFragment_panicUrls"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
         <CheckBox
             android:id="@+id/customizeFragment_checkBoxPassword"
             android:layout_width="match_parent"
@@ -52,18 +34,43 @@
             <RadioButton
                 android:id="@+id/customizeFragment_radioButtonGame"
                 android:layout_width="match_parent"
+                android:layout_marginStart="24dp"
                 android:layout_height="wrap_content"
                 android:text="@string/game"/>
             <RadioButton
                 android:id="@+id/customizeFragment_radioButtonWeb"
+                android:layout_marginStart="24dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/web_page"/>
             <RadioButton
                 android:id="@+id/customizeFragment_radioButtonSequence"
+                android:layout_marginStart="24dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/sequence"/>
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/customizeFragment_url"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="url" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <Button
+                android:id="@+id/customizeFragment_buttonAddUrl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="add panic url"/>
+
+            <ListView
+                android:id="@+id/customizeFragment_panicUrls"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
 
         </RadioGroup>
         <RadioGroup
@@ -73,6 +80,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textSize="24sp"
                 android:text="@string/language"/>
             <RadioButton
                 android:id="@+id/customizeFragment_radioButtonSwedish"

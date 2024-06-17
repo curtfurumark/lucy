@@ -116,7 +116,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/periodDialog_days"
+                android:id="@+id/addItemDialog_heading"
                 android:inputType="number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
@@ -158,7 +158,7 @@
         app:layout_constraintTop_toBottomOf="@+id/periodDialog_time" />
 
     <Button
-        android:id="@+id/periodDialog_save"
+        android:id="@+id/addItemDialog_buttonOK"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/save"

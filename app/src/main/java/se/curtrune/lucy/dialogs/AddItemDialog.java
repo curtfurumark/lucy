@@ -2,45 +2,56 @@ package se.curtrune.lucy.dialogs;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
 import se.curtrune.lucy.R;
+import se.curtrune.lucy.adapters.ActionAdapter;
+import se.curtrune.lucy.classes.Action;
 import se.curtrune.lucy.classes.Categories;
 import se.curtrune.lucy.classes.Item;
-import se.curtrune.lucy.classes.State;
-import se.curtrune.lucy.persist.LocalDB;
+import se.curtrune.lucy.classes.Notification;
+import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.workers.CategoryWorker;
 
 
 public class AddItemDialog extends BottomSheetDialogFragment {
     private EditText editText_heading;
-    private TextView textViewParentItem;
-    private Spinner spinnerCategory;
-    private State state;
+    private TextView textViewParentList;
+
     private String heading;
     private Button buttonSave;
-
-    private Button buttonEdit;
+    private Button buttonDismiss;
     private String category;
     private Categories categories;
+    private LocalTime targetTime;
+    private ActionAdapter actionAdapter;
+    private RecyclerView actionRecycler;
 
+    private Action currentAction;
+    public static boolean VERBOSE = true;
     private Item parent;
+    private Item newItem;
     public interface Callback{
         void onAddItem(Item item);
     }
@@ -49,10 +60,9 @@ public class AddItemDialog extends BottomSheetDialogFragment {
 
     public AddItemDialog(Item parent) {
         log("AddItemDialog(Item parent)");
-        if( parent == null){
-            log("...item parent is null, this is a project");
-        }
+        assert  parent != null;
         this.parent = parent;
+        this.newItem = createNewItem(parent);
     }
 
 
@@ -62,49 +72,102 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         log("AddItemDialog.onCreateView(...)");
         View view = inflater.inflate(R.layout.add_item_dialog, container, false);
         initComponents(view);
+        initActionRecycler();
         initListeners();
         initDefaults();
         editText_heading.setText(heading);
-        initSpinnerCategories();
         initUserInterface(parent);
 
         return view;
     }
-    private void startEditor(Item item){
-        log("...startEditor(Item)");
+    private Item createNewItem(Item parent){
+        log("...createNewItem(Item)");
+        newItem = new Item();
+        newItem.setParentId(parent.getID());
+        newItem.setCategory(parent.getCategory());
+        return newItem;
     }
-    private String getCategory(){
-        return (String) spinnerCategory.getSelectedItem();
+    private List<Action> getActionList(){
+        log("...getActionList()");
+        Action notification = new Action();
+        notification.setTitle("notification");
+        notification.setType(Action.Type.NOTIFICATION);
+        Action repeat = new Action();
+        repeat.setTitle("repeat");
+        repeat.setType(Action.Type.REPEAT);
+        Action category = new Action();
+        category.setTitle("category");
+        category.setType(Action.Type.CATEGORY);
+        Action time = new Action();
+        time.setTitle("time");
+        time.setType(Action.Type.TIME);
+        ArrayList<Action> actionList = new ArrayList<>();
+        actionList.add(repeat);
+        actionList.add(notification);
+        actionList.add(category);
+        actionList.add(time);
+        return actionList;
     }
+
     private Item getItem(){
         log("...getItem()");
-        Item item = new Item();
-        item.setHeading(editText_heading.getText().toString());
+        //Item item = new Item();
+        newItem.setHeading(editText_heading.getText().toString());
         if( parent != null) {
             log("...parent is not null");
-            item.setTags(parent.getTags());
-            item.setParentId(parent.getID());
+            newItem.setTags(parent.getTags());
+            //item.setParentId(parent.getID());
         }else{
             log("...parent is null, project");
-            item.setParentId(0);
-
+            newItem.setParentId(0);
         }
-        item.setCategory(getCategory());
-        item.setState(parent.getState());
-        return item;
+        //item.setState(parent.getState());
+        return newItem;
 
+    }
+    private void initActionRecycler(){
+        log("...initActionRecycler()");
+        ActionAdapter.VERBOSE = true;
+        actionAdapter = new ActionAdapter(getActionList(), new ActionAdapter.Callback() {
+            @Override
+            public void onAction(Action action) {
+                log("...onAction(Action)", action.getTitle());
+                log("...type", action.getType().toString());
+                currentAction = action;
+                switch (action.getType()){
+                    case NOTIFICATION:
+                        showNotificationDialog();
+                        break;
+                    case CATEGORY:
+                        showCategoryDialog();
+                        break;
+                    case TIME:
+                        showTimeDialog();
+                        break;
+                    case REPEAT:
+                        showRepeatDialog();
+                        break;
+                }
+            }
+        });
+
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        actionRecycler.setLayoutManager(layoutManager);
+        actionRecycler.setItemAnimator(new DefaultItemAnimator());
+        actionRecycler.setAdapter(actionAdapter);
+        actionAdapter.notifyDataSetChanged();
     }
     private void initComponents(View view){
         log("...initComponents(View)");
-        spinnerCategory = view.findViewById(R.id.addItem_spinnerType);
-        editText_heading = view.findViewById(R.id.periodDialog_days);
-        buttonSave = view.findViewById(R.id.periodDialog_save);
-        buttonEdit = view.findViewById(R.id.addItemDialog_edit);
-        textViewParentItem = view.findViewById(R.id.addItem_parentItem);
+        editText_heading = view.findViewById(R.id.addItemDialog_heading);
+        buttonSave = view.findViewById(R.id.addItemDialog_buttonOK);
+        buttonDismiss = view.findViewById(R.id.addItemDialog_buttonDismiss);
+        actionRecycler = view.findViewById(R.id.addItemDialog_actionRecycler);
+        textViewParentList = view.findViewById(R.id.addItemDialog_parentList);
     }
     private void initDefaults(){
         log("...initDefaults()");
-        state = State.PENDING;
+        //state = State.PENDING;
         categories = new Categories(CategoryWorker.getCategories(getContext()));
     }
     private void initListeners(){
@@ -116,40 +179,14 @@ public class AddItemDialog extends BottomSheetDialogFragment {
             listener.onAddItem(item);
             dismiss();
         });
-        buttonEdit.setOnClickListener(view->Toast.makeText(getContext(), "not implemented", Toast.LENGTH_LONG).show());
+        buttonDismiss.setOnClickListener(view->dismiss());
 
-    }
-
-    private void initSpinnerCategories() {
-        log("...initSpinnerCategories()");
-        LocalDB db = new LocalDB(getContext());
-        String[] categories = db.getCategories();
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, categories);
-        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
-        spinnerCategory.setAdapter(arrayAdapter);
-        spinnerCategory.setSelection(0);
-        spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                category = (String) spinnerCategory.getSelectedItem();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
     }
 
     public void initUserInterface(Item parentItem){
-        log("...initUserInterface()");
-        if( parentItem != null) {
-            //editText_heading.setText(parentItem.getHeading());
-            spinnerCategory.setSelection(categories.getIndex(parentItem.getCategory()));
-            textViewParentItem.setText(parentItem.getHeading());
-        }else{
-            textViewParentItem.setText("no parent, no good");
-        }
+        log("...initUserInterface(Item)");
+        String strParentList = String.format(Locale.getDefault(), "%s: %s",getString(R.string.add_to_list), parentItem.getHeading());
+        textViewParentList.setText(strParentList);
     }
 
     @Override
@@ -161,14 +198,69 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         this.listener = callback;
     }
 
-    public void setState(State state){
-        log("AddItemDialog.setState(State) ", state.toString());
-        this.state = state;
-    }
     public void setHeading(String heading){
         this.heading = heading;
     }
     public void setCategory(String category){
         this.category = category;
+    }
+
+    private void showCategoryDialog(){
+        log("...showCategoryDialog()");
+        ChooseCategoryDialog dialog = new ChooseCategoryDialog(parent.getCategory());
+        dialog.setCallback(new ChooseCategoryDialog.Callback() {
+            @Override
+            public void onSelected(String category) {
+                log("...onSelected(String)", category);
+                currentAction.setTitle(category);
+                newItem.setCategory(category);
+                actionAdapter.notifyDataSetChanged();
+            }
+        });
+        dialog.show(getChildFragmentManager(), "choose category");
+    }
+
+    public void showNotificationDialog(){
+        log("...showNotificationDialog()");
+        NotificationDialog dialog = new NotificationDialog(parent);
+        dialog.setListener(new NotificationDialog.Callback() {
+            @Override
+            public void onNotification(Notification notification) {
+                log("...onNotification(Notification)");
+                currentAction.setTitle(notification.toString());
+                newItem.setNotification(notification);
+                actionAdapter.notifyDataSetChanged();
+            }
+        });
+        dialog.show(getChildFragmentManager(), "notification ");
+
+    }
+    private void showRepeatDialog(){
+        log("...showRepeatDialog()");
+        RepeatDialog dialog = new RepeatDialog();
+        dialog.setCallback(new RepeatDialog.Callback() {
+            @Override
+            public void onRepeat(Repeat.Period period) {
+                log("...onRepeat(Period)", period.toString());
+                currentAction.setTitle(period.toString());
+                actionAdapter.notifyDataSetChanged();
+            }
+        });
+        dialog.show(getChildFragmentManager(), "repeat");
+
+    }
+    private void showTimeDialog(){
+        log("...showTimeDialog()");
+        LocalTime now = LocalTime.now();
+        int minutes = now.getMinute();
+        int hour = now.getHour();
+        TimePickerDialog timePicker = new TimePickerDialog(getContext(), (view, hourOfDay, minute) -> {
+            targetTime = LocalTime.of(hourOfDay, minute);
+            newItem.setTargetTime(targetTime);
+            currentAction.setTitle(targetTime.toString());
+            actionAdapter.notifyDataSetChanged();
+        }, hour, minutes, true);
+        timePicker.show();
+
     }
 }

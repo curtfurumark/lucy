@@ -10,15 +10,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -32,12 +29,9 @@ import se.curtrune.lucy.workers.NotificationsWorker;
 import se.curtrune.lucy.workers.SettingsWorker;
 
 public class LogInActivity extends AppCompatActivity {
-    private EditText editTextUser;
     private EditText editTextPwd;
     private Button buttonLogIn;
-    private CheckBox checkBoxUsePassword;
     private Lucinda lucinda;
-    private boolean createPassword = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,24 +56,17 @@ public class LogInActivity extends AppCompatActivity {
         initComponents();
         initListeners();
         NotificationsWorker.createNotificationChannel(this);
-        checkNotificationPermission();
-        //setDarkMode();
-        startActivity(new Intent( this, MainActivity.class));
-
-
-/*checkStuff();
-  if( User.usesPassword(this)){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            checkNotificationPermission();
+        }
+        if (User.usesPassword(this)) {
             log("...using password");
-            if( User.hasPassword(this)){
-                validateUser();
-            }else{
-                createPassword();
-            }
-        }else{
-            log("...not using password");
+            logIn();
+        } else {
             startActivity(new Intent(this, MainActivity.class));
-        }*/
+        }
     }
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     private void checkNotificationPermission() {
         log("...checkNotificationPermission()");
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
@@ -102,17 +89,8 @@ public class LogInActivity extends AppCompatActivity {
             requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 42);
         }
     }
-    private void checkStuff(){
-        log("...checkStuff()");
-        boolean usesPassword = User.usesPassword(this);
-        log("...usesPassword", usesPassword);
-        String pwd = User.getPassword(this);
-        log("...pwd", pwd);
-    }
-    private void clearPassword(){
-        User.setUsesPassword(true, this);
-        //User.savePassword("", this);
-    }
+
+
     private void initCatchAllExceptionsHandler(){
         Thread.setDefaultUncaughtExceptionHandler((paramThread, paramThrowable) -> {
 
@@ -171,29 +149,11 @@ public class LogInActivity extends AppCompatActivity {
         log("...language" , locale.getLanguage());
         log("...country", locale.getCountry());
     }
-    private void validateUser(){
-        log("...validateUser()");
-        String pwd = editTextPwd.getText().toString();
-        String user = editTextUser.getText().toString();
-        if( User.validatePassword(user, pwd, this)){
-            startActivity(new Intent(this, MainActivity.class));
-        }else{
-            log("...ERROR validating password");
-            Toast.makeText(this, "ERROR password", Toast.LENGTH_LONG).show();
-        }
-    }
-    private void createPassword(){
-        log("...createPassword");
-        buttonLogIn.setText(R.string.create_password);
-        Toast.makeText(this, "PASSWORD has to be at least 8 characters", Toast.LENGTH_LONG).show();
-        createPassword = true;
 
-    }
+
     private void initComponents(){
         editTextPwd = findViewById(R.id.logInActivity_pwd);
-        editTextUser = findViewById(R.id.logInActivity_user);
         buttonLogIn = findViewById(R.id.logInActivity_buttonLogIn);
-        checkBoxUsePassword = findViewById(R.id.logInActivity_checkBoxUsePassword);
     }
     private void initListeners(){
         buttonLogIn.setOnClickListener(view->logIn());
@@ -203,14 +163,11 @@ public class LogInActivity extends AppCompatActivity {
         if( !validateInput()){
             return;
         }
-        if( createPassword){
-            User.setUsesPassword(true, this);
-            User.savePassword(editTextPwd.getText().toString(), this);
-            startActivity(new Intent(this, MainActivity.class));
-        }else if(User.validatePassword(editTextUser.getText().toString(), editTextPwd.getText().toString(), this)){
+        String pwd = editTextPwd.getText().toString();
+        if( User.validatePassword("user", pwd, this)){
             startActivity(new Intent(this, MainActivity.class));
         }else{
-            Toast.makeText(this, "wrong password", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "incorrect password", Toast.LENGTH_LONG).show();
         }
     }
     private void setDarkMode(){
@@ -219,10 +176,11 @@ public class LogInActivity extends AppCompatActivity {
 
     }
     private boolean validateInput(){
-        if( editTextUser.getText().toString().isEmpty()){
+        log("...validateInput()");
+/*        if( editTextUser.getText().toString().isEmpty()){
             Toast.makeText(this, "no user name supplied", Toast.LENGTH_LONG).show();
             return false;
-        }
+        }*/
         if( editTextPwd.getText().toString().length() < 8){
             Toast.makeText(this, "password must be at least 8 characters long", Toast.LENGTH_LONG).show();
             return false;

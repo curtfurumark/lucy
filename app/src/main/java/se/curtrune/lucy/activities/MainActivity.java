@@ -32,6 +32,7 @@ import java.util.Objects;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.activities.flying_fish.GameActivity;
 import se.curtrune.lucy.app.Lucinda;
+import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.app.User;
 import se.curtrune.lucy.classes.Affirmation;
 import se.curtrune.lucy.classes.Item;
@@ -224,18 +225,17 @@ public class MainActivity extends AppCompatActivity {
     private void panic(){
         log("...panic()");
         Toast.makeText(this, "DON'T PANIC!", Toast.LENGTH_LONG).show();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String panicAction = prefs.getString("pref_panic_action", "");
-        log("....panicAction", panicAction);
+        Settings.PanicAction panicAction = User.getPanicAction(this);
+        log("....panicAction", panicAction.toString());
         switch (panicAction) {
-            case "flying fish":
+            case GAME:
                 startActivity(new Intent(this, GameActivity.class));
                 break;
-            case "url":
+            case URL:
                 String url = User.getRandomPanicUrl(this);
                 openWebPage(url);
                 break;
-            case "panic list":
+            case SEQUENCE:
                 Item panicRoot = ItemsWorker.getPanicRoot(this);
                 if (panicRoot == null) {
                     log("ERROR...panicRoot == null");

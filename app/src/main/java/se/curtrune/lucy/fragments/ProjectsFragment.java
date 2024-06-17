@@ -37,6 +37,7 @@ import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.CallingActivity;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
+import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.dialogs.AddTemplateDialog;
 import se.curtrune.lucy.dialogs.OnNewItemCallback;
 import se.curtrune.lucy.util.Constants;
@@ -75,7 +76,6 @@ public class ProjectsFragment extends Fragment implements
      * @param parent, show children to this item
      * @return A new instance of fragment ProjectsFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static ProjectsFragment newInstance(Item parent) {
         log("ProjectsFragment.newInstance(Item parent) ", parent.getHeading());
         ProjectsFragment fragment = new ProjectsFragment();
@@ -229,18 +229,17 @@ public class ProjectsFragment extends Fragment implements
     }
     private void showAddItemDialog(){
         if(VERBOSE) log("...showAddItemDialog()");
-        AddTemplateDialog dialog = new AddTemplateDialog(currentParent, LocalDate.now());
-        dialog.setCallback(new OnNewItemCallback() {
+        AddItemDialog dialog = new AddItemDialog(currentParent);
+        dialog.setCallback(new AddItemDialog.Callback() {
             @Override
-            public void onNewItem(Item item) {
-                log("...onNewItem(Item)");
+            public void onAddItem(Item item) {
                 item = ItemsWorker.insert(item, getContext());
                 items.add(item);
                 items.sort(Comparator.comparingLong(Item::compare));
                 adapter.notifyDataSetChanged();
             }
         });
-        dialog.show(getParentFragmentManager(), "add item");
+        dialog.show(getChildFragmentManager(), "add item");
     }
     private void startSequence(){
         log("...startSequence()");

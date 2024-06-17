@@ -34,6 +34,7 @@ import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.workers.ItemsWorker;
+import se.curtrune.lucy.workers.NotificationsWorker;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -44,10 +45,6 @@ public class TodoFragment extends Fragment implements
         ItemAdapter.Callback,
         TabLayout.OnTabSelectedListener {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
     private FloatingActionButton buttonAdd;
     private RecyclerView recycler;
     private EditText editTextSearch;
@@ -55,10 +52,6 @@ public class TodoFragment extends Fragment implements
     private List<Item> items;
     private Item currentParent;
     public static boolean VERBOSE = false;
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     public TodoFragment() {
         if( VERBOSE) log("ToDoFragment()");
@@ -68,27 +61,18 @@ public class TodoFragment extends Fragment implements
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+
      * @return A new instance of fragment ProjectsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static TodoFragment newInstance(String param1, String param2) {
-        TodoFragment fragment = new TodoFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    public static TodoFragment newInstance() {
+        return  new TodoFragment();
+
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -111,10 +95,15 @@ public class TodoFragment extends Fragment implements
             @Override
             public void onAddItem(Item item) {
                 log("...onAddItem(Item item)");
+                log(item);
                 item = ItemsWorker.insert(item, getContext());
                 items.add(item);
-                items.sort(Comparator.comparingLong(Item::compare).reversed());
+                items.sort(Comparator.comparingLong(Item::compare));
                 adapter.notifyDataSetChanged();
+                if( item.hasNotification()){
+                    log("...item has notification, will set notification");
+                    NotificationsWorker.setNotification(item, getContext());
+                }
             }
         });
         dialog.show(getChildFragmentManager(), "add item");

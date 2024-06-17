@@ -179,4 +179,11 @@
     <string name="panic_action">panic action</string>
     <string name="swedish">swedish</string>
     <string name="english">english</string>
+    <string name="open_db" translatable="false">open db</string>
+    <string name="add_to_list">add to list</string>
+    <string name="every_day">every day</string>
+    <string name="every_week">every week</string>
+    <string name="every_month">every month</string>
+    <string name="every_year">every year</string>
+    <string name="custom">custom</string>
 </resources>

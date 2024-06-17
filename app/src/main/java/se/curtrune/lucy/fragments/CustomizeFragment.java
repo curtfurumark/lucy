@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -22,6 +23,7 @@ import java.util.Set;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.app.User;
+import se.curtrune.lucy.dialogs.PasswordDialog;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -41,6 +43,7 @@ public class CustomizeFragment extends Fragment {
     private RadioButton radioButtonSwedish;
     private RadioButton radioButtonEnglish;
     private RadioGroup radioGroupLanguage;
+    public static boolean VERBOSE = true;
     public CustomizeFragment() {
         // Required empty public constructor
     }
@@ -62,13 +65,13 @@ public class CustomizeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         log("CustomizeFragment.onCreateView(...)");
-         View view = inflater.inflate(R.layout.customize_fragment, container, false);
-         initComponents(view);
-         initListeners();
-         initListView();
-         setUserInterface();
-         printSharedPreferences();
-         return view;
+        View view = inflater.inflate(R.layout.customize_fragment, container, false);
+        initComponents(view);
+        initListView();
+        initListeners();
+        setUserInterface();
+        printSharedPreferences();
+        return view;
     }
     private void addPanicUrl(){
         log("...addPanicUrl()");
@@ -99,7 +102,7 @@ public class CustomizeFragment extends Fragment {
                     showPasswordDialog();
                 }
             }else{
-                log("...remove password?");
+                //User.removePassword();
             }
         });
         checkBoxDarkMode.setOnClickListener(view->toggleDarkMode());
@@ -112,6 +115,14 @@ public class CustomizeFragment extends Fragment {
                 setLanguage(checkedId);
             }
         });
+        listViewPanicUrls.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+                log("...onItemClick(AdapterView<?>, View, int, long)");
+                String url = (String) listViewPanicUrls.getAdapter().getItem(position);
+                log("...url", url);
+            }
+        });
     }
     private void initListView(){
         log("...initListView()");
@@ -120,11 +131,11 @@ public class CustomizeFragment extends Fragment {
                 androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
                 urls.toArray(new String[1]));
         listViewPanicUrls.setAdapter(arr);
+
     }
     private void panicAction(Settings.PanicAction panicAction){
         log("...panicAction(PanicAction)", panicAction.toString());
-        Toast.makeText(getContext(), panicAction.toString(), Toast.LENGTH_LONG).show();
-        User.setPanicActions(panicAction, getContext());
+        User.setPanicAction(panicAction, getContext());
     }
     private void printSharedPreferences(){
         Settings.printAll(requireContext());
@@ -140,9 +151,14 @@ public class CustomizeFragment extends Fragment {
         }
     }
     private void setUserInterface(){
-        log("...setUserInterface(()") ;
+        log("...setUserInterface()") ;
         checkBoxPassword.setChecked(User.usesPassword(getContext()));
         checkBoxDarkMode.setChecked(User.getDarkMode(getContext()));
+        setLanguage();
+        setPanicAction();
+    }
+    private void setLanguage(){
+        log("..setLanguage()");
         String language = User.getLanguage(getContext());
         switch (language){
             case "sv":
@@ -154,9 +170,35 @@ public class CustomizeFragment extends Fragment {
             default:
         }
     }
+    private void setPanicAction(){
+        log("...setPanicAction()");
+        Settings.PanicAction panicAction = User.getPanicAction(getContext());
+        log("...panicAction", panicAction.toString());
+        switch (panicAction){
+            case URL:
+                radioButtonWeb.setChecked(true);
+                break;
+            case GAME:
+                radioButtonGame.setChecked(true);
+                break;
+            case SEQUENCE:
+                radioButtonSequence.setChecked(true);
+                break;
+        }
+
+    }
     private void showPasswordDialog(){
         log("...showPasswordDialog()");
-        Toast.makeText(getContext(), "password dialog", Toast.LENGTH_LONG).show();
+        PasswordDialog dialog = new PasswordDialog();
+        dialog.setCallback(new PasswordDialog.Callback() {
+            @Override
+            public void onPassword(String pwd) {
+                log("...onPassword(String)", pwd);
+                User.setUsesPassword(true, getContext());
+                User.setPassword(pwd, getContext());
+            }
+        });
+        dialog.show(getChildFragmentManager(), "set password");
     }
     private void toggleDarkMode(){
         log("...toggleDarkMode()");

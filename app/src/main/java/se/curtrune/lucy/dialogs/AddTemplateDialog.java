@@ -124,6 +124,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         item.setState(State.TODO);
         item.setTargetDate(date);
         item.setParent(parent);
+        item.setIsTemplate(true);
         return item;
     }
     private Item getItem(){
@@ -228,6 +229,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
         labelWeekDays.setOnClickListener(view->toggleWeekDays());
         labelDateTime.setOnClickListener(view-> toggleDateTime());
         labelRepeat.setOnClickListener(view->toggleRepeat());
+        //labelRepeat.setOnClickListener(view->showRepeatDialog());
         textViewDate.setOnClickListener(view->showDateDialog());
         textViewTime.setOnClickListener(view->showTimeDialog());
         labelOther.setOnClickListener(view->toggleOther());
@@ -310,6 +312,21 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
             textViewDate.setText(date.toString());
         });
         datePickerDialog.show();
+    }
+    private void showRepeatDialog(){
+        log("...showRepeatDialog()");
+        RepeatDialog dialog = new RepeatDialog();
+        dialog.setCallback(new RepeatDialog.Callback() {
+            @Override
+            public void onRepeat(Repeat.Period period) {
+                log("...onRepeat(String)", period.toString());
+                Repeat repeat = new Repeat();
+                repeat.setPeriod(period);
+                labelRepeat.setText(period.toString());
+            }
+        });
+        dialog.show(getChildFragmentManager(), "repeat dialog");
+
     }
     private void showTimeDialog(){
         if( VERBOSE) log("...showTimeDialog()");

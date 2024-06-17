@@ -35,6 +35,8 @@ import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Notification;
+import se.curtrune.lucy.classes.Repeat;
+import se.curtrune.lucy.dialogs.RepeatDialog;
 import se.curtrune.lucy.persist.DBAdmin;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
@@ -198,7 +200,6 @@ public class DevActivity extends AppCompatActivity {
         } else if (item.getItemId() == R.id.homeActivity_createTableCategories) {
             createTableCategories();
         } else if (item.getItemId() == R.id.homeActivity_createEconomyTables) {
-            // toggleDarkMode();
             createEconomyTables();
         }else if (item.getItemId() == R.id.homeActivity_setNotifications){
             testNotification();
@@ -208,6 +209,8 @@ public class DevActivity extends AppCompatActivity {
             setDefaultUserSettings();
         }else if( item.getItemId() == R.id.devActivity_clearSettings){
             Settings.removeAll(this);
+        }else if( item.getItemId() == R.id.devActivity_repeatDialog){
+            showRepeatDialog();
         }
         return true;
     }
@@ -316,6 +319,17 @@ public class DevActivity extends AppCompatActivity {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+    }
+    private void showRepeatDialog(){
+        log("...showRepeatDialog()");
+        RepeatDialog dialog = new RepeatDialog();
+        dialog.setCallback(new RepeatDialog.Callback() {
+            @Override
+            public void onRepeat(Repeat.Period period) {
+                log("...onRepeat(Period)", period.toString());
+            }
+        });
+        dialog.show(getSupportFragmentManager(), "repeat dialog");
 
     }
     private void testNotification(){
@@ -357,7 +371,6 @@ public class DevActivity extends AppCompatActivity {
             case UiModeManager.MODE_NIGHT_CUSTOM:
                 log("MODE_NIGHT_CUSTOM");
                 break;
-
         }
     }
 }

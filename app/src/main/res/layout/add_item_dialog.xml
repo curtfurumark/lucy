@@ -8,74 +8,54 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-
-    <Spinner
-        android:id="@+id/addItem_spinnerType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:minHeight="48dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayouteading" />
-
-    <Button
-        android:id="@+id/periodDialog_save"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/save"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/addItemDialog_edit" />
-
     <TextView
-        android:id="@+id/labelCategory"
-        android:layout_width="wrap_content"
+        android:id="@+id/addItemDialog_parentList"
+        android:text="parent list"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/category"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/addItem_spinnerType" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayouteading"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/addItemDialog_parentList">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/periodDialog_days"
+            android:id="@+id/addItemDialog_heading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/heading" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/addItemDialog_actionRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayouteading" />
+
     <Button
-        android:id="@+id/addItemDialog_edit"
+        android:id="@+id/addItemDialog_buttonDismiss"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/edit"
+        android:text="@string/dismiss"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addItem_parentItem" />
-
-    <TextView
-        android:id="@+id/textView4"
+        app:layout_constraintTop_toTopOf="@+id/addItemDialog_buttonOK" />
+    <Button
+        android:id="@+id/addItemDialog_buttonOK"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:ems="6"
-        android:text="@string/parent_item"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/labelCategory" />
-
-    <TextView
-        android:id="@+id/addItem_parentItem"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/parent_item_heading"
+        android:text="@string/save"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView4"
-        app:layout_constraintTop_toTopOf="@+id/textView4" />
+        app:layout_constraintTop_toBottomOf="@+id/addItemDialog_actionRecycler" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

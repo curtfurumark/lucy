@@ -86,12 +86,22 @@
     <string name="menu_slideshow">Slideshow</string>
     <string name="delete_item">delete item</string>
     <string name="save_item">save item</string>
-    <string name="add_category">Lägg till kategorie</string>
+    <string name="add_category">Lägg till kategori</string>
     <string name="color">Färg</string>
     <string name="week">Vecka</string>
     <string name="month">Månad</string>
     <string name="send">Skicka</string>
     <string name="user">user</string>
     <string name="mental">Mental</string>
+    <string name="game">Spel</string>
+    <string name="panic_action">Panik åtgärd</string>
+    <string name="swedish">Swedish</string>
+    <string name="english">English</string>
+    <string name="add_to_list">Lägg till i lista</string>
+    <string name="every_day">Varje dag</string>
+    <string name="every_week">Varje vecka</string>
+    <string name="every_month">Varje månad</string>
+    <string name="every_year">Varje år</string>
+    <string name="custom">Anpassad</string>
 
 </resources>

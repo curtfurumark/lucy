@@ -26,6 +26,9 @@ public class Settings {
     private long panicID;
     private long theRootID;
     private boolean isInitialized = false;
+
+
+
     public enum PanicAction{
         GAME, URL, SEQUENCE, PENDING
     }
@@ -52,6 +55,11 @@ public class Settings {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(key, value);
         editor.commit();
+    }
+
+    public static int getInt(String key, int defaultValue, Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getInt(key , defaultValue);
     }
 
     public static Set<String> getList(String key, Context context) {

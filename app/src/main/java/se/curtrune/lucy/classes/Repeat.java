@@ -20,10 +20,13 @@ public class Repeat implements Serializable {
     public enum Mode{
         DAYS, DAY_OF_WEEKS
     }
+    public enum Period{
+        DAY, WEEK, MONTH, YEAR, CUSTOM
+    }
+    private Period period;
     private Mode mode = Mode.DAYS;
     private int days;
     private LocalTime time;
-    //private LocalDate nextDate;
     private LocalDate firstDate;
     private LocalDate lastDate;
     private List<DayOfWeek> dayOfWeeks = new ArrayList<>();
@@ -67,6 +70,9 @@ public class Repeat implements Serializable {
         }
         return date;
     }
+    public LocalDate getNextDate2(){
+        return LocalDate.now();
+    }
     public LocalDate getNextDate(){
         if( mode.equals(Mode.DAY_OF_WEEKS)) {
             return calculateNextDate();
@@ -88,6 +94,10 @@ public class Repeat implements Serializable {
     }
     public void setLastDate(LocalDate lastDate){
         this.lastDate = lastDate;
+    }
+    public void setPeriod(Period period){
+        log("Repeat.setPeriod(Period) ", period.toString());
+        this.period = period;
     }
     public void setWeekDays(List<DayOfWeek> weekDays){
         this.mode = Mode.DAY_OF_WEEKS;
