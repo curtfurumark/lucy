@@ -31,14 +31,16 @@ import java.util.Locale;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.ActionAdapter;
 import se.curtrune.lucy.classes.Action;
+import se.curtrune.lucy.classes.Categories;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.util.Converter;
+import se.curtrune.lucy.workers.CategoryWorker;
 
 
-public class AddItemDialog extends BottomSheetDialogFragment {
+public class EditItemDialog extends BottomSheetDialogFragment {
     private EditText editText_heading;
     private TextView textViewParentList;
 
@@ -47,36 +49,27 @@ public class AddItemDialog extends BottomSheetDialogFragment {
     private Button buttonDismiss;
     private CheckBox checkBoxCalendarEvent;
     private CheckBox checkBoxIsTemplate;
-    private CheckBox checkBoxIsPrioritized;
     private String category;
-    //private Categories categories;
+    private Categories categories;
     private LocalTime targetTime;
     private LocalDate targetDate;
     private ActionAdapter actionAdapter;
     private RecyclerView actionRecycler;
-    private final boolean isEvent;
 
     private Action currentAction;
     public static boolean VERBOSE = true;
-    private final Item parent;
-    private Item newItem;
+    private final Item item;
     public interface Callback{
-        void onAddItem(Item item);
+        void onUpdate(Item item);
     }
 
     private Callback listener;
 
-    public AddItemDialog(Item parent, boolean isEvent) {
+    public EditItemDialog(Item item) {
         log("AddItemDialog(Item parent)");
-        assert  parent != null;
-        this.parent = parent;
-        this.newItem = createNewItem(parent);
-        this.isEvent = isEvent;
-        if( this.isEvent){
-            targetDate = LocalDate.now();
-        }
+        assert  item != null;
+        this.item = item;
     }
-
 
     @Nullable
     @Override
@@ -89,43 +82,39 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         initDefaults();
         editText_heading.setText(heading);
         log("...targetDate", targetDate);
-        initUserInterface(parent);
+        initUserInterface(item);
         return view;
     }
-    private Item createNewItem(Item parent){
-        log("...createNewItem(Item)");
-        newItem = new Item();
-        newItem.setParentId(parent.getID());
-        newItem.setCategory(parent.getCategory());
-        return newItem;
-    }
-    private List<Action> getActionList(){
+
+    private List<Action> getActionList(Item item){
         log("...getActionList()");
         Action time = new Action();
-        time.setTitle(getString(R.string.time));
+        time.setTitle(item.getTargetTime().toString());
         time.setType(Action.Type.TIME);
 
         Action notification = new Action();
-        notification.setTitle(getString(R.string.notification));
+        if( item.hasNotification()){
+            notification.setTitle(item.getNotification().toString());
+        }else {
+            notification.setTitle(getString(R.string.notification));
+        }
         notification.setType(Action.Type.NOTIFICATION);
 
         Action dateAction = new Action();
-        if( targetDate != null) {
-            dateAction.setTitle(targetDate.toString());
-        }
+        dateAction.setTitle(item.getTargetDate().toString());
         dateAction.setType(Action.Type.DATE);
 
         Action repeat = new Action();
         repeat.setTitle(getString(R.string.repeat));
         repeat.setType(Action.Type.REPEAT);
 
-        Action categoryAction = new Action();
-        if( category != null && !category.isEmpty()){
-            categoryAction.setTitle(category);
+        Action category = new Action();
+        if( item.hasCategory()){
+            category.setTitle(item.getCategory());
         }else {
-            categoryAction.setTitle(getString(R.string.category));
+            category.setTitle(getString(R.string.category));
         }
-        categoryAction.setType(Action.Type.CATEGORY);
+        category.setType(Action.Type.CATEGORY);
 
         Action actionDuration = new Action();
         actionDuration.setTitle(getString(R.string.duration));
@@ -137,32 +126,17 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         actionList.add(dateAction);
         actionList.add(repeat);
         actionList.add(notification);
-        actionList.add(categoryAction);
+        actionList.add(category);
         actionList.add(actionDuration);
 
         return actionList;
     }
 
-    private Item getItem(){
-        log("...getItem()");
-        newItem.setHeading(editText_heading.getText().toString());
-        newItem.setTags(parent.getTags());
-        newItem.setTargetDate(targetDate);
-        if( isEvent) {
-            log("...item is event, setting type to appointment");
-            newItem.setType(Type.APPOINTMENT);
-        }
-        if( checkBoxIsTemplate.isChecked()){
-            newItem.setIsTemplate(true);
-        }
-        newItem.setPriority( checkBoxIsPrioritized.isChecked() ? 1:0);
-        return newItem;
 
-    }
     private void initActionRecycler(){
         log("...initActionRecycler()");
         ActionAdapter.VERBOSE = true;
-        actionAdapter = new ActionAdapter(getActionList(), new ActionAdapter.Callback() {
+        actionAdapter = new ActionAdapter(getActionList(item), new ActionAdapter.Callback() {
             @Override
             public void onAction(Action action) {
                 log("...onAction(Action)", action.getTitle());
@@ -206,30 +180,31 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         textViewParentList = view.findViewById(R.id.addItemDialog_parentList);
         checkBoxCalendarEvent = view.findViewById(R.id.addItemDialog_checkBoxCalendarEvent);
         checkBoxIsTemplate = view.findViewById(R.id.addItemDialog_checkBoxIsTemplate);
-        checkBoxIsPrioritized = view.findViewById(R.id.addItemDialog_checkBoxIsPrioritized);
     }
     private void initDefaults(){
         log("...initDefaults()");
         targetDate = LocalDate.now();
-        //categories = new Categories(CategoryWorker.getCategories(getContext()));
+        categories = new Categories(CategoryWorker.getCategories(getContext()));
     }
     private void initListeners(){
         log("...initListeners()");
         buttonSave.setOnClickListener(view1 -> {
             log("...saveItem()");
-            Item item = getItem();
-            log(item);
-            listener.onAddItem(item);
+            //log(item);
+            item.setHeading(editText_heading.getText().toString());
+            listener.onUpdate(item);
             dismiss();
         });
         buttonDismiss.setOnClickListener(view->dismiss());
     }
 
-    public void initUserInterface(Item parentItem){
+    public void initUserInterface(Item item){
         log("...initUserInterface(Item)");
-        String strParentList = String.format(Locale.getDefault(), "%s: %s",getString(R.string.add_to_list), parentItem.getHeading());
-        textViewParentList.setText(strParentList);
-        checkBoxCalendarEvent.setChecked(isEvent);
+        //String strParentList = String.format(Locale.getDefault(), "%s: %s",getString(R.string.add_to_list), parentItem.getHeading());
+        //textViewParentList.setText(strParentList);
+        editText_heading.setText(item.getHeading());
+        checkBoxCalendarEvent.setChecked(item.getType().equals(Type.APPOINTMENT));
+        checkBoxIsTemplate.setChecked(item.isTemplate());
     }
 
     @Override
@@ -253,13 +228,13 @@ public class AddItemDialog extends BottomSheetDialogFragment {
 
     private void showCategoryDialog(){
         log("...showCategoryDialog()");
-        ChooseCategoryDialog dialog = new ChooseCategoryDialog(parent.getCategory());
+        ChooseCategoryDialog dialog = new ChooseCategoryDialog(item.getCategory());
         dialog.setCallback(new ChooseCategoryDialog.Callback() {
             @Override
             public void onSelected(String category) {
                 log("...onSelected(String)", category);
                 currentAction.setTitle(category);
-                newItem.setCategory(category);
+                item.setCategory(category);
                 actionAdapter.notifyDataSetChanged();
             }
         });
@@ -276,7 +251,7 @@ public class AddItemDialog extends BottomSheetDialogFragment {
             @Override
             public void onDurationDialog(Duration duration) {
                 log("...onDurationDialog(Duration)");
-                newItem.setDuration(duration.getSeconds());
+                item.setDuration(duration.getSeconds());
                 currentAction.setTitle(Converter.formatSecondsWithHours(duration.getSeconds()));
                 actionAdapter.notifyDataSetChanged();
             }
@@ -287,13 +262,13 @@ public class AddItemDialog extends BottomSheetDialogFragment {
 
     public void showNotificationDialog(){
         log("...showNotificationDialog()");
-        NotificationDialog dialog = new NotificationDialog(parent);
+        NotificationDialog dialog = new NotificationDialog(item);
         dialog.setListener(new NotificationDialog.Callback() {
             @Override
             public void onNotification(Notification notification) {
                 log("...onNotification(Notification)");
                 currentAction.setTitle(notification.toString());
-                newItem.setNotification(notification);
+                item.setNotification(notification);
                 actionAdapter.notifyDataSetChanged();
             }
         });
@@ -321,11 +296,10 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         int hour = now.getHour();
         TimePickerDialog timePicker = new TimePickerDialog(getContext(), (view, hourOfDay, minute) -> {
             targetTime = LocalTime.of(hourOfDay, minute);
-            newItem.setTargetTime(targetTime);
+            item.setTargetTime(targetTime);
             currentAction.setTitle(targetTime.toString());
             actionAdapter.notifyDataSetChanged();
         }, hour, minutes, true);
         timePicker.show();
-
     }
 }

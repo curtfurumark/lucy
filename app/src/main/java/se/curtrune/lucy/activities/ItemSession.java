@@ -182,7 +182,7 @@ public class ItemSession extends AppCompatActivity implements
 
     private void addChildItem(){
         log("ItemSession.addChildItem()");
-        AddItemDialog dialog = new AddItemDialog(currentItem);
+        AddItemDialog dialog = new AddItemDialog(currentItem, false);
         dialog.setCallback(item -> {
             log("...onAddItem(Item)");
             item = ItemsWorker.insertChild(currentItem, item, this);

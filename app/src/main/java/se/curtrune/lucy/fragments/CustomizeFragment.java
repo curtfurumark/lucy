@@ -11,9 +11,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -43,6 +45,8 @@ public class CustomizeFragment extends Fragment {
     private RadioButton radioButtonSwedish;
     private RadioButton radioButtonEnglish;
     private RadioGroup radioGroupLanguage;
+    private LinearLayout layoutPanicButton;
+    private TextView textViewPanicButton;
     public static boolean VERBOSE = true;
     public CustomizeFragment() {
         // Required empty public constructor
@@ -92,6 +96,8 @@ public class CustomizeFragment extends Fragment {
         radioButtonEnglish = view.findViewById(R.id.customizeFragment_radioButtonEnglish);
         radioButtonSwedish = view.findViewById(R.id.customizeFragment_radioButtonSwedish);
         radioGroupLanguage = view.findViewById(R.id.customizeFragment_radioGroupLanguage);
+        layoutPanicButton = view.findViewById(R.id.customizeFragment_layoutPanicButton);
+        textViewPanicButton = view.findViewById(R.id.customizeFragment_labelPanicButton);
     }
     private void initListeners(){
         log("...initListeners()");
@@ -102,7 +108,7 @@ public class CustomizeFragment extends Fragment {
                     showPasswordDialog();
                 }
             }else{
-                //User.removePassword();
+                removePassword();
             }
         });
         checkBoxDarkMode.setOnClickListener(view->toggleDarkMode());
@@ -123,6 +129,7 @@ public class CustomizeFragment extends Fragment {
                 log("...url", url);
             }
         });
+        textViewPanicButton.setOnClickListener(view->togglePanicButton());
     }
     private void initListView(){
         log("...initListView()");
@@ -139,6 +146,12 @@ public class CustomizeFragment extends Fragment {
     }
     private void printSharedPreferences(){
         Settings.printAll(requireContext());
+    }
+    private void removePassword(){
+        log("...removePassword()");
+        //TODO, confirm with pwd
+        Toast.makeText(getContext(), "remove password, are you sure?", Toast.LENGTH_LONG).show();
+        User.setUsesPassword(false, getContext());
     }
     private void setLanguage(int id){
         log("...setLanguage(int)", id);
@@ -205,5 +218,14 @@ public class CustomizeFragment extends Fragment {
         Toast.makeText(getContext(), "light mode not implemented", Toast.LENGTH_LONG).show();
         //User.setUseDarkMode(checkBoxDarkMode.isChecked(), getContext());
         //SettingsWorker.toggleDarkMode(getContext());
+    }
+    private void togglePanicButton(){
+        log("...togglePanicButton()");
+        if( layoutPanicButton.getVisibility() == View.GONE){
+            layoutPanicButton.setVisibility(View.VISIBLE);
+        }else{
+            layoutPanicButton.setVisibility(View.GONE);
+        }
+
     }
 }

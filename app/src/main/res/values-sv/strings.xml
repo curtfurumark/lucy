@@ -94,7 +94,7 @@
     <string name="user">user</string>
     <string name="mental">Mental</string>
     <string name="game">Spel</string>
-    <string name="panic_action">Panik åtgärd</string>
+    <string name="panic_action">Panik knapp</string>
     <string name="swedish">Swedish</string>
     <string name="english">English</string>
     <string name="add_to_list">Lägg till i lista</string>
@@ -103,5 +103,35 @@
     <string name="every_month">Varje månad</string>
     <string name="every_year">Varje år</string>
     <string name="custom">Anpassad</string>
-
+    <string name="graph_today">Energi graf</string>
+    <string name="timer">Timer</string>
+    <string name="estimate_today">Beräkning idag</string>
+    <string name="enchilada">Allt</string>
+    <string name="invalid_password">lösen ord måste vara minst 8 tecken</string>
+    <string name="stress_level">Stress nivå</string>
+    <string name="add_mental">Lägg till mental</string>
+    <string name="mental_sum">mental sum</string>
+    <string name="economy">Ekonomi</string>
+    <string name="quotes">quotes</string>
+    <string name="navigation_drawer">navigation drawer</string>
+    <string name="web_page">web page</string>
+    <string name="sequence">Sekvens</string>
+    <string name="customize">Anpassa</string>
+    <string name="show_in_calendar">Visa i kalender</string>
+    <string name="is_template">Mall</string>
+    <string name="is_prioritized">Prioriterad</string>
+    <string name="add_notification">add notification</string>
+    <string name="tags">Sökord</string>
+    <string name="add_or_delete_notification">add or delete notification</string>
+    <string name="mood_level">Humör</string>
+    <string name="anxiety_level">Ångest</string>
+    <string name="add_or_delete_repeat">add or delete repeat</string>
+    <string name="energy_level">Energy</string>
+    <string name="estimated_energy_level">estimated energy level</string>
+    <string name="parent_id">parent id</string>
+    <string name="content">Innehåll</string>
+    <string name="publish">Publicera</string>
+    <string name="subject">Ämne</string>
+    <string name="firstdate">firstDate</string>
+    <string name="total_duration">total duration:</string>
 </resources>

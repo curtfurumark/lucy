@@ -90,7 +90,7 @@ public class TodoFragment extends Fragment implements
     }
     private void addItemDialog(){
         if( VERBOSE) log("...addItemDialog()");
-        AddItemDialog dialog = new AddItemDialog(ItemsWorker.getRootItem(Settings.Root.TODO, getContext()));
+        AddItemDialog dialog = new AddItemDialog(ItemsWorker.getRootItem(Settings.Root.TODO, getContext()), false);
         dialog.setCallback(new AddItemDialog.Callback() {
             @Override
             public void onAddItem(Item item) {

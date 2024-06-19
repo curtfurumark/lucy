@@ -229,7 +229,7 @@ public class ProjectsFragment extends Fragment implements
     }
     private void showAddItemDialog(){
         if(VERBOSE) log("...showAddItemDialog()");
-        AddItemDialog dialog = new AddItemDialog(currentParent);
+        AddItemDialog dialog = new AddItemDialog(currentParent, false);
         dialog.setCallback(new AddItemDialog.Callback() {
             @Override
             public void onAddItem(Item item) {

@@ -226,7 +226,6 @@ public class Item implements Serializable , Listable {
     public boolean hasPeriod(){
         return repeat != null;
     }
-    //public boolean hasMental() {return mental != null;}
     public boolean hasNotification(){return notification != null;}
     public boolean hasReward(){return reward != null;}
     public boolean hasTags(){
@@ -262,6 +261,10 @@ public class Item implements Serializable , Listable {
         LocalDateTime localDateTime = date.atStartOfDay();
         long epoch = localDateTime.toEpochSecond(ZoneOffset.UTC);
         return updated >= epoch && updated <= epoch + (3600 * 24);
+    }
+    public void postpone(){
+
+
     }
 
     public void setChildren(List<Item> children){

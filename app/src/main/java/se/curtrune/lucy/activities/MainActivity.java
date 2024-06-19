@@ -159,8 +159,6 @@ public class MainActivity extends AppCompatActivity {
                 navigate(new ContactFragment());
             }else if( item.getItemId() == R.id.navigationDrawer_messageBoardFragment){
                 navigate(new MessageBoardFragment());
-            }else if( item.getItemId() == R.id.navigationDrawer_settings){
-                startActivity(new Intent(this, SettingsActivity.class));
             }else if( item.getItemId() == R.id.navigationDrawer_countDownTimer){
                 navigate(new TimerFragment());
             }else if ( item.getItemId() == R.id.navigationDrawer_customizeFragment){

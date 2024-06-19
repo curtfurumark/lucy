@@ -21,58 +21,70 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/dark_mode" />
-
-        <RadioGroup
-            android:id="@+id/customizeFragment_radioGroupPanicAction"
+        <TextView
+            android:id="@+id/customizeFragment_labelPanicButton"
+            android:text="@string/panic_action"
+            android:textSize="24sp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-            <TextView
-                android:text="@string/panic_action"
-                android:textSize="24sp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-            <RadioButton
-                android:id="@+id/customizeFragment_radioButtonGame"
-                android:layout_width="match_parent"
-                android:layout_marginStart="24dp"
-                android:layout_height="wrap_content"
-                android:text="@string/game"/>
-            <RadioButton
-                android:id="@+id/customizeFragment_radioButtonWeb"
-                android:layout_marginStart="24dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/web_page"/>
-            <RadioButton
-                android:id="@+id/customizeFragment_radioButtonSequence"
-                android:layout_marginStart="24dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/sequence"/>
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            android:layout_height="wrap_content"/>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/customizeFragment_url"
+        <LinearLayout
+            android:id="@+id/customizeFragment_layoutPanicButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <RadioGroup
+                android:id="@+id/customizeFragment_radioGroupPanicAction"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <RadioButton
+                    android:id="@+id/customizeFragment_radioButtonGame"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="url" />
-            </com.google.android.material.textfield.TextInputLayout>
-            <Button
-                android:id="@+id/customizeFragment_buttonAddUrl"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="add panic url"/>
+                    android:layout_marginStart="24dp"
+                    android:text="@string/game" />
 
-            <ListView
-                android:id="@+id/customizeFragment_panicUrls"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                <RadioButton
+                    android:id="@+id/customizeFragment_radioButtonWeb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:text="@string/web_page" />
 
+                <RadioButton
+                    android:id="@+id/customizeFragment_radioButtonSequence"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:text="@string/sequence" />
 
-        </RadioGroup>
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/customizeFragment_url"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="url" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <Button
+                    android:id="@+id/customizeFragment_buttonAddUrl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="add panic url" />
+
+                <ListView
+                    android:id="@+id/customizeFragment_panicUrls"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </RadioGroup>
+        </LinearLayout>
         <RadioGroup
             android:id="@+id/customizeFragment_radioGroupLanguage"
             android:layout_width="match_parent"

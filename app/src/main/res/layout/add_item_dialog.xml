@@ -10,11 +10,11 @@
 
     <TextView
         android:id="@+id/addItemDialog_parentList"
-        android:text="parent list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        android:text="parent list"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <com.google.android.material.textfield.TextInputLayout
@@ -46,16 +46,46 @@
         android:id="@+id/addItemDialog_buttonDismiss"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:text="@string/dismiss"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/addItemDialog_buttonOK" />
+        app:layout_constraintTop_toBottomOf="@+id/addItemDialog_checkBoxIsPrioritized"
+        tools:layout_editor_absoluteX="16dp" />
+
     <Button
         android:id="@+id/addItemDialog_buttonOK"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:text="@string/save"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/addItemDialog_buttonDismiss" />
+
+    <CheckBox
+        android:id="@+id/addItemDialog_checkBoxCalendarEvent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/show_in_calendar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/addItemDialog_actionRecycler" />
+
+    <CheckBox
+        android:id="@+id/addItemDialog_checkBoxIsTemplate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/is_template"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addItemDialog_checkBoxCalendarEvent" />
+
+    <CheckBox
+        android:id="@+id/addItemDialog_checkBoxIsPrioritized"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/is_prioritized"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addItemDialog_checkBoxIsTemplate" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

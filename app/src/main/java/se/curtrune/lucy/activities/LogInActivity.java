@@ -61,7 +61,7 @@ public class LogInActivity extends AppCompatActivity {
         }
         if (User.usesPassword(this)) {
             log("...using password");
-            logIn();
+            //logIn();
         } else {
             startActivity(new Intent(this, MainActivity.class));
         }
@@ -177,15 +177,10 @@ public class LogInActivity extends AppCompatActivity {
     }
     private boolean validateInput(){
         log("...validateInput()");
-/*        if( editTextUser.getText().toString().isEmpty()){
-            Toast.makeText(this, "no user name supplied", Toast.LENGTH_LONG).show();
-            return false;
-        }*/
         if( editTextPwd.getText().toString().length() < 8){
-            Toast.makeText(this, "password must be at least 8 characters long", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.invalid_password), Toast.LENGTH_LONG).show();
             return false;
         }
-
         return true;
     }
 }

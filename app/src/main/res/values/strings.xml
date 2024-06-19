@@ -128,8 +128,7 @@
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="welcome">"Welcome !"</string>
-    <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="invalid_password">Password must be at least 8 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="create_password">create password</string>
     <string name="use_password">use password</string>
@@ -152,7 +151,7 @@
     <string name="add_appointment">add appointment</string>
     <string name="add_or_delete">add or delete</string>
     <string name="has_child">has child</string>
-    <string name="id">id</string>
+    <string name="id" translatable="false">id</string>
     <string name="add_notification">add notification</string>
     <string name="tags">tags</string>
     <string name="add_or_delete_notification">add or delete notification</string>
@@ -186,4 +185,10 @@
     <string name="every_month">every month</string>
     <string name="every_year">every year</string>
     <string name="custom">custom</string>
+    <string name="graph_today">graph today</string>
+    <string name="timer">timer</string>
+    <string name="estimate_today">estimate today</string>
+    <string name="enchilada">everything</string>
+    <string name="customize">customize</string>
+    <string name="show_in_calendar">show in calendar</string>
 </resources>

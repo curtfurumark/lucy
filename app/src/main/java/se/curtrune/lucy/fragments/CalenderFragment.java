@@ -43,7 +43,9 @@ import se.curtrune.lucy.classes.CallingActivity;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.calender.Week;
-import se.curtrune.lucy.dialogs.AddTemplateDialog;
+import se.curtrune.lucy.dialogs.AddItemDialog;
+import se.curtrune.lucy.dialogs.EditItemDialog;
+import se.curtrune.lucy.dialogs.PostponeDialog;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.ItemsWorker;
@@ -73,7 +75,6 @@ public class CalenderFragment extends Fragment {
 
     private LocalDate currentDate;
     private List<Item> items;
-    private Month month;
     public static boolean VERBOSE = false;
     private LucindaViewModel viewModel;
     public CalenderFragment() {
@@ -174,7 +175,22 @@ public class CalenderFragment extends Fragment {
 
             @Override
             public void onLongClick(Item item) {
-                log("...onLongClick(Item)");
+                log("...onLongClick(Item)", item.getHeading());
+                EditItemDialog dialog = new EditItemDialog(item);
+                dialog.setCallback(new EditItemDialog.Callback() {
+                    @Override
+                    public void onUpdate(Item item) {
+                        log("...onUpdate(Item)");
+                        log(item);
+                        int rowsAffected = ItemsWorker.update(item, getContext());
+                        if( rowsAffected != 1){
+                            log("ERROR updating item", item.getHeading());
+                        }else{
+                            log("...item updated");
+                        }
+                    }
+                });
+                dialog.show(getChildFragmentManager(), "edit item");
             }
 
             @Override
@@ -255,45 +271,21 @@ public class CalenderFragment extends Fragment {
                     });
                     builder.setNegativeButton("cancel", (dialog, which) -> {
                         log("...on negative button click");
-                        //adapter.notifyDataSetChanged();
                     });
                     AlertDialog dialog = builder.create();
                     dialog.show();
 
                 }else if( direction == ItemTouchHelper.RIGHT) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                    builder.setTitle("postpone" + item.getHeading());
-                    builder.setMessage("are you sure? ");
-                    builder.setPositiveButton("postpone", (dialog, which) -> {
-                        log("...on positive button click");
-                        item.setTargetDate(LocalDate.now().plusDays(1));
-                        items.remove(item);
-                        int rowsAffected = ItemsWorker.update(item, getContext());
-                        log(item);
-                        if (rowsAffected != 1) {
-                            log("ERROR updating item", item.getHeading());
-                        } else {
-                            adapter.notifyDataSetChanged();
-                        }
-/*
-                        adapter.notifyItemRemoved(index);
-                        Toast.makeText(TodayActivity.this, "item deleted", Toast.LENGTH_LONG).show();
-                    }else{
-                        log("error deleting item");
-                        Toast.makeText(TodayActivity.this, "error deleting item", Toast.LENGTH_LONG).show();
-                    }*/
-                    });
-                    builder.setNegativeButton("cancel", (dialog, which) -> {
-                        log(
-                                "...on negative button click");
+                    PostponeDialog dialog = new PostponeDialog();
+                    dialog.setCallback(postpone -> {
+                        log("...postpone(Postpone)", postpone.toString());
+                        postpone(item, postpone);
                         adapter.notifyDataSetChanged();
                     });
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
+                    dialog.show(getChildFragmentManager(), "postpone");
                 }
             }
         });
-
         itemTouchHelper.attachToRecyclerView(recycler);
     }
     private void initViewModel(){
@@ -313,6 +305,33 @@ public class CalenderFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         log("CalenderFragment.onOptionsItemSelected(MenuItem) ", Objects.requireNonNull(item.getTitle()).toString());
         return super.onOptionsItemSelected(item);
+    }
+    private void postpone(Item item, PostponeDialog.Postpone postpone){
+        log("...postpone(Item, Postpone)");
+        LocalDate today = LocalDate.now();
+        switch (postpone){
+            case ONE_HOUR:
+                LocalTime targetTime = item.getTargetTime();
+                item.setTargetTime(targetTime.plusHours(1));
+                break;
+            case ONE_DAY:
+                item.setTargetDate(today.plusDays(1));
+                items.remove(item);
+                break;
+            case ONE_WEEK:
+                item.setTargetDate(today.plusWeeks(1));
+                items.remove(item);
+                break;
+            case ONE_MONTH:
+                item.setTargetDate(today.plusMonths(1));
+                items.remove(item);
+                break;
+        }
+        int rowsAffected = ItemsWorker.update(item, getContext());
+        log(item);
+        if( rowsAffected != 1){
+            Toast.makeText(getContext(), "error updating item", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void prevWeek(){
@@ -336,12 +355,13 @@ public class CalenderFragment extends Fragment {
     }
     private void showAddItemDialog(){
         log("...showAddItemDialog()");
-        AddTemplateDialog dialog = new AddTemplateDialog(ItemsWorker.getRootItem(Settings.Root.DAILY, getContext()), currentDate);
+        AddItemDialog dialog = new AddItemDialog(ItemsWorker.getRootItem(Settings.Root.DAILY, getContext()), true);
+        dialog.setTargetDate(currentDate);
         dialog.setCallback(item -> {
             log("...onNewItem(Item)");
-            log(item);
             item = ItemsWorker.insert(item, getContext());
             items.add(item);
+            log(item);
             if(item.hasNotification()){
                 log("...item has notification");
                 NotificationsWorker.setNotification(item, getContext());
@@ -350,13 +370,7 @@ public class CalenderFragment extends Fragment {
         });
         dialog.show(getParentFragmentManager(), "add item");
     }
-/*    private void showAffirmation(){
-        log("...showAffirmation");
-        AffirmationWorker.requestAffirmation(affirmation -> {
-            log("...onRequest(Affirmation)", affirmation.getAffirmation());
-            Toast.makeText(getContext(), affirmation.getAffirmation(), Toast.LENGTH_LONG).show();
-        });
-    }*/
+
     private void updateTargetTime(Item item){
         log("...updateTargetTime(Item)");
         LocalTime oldTime = item.getTargetTime();

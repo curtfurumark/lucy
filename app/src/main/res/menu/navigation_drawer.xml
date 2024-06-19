@@ -26,29 +26,25 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/navigationDrawer_estimateFragment"
-            android:title="estimate fragment" />
+            android:title="@string/estimate_today" />
         <item android:id="@+id/navigationDrawer_durationFragment"
             android:icon="@drawable/baseline_access_time_24"
-        android:title="duration"/>
+        android:title="@string/duration"/>
     <item android:title="top ten"
         android:id="@+id/navigationDrawer_topTen"/>
     <item android:id="@+id/bottomNavigation_enchilada"
-        android:title="enchilda"
+        android:title="@string/enchilada"
         android:icon="@drawable/baseline_checklist_24"/>
     <item android:id="@+id/navigationDrawer_graphFragment"
-        android:title="graph today"/>
+        android:title="@string/graph_today"/>
     </group>
-    <item android:title="customize"
+    <item android:title="@string/customize"
         android:id="@+id/navigationDrawer_customizeFragment"/>
-
     <item android:id="@+id/navigationDrawer_contactFragment"
         android:icon="@drawable/baseline_email_24"
         android:title="contact curt rune"/>
     <item android:id="@+id/navigationDrawer_messageBoardFragment"
         android:title="message board"/>
     <item android:id="@+id/navigationDrawer_countDownTimer"
-        android:title="timer"/>
-    <item android:id="@+id/navigationDrawer_settings"
-        android:title="@string/settings"
-        />
+        android:title="@string/timer"/>
 </menu>

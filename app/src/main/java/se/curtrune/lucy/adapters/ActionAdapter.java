@@ -18,7 +18,7 @@ import se.curtrune.lucy.classes.Action;
 
 public class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ViewHolder>{
     private List<Action> items;
-    public static boolean VERBOSE = true;
+    public static boolean VERBOSE = false;
 
 
     public interface Callback{
