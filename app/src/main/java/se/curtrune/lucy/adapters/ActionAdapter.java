@@ -3,11 +3,15 @@ package se.curtrune.lucy.adapters;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -17,7 +21,7 @@ import se.curtrune.lucy.classes.Action;
 
 
 public class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ViewHolder>{
-    private List<Action> items;
+    private final List<Action> items;
     public static boolean VERBOSE = false;
 
 
@@ -48,6 +52,8 @@ public class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ViewHolder
 
         holder.textViewTitle.setText(action.getTitle());
 
+        //holder.textViewTitle.setCompoundDrawables();
+
     }
 
     @Override
@@ -60,9 +66,7 @@ public class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ViewHolder
         public ViewHolder(@NonNull android.view.View itemView) {
             super(itemView);
             textViewTitle = itemView.findViewById(R.id.actionAdapter_title);
-            textViewTitle.setOnClickListener(view -> {
-                callback.onAction(items.get(getAdapterPosition()));
-            });
+            textViewTitle.setOnClickListener(view -> callback.onAction(items.get(getAdapterPosition())));
         }
     }
 }

@@ -5,17 +5,13 @@ import static se.curtrune.lucy.util.Logger.log;
 import android.content.Context;
 
 import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
 
-import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
-import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.fragments.TopTenFragment;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
@@ -40,21 +36,23 @@ public class MentalWorker {
 
     /**
      * the latest ten entries, notwithstanding date
-     * @param context
-     * @return
+     * @param context, the f-ing context, what did you expect=
+     * @return energy as calculated from the ten latest mental entries
      */
     public static long getCurrentEnergy(Context context) {
         log("MentalWorker.getCurrentEnergy(Context)");
+        long sum;
         String query = "SELECT * FROM mental ORDER BY updated DESC LIMIT 10";
-        LocalDB db = new LocalDB(context);
-        List<Mental> items = db.selectMentals(query);
-        if (items.size() == 0) {
-            log("...no mental items in database");
-            return 0;
+        try(LocalDB db = new LocalDB(context)) {
+            List<Mental> items = db.selectMentals(query);
+            if (items.size() == 0) {
+                log("...no mental items in database");
+                return 0;
+            }
+            items.forEach(Logger::log);
+            sum = items.stream().mapToLong(Mental::getEnergy).sum();
+            log("...sum energy", sum);
         }
-        items.forEach(Logger::log);
-        long sum = items.stream().mapToLong(Mental::getEnergy).sum();
-        log("...sum energy", sum);
         return sum;
     }
     public static int getEnergy(LocalDate date, Context context){
@@ -72,8 +70,9 @@ public class MentalWorker {
     public static List<Mental> select(LocalDate firstDate, LocalDate lastDate, Context context) {
         if( VERBOSE) log("MentalWorker.select(LocalDate, LocalDate, Context");
         String query = String.format("SELECT * FROM mental WHERE date >= %d AND date <= %d", firstDate.toEpochDay(), lastDate.toEpochDay());
-        LocalDB db = new LocalDB(context);
-        return db.selectMentals(query);
+        try(LocalDB db = new LocalDB(context)){
+            return db.selectMentals(query);
+        }
     }
 
     public static List<Mental> selectTopTen(TopTenFragment.Mode mode, Context context) {
@@ -113,7 +112,7 @@ public class MentalWorker {
         return db.selectMentals(queery);
     }
     public static DataPoint[] getMentalsAsDataPoints(LocalDate date, Context context){
-        log("MentalWorker.gettMentalAdDataPoints(LocalDate, Context)", date.toString());
+        log("MentalWorker.getMentalAdDataPoints(LocalDate, Context)", date.toString());
         List<Mental> mentals = getMentals(date,false, true, context);
         log("...number of mentals", mentals.size());
         DataPoint[] dataPoints = new DataPoint[mentals.size()];

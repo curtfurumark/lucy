@@ -191,4 +191,6 @@
     <string name="enchilada">everything</string>
     <string name="customize">customize</string>
     <string name="show_in_calendar">show in calendar</string>
+    <string name="projects_tabs">projects tabs</string>
+    <string name="add_item">add item</string>
 </resources>

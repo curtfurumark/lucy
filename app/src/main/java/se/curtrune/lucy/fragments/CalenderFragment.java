@@ -187,6 +187,8 @@ public class CalenderFragment extends Fragment {
                             log("ERROR updating item", item.getHeading());
                         }else{
                             log("...item updated");
+                            items.sort(Comparator.comparingLong(Item::compareTargetTime));
+                            adapter.notifyDataSetChanged();
                         }
                     }
                 });
@@ -308,22 +310,26 @@ public class CalenderFragment extends Fragment {
     }
     private void postpone(Item item, PostponeDialog.Postpone postpone){
         log("...postpone(Item, Postpone)");
-        LocalDate today = LocalDate.now();
+        if(item.isPrioritized()){
+            Toast.makeText(getContext(), "no no no, dont postpone prioritized items", Toast.LENGTH_LONG).show();
+            return;
+        }
+        log("...currentDate", currentDate.toString());
         switch (postpone){
             case ONE_HOUR:
                 LocalTime targetTime = item.getTargetTime();
                 item.setTargetTime(targetTime.plusHours(1));
                 break;
             case ONE_DAY:
-                item.setTargetDate(today.plusDays(1));
+                item.setTargetDate(currentDate.plusDays(1));
                 items.remove(item);
                 break;
             case ONE_WEEK:
-                item.setTargetDate(today.plusWeeks(1));
+                item.setTargetDate(currentDate.plusWeeks(1));
                 items.remove(item);
                 break;
             case ONE_MONTH:
-                item.setTargetDate(today.plusMonths(1));
+                item.setTargetDate(currentDate.plusMonths(1));
                 items.remove(item);
                 break;
         }

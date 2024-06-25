@@ -5,9 +5,6 @@ import static se.curtrune.lucy.util.Logger.log;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +12,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
+
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Message;
-import se.curtrune.lucy.persist.DB1Result;
 import se.curtrune.lucy.util.Settings;
-import se.curtrune.lucy.web.InsertThread;
 import se.curtrune.lucy.workers.MessageWorker;
 
 /**
@@ -31,12 +28,7 @@ public class ContactFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
     private EditText editTextSubject;
     private EditText editTextContent;
     private EditText editTextMailAddress;
@@ -50,26 +42,19 @@ public class ContactFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment ContactFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ContactFragment newInstance(String param1, String param2) {
-        ContactFragment fragment = new ContactFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    public static ContactFragment newInstance() {
+        return new ContactFragment();
+
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            log("WTF getArguments != null");
         }
     }
 
@@ -107,8 +92,7 @@ public class ContactFragment extends Fragment {
         if( !validateInput()){
             return;
         }
-        Intent intent = new Intent(Intent.ACTION_SENDTO);
-        intent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+        Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                 "mailto:","", null));
         intent.setData(Uri.parse("mailto:"));
         intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"curt.r.truc@gmail.com"});
@@ -118,20 +102,14 @@ public class ContactFragment extends Fragment {
         //if( intent.resolveActivity(getContext().getPackageManager()) != null) {
             startActivity(Intent.createChooser(intent, "choose client"));
             log("...message sent, well not really but you know what i mean");
-            //Toast.makeText(getContext(), "message sent", Toast.LENGTH_LONG).show();
-        //}else{
-        //    log("ERROR, intent.resolveActivity");
-        //}
         insert(getMessage());
     }
     private void insert(Message message){
         log("...insert(Message)");
-        MessageWorker.insert(message, new InsertThread.Callback() {
-            @Override
-            public void onItemInserted(DB1Result result) {
-                if(result.isOK()){
-                    log("...error inserting messagee");
-                }
+        MessageWorker.insert(message, result -> {
+            log("...onItemInsert(DB1Result) ok", result.isOK());
+            if(result.isOK()){
+                log("...error inserting message");
             }
         });
     }

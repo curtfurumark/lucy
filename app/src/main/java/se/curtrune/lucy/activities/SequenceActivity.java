@@ -109,11 +109,7 @@ public class SequenceActivity extends AppCompatActivity implements SequenceAdapt
     }
     private void initRecycler(){
         log("...initRecycler()");
-        adapter = new SequenceAdapter(items, this);
-        layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
-        recycler.setLayoutManager(layoutManager);
-        recycler.setItemAnimator(new DefaultItemAnimator());
-        recycler.setAdapter(adapter);
+
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recycler);
         recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {

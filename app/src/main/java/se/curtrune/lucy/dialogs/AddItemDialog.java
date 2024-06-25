@@ -21,7 +21,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -32,9 +31,6 @@ import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.ActionAdapter;
 import se.curtrune.lucy.classes.Action;
 import se.curtrune.lucy.classes.Item;
-import se.curtrune.lucy.classes.Notification;
-import se.curtrune.lucy.classes.Repeat;
-import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.util.Converter;
 
 
@@ -49,7 +45,6 @@ public class AddItemDialog extends BottomSheetDialogFragment {
     private CheckBox checkBoxIsTemplate;
     private CheckBox checkBoxIsPrioritized;
     private String category;
-    //private Categories categories;
     private LocalTime targetTime;
     private LocalDate targetDate;
     private ActionAdapter actionAdapter;
@@ -150,7 +145,8 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         newItem.setTargetDate(targetDate);
         if( isEvent) {
             log("...item is event, setting type to appointment");
-            newItem.setType(Type.APPOINTMENT);
+            //newItem.setType(Type.APPOINTMENT);
+            newItem.setIsCalenderItem(true);
         }
         if( checkBoxIsTemplate.isChecked()){
             newItem.setIsTemplate(true);
@@ -162,32 +158,29 @@ public class AddItemDialog extends BottomSheetDialogFragment {
     private void initActionRecycler(){
         log("...initActionRecycler()");
         ActionAdapter.VERBOSE = true;
-        actionAdapter = new ActionAdapter(getActionList(), new ActionAdapter.Callback() {
-            @Override
-            public void onAction(Action action) {
-                log("...onAction(Action)", action.getTitle());
-                log("...type", action.getType().toString());
-                currentAction = action;
-                switch (action.getType()){
-                    case NOTIFICATION:
-                        showNotificationDialog();
-                        break;
-                    case CATEGORY:
-                        showCategoryDialog();
-                        break;
-                    case TIME:
-                        showTimeDialog();
-                        break;
-                    case REPEAT:
-                        showRepeatDialog();
-                        break;
-                    case DATE:
-                        showDateDialog();
-                        break;
-                    case DURATION:
-                        showDurationDialog();
-                        break;
-                }
+        actionAdapter = new ActionAdapter(getActionList(), action -> {
+            log("...onAction(Action)", action.getTitle());
+            log("...type", action.getType().toString());
+            currentAction = action;
+            switch (action.getType()){
+                case NOTIFICATION:
+                    showNotificationDialog();
+                    break;
+                case CATEGORY:
+                    showCategoryDialog();
+                    break;
+                case TIME:
+                    showTimeDialog();
+                    break;
+                case REPEAT:
+                    showRepeatDialog();
+                    break;
+                case DATE:
+                    showDateDialog();
+                    break;
+                case DURATION:
+                    showDurationDialog();
+                    break;
             }
         });
 
@@ -254,14 +247,11 @@ public class AddItemDialog extends BottomSheetDialogFragment {
     private void showCategoryDialog(){
         log("...showCategoryDialog()");
         ChooseCategoryDialog dialog = new ChooseCategoryDialog(parent.getCategory());
-        dialog.setCallback(new ChooseCategoryDialog.Callback() {
-            @Override
-            public void onSelected(String category) {
-                log("...onSelected(String)", category);
-                currentAction.setTitle(category);
-                newItem.setCategory(category);
-                actionAdapter.notifyDataSetChanged();
-            }
+        dialog.setCallback(category -> {
+            log("...onSelected(String category)", category);
+            currentAction.setTitle(category);
+            newItem.setCategory(category);
+            actionAdapter.notifyDataSetChanged();
         });
         dialog.show(getChildFragmentManager(), "choose category");
     }
@@ -272,14 +262,11 @@ public class AddItemDialog extends BottomSheetDialogFragment {
     public void showDurationDialog(){
         log("...showDurationDialog()");
         DurationDialog dialog = new DurationDialog();
-        dialog.setCallback(new DurationDialog.Callback() {
-            @Override
-            public void onDurationDialog(Duration duration) {
-                log("...onDurationDialog(Duration)");
-                newItem.setDuration(duration.getSeconds());
-                currentAction.setTitle(Converter.formatSecondsWithHours(duration.getSeconds()));
-                actionAdapter.notifyDataSetChanged();
-            }
+        dialog.setCallback(duration -> {
+            log("...onDurationDialog(Duration)", duration.getSeconds());
+            newItem.setEstimatedDuration(duration.getSeconds());
+            currentAction.setTitle(Converter.formatSecondsWithHours(duration.getSeconds()));
+            actionAdapter.notifyDataSetChanged();
         });
         dialog.show(getChildFragmentManager(), "duration");
 
@@ -288,14 +275,11 @@ public class AddItemDialog extends BottomSheetDialogFragment {
     public void showNotificationDialog(){
         log("...showNotificationDialog()");
         NotificationDialog dialog = new NotificationDialog(parent);
-        dialog.setListener(new NotificationDialog.Callback() {
-            @Override
-            public void onNotification(Notification notification) {
-                log("...onNotification(Notification)");
-                currentAction.setTitle(notification.toString());
-                newItem.setNotification(notification);
-                actionAdapter.notifyDataSetChanged();
-            }
+        dialog.setListener(notification -> {
+            log("...onNotification(Notification)", notification.toString());
+            currentAction.setTitle(notification.toString());
+            newItem.setNotification(notification);
+            actionAdapter.notifyDataSetChanged();
         });
         dialog.show(getChildFragmentManager(), "notification ");
 
@@ -303,13 +287,10 @@ public class AddItemDialog extends BottomSheetDialogFragment {
     private void showRepeatDialog(){
         log("...showRepeatDialog()");
         RepeatDialog dialog = new RepeatDialog();
-        dialog.setCallback(new RepeatDialog.Callback() {
-            @Override
-            public void onRepeat(Repeat.Period period) {
-                log("...onRepeat(Period)", period.toString());
-                currentAction.setTitle(period.toString());
-                actionAdapter.notifyDataSetChanged();
-            }
+        dialog.setCallback(period -> {
+            log("...onRepeat(Period)", period.toString());
+            currentAction.setTitle(period.toString());
+            actionAdapter.notifyDataSetChanged();
         });
         dialog.show(getChildFragmentManager(), "repeat");
 

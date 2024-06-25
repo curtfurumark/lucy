@@ -9,13 +9,25 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import se.curtrune.lucy.R;
+import se.curtrune.lucy.adapters.ListableAdapter;
+import se.curtrune.lucy.adapters.SequenceAdapter;
 import se.curtrune.lucy.classes.EstimateDate;
+import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.Listable;
+import se.curtrune.lucy.classes.Mental;
+import se.curtrune.lucy.statistics.MentalStatistics;
 import se.curtrune.lucy.util.Converter;
+import se.curtrune.lucy.workers.ItemsWorker;
 
 public class EstimateFragment extends Fragment {
 
@@ -24,50 +36,98 @@ public class EstimateFragment extends Fragment {
     private TextView textViewStress;
     private TextView textViewAnxiety;
     private TextView textViewMood;
+    private TextView textViewDate;
+    private ListableAdapter adapterDuration;
+    private RecyclerView recyclerDuration;
     private EstimateDate estimateDate;
     private LocalDate date;
+    private long duration;
+    private List<Mental> mentals;
+    public static boolean VERBOSE = false;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-           // mParam1 = getArguments().getString(ARG_PARAM1);
-            //mParam2 = getArguments().getString(ARG_PARAM2);
+           log("WTF, getArguments != null");
         }
     }
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         log("EstimateFragment.onCreateView(LayoutInflater, ViewGroup, Bundle)");
         View view = inflater.inflate(R.layout.estimate_fragment, container, false);
+        initDefaults();
         initComponents(view);
-        initEstimate(LocalDate.now());
+        initRecyclerDuration();
+        initListeners();
+        initEstimate(date);
         setUserInterface(estimateDate);
         return view;
     }
     private void initComponents(View view){
-        log("...initComponents(View view) ");
+        if( VERBOSE) log("...initComponents(View) ");
         textViewDuration = view.findViewById(R.id.estimateFragment_duration);
         textViewEnergy = view.findViewById(R.id.estimateFragment_energy);
         textViewStress = view.findViewById(R.id.estimateFragment_stress);
         textViewMood = view.findViewById(R.id.estimateFragment_mood);
         textViewAnxiety = view.findViewById(R.id.estimateFragment_anxiety);
+        textViewDate = view.findViewById(R.id.estimateFragment_date);
+        recyclerDuration = view.findViewById(R.id.estimateFragment_recyclerDuration);
+    }
+    private void initDefaults(){
+        if( VERBOSE) log("...initDefaults()");
+        date = LocalDate.now();
+
     }
     private void initEstimate(LocalDate date){
-        log("...initEstimate()");
+        log("...initEstimate(LocalDate)", date.toString());
         estimateDate = new EstimateDate(date, getContext());
+        duration = EstimateDate.calculateDuration(date, getContext());
+        List<Item> items = ItemsWorker.selectTodayList(date, getContext());
+        mentals = MentalStatistics.getMentals(items, getContext());
+        log("...number of mentals:", mentals.size());
+        mentals.forEach(System.out::println);
 
+    }
+    private void initListeners(){
+        if( VERBOSE)log("...initListeners()");
+        textViewDate.setOnClickListener(view->showDateDialog());
+    }
+    private void initRecyclerDuration(){
+        log("...initRecyclerDuration()");
+        adapterDuration = new ListableAdapter(new ArrayList<>(), new ListableAdapter.Callback() {
+            @Override
+            public void onItemClick(Listable item) {
+                log("...onItemClick(Listable)");
+            }
+
+            @Override
+            public void onLongClick(Listable item) {
+                log("...onLongClick(Listable)");
+            }
+        });
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        recyclerDuration.setLayoutManager(layoutManager);
+        recyclerDuration.setItemAnimator(new DefaultItemAnimator());
+        recyclerDuration.setAdapter(adapterDuration);
     }
     private void setUserInterface(EstimateDate estimateDate){
         log("...setUserInterface(EstimateDate)");
-        String textTotalDuration = String.format(Locale.getDefault(), "total duration %s", Converter.formatSecondsWithHours(estimateDate.getDurationEstimate()));
+        //String textTotalDuration = String.format(Locale.getDefault(), "total duration %s", Converter.formatSecondsWithHours(estimateDate.getDurationEstimate()));
+        String textTotalDuration = String.format(Locale.getDefault(), "total duration %s", Converter.formatSecondsWithHours(duration));
         textViewDuration.setText(textTotalDuration );
         estimateDate.getEnergyEstimate();
-        String textEnergy =String.format(Locale.getDefault(), "energy: %d", estimateDate.getEnergyEstimate());
+        String textEnergy =String.format(Locale.getDefault(), "%s: %d", getString(R.string.energy),estimateDate.getEnergyEstimate());
         textViewEnergy.setText(textEnergy);
-        String textAnxiety =String.format(Locale.getDefault(), "anxiety: %d", estimateDate.getAnxiety());
+        String textAnxiety =String.format(Locale.getDefault(), "%s: %d",getString(R.string.anxiety), estimateDate.getAnxiety());
         textViewAnxiety.setText(textAnxiety);
         String textStress =String.format(Locale.getDefault(), "stress: %d", estimateDate.getStressEstimate());
         textViewStress.setText(textStress);
-        String textMood =String.format(Locale.getDefault(), "mood: %d", estimateDate.getMoodEstimate());
+        String textMood =String.format(Locale.getDefault(), "%s: %d",getString(R.string.mood), estimateDate.getMoodEstimate());
         textViewMood.setText(textMood);
+        textViewDate.setText(date.toString());
+    }
+    private void showDateDialog(){
+        log("...showDateDialog()");
+
     }
 }

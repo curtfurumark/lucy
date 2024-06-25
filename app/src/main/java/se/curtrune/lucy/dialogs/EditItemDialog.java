@@ -105,7 +105,11 @@ public class EditItemDialog extends BottomSheetDialogFragment {
         dateAction.setType(Action.Type.DATE);
 
         Action repeat = new Action();
-        repeat.setTitle(getString(R.string.repeat));
+        if( item.hasPeriod()) {
+            repeat.setTitle(item.getPeriod().toString());
+        }else{
+            repeat.setTitle(getString(R.string.repeat));
+        }
         repeat.setType(Action.Type.REPEAT);
 
         Action category = new Action();
@@ -190,7 +194,9 @@ public class EditItemDialog extends BottomSheetDialogFragment {
         log("...initListeners()");
         buttonSave.setOnClickListener(view1 -> {
             log("...saveItem()");
-            //log(item);
+            if( checkBoxCalendarEvent.isChecked()){
+                item.setType(Type.APPOINTMENT);
+            }
             item.setHeading(editText_heading.getText().toString());
             listener.onUpdate(item);
             dismiss();
@@ -251,7 +257,8 @@ public class EditItemDialog extends BottomSheetDialogFragment {
             @Override
             public void onDurationDialog(Duration duration) {
                 log("...onDurationDialog(Duration)");
-                item.setDuration(duration.getSeconds());
+                //item.setDuration(duration.getSeconds());
+                item.setEstimatedDuration(duration.getSeconds());
                 currentAction.setTitle(Converter.formatSecondsWithHours(duration.getSeconds()));
                 actionAdapter.notifyDataSetChanged();
             }

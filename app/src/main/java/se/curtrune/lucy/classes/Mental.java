@@ -2,6 +2,8 @@ package se.curtrune.lucy.classes;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.Gson;
 
 import java.io.Serializable;
@@ -50,7 +52,8 @@ public class Mental implements Listable, Serializable {
 
     /**
      * DOES NOT COPY ALL FIELDS, just "content"
-     * @param other
+     * @param other, the mental to partially copy
+     * TODO, take a deeper look at this
      */
     public Mental(Mental other) {
         this();
@@ -251,9 +254,11 @@ public class Mental implements Listable, Serializable {
         return new Gson().toJson(this);
     }
 
+    @NonNull
     @Override
     public String toString() {
-        return String.format(Locale.getDefault(), "Mental{energy=%d, date: %s}", energy, LocalDate.ofEpochDay(date).toString());
+        return String.format(Locale.getDefault(),
+                "Mental{%s, e=%d, s=%d, a=%d, m=%d date: %s}", heading,  energy, stress, anxiety, mood,LocalDate.ofEpochDay(date).toString());
     }
 
     public void setCreated(LocalDateTime created) {

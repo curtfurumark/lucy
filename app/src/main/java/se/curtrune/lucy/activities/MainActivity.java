@@ -3,7 +3,6 @@ package se.curtrune.lucy.activities;
 import static se.curtrune.lucy.util.Logger.log;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,7 +18,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.preference.PreferenceManager;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -45,7 +43,7 @@ import se.curtrune.lucy.fragments.DurationFragment;
 import se.curtrune.lucy.fragments.EnchildaFragment;
 import se.curtrune.lucy.fragments.EstimateFragment;
 import se.curtrune.lucy.fragments.GraphFragment;
-import se.curtrune.lucy.fragments.MentalFragment2;
+import se.curtrune.lucy.fragments.MentalDayFragment;
 import se.curtrune.lucy.fragments.MessageBoardFragment;
 import se.curtrune.lucy.fragments.MonthCalenderFragment;
 import se.curtrune.lucy.fragments.ProjectsFragment;
@@ -163,7 +161,8 @@ public class MainActivity extends AppCompatActivity {
                 navigate(new TimerFragment());
             }else if ( item.getItemId() == R.id.navigationDrawer_customizeFragment){
                 navigate(new CustomizeFragment());
-            }
+            }else if( item.getItemId() == R.id.navigationDrawer_mentalFragment){
+                navigate( new MentalDayFragment());}
             drawerLayout.close();
             return true;
         });
@@ -263,6 +262,6 @@ public class MainActivity extends AppCompatActivity {
     }
     private void showMentalDay(){
         log("...showMentalDay");
-        navigate(new MentalFragment2());
+        navigate(new MentalDayFragment());
     }
 }

@@ -30,6 +30,8 @@
         <item android:id="@+id/navigationDrawer_durationFragment"
             android:icon="@drawable/baseline_access_time_24"
         android:title="@string/duration"/>
+        <item android:id="@+id/navigationDrawer_mentalFragment"
+            android:title="@string/mental"/>
     <item android:title="top ten"
         android:id="@+id/navigationDrawer_topTen"/>
     <item android:id="@+id/bottomNavigation_enchilada"

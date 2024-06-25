@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -39,17 +40,18 @@ public class WeeklyCalenderFragment extends Fragment {
     private Week currentWeek;
     private LocalDate currentDate;
     private TextView textViewWeekNumber;
+    private List<Item> items;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         log("WeeklyFragment.onCreateView(...)");
         View view = inflater.inflate(R.layout.weekly_fragment, container, false);
         initDefaults();
         initComponents(view);
         initRecyclerDates();
-        List<Item> items  = ItemsWorker.selectItems(currentWeek, getContext());
+        items  = ItemsWorker.selectItems(currentWeek, getContext());
+        items.forEach(System.out::println);
         initRecyclerCells();
         initListeners();
         setUserInterface(LocalDate.now());
@@ -57,31 +59,35 @@ public class WeeklyCalenderFragment extends Fragment {
     }
     private List<DateHourCell> getDateHourCells(){
         log("...getDateHourCells()");
+        Week week = new Week(LocalDate.now());
         List<DateHourCell> dateHourCells = new ArrayList<>();
         int hour = 0;
+        LocalDate date = LocalDate.now().plusDays(7);
         for( int i = 0; i < 7 * 24; i++){
-            DateHourCell dateHourCell = new DateHourCell();
             if(  i % 7 == 0){
+                log("...new Row", i);
+                date = date.minusDays(7);
                 hour++;
             }
-            dateHourCell.setHour(hour);
+
+            DateHourCell dateHourCell = new DateHourCell();
+            dateHourCell.setHour(hour - 1);
+            dateHourCell.setDate(date);
             dateHourCells.add(dateHourCell);
+            date = date.plusDays(1);
         }
         return dateHourCells;
     }
 
     private void initRecyclerDates() {
         if (VERBOSE) log("...initRecyclerDates()");
-        calenderDateAdapter = new CalenderDateAdapter(currentWeek, new CalenderDateAdapter.Callback() {
-            @Override
-            public void onDateSelected(LocalDate date) {
-                log("...onDateSelected(LocalDate)", date.toString());
-                //items = ItemsWorker.selectItems(date, getContext(), State.TODO);
-                //adapter.setList(items);
-                currentDate = date;
-                currentWeek.setCurrentDate(currentDate);
-                calenderDateAdapter.setList(currentWeek);
-            }
+        calenderDateAdapter = new CalenderDateAdapter(currentWeek, date -> {
+            log("...onDateSelected(LocalDate)", date.toString());
+            //items = ItemsWorker.selectItems(date, getContext(), State.TODO);
+            //adapter.setList(items);
+            currentDate = date;
+            currentWeek.setCurrentDate(currentDate);
+            calenderDateAdapter.setList(currentWeek);
         });
         recyclerDates.setLayoutManager(new GridLayoutManager(getContext(), 7));
         recyclerDates.setItemAnimator(new DefaultItemAnimator());
@@ -110,11 +116,10 @@ public class WeeklyCalenderFragment extends Fragment {
     private void initRecyclerCells() {
         log("...initRecyclerCells()");
         List<DateHourCell> dateHourCells = getDateHourCells();
-        dateHourAdapter = new DateHourAdapter(dateHourCells, new DateHourAdapter.Callback() {
-            @Override
-            public void onDateHourCellSelected(DateHourCell dateHourCell) {
-                log("...onDateHourCellSelected(DateHourCell)");
-            }
+        dateHourAdapter = new DateHourAdapter(dateHourCells, dateHourCell -> {
+            log("...onDateHourCellSelected(DateHourCell)");
+            log(dateHourCell);
+            Toast.makeText(getContext(), dateHourCell.toString(), Toast.LENGTH_LONG).show();
         });
         recyclerCells.setLayoutManager(new GridLayoutManager(getContext(), 7));
         recyclerCells.setItemAnimator(new DefaultItemAnimator());

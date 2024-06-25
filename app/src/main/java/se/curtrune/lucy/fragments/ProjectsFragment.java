@@ -9,8 +9,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,13 +22,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
-import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.activities.ItemSession;
-import se.curtrune.lucy.activities.SequenceActivity;
 import se.curtrune.lucy.adapters.ItemAdapter;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.Settings;
@@ -38,8 +35,6 @@ import se.curtrune.lucy.classes.CallingActivity;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.AddItemDialog;
-import se.curtrune.lucy.dialogs.AddTemplateDialog;
-import se.curtrune.lucy.dialogs.OnNewItemCallback;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.workers.ItemsWorker;
 
@@ -52,13 +47,10 @@ public class ProjectsFragment extends Fragment implements
         ItemAdapter.Callback,
         TabLayout.OnTabSelectedListener {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-
     private static final String CURRENT_PARENT = "CURRENT_PARENT";
     private RecyclerView recycler;
-    private EditText editTextSearch;
-    private TextView textViewGoToParentList;
+    //private EditText editTextSearch;
+    private TabLayout tabLayout;
     private FloatingActionButton buttonAddItem;
     private ItemAdapter adapter;
     private Item currentParent;
@@ -109,7 +101,7 @@ public class ProjectsFragment extends Fragment implements
             log("...savedInstanceState != null");
             currentParent = (Item) savedInstanceState.getSerializable(CURRENT_PARENT);
         }else{
-            currentParent = ItemsWorker.getRootItem(Settings.Root.THE_ROOT, getContext());
+            currentParent = ItemsWorker.getRootItem(Settings.Root.PROJECTS, getContext());
         }
         if( currentParent == null){
             log("ERROR, currentParent is null");
@@ -118,14 +110,33 @@ public class ProjectsFragment extends Fragment implements
         }
         items = ItemsWorker.selectChildren(currentParent, getContext());
         initRecycler(items);
+        initTabs();
         return view;
+    }
+    private void addTab(Item item){
+        log("...addTab(Item)", item.getHeading());
+        TabLayout.Tab tab = tabLayout.newTab();
+        tab.setText(item.getHeading());
+        tab.setTag(item);
+        tabLayout.addTab(tab, true);
+    }
+    private void descend(Item item){
+        log("...descend()");
+        items = ItemsWorker.selectChildItems(item, getContext());
+        Lucinda.currentParent = item;
+        currentParent = item;
+        adapter.setList(items);
+        addTab(currentParent);
+
     }
     private void initComponents(View view){
         if(VERBOSE)log("...initComponents()");
         recycler = view.findViewById(R.id.projectsFragment_recycler);
-        editTextSearch = view.findViewById(R.id.projectsFragment_search);
+        //dont delete this, might return
+        //editTextSearch = view.findViewById(R.id.projectsFragment_search);
         buttonAddItem = view.findViewById(R.id.projectsFragment_addItem);
-        textViewGoToParentList = view.findViewById(R.id.projectsFragment_parentList);
+        tabLayout = view.findViewById(R.id.projectsFragment_tabLayout);
+        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
 
     }
 
@@ -140,24 +151,18 @@ public class ProjectsFragment extends Fragment implements
     private void  initListeners(){
         if(VERBOSE) log("...initListeners()");
         buttonAddItem.setOnClickListener(view->showAddItemDialog());
-        textViewGoToParentList.setOnClickListener(view->navigateUp());
+        //textViewGoToParentList.setOnClickListener(view->navigateUp());
+        tabLayout.addOnTabSelectedListener(this);
     }
-    private void navigateUp(){
-        log("...navigateUp()");
-        Item itemTmp  = ItemsWorker.getParent(currentParent, getContext());
-        if( itemTmp == null){
-            log("...you've reached the top!, congrats!");
-            Toast.makeText(getContext(), "top of the world", Toast.LENGTH_LONG).show();
-        }else{
-            currentParent = itemTmp;
-            items = ItemsWorker.selectChildItems(currentParent, getContext());
-            adapter.setList(items);
-        }
+    private void initTabs(){
+        log("...initTabs()");
+        addTab(currentParent);
 
     }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if( VERBOSE) log("...onOptionsItemSelected(MenuItem) ", item.getTitle().toString());
+        if( VERBOSE) log("...onOptionsItemSelected(MenuItem) ", Objects.requireNonNull(item.getTitle()).toString());
         if( item.getItemId() == R.id.mainActivity_startSequence){
             startSequence();
         }
@@ -180,6 +185,9 @@ public class ProjectsFragment extends Fragment implements
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
         log("...onTabSelected()");
+        log("...tab", Objects.requireNonNull(tab.getText()).toString());
+        removeTabs(tab.getPosition());
+        showChildren(tab);
     }
 
     @Override
@@ -196,10 +204,8 @@ public class ProjectsFragment extends Fragment implements
     public void onItemClick(Item item) {
         log("...onItemClick(Item)", item.getHeading());
         if(item.hasChild() && !item.isTemplate()){
-            items = ItemsWorker.selectChildItems(item, getContext());
-            Lucinda.currentParent = item;
-            currentParent = item;
-            adapter.setList(items);
+            descend(item);
+
         }else {
             Lucinda.currentFragment = this;
             Intent intent = new Intent(getContext(), ItemSession.class);
@@ -227,12 +233,19 @@ public class ProjectsFragment extends Fragment implements
         adapter.notifyDataSetChanged();
 
     }
+    private void removeTabs(int position){
+        log("...removeTabs(int)", position);
+        for(int i = position + 1; i < tabLayout.getTabCount(); i++){
+            tabLayout.removeTabAt(i);
+        }
+    }
     private void showAddItemDialog(){
         if(VERBOSE) log("...showAddItemDialog()");
         AddItemDialog dialog = new AddItemDialog(currentParent, false);
         dialog.setCallback(new AddItemDialog.Callback() {
             @Override
             public void onAddItem(Item item) {
+                log("...onAddItem(Item)", item.getHeading());
                 item = ItemsWorker.insert(item, getContext());
                 items.add(item);
                 items.sort(Comparator.comparingLong(Item::compare));
@@ -240,6 +253,13 @@ public class ProjectsFragment extends Fragment implements
             }
         });
         dialog.show(getChildFragmentManager(), "add item");
+    }
+    private void showChildren(TabLayout.Tab tab){
+        log("...showChildren(Tab)", Objects.requireNonNull(tab.getText()).toString());
+        Item parent = (Item) tab.getTag();
+        items = ItemsWorker.selectChildItems(parent, getContext());
+        adapter.setList(items);
+
     }
     private void startSequence(){
         log("...startSequence()");

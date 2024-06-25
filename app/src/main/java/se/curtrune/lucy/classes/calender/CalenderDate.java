@@ -19,6 +19,12 @@ public class CalenderDate {
     public int getDay(){
         return date.getDayOfMonth();
     }
+    public List<Item> getItems() {
+        return items;
+    }
+    public boolean hasEvents() {
+        return items.size() > 0;
+    }
     public void setDate(LocalDate date) {
         this.date = date;
     }
@@ -32,11 +38,11 @@ public class CalenderDate {
         return String.format(Locale.getDefault(), "%s, %d events", date.toString(), items.size());
     }
 
-    public boolean hasEvents() {
-        return items.size() > 0;
-    }
+
     public DayOfWeek getFirstDayOfMonth(){
         LocalDate firstDate = date.withDayOfMonth(1);
         return firstDate.getDayOfWeek();
     }
+
+
 }

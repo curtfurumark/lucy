@@ -17,7 +17,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,10 +32,9 @@ import se.curtrune.lucy.adapters.MentalAdapter;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.dialogs.MentalDialog;
 import se.curtrune.lucy.statistics.MentalStatistics;
-import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.MentalWorker;
 
-public class MentalFragment2 extends Fragment implements MentalAdapter.Callback, MentalDialog.Callback{
+public class MentalDayFragment extends Fragment implements MentalAdapter.Callback, MentalDialog.Callback{
     private RecyclerView recycler;
     private EditText editTextSearch;
     private RadioButton radioButtonMood;
@@ -63,13 +61,15 @@ public class MentalFragment2 extends Fragment implements MentalAdapter.Callback,
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.mental_fragment2, container, false);
-        log("MentalFragment2.onCreateView(...)");
+        View view = inflater.inflate(R.layout.mental_day_fragment, container, false);
+        log("MentalDayFragment.onCreateView(...)");
+        initDefaults();
         initComponents(view);
         initRecycler();
         initListeners();
         initViewModel();
         initStuff();
+        updateUserInterface();
         return view;
     }
     private void delete(Mental mental){
@@ -107,6 +107,11 @@ public class MentalFragment2 extends Fragment implements MentalAdapter.Callback,
         buttonAddMental = view.findViewById(R.id.mentalFragment_addMentalButton);
         textViewDate = view.findViewById(R.id.mentalFragment_firstDate);
     }
+    private void initDefaults(){
+        log("...initDefaults()");
+        date = LocalDate.now();
+
+    }
     private void initRecycler(){
         if( VERBOSE)log("...initRecycler()");
         adapter = new MentalAdapter(new ArrayList<>(), this);
@@ -134,7 +139,7 @@ public class MentalFragment2 extends Fragment implements MentalAdapter.Callback,
             mode = MentalAdapter.Mode.STRESS;
             updateUserInterface();
         });
-        textViewDate.setOnClickListener(view->showDateDialog(true));
+        textViewDate.setOnClickListener(view->showDateDialog());
         //textViewLastDate.setOnClickListener(view->showDateDialog(false));
         buttonAddMental.setOnClickListener(view->showMentalDialog());
         editTextSearch.addTextChangedListener(new TextWatcher() {
@@ -179,7 +184,7 @@ public class MentalFragment2 extends Fragment implements MentalAdapter.Callback,
 
     @Override
     public void onMental(Mental mental, MentalDialog.Mode mode) {
-        log("MentalFragment2.onMental(Mental, Mode", mode.toString());
+        log("MentalDayFragment.onMental(Mental, Mode", mode.toString());
         log("...onMental()", mode.toString());
         log(mental);
         switch (mode){
@@ -201,8 +206,8 @@ public class MentalFragment2 extends Fragment implements MentalAdapter.Callback,
                 updateUserInterface();
         }
     }
-    private void showDateDialog(boolean setFirstDate){
-        log("...showDateDialog");
+    private void showDateDialog(){
+        if( VERBOSE) log("...showDateDialog()");
         DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext());
         datePickerDialog.setOnDateSetListener((view, year, month, dayOfMonth) ->
         {

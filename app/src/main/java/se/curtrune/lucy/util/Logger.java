@@ -20,6 +20,7 @@ import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
+import se.curtrune.lucy.classes.calender.DateHourCell;
 import se.curtrune.lucy.persist.DB1Result;
 import se.curtrune.lucy.statistics.CategoryListable;
 import se.curtrune.lucy.statistics.StatisticsPeriod;
@@ -36,6 +37,12 @@ public class Logger {
     public static void log(CategoryListable listable){
         log("log(CategoryListable)");
         log("\tcategory", listable.getCategory());
+    }
+    public static void log(DateHourCell dateHourCell){
+        log("log(DateHourCell)");
+        log("\thour", dateHourCell.getHour());
+        log("\tdate", dateHourCell.getDate());
+
     }
     public static void log(DB1Result result){
         log("CRBLogger.log(DB1Result)...");
@@ -89,7 +96,7 @@ public class Logger {
         log("\theading", item.getHeading());
         log("\tcomment", item.getComment());
         log("\ttags", item.getTags());
-        log("\tdescription", item.getDescription() );
+        log("\tdescription", item.getDescription() );//TODO, not in use
         log("\tget info", item.getInfo());
         log("\tduration", item.getDuration());
         log("\tcreated", item.getCreated());

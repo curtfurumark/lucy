@@ -21,10 +21,33 @@ public class User {
     public static final String USE_DARK_MODE = "USE_DARK_MODE";
     public static final String USER_NAME = "USER_NAME";
     public static final String USES_PASSWORD = "USES_PASSWORD";
+    public static final String KEY_CATEGORIES = "KEY_CATEGORIES";
     public static final String KEY_PASSWORD = "KEY_PASSWORD";
     public static final String KEY_PANIC_ACTION = "KEY_PANIC_ACTION";
     public static final String KEY_PANIC_URLS = "KEY_PANIC_URLS";
     public static final String KEY_LANGUAGE = "KEY_LANGUAGE";
+
+    public static void addCategory(String category, Context context){
+        Set<String> setCategories = Settings.getList(KEY_CATEGORIES, context);
+        setCategories.add(category);
+        //Settings.addList
+
+    }
+    public static String[] getCategories(Context context){
+        log("User.getCategories()");
+        Set<String> setCategories = Settings.getList(KEY_CATEGORIES, context);
+        return Arrays.copyOf(setCategories.toArray(), setCategories.size(), String[].class);
+
+    }
+
+    public static String getLanguage(Context context) {
+        return Settings.getString(KEY_LANGUAGE, "sv", context);
+    }
+
+    public static Set<String> getPanicUrls(Context context){
+        return Settings.getList(KEY_PANIC_URLS, context);
+    }
+
     public static String getRandomPanicUrl(Context context){
         log("User.getRandomPanicUrl(Context) ");
         List<String> urls = new ArrayList<String>(getPanicUrls(context));
@@ -32,13 +55,6 @@ public class User {
         urls.forEach(System.out::println);
         Random random = new Random();
         return urls.get(random.nextInt(urls.size()));
-    }
-    public static String getLanguage(Context context) {
-        return Settings.getString(KEY_LANGUAGE, "sv", context);
-    }
-
-    public static Set<String> getPanicUrls(Context context){
-        return Settings.getList(KEY_PANIC_URLS, context);
     }
     public static String getUserName(Context context){
         return Settings.getString(USER_NAME, "anonymous", context);

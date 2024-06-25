@@ -27,13 +27,18 @@ public class Settings {
     private long theRootID;
     private boolean isInitialized = false;
 
-
-
     public enum PanicAction{
         GAME, URL, SEQUENCE, PENDING
     }
+
+    public enum Root{
+        TODO, DAILY, PROJECTS, APPOINTMENTS, PANIC, THE_ROOT
+    }
     private SharedPreferences.Editor editor;
     private static Settings instance;
+    private Settings(Context context){
+        init(context);
+    }
 
     public static void addString(String key, String value, Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -69,18 +74,13 @@ public class Settings {
 
 
 
-
     public void reload(Context context) {
         log("...reload(Context)");
         init(context);
     }
 
-    public enum Root{
-        TODO, DAILY, PROJECTS, APPOINTMENTS, PANIC, THE_ROOT
-    }
-    private Settings(Context context){
-        init(context);
-    }
+
+
     public static Settings getInstance(Context context){
         if( instance == null){
             instance = new Settings(context);

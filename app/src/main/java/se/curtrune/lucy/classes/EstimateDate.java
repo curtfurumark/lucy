@@ -16,6 +16,7 @@ public class EstimateDate {
     private List<Item> items;
     private List<Estimate> estimates;
     private long durationEstimate;
+    public static boolean VERBOSE = false;
     public EstimateDate(){
         estimates = new ArrayList<>();
 
@@ -30,15 +31,37 @@ public class EstimateDate {
         log("EstimateDate(List<Item>) ");
 
     }
-    private void calculate(LocalDate date, Context context){
+    public static long calculateDuration(LocalDate date, Context context){
+        log("EstimateDate.calculateDuration(LocalDate, Context)", date.toString());
+        long totalDuration = 0;
         List<Item> items = ItemsWorker.selectTodayList(date, context);
         for( Item item: items){
-            if( item.isTemplate()){
+            if( item.isDone()){
+                totalDuration += item.getDuration();
+            }else{
+                totalDuration += item.getEstimatedDuration();
+            }
 
+        }
+        return totalDuration;
+    }
+
+    /**
+     * no good at all, does nothing, abandoned i reckon
+     * maybe it does something after all, but please rewrite
+     * @param date the date to estimate
+     * @param context, context context context
+     */
+    private void calculate(LocalDate date, Context context){
+        log("...calculate(LocalDate, Context)");
+        List<Item> items = ItemsWorker.selectTodayList(date, context);
+/*        for( Item item: items){
+            if( item.isTemplate()){
+                log("...itemIsTemplate()");
             }else{
                 Mental mental = MentalWorker.getMental(item, context);
             }
-        }
+        }*/
         for( Item item: items) {
             estimates.add(item.getEstimate());
         }

@@ -31,6 +31,7 @@ import se.curtrune.lucy.adapters.ItemAdapter;
 import se.curtrune.lucy.adapters.MonthAdapter;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.calender.CalenderDate;
+import se.curtrune.lucy.dialogs.ItemsDialog;
 import se.curtrune.lucy.workers.ItemsWorker;
 
 /**
@@ -172,6 +173,7 @@ public class MonthCalenderFragment extends Fragment {
         log("...initRecycler()");
         monthDayAdapter = new MonthAdapter(calenderDates, calenderDate -> {
             log("onDateClick(CalenderDate)", calenderDate.getDate().toString());
+            showItemsDialog(calenderDate);
             Toast.makeText(getContext(), calenderDate.toString(), Toast.LENGTH_LONG).show();
         });
 
@@ -225,5 +227,11 @@ public class MonthCalenderFragment extends Fragment {
     }
     private void setMonthYearLabel(){
         monthYearText.setText(monthYearFromDate(selectedDate));
+    }
+    private void showItemsDialog(CalenderDate calenderDate){
+        log("...showItemsDialog()");
+        ItemsDialog dialog = new ItemsDialog(calenderDate.getItems(), calenderDate.getDate());
+        dialog.show(getChildFragmentManager(), "show items");
+
     }
 }

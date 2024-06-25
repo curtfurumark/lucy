@@ -7,15 +7,18 @@ import se.curtrune.lucy.classes.Item;
 
 public class DateHourCell {
     private int hour;
-    private LocalDate localDate;
+    private LocalDate date;
     private List<Item> events;
 
     public DateHourCell(int hour, LocalDate localDate) {
         this.hour = hour;
-        this.localDate = localDate;
+        this.date = localDate;
     }
     public DateHourCell(){
 
+    }
+    public LocalDate getDate(){
+        return date;
     }
     public int getHour(){
         return this.hour;
@@ -26,5 +29,18 @@ public class DateHourCell {
     }
     public void setHour(int hour){
         this.hour = hour;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    @Override
+    public String toString() {
+        return "DateHourCell{" +
+                "hour=" + hour +
+                ", date=" + date +
+                ", events=" + events +
+                '}';
     }
 }

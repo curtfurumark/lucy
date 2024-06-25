@@ -248,6 +248,10 @@ public class Item implements Serializable , Listable {
         return state == State.DONE.ordinal();
     }
 
+    public boolean isPrioritized(){
+        return priority == 1;
+    }
+
     public boolean isRoot(){
         return parent_id < 1;
     }
@@ -308,11 +312,24 @@ public class Item implements Serializable , Listable {
     public void setDuration(long  duration){
         this.duration = duration;
     }
+
+    /**
+     * WTF is this
+     * calculate duration in some weird way
+     * @param now
+     */
+
     public void setDuration(LocalDateTime now){
         duration  = now.toEpochSecond(ZoneOffset.UTC) - updated;
     }
     public void setEstimate(Estimate estimate){
         this.estimate = estimate;
+    }
+    public void setEstimatedDuration(long seconds) {
+        if( estimate == null){
+            estimate = new Estimate();
+        }
+        estimate.setDuration(seconds);
     }
     public void setEstimate(String json){
         if( json != null){
@@ -437,4 +454,7 @@ public class Item implements Serializable , Listable {
             target_date = repeat.getNextDate().toEpochDay();
         }
     }
+
+
+
 }

@@ -3,6 +3,7 @@ package se.curtrune.lucy.app;
 import static se.curtrune.lucy.util.Logger.log;
 
 import android.content.Context;
+import android.media.Image;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -31,6 +32,7 @@ public class Demo {
         item.setIsTemplate(true);
         item.setTargetDate(LocalDate.now());
         item.setTargetTime(time);
+        item.setIsCalenderItem(true);
         Repeat repeat = new Repeat();
         repeat.setDays(days);
         item.setPeriod(repeat);
@@ -71,6 +73,7 @@ public class Demo {
         log("...insertProjects(Context)");
         createReadingList(context);
         createShoppingList(context);
+        createMiddagsTips(context);
     }
     public static void createReadingList(Context context){
         LocalDB db = new LocalDB(context);
@@ -95,6 +98,40 @@ public class Demo {
         db.insertChild(douglas, fish);
         Item restaurant = getProjectItem("the restaurant at the end of the universe");
         db.insertChild(douglas, restaurant);
+    }
+    public static void createMiddagsTips(Context context){
+        log("...createMiddagsTips()");
+        Item projects = ItemsWorker.getProjectsRoot(context);
+        Item middagsRoot = new Item("middagstips");
+        middagsRoot.setParent(projects);
+        ItemsWorker.insertChild(projects, middagsRoot, context);
+
+        Item pastaCarbonara = new Item("past carbonara");
+        ItemsWorker.insertChild(middagsRoot, pastaCarbonara, context);
+
+        //INGREDIENTS
+        Item carbonaraIngredients = new Item("ingredienser");
+        ItemsWorker.insertChild(pastaCarbonara, carbonaraIngredients, context);
+
+        Item bacon = new Item("bacon");
+        Item pasta = new Item("pasta");
+        Item egg = new Item("ägg");
+        Item parmesan = new Item("parmesan");
+        Item blackPepper = new Item("svartpeppar");
+
+        ItemsWorker.insertChild(carbonaraIngredients, bacon, context);
+        ItemsWorker.insertChild(carbonaraIngredients, pasta, context);
+        ItemsWorker.insertChild(carbonaraIngredients, egg, context);
+        ItemsWorker.insertChild(carbonaraIngredients, parmesan, context);
+        ItemsWorker.insertChild(carbonaraIngredients, blackPepper, context);
+        //RECIPES, TODO
+        Item recipe = new Item("recept");
+        ItemsWorker.insertChild(pastaCarbonara, recipe, context);
+
+        Item step1 = new Item("1. koka pastan");
+        Item step2 = new Item("2. stek bacon");
+        Item step3 = new Item("3. rör ihop äggulor och parmesan");
+
     }
     public static void createShoppingList(Context context){
         log("Demo.createShoppingList()");

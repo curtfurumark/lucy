@@ -11,8 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.w3c.dom.Text;
-
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -46,7 +44,7 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
         void onLongClick(Item item);
         void onCheckboxClicked(Item item, boolean checked);
     }
-    private Callback callback;
+    private final Callback callback;
 
     public CalenderAdapter(List<Item> items, Callback callback) {
         if( VERBOSE) log("CalenderAdapter(List<Item>, Callback) items size", items.size());
@@ -65,6 +63,16 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         if( VERBOSE) log("CalenderAdapter.onBindViewHolder() position", position);
         Item item = items.get(position);
+/*        if (position == items.size() - 1) {
+            RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) holder.itemView.getLayoutParams();
+            params.bottomMargin = 150; // last item bottom margin
+            holder.itemView.setLayoutParams(params);
+
+        } else {
+            RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) holder.itemView.getLayoutParams();
+            params.bottomMargin = 10; // other items bottom margin
+            holder.itemView.setLayoutParams(params);
+        }*/
         holder.textView_heading.setText(item.getHeading());
         holder.textView_info.setText(item.getInfo());
         holder.checkBox_state.setChecked(item.getState().equals(State.DONE));
@@ -93,15 +101,12 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
             checkBox_state = itemView.findViewById(R.id.calenderAdapter_itemState);
             textViewTime = itemView.findViewById(R.id.calenderAdapter_time);
             checkBox_state.setOnClickListener(view -> {
-                Item item = items.get(getAdapterPosition());
                 callback.onCheckboxClicked(items.get(getAdapterPosition()), checkBox_state.isChecked());});
             layout = itemView.findViewById(R.id.calenderAdapter_mainLayout);
             layout.setOnClickListener(view -> {
-                //log("...layout onClick");
                 callback.onItemClick(items.get(getAdapterPosition()));
             });
             layout.setOnLongClickListener(e->{
-                //log("...onLongClick");
                 callback.onLongClick(items.get((getAdapterPosition())));
                 return true;
             });

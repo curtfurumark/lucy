@@ -2,9 +2,8 @@ package se.curtrune.lucy.activities;
 
 import static se.curtrune.lucy.util.Logger.log;
 
-import android.app.UiModeManager;
-import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -17,7 +16,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 
 import java.sql.SQLException;
@@ -35,8 +33,6 @@ import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Notification;
-import se.curtrune.lucy.classes.Repeat;
-import se.curtrune.lucy.dialogs.RepeatDialog;
 import se.curtrune.lucy.persist.DBAdmin;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
@@ -102,7 +98,9 @@ public class DevActivity extends AppCompatActivity {
             {
                 Thread.sleep(4000); // Let the Toast display before app will get shutdown
             }
-            catch (InterruptedException e) {    }
+            catch (InterruptedException e) {
+                log("InterruptedException", e.getMessage());
+            }
             System.exit(2);
         });
     }
@@ -125,7 +123,10 @@ public class DevActivity extends AppCompatActivity {
     private void createLoggerTable(){
         log("...createLoggerTable()");
         String queery = Queeries.CREATE_TABLE_LOGGER;
-
+        try(LocalDB db = new LocalDB(this)){
+            log("...queery", queery);
+            db.executeSQL(queery);
+        }
     }
 
     private void initComponents() {
@@ -158,10 +159,12 @@ public class DevActivity extends AppCompatActivity {
         log("\tMODEL", Build.MODEL);
         try {
             PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-            String version = pInfo.versionName;
+            //String version = pInfo.versionName;
             log("...versionName", pInfo.versionName);
             log("...versionCode", pInfo.versionCode);
             log("...packageName", pInfo.packageName);
+            ApplicationInfo applicationInfo = pInfo.applicationInfo;
+            log("...dataDir", applicationInfo.dataDir);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
@@ -210,7 +213,10 @@ public class DevActivity extends AppCompatActivity {
         }else if( item.getItemId() == R.id.devActivity_clearSettings){
             Settings.removeAll(this);
         }else if( item.getItemId() == R.id.devActivity_repeatDialog){
-            showRepeatDialog();
+            //showRepeatDialog();
+            Toast.makeText(this, "for future use", Toast.LENGTH_LONG).show();
+        }else if( item.getItemId() == R.id.homeActivity_setNotifications){
+            setNotifications();
         }
         return true;
     }
@@ -320,7 +326,7 @@ public class DevActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-    private void showRepeatDialog(){
+/*    private void showRepeatDialog(){
         log("...showRepeatDialog()");
         RepeatDialog dialog = new RepeatDialog();
         dialog.setCallback(new RepeatDialog.Callback() {
@@ -331,7 +337,7 @@ public class DevActivity extends AppCompatActivity {
         });
         dialog.show(getSupportFragmentManager(), "repeat dialog");
 
-    }
+    }*/
     private void testNotification(){
         log("...testNotification()");
         Notification notification = new Notification();
@@ -349,28 +355,5 @@ public class DevActivity extends AppCompatActivity {
         item.setNotification(notification);
         log(item);
         NotificationsWorker.setNotification(item, this);
-    }
-    private void toggleDarkMode() {
-        log("...toggleDarkMode()");
-        UiModeManager uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
-        //uiModeManager.getCurrentModeType();
-        int currentMode = uiModeManager.getNightMode();
-        log("...currentMode");
-        switch (currentMode) {
-            case UiModeManager.MODE_NIGHT_NO:
-                log("MODE_NIGHT_NO");
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                break;
-            case UiModeManager.MODE_NIGHT_YES:
-                log("MODE_NIGHT_YES");
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                break;
-            case UiModeManager.MODE_NIGHT_AUTO:
-                log("MODE_NIGHT_AUTO");
-                break;
-            case UiModeManager.MODE_NIGHT_CUSTOM:
-                log("MODE_NIGHT_CUSTOM");
-                break;
-        }
     }
 }

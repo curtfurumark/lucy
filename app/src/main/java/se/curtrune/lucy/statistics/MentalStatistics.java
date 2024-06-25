@@ -3,20 +3,22 @@ package se.curtrune.lucy.statistics;
 import static se.curtrune.lucy.util.Logger.log;
 
 import android.content.Context;
+import android.media.MediaSession2Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
-import se.curtrune.lucy.classes.Listable;
+import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
+import se.curtrune.lucy.workers.MentalWorker;
 
 public class MentalStatistics {
-    private LocalDate firstDate;
-    private LocalDate lastDate;
+    private final LocalDate firstDate;
+    private final LocalDate lastDate;
     private List<Mental> mentals;
     private List<Mental> filtered;
 
@@ -40,23 +42,39 @@ public class MentalStatistics {
     }
     private void init(Context context){
         log("MentalStatistics.init()");
-        LocalDB db = new LocalDB(context);
-        String queery = Queeries.selectMentals(firstDate, lastDate, false, true);
-        filtered = mentals = db.selectMentals(queery);
+        try(LocalDB db = new LocalDB(context)) {
+            String queery = Queeries.selectMentals(firstDate, lastDate, false, true);
+            filtered = mentals = db.selectMentals(queery);
+        }
     }
     public List<Mental> filter(String str){
         filtered = mentals.stream().filter(mental -> mental.contains(str)).collect(Collectors.toList());
         return filtered;
     }
+
+    /**
+     * get every fucking mental
+     * @return, a list containing all the mentals
+     */
     private List<Mental> getMentals(){
         log("MentalStatistics.getMentals()");
         return mentals;
     }
+    public static List<Mental> getMentals(List<Item> items, Context context){
+        log("...getMentals(List<Item>)");
+        List<Mental> mentalList = new ArrayList<>();
+        for( Item item: items){
+            Mental mental = MentalWorker.getMental(item, context);
+            assert  mental != null;
+            mentalList.add(mental);
+        }
+        return mentalList;
+    }
 
     /**
      * to be use when user filters the list
-     * @param mentalList
-     * @return
+     * @param mentalList, the list of mentals to sum
+     * @return, sum of energy fields
      */
     public static int getTotalEnergy(List<Mental> mentalList){
         return mentalList.stream().mapToInt(Mental::getEnergy).sum();

@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -115,19 +114,14 @@ public class CustomizeFragment extends Fragment {
         radioButtonGame.setOnClickListener(view->panicAction(Settings.PanicAction.GAME));
         radioButtonWeb.setOnClickListener(view->panicAction(Settings.PanicAction.URL));
         radioButtonSequence.setOnClickListener(view->panicAction(Settings.PanicAction.SEQUENCE));
-        radioGroupLanguage.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                setLanguage(checkedId);
-            }
+        radioGroupLanguage.setOnCheckedChangeListener((group, checkedId) -> {
+            log("...onCheckChanged(RadioGroup, int)");
+            setLanguage(checkedId);
         });
-        listViewPanicUrls.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-                log("...onItemClick(AdapterView<?>, View, int, long)");
-                String url = (String) listViewPanicUrls.getAdapter().getItem(position);
-                log("...url", url);
-            }
+        listViewPanicUrls.setOnItemClickListener((arg0, arg1, position, arg3) -> {
+            log("...onItemClick(AdapterView<?>, View, int, long)");
+            String url = (String) listViewPanicUrls.getAdapter().getItem(position);
+            log("...url", url);
         });
         textViewPanicButton.setOnClickListener(view->togglePanicButton());
     }
@@ -203,13 +197,10 @@ public class CustomizeFragment extends Fragment {
     private void showPasswordDialog(){
         log("...showPasswordDialog()");
         PasswordDialog dialog = new PasswordDialog();
-        dialog.setCallback(new PasswordDialog.Callback() {
-            @Override
-            public void onPassword(String pwd) {
-                log("...onPassword(String)", pwd);
-                User.setUsesPassword(true, getContext());
-                User.setPassword(pwd, getContext());
-            }
+        dialog.setCallback(pwd -> {
+            log("...onPassword(String)", pwd);
+            User.setUsesPassword(true, getContext());
+            User.setPassword(pwd, getContext());
         });
         dialog.show(getChildFragmentManager(), "set password");
     }
