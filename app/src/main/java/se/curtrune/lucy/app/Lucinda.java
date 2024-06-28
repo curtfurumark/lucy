@@ -11,7 +11,9 @@ import java.sql.SQLException;
 import java.util.Arrays;
 
 import se.curtrune.lucy.R;
+import se.curtrune.lucy.activities.LogInActivity;
 import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.notifications.EasyAlarm;
 import se.curtrune.lucy.persist.DBAdmin;
 
 public class Lucinda {
@@ -21,8 +23,7 @@ public class Lucinda {
     public static Item currentParent;
     public static Fragment currentFragment;
     public static boolean VERBOSE = false;
-
-
+    private static final String KEY_NIGHTLY_ALARM ="KEY_NIGHTLY_ALARM";
     public static String[] CATEGORIES = new String[] {"household", "work", "health", "play"};
 
     private Lucinda(Context context){
@@ -35,6 +36,13 @@ public class Lucinda {
         }
         return instance;
     }
+
+    public static void setNightlyAlarm(Context context) {
+        log("...setNightlyAlarm(Context");
+        //EasyAlarm easyAlarm = new EasyAlarm();
+    }
+
+
     public  void initialize(Context context) throws SQLException {
         log("Lucinda.initialize(Context)");
         initTheApp(context);
@@ -55,7 +63,10 @@ public class Lucinda {
         Demo.insertDemo(context);
         setDefaultUserSettings(context);
     }
-
+    public static boolean nightlyAlarmIsSet(Context context) {
+        log("Lucinda.nightlyAlarmIsSet(Context)");
+        return Settings.getBoolean(KEY_NIGHTLY_ALARM, false, context);
+    }
 
     public void reset(Context context) throws SQLException {
         log("Lucinda.reset(Context)");

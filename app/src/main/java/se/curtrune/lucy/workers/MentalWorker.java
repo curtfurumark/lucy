@@ -7,6 +7,7 @@ import android.content.Context;
 import com.jjoe64.graphview.series.DataPoint;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -60,11 +61,28 @@ public class MentalWorker {
         List<Mental> mentals = getMentals(date,false, true,  context);
         return mentals.stream().mapToInt(Mental::getEnergy).sum();
     }
+
+    /**
+     * get the mental instance associated with this item
+     * @param item, the item you wish to get item for
+     * @param context so tired of contexts
+     * @return the mental, null if none?
+     */
     public static Mental getMental(Item item, Context context){
         if( VERBOSE) log("MentalWorker.getMental(Item)", item.getHeading());
         LocalDB db = new LocalDB(context);
         String query = String.format(Locale.ENGLISH,"SELECT * FROM mental WHERE itemID = %d", item.getID());
         return db.selectMental(query);
+    }
+    public static List<Mental> getMentals(List<Item> items, Context context){
+        log("...getMentals(List<Item>)");
+        List<Mental> mentalList = new ArrayList<>();
+        for( Item item: items){
+            Mental mental = MentalWorker.getMental(item, context);
+            assert  mental != null;
+            mentalList.add(mental);
+        }
+        return mentalList;
     }
 
     public static List<Mental> select(LocalDate firstDate, LocalDate lastDate, Context context) {
@@ -92,7 +110,6 @@ public class MentalWorker {
         LocalDB db = new LocalDB(context);
         return db.insert(mental);
     }
-
 
 
     public static List<Mental> getLatestMentals(int limit, Context context){
@@ -125,6 +142,12 @@ public class MentalWorker {
         return dataPoints;
     }
 
+    /**
+     * update a mental item whatever
+     * @param mental, the mental item to updated
+     * @param context and context is still just context
+     * @return rowsaffected, in other words, 1 is ok, all other is fail
+     */
     public static int update(Mental mental, Context context) {
         if( VERBOSE) log("MentalWorker.update(Mental, Context)");
         LocalDB db = new LocalDB(context);

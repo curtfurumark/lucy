@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,18 +27,19 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.ActionAdapter;
 import se.curtrune.lucy.classes.Action;
 import se.curtrune.lucy.classes.Categories;
 import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.util.Converter;
 import se.curtrune.lucy.workers.CategoryWorker;
+import se.curtrune.lucy.workers.MentalWorker;
 
 
 public class EditItemDialog extends BottomSheetDialogFragment {
@@ -124,6 +126,9 @@ public class EditItemDialog extends BottomSheetDialogFragment {
         actionDuration.setTitle(getString(R.string.duration));
         actionDuration.setType(Action.Type.DURATION);
 
+        Action actionMental = new Action();
+        actionMental.setTitle(getString(R.string.mental));
+        actionMental.setType(Action.Type.MENTAL);
 
         ArrayList<Action> actionList = new ArrayList<>();
         actionList.add(time);
@@ -132,6 +137,7 @@ public class EditItemDialog extends BottomSheetDialogFragment {
         actionList.add(notification);
         actionList.add(category);
         actionList.add(actionDuration);
+        actionList.add(actionMental);
 
         return actionList;
     }
@@ -164,6 +170,9 @@ public class EditItemDialog extends BottomSheetDialogFragment {
                         break;
                     case DURATION:
                         showDurationDialog();
+                        break;
+                    case MENTAL:
+                        showMentalDialog();
                         break;
                 }
             }
@@ -265,6 +274,26 @@ public class EditItemDialog extends BottomSheetDialogFragment {
         });
         dialog.show(getChildFragmentManager(), "duration");
 
+    }
+    public void showMentalDialog(){
+        log("...showMentalDialog()");
+        Mental mental = MentalWorker.getMental(item, getContext());
+        MentalDialog dialog = new MentalDialog(mental);
+        dialog.setCallback(new MentalDialog.Callback() {
+            @Override
+            public void onMental(Mental mental, MentalDialog.Mode mode) {
+                log("...onMental(Mental, Mental)", mode.toString());
+                log("should only be mode edit");
+                int res = MentalWorker.update(mental, getContext());
+                if( res != 1){
+                    log("ERROR updating mental");
+                    Toast.makeText(getContext(), "ERROR updating mental", Toast.LENGTH_LONG).show();
+                }else{
+                    log("...mental updated ok");
+                }
+            }
+        });
+        dialog.show(getChildFragmentManager(), "edit mental");
     }
 
     public void showNotificationDialog(){

@@ -64,6 +64,7 @@ public class MentalDialog extends BottomSheetDialogFragment {
     private String heading;
     private Button buttonSave;
     private Button buttonDelete;
+    private Button buttonDismiss;
     private ArrayAdapter<String> arrayAdapter;
 
     private LocalDate date;
@@ -178,6 +179,7 @@ public class MentalDialog extends BottomSheetDialogFragment {
         labelMood = view.findViewById(R.id.mentalDialog_labelMood);
         buttonDelete = view.findViewById(R.id.mentalDialog_delete);
         checkBoxIsTemplate = view.findViewById(R.id.mentalDialog_checkboxIsTemplate);
+        buttonDismiss = view.findViewById(R.id.mentalDialog_buttonDismiss);
     }
     private void initDefaults(){
         if( VERBOSE) log("...initDefaults()");
@@ -188,6 +190,7 @@ public class MentalDialog extends BottomSheetDialogFragment {
     }
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
+        buttonDismiss.setOnClickListener(view->dismiss());
         buttonSave.setOnClickListener(view1 -> {
             mental = getMental();
             listener.onMental(mental, mode);

@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
+import se.curtrune.lucy.classes.MentalEstimate;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
 import se.curtrune.lucy.workers.MentalWorker;
@@ -33,6 +34,24 @@ public class MentalStatistics {
         this.lastDate = date;
         init(context);
     }
+
+    public static MentalEstimate getEstimate(List<Item> items, Context context) {
+        log("MentalEstimate.getEstimate(List<Item>");
+        MentalEstimate mentalEstimate = new MentalEstimate();
+        for( Item item: items){
+            if(item.isTemplate()){
+                log("item isTemplateTODO, something intelligent");
+            }
+            Mental mental = MentalWorker.getMental(item, context);
+            mentalEstimate.add(mental);
+            mentalEstimate.plusEnergy(mental.getEnergy());
+            mentalEstimate.plusAnxiety(mental.getAnxiety());
+            mentalEstimate.plusStress(mental.getStress());
+            mentalEstimate.plusMood(mental.getMood());
+        }
+        return mentalEstimate;
+    }
+
     public List<Mental> getMentalList(){
         return mentals;
     }
@@ -60,16 +79,7 @@ public class MentalStatistics {
         log("MentalStatistics.getMentals()");
         return mentals;
     }
-    public static List<Mental> getMentals(List<Item> items, Context context){
-        log("...getMentals(List<Item>)");
-        List<Mental> mentalList = new ArrayList<>();
-        for( Item item: items){
-            Mental mental = MentalWorker.getMental(item, context);
-            assert  mental != null;
-            mentalList.add(mental);
-        }
-        return mentalList;
-    }
+
 
     /**
      * to be use when user filters the list

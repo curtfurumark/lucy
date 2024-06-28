@@ -7,4 +7,9 @@
         android:title="dev activity" />
     <item android:id="@+id/mainActivity_startSequence"
         android:title="@string/start_sequence"/>
+    <item
+        android:id="@+id/mainActivity_calendar"
+        android:title="calendar"
+        app:showAsAction="always"
+        android:icon="@drawable/baseline_today_24"/>
 </menu>

@@ -53,6 +53,11 @@ public class LogInActivity extends AppCompatActivity {
         } else {
             log("Lucinda is initialized!");
         }
+        if( !Lucinda.nightlyAlarmIsSet(this)){
+            Lucinda.setNightlyAlarm(this);
+        }else{
+            log("...nightly alarm is already set");
+        }
         initComponents();
         initListeners();
         NotificationsWorker.createNotificationChannel(this);

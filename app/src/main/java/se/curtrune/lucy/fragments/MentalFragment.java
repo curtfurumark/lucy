@@ -23,16 +23,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.MentalAdapter;
+import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
+import se.curtrune.lucy.classes.MentalEstimate;
 import se.curtrune.lucy.dialogs.MentalDialog;
 import se.curtrune.lucy.statistics.MentalStatistics;
+import se.curtrune.lucy.workers.ItemsWorker;
 import se.curtrune.lucy.workers.MentalWorker;
 
 public class MentalFragment extends Fragment implements MentalAdapter.Callback {
@@ -53,7 +55,12 @@ public class MentalFragment extends Fragment implements MentalAdapter.Callback {
     private LocalDate firstDate;
     private LocalDate lastDate;
     private MentalStatistics mentalStatistics;
-    private MentalAdapter.Mode mode;
+    private MentalAdapter.Mental mentalType;
+
+    private enum Mode{
+        ESTIMATE, ACTUAL
+    }
+    private Mode mode = Mode.ESTIMATE;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,7 +96,6 @@ public class MentalFragment extends Fragment implements MentalAdapter.Callback {
     }
 
     private void filter(String str){
-        //List<Mental> filtered = mentals.stream().filter(mental-> mental.contains(str)).collect(Collectors.toList());
         adapter.setList(mentalStatistics.filter(str));
         updateUserInterface();
     }
@@ -119,19 +125,19 @@ public class MentalFragment extends Fragment implements MentalAdapter.Callback {
     private void initListeners(){
         log("...initListeners()");
         radioButtonEnergy.setOnClickListener(view->{
-            mode = MentalAdapter.Mode.ENERGY;
+            mentalType = MentalAdapter.Mental.ENERGY;
             updateUserInterface();
             });
         radioButtonMood.setOnClickListener(view->{
-            mode = MentalAdapter.Mode.MOOD;
+            mentalType = MentalAdapter.Mental.MOOD;
             updateUserInterface();
         });
         radioButtonAnxiety.setOnClickListener(view->{
-            mode = MentalAdapter.Mode.ANXIETY;
+            mentalType = MentalAdapter.Mental.ANXIETY;
             updateUserInterface();
         });
         radioButtonStress.setOnClickListener(view->{
-            mode = MentalAdapter.Mode.STRESS;
+            mentalType = MentalAdapter.Mental.STRESS;
             updateUserInterface();
         });
         textViewFirstDate.setOnClickListener(view->showDateDialog(true));
@@ -155,16 +161,26 @@ public class MentalFragment extends Fragment implements MentalAdapter.Callback {
         });
 
     }
+
+    /**
+     * sorry but the naming of this on, and it is a mixed bag, it should not be a mixed bag but it is
+     * TODO, please do something about it
+     */
     private void initStuff(){
         log("...initStuff()");
         lastDate = LocalDate.now();
         firstDate = lastDate.minusDays(7);
         mentalStatistics = new MentalStatistics(firstDate, lastDate, getContext());
         mentals = mentalStatistics.getMentalList();
-        mode = MentalAdapter.Mode.ENERGY;
+        mentalType = MentalAdapter.Mental.ENERGY;
         radioButtonEnergy.setChecked(true);
         adapter.setList(mentals);
         updateUserInterface();
+    }
+    private void initEstimateStuff(){
+        log("...initEstimateStuff()");
+        List<Item> items = ItemsWorker.selectTodayList(LocalDate.now(), getContext());
+        MentalEstimate estimate = MentalStatistics.getEstimate(items,getContext() );
 
     }
 
@@ -243,7 +259,7 @@ public class MentalFragment extends Fragment implements MentalAdapter.Callback {
     private void updateUserInterface(){
         log("...updateUserInterface()");
         int total = 0;
-        switch (mode){
+        switch (mentalType){
             case ENERGY:
                 total = mentalStatistics.getTotalEnergy();
                 break;
@@ -257,16 +273,16 @@ public class MentalFragment extends Fragment implements MentalAdapter.Callback {
                 total = mentalStatistics.getTotalMood();
                 break;
         }
-        adapter.show(mode);
-        textViewMentalLabel.setText(mode.toString());
+        adapter.show(mentalType);
+        textViewMentalLabel.setText(mentalType.toString());
         textViewMentalTotal.setText(String.valueOf(total));
         textViewLastDate.setText(lastDate.toString());
         textViewFirstDate.setText(firstDate.toString());
 
     }
 /*    @Override
-    public void onMental(Mental mental, MentalDialog.Mode mode) {
-        log("MentalFragment.onMental, MentalDialog.Mode");
+    public void onMental(Mental mental, MentalDialog.Mental mentalType) {
+        log("MentalFragment.onMental, MentalDialog.Mental");
     }*/
     private void updateStatistics(){
         log("...updateStatistics()");

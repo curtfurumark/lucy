@@ -20,13 +20,13 @@ import java.util.Locale;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.ListableAdapter;
-import se.curtrune.lucy.adapters.SequenceAdapter;
-import se.curtrune.lucy.classes.EstimateDate;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Listable;
 import se.curtrune.lucy.classes.Mental;
+import se.curtrune.lucy.classes.MentalEstimate;
 import se.curtrune.lucy.statistics.MentalStatistics;
 import se.curtrune.lucy.util.Converter;
+import se.curtrune.lucy.workers.DurationWorker;
 import se.curtrune.lucy.workers.ItemsWorker;
 
 public class EstimateFragment extends Fragment {
@@ -39,10 +39,11 @@ public class EstimateFragment extends Fragment {
     private TextView textViewDate;
     private ListableAdapter adapterDuration;
     private RecyclerView recyclerDuration;
-    private EstimateDate estimateDate;
+    private MentalEstimate mentalEstimate;
     private LocalDate date;
     private long duration;
     private List<Mental> mentals;
+    private List<Item> items;
     public static boolean VERBOSE = false;
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,7 +61,8 @@ public class EstimateFragment extends Fragment {
         initRecyclerDuration();
         initListeners();
         initEstimate(date);
-        setUserInterface(estimateDate);
+        setUserInterface();
+        //setUserInterface(mentalEstimate);
         return view;
     }
     private void initComponents(View view){
@@ -76,17 +78,12 @@ public class EstimateFragment extends Fragment {
     private void initDefaults(){
         if( VERBOSE) log("...initDefaults()");
         date = LocalDate.now();
-
     }
     private void initEstimate(LocalDate date){
         log("...initEstimate(LocalDate)", date.toString());
-        estimateDate = new EstimateDate(date, getContext());
-        duration = EstimateDate.calculateDuration(date, getContext());
-        List<Item> items = ItemsWorker.selectTodayList(date, getContext());
-        mentals = MentalStatistics.getMentals(items, getContext());
-        log("...number of mentals:", mentals.size());
-        mentals.forEach(System.out::println);
-
+        items = ItemsWorker.selectTodayList(date, getContext());
+        mentalEstimate = MentalStatistics.getEstimate(items, getContext());
+        duration = DurationWorker.getEstimatedDuration(items, getContext());
     }
     private void initListeners(){
         if( VERBOSE)log("...initListeners()");
@@ -110,19 +107,19 @@ public class EstimateFragment extends Fragment {
         recyclerDuration.setItemAnimator(new DefaultItemAnimator());
         recyclerDuration.setAdapter(adapterDuration);
     }
-    private void setUserInterface(EstimateDate estimateDate){
+    private void setUserInterface(){
         log("...setUserInterface(EstimateDate)");
-        //String textTotalDuration = String.format(Locale.getDefault(), "total duration %s", Converter.formatSecondsWithHours(estimateDate.getDurationEstimate()));
         String textTotalDuration = String.format(Locale.getDefault(), "total duration %s", Converter.formatSecondsWithHours(duration));
         textViewDuration.setText(textTotalDuration );
-        estimateDate.getEnergyEstimate();
-        String textEnergy =String.format(Locale.getDefault(), "%s: %d", getString(R.string.energy),estimateDate.getEnergyEstimate());
+
+        mentalEstimate = MentalStatistics.getEstimate(items,getContext() );
+        String textEnergy =String.format(Locale.getDefault(), "%s: %d", getString(R.string.energy),mentalEstimate.getEnergy());
         textViewEnergy.setText(textEnergy);
-        String textAnxiety =String.format(Locale.getDefault(), "%s: %d",getString(R.string.anxiety), estimateDate.getAnxiety());
+        String textAnxiety =String.format(Locale.getDefault(), "%s: %d",getString(R.string.anxiety), mentalEstimate.getAnxiety());
         textViewAnxiety.setText(textAnxiety);
-        String textStress =String.format(Locale.getDefault(), "stress: %d", estimateDate.getStressEstimate());
+        String textStress =String.format(Locale.getDefault(), "stress: %d", mentalEstimate.getStress());
         textViewStress.setText(textStress);
-        String textMood =String.format(Locale.getDefault(), "%s: %d",getString(R.string.mood), estimateDate.getMoodEstimate());
+        String textMood =String.format(Locale.getDefault(), "%s: %d",getString(R.string.mood), mentalEstimate.getMood());
         textViewMood.setText(textMood);
         textViewDate.setText(date.toString());
     }

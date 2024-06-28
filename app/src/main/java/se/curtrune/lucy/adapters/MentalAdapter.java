@@ -14,23 +14,22 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.util.Constants;
 
 
 public class MentalAdapter extends RecyclerView.Adapter<MentalAdapter.MyViewHolder>{
-    private List<Mental> items;
+    private List<se.curtrune.lucy.classes.Mental> items;
     public boolean VERBOSE = false;
-    public enum Mode{
+    public enum Mental {
         MOOD, ENERGY, ANXIETY, STRESS
     }
-    private Mode mode = Mode.ENERGY;
+    private Mental mode = Mental.ENERGY;
     public interface Callback{
-        void onItemClick(Mental item);
+        void onItemClick(se.curtrune.lucy.classes.Mental item);
     }
     private final Callback callback;
 
-    public MentalAdapter(List<Mental> items, Callback callback) {
+    public MentalAdapter(List<se.curtrune.lucy.classes.Mental> items, Callback callback) {
         if( VERBOSE) log("MentalAdapter(List<Mental>, Context, Callback");
         if (items == null){
             log("...items is null");
@@ -50,7 +49,7 @@ public class MentalAdapter extends RecyclerView.Adapter<MentalAdapter.MyViewHold
     @Override
     public void onBindViewHolder(@androidx.annotation.NonNull final MyViewHolder holder, int position) {
         if( VERBOSE) log("MentalAdapter.onBindViewHolder() mode", mode.toString());
-        final Mental item = items.get(position);
+        final se.curtrune.lucy.classes.Mental item = items.get(position);
         //log(item);
         switch (mode){
             case MOOD:
@@ -75,11 +74,11 @@ public class MentalAdapter extends RecyclerView.Adapter<MentalAdapter.MyViewHold
     public int getItemCount() {
         return items != null? items.size(): 0;
     }
-    public List<Mental> getItems(){
+    public List<se.curtrune.lucy.classes.Mental> getItems(){
         return items;
     }
 
-    public void setList(List<Mental> items) {
+    public void setList(List<se.curtrune.lucy.classes.Mental> items) {
         log("MentalAdapter.setList(List<Mental>) size",  items.size());
         if( items == null){
             log("ItemsAdapter.setList(List<Item>) called with null items");
@@ -88,8 +87,8 @@ public class MentalAdapter extends RecyclerView.Adapter<MentalAdapter.MyViewHold
         this.items = items;
         notifyDataSetChanged();
     }
-    public void show(Mode mode){
-        log("MentalAdapter.show(Mode)", mode.toString());
+    public void show(Mental mode){
+        log("MentalAdapter.show(Mental)", mode.toString());
         this.mode = mode;
         notifyDataSetChanged();
 

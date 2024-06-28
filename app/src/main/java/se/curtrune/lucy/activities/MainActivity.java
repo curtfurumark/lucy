@@ -40,9 +40,10 @@ import se.curtrune.lucy.fragments.CalenderFragment;
 import se.curtrune.lucy.fragments.ContactFragment;
 import se.curtrune.lucy.fragments.CustomizeFragment;
 import se.curtrune.lucy.fragments.DurationFragment;
-import se.curtrune.lucy.fragments.EnchildaFragment;
+import se.curtrune.lucy.fragments.EnchiladaFragment;
 import se.curtrune.lucy.fragments.EstimateFragment;
 import se.curtrune.lucy.fragments.GraphFragment;
+import se.curtrune.lucy.fragments.ItemSessionFragment;
 import se.curtrune.lucy.fragments.MentalDayFragment;
 import se.curtrune.lucy.fragments.MessageBoardFragment;
 import se.curtrune.lucy.fragments.MonthCalenderFragment;
@@ -144,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
             }else if( item.getItemId() == R.id.bottomNavigation_appointments){
                 navigate( new AppointmentsFragment());
             }else if( item.getItemId() == R.id.bottomNavigation_enchilada){
-                navigate( new EnchildaFragment());
+                navigate( new EnchiladaFragment());
             }else if (item.getItemId() == R.id.bottomNavigation_projects){
                 navigate(new ProjectsFragment());
             }else if ( item.getItemId() == R.id.navigationDrawer_durationFragment){
@@ -162,7 +163,10 @@ public class MainActivity extends AppCompatActivity {
             }else if ( item.getItemId() == R.id.navigationDrawer_customizeFragment){
                 navigate(new CustomizeFragment());
             }else if( item.getItemId() == R.id.navigationDrawer_mentalFragment){
-                navigate( new MentalDayFragment());}
+                navigate( new MentalDayFragment());
+            }else if( item.getItemId() ==R.id.navigationDrawer_itemSession){
+                navigate( new ItemSessionFragment(ItemsWorker.getRootItem(Settings.Root.DAILY, this)));
+            }
             drawerLayout.close();
             return true;
         });
@@ -201,10 +205,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         log("...onOptionsItemSelected(MenuItem item)", Objects.requireNonNull(item.getTitle()).toString());
+        //TODO, remove
         if( item.getItemId() == R.id.navigationDrawer_graphFragment){
             navigate( new GraphFragment());
         }else if( item.getItemId() == R.id.mainActivity_dev){
             startActivity(new Intent(this, DevActivity.class));
+        }else if( item.getItemId() == R.id.mainActivity_calendar){
+            navigate(new CalenderFragment());
         }
         return super.onOptionsItemSelected(item);
     }

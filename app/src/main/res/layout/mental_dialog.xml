@@ -209,4 +209,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mentalDialog_checkboxIsTemplate" />
 
+    <Button
+        android:id="@+id/mentalDialog_buttonDismiss"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dismiss"
+        app:layout_constraintEnd_toStartOf="@+id/mentalDialog_button"
+        app:layout_constraintStart_toEndOf="@+id/mentalDialog_delete"
+        app:layout_constraintTop_toTopOf="@+id/mentalDialog_delete" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,12 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import se.curtrune.lucy.workers.ItemsWorker;
-import se.curtrune.lucy.workers.MentalWorker;
 
 public class EstimateDate {
     private LocalDate date;
     private List<Item> items;
-    private List<Estimate> estimates;
+    private List<MentalEstimate> estimates;
     private long durationEstimate;
     public static boolean VERBOSE = false;
     public EstimateDate(){
@@ -67,7 +66,7 @@ public class EstimateDate {
         }
     }
     public int getAnxiety(){
-        return estimates.stream().mapToInt(Estimate::getAnxiety).sum();
+        return estimates.stream().mapToInt(MentalEstimate::getAnxiety).sum();
     }
 
     public LocalDate getDate() {
@@ -75,16 +74,16 @@ public class EstimateDate {
     }
 
     public long getDurationEstimate(){
-        return estimates.stream().mapToLong(Estimate::getDuration).sum();
+        return estimates.stream().mapToLong(MentalEstimate::getDuration).sum();
     }
     public int  getEnergyEstimate() {
-        return estimates.stream().mapToInt(Estimate::getEnergy).sum();
+        return estimates.stream().mapToInt(MentalEstimate::getEnergy).sum();
     }
     public int getStressEstimate(){
-        return estimates.stream().mapToInt(Estimate::getStress).sum();
+        return estimates.stream().mapToInt(MentalEstimate::getStress).sum();
     }
     public int getMoodEstimate(){
-        return estimates.stream().mapToInt(Estimate::getMood).sum();
+        return estimates.stream().mapToInt(MentalEstimate::getMood).sum();
     }
 
 }

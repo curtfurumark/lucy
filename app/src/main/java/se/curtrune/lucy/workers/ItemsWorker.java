@@ -267,10 +267,11 @@ public class ItemsWorker {
 
     public static List<Item> selectCalenderItems(YearMonth yearMonth, Context context) {
         if (VERBOSE) log("ItemsWorker.selectCalenderItems(YearMonth)");
-        LocalDate firstDate = yearMonth.atDay(1);
-        LocalDate lastDate = yearMonth.atEndOfMonth();
+        //LocalDate firstDate = yearMonth.atDay(1);
+        //LocalDate lastDate = yearMonth.atEndOfMonth();
         try (LocalDB db = new LocalDB(context)) {
-            String queery = Queeries.selectItems(firstDate, lastDate, Type.APPOINTMENT);
+            //String queery = Queeries.selectItems(firstDate, lastDate, Type.APPOINTMENT);
+            String queery = Queeries.selectCalendarMonth(yearMonth);
             return db.selectItems(queery);
         }
     }

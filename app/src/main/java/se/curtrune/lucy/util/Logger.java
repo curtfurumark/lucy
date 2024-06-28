@@ -11,7 +11,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import se.curtrune.lucy.activities.economy.classes.Transaction;
-import se.curtrune.lucy.classes.Estimate;
+import se.curtrune.lucy.classes.MentalEstimate;
 import se.curtrune.lucy.classes.EstimateDate;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
@@ -58,8 +58,8 @@ public class Logger {
             }
         }
     }
-    public static void log(Estimate estimate){
-        log("Logger.log(Estimate");
+    public static void log(MentalEstimate estimate){
+        log("Logger.log(MentalEstimate");
         log("\tenergy", estimate.getEnergy());
         log("\tduration", estimate.getDuration());
     }

@@ -2,7 +2,7 @@ package se.curtrune.lucy.classes;
 
 public class Action {
     public enum Type{
-        NOTIFICATION, CATEGORY, REPEAT, TIME, EVENT, DATE, DURATION
+        NOTIFICATION, CATEGORY, REPEAT, TIME, EVENT, DATE, DURATION, MENTAL
     }
     private Type type;
     private String title;

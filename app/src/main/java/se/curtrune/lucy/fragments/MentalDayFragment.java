@@ -17,6 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,6 +33,7 @@ import se.curtrune.lucy.adapters.MentalAdapter;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.dialogs.MentalDialog;
 import se.curtrune.lucy.statistics.MentalStatistics;
+import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.MentalWorker;
 
 public class MentalDayFragment extends Fragment implements MentalAdapter.Callback, MentalDialog.Callback{
@@ -51,7 +53,12 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
 
     private LocalDate date;
     private MentalStatistics mentalStatistics;
-    private MentalAdapter.Mode mode;
+    private MentalAdapter.Mental mentalType;
+    private enum Mode{
+        ESTIMATE, ACTUAL
+    }
+    private Mode mode = Mode.ESTIMATE;
+    LucindaViewModel viewModel;
     public static boolean VERBOSE = false;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -124,19 +131,19 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
         radioButtonEnergy.setOnClickListener(view->{
-            mode = MentalAdapter.Mode.ENERGY;
+            mentalType = MentalAdapter.Mental.ENERGY;
             updateUserInterface();
             });
         radioButtonMood.setOnClickListener(view->{
-            mode = MentalAdapter.Mode.MOOD;
+            mentalType = MentalAdapter.Mental.MOOD;
             updateUserInterface();
         });
         radioButtonAnxiety.setOnClickListener(view->{
-            mode = MentalAdapter.Mode.ANXIETY;
+            mentalType = MentalAdapter.Mental.ANXIETY;
             updateUserInterface();
         });
         radioButtonStress.setOnClickListener(view->{
-            mode = MentalAdapter.Mode.STRESS;
+            mentalType = MentalAdapter.Mental.STRESS;
             updateUserInterface();
         });
         textViewDate.setOnClickListener(view->showDateDialog());
@@ -162,16 +169,20 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
     private void initStuff(){
         if( VERBOSE) log("...initStuff()");
         date = LocalDate.now();
-        mentalStatistics = new MentalStatistics(date, getContext());
-        mentals = mentalStatistics.getMentalList();
-        mode = MentalAdapter.Mode.ENERGY;
+        if( mode.equals(Mode.ACTUAL)) {
+            mentalStatistics = new MentalStatistics(date, getContext());
+            mentals = mentalStatistics.getMentalList();
+        }else{
+            //mentalStatistics = MentalStatistics.kjkjkjk;
+        }
+        mentalType = MentalAdapter.Mental.ENERGY;
         radioButtonEnergy.setChecked(true);
         adapter.setList(mentals);
         updateUserInterface();
     }
     private void initViewModel(){
-        log("...initViewModel()");
-
+        if( VERBOSE) log("...initViewModel()");
+        viewModel = new ViewModelProvider(getActivity() ).get(LucindaViewModel.class);
     }
 
     @Override
@@ -182,9 +193,14 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
         dialog.show(requireActivity().getSupportFragmentManager(), "hello mental");
     }
 
+    /**
+     * callback for mentalDialog
+     * @param mental, the edited, created or deleted mental
+     * @param mode edit, create or delete mental
+     */
     @Override
     public void onMental(Mental mental, MentalDialog.Mode mode) {
-        log("MentalDayFragment.onMental(Mental, Mode", mode.toString());
+        log("MentalDayFragment.onMental(Mental, Mental", mode.toString());
         log("...onMental()", mode.toString());
         log(mental);
         switch (mode){
@@ -205,6 +221,7 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
                 adapter.notifyDataSetChanged();
                 updateUserInterface();
         }
+        viewModel.setEnergy(42);
     }
     private void showDateDialog(){
         if( VERBOSE) log("...showDateDialog()");
@@ -228,9 +245,9 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
     /**
      */
     private void updateUserInterface(){
-        log("...updateUserInterface()", mode.toString());
+        log("...updateUserInterface()", mentalType.toString());
         int total = 0;
-        switch (mode){
+        switch (mentalType){
             case ENERGY:
                 total = mentalStatistics.getTotalEnergy();
                 //viewModel.setEnergy(total);
@@ -245,8 +262,8 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
                 total = mentalStatistics.getTotalMood();
                 break;
         }
-        adapter.show(mode);
-        textViewMentalLabel.setText(mode.toString());
+        adapter.show(mentalType);
+        textViewMentalLabel.setText(mentalType.toString());
         textViewMentalTotal.setText(String.valueOf(total));
         textViewDate.setText(date.toString());
     }

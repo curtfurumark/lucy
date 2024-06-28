@@ -20,7 +20,7 @@ import java.time.Duration;
 import java.util.Locale;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.classes.Estimate;
+import se.curtrune.lucy.classes.MentalEstimate;
 import se.curtrune.lucy.util.Constants;
 
 
@@ -32,7 +32,7 @@ public class EstimateDialog extends BottomSheetDialogFragment {
     private TextView textViewMinutes;
     private TextView textViewSeconds;
     private Button buttonSave;
-    private Estimate estimate;
+    private MentalEstimate estimate;
 
     public static boolean VERBOSE = false;
     private int energy;
@@ -41,12 +41,12 @@ public class EstimateDialog extends BottomSheetDialogFragment {
     }
     private Mode mode = Mode.CREATE;
     public interface Callback{
-        void onEstimate(Estimate estimate, Mode mode);
+        void onEstimate(MentalEstimate estimate, Mode mode);
     }
     private Callback callback;
     public EstimateDialog(){
         if( VERBOSE) log("EstimateDialog()");
-        this.estimate = new Estimate();
+        this.estimate = new MentalEstimate();
     }
     @Nullable
     @Override
@@ -58,9 +58,9 @@ public class EstimateDialog extends BottomSheetDialogFragment {
         setUserInterface();
         return view;
     }
-    private Estimate getEstimate(){
+    private MentalEstimate getEstimate(){
         if( VERBOSE) log("...getEstimate()");
-        estimate = new Estimate();
+        estimate = new MentalEstimate();
         long hours = Integer.parseInt(textViewHours.getText().toString());
         long minutes = Integer.parseInt(textViewMinutes.getText().toString());
         long seconds = Integer.parseInt(textViewSeconds.getText().toString());

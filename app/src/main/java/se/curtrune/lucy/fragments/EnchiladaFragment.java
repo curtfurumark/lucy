@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -27,29 +28,28 @@ import se.curtrune.lucy.adapters.ItemAdapter;
 import se.curtrune.lucy.classes.CallingActivity;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
+import se.curtrune.lucy.dialogs.EditItemDialog;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.workers.ItemsWorker;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link EnchildaFragment#newInstance} factory method to
+ * Use the {@link EnchiladaFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class EnchildaFragment extends Fragment implements
+public class EnchiladaFragment extends Fragment implements
         ItemAdapter.Callback,
         TabLayout.OnTabSelectedListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+
     private RecyclerView recycler;
     private EditText editTextSearch;
     private ItemAdapter adapter;
     private List<Item> items;
+    public static boolean VERBOSE = false;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -58,14 +58,13 @@ public class EnchildaFragment extends Fragment implements
         initComponents(view);
         items = ItemsWorker.selectItems(getContext());
         initRecycler(items);
-        log("...recycler initialized");
         initListeners();
         return view;
     }
 
     private String mParam2;
 
-    public EnchildaFragment() {
+    public EnchiladaFragment() {
         log("ProjectsFragment()");
     }
 
@@ -78,21 +77,15 @@ public class EnchildaFragment extends Fragment implements
      * @return A new instance of fragment ProjectsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static EnchildaFragment newInstance(String param1, String param2) {
-        EnchildaFragment fragment = new EnchildaFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    public static EnchiladaFragment newInstance(String param1, String param2) {
+        return new EnchiladaFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            log("...getArguments != null");
         }
     }
     private void filter(String str){
@@ -100,12 +93,12 @@ public class EnchildaFragment extends Fragment implements
         adapter.setList(filteredItems);
     }
     private void initComponents(View view){
-        log("...initComponents()");
+        if( VERBOSE) log("...initComponents()");
         recycler = view.findViewById(R.id.todoFragment_recycler);
         editTextSearch = view.findViewById(R.id.todoFragment_search);
     }
     private void initListeners(){
-        log("...initListeners()");
+        if( VERBOSE) log("...initListeners()");
         editTextSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -128,7 +121,7 @@ public class EnchildaFragment extends Fragment implements
     }
 
     private void initRecycler(List<Item> items){
-        log("...initRecycler(List<Item>)", items.size());
+        if( VERBOSE) log("...initRecycler(List<Item>)", items.size());
         adapter = new ItemAdapter(this.items, this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recycler.setLayoutManager(layoutManager);
@@ -161,13 +154,45 @@ public class EnchildaFragment extends Fragment implements
         startActivity(intent);
     }
 
+    /**
+     * callback ItemAdapter
+     * @param item, the long clicked item
+     */
+
     @Override
     public void onLongClick(Item item) {
-
+        log("...onLongClick(Item)", item.getHeading());
+        EditItemDialog dialog = new EditItemDialog(item);
+        dialog.setCallback(new EditItemDialog.Callback() {
+            @Override
+            public void onUpdate(Item item) {
+                log("...onUpdate(Item)");
+                update(item);
+            }
+        });
+        dialog.show(getChildFragmentManager(), "edit item");
     }
 
+    /**
+     * callback for ItemAdapter
+     * @param item, the clicked item, the item to be updated
+     * @param checked, done or not done
+     */
     @Override
     public void onCheckboxClicked(Item item, boolean checked) {
+        log("...onCheckBoxClicked(Item, boolean)");
+        item.setState(checked? State.DONE: State.TODO);
+        update(item);
 
+    }
+    private void update(Item item){
+        log("...update(Item)");
+        int stat = ItemsWorker.update(item, getContext());
+        if( stat != 1){
+            log("ERROR updating item", item.getHeading());
+            Toast.makeText(getContext(), "ERROR updating item", Toast.LENGTH_LONG).show();
+        }else{
+            log("...item updated ok");
+        }
     }
 }

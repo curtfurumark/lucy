@@ -4,6 +4,8 @@ import static se.curtrune.lucy.util.Logger.log;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.YearMonth;
 import java.time.ZoneOffset;
 import java.util.Locale;
 
@@ -73,6 +75,10 @@ public class Queeries {
             "(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)";
 
     public static boolean VERBOSE = false;
+    public static String insert(Message message) {
+        return String.format(Locale.getDefault(), "INSERT INTO messages(subject, content, user, created) values " +
+                "('%s', '%s', '%s', %d)", message.getSubject(), message.getContent(), message.getUser(), message.getCreatedEpoch());
+    }
 
     public static String insertCategory(String category) {
         return String.format("INSERT INTO categories (name) values ('%s')", category);
@@ -206,17 +212,10 @@ public class Queeries {
     }
 
 
-    public static String selectMentals2() {
-        return String.format(Locale.getDefault(), "SELECT mental FROM items ORDER BY date DESC");
-    }
-
     public static String selectMentalsFromItem(LocalDate firstDate, LocalDate lastDate) {
         return String.format(Locale.getDefault(), "SELECT mental FROM items WHERE date >= %d AND date <= %d ORDER BY date DESC",
                 firstDate.toEpochDay(), lastDate.toEpochDay());
-
     }
-
-
     public static String selectMentalsFromItems(LocalDate date, State state) {
         log("...selectMentalsFromItems(LocalDate");
         long startOfDay = date.atStartOfDay().toEpochSecond(ZoneOffset.UTC);
@@ -230,9 +229,14 @@ public class Queeries {
                 week.getMonday().toEpochDay(), week.getLastDateOfWeek().toEpochDay());
     }
 
-    public static String insert(Message message) {
-        return String.format(Locale.getDefault(), "INSERT INTO messages(subject, content, user, created) values " +
-                "('%s', '%s', '%s', %d)", message.getSubject(), message.getContent(), message.getUser(), message.getCreatedEpoch());
+
+
+    public static String selectCalendarMonth(YearMonth yearMonth) {
+        LocalDate lastDate =  yearMonth.atEndOfMonth();
+        LocalDate firstDate = yearMonth.atDay(1);
+        return String.format(Locale.getDefault(), "SELECT * FROM items WHERE targetDate >= %d AND targetDate <= %d AND isCalenderItem = 1 ORDER by targetDate DESC",
+                firstDate.toEpochDay(), lastDate.toEpochDay());
+
     }
 }
 

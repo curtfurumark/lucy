@@ -38,7 +38,7 @@ import java.util.Objects;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.CallingActivity;
-import se.curtrune.lucy.classes.Estimate;
+import se.curtrune.lucy.classes.MentalEstimate;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.Notification;
@@ -71,6 +71,7 @@ public class ItemSession extends AppCompatActivity implements
     private EditText editTextHeading;
     //comment etc
     private EditText  editTextComment;
+    private TextView textViewEstimateTime;
     private EditText editTextTags;
     private Spinner spinnerCategories;
     //MENTAL
@@ -124,7 +125,6 @@ public class ItemSession extends AppCompatActivity implements
 
     //DATE AND TIME
     private TextView labelDateTime;
-    //private ImageView imageViewDateTimeAction;
     private LinearLayout layoutDateTime;
     private TextView textViewTargetDate;
     private TextView textViewTargetTime;
@@ -134,7 +134,6 @@ public class ItemSession extends AppCompatActivity implements
 
 
     //ESTIMATE
-    //private ImageView imageViewEstimateAction;
     private ConstraintLayout layoutEstimate;
     private ConstraintLayout layoutNotification;
     private ConstraintLayout layoutRepeat;
@@ -209,9 +208,9 @@ public class ItemSession extends AppCompatActivity implements
         returnToCallingActivity();
     }
 
-    private Estimate getEstimate(){
+    private MentalEstimate getEstimate(){
         log("...getEstimate()");
-        Estimate estimate = new Estimate();
+        MentalEstimate estimate = new MentalEstimate();
         estimate.setDuration(getEstimatedDuration());
         estimate.setEnergy(getEstimatedEnergy());
         return estimate;
@@ -286,6 +285,7 @@ public class ItemSession extends AppCompatActivity implements
         checkBoxDone = findViewById(R.id.itemSession_checkBoxDone);
         editTextComment = findViewById(R.id.itemSession_comment);
         editTextHeading = findViewById(R.id.itemSession_heading);
+        textViewEstimateTime = findViewById(R.id.itemSession_estimateTime);
         //COMMENT SECTION
         editTextMentalComment = findViewById(R.id.itemSession_mentalComment);
 
@@ -381,7 +381,8 @@ public class ItemSession extends AppCompatActivity implements
             }
         });
         imageViewNotificationAction.setOnClickListener(view->showNotificationDialog());
-        labelComment.setOnClickListener(view->toggleComment());
+       // labelComment.setOnClickListener(view->toggleComment());
+        labelComment.setOnClickListener(view->showCommentDialog());
         labelMental.setOnClickListener(view->toggleMental());
         labelRepeat.setOnClickListener(view->togglePeriod());
         labelEstimate.setOnClickListener(view->toggleEstimate());
@@ -668,10 +669,12 @@ public class ItemSession extends AppCompatActivity implements
         }
     }
 
-    private void setUserInterface(Estimate estimate){
-        log("...setUserInterface(Estimate)");
+    private void setUserInterface(MentalEstimate estimate){
+        log("...setUserInterface(MentalEstimate)");
         log(estimate);
         long seconds = estimate.getDuration();
+        String stringEstimatedTime = String.format(Locale.getDefault(), "estimated time: %s", Converter.formatSecondsWithHours(estimate.getDuration()));
+        textViewEstimateTime.setText(stringEstimatedTime);
         editTextEstimateHours.setText(String.valueOf(seconds / 3600));
         editTextEstimateMinutes.setText(String.valueOf((seconds % 3600) / 60));
         editTextEstimateSeconds.setText(String.valueOf(seconds % 60));
@@ -850,12 +853,16 @@ public class ItemSession extends AppCompatActivity implements
         });
         dialog.show(getSupportFragmentManager(), "add edit repeat");
     }
+    private void showCommentDialog(){
+        log("...showCommentDialog()");
+        Toast.makeText(this, "NOT IMPLEMENTED", Toast.LENGTH_LONG).show();
+    }
 
     private void showEstimateDialog(){
         log("...showEstimateDialog()");
         EstimateDialog dialog = new EstimateDialog();
         dialog.setCallback((estimate, mode) -> {
-            log("...onEstimate(Estimate)", mode.toString());
+            log("...onEstimate(MentalEstimate)", mode.toString());
             log(estimate);
             currentItem.setEstimate(estimate);
             int rowsAffected = ItemsWorker.update(currentItem, this);

@@ -34,7 +34,7 @@ public class EasyAlarm  {
     public void  setAlarm(Context context){
         log("...setAlarm");
         if( !item.hasNotification()){
-            log("...item without notification");
+            log("ERROR item without notification");
             return;
         }
         Notification notification = item.getNotification();

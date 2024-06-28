@@ -236,7 +236,7 @@ public class AddPeriodDialog extends BottomSheetDialogFragment {
      */
 
     private void toggle(Mode mode){
-        log("...toggle(Mode)", mode.toString());
+        log("...toggle(Mental)", mode.toString());
         this.mode = mode;
         if( mode.equals(Mode.DAYS)){
             layoutDays.setVisibility(View.VISIBLE);

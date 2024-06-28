@@ -31,6 +31,7 @@ import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.ActionAdapter;
 import se.curtrune.lucy.classes.Action;
 import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.util.Converter;
 
 
@@ -50,6 +51,7 @@ public class AddItemDialog extends BottomSheetDialogFragment {
     private ActionAdapter actionAdapter;
     private RecyclerView actionRecycler;
     private final boolean isEvent;
+    private Mental mental = null;
 
     private Action currentAction;
     public static boolean VERBOSE = true;
@@ -126,6 +128,9 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         actionDuration.setTitle(getString(R.string.duration));
         actionDuration.setType(Action.Type.DURATION);
 
+        Action actionMental = new Action();
+        actionMental.setTitle(getString(R.string.mental));
+        actionMental.setType(Action.Type.MENTAL);
 
         ArrayList<Action> actionList = new ArrayList<>();
         actionList.add(time);
@@ -134,7 +139,7 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         actionList.add(notification);
         actionList.add(categoryAction);
         actionList.add(actionDuration);
-
+        actionList.add(actionMental);
         return actionList;
     }
 
@@ -144,8 +149,7 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         newItem.setTags(parent.getTags());
         newItem.setTargetDate(targetDate);
         if( isEvent) {
-            log("...item is event, setting type to appointment");
-            //newItem.setType(Type.APPOINTMENT);
+            log("...item isEvent, setting isCalenderItem to true");
             newItem.setIsCalenderItem(true);
         }
         if( checkBoxIsTemplate.isChecked()){
@@ -180,6 +184,9 @@ public class AddItemDialog extends BottomSheetDialogFragment {
                     break;
                 case DURATION:
                     showDurationDialog();
+                    break;
+                case MENTAL:
+                    showMentalDialog();
                     break;
             }
         });
@@ -272,7 +279,30 @@ public class AddItemDialog extends BottomSheetDialogFragment {
 
     }
 
-    public void showNotificationDialog(){
+    /**
+     * shows the MentalDialog and if mental created replies with a new mental, not saved to db
+     * cannot save until, the item has been saved
+     */
+
+    private void showMentalDialog(){
+        log("...showMentalDialog()");
+        Mental mental = new Mental();
+        MentalDialog dialog = new MentalDialog();
+        dialog.setCallback(new MentalDialog.Callback() {
+            @Override
+            public void onMental(Mental mental, MentalDialog.Mode mode) {
+                log("...onMental(Mental, Mental)", mode.toString());
+                log(mental);
+                newItem.setMental( mental);
+            }
+        });
+        dialog.show(getChildFragmentManager(), "add mental");
+        //Mental mental = MentalWorker.getMental(newItem, getContext());
+        //log("....mental should be null");
+        //log(mental);
+
+    }
+    private void showNotificationDialog(){
         log("...showNotificationDialog()");
         NotificationDialog dialog = new NotificationDialog(parent);
         dialog.setListener(notification -> {
