@@ -206,6 +206,13 @@ public class Queeries {
         return String.format(Locale.getDefault(), "SELECT * FROM items WHERE parentID = %d", id);
     }
 
+    /**
+     * returns a sql queery, which selects all mentals of said date, done or not
+     * @param date, the date which is of interest
+     * @param isTemplate, not in use, remove ? TODO
+     * @param isDone, set to true to get only those which are done the requested date
+     * @return
+     */
     public static String selectMentals(LocalDate date, boolean isTemplate, boolean isDone) {
         return String.format(Locale.getDefault(), "SELECT * FROM mental WHERE date = %d   AND  isDone = %d ORDER BY date DESC",
                 date.toEpochDay(), 1);

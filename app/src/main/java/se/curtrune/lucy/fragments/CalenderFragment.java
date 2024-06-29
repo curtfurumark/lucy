@@ -132,7 +132,6 @@ public class CalenderFragment extends Fragment {
         //calendar.set(currentDate.getYear(), currentDate.getMonthValue(), currentDate.getDayOfMonth());
         //int weekOfYear = calendar.get(Calendar.WEEK_OF_YEAR);
         return String.valueOf(currentWeek.getWeekNumber());
-
     }
     private void initComponents(View view){
         if( VERBOSE) log("...initComponents(View)");
@@ -296,7 +295,7 @@ public class CalenderFragment extends Fragment {
 
     }
     private void nextWeek(){
-        log("...nextWeek()");
+        if( VERBOSE)log("...nextWeek()");
         currentDate = currentDate.plusWeeks(1);
         currentWeek = new Week(currentDate);
         setUserInterface(currentDate);
@@ -341,7 +340,7 @@ public class CalenderFragment extends Fragment {
     }
 
     private void prevWeek(){
-        log("...prevWeek()");
+        if( VERBOSE) log("...prevWeek()");
         currentDate = currentDate.minusWeeks(1);
         currentWeek = new Week(currentDate);
         setUserInterface(currentDate);

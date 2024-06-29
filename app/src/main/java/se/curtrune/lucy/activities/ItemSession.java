@@ -38,7 +38,7 @@ import java.util.Objects;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.CallingActivity;
-import se.curtrune.lucy.classes.MentalEstimate;
+import se.curtrune.lucy.classes.MentalStats;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.Notification;
@@ -208,9 +208,9 @@ public class ItemSession extends AppCompatActivity implements
         returnToCallingActivity();
     }
 
-    private MentalEstimate getEstimate(){
+    private MentalStats getEstimate(){
         log("...getEstimate()");
-        MentalEstimate estimate = new MentalEstimate();
+        MentalStats estimate = new MentalStats();
         estimate.setDuration(getEstimatedDuration());
         estimate.setEnergy(getEstimatedEnergy());
         return estimate;
@@ -669,8 +669,8 @@ public class ItemSession extends AppCompatActivity implements
         }
     }
 
-    private void setUserInterface(MentalEstimate estimate){
-        log("...setUserInterface(MentalEstimate)");
+    private void setUserInterface(MentalStats estimate){
+        log("...setUserInterface(MentalStats)");
         log(estimate);
         long seconds = estimate.getDuration();
         String stringEstimatedTime = String.format(Locale.getDefault(), "estimated time: %s", Converter.formatSecondsWithHours(estimate.getDuration()));
@@ -862,7 +862,7 @@ public class ItemSession extends AppCompatActivity implements
         log("...showEstimateDialog()");
         EstimateDialog dialog = new EstimateDialog();
         dialog.setCallback((estimate, mode) -> {
-            log("...onEstimate(MentalEstimate)", mode.toString());
+            log("...onEstimate(MentalStats)", mode.toString());
             log(estimate);
             currentItem.setEstimate(estimate);
             int rowsAffected = ItemsWorker.update(currentItem, this);

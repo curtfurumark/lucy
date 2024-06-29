@@ -42,7 +42,7 @@ public class Item implements Serializable , Listable {
     //protected int days;
     protected int energy;
     protected Repeat repeat;
-    protected MentalEstimate estimate;
+    protected MentalStats estimate;
     protected Notification notification;
     protected Mental mental;
     protected  int color;
@@ -67,7 +67,7 @@ public class Item implements Serializable , Listable {
         type = Type.NODE.ordinal();
         has_child = 0;
         children = new ArrayList<>();
-        estimate = new MentalEstimate();
+        estimate = new MentalStats();
     }
     public Item(String heading){
         this();
@@ -127,7 +127,7 @@ public class Item implements Serializable , Listable {
     public int getEnergy(){
         return mental != null? mental.getEnergy():0;
     }
-    public MentalEstimate getEstimate(){
+    public MentalStats getEstimate(){
         return estimate;
     }
     public String getHeading() {
@@ -322,18 +322,18 @@ public class Item implements Serializable , Listable {
     public void setDuration(LocalDateTime now){
         duration  = now.toEpochSecond(ZoneOffset.UTC) - updated;
     }
-    public void setEstimate(MentalEstimate estimate){
+    public void setEstimate(MentalStats estimate){
         this.estimate = estimate;
     }
     public void setEstimatedDuration(long seconds) {
         if( estimate == null){
-            estimate = new MentalEstimate();
+            estimate = new MentalStats();
         }
         estimate.setDuration(seconds);
     }
     public void setEstimate(String json){
         if( json != null){
-            this.estimate = new Gson().fromJson(json, MentalEstimate.class);
+            this.estimate = new Gson().fromJson(json, MentalStats.class);
         }
     }
     public void setHeading(String heading) {

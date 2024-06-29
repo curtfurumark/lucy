@@ -7,17 +7,17 @@ import android.content.Context;
 import java.time.LocalDate;
 import java.util.List;
 
-import se.curtrune.lucy.classes.MentalEstimate;
+import se.curtrune.lucy.classes.MentalStats;
 import se.curtrune.lucy.classes.Item;
 
 public class DurationWorker {
-    public static MentalEstimate getEstimate(Item item, Context context){
+    public static MentalStats getEstimate(Item item, Context context){
         log("StaticsWorker.getEstimate(Item, Context)", item.getHeading());
         if( !item.isTemplate()){
             return item.getEstimate();
         }
         List<Item> children = ItemsWorker.selectChildren(item, context);
-        MentalEstimate result = new MentalEstimate();
+        MentalStats result = new MentalStats();
         for(Item item1 : children){
             result.plusDuration(item1.getDuration());
             result.plusEnergy(item1.getEnergy());

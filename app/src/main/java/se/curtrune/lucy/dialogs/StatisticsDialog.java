@@ -115,10 +115,6 @@ public class StatisticsDialog extends BottomSheetDialogFragment {
     private void setUserInterface(View view){
         log("...setUserInterface()");
         log(statisticsPeriod);
-/*        mentalList = MentalWorker.getLatestMentals(10, view.getContext());
-        MentalStatistics stats = new MentalStatistics(mentalList);
-        List<Item> items = ItemsWorker.selectItems(LocalDate.now(), view.getContext(), State.DONE);
-        long seconds = StatisticsWorker.getSum(items);*/
         Duration duration = statisticsPeriod.getDuration();
         textViewDate.setText(date.toString());
         textViewTime.setText(Converter.format(LocalTime.now()));

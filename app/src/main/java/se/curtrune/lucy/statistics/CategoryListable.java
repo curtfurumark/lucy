@@ -22,6 +22,7 @@ public class CategoryListable implements Listable {
     }
 
     public int getAnxiety(){
+        //TODO, what is this, or rather do i need this?
         //return StatisticsCalculator.getAnxiety(items , xxxx);
         return 0;
     }

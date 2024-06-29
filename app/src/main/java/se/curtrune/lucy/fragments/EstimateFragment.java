@@ -23,11 +23,11 @@ import se.curtrune.lucy.adapters.ListableAdapter;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Listable;
 import se.curtrune.lucy.classes.Mental;
-import se.curtrune.lucy.classes.MentalEstimate;
-import se.curtrune.lucy.statistics.MentalStatistics;
+import se.curtrune.lucy.classes.MentalStats;
 import se.curtrune.lucy.util.Converter;
 import se.curtrune.lucy.workers.DurationWorker;
 import se.curtrune.lucy.workers.ItemsWorker;
+import se.curtrune.lucy.workers.MentalWorker;
 
 public class EstimateFragment extends Fragment {
 
@@ -39,7 +39,7 @@ public class EstimateFragment extends Fragment {
     private TextView textViewDate;
     private ListableAdapter adapterDuration;
     private RecyclerView recyclerDuration;
-    private MentalEstimate mentalEstimate;
+    private MentalStats mentalStats;
     private LocalDate date;
     private long duration;
     private List<Mental> mentals;
@@ -60,9 +60,8 @@ public class EstimateFragment extends Fragment {
         initComponents(view);
         initRecyclerDuration();
         initListeners();
-        initEstimate(date);
+        initMentalStats(date);
         setUserInterface();
-        //setUserInterface(mentalEstimate);
         return view;
     }
     private void initComponents(View view){
@@ -79,10 +78,10 @@ public class EstimateFragment extends Fragment {
         if( VERBOSE) log("...initDefaults()");
         date = LocalDate.now();
     }
-    private void initEstimate(LocalDate date){
-        log("...initEstimate(LocalDate)", date.toString());
+    private void initMentalStats(LocalDate date){
+        log("...initMentalStats(LocalDate)", date.toString());
         items = ItemsWorker.selectTodayList(date, getContext());
-        mentalEstimate = MentalStatistics.getEstimate(items, getContext());
+        mentalStats = MentalWorker.getMentalStats(items, getContext());
         duration = DurationWorker.getEstimatedDuration(items, getContext());
     }
     private void initListeners(){
@@ -112,14 +111,14 @@ public class EstimateFragment extends Fragment {
         String textTotalDuration = String.format(Locale.getDefault(), "total duration %s", Converter.formatSecondsWithHours(duration));
         textViewDuration.setText(textTotalDuration );
 
-        mentalEstimate = MentalStatistics.getEstimate(items,getContext() );
-        String textEnergy =String.format(Locale.getDefault(), "%s: %d", getString(R.string.energy),mentalEstimate.getEnergy());
+        //mentalEstimate = MentalStatistics.getEstimate(items,getContext() );
+        String textEnergy =String.format(Locale.getDefault(), "%s: %d", getString(R.string.energy),mentalStats.getEnergy());
         textViewEnergy.setText(textEnergy);
-        String textAnxiety =String.format(Locale.getDefault(), "%s: %d",getString(R.string.anxiety), mentalEstimate.getAnxiety());
+        String textAnxiety =String.format(Locale.getDefault(), "%s: %d",getString(R.string.anxiety), mentalStats.getAnxiety());
         textViewAnxiety.setText(textAnxiety);
-        String textStress =String.format(Locale.getDefault(), "stress: %d", mentalEstimate.getStress());
+        String textStress =String.format(Locale.getDefault(), "stress: %d", mentalStats.getStress());
         textViewStress.setText(textStress);
-        String textMood =String.format(Locale.getDefault(), "%s: %d",getString(R.string.mood), mentalEstimate.getMood());
+        String textMood =String.format(Locale.getDefault(), "%s: %d",getString(R.string.mood), mentalStats.getMood());
         textViewMood.setText(textMood);
         textViewDate.setText(date.toString());
     }

@@ -2,6 +2,7 @@ package se.curtrune.lucy.fragments;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -12,8 +13,10 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -58,11 +61,10 @@ public class EnchiladaFragment extends Fragment implements
         initComponents(view);
         items = ItemsWorker.selectItems(getContext());
         initRecycler(items);
+        initSwipe();
         initListeners();
         return view;
     }
-
-    private String mParam2;
 
     public EnchiladaFragment() {
         log("ProjectsFragment()");
@@ -72,12 +74,10 @@ public class EnchiladaFragment extends Fragment implements
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment ProjectsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static EnchiladaFragment newInstance(String param1, String param2) {
+    public static EnchiladaFragment newInstance() {
         return new EnchiladaFragment();
     }
 
@@ -128,6 +128,50 @@ public class EnchiladaFragment extends Fragment implements
         recycler.setItemAnimator(new DefaultItemAnimator());
         recycler.setAdapter(adapter);
     }
+    private void initSwipe() {
+        if( VERBOSE) log("...initSwipe()");
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                //int index = viewHolder.getAdapterPosition();
+                Item item = items.get(viewHolder.getAdapterPosition());
+                if (item.isPrioritized()) {
+                    log("...item isPrioritized");
+                    Toast.makeText(getContext(), "don't delete prioritized items", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                if (direction == ItemTouchHelper.LEFT) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle(getString(R.string.delete) + ":  " + item.getHeading());
+                    builder.setMessage("are you sure? ");
+                    builder.setPositiveButton(getString(R.string.delete), (dialog, which) -> {
+                        log("...on positive button click");
+                        boolean deleted = ItemsWorker.delete(item, getContext());
+                        if (!deleted) {
+                            log("...error deleting item");
+                            Toast.makeText(getContext(), "error deleting item", Toast.LENGTH_LONG).show();
+                        } else {
+                            log("...item deleted");
+                            items.remove(item);
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+                    builder.setNegativeButton("cancel", (dialog, which) -> {
+                        log("...on negative button click->do nothing");
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+
+                }
+            }
+        });
+        itemTouchHelper.attachToRecyclerView(recycler);
+    }
 
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
@@ -163,12 +207,9 @@ public class EnchiladaFragment extends Fragment implements
     public void onLongClick(Item item) {
         log("...onLongClick(Item)", item.getHeading());
         EditItemDialog dialog = new EditItemDialog(item);
-        dialog.setCallback(new EditItemDialog.Callback() {
-            @Override
-            public void onUpdate(Item item) {
-                log("...onUpdate(Item)");
-                update(item);
-            }
+        dialog.setCallback(item1 -> {
+            log("...onUpdate(Item)");
+            update(item1);
         });
         dialog.show(getChildFragmentManager(), "edit item");
     }

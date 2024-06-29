@@ -20,7 +20,6 @@ import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.ListableAdapter;
 import se.curtrune.lucy.classes.Listable;
 import se.curtrune.lucy.fragments.DurationFragment;
-import se.curtrune.lucy.fragments.MentalFragment;
 import se.curtrune.lucy.fragments.TopTenFragment;
 import se.curtrune.lucy.workers.StatisticsWorker;
 
@@ -78,7 +77,8 @@ public class StatisticsMain extends AppCompatActivity  {
                         getSupportFragmentManager().beginTransaction().replace(R.id.statisticsMain_fragmentContainer, new DurationFragment()).commit();
                         break;
                     case 1:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.statisticsMain_fragmentContainer, new MentalFragment()).commit();
+                        //getSupportFragmentManager().beginTransaction().replace(R.id.statisticsMain_fragmentContainer, new MentalFragment()).commit();
+                        log(" MentalFragment, discontinued");
                         break;
                     case 2:
                         getSupportFragmentManager().beginTransaction().replace(R.id.statisticsMain_fragmentContainer, new TopTenFragment()).commit();

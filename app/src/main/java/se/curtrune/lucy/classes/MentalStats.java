@@ -11,7 +11,7 @@ import java.util.Locale;
 
 import se.curtrune.lucy.util.Converter;
 
-public class MentalEstimate implements Serializable {
+public class MentalStats implements Serializable {
     private long duration;
     private int energy;
     private int anxiety;
@@ -20,20 +20,24 @@ public class MentalEstimate implements Serializable {
     private List<Mental> mentalList = new ArrayList<>();
     public static boolean VERBOSE = false;
 
+    public boolean remove(Mental mental) {
+        return mentalList.remove(mental);
+    }
+
     public enum Type{
         USER, CALCULATED
     }
     private Type type =Type.USER;
 
-    public MentalEstimate() {
-        if( VERBOSE) log("MentalEstimate()");
+    public MentalStats() {
+        if( VERBOSE) log("MentalStats()");
     }
 
     public void add(Mental mental) {
         mentalList.add(mental);
     }
-    public MentalEstimate divide(int denominator){
-        MentalEstimate estimate = new MentalEstimate();
+    public MentalStats divide(int denominator){
+        MentalStats estimate = new MentalStats();
         estimate.setType(Type.CALCULATED);
         if( denominator == 0){
             return estimate;
@@ -82,7 +86,7 @@ public class MentalEstimate implements Serializable {
     public void plusStress(int stress){
         this.stress += stress;
     }
-   public void plus(MentalEstimate other){
+   public void plus(MentalStats other){
         this.duration += other.duration;
         this.energy += other.energy;
     }
@@ -100,7 +104,7 @@ public class MentalEstimate implements Serializable {
         this.type = type;
     }
     public String toJson(){
-        return new Gson().toJson(this, MentalEstimate.class);
+        return new Gson().toJson(this, MentalStats.class);
     }
 
     @Override

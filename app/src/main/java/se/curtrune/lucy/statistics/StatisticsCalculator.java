@@ -25,16 +25,9 @@ public class StatisticsCalculator {
     public static long getDuration(List<Item> items){
         return items.stream().mapToLong(Item::getDuration).sum();
     }
-/*    public static int getEnergy(List<Item> items){
-        return items.stream().mapToInt(Item::getEnergy).sum();
-    }*/
+
     public static int getEnergy(List<Mental> mentals){
         return mentals.stream().mapToInt(Mental::getEnergy).sum();
     }
-    public static float getAverageEnergy(List<Mental> mentals){
-        if( mentals.size() == 0){
-            return 0;
-        }
-        return getEnergy(mentals) / mentals.size();
-    }
+
 }
