@@ -72,7 +72,7 @@ public class Lucinda {
         log("Lucinda.reset(Context)");
         DBAdmin.dropTables(context);
         DBAdmin.createTables(context);
-        DBAdmin.insertCategories(context);
+        //DBAdmin.insertCategories(context);
         DBAdmin.insertRootItems(context);
         Demo.insertDemo(context);
         setDefaultUserSettings(context);
@@ -82,6 +82,7 @@ public class Lucinda {
     public static void setDefaultUserSettings(Context context){
         log("Lucinda.setDefaultUserSettings()");
         User.setPanicUrls(context.getResources().getStringArray(R.array.panicUrls), context);
+        User.setCategories(context.getResources().getStringArray(R.array.categories), context);
         User.setUsesPassword(false, context);
         User.setUseDarkMode(true, context);
 

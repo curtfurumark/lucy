@@ -99,6 +99,7 @@ public class LocalDB extends SQLiteOpenHelper {
         return selectItem(item.getParentId());
     }
 
+/*
     public String[] getCategories() {
         if( VERBOSE) log("LocalDB.getCategories()");
         db = this.getReadableDatabase();
@@ -115,6 +116,7 @@ public class LocalDB extends SQLiteOpenHelper {
         cursor.close();
         return categoriesArray;
     }
+*/
 
     public List<String> getTableNames() {
         if( VERBOSE) log("LocalDB.getTableNames()");

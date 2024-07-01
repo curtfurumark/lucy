@@ -134,4 +134,14 @@
     <string name="subject">Ämne</string>
     <string name="firstdate">firstDate</string>
     <string name="total_duration">total duration:</string>
+    <string name="projects_tabs">projects tabs</string>
+    <string name="add_item">Lägg till aktivitet</string>
+    <string name="actual">Aktuell</string>
+    <string name="categories">Kategorier</string>
+    <string name="choose_category">Välj kategori</string>
+    <string-array name="categories">
+        <item>hushåll</item>
+        <item>fritid</item>
+        <item>hälsa</item>
+</string-array>
 </resources>

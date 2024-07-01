@@ -33,4 +33,6 @@
         android:title="clear settings"/>
     <item android:id="@+id/devActivity_repeatDialog"
         android:title="repeat dialog"/>
+    <item android:id="@+id/devActivity_testNotification"
+        android:title="test notification"/>
 </menu>

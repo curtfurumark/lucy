@@ -28,11 +28,16 @@ public class User {
     public static final String KEY_LANGUAGE = "KEY_LANGUAGE";
 
     public static void addCategory(String category, Context context){
+        log("User.addCategory(String, Context)", category);
         Set<String> setCategories = Settings.getList(KEY_CATEGORIES, context);
         setCategories.add(category);
-        //Settings.addList
-
+        Settings.saveList( KEY_CATEGORIES, setCategories, context);
     }
+    /**
+     * list of categories, stored in sharedPreferences, settings whatever you want to call it
+     * @param context, context, whatever that is
+     * @return an array of categories
+     */
     public static String[] getCategories(Context context){
         log("User.getCategories()");
         Set<String> setCategories = Settings.getList(KEY_CATEGORIES, context);
@@ -138,5 +143,10 @@ public class User {
 
     public static Settings.PanicAction getPanicAction(Context context) {
         return Settings.PanicAction.valueOf(Settings.getString(KEY_PANIC_ACTION, Settings.PanicAction.SEQUENCE.toString(), context));
+    }
+
+    public static void setCategories(String[] categories, Context context) {
+        Set<String> urlSet = new HashSet<>(Arrays.asList(categories));
+        Settings.saveList(KEY_CATEGORIES,urlSet, context );
     }
 }

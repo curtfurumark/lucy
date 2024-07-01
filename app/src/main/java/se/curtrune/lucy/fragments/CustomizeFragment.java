@@ -18,12 +18,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import se.curtrune.lucy.R;
+import se.curtrune.lucy.adapters.CategoryAdapter;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.app.User;
+import se.curtrune.lucy.dialogs.AddCategoryDialog;
 import se.curtrune.lucy.dialogs.PasswordDialog;
 
 /**
@@ -38,6 +46,7 @@ public class CustomizeFragment extends Fragment {
     private EditText editTextUrl;
     private Button buttonAddUrl;
     private ListView listViewPanicUrls;
+    private RecyclerView recyclerCategories;
     private RadioButton radioButtonGame;
     private RadioButton radioButtonWeb;
     private RadioButton radioButtonSequence;
@@ -46,6 +55,9 @@ public class CustomizeFragment extends Fragment {
     private RadioGroup radioGroupLanguage;
     private LinearLayout layoutPanicButton;
     private TextView textViewPanicButton;
+    private TextView labelCategories;
+    private List<String> categories;
+    private CategoryAdapter categoryAdapter;
     public static boolean VERBOSE = true;
     public CustomizeFragment() {
         // Required empty public constructor
@@ -71,10 +83,17 @@ public class CustomizeFragment extends Fragment {
         View view = inflater.inflate(R.layout.customize_fragment, container, false);
         initComponents(view);
         initListView();
+        initRecyclerCategories();
         initListeners();
         setUserInterface();
         printSharedPreferences();
         return view;
+    }
+    private void addCategory(String category){
+        log("...addCategory(String)", category);
+        User.addCategory(category, getContext());
+        categories.add(category);
+        categoryAdapter.notifyDataSetChanged();
     }
     private void addPanicUrl(){
         log("...addPanicUrl()");
@@ -97,9 +116,12 @@ public class CustomizeFragment extends Fragment {
         radioGroupLanguage = view.findViewById(R.id.customizeFragment_radioGroupLanguage);
         layoutPanicButton = view.findViewById(R.id.customizeFragment_layoutPanicButton);
         textViewPanicButton = view.findViewById(R.id.customizeFragment_labelPanicButton);
+        recyclerCategories = view.findViewById(R.id.customizeFragment_recyclerCategories);
+        labelCategories = view.findViewById(R.id.customizeFragment_labelCategory);
     }
     private void initListeners(){
         log("...initListeners()");
+        labelCategories.setOnClickListener(view->showCategoryDialog());
         buttonAddUrl.setOnClickListener(view->addPanicUrl());
         checkBoxPassword.setOnClickListener(view->{
             if( checkBoxPassword.isChecked()){
@@ -124,6 +146,19 @@ public class CustomizeFragment extends Fragment {
             log("...url", url);
         });
         textViewPanicButton.setOnClickListener(view->togglePanicButton());
+    }
+    private void initRecyclerCategories(){
+        log("...initRecyclerCategories()");
+        categories = new ArrayList<>(Arrays.asList( User.getCategories(getContext())));
+        categoryAdapter = new CategoryAdapter(categories, new CategoryAdapter.Callback() {
+            @Override
+            public void onItemClick(String category) {
+                log("...onItemClick(String)", category);
+            }
+        });
+        recyclerCategories.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerCategories.setItemAnimator(new DefaultItemAnimator());
+        recyclerCategories.setAdapter(categoryAdapter);
     }
     private void initListView(){
         log("...initListView()");
@@ -193,6 +228,18 @@ public class CustomizeFragment extends Fragment {
                 break;
         }
 
+    }
+    private void showCategoryDialog(){
+        log("...showCategoryDialog()");
+        AddCategoryDialog dialog = new AddCategoryDialog();
+        dialog.setListener(new AddCategoryDialog.Callback() {
+            @Override
+            public void onNewCategory(String category) {
+                log("...onNewCategory(String)", category);
+                addCategory(category);
+            }
+        });
+        dialog.show(getChildFragmentManager(), "add category");
     }
     private void showPasswordDialog(){
         log("...showPasswordDialog()");

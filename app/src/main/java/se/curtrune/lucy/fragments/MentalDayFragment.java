@@ -4,8 +4,6 @@ import static se.curtrune.lucy.util.Logger.log;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -111,8 +109,8 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
     }
     private void initComponents(View view){
         if( VERBOSE) log("...initComponents(View)");
-        recycler = view.findViewById(R.id.mentalList_recycler);
-        editTextSearch = view.findViewById(R.id.mentalFragment_filter);
+        recycler = view.findViewById(R.id.mentalDayFragment_recycler);
+        //editTextSearch = view.findViewById(R.id.mentalFragment_filter);
         radioButtonAnxiety = view.findViewById(R.id.mentalList_radioButtonAnxiety);
         radioButtonEnergy = view.findViewById(R.id. mentalList_radioButtonEnergy);
         radioButtonMood = view. findViewById(R.id.mentalList_radioButtonMood);
@@ -162,7 +160,7 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
         });
         textViewDate.setOnClickListener(view->showDateDialog());
         buttonAddMental.setOnClickListener(view->showMentalDialog());
-        editTextSearch.addTextChangedListener(new TextWatcher() {
+/*        editTextSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -177,7 +175,7 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
             public void afterTextChanged(Editable s) {
 
             }
-        });
+        });*/
     }
 
     /**
@@ -197,7 +195,7 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
         mentalStats = MentalWorker.getStatistics(items, getContext());
         mentals = mentalStats.getMentals();
         mentalType = MentalAdapter.Mental.ENERGY;
-
+        radioButtonEnergy.setChecked(true);
         updateUserInterface();
     }
     private void initViewModel(){
@@ -267,26 +265,29 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
     private void updateUserInterface(){
         log("...updateUserInterface()", mentalType.toString());
         int total = 0;
+        String mentalLabel = "Energy";
         switch (mentalType){
             case ENERGY:
                 total = mentalStats.getEnergy();
-                //viewModel.setEnergy(total);
+                mentalLabel = getString(R.string.mental);
                 break;
             case STRESS:
                 total = mentalStats.getStress();
+                mentalLabel = getString(R.string.stress);
                 break;
             case ANXIETY:
                 total = mentalStats.getAnxiety();
+                mentalLabel = getString(R.string.anxiety);
                 break;
             case MOOD:
                 total = mentalStats.getMood();
+                mentalLabel = getString(R.string.mood);
                 break;
         }
-        radioButtonEnergy.setChecked(true);
         Collections.reverse(mentals);
         adapter.setList(mentals);
         adapter.show(mentalType);
-        textViewMentalLabel.setText(mentalType.toString());
+        textViewMentalLabel.setText(mentalLabel);
         textViewMentalTotal.setText(String.valueOf(total));
         textViewDate.setText(date.toString());
     }

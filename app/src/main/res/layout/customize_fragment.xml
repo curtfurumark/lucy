@@ -82,7 +82,6 @@
                     android:id="@+id/customizeFragment_panicUrls"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
-
             </RadioGroup>
         </LinearLayout>
         <RadioGroup
@@ -106,6 +105,22 @@
                 android:layout_height="wrap_content"/>
 
         </RadioGroup>
+        <TextView
+            android:id="@+id/customizeFragment_labelCategory"
+            android:text="@string/categories"
+            android:textSize="24sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:id="@+id/customizeFragment_layoutCategories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/customizeFragment_recyclerCategories"
+                android:layout_marginStart="24dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </LinearLayout>
     </LinearLayout>
 
     <!-- TODO: Update blank fragment layout -->

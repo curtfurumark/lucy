@@ -204,14 +204,15 @@ public class DevActivity extends AppCompatActivity {
             createTableCategories();
         } else if (item.getItemId() == R.id.homeActivity_createEconomyTables) {
             createEconomyTables();
-        }else if (item.getItemId() == R.id.homeActivity_setNotifications){
+        }else if (item.getItemId() == R.id.devActivity_testNotification){
             testNotification();
         }else if( item.getItemId() == R.id.homeActivity_logInActivity){
             startActivity(new Intent(this, LogInActivity.class));
         }else if ( item.getItemId() == R.id.devActivity_userSettings){
             setDefaultUserSettings();
         }else if( item.getItemId() == R.id.devActivity_clearSettings){
-            Settings.removeAll(this);
+            //Settings.removeAll(this);
+            Toast.makeText(this, "don't do this", Toast.LENGTH_LONG);
         }else if( item.getItemId() == R.id.devActivity_repeatDialog){
             //showRepeatDialog();
             Toast.makeText(this, "for future use", Toast.LENGTH_LONG).show();
@@ -345,14 +346,14 @@ public class DevActivity extends AppCompatActivity {
         notification.setTime(targetTime);
         notification.setDate(LocalDate.now());
         Item item = new Item();
-        String heading = String.format("notify me %s", notification.getTime().toString());
+        String heading = String.format(Locale.getDefault(), "notify me %s", notification.getTime().toString());
         item.setHeading(heading);
         item.setTargetDate(LocalDate.now());
         item.setTargetTime(targetTime);
         Item todoParent = ItemsWorker.getRootItem(Settings.Root.TODO, this);
         item.setParentId(todoParent.getID());
-        item = ItemsWorker.insertChild(todoParent, item, this);
         item.setNotification(notification);
+        item = ItemsWorker.insertChild(todoParent, item, this);
         log(item);
         NotificationsWorker.setNotification(item, this);
     }

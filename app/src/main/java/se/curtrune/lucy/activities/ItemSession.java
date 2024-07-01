@@ -37,6 +37,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 import se.curtrune.lucy.R;
+import se.curtrune.lucy.app.User;
 import se.curtrune.lucy.classes.CallingActivity;
 import se.curtrune.lucy.classes.MentalStats;
 import se.curtrune.lucy.classes.Item;
@@ -56,7 +57,6 @@ import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.util.Converter;
 import se.curtrune.lucy.util.ItemStack;
 import se.curtrune.lucy.util.Kronos;
-import se.curtrune.lucy.workers.CategoryWorker;
 import se.curtrune.lucy.workers.ItemsWorker;
 import se.curtrune.lucy.workers.MentalWorker;
 import se.curtrune.lucy.workers.NotificationsWorker;
@@ -501,7 +501,7 @@ public class ItemSession extends AppCompatActivity implements
     }
     private void initSpinnerCategories(){
         if( VERBOSE) log("...initSpinnerCategories()");
-        String[] categories = CategoryWorker.getCategories(this);
+        String[] categories = User.getCategories(this);
         categoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
         spinnerCategories.setAdapter(categoryAdapter);
@@ -547,8 +547,8 @@ public class ItemSession extends AppCompatActivity implements
      */
     public void onNewCategory(String category) {
         log("ItemEditor.onNewCategory(String)", category);
-        CategoryWorker.insertCategory(category, this);
-        String[] categories = CategoryWorker.getCategories(this);
+        User.addCategory(category, this);
+        String[] categories = User.getCategories(this);
         categoryAdapter.clear();
         categoryAdapter.addAll(categories);
     }
@@ -816,7 +816,7 @@ public class ItemSession extends AppCompatActivity implements
         AddCategoryDialog dialog = new AddCategoryDialog();
         dialog.setListener(category -> {
             log("...onNewCategory(String)", category);
-            CategoryWorker.insertCategory(category, this);
+            User.addCategory(category, this);
             updateSpinnerCategories();
         });
         dialog.show(getSupportFragmentManager(), "add category");

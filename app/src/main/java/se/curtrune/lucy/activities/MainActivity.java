@@ -267,8 +267,13 @@ public class MainActivity extends AppCompatActivity {
         }
         textViewEnergy.setText(textEnergy);
     }
+
+    /**
+     * loads fragment, stats about current day,
+     * expected/estimated duration and mental and actual duration and mental
+     */
     private void showMentalDay(){
         log("...showMentalDay");
-        navigate(new MentalDayFragment());
+        navigate(new EstimateFragment());
     }
 }

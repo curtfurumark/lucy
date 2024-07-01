@@ -17,11 +17,12 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.persist.LocalDB;
+import se.curtrune.lucy.app.User;
 
 
 public class ChooseCategoryDialog extends DialogFragment {
     private Button buttonOK;
+    private Button buttonDismiss;
 
     private String currentCategory;
     public interface Callback{
@@ -51,8 +52,10 @@ public class ChooseCategoryDialog extends DialogFragment {
     private void initComponents(View view){
         spinnerCategory = view.findViewById(R.id.chooseCategoryDialog_spinnerCategories);
         buttonOK = view.findViewById(R.id.chooseCategoryDialog_buttonOK);
+        buttonDismiss =view.findViewById(R.id.chooseCategoryDialog_dismiss);
     }
     private void initListeners(){
+        buttonDismiss.setOnClickListener(view->dismiss());
         buttonOK.setOnClickListener(view->{
                 callback.onSelected(currentCategory);
                 dismiss();
@@ -61,8 +64,8 @@ public class ChooseCategoryDialog extends DialogFragment {
 
     private void initSpinnerCategories() {
         log("...initSpinnerCategories()");
-        LocalDB db = new LocalDB(getContext());
-        String[] categories = db.getCategories();
+
+        String[] categories = User.getCategories(getContext());
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, categories);
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
         spinnerCategory.setAdapter(arrayAdapter);

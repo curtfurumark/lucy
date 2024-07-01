@@ -26,7 +26,7 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
     public static boolean VERBOSE = false;
 
     public void setList(List<Item> items) {
-        if( VERBOSE) log("ItemAdapter.setList(List<Item>) size", items.size());
+        if( VERBOSE) log("CategoryAdapter.setList(List<Item>) size", items.size());
         this.items = items;
         notifyDataSetChanged();
     }

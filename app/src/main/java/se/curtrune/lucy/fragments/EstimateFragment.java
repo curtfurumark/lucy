@@ -17,12 +17,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.ListableAdapter;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Listable;
-import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.MentalStats;
 import se.curtrune.lucy.util.Converter;
 import se.curtrune.lucy.workers.DurationWorker;
@@ -31,18 +31,24 @@ import se.curtrune.lucy.workers.MentalWorker;
 
 public class EstimateFragment extends Fragment {
 
-    private TextView textViewDuration;
+    private TextView textViewEstimateDuration;
+    private TextView textViewActualDuration;
     private TextView textViewEnergy;
+    private TextView textViewCurrentEnergy;
     private TextView textViewStress;
+    private TextView textViewCurrentStress;
     private TextView textViewAnxiety;
+    private TextView textViewCurrentAnxiety;
     private TextView textViewMood;
+    private TextView textViewCurrentMood;
     private TextView textViewDate;
     private ListableAdapter adapterDuration;
     private RecyclerView recyclerDuration;
-    private MentalStats mentalStats;
+    private MentalStats estimatedStats;
+    private MentalStats currentStats;
     private LocalDate date;
-    private long duration;
-    private List<Mental> mentals;
+    private long estimatedDuration;
+    private long actualDuration;
     private List<Item> items;
     public static boolean VERBOSE = false;
     @Override
@@ -60,29 +66,54 @@ public class EstimateFragment extends Fragment {
         initComponents(view);
         initRecyclerDuration();
         initListeners();
-        initMentalStats(date);
-        setUserInterface();
+        initMentalStatsAndDuration(date);
+        setUserInterfaceCurrent();
+        setUserInterfaceEstimate();
         return view;
     }
     private void initComponents(View view){
         if( VERBOSE) log("...initComponents(View) ");
-        textViewDuration = view.findViewById(R.id.estimateFragment_duration);
+        textViewEstimateDuration = view.findViewById(R.id.estimateFragment_estimatedDuration);
+        textViewActualDuration = view.findViewById(R.id.estimateFragment_actualDuration);
         textViewEnergy = view.findViewById(R.id.estimateFragment_energy);
         textViewStress = view.findViewById(R.id.estimateFragment_stress);
         textViewMood = view.findViewById(R.id.estimateFragment_mood);
         textViewAnxiety = view.findViewById(R.id.estimateFragment_anxiety);
         textViewDate = view.findViewById(R.id.estimateFragment_date);
         recyclerDuration = view.findViewById(R.id.estimateFragment_recyclerDuration);
+        textViewCurrentAnxiety = view.findViewById(R.id.estimateFragment_currentAnxiety);
+        textViewCurrentEnergy = view.findViewById(R.id.estimateFragment_currentEnergy);
+        textViewCurrentStress = view.findViewById(R.id.estimateFragment_currentStress);
+        textViewCurrentMood = view.findViewById(R.id.estimateFragment_currentMood);
+    }
+    private void setUserInterfaceCurrent(){
+        log("...setUserInterfaceCurrent()");
+        String stringActualDuration = String.format(Locale.getDefault(), "%s: %s", getString(R.string.duration),Converter.formatSecondsWithHours(actualDuration));
+        String stringCurrentEnergy = String.format(Locale.getDefault(), "%s %d", getString(R.string.energy), currentStats.getEnergy());
+        String stringCurrentAnxiety = String.format(Locale.getDefault(), "%s %d", getString(R.string.anxiety), currentStats.getAnxiety());
+        String stringCurrentStress = String.format(Locale.getDefault(), "%s %d", getString(R.string.stress), currentStats.getStress());
+        String stringCurrentMood = String.format(Locale.getDefault(), "%s %d", getString(R.string.mood), currentStats.getMood());
+        textViewCurrentEnergy.setText(stringCurrentEnergy);
+        textViewCurrentAnxiety.setText(stringCurrentAnxiety);
+        textViewCurrentStress.setText(stringCurrentStress);
+        textViewCurrentMood.setText(stringCurrentMood);
+        textViewActualDuration.setText(stringActualDuration);
     }
     private void initDefaults(){
         if( VERBOSE) log("...initDefaults()");
         date = LocalDate.now();
     }
-    private void initMentalStats(LocalDate date){
-        log("...initMentalStats(LocalDate)", date.toString());
+    private void initMentalStatsAndDuration(LocalDate date){
+        log("...initMentalStatsAndDuration(LocalDate)", date.toString());
         items = ItemsWorker.selectTodayList(date, getContext());
-        mentalStats = MentalWorker.getMentalStats(items, getContext());
-        duration = DurationWorker.getEstimatedDuration(items, getContext());
+        estimatedStats = MentalWorker.getMentalStats(items, getContext());
+        estimatedDuration =  DurationWorker.getEstimatedDuration(items, getContext());
+
+        //List<Item> doneItems = ItemsWorker.selectItems(date, getContext(), State.DONE);
+        List<Item> doneItems = items.stream().filter(Item::isDone).collect(Collectors.toList());
+        currentStats = MentalWorker.getMentalStats(doneItems, getContext());
+        actualDuration = doneItems.stream().mapToLong(Item::getDuration).sum();
+
     }
     private void initListeners(){
         if( VERBOSE)log("...initListeners()");
@@ -106,19 +137,18 @@ public class EstimateFragment extends Fragment {
         recyclerDuration.setItemAnimator(new DefaultItemAnimator());
         recyclerDuration.setAdapter(adapterDuration);
     }
-    private void setUserInterface(){
-        log("...setUserInterface(EstimateDate)");
-        String textTotalDuration = String.format(Locale.getDefault(), "total duration %s", Converter.formatSecondsWithHours(duration));
-        textViewDuration.setText(textTotalDuration );
+    private void setUserInterfaceEstimate(){
+        log("...setUserInterfaceEstimate()");
+        String stringEstimatedDuration = String.format(Locale.getDefault(), "%s: %s", getString(R.string.duration), Converter.formatSecondsWithHours(estimatedDuration));
+        textViewEstimateDuration.setText(stringEstimatedDuration );
 
-        //mentalEstimate = MentalStatistics.getEstimate(items,getContext() );
-        String textEnergy =String.format(Locale.getDefault(), "%s: %d", getString(R.string.energy),mentalStats.getEnergy());
+        String textEnergy =String.format(Locale.getDefault(), "%s: %d", getString(R.string.energy),estimatedStats.getEnergy());
         textViewEnergy.setText(textEnergy);
-        String textAnxiety =String.format(Locale.getDefault(), "%s: %d",getString(R.string.anxiety), mentalStats.getAnxiety());
+        String textAnxiety =String.format(Locale.getDefault(), "%s: %d",getString(R.string.anxiety), estimatedStats.getAnxiety());
         textViewAnxiety.setText(textAnxiety);
-        String textStress =String.format(Locale.getDefault(), "stress: %d", mentalStats.getStress());
+        String textStress =String.format(Locale.getDefault(), "%s: %d",getString(R.string.stress), estimatedStats.getStress());
         textViewStress.setText(textStress);
-        String textMood =String.format(Locale.getDefault(), "%s: %d",getString(R.string.mood), mentalStats.getMood());
+        String textMood =String.format(Locale.getDefault(), "%s: %d",getString(R.string.mood), estimatedStats.getMood());
         textViewMood.setText(textMood);
         textViewDate.setText(date.toString());
     }

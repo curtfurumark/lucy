@@ -29,12 +29,11 @@ import java.time.LocalTime;
 import java.util.Locale;
 
 import se.curtrune.lucy.R;
+import se.curtrune.lucy.app.User;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.util.Converter;
-import se.curtrune.lucy.workers.CategoryWorker;
-import se.curtrune.lucy.workers.MentalWorker;
 
 
 public class MentalDialog extends BottomSheetDialogFragment {
@@ -183,7 +182,7 @@ public class MentalDialog extends BottomSheetDialogFragment {
     }
     private void initDefaults(){
         if( VERBOSE) log("...initDefaults()");
-        categories = CategoryWorker.getCategories(getContext());
+        categories = User.getCategories(getContext());
         assert categories.length > 0;
         category = categories[0];
 

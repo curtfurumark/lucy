@@ -62,12 +62,7 @@ public class ItemsWorker {
         }
         return res;
     }
-    public static String[] getCategories(Context context){
-        log("ItemsWorker.getCategories(Context)");
-        try(LocalDB db = new LocalDB(context)){
-            return  db.getCategories();
-        }
-    }
+
 
     public static Item getParent(Item currentParent, Context context) {
         if( VERBOSE) log("ItemsWorker.getParent(Item, Context)");

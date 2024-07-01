@@ -32,12 +32,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import se.curtrune.lucy.R;
+import se.curtrune.lucy.app.User;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.workers.ItemsWorker;
-import se.curtrune.lucy.workers.UtilWorker;
 
 public class AddTemplateDialog extends BottomSheetDialogFragment {
 
@@ -242,7 +242,7 @@ public class AddTemplateDialog extends BottomSheetDialogFragment {
      */
     private void initSpinner(){
         if(VERBOSE)log("...initSpinner()");
-        String[] categories = ItemsWorker.getCategories(getContext());
+        String[] categories = User.getCategories(getContext());
         arrayAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, categories);
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
         spinner.setAdapter(arrayAdapter);

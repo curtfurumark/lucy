@@ -15,10 +15,8 @@ import se.curtrune.lucy.classes.Type;
 public class Settings {
     private static final String PREFERENCES_NAME =  "PREFERENCES_NAME";
     private static final String IS_INITIALIZED = "IS_INITIALIZED";
-
     public static final String USER = "USER";
     public static final String PWD = "PWD";
-
     private long todoID;
     private long dailyID;
     private long projectsID;
@@ -30,7 +28,6 @@ public class Settings {
     public enum PanicAction{
         GAME, URL, SEQUENCE, PENDING
     }
-
     public enum Root{
         TODO, DAILY, PROJECTS, APPOINTMENTS, PANIC, THE_ROOT
     }
@@ -47,7 +44,6 @@ public class Settings {
         editor.commit();
 
     }
-
     public static void addInt(String key, int value, Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -71,8 +67,6 @@ public class Settings {
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
         return new HashSet<>(sharedPreferences.getStringSet(key , new HashSet<>()));
     }
-
-
 
     public void reload(Context context) {
         log("...reload(Context)");

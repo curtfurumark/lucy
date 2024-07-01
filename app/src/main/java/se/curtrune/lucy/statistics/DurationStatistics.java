@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import se.curtrune.lucy.app.User;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Listable;
 import se.curtrune.lucy.classes.Mental;
@@ -35,13 +36,10 @@ public class DurationStatistics {
     private void createCategoryListables(Context context){
         log("createCategoryListables(List<Item>");
         LocalDB localDB = new LocalDB(context);
-        String[] categories = localDB.getCategories();
+        String[] categories = User.getCategories(context);
         for(String category : categories){
             List<Item> categoryItems = items.stream().filter(item->item.isCategory(category)).collect(Collectors.toList());
             List<Mental> categoryMentals = mentals.stream().filter(mental->mental.isCategory(category)).collect(Collectors.toList());
-/*            log("category", category);
-            log("number of mentals", categoryMentals.size());
-            log("...number of items", categoryItems.size());*/
             categoryListables.add(new CategoryListable(category, categoryItems, categoryMentals));
         }
     }
