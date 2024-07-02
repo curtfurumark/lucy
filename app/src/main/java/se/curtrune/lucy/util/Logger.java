@@ -271,4 +271,14 @@ public class Logger {
         log("...getAuthority", url.getAuthority());
         log("...toExternalForm", url.toExternalForm());
     }
+    public static void logDateHourCells(List<DateHourCell> dateHourCells){
+        assert dateHourCells != null;
+        log("Logger.logDateHourCells(List<DateHourCell>)");
+        for(int i = 0; i < dateHourCells.size(); i++){
+            String str = String.format(Locale.getDefault(),"%d %s", i, dateHourCells.get(i).toString() );
+            log(str);
+        }
+
+
+    }
 }

@@ -159,7 +159,6 @@ public class ItemSession extends AppCompatActivity implements
     private int stress;
     private int energy; //seekbar
     private String category;
-    //private boolean itemIsDone= false;
     private long duration;
 
     private final boolean VERBOSE = false;
@@ -672,6 +671,7 @@ public class ItemSession extends AppCompatActivity implements
     private void setUserInterface(MentalStats estimate){
         log("...setUserInterface(MentalStats)");
         log(estimate);
+
         long seconds = estimate.getDuration();
         String stringEstimatedTime = String.format(Locale.getDefault(), "estimated time: %s", Converter.formatSecondsWithHours(estimate.getDuration()));
         textViewEstimateTime.setText(stringEstimatedTime);

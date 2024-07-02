@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.TextStyle;
 import java.util.List;
 import java.util.Locale;
 
@@ -24,11 +26,7 @@ public class DateHourAdapter extends RecyclerView.Adapter<DateHourAdapter.ViewHo
     private List<DateHourCell> dateHourCells;
     public static boolean VERBOSE = true;
 
-    public void setList(List<DateHourCell> dateHourCells) {
-        if( VERBOSE) log("DateHourAdapter.setList(List<DateHourCell>)");
-        this.dateHourCells = dateHourCells;
-        notifyDataSetChanged();
-    }
+
 
     public interface Callback{
         void onClick(DateHourCell dateHourCell);
@@ -52,14 +50,37 @@ public class DateHourAdapter extends RecyclerView.Adapter<DateHourAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         if( VERBOSE) log("DateHourAdapter.onBindViewHolder() position", position);
         DateHourCell dateHourCell = dateHourCells.get(position);
-        holder.textViewHourLabel.setText(String.valueOf(dateHourCell.getHour()));
-        String stringDate = String.format(Locale.getDefault(), "%d", dateHourCell.getDate().getDayOfMonth());
-        holder.textViewDate.setText(stringDate);
+        log("...type", dateHourCell.getType().toString());
+        DateHourCell.Type type = dateHourCell.getType();
+        switch (type){
+            case EMPTY_CELL:
+                break;
+            case TIME_CELL:
+                LocalTime time = dateHourCell.getTime();
+                //holder.textViewHourLabel.setText(String.valueOf(dateHourCell.getHour()));
+                holder.textViewHourLabel.setText(time.toString());
+                holder.textViewDate.setVisibility(View.GONE);
+                break;
+            case EVENT_CELL:
+                holder.textViewHourLabel.setVisibility(View.GONE);
+                holder.textViewDate.setText("EC");
+                break;
+            case DATE_CELL:
+                LocalDate date = dateHourCell.getDate();
+                holder.textViewHourLabel.setText(date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.getDefault()));
+                holder.textViewDate.setText(String.valueOf(date.getDayOfMonth()));
+                break;
+        }
     }
 
     @Override
     public int getItemCount() {
         return dateHourCells.size();
+    }
+    public void setList(List<DateHourCell> dateHourCells) {
+        if( VERBOSE) log("DateHourAdapter.setList(List<DateHourCell>)");
+        this.dateHourCells = dateHourCells;
+        notifyDataSetChanged();
     }
     public class ViewHolder extends RecyclerView.ViewHolder{
         private final TextView textViewHourLabel;

@@ -138,7 +138,7 @@ public class Item implements Serializable , Listable {
     }
 
     public String getInfo(){
-        if(type == Type.APPOINTMENT.ordinal()){
+/*        if(type == Type.APPOINTMENT.ordinal()){
            return String.format("%s %s", Converter.format(Converter.epochToDate(target_date)), Converter.epochTimeToFormattedString(target_time));
         }
         if( state == State.DONE.ordinal()){
@@ -146,7 +146,9 @@ public class Item implements Serializable , Listable {
         }else if( isTemplate()){
             return String.format("template, %s", Converter.epochToDate(target_date));
         }
-        return String.format("%s", Converter.formatDateTimeUI(updated));
+        return String.format("%s", Converter.formatDateTimeUI(updated));*/
+        return String.format(Locale.getDefault(), "%s %s %s", hasNotification()? "notify ":"",
+        hasPeriod()? "repeat ": "", hasChild()? "-> ": "");
     }
 
     public LocalDate getDateUpdated(){

@@ -9,10 +9,10 @@
         android:id="@+id/hourAdapter_hour"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="00" />
+        />
     <TextView
         android:id="@+id/hourAdapter_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="00" />
+         />
 </LinearLayout>

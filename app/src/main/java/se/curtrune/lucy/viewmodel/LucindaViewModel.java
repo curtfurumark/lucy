@@ -13,6 +13,12 @@ public class LucindaViewModel extends ViewModel {
     public void setCurrentParent(Item item){
         currentParent.setValue(item);
     }
+
+    /**
+     * basically a hack, set energy to whatever you want, value does not matter
+     * value will trigger update of mentalStats, for interested parties
+     * @param energy
+     */
     public void setEnergy(Integer energy){
         this.energy.setValue(energy);
     }

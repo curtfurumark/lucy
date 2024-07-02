@@ -202,11 +202,13 @@ public class CalenderFragment extends Fragment {
                 log(item);
                 int rowsAffected = ItemsWorker.update(item, getContext());
                 if( rowsAffected != 1){
+                    log("ERROR updating item", item.getHeading());
                     Toast.makeText(getContext(),"error updating item", Toast.LENGTH_LONG).show();
                     return;
                 }else{
                     items.sort(Comparator.comparingLong(Item::getTargetTimeSecondOfDay));
                     adapter.notifyDataSetChanged();
+                    viewModel.setEnergy(42);
                 }
                 if(item.hasReward()){
                     switch (item.getReward().getType()){
@@ -272,6 +274,7 @@ public class CalenderFragment extends Fragment {
                     });
                     builder.setNegativeButton("cancel", (dialog, which) -> {
                         log("...on negative button click");
+                        adapter.notifyDataSetChanged();
                     });
                     AlertDialog dialog = builder.create();
                     dialog.show();

@@ -27,6 +27,7 @@ import se.curtrune.lucy.adapters.DateHourAdapter;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.calender.DateHourCell;
 import se.curtrune.lucy.classes.calender.Week;
+import se.curtrune.lucy.util.Logger;
 import se.curtrune.lucy.workers.ItemsWorker;
 
 public class WeeklyCalenderFragment extends Fragment {
@@ -35,7 +36,7 @@ public class WeeklyCalenderFragment extends Fragment {
     public static boolean VERBOSE = true;
     private CalenderDateAdapter calenderDateAdapter;
     private DateHourAdapter dateHourAdapter;
-    private RecyclerView recyclerDates;
+    //private RecyclerView recyclerDates;
     private RecyclerView recyclerCells;
     private Week currentWeek;
     private LocalDate currentDate;
@@ -57,7 +58,41 @@ public class WeeklyCalenderFragment extends Fragment {
         setUserInterface(LocalDate.now());
         return view;
     }
-    private List<DateHourCell> getDateHourCells(){
+    private List<DateHourCell> getDateHourCells(Week week){
+        log("...getDateHourCells(Week)");
+        List<DateHourCell> dateHourCells = new ArrayList<>();
+        int hour = 0;
+        LocalDate date = week.getFirstDateOfWeek();
+        //SET DATE HEADER
+        for( int i = 0; i < 8; i++){
+            DateHourCell dateHourCell = new DateHourCell();
+            if( i == 0){
+                dateHourCell.setType(DateHourCell.Type.EMPTY_CELL);
+                dateHourCells.add(dateHourCell);
+            }else{
+                dateHourCell.setDate(date);
+                dateHourCell.setType(DateHourCell.Type.DATE_CELL);
+                dateHourCells.add(dateHourCell);
+                date = date.plusDays(1);
+            }
+        }
+        for( int i = 0; i < 8 * 24; i++){
+            DateHourCell dateHourCell = new DateHourCell();
+            if(  i % 8 == 0){
+                log("...new Row", i);
+                dateHourCell.setHour(hour);
+                dateHourCell.setType(DateHourCell.Type.TIME_CELL);
+                hour++;
+            }else{
+                dateHourCell.setType(DateHourCell.Type.EVENT_CELL);
+                log("EVENT_CELL");
+            }
+            dateHourCells.add(dateHourCell);
+        }
+        Logger.logDateHourCells(dateHourCells);
+        return dateHourCells;
+    }
+    private List<DateHourCell> getDateHourCellsFirst(){
         log("...getDateHourCells()");
         Week week = new Week(LocalDate.now());
         List<DateHourCell> dateHourCells = new ArrayList<>();
@@ -76,29 +111,17 @@ public class WeeklyCalenderFragment extends Fragment {
             dateHourCells.add(dateHourCell);
             date = date.plusDays(1);
         }
+
         return dateHourCells;
     }
 
-    private void initRecyclerDates() {
-        if (VERBOSE) log("...initRecyclerDates()");
-        calenderDateAdapter = new CalenderDateAdapter(currentWeek, date -> {
-            log("...onDateSelected(LocalDate)", date.toString());
-            //items = ItemsWorker.selectItems(date, getContext(), State.TODO);
-            //adapter.setList(items);
-            currentDate = date;
-            currentWeek.setCurrentDate(currentDate);
-            calenderDateAdapter.setList(currentWeek);
-        });
-        recyclerDates.setLayoutManager(new GridLayoutManager(getContext(), 7));
-        recyclerDates.setItemAnimator(new DefaultItemAnimator());
-        recyclerDates.setAdapter(calenderDateAdapter);
-    }
+
 
     private void initComponents(View view) {
         log("...initComponents(View)");
         buttonPrev = view.findViewById(R.id.weeklyFragment_buttonPrev);
         buttonNext = view.findViewById(R.id.weeklyFragment_buttonNext);
-        recyclerDates = view.findViewById(R.id.weeklyFragment_recyclerDays);
+        //recyclerDates = view.findViewById(R.id.weeklyFragment_recyclerDays);
         recyclerCells = view.findViewById(R.id.weeklyFragment_layoutRecyclerCells);
         textViewWeekNumber = view.findViewById(R.id.weeklyFragment_weekNumber);
     }
@@ -115,13 +138,13 @@ public class WeeklyCalenderFragment extends Fragment {
 
     private void initRecyclerCells() {
         log("...initRecyclerCells()");
-        List<DateHourCell> dateHourCells = getDateHourCells();
+        List<DateHourCell> dateHourCells = getDateHourCells(currentWeek);
         dateHourAdapter = new DateHourAdapter(dateHourCells, dateHourCell -> {
             log("...onDateHourCellSelected(DateHourCell)");
             log(dateHourCell);
             Toast.makeText(getContext(), dateHourCell.toString(), Toast.LENGTH_LONG).show();
         });
-        recyclerCells.setLayoutManager(new GridLayoutManager(getContext(), 7));
+        recyclerCells.setLayoutManager(new GridLayoutManager(getContext(), 8));
         recyclerCells.setItemAnimator(new DefaultItemAnimator());
         recyclerCells.setAdapter(dateHourAdapter);
 
@@ -129,11 +152,13 @@ public class WeeklyCalenderFragment extends Fragment {
     private void nextWeek(){
         log("...nextWeek()");
         currentDate = currentDate.plusDays(6);
+        currentWeek = new Week(currentDate);
         setUserInterface(currentDate);
     }
     private void previousWeek(){
         log("...previousWeek");
         currentDate = currentDate.minusDays(6);
+        currentWeek = new Week(currentDate);
         setUserInterface(currentDate);
     }
     private void setUserInterface(LocalDate date){
@@ -141,6 +166,9 @@ public class WeeklyCalenderFragment extends Fragment {
         int weekNumber = date.get(WeekFields.of(Locale.getDefault()).weekOfYear());
         String textWeekNumber = String.format(Locale.getDefault(), "week %d", weekNumber);
         textViewWeekNumber.setText(textWeekNumber);
+        //dateHourAdapter.setList(getDateHourCells(currentWeek));
+        //sometimes i wonder why i have to do this, wny is it not sufficient to set list and notify adapter
+        initRecyclerCells();
 
     }
 }

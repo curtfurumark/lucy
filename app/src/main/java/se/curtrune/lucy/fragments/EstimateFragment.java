@@ -103,6 +103,12 @@ public class EstimateFragment extends Fragment {
         if( VERBOSE) log("...initDefaults()");
         date = LocalDate.now();
     }
+
+    /**
+     * need to figure out a way to calculate coming days, but that will require some serious thing
+     * maybe even redesigning
+     * @param date the date currently only current date today whatever
+     */
     private void initMentalStatsAndDuration(LocalDate date){
         log("...initMentalStatsAndDuration(LocalDate)", date.toString());
         items = ItemsWorker.selectTodayList(date, getContext());
