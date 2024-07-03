@@ -42,7 +42,6 @@ public class Logger {
         log("log(DateHourCell)");
         log("\thour", dateHourCell.getHour());
         log("\tdate", dateHourCell.getDate());
-
     }
     public static void log(DB1Result result){
         log("CRBLogger.log(DB1Result)...");

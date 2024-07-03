@@ -355,7 +355,9 @@ public class CalenderFragment extends Fragment {
         if( currentDate.equals(LocalDate.now())) {
             items = ItemsWorker.selectTodayList(currentDate, getContext());
         }else{
-            items = ItemsWorker.selectAppointments( currentDate, getContext());
+            ItemsWorker.VERBOSE = true;
+            items = ItemsWorker.selectCalenderItems(currentDate, getContext());
+            ItemsWorker.VERBOSE = false;
         }
         items.sort(Comparator.comparingLong(Item::compareTargetTime));
         adapter.setList(items);

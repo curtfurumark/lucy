@@ -3,7 +3,6 @@ package se.curtrune.lucy.app;
 import static se.curtrune.lucy.util.Logger.log;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,7 +11,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import se.curtrune.lucy.fragments.CustomizeFragment;
 import se.curtrune.lucy.workers.SettingsWorker;
 
 public class User {
@@ -55,7 +53,7 @@ public class User {
 
     public static String getRandomPanicUrl(Context context){
         log("User.getRandomPanicUrl(Context) ");
-        List<String> urls = new ArrayList<String>(getPanicUrls(context));
+        List<String> urls = new ArrayList<>(getPanicUrls(context));
         log("...number of urls", urls.size());
         urls.forEach(System.out::println);
         Random random = new Random();

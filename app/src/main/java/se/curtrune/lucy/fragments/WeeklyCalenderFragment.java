@@ -16,10 +16,12 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.CalenderDateAdapter;
@@ -46,11 +48,10 @@ public class WeeklyCalenderFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        log("WeeklyFragment.onCreateView(...)");
+        log("WeeklyCalendarFragment.onCreateView(...)");
         View view = inflater.inflate(R.layout.weekly_fragment, container, false);
         initDefaults();
         initComponents(view);
-        initRecyclerDates();
         items  = ItemsWorker.selectItems(currentWeek, getContext());
         items.forEach(System.out::println);
         initRecyclerCells();
@@ -76,15 +77,23 @@ public class WeeklyCalenderFragment extends Fragment {
                 date = date.plusDays(1);
             }
         }
+
+        LocalTime time = LocalTime.of(0, 0);
         for( int i = 0; i < 8 * 24; i++){
             DateHourCell dateHourCell = new DateHourCell();
-            if(  i % 8 == 0){
-                log("...new Row", i);
+            if(  i % 8 == 0){//new row, cell time
+                date = week.getFirstDateOfWeek();
+                log(String.format(Locale.getDefault(),"row: %s", time.toString()));
                 dateHourCell.setHour(hour);
                 dateHourCell.setType(DateHourCell.Type.TIME_CELL);
                 hour++;
+                time = time.plusHours(1);
             }else{
+                dateHourCell.setDate(date);
+                dateHourCell.setHour(hour - 1);
                 dateHourCell.setType(DateHourCell.Type.EVENT_CELL);
+                dateHourCell.setEvents(getEvents(date, time));
+                date = date.plusDays(1);
                 log("EVENT_CELL");
             }
             dateHourCells.add(dateHourCell);
@@ -92,36 +101,17 @@ public class WeeklyCalenderFragment extends Fragment {
         Logger.logDateHourCells(dateHourCells);
         return dateHourCells;
     }
-    private List<DateHourCell> getDateHourCellsFirst(){
-        log("...getDateHourCells()");
-        Week week = new Week(LocalDate.now());
-        List<DateHourCell> dateHourCells = new ArrayList<>();
-        int hour = 0;
-        LocalDate date = LocalDate.now().plusDays(7);
-        for( int i = 0; i < 7 * 24; i++){
-            if(  i % 7 == 0){
-                log("...new Row", i);
-                date = date.minusDays(7);
-                hour++;
-            }
 
-            DateHourCell dateHourCell = new DateHourCell();
-            dateHourCell.setHour(hour - 1);
-            dateHourCell.setDate(date);
-            dateHourCells.add(dateHourCell);
-            date = date.plusDays(1);
-        }
 
-        return dateHourCells;
+    private List<Item> getEvents(LocalDate date, LocalTime time){
+        log("...getEvents(LocalDate, LocalTime)");
+        return items.stream().filter(item -> item.isDateHour(date, time)).collect(Collectors.toList());
     }
-
-
 
     private void initComponents(View view) {
         log("...initComponents(View)");
         buttonPrev = view.findViewById(R.id.weeklyFragment_buttonPrev);
         buttonNext = view.findViewById(R.id.weeklyFragment_buttonNext);
-        //recyclerDates = view.findViewById(R.id.weeklyFragment_recyclerDays);
         recyclerCells = view.findViewById(R.id.weeklyFragment_layoutRecyclerCells);
         textViewWeekNumber = view.findViewById(R.id.weeklyFragment_weekNumber);
     }
@@ -142,7 +132,7 @@ public class WeeklyCalenderFragment extends Fragment {
         dateHourAdapter = new DateHourAdapter(dateHourCells, dateHourCell -> {
             log("...onDateHourCellSelected(DateHourCell)");
             log(dateHourCell);
-            Toast.makeText(getContext(), dateHourCell.toString(), Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "CLICK DATEHOURCELL", Toast.LENGTH_LONG).show();
         });
         recyclerCells.setLayoutManager(new GridLayoutManager(getContext(), 8));
         recyclerCells.setItemAnimator(new DefaultItemAnimator());

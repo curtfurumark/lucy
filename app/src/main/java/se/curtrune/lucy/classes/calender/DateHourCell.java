@@ -11,7 +11,13 @@ public class DateHourCell {
     private LocalDate date;
     private List<Item> events;
 
+    public List<Item> getEvents() {
+        return events;
+    }
 
+    public boolean hasEvents() {
+        return events != null && events.size() > 0;
+    }
 
 
     public enum Type{

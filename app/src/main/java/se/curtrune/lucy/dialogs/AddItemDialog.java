@@ -50,7 +50,7 @@ public class AddItemDialog extends BottomSheetDialogFragment {
     private LocalDate targetDate;
     private ActionAdapter actionAdapter;
     private RecyclerView actionRecycler;
-    private final boolean isEvent;
+    private final boolean isCalenderItem;
     private Mental mental = null;
 
     private Action currentAction;
@@ -63,17 +63,13 @@ public class AddItemDialog extends BottomSheetDialogFragment {
 
     private Callback listener;
 
-    public AddItemDialog(Item parent, boolean isEvent) {
-        log("AddItemDialog(Item parent)");
+    public AddItemDialog(Item parent, boolean isCalenderItem) {
+        log("AddItemDialog(Item parent, boolean isCalenderItem)");
         assert  parent != null;
         this.parent = parent;
         this.newItem = createNewItem(parent);
-        this.isEvent = isEvent;
-        if( this.isEvent){
-            targetDate = LocalDate.now();
-        }
+        this.isCalenderItem = isCalenderItem;
     }
-
 
     @Nullable
     @Override
@@ -148,8 +144,8 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         newItem.setHeading(editText_heading.getText().toString());
         newItem.setTags(parent.getTags());
         newItem.setTargetDate(targetDate);
-        if( isEvent) {
-            log("...item isEvent, setting isCalenderItem to true");
+        if(isCalenderItem) {
+            log("...item isCalenderItem, setting isCalenderItem to true");
             newItem.setIsCalenderItem(true);
         }
         if( checkBoxIsTemplate.isChecked()){
@@ -210,7 +206,7 @@ public class AddItemDialog extends BottomSheetDialogFragment {
     }
     private void initDefaults(){
         log("...initDefaults()");
-        targetDate = LocalDate.now();
+        //targetDate = LocalDate.now();
         //categories = new Categories(CategoryWorker.getCategories(getContext()));
     }
     private void initListeners(){
@@ -229,7 +225,7 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         log("...initUserInterface(Item)");
         String strParentList = String.format(Locale.getDefault(), "%s: %s",getString(R.string.add_to_list), parentItem.getHeading());
         textViewParentList.setText(strParentList);
-        checkBoxCalendarEvent.setChecked(isEvent);
+        checkBoxCalendarEvent.setChecked(isCalenderItem);
     }
 
     @Override

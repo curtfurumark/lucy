@@ -243,8 +243,17 @@ public class Item implements Serializable , Listable {
         }
         return this.category.equalsIgnoreCase(category);
     }
+
+    /**
+     * checks if this item has targetTime
+     * @param date the date to check
+     * @return true if date equals this items targetDate
+     */
     public boolean isDate(LocalDate date){
         return this.target_date == date.toEpochDay();
+    }
+    public boolean isDateHour(LocalDate date, LocalTime time){
+        return isDate(date) && isTargetTimeHour(time);
     }
     public boolean isDone(){
         return state == State.DONE.ordinal();
@@ -259,6 +268,9 @@ public class Item implements Serializable , Listable {
     }
     public boolean isState(State state){
         return this.state == state.ordinal();
+    }
+    public boolean isTargetTimeHour(LocalTime time){
+        return getTargetTime().getHour() == time.getHour();
     }
     public boolean isTemplate(){
         return templateType != 0;

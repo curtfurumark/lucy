@@ -16,7 +16,7 @@ public class Settings {
     private static final String PREFERENCES_NAME =  "PREFERENCES_NAME";
     private static final String IS_INITIALIZED = "IS_INITIALIZED";
     public static final String USER = "USER";
-    public static final String PWD = "PWD";
+    //public static final String PWD = "PWD";
     private long todoID;
     private long dailyID;
     private long projectsID;

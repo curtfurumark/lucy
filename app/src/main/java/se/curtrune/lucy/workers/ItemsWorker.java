@@ -281,7 +281,14 @@ public class ItemsWorker {
         return items;
     }
 
-
+    public static List<Item> selectCalenderItems(LocalDate currentDate, Context context) {
+        if( VERBOSE) log("ItemsWorker.selectCalenderItems(LocalDate, Context)");
+        String queery = Queeries.selectCalenderItems(currentDate);
+        if(VERBOSE) log("queery", queery);
+        try(LocalDB db = new LocalDB(context)){
+            return db.selectItems(queery);
+        }
+    }
     public void touch(Item currentItem, Context context) {
         log("ItemsWorker.touch(Item, Context)");
         try (LocalDB db = new LocalDB(context)) {

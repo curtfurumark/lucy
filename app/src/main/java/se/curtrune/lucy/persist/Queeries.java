@@ -245,6 +245,13 @@ public class Queeries {
                 firstDate.toEpochDay(), lastDate.toEpochDay());
 
     }
+
+    public static String selectCalenderItems(LocalDate date) {
+        return String.format(Locale.getDefault(),
+                "SELECT * FROM items WHERE targetDate = %d AND isCalenderItem = 1 ORDER BY targetTime DESC",
+                date.toEpochDay());
+
+    }
 }
 
 

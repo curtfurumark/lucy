@@ -63,7 +63,11 @@ public class DateHourAdapter extends RecyclerView.Adapter<DateHourAdapter.ViewHo
                 break;
             case EVENT_CELL:
                 holder.textViewHourLabel.setVisibility(View.GONE);
-                holder.textViewDate.setText("EC");
+                if( dateHourCell.hasEvents()){
+                    holder.textViewDate.setText("+");
+                }else {
+                    holder.textViewDate.setText("X");
+                }
                 break;
             case DATE_CELL:
                 LocalDate date = dateHourCell.getDate();
