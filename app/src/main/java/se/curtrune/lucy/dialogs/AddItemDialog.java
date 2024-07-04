@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,14 +32,12 @@ import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.ActionAdapter;
 import se.curtrune.lucy.classes.Action;
 import se.curtrune.lucy.classes.Item;
-import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.util.Converter;
 
 
 public class AddItemDialog extends BottomSheetDialogFragment {
     private EditText editText_heading;
     private TextView textViewParentList;
-
     private String heading;
     private Button buttonSave;
     private Button buttonDismiss;
@@ -51,8 +50,6 @@ public class AddItemDialog extends BottomSheetDialogFragment {
     private ActionAdapter actionAdapter;
     private RecyclerView actionRecycler;
     private final boolean isCalenderItem;
-    private Mental mental = null;
-
     private Action currentAction;
     public static boolean VERBOSE = true;
     private final Item parent;
@@ -79,21 +76,19 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         initComponents(view);
         initActionRecycler();
         initListeners();
-        initDefaults();
         editText_heading.setText(heading);
-        log("...targetDate", targetDate);
         initUserInterface(parent);
         return view;
     }
     private Item createNewItem(Item parent){
-        log("...createNewItem(Item)");
+        if( VERBOSE) log("...createNewItem(Item)");
         newItem = new Item();
         newItem.setParentId(parent.getID());
         newItem.setCategory(parent.getCategory());
         return newItem;
     }
     private List<Action> getActionList(){
-        log("...getActionList()");
+        if( VERBOSE)log("...getActionList()");
         Action time = new Action();
         time.setTitle(getString(R.string.time));
         time.setType(Action.Type.TIME);
@@ -140,7 +135,7 @@ public class AddItemDialog extends BottomSheetDialogFragment {
     }
 
     private Item getItem(){
-        log("...getItem()");
+        if( VERBOSE) log("...getItem()");
         newItem.setHeading(editText_heading.getText().toString());
         newItem.setTags(parent.getTags());
         newItem.setTargetDate(targetDate);
@@ -194,7 +189,7 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         actionAdapter.notifyDataSetChanged();
     }
     private void initComponents(View view){
-        log("...initComponents(View)");
+        if( VERBOSE) log("...initComponents(View)");
         editText_heading = view.findViewById(R.id.addItemDialog_heading);
         buttonSave = view.findViewById(R.id.addItemDialog_buttonOK);
         buttonDismiss = view.findViewById(R.id.addItemDialog_buttonDismiss);
@@ -204,15 +199,14 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         checkBoxIsTemplate = view.findViewById(R.id.addItemDialog_checkBoxIsTemplate);
         checkBoxIsPrioritized = view.findViewById(R.id.addItemDialog_checkBoxIsPrioritized);
     }
-    private void initDefaults(){
-        log("...initDefaults()");
-        //targetDate = LocalDate.now();
-        //categories = new Categories(CategoryWorker.getCategories(getContext()));
-    }
+
     private void initListeners(){
-        log("...initListeners()");
+        if( VERBOSE) log("...initListeners()");
         buttonSave.setOnClickListener(view1 -> {
             log("...saveItem()");
+            if( !validateInput()){
+                return;
+            }
             Item item = getItem();
             log(item);
             listener.onAddItem(item);
@@ -281,25 +275,17 @@ public class AddItemDialog extends BottomSheetDialogFragment {
      */
 
     private void showMentalDialog(){
-        log("...showMentalDialog()");
-        Mental mental = new Mental();
+        if(VERBOSE) log("...showMentalDialog()");
         MentalDialog dialog = new MentalDialog();
-        dialog.setCallback(new MentalDialog.Callback() {
-            @Override
-            public void onMental(Mental mental, MentalDialog.Mode mode) {
-                log("...onMental(Mental, Mental)", mode.toString());
-                log(mental);
-                newItem.setMental( mental);
-            }
+        dialog.setCallback((mental, mode) -> {
+            log("...onMental(Mental, Mode)", mode.toString());
+            log(mental);
+            newItem.setMental( mental);
         });
         dialog.show(getChildFragmentManager(), "add mental");
-        //Mental mental = MentalWorker.getMental(newItem, getContext());
-        //log("....mental should be null");
-        //log(mental);
-
     }
     private void showNotificationDialog(){
-        log("...showNotificationDialog()");
+        if( VERBOSE) log("...showNotificationDialog()");
         NotificationDialog dialog = new NotificationDialog(parent);
         dialog.setListener(notification -> {
             log("...onNotification(Notification)", notification.toString());
@@ -333,6 +319,12 @@ public class AddItemDialog extends BottomSheetDialogFragment {
             actionAdapter.notifyDataSetChanged();
         }, hour, minutes, true);
         timePicker.show();
-
+    }
+    private boolean validateInput(){
+        if(editText_heading.getText().toString().isEmpty()){
+            Toast.makeText(getContext(), R.string.missing_heading, Toast.LENGTH_LONG).show();
+            return false;
+        }
+        return true;
     }
 }

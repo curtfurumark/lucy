@@ -185,6 +185,9 @@ public class MainActivity extends AppCompatActivity {
             log("...energy updated", energy);
             setUserInterfaceCurrentEnergy();
         });
+        viewModel.getFragment().observe(this, fragment ->{
+            navigate(fragment);
+        });
     }
     private void navigate(Fragment fragment){
         if( fragment == null){

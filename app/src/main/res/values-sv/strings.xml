@@ -143,5 +143,9 @@
         <item>hushåll</item>
         <item>fritid</item>
         <item>hälsa</item>
-</string-array>
+    </string-array>
+    <string name="actual_duration">Faktisk tid</string>
+    <string name="currently">Aktuell</string>
+    <string name="estimated">Beräknad</string>
+    <string name="missing_heading">Saknad rubrik</string>
 </resources>

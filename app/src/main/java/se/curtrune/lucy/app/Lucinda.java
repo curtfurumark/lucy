@@ -19,6 +19,7 @@ public class Lucinda {
     public static Item currentParent;
     public static Fragment currentFragment;
     public static boolean VERBOSE = false;
+    public static boolean Dev = false;
     private static final String KEY_NIGHTLY_ALARM ="KEY_NIGHTLY_ALARM";
     public static String[] CATEGORIES = new String[] {"household", "work", "health", "play"};
 

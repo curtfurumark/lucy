@@ -38,6 +38,7 @@ import se.curtrune.lucy.R;
 import se.curtrune.lucy.activities.ItemSession;
 import se.curtrune.lucy.adapters.CalenderAdapter;
 import se.curtrune.lucy.adapters.CalenderDateAdapter;
+import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.CallingActivity;
 import se.curtrune.lucy.classes.Item;
@@ -166,10 +167,16 @@ public class CalenderFragment extends Fragment {
             @Override
             public void onItemClick(Item item) {
                 if(VERBOSE)log("...onItemClick(Item)", item.getHeading());
-                Intent intent = new Intent(getContext(), ItemSession.class);
-                intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.CALENDER_FRAGMENT);
-                intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, item);
-                startActivity(intent);
+                Lucinda.Dev = true;
+                if( Lucinda.Dev) {
+                    loadFragment(new ItemSessionFragment(item));
+                }else {
+
+                    Intent intent = new Intent(getContext(), ItemSession.class);
+                    intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.CALENDER_FRAGMENT);
+                    intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, item);
+                    startActivity(intent);
+                }
             }
 
             @Override
@@ -295,7 +302,9 @@ public class CalenderFragment extends Fragment {
     private void initViewModel(){
         if( VERBOSE)  log("...initViewModel()");
         viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
-
+    }
+    private void loadFragment(Fragment fragment){
+        viewModel.updateFragment(fragment);
     }
     private void nextWeek(){
         if( VERBOSE)log("...nextWeek()");

@@ -196,4 +196,5 @@
     <string name="actual_duration">actual duration</string>
     <string name="currently">currently</string>
     <string name="estimated">estimated</string>
+    <string name="missing_heading">missing heading</string>
 </resources>

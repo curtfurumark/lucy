@@ -27,6 +27,7 @@ public class EasyAlarm  {
     private Item item;
 
     public EasyAlarm(Item item){
+        assert item != null;
         log("EasyAlarm(Item)", item.getHeading());
         this.item = item;
         this.calendar = Calendar.getInstance();
@@ -38,8 +39,8 @@ public class EasyAlarm  {
             return;
         }
         Notification notification = item.getNotification();
-        //calendar.set(Calendar.MONTH, notification.getDate().getMonthValue());
-        //calendar.set(Calendar.DATE, notification.getDate().getDayOfMonth());
+        calendar.set(Calendar.MONTH, notification.getDate().getMonthValue());
+        calendar.set(Calendar.DATE, notification.getDate().getDayOfMonth());
         calendar.set(Calendar.HOUR_OF_DAY,notification.getTime().getHour() );
         calendar.set(Calendar.MINUTE, notification.getTime().getMinute());
         calendar.set(Calendar.SECOND, 0);

@@ -3,21 +3,20 @@ package se.curtrune.lucy.adapters;
 
 import static se.curtrune.lucy.util.Logger.log;
 
-import android.graphics.Canvas;
-import android.graphics.ColorFilter;
-import android.graphics.drawable.Drawable;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Action;
+import se.curtrune.lucy.classes.Item;
 
 
 public class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ViewHolder>{
@@ -54,6 +53,53 @@ public class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ViewHolder
 
         //holder.textViewTitle.setCompoundDrawables();
 
+    }
+    public static List<Action> getActionList(Item item, Context context){
+        log("ActionAdapter.getActionList(Item)");
+        Action time = new Action();
+        time.setTitle(context.getString(R.string.time));
+        time.setType(Action.Type.TIME);
+
+        Action notification = new Action();
+        notification.setTitle(context.getString(R.string.notification));
+        notification.setType(Action.Type.NOTIFICATION);
+
+        Action dateAction = new Action();
+        if( item.getTargetDate() != null) {
+            dateAction.setTitle(item.getTargetDate().toString());
+        }
+        dateAction.setType(Action.Type.DATE);
+
+        Action repeat = new Action();
+        repeat.setTitle(context.getString(R.string.repeat));
+        repeat.setType(Action.Type.REPEAT);
+
+        Action categoryAction = new Action();
+        String category = item.getCategory();
+        if( category != null && !category.isEmpty()){
+            categoryAction.setTitle(category);
+        }else {
+            categoryAction.setTitle(context.getString(R.string.category));
+        }
+        categoryAction.setType(Action.Type.CATEGORY);
+
+        Action actionDuration = new Action();
+        actionDuration.setTitle(context.getString(R.string.duration));
+        actionDuration.setType(Action.Type.DURATION);
+
+        Action actionMental = new Action();
+        actionMental.setTitle(context.getString(R.string.mental));
+        actionMental.setType(Action.Type.MENTAL);
+
+        ArrayList<Action> actionList = new ArrayList<>();
+        actionList.add(time);
+        actionList.add(dateAction);
+        actionList.add(repeat);
+        actionList.add(notification);
+        actionList.add(categoryAction);
+        actionList.add(actionDuration);
+        actionList.add(actionMental);
+        return actionList;
     }
 
     @Override
