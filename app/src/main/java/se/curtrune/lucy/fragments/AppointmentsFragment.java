@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,6 +27,7 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.dialogs.AddAppointmentDialog;
 import se.curtrune.lucy.dialogs.EditItemDialog;
 import se.curtrune.lucy.util.Constants;
+import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.ItemsWorker;
 
 /**
@@ -40,7 +42,7 @@ public class AppointmentsFragment extends Fragment implements
     private ItemAdapter adapter;
     private List<Item> items;
     private FloatingActionButton buttonAdd;
-
+    private LucindaViewModel viewModel;
 
     public AppointmentsFragment() {
 
@@ -75,6 +77,7 @@ public class AppointmentsFragment extends Fragment implements
         items = ItemsWorker.selectAppointments(getContext());
         initRecycler(items);
         initListeners();
+        initViewModel();
         return view;
     }
     private void addAppointment(){
@@ -111,15 +114,24 @@ public class AppointmentsFragment extends Fragment implements
         recycler.setItemAnimator(new DefaultItemAnimator());
         recycler.setAdapter(adapter);
     }
+    private void initViewModel(){
+        if( VERBOSE)  log("...initViewModel()");
+        viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
+    }
 
     @Override
     public void onItemClick(Item item) {
         if( VERBOSE) log("...onItemClick(Item)", item.getHeading());
         Lucinda.currentFragment = this;
-        Intent intent = new Intent(getContext(), ItemSession.class);
-        intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, item);
-        intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.APPOINTMENTS_FRAGMENT);
-        startActivity(intent);
+        Lucinda.Dev = true;
+        if( Lucinda.Dev ){
+            viewModel.updateFragment(new ItemSessionFragment(item));
+        }else {
+            Intent intent = new Intent(getContext(), ItemSession.class);
+            intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, item);
+            intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.APPOINTMENTS_FRAGMENT);
+            startActivity(intent);
+        }
     }
 
     @Override

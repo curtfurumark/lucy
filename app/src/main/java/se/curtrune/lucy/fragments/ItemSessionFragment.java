@@ -27,6 +27,7 @@ import se.curtrune.lucy.classes.Action;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.State;
+import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.dialogs.ChooseCategoryDialog;
 import se.curtrune.lucy.dialogs.DurationDialog;
 import se.curtrune.lucy.dialogs.MentalDialog;
@@ -57,6 +58,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
     private CheckBox checkBoxIsDone;
     private Action currentAction;
     private CheckBox checkBoxPrioritized;
+    private CheckBox checkBoxAppointment;
     private ActionAdapter actionAdapter;
     private RecyclerView actionRecycler;
     private Item currentItem;
@@ -192,6 +194,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         textViewDuration = view.findViewById(R.id.itemSessionFragment_textViewDuration);
         checkBoxIsCalenderItem = view.findViewById(R.id.itemSessionFragment_checkboxIsCalendarItem);
         buttonSave = view.findViewById(R.id.itemSessionFragment_buttonSave);
+        checkBoxAppointment = view.findViewById(R.id.itemSessionFragment_checkboxAppointment);
     }
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
@@ -212,6 +215,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         checkBoxTemplate.setChecked(item.isTemplate());
         checkBoxPrioritized.setChecked(item.isPrioritized());
         checkBoxIsDone.setChecked(item.isDone());
+        checkBoxAppointment.setChecked(item.isAppointment());
         setEstimatedTime(item);
     }
     private void showCategoryDialog(){
@@ -316,6 +320,9 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         currentItem.setState(checkBoxIsDone.isChecked() ? State.DONE: State.TODO);
         currentItem.setIsCalenderItem(checkBoxIsCalenderItem.isChecked());
         currentItem.setIsTemplate(checkBoxTemplate.isChecked());
+        if( checkBoxAppointment.isChecked()) {
+            currentItem.setType(Type.APPOINTMENT);
+        }
         return currentItem;
     }
     /**

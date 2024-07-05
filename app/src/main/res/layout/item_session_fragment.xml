@@ -88,6 +88,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/is_prioritized" />
+    <CheckBox
+        android:id="@+id/itemSessionFragment_checkboxAppointment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="appointment" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/itemSessionFragment_actionRecycler"

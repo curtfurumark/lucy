@@ -138,10 +138,10 @@ public class Item implements Serializable , Listable {
     }
 
     public String getInfo(){
-/*        if(type == Type.APPOINTMENT.ordinal()){
+        if(type == Type.APPOINTMENT.ordinal()){
            return String.format("%s %s", Converter.format(Converter.epochToDate(target_date)), Converter.epochTimeToFormattedString(target_time));
         }
-        if( state == State.DONE.ordinal()){
+/*        if( state == State.DONE.ordinal()){
             return String.format("%s %s", Converter.formatDateTimeUI(updated), Converter.formatSecondsWithHours(duration));
         }else if( isTemplate()){
             return String.format("template, %s", Converter.epochToDate(target_date));
@@ -468,7 +468,8 @@ public class Item implements Serializable , Listable {
             target_date = repeat.getNextDate().toEpochDay();
         }
     }
-
-
+    public boolean isAppointment() {
+        return type == Type.APPOINTMENT.ordinal();
+    }
 
 }

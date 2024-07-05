@@ -92,7 +92,6 @@ public class Queeries {
         return String.format(Locale.getDefault(), "SELECT * FROM items WHERE (type = %d  OR isCalenderItem = 1)  AND targetDate = %d ORDER BY targetDate DESC",
                 Type.APPOINTMENT.ordinal(),date.toEpochDay());
     }
-
     public static String selectItems() {
         return "SELECT * FROM items ORDER BY updated DESC";
     }
@@ -104,7 +103,6 @@ public class Queeries {
     public static String selectItems(LocalDate targetDate, State state) {
         return String.format(Locale.ENGLISH, "SELECT * FROM items WHERE targetDate = %d AND state = %d", targetDate.toEpochDay(), state.ordinal());
     }
-
     public static String selectCategories() {
         return "SELECT name FROM categories ORDER BY name";
     }

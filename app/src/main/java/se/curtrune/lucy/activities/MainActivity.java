@@ -61,6 +61,7 @@ import se.curtrune.lucy.workers.MentalWorker;
 public class MainActivity extends AppCompatActivity {
 
     private Fragment currentFragment;
+    private Fragment previousFragment;
     private DrawerLayout drawerLayout;
     private MaterialToolbar toolbar;
     private NavigationView navigationView;

@@ -32,7 +32,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
     }
 
     public void sort() {
-        if(VERBOSE)log("TodayAdapter.sort()");
+        if(VERBOSE)log("ItemAdapter.sort()");
         items.sort(Comparator.comparingLong(Item::compare));
         Collections.reverse(items);
         notifyDataSetChanged();
@@ -86,9 +86,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
 
         public ViewHolder(@NonNull android.view.View itemView) {
             super(itemView);
-            textView_heading = itemView.findViewById(R.id.sequenceActivity_itemHeading);
-            textView_info = itemView.findViewById(R.id.sequenceActivity_itemInfo);
-            checkBox_state = itemView.findViewById(R.id.sequenceActivity_itemState);
+            textView_heading = itemView.findViewById(R.id.itemAdapter_itemHeading);
+            textView_info = itemView.findViewById(R.id.itemAdapter_itemInfo);
+            checkBox_state = itemView.findViewById(R.id.itemAdapter_itemState);
             checkBox_state.setOnClickListener(view -> {
                 //log("...on checkbox state");
                 Item item = items.get(getAdapterPosition());

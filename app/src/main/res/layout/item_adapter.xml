@@ -24,7 +24,7 @@
             android:layout_height="match_parent">
 
             <CheckBox
-                android:id="@+id/sequenceActivity_itemState"
+                android:id="@+id/itemAdapter_itemState"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=""
@@ -32,23 +32,36 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/sequenceActivity_itemHeading"
+                android:id="@+id/itemAdapter_itemHeading"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/sequenceActivity_itemState"
+                app:layout_constraintStart_toEndOf="@+id/itemAdapter_itemState"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/sequenceActivity_itemInfo"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:id="@+id/itemAdapter_itemInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@+id/itemAdapter_repeat"
+                app:layout_constraintStart_toEndOf="@+id/itemAdapter_itemState"
+                app:layout_constraintTop_toBottomOf="@id/itemAdapter_itemHeading" />
+
+            <ImageView
+                android:id="@+id/itemAdapter_repeat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="@string/add_or_delete_repeat"
+                android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/sequenceActivity_itemState"
-                app:layout_constraintTop_toBottomOf="@id/sequenceActivity_itemHeading" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/itemAdapter_itemInfo"
+                app:srcCompat="@drawable/baseline_add_24" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
