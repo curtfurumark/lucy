@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -28,6 +29,10 @@ public class RepeatDialog extends BottomSheetDialogFragment {
     private TextView textViewEveryMonth;
     private TextView textViewEveryYear;
     private TextView textViewCustom;
+    private LinearLayout layoutSimple;
+    private LinearLayout layoutCustom;
+    private Button buttonOK;
+    private Button buttonDismiss;
 
     public static boolean VERBOSE = false;
 
@@ -50,6 +55,10 @@ public class RepeatDialog extends BottomSheetDialogFragment {
         initListeners();
         return view;
     }
+    private void getPeriod(){
+        log("...getPeriod()");
+
+    }
 
     private void initComponents(View view){
         if( VERBOSE) log("...initComponents(View)");
@@ -58,6 +67,10 @@ public class RepeatDialog extends BottomSheetDialogFragment {
         textViewEveryMonth = view.findViewById(R.id.repeatDialog_everyMonth);
         textViewEveryYear = view.findViewById(R.id.repeatDialog_everyYear);
         textViewCustom = view.findViewById(R.id.repeatDialog_custom);
+        buttonDismiss = view.findViewById(R.id.repeatDialog_buttonDismiss);
+        buttonOK = view.findViewById(R.id.repeatDialog_buttonOK);
+        layoutCustom = view.findViewById(R.id.repeatDialog_layoutCustom);
+        layoutSimple = view.findViewById(R.id.repeatDialog_layoutSimple);
     }
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
@@ -65,7 +78,9 @@ public class RepeatDialog extends BottomSheetDialogFragment {
         textViewEveryWeek.setOnClickListener(view->onRepeat(Repeat.Period.WEEK));
         textViewEveryDay.setOnClickListener(view->onRepeat(Repeat.Period.DAY));
         textViewEveryYear.setOnClickListener(view->onRepeat(Repeat.Period.YEAR));
-        textViewCustom.setOnClickListener(view->onRepeat(Repeat.Period.CUSTOM));
+        textViewCustom.setOnClickListener(view->toggleCustom());
+        buttonDismiss.setOnClickListener(view->dismiss());
+        buttonOK.setOnClickListener(view->getPeriod());
     }
     @Override
     public void onAttach(@NonNull Context context) {
@@ -77,6 +92,16 @@ public class RepeatDialog extends BottomSheetDialogFragment {
     }
     public void setCallback(Callback callback){
         this.listener = callback;
+    }
+    private void toggleCustom(){
+        log("...toggleCustom()");
+        if( layoutSimple.getVisibility() == View.VISIBLE){
+            layoutSimple.setVisibility(View.GONE);
+            layoutCustom.setVisibility(View.VISIBLE);
+        }else{
+            layoutCustom.setVisibility(View.GONE);
+            layoutSimple.setVisibility(View.VISIBLE);
+        }
     }
 
 }

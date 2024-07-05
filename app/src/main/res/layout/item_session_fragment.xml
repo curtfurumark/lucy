@@ -2,11 +2,27 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:padding="16dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
     tools:context=".fragments.ItemSessionFragment">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <CheckBox
+            android:id="@+id/itemSessionFragment_checkboxIsDone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:text="@string/done" />
+        <Button
+            android:id="@+id/itemSessionFragment_buttonSave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/save" />
+    </LinearLayout>
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/itemSessionFragment_headingLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -18,12 +34,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/itemSession_currentEnergy">
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/itemSessionFragment_heading"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/heading"
-        android:minHeight="48dp" />
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/itemSessionFragment_heading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/heading"
+            android:minHeight="48dp" />
     </com.google.android.material.textfield.TextInputLayout>
     <!-- TODO: Update blank fragment layout -->
     <TextView
@@ -36,48 +52,46 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/itemSessionFragment_buttonTimer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/start" />
-
-    <TextView
-        android:id="@+id/itemSessionFragment_textViewDuration"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/itemSessionFragment_buttonTimer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/start" />
+
+        <TextView
+            android:id="@+id/itemSessionFragment_textViewDuration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="32sp"
+            android:gravity="end"
+            android:text="00:00:00" />
+    </LinearLayout>
+
     <CheckBox
         android:id="@+id/itemSessionFragment_checkboxIsCalendarItem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/show_in_calendar" />
 
-    <CheckBox
-        android:id="@+id/itemSessionFragment_checkboxIsDone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/done" />
-    <CheckBox
-        android:id="@+id/itemSessionFragment_checkboxSave"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/save" />
 
     <CheckBox
         android:id="@+id/itemSessionFragment_checkboxTemplate"
-        android:text="@string/is_template"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:text="@string/is_template" />
+
     <CheckBox
         android:id="@+id/itemSessionFragment_checkboxPrioritized"
-        android:text="@string/is_prioritized"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:text="@string/is_prioritized" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/itemSessionFragment_actionRecycler"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

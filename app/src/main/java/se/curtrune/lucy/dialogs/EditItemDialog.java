@@ -140,7 +140,7 @@ public class EditItemDialog extends BottomSheetDialogFragment {
 
     private void initActionRecycler(){
         log("...initActionRecycler()");
-        ActionAdapter.VERBOSE = true;
+        //ActionAdapter.VERBOSE = true;
         actionAdapter = new ActionAdapter(getActionList(item), action -> {
             log("...onAction(Action)", action.getTitle());
             log("...type", action.getType().toString());

@@ -17,6 +17,7 @@ import java.util.List;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Action;
 import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.util.Converter;
 
 
 public class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ViewHolder>{
@@ -55,23 +56,33 @@ public class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ViewHolder
 
     }
     public static List<Action> getActionList(Item item, Context context){
-        log("ActionAdapter.getActionList(Item)");
+        if( VERBOSE) log("ActionAdapter.getActionList(Item)");
         Action time = new Action();
         time.setTitle(context.getString(R.string.time));
         time.setType(Action.Type.TIME);
 
         Action notification = new Action();
-        notification.setTitle(context.getString(R.string.notification));
+        if(item.hasNotification()){
+            notification.setTitle(item.getNotification().toString());
+        }else{
+            notification.setTitle(context.getString(R.string.notification));
+        }
         notification.setType(Action.Type.NOTIFICATION);
 
         Action dateAction = new Action();
         if( item.getTargetDate() != null) {
             dateAction.setTitle(item.getTargetDate().toString());
+        }else{
+            dateAction.setTitle(context.getString(R.string.date));
         }
         dateAction.setType(Action.Type.DATE);
 
         Action repeat = new Action();
-        repeat.setTitle(context.getString(R.string.repeat));
+        if( item.hasPeriod()){
+            repeat.setTitle(item.getPeriod().toString());
+        }else{
+            repeat.setTitle(context.getString(R.string.repeat));
+        }
         repeat.setType(Action.Type.REPEAT);
 
         Action categoryAction = new Action();
@@ -84,7 +95,11 @@ public class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ViewHolder
         categoryAction.setType(Action.Type.CATEGORY);
 
         Action actionDuration = new Action();
-        actionDuration.setTitle(context.getString(R.string.duration));
+        if( item.isDone()){
+            actionDuration.setTitle(Converter.formatSecondsWithHours(item.getDuration()));
+        }else{
+            actionDuration.setTitle(context.getString(R.string.duration));
+        }
         actionDuration.setType(Action.Type.DURATION);
 
         Action actionMental = new Action();

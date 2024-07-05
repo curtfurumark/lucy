@@ -165,14 +165,14 @@ public class Logger {
             log("...repeat is null, i surrender");
             return;
         }
-        log("\tmode", repeat.getMode().toString());
+        log("\tperiod", repeat.getPeriod().toString());
         if( repeat.isMode(Repeat.Mode.DAYS)){
             log("\tdays", repeat.getDays());
         }else{
             List<DayOfWeek> dayOfWeeks = repeat.getWeekDays();
             dayOfWeeks.forEach(System.out::println);
         }
-        log("\tnextDate", repeat.getNextDate());
+        //log("\tnextDate", repeat.getNextDate());
         log("\ttime", repeat.getTime());
         log("\ttoJson", repeat.toJson());
         log("\tfirstDate", repeat.getFirstDate());

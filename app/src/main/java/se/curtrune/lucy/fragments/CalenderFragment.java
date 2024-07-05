@@ -171,7 +171,6 @@ public class CalenderFragment extends Fragment {
                 if( Lucinda.Dev) {
                     loadFragment(new ItemSessionFragment(item));
                 }else {
-
                     Intent intent = new Intent(getContext(), ItemSession.class);
                     intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.CALENDER_FRAGMENT);
                     intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, item);

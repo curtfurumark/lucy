@@ -12,26 +12,45 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import se.curtrune.lucy.classes.calender.Week;
+
 
 public class Repeat implements Serializable {
 
-
     public static boolean   VERBOSE = false;
+
+    public Period getPeriod() {
+        return period;
+    }
+
     public enum Mode{
         DAYS, DAY_OF_WEEKS
     }
     public enum Period{
-        DAY, WEEK, MONTH, YEAR, CUSTOM
+        DAY, WEEK, MONTH, YEAR, DAYS_OF_WEEK
     }
     private Period period;
     private Mode mode = Mode.DAYS;
     private int days;
     private LocalTime time;
     private LocalDate firstDate;
+    private LocalDate currentDate;
     private LocalDate lastDate;
     private List<DayOfWeek> dayOfWeeks = new ArrayList<>();
     public Repeat(){
         //log("Repeat() constructor");
+        currentDate = LocalDate.now();
+    }
+    public Repeat(LocalDate currentDate){
+        this.currentDate = currentDate;
+
+    }
+    private LocalDate calculateNextDayOfWeek(){
+        LocalDate date = LocalDate.now().plusDays(1);
+        while( !isNextDate(date)){
+            date = date.plusDays(1);
+        }
+        return date;
     }
 
     public int getDays() {
@@ -63,21 +82,43 @@ public class Repeat implements Serializable {
         }
         return false;
     }
-    private LocalDate calculateNextDate(){
-        LocalDate date = LocalDate.now().plusDays(1);
-        while( !isNextDate(date)){
-            date = date.plusDays(1);
-        }
-        return date;
-    }
-    public LocalDate getNextDate2(){
-        return LocalDate.now();
-    }
     public LocalDate getNextDate(){
         if( mode.equals(Mode.DAY_OF_WEEKS)) {
-            return calculateNextDate();
+            return calculateNextDayOfWeek();
         }
         return LocalDate.now().plusDays(days);
+    }
+
+    /**
+     *
+     * @param period, one of DAY, WEEK, MONTH and maybe YEAR
+     * @param qualifier, for every other WEEK, qualifier 2
+     * @return the next date that
+     */
+    public LocalDate getNextDate(Period period, int qualifier){
+        log("Repeat.getNextDate(Period)");
+        if( qualifier < 1){
+            log("WARNING, qualifier less than one, setting it to one");
+            qualifier = 1;
+        }
+        LocalDate currentDate = LocalDate.now();
+        switch (period){
+            case DAY:
+                return currentDate.plusDays(1 * qualifier);
+            case WEEK:
+                return currentDate.plusWeeks(1 * qualifier);
+            case MONTH:
+                return currentDate.plusMonths(1 * qualifier);
+            case YEAR:
+                return currentDate.plusYears(1 * qualifier);
+            case DAYS_OF_WEEK:
+                return calculateNextDayOfWeek();
+        }
+        return currentDate;
+    }
+    public LocalDate getNextWeekDay(){
+        log("Repeat.getNextWeekDay()");
+        return LocalDate.now();
     }
     public LocalTime getTime(){
         return time;
