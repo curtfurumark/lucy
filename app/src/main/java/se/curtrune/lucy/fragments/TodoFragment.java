@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,6 +35,7 @@ import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.dialogs.EditItemDialog;
 import se.curtrune.lucy.util.Constants;
+import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.ItemsWorker;
 import se.curtrune.lucy.workers.NotificationsWorker;
 
@@ -53,6 +55,7 @@ public class TodoFragment extends Fragment implements
     private List<Item> items;
     private Item currentParent;
     public static boolean VERBOSE = false;
+    private LucindaViewModel viewModel;
 
     public TodoFragment() {
         if( VERBOSE) log("ToDoFragment()");
@@ -86,6 +89,7 @@ public class TodoFragment extends Fragment implements
         items = ItemsWorker.selectItems(State.TODO, getContext());
         items.sort(Comparator.comparingLong(Item::compare));
         initRecycler(items);
+        initViewModel();
         initListeners();
         return view;
     }
@@ -151,6 +155,10 @@ public class TodoFragment extends Fragment implements
         recycler.setItemAnimator(new DefaultItemAnimator());
         recycler.setAdapter(adapter);
     }
+    private void initViewModel(){
+        if( VERBOSE)  log("...initViewModel()");
+        viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
+    }
 
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
@@ -175,11 +183,11 @@ public class TodoFragment extends Fragment implements
             items = ItemsWorker.selectChildItems(currentParent, getContext());
             adapter.setList(items);
         }else{
-            Intent intent = new Intent(getContext(), ItemSession.class);
-            intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.TODO_FRAGMENT);
-            //intent.putExtra(Constants.INTENT_ITEM_SESSION, true);
-            intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, item);
-            startActivity(intent);
+            viewModel.updateFragment(new ItemSessionFragment(item));
+            //Intent intent = new Intent(getContext(), ItemSession.class);
+            //intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.TODO_FRAGMENT);
+            //intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, item);
+            //startActivity(intent);
         }
     }
 

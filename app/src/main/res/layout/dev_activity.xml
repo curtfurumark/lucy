@@ -15,6 +15,11 @@
         android:minHeight="48dp"
         android:layout_marginTop="24sp"
         android:textSize="34sp" />
+    <CheckBox
+        android:id="@+id/devActivity_checkBoxDev"
+        android:text="dev mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
     <TextView
         android:id="@+id/devActivity_economy"

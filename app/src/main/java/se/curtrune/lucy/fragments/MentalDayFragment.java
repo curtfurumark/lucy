@@ -55,7 +55,7 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
     //private LucindaViewModel viewModel = new ViewModelProvider(this).get(LucindaViewModel.class);
 
     private Switch switchActual;
-    private LocalDate date;
+    private LocalDate currentDate;
     //private MentalStatistics mentalStatistics;
     private MentalStats mentalStats;
     private MentalAdapter.Mental mentalType;
@@ -65,6 +65,13 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
     private Mode mode = Mode.ESTIMATE;
     LucindaViewModel viewModel;
     public static boolean VERBOSE = false;
+    public MentalDayFragment(){
+
+    }
+    public MentalDayFragment(LocalDate date, boolean actual){
+        currentDate = date;
+        mode = actual ? Mode.ACTUAL: Mode.ESTIMATE;
+    }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,7 +130,7 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
     }
     private void initDefaults(){
         log("...initDefaults()");
-        date = LocalDate.now();
+        currentDate = LocalDate.now();
 
     }
     private void initRecycler(){
@@ -184,12 +191,19 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
      */
     private void initMentalStats(){
         log("...initMentalStats()", mode.toString());
-        date = LocalDate.now();
+        //date = LocalDate.now();
         List<Item> items;
-        if( mode.equals(Mode.ACTUAL)) {
-            items = ItemsWorker.selectDateState(date, State.DONE, getContext());
+        if( currentDate.equals(LocalDate.now())) {
+            if (mode.equals(Mode.ACTUAL)) {
+                items = ItemsWorker.selectDateState(currentDate, State.DONE, getContext());
+            } else {
+                items = ItemsWorker.selectTodayList(currentDate, getContext());
+            }
+        }else if( currentDate.isAfter(LocalDate.now())){
+            items = ItemsWorker.selectDateState(currentDate, State.TODO, getContext());
         }else{
-            items = ItemsWorker.selectTodayList(date, getContext());
+            switchActual.setVisibility(View.GONE);
+            items = ItemsWorker.selectDateState(currentDate,State.DONE,  getContext());
         }
         items.forEach(System.out::println);
         mentalStats = MentalWorker.getStatistics(items, getContext());
@@ -239,7 +253,7 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
                 adapter.notifyDataSetChanged();
                 updateUserInterface();
         }
-        viewModel.setEnergy(42);
+        viewModel.updateEnergy(true);
     }
     private void showDateDialog(){
         if( VERBOSE) log("...showDateDialog()");
@@ -247,8 +261,8 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
         datePickerDialog.setOnDateSetListener((view, year, month, dayOfMonth) ->
         {
 
-            date = LocalDate.of(year, month + 1, dayOfMonth);
-            log("...onDateSet()", date.toString());
+            currentDate = LocalDate.of(year, month + 1, dayOfMonth);
+            log("...onDateSet()", currentDate.toString());
             updateStatistics();
         });
         datePickerDialog.show();
@@ -289,12 +303,11 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
         adapter.show(mentalType);
         textViewMentalLabel.setText(mentalLabel);
         textViewMentalTotal.setText(String.valueOf(total));
-        textViewDate.setText(date.toString());
+        textViewDate.setText(currentDate.toString());
     }
     private void updateStatistics(){
-        log("...updateStatistics()", date.toString());
-        //mentalStatistics = new MentalStatistics(date, date, getContext());
-        //adapter.setList(mentalStatistics.getMentalList());
+        log("...updateStatistics()", currentDate.toString());
+        initMentalStats();
         updateUserInterface();
     }
 

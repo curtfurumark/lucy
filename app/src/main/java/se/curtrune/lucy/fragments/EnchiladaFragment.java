@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -33,6 +34,7 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.EditItemDialog;
 import se.curtrune.lucy.util.Constants;
+import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.ItemsWorker;
 
 /**
@@ -44,14 +46,12 @@ public class EnchiladaFragment extends Fragment implements
         ItemAdapter.Callback,
         TabLayout.OnTabSelectedListener {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-
     private RecyclerView recycler;
     private EditText editTextSearch;
     private ItemAdapter adapter;
     private List<Item> items;
     public static boolean VERBOSE = false;
+    private LucindaViewModel viewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,6 +63,7 @@ public class EnchiladaFragment extends Fragment implements
         initRecycler(items);
         initSwipe();
         initListeners();
+        initViewModel();
         return view;
     }
 
@@ -172,6 +173,11 @@ public class EnchiladaFragment extends Fragment implements
         });
         itemTouchHelper.attachToRecyclerView(recycler);
     }
+    private void initViewModel(){
+        log("...initViewModel()");
+        viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
+
+    }
 
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
@@ -191,11 +197,13 @@ public class EnchiladaFragment extends Fragment implements
     @Override
     public void onItemClick(Item item) {
         log("...onItemClick(Item)", item.getHeading());
-        Intent intent = new Intent(getContext(), ItemSession.class);
+        viewModel.updateFragment( new ItemSessionFragment(item));
+
+/*        Intent intent = new Intent(getContext(), ItemSession.class);
         //intent.putExtra(Constants.INTENT_ITEM_SESSION, true);
         intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.ENCHILADA_FRAGMENT);
         intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, item);
-        startActivity(intent);
+        startActivity(intent);*/
     }
 
     /**

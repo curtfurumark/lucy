@@ -24,6 +24,7 @@ public class User {
     public static final String KEY_PANIC_ACTION = "KEY_PANIC_ACTION";
     public static final String KEY_PANIC_URLS = "KEY_PANIC_URLS";
     public static final String KEY_LANGUAGE = "KEY_LANGUAGE";
+    public static final String KEY_DEV_MODE = "KEY_DEV_MODE";
 
     public static void addCategory(String category, Context context){
         log("User.addCategory(String, Context)", category);
@@ -122,6 +123,9 @@ public class User {
         log("User.getDarkMode(Context)");
         return Settings.getBoolean(USE_DARK_MODE, false, context);
     }
+    public static void setDevMode(boolean devMode, Context context){
+        Settings.addBoolean(KEY_DEV_MODE, devMode, context);
+    }
 
     public static void setPanicAction(Settings.PanicAction panicAction, Context context) {
         Settings.addString(KEY_PANIC_ACTION, panicAction.toString(), context);
@@ -146,5 +150,9 @@ public class User {
     public static void setCategories(String[] categories, Context context) {
         Set<String> urlSet = new HashSet<>(Arrays.asList(categories));
         Settings.saveList(KEY_CATEGORIES,urlSet, context );
+    }
+
+    public static boolean isDevMode(Context context) {
+        return Settings.getBoolean(KEY_DEV_MODE, false, context);
     }
 }

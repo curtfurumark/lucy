@@ -4,7 +4,6 @@ import static se.curtrune.lucy.util.Logger.log;
 
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -27,7 +26,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -35,21 +33,18 @@ import java.util.Locale;
 import java.util.Objects;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.activities.ItemSession;
 import se.curtrune.lucy.adapters.CalenderAdapter;
 import se.curtrune.lucy.adapters.CalenderDateAdapter;
-import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.Settings;
-import se.curtrune.lucy.classes.CallingActivity;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.calender.Week;
 import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.dialogs.EditItemDialog;
 import se.curtrune.lucy.dialogs.PostponeDialog;
-import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.ItemsWorker;
+import se.curtrune.lucy.workers.MentalWorker;
 import se.curtrune.lucy.workers.NotificationsWorker;
 import se.curtrune.lucy.workers.StatisticsWorker;
 
@@ -121,7 +116,29 @@ public class CalenderFragment extends Fragment {
     private void calculateEstimate(){
         if( VERBOSE)  log("...calculateEstimate()");
         StatisticsWorker.getEstimate(currentDate, getContext());
+    }
 
+    /**
+     * deletes and item AND its mental if such exists
+     * @param item, the item to be deleted
+     */
+    private void deleteItem(Item item){
+        log("....deleteItem(Item)", item.getHeading());
+        int rowsAffected = MentalWorker.deleteMental(item, getContext());
+        if( rowsAffected != 1){
+            log("WARNING mental not deleted, possibly no mental to delete...");
+        }else{
+            log("...mental deleted from db");
+        }
+        boolean deleted = ItemsWorker.delete(item, getContext());
+        if( !deleted){
+            log("...error deleting item");
+            Toast.makeText(getContext(), "error deleting item", Toast.LENGTH_LONG).show();
+        }else {
+            log("...item deleted from DB");
+            items.remove(item);
+            adapter.notifyDataSetChanged();
+        }
     }
     private String getMonthYear(LocalDate date){
         if( VERBOSE) log("...getMonthYear(LocalDate)");
@@ -167,15 +184,7 @@ public class CalenderFragment extends Fragment {
             @Override
             public void onItemClick(Item item) {
                 if(VERBOSE)log("...onItemClick(Item)", item.getHeading());
-                Lucinda.Dev = true;
-                if( Lucinda.Dev) {
-                    loadFragment(new ItemSessionFragment(item));
-                }else {
-                    Intent intent = new Intent(getContext(), ItemSession.class);
-                    intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.CALENDER_FRAGMENT);
-                    intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, item);
-                    startActivity(intent);
-                }
+                loadFragment(new ItemSessionFragment(item));
             }
 
             @Override
@@ -185,7 +194,7 @@ public class CalenderFragment extends Fragment {
                 dialog.setCallback(new EditItemDialog.Callback() {
                     @Override
                     public void onUpdate(Item item) {
-                        log("...onUpdate(Item)");
+                        log("EditItemDialog.Callback.onUpdate(Item)");
                         log(item);
                         int rowsAffected = ItemsWorker.update(item, getContext());
                         if( rowsAffected != 1){
@@ -214,7 +223,7 @@ public class CalenderFragment extends Fragment {
                 }else{
                     items.sort(Comparator.comparingLong(Item::getTargetTimeSecondOfDay));
                     adapter.notifyDataSetChanged();
-                    viewModel.setEnergy(42);
+                    viewModel.updateEnergy(true);
                 }
                 if(item.hasReward()){
                     switch (item.getReward().getType()){
@@ -269,14 +278,8 @@ public class CalenderFragment extends Fragment {
                     builder.setMessage("are you sure? ");
                     builder.setPositiveButton("delete", (dialog, which) -> {
                         log("...on positive button click");
-                        boolean deleted = ItemsWorker.delete(item, getContext());
-                        if( !deleted){
-                            log("...error deleting item");
-                            Toast.makeText(getContext(), "error deleting item", Toast.LENGTH_LONG).show();
-                        }else {
-                            items.remove(item);
-                            adapter.notifyDataSetChanged();
-                        }
+                        deleteItem(item);
+
                     });
                     builder.setNegativeButton("cancel", (dialog, which) -> {
                         log("...on negative button click");

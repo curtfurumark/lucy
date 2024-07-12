@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,8 +59,18 @@ public class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ViewHolder
     public static List<Action> getActionList(Item item, Context context){
         if( VERBOSE) log("ActionAdapter.getActionList(Item)");
         Action time = new Action();
-        time.setTitle(context.getString(R.string.time));
+        LocalTime targetTime = item.getTargetTime();
+        if( targetTime != null){
+            time.setTitle(targetTime.toString());
+        }else {
+            time.setTitle(context.getString(R.string.time));
+        }
         time.setType(Action.Type.TIME);
+
+        Action actionTags = new Action();
+        String tags = item.getTags();
+        actionTags.setTitle(context.getString(R.string.tags));
+        actionTags.setType(Action.Type.TAGS);
 
         Action notification = new Action();
         if(item.hasNotification()){

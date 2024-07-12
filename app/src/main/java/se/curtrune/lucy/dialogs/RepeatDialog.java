@@ -7,9 +7,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -31,10 +33,15 @@ public class RepeatDialog extends BottomSheetDialogFragment {
     private TextView textViewCustom;
     private LinearLayout layoutSimple;
     private LinearLayout layoutCustom;
+    private Spinner spinnerPeriods;
     private Button buttonOK;
     private Button buttonDismiss;
 
     public static boolean VERBOSE = false;
+    private enum Mode{
+        SIMPLE, CUSTOM
+    }
+    private Mode mode;
 
     public interface Callback{
         void onRepeat(Repeat.Period period);
@@ -53,11 +60,16 @@ public class RepeatDialog extends BottomSheetDialogFragment {
         View view = inflater.inflate(R.layout.repeat_dialog, container, false);
         initComponents(view);
         initListeners();
+        initSpinner();
         return view;
     }
     private void getPeriod(){
         log("...getPeriod()");
+        if( mode.equals(Mode.CUSTOM)){
+            Repeat repeat = new Repeat();
+            //repeat.setPeriod();
 
+        }
     }
 
     private void initComponents(View view){
@@ -71,6 +83,7 @@ public class RepeatDialog extends BottomSheetDialogFragment {
         buttonOK = view.findViewById(R.id.repeatDialog_buttonOK);
         layoutCustom = view.findViewById(R.id.repeatDialog_layoutCustom);
         layoutSimple = view.findViewById(R.id.repeatDialog_layoutSimple);
+        spinnerPeriods = view.findViewById(R.id.repeatDialog_spinnerPeriod);
     }
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
@@ -81,6 +94,16 @@ public class RepeatDialog extends BottomSheetDialogFragment {
         textViewCustom.setOnClickListener(view->toggleCustom());
         buttonDismiss.setOnClickListener(view->dismiss());
         buttonOK.setOnClickListener(view->getPeriod());
+    }
+    private void initSpinner(){
+        log("...initSpinner");
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                getContext(),
+                R.array.periods,
+                android.R.layout.simple_spinner_item
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerPeriods.setAdapter(adapter);
     }
     @Override
     public void onAttach(@NonNull Context context) {

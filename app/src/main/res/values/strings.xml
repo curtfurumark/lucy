@@ -197,4 +197,10 @@
     <string name="currently">currently</string>
     <string name="estimated">estimated</string>
     <string name="missing_heading">missing heading</string>
+    <string-array name="periods">
+        <item name="day">day</item>
+        <item name="week">week</item>
+        <item name="month">month</item>
+        <item name="year">year</item>
+    </string-array>
 </resources>

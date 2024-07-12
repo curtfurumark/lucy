@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,8 +24,10 @@ import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.ListableAdapter;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Listable;
+import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.MentalStats;
 import se.curtrune.lucy.util.Converter;
+import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.DurationWorker;
 import se.curtrune.lucy.workers.ItemsWorker;
 import se.curtrune.lucy.workers.MentalWorker;
@@ -42,10 +45,13 @@ public class EstimateFragment extends Fragment {
     private TextView textViewMood;
     private TextView textViewCurrentMood;
     private TextView textViewDate;
+    private TextView labelCurrent;
+    private TextView labelEstimate;
     private ListableAdapter adapterDuration;
     private RecyclerView recyclerDuration;
     private MentalStats estimatedStats;
     private MentalStats currentStats;
+    private LucindaViewModel viewModel;
     private LocalDate date;
     private long estimatedDuration;
     private long actualDuration;
@@ -66,6 +72,7 @@ public class EstimateFragment extends Fragment {
         initComponents(view);
         initRecyclerDuration();
         initListeners();
+        initViewModel();
         initMentalStatsAndDuration(date);
         setUserInterfaceCurrent();
         setUserInterfaceEstimate();
@@ -85,6 +92,12 @@ public class EstimateFragment extends Fragment {
         textViewCurrentEnergy = view.findViewById(R.id.estimateFragment_currentEnergy);
         textViewCurrentStress = view.findViewById(R.id.estimateFragment_currentStress);
         textViewCurrentMood = view.findViewById(R.id.estimateFragment_currentMood);
+        labelCurrent = view.findViewById(R.id.estimateFragment_labelActual);
+        labelEstimate = view.findViewById(R.id.estimateFragment__labelEstimate);
+    }
+    private void initViewModel(){
+        log("...initViewModel()");
+        viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
     }
     private void setUserInterfaceCurrent(){
         log("...setUserInterfaceCurrent()");
@@ -112,10 +125,10 @@ public class EstimateFragment extends Fragment {
     private void initMentalStatsAndDuration(LocalDate date){
         log("...initMentalStatsAndDuration(LocalDate)", date.toString());
         items = ItemsWorker.selectTodayList(date, getContext());
+        //items = ItemsWorker.selectCalenderItems(date, getContext());
+        items.forEach(System.out::println);
         estimatedStats = MentalWorker.getMentalStats(items, getContext());
         estimatedDuration =  DurationWorker.getEstimatedDuration(items, getContext());
-
-        //List<Item> doneItems = ItemsWorker.selectItems(date, getContext(), State.DONE);
         List<Item> doneItems = items.stream().filter(Item::isDone).collect(Collectors.toList());
         currentStats = MentalWorker.getMentalStats(doneItems, getContext());
         actualDuration = doneItems.stream().mapToLong(Item::getDuration).sum();
@@ -124,6 +137,8 @@ public class EstimateFragment extends Fragment {
     private void initListeners(){
         if( VERBOSE)log("...initListeners()");
         textViewDate.setOnClickListener(view->showDateDialog());
+        textViewActualDuration.setOnClickListener(view->printActualDuration());
+        labelCurrent.setOnClickListener(view->printActualMental());
     }
     private void initRecyclerDuration(){
         log("...initRecyclerDuration()");
@@ -142,6 +157,18 @@ public class EstimateFragment extends Fragment {
         recyclerDuration.setLayoutManager(layoutManager);
         recyclerDuration.setItemAnimator(new DefaultItemAnimator());
         recyclerDuration.setAdapter(adapterDuration);
+    }
+    private void printActualDuration(){
+        log("...printActualDuration()");
+        List<Item> doneItems = items.stream().filter(item -> item.isDone()).collect(Collectors.toList());
+        doneItems.forEach(System.out::println);
+    }
+    private void printActualMental(){
+        log("...printActualMental()");
+        List<Item> doneItems = items.stream().filter(item -> item.isDone()).collect(Collectors.toList());
+        List<Mental> doneMentals = MentalWorker.getMentals(doneItems, getContext());
+        doneMentals.forEach(System.out::println);
+        viewModel.updateFragment(new MentalDayFragment(date, true));
     }
     private void setUserInterfaceEstimate(){
         log("...setUserInterfaceEstimate()");

@@ -208,6 +208,13 @@ public class ItemsWorker {
             return db.selectItems(Queeries.selectChildren(id));
         }
     }
+
+    /**
+     * calenderItems, done items and possibly targetDate == date
+     * @param date, the date for which to select items
+     * @param context context context context
+     * @return a list of items
+     */
     public static List<Item> selectTodayList(LocalDate date, Context context){
         if( VERBOSE) log("ItemsWorker.selectTodayList(LocalDate, Context)", date.toString());
         String query = Queeries.selectTodayList(date);
@@ -322,7 +329,7 @@ public class ItemsWorker {
         }
     }
     private static int updateTemplate(Item template, Context context) {
-        log("...updateTemplate(Item, Context)", template.getHeading());
+        log("ItemsWorker.updateTemplate(Item, Context)", template.getHeading());
         try (LocalDB db = new LocalDB(context)) {
             if (template.isDone()) {
                 if (VERBOSE) log("...template is done, will spawn a child");
@@ -339,15 +346,6 @@ public class ItemsWorker {
                     template.updateTargetDate();
                 }
                 template.setDuration(0);
-    /*            Mental childMental = new Mental(template.getMental());
-                assert  childMental != null;
-                childMental.setDate(LocalDate.now());
-                childMental.setTime(LocalTime.now());
-                childMental.setUpdated(LocalDateTime.now());
-                childMental.setCreated(LocalDateTime.now());
-                childMental.setIsTemplate(false);
-                childMental.setItemID(child.getID());
-                childMental = MentalWorker.insert(childMental, context);*/
             }
             return db.update(template);
         }

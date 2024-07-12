@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +32,7 @@ import se.curtrune.lucy.activities.economy.EconomyActivity;
 import se.curtrune.lucy.activities.economy.persist.ECDBAdmin;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.Settings;
+import se.curtrune.lucy.app.User;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.persist.DBAdmin;
@@ -51,6 +53,7 @@ public class DevActivity extends AppCompatActivity {
     private TextView textViewFirstInstalled;
     private TextView textViewUpdated;
     private TextView textViewModel;
+    private CheckBox checkBoxDev;
 
 
     private Lucinda lucinda;
@@ -131,7 +134,6 @@ public class DevActivity extends AppCompatActivity {
 
     private void initComponents() {
         if( VERBOSE) log("...initComponents()");
-
         textViewNewMain = findViewById(R.id.devActivity_mainActivity);
         textViewLucindaVersion = findViewById(R.id.devActivity_lucindaVersionCode);
         textViewAndroidVersion = findViewById(R.id.devActivity_androidVersion);
@@ -141,12 +143,18 @@ public class DevActivity extends AppCompatActivity {
         textViewVersionName = findViewById(R.id.devActivity_lucindaVersionName);
         textViewModel = findViewById(R.id.devActivity_model);
         textViewUpdated = findViewById(R.id.devActivity_updated);
+        checkBoxDev = findViewById(R.id.devActivity_checkBoxDev);
     }
 
     private void initListeners() {
         if( VERBOSE) log("...initListeners()");
         textViewSwipeAble.setOnClickListener(view -> startActivity(new Intent(this, EconomyActivity.class)));
         textViewNewMain.setOnClickListener(view -> startActivity(new Intent(this, MainActivity.class)));
+        checkBoxDev.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            log("...onCheckChanged(CompoundButton, boolean isChecked)", isChecked);
+            User.setDevMode(isChecked,this );
+            Lucinda.Dev = isChecked;
+        });
     }
     private void printSystemInfo(){
         log("...printSystemInfo()");
@@ -212,7 +220,7 @@ public class DevActivity extends AppCompatActivity {
             setDefaultUserSettings();
         }else if( item.getItemId() == R.id.devActivity_clearSettings){
             //Settings.removeAll(this);
-            Toast.makeText(this, "don't do this", Toast.LENGTH_LONG);
+            Toast.makeText(this, "don't do this", Toast.LENGTH_LONG).show();
         }else if( item.getItemId() == R.id.devActivity_repeatDialog){
             //showRepeatDialog();
             Toast.makeText(this, "for future use", Toast.LENGTH_LONG).show();
@@ -301,6 +309,7 @@ public class DevActivity extends AppCompatActivity {
     private void setUserInterface(){
         log("...setUserInterface()");
         try {
+            //checkBoxDev.setChecked(User);
             PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
             String stringVersionCode = String.format(Locale.getDefault(), "VERSION_CODE: %d", pInfo.versionCode );
             textViewLucindaVersion.setText(stringVersionCode);
@@ -322,6 +331,7 @@ public class DevActivity extends AppCompatActivity {
 
             String stringModel = String.format(Locale.getDefault(), "MODEL: %s",Build.MODEL);
             textViewModel.setText(stringModel);
+            checkBoxDev.setChecked(User.isDevMode(this));
 
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();

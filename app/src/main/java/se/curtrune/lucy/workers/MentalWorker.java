@@ -42,6 +42,24 @@ public class MentalWorker {
     }
 
     /**
+     * deletes the mental associated with said item,
+     * if theres no mental to delete, this method just returns
+     * @param item the item for which you want to delete it's mental
+     * @param context context context context and more context
+     * @return 0 if no mental to delete, otherwise rowsAffected ( 1 = success, 0 = trouble)
+     */
+    public static int deleteMental(Item item, Context context){
+        log("MentalWorker.deleteMental(Item, Context)");
+        if( item.getMental() == null){
+            log("WARNING, no mental to delete");
+            return 0;
+        }
+        try(LocalDB db = new LocalDB(context)){
+            return db.delete(item.getMental());
+        }
+    }
+
+    /**
      * the latest ten entries, notwithstanding date
      * @param context, the f-ing context, what did you expect=
      * @return energy as calculated from the ten latest mental entries

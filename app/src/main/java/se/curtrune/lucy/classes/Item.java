@@ -147,8 +147,7 @@ public class Item implements Serializable , Listable {
             return String.format("template, %s", Converter.epochToDate(target_date));
         }
         return String.format("%s", Converter.formatDateTimeUI(updated));*/
-        return String.format(Locale.getDefault(), "%s %s %s", hasNotification()? "notify ":"",
-        hasPeriod()? "repeat ": "", hasChild()? "-> ": "");
+        return String.format(Locale.getDefault(), "%s", getTargetDate().toString());
     }
 
     public LocalDate getDateUpdated(){
@@ -456,7 +455,9 @@ public class Item implements Serializable , Listable {
     @NonNull
     @Override
     public String toString() {
-        return String.format(Locale.getDefault(), "%s (%d), parent: %d, has child: %b", heading,id, parent_id, hasChild());
+/*        return String.format(Locale.getDefault(),
+                "%s (%d), parent: %d, has child: %b", heading,id, parent_id, hasChild());*/
+        return String.format(Locale.getDefault(), "%s, %s,  d:%s", getHeading(), getTargetTime().toString(), Converter.formatSecondsWithHours(duration));
     }
     /**
      * sets the next targetDate,
@@ -472,4 +473,10 @@ public class Item implements Serializable , Listable {
         return type == Type.APPOINTMENT.ordinal();
     }
 
+    public void setPeriod(Repeat.Period period) {
+        if( repeat == null){
+            repeat = new Repeat();
+        }
+        repeat.setPeriod(period);
+    }
 }

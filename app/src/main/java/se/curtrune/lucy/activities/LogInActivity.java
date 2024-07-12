@@ -58,8 +58,10 @@ public class LogInActivity extends AppCompatActivity {
         }else{
             log("...nightly alarm is already set");
         }
+        Lucinda.Dev = true;
         initComponents();
         initListeners();
+        initDevMode();
         NotificationsWorker.createNotificationChannel(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             checkNotificationPermission();
@@ -95,6 +97,12 @@ public class LogInActivity extends AppCompatActivity {
         }
     }
 
+    private void initDevMode(){
+        log("...initDevMode()");
+        Lucinda.Dev = User.isDevMode(this);
+        log("...devMode", Lucinda.Dev);
+
+    }
 
     private void initCatchAllExceptionsHandler(){
         Thread.setDefaultUncaughtExceptionHandler((paramThread, paramThrowable) -> {

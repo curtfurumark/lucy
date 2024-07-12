@@ -23,6 +23,15 @@ public class Repeat implements Serializable {
         return period;
     }
 
+    public void setCurrentDate(LocalDate currentDate) {
+        this.currentDate = currentDate;
+    }
+
+    public void setPeriod(int qualifier, Period period) {
+        this.qualifier = qualifier;
+        this.period = period;
+    }
+
     public enum Mode{
         DAYS, DAY_OF_WEEKS
     }
@@ -36,9 +45,9 @@ public class Repeat implements Serializable {
     private LocalDate firstDate;
     private LocalDate currentDate;
     private LocalDate lastDate;
+    private int qualifier = 1;
     private List<DayOfWeek> dayOfWeeks = new ArrayList<>();
     public Repeat(){
-        //log("Repeat() constructor");
         currentDate = LocalDate.now();
     }
     public Repeat(LocalDate currentDate){

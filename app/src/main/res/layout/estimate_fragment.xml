@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/estimateFragment__labelEstimate"
         android:layout_width="match_parent"
         android:textSize="26sp"
         android:textStyle="bold"
@@ -73,13 +73,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView11" />
+
     <TextView
+        android:id="@+id/estimateFragment_labelActual"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
         android:text="@string/currently"
         android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:textStyle="bold" />
     <TextView
         android:id="@+id/estimateFragment_currentEnergy"
         android:layout_width="wrap_content"

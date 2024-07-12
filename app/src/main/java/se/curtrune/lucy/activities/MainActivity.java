@@ -29,10 +29,10 @@ import java.util.Objects;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.activities.flying_fish.GameActivity;
-import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.app.User;
 import se.curtrune.lucy.classes.Affirmation;
+import se.curtrune.lucy.classes.GlobalStats;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.dialogs.BoostDialog;
 import se.curtrune.lucy.fragments.AppointmentsFragment;
@@ -60,8 +60,8 @@ import se.curtrune.lucy.workers.MentalWorker;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Fragment currentFragment;
-    private Fragment previousFragment;
+    //private Fragment currentFragment;
+    //private Fragment previousFragment;
     private DrawerLayout drawerLayout;
     private MaterialToolbar toolbar;
     private NavigationView navigationView;
@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fapBoost;
     private TextView textViewEnergy;
     private TextView textViewLucindaHome;
+    private GlobalStats globalStats;
     public static boolean VERBOSE = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,18 +81,13 @@ public class MainActivity extends AppCompatActivity {
         initComponents();
         initListeners();
         initViewModel();
+        initGlobalStats();
         Intent intent = getIntent();
-        if( intent.getBooleanExtra(Constants.INTENT_SHOW_CHILD_ITEMS, false)){
+/*        if( intent.getBooleanExtra(Constants.INTENT_SHOW_CHILD_ITEMS, false)){
             log("...INTENT_SHOW_CHILD_ITEMS");
             Item currentParent = (Item) intent.getSerializableExtra(Constants.INTENT_SERIALIZED_ITEM);
-        }
-        if( Lucinda.currentFragment != null){
-            log("...currentFragment != null");
-            currentFragment = Lucinda.currentFragment;
-        }else{
-            currentFragment = new CalenderFragment();
-            navigate(currentFragment);
-        }
+        }*/
+        navigate(new CalenderFragment());
         setUserInterfaceCurrentEnergy();
     }
     private void boostMe(){
@@ -172,6 +168,20 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
     }
+
+    /**
+     * to listen to changes made to stats by on or another fragment
+     * changes which should be reflected in the user interface
+     */
+    private void initGlobalStats(){
+        globalStats = GlobalStats.getInstance();
+        globalStats.register(new GlobalStats.Callback() {
+            @Override
+            public void onStatsChanged() {
+                setUserInterfaceCurrentEnergy();
+            }
+        });
+    }
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
         textViewEnergy.setOnClickListener(view->showMentalDay());
@@ -182,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
     private void initViewModel(){
         if( VERBOSE) log("...initViewModel()");
         viewModel = new ViewModelProvider(this ).get(LucindaViewModel.class);
-        viewModel.getEnergy().observe(this, energy->{
+        viewModel.updateEnergy().observe(this, energy->{
             log("...energy updated", energy);
             setUserInterfaceCurrentEnergy();
         });
@@ -196,8 +206,12 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         log("...navigate(Fragment) ", fragment.getClass().getName());
-        currentFragment = fragment;
-        getSupportFragmentManager().beginTransaction().replace(R.id.navigationDrawer_frameContainer, currentFragment).commit();
+        setUserInterfaceCurrentEnergy();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.navigationDrawer_frameContainer, fragment)
+                .addToBackStack("previous fragment")
+                .commit();
     }
 
     @Override
@@ -280,4 +294,13 @@ public class MainActivity extends AppCompatActivity {
         log("...showMentalDay");
         navigate(new EstimateFragment());
     }
+
+/*    @Override
+    public void goToPreviousFragment() {
+        log("MainActivity.goToPreviousFragment()");
+        navigate(previousFragment);
+    }*/
+
+
+
 }

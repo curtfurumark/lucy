@@ -339,7 +339,7 @@ public class ItemSession extends AppCompatActivity implements
         textViewUpdated = findViewById(R.id.itemSession_infoUpdated);
         textViewUpdateEpoch = findViewById(R.id.itemSession_infoUpdatedEpoch);
         textViewCreated = findViewById(R.id.itemSession_infoCreated);
-        textViewTags = findViewById(R.id.itemSession_infoTags);
+        textViewTags = findViewById(R.id.itemSession_tags);
         textViewCategory = findViewById(R.id.itemSession_infoCategory);
         textViewID = findViewById(R.id.itemSession_infoID);
         textViewParentID = findViewById(R.id.itemSession_infoParentID);

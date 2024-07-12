@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,6 +37,7 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.util.Constants;
+import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.ItemsWorker;
 
 /**
@@ -49,12 +51,12 @@ public class ProjectsFragment extends Fragment implements
 
     private static final String CURRENT_PARENT = "CURRENT_PARENT";
     private RecyclerView recycler;
-    //private EditText editTextSearch;
     private TabLayout tabLayout;
     private FloatingActionButton buttonAddItem;
     private ItemAdapter adapter;
     private Item currentParent;
     private List<Item> items;
+    private LucindaViewModel viewModel;
     public static boolean VERBOSE = false;
 
     public ProjectsFragment() {
@@ -97,6 +99,7 @@ public class ProjectsFragment extends Fragment implements
         setHasOptionsMenu(true);
         initComponents(view);
         initListeners();
+        initViewModel();
         if( savedInstanceState != null){
             log("...savedInstanceState != null");
             currentParent = (Item) savedInstanceState.getSerializable(CURRENT_PARENT);
@@ -159,6 +162,10 @@ public class ProjectsFragment extends Fragment implements
         addTab(currentParent);
 
     }
+    private void initViewModel(){
+        log("...initViewModel()");
+        viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
+    }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -205,13 +212,8 @@ public class ProjectsFragment extends Fragment implements
         log("...onItemClick(Item)", item.getHeading());
         if(item.hasChild() && !item.isTemplate()){
             descend(item);
-
         }else {
-            Lucinda.currentFragment = this;
-            Intent intent = new Intent(getContext(), ItemSession.class);
-            intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.PROJECTS_FRAGMENT);
-            intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, item);
-            startActivity(intent);
+            viewModel.updateFragment(new ItemSessionFragment(item));
         }
     }
 

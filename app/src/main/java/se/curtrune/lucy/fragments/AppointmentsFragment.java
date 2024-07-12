@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -24,6 +25,7 @@ import se.curtrune.lucy.adapters.ItemAdapter;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.classes.CallingActivity;
 import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.AddAppointmentDialog;
 import se.curtrune.lucy.dialogs.EditItemDialog;
 import se.curtrune.lucy.util.Constants;
@@ -122,16 +124,7 @@ public class AppointmentsFragment extends Fragment implements
     @Override
     public void onItemClick(Item item) {
         if( VERBOSE) log("...onItemClick(Item)", item.getHeading());
-        Lucinda.currentFragment = this;
-        Lucinda.Dev = true;
-        if( Lucinda.Dev ){
-            viewModel.updateFragment(new ItemSessionFragment(item));
-        }else {
-            Intent intent = new Intent(getContext(), ItemSession.class);
-            intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, item);
-            intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.APPOINTMENTS_FRAGMENT);
-            startActivity(intent);
-        }
+        viewModel.updateFragment(new ItemSessionFragment(item));
     }
 
     @Override
@@ -148,7 +141,11 @@ public class AppointmentsFragment extends Fragment implements
 
     @Override
     public void onCheckboxClicked(Item item, boolean checked) {
-
+        log("...onCheckBoxClicked(Item, boolean)", checked);
+        item.setState(checked? State.DONE: State.TODO);
+        int rowsAffected = ItemsWorker.update(item, getContext());
+        if( rowsAffected != 1){
+            Toast.makeText(getContext(), "error updating appointment", Toast.LENGTH_SHORT).show();
+        }
     }
-
 }

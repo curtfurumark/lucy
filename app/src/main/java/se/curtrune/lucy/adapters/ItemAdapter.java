@@ -3,8 +3,10 @@ package se.curtrune.lucy.adapters;
 import static se.curtrune.lucy.util.Logger.log;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -69,6 +71,15 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
         holder.textView_heading.setText(item.getHeading());
         holder.textView_info.setText(item.getInfo());
         holder.checkBox_state.setChecked(item.getState().equals(State.DONE));
+        if( item.hasNotification()){
+            holder.imageViewNotificationIcon.setVisibility(View.VISIBLE);
+        }
+        if( item.hasPeriod()){
+            holder.imageViewRepeatIcon.setVisibility(View.VISIBLE);
+        }
+        if(item.isPrioritized()){
+            holder.imageViewImportantIcon.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -83,12 +94,18 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
         private final TextView textView_heading;
         private final CheckBox checkBox_state;
         private final TextView textView_info;
+        private final ImageView imageViewRepeatIcon;
+        private final ImageView imageViewNotificationIcon;
+        private final ImageView imageViewImportantIcon;
 
         public ViewHolder(@NonNull android.view.View itemView) {
             super(itemView);
             textView_heading = itemView.findViewById(R.id.itemAdapter_itemHeading);
             textView_info = itemView.findViewById(R.id.itemAdapter_itemInfo);
             checkBox_state = itemView.findViewById(R.id.itemAdapter_itemState);
+            imageViewNotificationIcon = itemView.findViewById(R.id.itemAdapter_notificationIcon);
+            imageViewRepeatIcon = itemView.findViewById(R.id.itemAdapter_repeatIcon);
+            imageViewImportantIcon = itemView.findViewById(R.id.itemAdapter_importantIcon);
             checkBox_state.setOnClickListener(view -> {
                 //log("...on checkbox state");
                 Item item = items.get(getAdapterPosition());
