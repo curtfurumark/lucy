@@ -32,7 +32,7 @@
         android:title="@string/duration"/>
         <item android:id="@+id/navigationDrawer_mentalFragment"
             android:title="@string/mental"/>
-    <item android:title="top ten"
+    <item android:title="@string/top_ten"
         android:id="@+id/navigationDrawer_topTen"/>
     <item android:id="@+id/bottomNavigation_enchilada"
         android:title="@string/enchilada"
@@ -44,11 +44,12 @@
         android:id="@+id/navigationDrawer_customizeFragment"/>
     <item android:id="@+id/navigationDrawer_contactFragment"
         android:icon="@drawable/baseline_email_24"
-        android:title="contact curt rune"/>
+        android:title="@string/contact_curt_rune"/>
     <item android:id="@+id/navigationDrawer_messageBoardFragment"
-        android:title="message board"/>
+        android:title="@string/message_board"/>
     <item android:id="@+id/navigationDrawer_countDownTimer"
+        android:visible="false"
         android:title="@string/timer"/>
-    <item android:id="@+id/navigationDrawer_itemSession"
-        android:title="item session"/>
+    <item android:id="@+id/navigationDrawer_logOut"
+        android:title="@string/log_out"/>
 </menu>

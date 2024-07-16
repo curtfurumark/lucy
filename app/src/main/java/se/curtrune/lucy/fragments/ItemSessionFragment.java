@@ -33,6 +33,7 @@ import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.classes.Action;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
+import se.curtrune.lucy.classes.MentalStats;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.dialogs.ChooseCategoryDialog;
@@ -46,6 +47,7 @@ import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.DurationWorker;
 import se.curtrune.lucy.workers.ItemsWorker;
 import se.curtrune.lucy.workers.MentalWorker;
+import se.curtrune.lucy.workers.StatisticsWorker;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -55,6 +57,7 @@ import se.curtrune.lucy.workers.MentalWorker;
 public class ItemSessionFragment extends Fragment implements Kronos.Callback{
 
     private TextView textViewEstimatedTime;
+    private TextView textViewEstimatedEnergy;
     private TextView textViewHeading;
     private  TextView textViewType;
     private TextView textViewDuration;
@@ -235,6 +238,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         textViewType = view.findViewById(R.id.itemSessionFragment_type);
         textViewTags = view.findViewById(R.id.itemSessionFragment_tags);
         textViewRepeat = view.findViewById(R.id.itemSessionFragment_repeat);
+        textViewEstimatedEnergy = view.findViewById(R.id.itemSessionFragment_estimatedEnergy);
     }
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
@@ -258,10 +262,18 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         checkBoxIsDone.setChecked(item.isDone());
         checkBoxAppointment.setChecked(item.isAppointment());
         setEstimatedTime(item);
+        setEstimatedEnergy(item);
         log("Lucinda.Dev ", Lucinda.Dev);
         if(Lucinda.Dev){
             setUserInterfaceDev(item);
         }
+    }
+    private void setEstimatedEnergy(Item item){
+        log("...setEstimatedEnergy(Item)");
+        //MentalStats stats = StatisticsWorker.getEstimate(item, getContext());
+        MentalStats stats1 = StatisticsWorker.getMentalStats(item, getContext());
+        String stringEstimatedEnergy = String.format(Locale.getDefault(), "estimated energy %s", stats1.getEnergy());
+        textViewEstimatedEnergy.setText(stringEstimatedEnergy);
     }
 
     /**
@@ -315,7 +327,6 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
     }
     private void showDurationDialogActual(){
         log("...showDurationDialog()");
-        Toast.makeText(getContext(), "show duration dialog wtf", Toast.LENGTH_LONG).show();
         DurationDialog dialog = new DurationDialog();
         dialog.setCallback(duration -> {
             log("...onDurationDialog(Duration)");
@@ -336,6 +347,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         dialog.setCallback((mental1, mode) -> {
             log("...onMental(Mental, Mental)", mode.toString());
             log("should only be mode edit");
+            currentItem.setMental(mental1);
             int res = MentalWorker.update(mental1, getContext());
             if( res != 1){
                 log("ERROR updating mental");
@@ -362,10 +374,10 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
     private void showRepeatDialog(){
         log("...showRepeatDialog()");
         RepeatDialog dialog = new RepeatDialog();
-        dialog.setCallback(period -> {
-            log("...onRepeat(Period)", period.toString());
-            currentAction.setTitle(period.toString());
-            currentItem.setPeriod(period);
+        dialog.setCallback(repeat -> {
+            log("...onRepeat(Unit)", repeat.toString());
+            currentAction.setTitle(repeat.toString());
+            currentItem.setRepeat(repeat);
             currentItem.setIsTemplate(true);
             actionAdapter.notifyDataSetChanged();
         });

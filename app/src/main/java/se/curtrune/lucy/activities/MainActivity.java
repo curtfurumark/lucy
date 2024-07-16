@@ -32,7 +32,6 @@ import se.curtrune.lucy.activities.flying_fish.GameActivity;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.app.User;
 import se.curtrune.lucy.classes.Affirmation;
-import se.curtrune.lucy.classes.GlobalStats;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.dialogs.BoostDialog;
 import se.curtrune.lucy.fragments.AppointmentsFragment;
@@ -43,7 +42,6 @@ import se.curtrune.lucy.fragments.DurationFragment;
 import se.curtrune.lucy.fragments.EnchiladaFragment;
 import se.curtrune.lucy.fragments.EstimateFragment;
 import se.curtrune.lucy.fragments.GraphFragment;
-import se.curtrune.lucy.fragments.ItemSessionFragment;
 import se.curtrune.lucy.fragments.MentalDayFragment;
 import se.curtrune.lucy.fragments.MessageBoardFragment;
 import se.curtrune.lucy.fragments.MonthCalenderFragment;
@@ -60,8 +58,6 @@ import se.curtrune.lucy.workers.MentalWorker;
 
 public class MainActivity extends AppCompatActivity {
 
-    //private Fragment currentFragment;
-    //private Fragment previousFragment;
     private DrawerLayout drawerLayout;
     private MaterialToolbar toolbar;
     private NavigationView navigationView;
@@ -71,22 +67,16 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fapBoost;
     private TextView textViewEnergy;
     private TextView textViewLucindaHome;
-    private GlobalStats globalStats;
     public static boolean VERBOSE = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
         log("MainActivity.onCreate(Bundle of joy)");
+        checkLoggedIn();
         initComponents();
         initListeners();
         initViewModel();
-        initGlobalStats();
-        Intent intent = getIntent();
-/*        if( intent.getBooleanExtra(Constants.INTENT_SHOW_CHILD_ITEMS, false)){
-            log("...INTENT_SHOW_CHILD_ITEMS");
-            Item currentParent = (Item) intent.getSerializableExtra(Constants.INTENT_SERIALIZED_ITEM);
-        }*/
         navigate(new CalenderFragment());
         setUserInterfaceCurrentEnergy();
     }
@@ -105,6 +95,13 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText( MainActivity.this, message, Toast.LENGTH_LONG).show();
             }
         });
+    }
+    private boolean checkLoggedIn(){
+        log("...checkLoggedIn()");
+        if( User.usesPassword(this) && !User.loggedIn(this)){
+            return false;
+        }
+        return true;
     }
     private void initComponents(){
         if( VERBOSE) log("...initComponents()");
@@ -161,27 +158,19 @@ public class MainActivity extends AppCompatActivity {
                 navigate(new CustomizeFragment());
             }else if( item.getItemId() == R.id.navigationDrawer_mentalFragment){
                 navigate( new MentalDayFragment());
-            }else if( item.getItemId() ==R.id.navigationDrawer_itemSession){
-                navigate( new ItemSessionFragment(ItemsWorker.getRootItem(Settings.Root.DAILY, this)));
+            }else if( item.getItemId() ==R.id.navigationDrawer_logOut){
+                log("...log out");
+                Intent intent = new Intent(this, LogInActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                //finish();
             }
             drawerLayout.close();
             return true;
         });
     }
 
-    /**
-     * to listen to changes made to stats by on or another fragment
-     * changes which should be reflected in the user interface
-     */
-    private void initGlobalStats(){
-        globalStats = GlobalStats.getInstance();
-        globalStats.register(new GlobalStats.Callback() {
-            @Override
-            public void onStatsChanged() {
-                setUserInterfaceCurrentEnergy();
-            }
-        });
-    }
+
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
         textViewEnergy.setOnClickListener(view->showMentalDay());
@@ -196,9 +185,7 @@ public class MainActivity extends AppCompatActivity {
             log("...energy updated", energy);
             setUserInterfaceCurrentEnergy();
         });
-        viewModel.getFragment().observe(this, fragment ->{
-            navigate(fragment);
-        });
+        viewModel.getFragment().observe(this, fragment -> navigate(fragment));
     }
     private void navigate(Fragment fragment){
         if( fragment == null){
@@ -294,13 +281,4 @@ public class MainActivity extends AppCompatActivity {
         log("...showMentalDay");
         navigate(new EstimateFragment());
     }
-
-/*    @Override
-    public void goToPreviousFragment() {
-        log("MainActivity.goToPreviousFragment()");
-        navigate(previousFragment);
-    }*/
-
-
-
 }

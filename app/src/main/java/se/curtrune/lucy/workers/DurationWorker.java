@@ -14,7 +14,7 @@ public class DurationWorker {
      * returns an estimated duration based on previous uses of this template
      * checks for template children, adds their actual duration and divides by number of children
      * @param template, the item for which you wish to get a duration estimate
-     * @param context, jkjkjkjikjk
+     * @param context, context context and context
      * @return duration estimate in seconds
      */
     public static long calculateTemplateDuration(Item template, Context context){
@@ -30,19 +30,6 @@ public class DurationWorker {
         }
         return duration / children.size();
     }
-/*    public static MentalStats getEstimate(Item item, Context context){
-        log("Duration.getEstimate(Item, Context)", item.getHeading());
-        if( !item.isTemplate()){
-            return item.getEstimate();
-        }
-        List<Item> children = ItemsWorker.selectChildren(item, context);
-        MentalStats result = new MentalStats();
-        for(Item item1 : children){
-            result.plusDuration(item1.getDuration());
-            result.plusEnergy(item1.getEnergy());
-        }
-        return result.divide(children.size());
-    }*/
 
     /**
      * calculates an estimated duration based on factors such as whether the item is a template
@@ -51,7 +38,6 @@ public class DurationWorker {
      * @param context, always the context
      * @return the estimated duration
      */
-
     public static long getEstimatedDuration(Item item, Context context){
         log("StaticsWorker.getEstimate(Item, Context)", item.getHeading());
         if( item.isTemplate()){
@@ -78,5 +64,9 @@ public class DurationWorker {
             duration += getEstimatedDuration(item, context);
         }
         return duration;
+    }
+    public static long  calculateEstimate(List<Item> items) {
+        if( VERBOSE) log("ItemsWorker.calculateEstimate(List<Item>)");
+        return items.stream().mapToLong(Item::getEstimatedDuration).sum();
     }
 }

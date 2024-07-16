@@ -34,8 +34,8 @@ public class Demo {
         item.setTargetTime(time);
         item.setIsCalenderItem(true);
         Repeat repeat = new Repeat();
-        repeat.setDays(days);
-        item.setPeriod(repeat);
+        repeat.setPeriod(days, Repeat.Unit.DAY);
+        item.setRepeat(repeat);
         item.setParentId(settings.getRootID(Settings.Root.DAILY));
         return item;
     }

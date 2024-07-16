@@ -32,10 +32,57 @@ public class MentalStats implements Serializable {
     public MentalStats() {
         if( VERBOSE) log("MentalStats()");
     }
+    public MentalStats(List<Mental> mentals){
+        if( VERBOSE) log("MentalStats(List<Mental>)");
+        this.mentalList = mentals;
+        calculate();
+    }
+    public MentalStats(Mental mental){
+        calculate(mental);
+    }
 
     public void add(Mental mental) {
         mentalList.add(mental);
     }
+
+    /**
+     * called if MentalStats is initiated with a list of mentals
+     */
+    private void calculate(){
+        log("...calculate()");
+        mentalList.forEach(System.out::println);
+        if( mentalList.size() < 1){
+            energy = 0;
+            mood = 0;
+            anxiety = 0;
+            stress = 0;
+        }else {
+            energy = mentalList.stream().mapToInt(Mental::getEnergy).sum() / mentalList.size();
+            if( VERBOSE) {
+                int sumEnergy = mentalList.stream().mapToInt(Mental::getEnergy).sum();
+                log("...energy", energy);
+                log("...sum energy", sumEnergy);
+                log(" mentals size", mentalList.size());
+                log("sum/size", sumEnergy / mentalList.size());
+            }
+            mood = mentalList.stream().mapToInt(Mental::getMood).sum() / mentalList.size();
+            anxiety = mentalList.stream().mapToInt(Mental::getAnxiety).sum() / mentalList.size();
+            stress = mentalList.stream().mapToInt(Mental::getStress).sum() / mentalList.size();
+        }
+    }
+
+    /**
+     * not much to calculate here,
+     * @param mental, the mental
+     */
+    private void calculate(Mental mental){
+        log("...calculate(Mental)");
+        energy = mental.getEnergy();
+        anxiety = mental.getAnxiety();
+        stress = mental.getStress();
+        mood = mental.getMood();
+    }
+    @Deprecated
     public MentalStats divide(int denominator){
         MentalStats estimate = new MentalStats();
         estimate.setType(Type.CALCULATED);

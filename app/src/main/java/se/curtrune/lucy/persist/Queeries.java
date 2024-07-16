@@ -4,7 +4,6 @@ import static se.curtrune.lucy.util.Logger.log;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.time.YearMonth;
 import java.time.ZoneOffset;
 import java.util.Locale;
@@ -18,7 +17,7 @@ import se.curtrune.lucy.fragments.TopTenFragment;
 
 public class Queeries {
     public static final String DROP_TABLE_ITEMS = "DROP TABLE IF EXISTS items ";
-    public static final String DROP_TABLE_CATEGORIES = "DROP TABLE IF EXISTS categories";
+    //public static final String DROP_TABLE_CATEGORIES = "DROP TABLE IF EXISTS categories";
     public static final String DROP_TABLE_LOGGER = "DROP TABLE IF EXISTS logger";
     public static final String DROP_TABLE_MENTAL = "DROP TABLE IF EXISTS mental";
     public static final String CREATE_TABLE_LOGGER = " CREATE TABLE logger " +
@@ -71,8 +70,8 @@ public class Queeries {
                     "isTemplate INTEGER, " +      //13
                     "isDone DEFAULT 0" +        //14
                     ")";
-    public static String CREATE_TABLE_CATEGORIES = "CREATE TABLE categories " +
-            "(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)";
+/*    public static String CREATE_TABLE_CATEGORIES = "CREATE TABLE categories " +
+            "(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)";*/
 
     public static boolean VERBOSE = false;
     public static String insert(Message message) {
@@ -103,9 +102,9 @@ public class Queeries {
     public static String selectItems(LocalDate targetDate, State state) {
         return String.format(Locale.ENGLISH, "SELECT * FROM items WHERE targetDate = %d AND state = %d", targetDate.toEpochDay(), state.ordinal());
     }
-    public static String selectCategories() {
+/*    public static String selectCategories() {
         return "SELECT name FROM categories ORDER BY name";
-    }
+    }*/
 
     /**
      * selects direct items to given parent
@@ -134,8 +133,8 @@ public class Queeries {
      * this one is supposed to selectItem that are
      *      calenderItems with targetDate to specified date
      *      any items that are done today
-     * @param date
-     * @return
+     * @param date, the date you've shown an interest in
+     * @return a appropriate valid sql queery
      */
     public static String selectTodayList(LocalDate date) {
         LocalDateTime.now().toLocalDate();
@@ -254,6 +253,12 @@ public class Queeries {
                 "SELECT * FROM items WHERE targetDate = %d AND isCalenderItem = 1 ORDER BY targetTime DESC",
                 date.toEpochDay());
 
+    }
+
+    public static String selectMentalChildren(Item item) {
+        return String.format(Locale.getDefault(), "SELECT * FROM mentals WHERE itemID = %d ORDER BY date DESC",
+                item.getID()
+                );
     }
 }
 

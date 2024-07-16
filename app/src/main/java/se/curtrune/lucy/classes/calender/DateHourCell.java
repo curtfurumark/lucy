@@ -61,6 +61,6 @@ public class DateHourCell {
     }
     @Override
     public String toString() {
-        return type.toString();
+        return String.format("%s, %s events %d", date.toString(), time.toString(),events.size() );
     }
 }

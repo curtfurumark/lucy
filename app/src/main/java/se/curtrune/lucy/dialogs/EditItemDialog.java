@@ -289,7 +289,7 @@ public class EditItemDialog extends BottomSheetDialogFragment {
         log("...showRepeatDialog()");
         RepeatDialog dialog = new RepeatDialog();
         dialog.setCallback(period -> {
-            log("...onRepeat(Period)", period.toString());
+            log("...onRepeat(Unit)", period.toString());
             currentAction.setTitle(period.toString());
             actionAdapter.notifyDataSetChanged();
         });

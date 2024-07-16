@@ -148,4 +148,18 @@
     <string name="currently">Aktuell</string>
     <string name="estimated">Beräknad</string>
     <string name="missing_heading">Saknad rubrik</string>
+    <string name="use_password">Använd lösenord</string>
+    <string name="log_in">Logga in</string>
+    <string name="password">Lösenord</string>
+    <string name="log_out">Logga ut</string>
+    <string name="top_ten">Tio i topp</string>
+    <string name="message_board">Anslagstavla</string>
+    <string name="contact_curt_rune">Kontakta curt rune</string>
+    <string name="every" >Varje</string>
+    <string name="_1_hour">1 Timme</string>
+    <string name="_1_day">1 Dag</string>
+    <string name="_1_week">1 Vecka</string>
+    <string name="_1_month">1 Månad</string>
+    <string name="postpone">Skjut upp</string>
+
 </resources>

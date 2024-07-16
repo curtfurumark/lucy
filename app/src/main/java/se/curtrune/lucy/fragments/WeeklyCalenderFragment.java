@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -98,7 +99,7 @@ public class WeeklyCalenderFragment extends Fragment {
             }
             dateHourCells.add(dateHourCell);
         }
-        Logger.logDateHourCells(dateHourCells);
+        //Logger.logDateHourCells(dateHourCells);
         return dateHourCells;
     }
 
@@ -132,11 +133,12 @@ public class WeeklyCalenderFragment extends Fragment {
         dateHourAdapter = new DateHourAdapter(dateHourCells, dateHourCell -> {
             log("...onDateHourCellSelected(DateHourCell)");
             log(dateHourCell);
-            Toast.makeText(getContext(), "CLICK DATEHOURCELL", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), dateHourCell.toString(), Toast.LENGTH_SHORT).show();
         });
         recyclerCells.setLayoutManager(new GridLayoutManager(getContext(), 8));
         recyclerCells.setItemAnimator(new DefaultItemAnimator());
         recyclerCells.setAdapter(dateHourAdapter);
+        recyclerCells.addItemDecoration( new DividerItemDecoration(getContext(), GridLayoutManager.VERTICAL));
 
     }
     private void nextWeek(){

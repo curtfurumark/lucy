@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,8 +20,6 @@ import androidx.annotation.Nullable;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-import java.time.Duration;
-
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Repeat;
 
@@ -31,9 +30,12 @@ public class RepeatDialog extends BottomSheetDialogFragment {
     private TextView textViewEveryMonth;
     private TextView textViewEveryYear;
     private TextView textViewCustom;
+    private EditText editTextQualifier;
     private LinearLayout layoutSimple;
     private LinearLayout layoutCustom;
+    private String dayWeekMonthYear;
     private Spinner spinnerPeriods;
+    ArrayAdapter<CharSequence> adapter;
     private Button buttonOK;
     private Button buttonDismiss;
 
@@ -44,13 +46,13 @@ public class RepeatDialog extends BottomSheetDialogFragment {
     private Mode mode;
 
     public interface Callback{
-        void onRepeat(Repeat.Period period);
+        void onRepeat(Repeat repeat);
     }
 
     private Callback listener;
     public RepeatDialog(){
-
         if( VERBOSE) log("RepeatDialog constructor");
+        mode = Mode.SIMPLE;
     }
 
     @Nullable
@@ -64,11 +66,16 @@ public class RepeatDialog extends BottomSheetDialogFragment {
         return view;
     }
     private void getPeriod(){
-        log("...getPeriod()");
+        log("...getUnit()");
         if( mode.equals(Mode.CUSTOM)){
             Repeat repeat = new Repeat();
-            //repeat.setPeriod();
-
+            String qualifier = editTextQualifier.getText().toString();
+            log("...qualifier", qualifier);
+            log("...dayWeekYearMonth", dayWeekMonthYear);
+            //listener.onRepeat();
+            dismiss();
+        }else{
+            log("STRANGE, ");
         }
     }
 
@@ -84,33 +91,49 @@ public class RepeatDialog extends BottomSheetDialogFragment {
         layoutCustom = view.findViewById(R.id.repeatDialog_layoutCustom);
         layoutSimple = view.findViewById(R.id.repeatDialog_layoutSimple);
         spinnerPeriods = view.findViewById(R.id.repeatDialog_spinnerPeriod);
+        editTextQualifier = view.findViewById(R.id.repeatDialog_qualifier);
     }
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
-        textViewEveryMonth.setOnClickListener(view->onRepeat(Repeat.Period.MONTH));
-        textViewEveryWeek.setOnClickListener(view->onRepeat(Repeat.Period.WEEK));
-        textViewEveryDay.setOnClickListener(view->onRepeat(Repeat.Period.DAY));
-        textViewEveryYear.setOnClickListener(view->onRepeat(Repeat.Period.YEAR));
+        textViewEveryMonth.setOnClickListener(view->onRepeat(Repeat.Unit.MONTH));
+        textViewEveryWeek.setOnClickListener(view->onRepeat(Repeat.Unit.WEEK));
+        textViewEveryDay.setOnClickListener(view->onRepeat(Repeat.Unit.DAY));
+        textViewEveryYear.setOnClickListener(view->onRepeat(Repeat.Unit.YEAR));
         textViewCustom.setOnClickListener(view->toggleCustom());
         buttonDismiss.setOnClickListener(view->dismiss());
         buttonOK.setOnClickListener(view->getPeriod());
     }
     private void initSpinner(){
-        log("...initSpinner");
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+        if( VERBOSE) log("...initSpinner");
+        adapter = ArrayAdapter.createFromResource(
                 getContext(),
                 R.array.periods,
                 android.R.layout.simple_spinner_item
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerPeriods.setAdapter(adapter);
+        spinnerPeriods.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                log("...spinner.onItemClick(...)");
+                dayWeekMonthYear = adapter.getItem(position).toString();
+                //log("...dayWeekMonthYear", dayWeekMonthYear);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        spinnerPeriods.setSelection(0);
     }
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
     }
-    private void onRepeat(Repeat.Period period){
-        listener.onRepeat(period);
+    private void onRepeat(Repeat.Unit unit){
+        Repeat repeat = new Repeat();
+        repeat.setPeriod(1, unit);
+        listener.onRepeat(repeat);
         dismiss();
     }
     public void setCallback(Callback callback){
@@ -121,9 +144,11 @@ public class RepeatDialog extends BottomSheetDialogFragment {
         if( layoutSimple.getVisibility() == View.VISIBLE){
             layoutSimple.setVisibility(View.GONE);
             layoutCustom.setVisibility(View.VISIBLE);
+            mode = Mode.CUSTOM;
         }else{
             layoutCustom.setVisibility(View.GONE);
             layoutSimple.setVisibility(View.VISIBLE);
+            mode = Mode.SIMPLE;
         }
     }
 

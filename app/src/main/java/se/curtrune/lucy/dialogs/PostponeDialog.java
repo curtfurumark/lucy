@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RadioButton;
 
 import androidx.annotation.NonNull;
@@ -29,6 +28,7 @@ public class PostponeDialog extends DialogFragment {
 
     public interface Callback{
         void postpone(Postpone postpone);
+        void dismiss();
     }
     private Callback callback;
     public static boolean VERBOSE = false;
@@ -66,7 +66,10 @@ public class PostponeDialog extends DialogFragment {
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
         buttonOK.setOnClickListener(view->postpone());
-        buttonDismiss.setOnClickListener(view->dismiss());
+        buttonDismiss.setOnClickListener(view->{
+            callback.dismiss();
+            dismiss();
+        });
     }
     private void postpone(){
         log("...postpone()");

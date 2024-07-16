@@ -27,23 +27,14 @@ import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
 
 public class ItemsWorker {
-    private static ItemsWorker instance;
     public static boolean VERBOSE = false;
-    private ItemsWorker(){
-        log("...ItemsWorker() private constructor");
-    }
-    public static ItemsWorker getInstance(){
-        if( instance == null){
-            instance = new ItemsWorker();
-        }
-        return instance;
-    }
 
-    public static long  calculateEstimate(List<Item> items) {
-        if( VERBOSE) log("ItemsWorker.calculateEstimate(List<Item>)");
-        return items.stream().mapToLong(Item::getEstimatedDuration).sum();
-    }
-
+    /**
+     * deletes an item, but if it has children, //TODO delete children recursively
+     * @param item, the item to delete from the db
+     * @param context context context context
+     * @return true if item was deleted false otherwise
+     */
     public static boolean delete(Item item, Context context) {
         if( VERBOSE) log("ItemsWorker.delete(Item, Context)");
         boolean res = false;
@@ -63,18 +54,21 @@ public class ItemsWorker {
         return res;
     }
 
-
-    public static Item getParent(Item currentParent, Context context) {
+    /**
+     * @param item, the item for which you wish to get its parent
+     * @param context context context context
+     * @return the parent, TODO, null if not parent?
+     */
+    public static Item getParent(Item item, Context context) {
         if( VERBOSE) log("ItemsWorker.getParent(Item, Context)");
-        if( currentParent == null){
-            log("...currentParent is null, returning null");
+        if( item == null){
+            log("WARNING, parent item is null, returning null");
             return null;
         }
         try (LocalDB db = new LocalDB(context)) {
-            return db.selectItem(currentParent.getParentId());
+            return db.selectItem(item.getParentId());
         }
     }
-
 
     public static Item getRootItem(Settings.Root root, Context context){
         if( VERBOSE) log("ItemsWorker.getRootItem(Settings.Root, Context)");

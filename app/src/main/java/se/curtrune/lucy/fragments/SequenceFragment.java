@@ -34,6 +34,7 @@ import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.DurationDialog;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.util.Converter;
+import se.curtrune.lucy.workers.DurationWorker;
 import se.curtrune.lucy.workers.ItemsWorker;
 
 public class SequenceFragment extends Fragment implements SequenceAdapter.Callback{
@@ -259,7 +260,7 @@ public class SequenceFragment extends Fragment implements SequenceAdapter.Callba
         long numberDone  = items.stream().filter(item->item.isDone()).count();
         String textInfo = String.format(Locale.getDefault(), "%d/%d done", numberDone, items.size());
         textViewNumberItems.setText(textInfo);
-        long seconds = ItemsWorker.calculateEstimate(items);
+        long seconds = DurationWorker.calculateEstimate(items);
         String textEstimatedDuration = String.format(Locale.getDefault() ,"estimated total duration %s", Converter.formatSecondsWithHours(seconds));
         textViewEstimatedTotalDuration.setText(textEstimatedDuration);
         String textEstimatedEnergy = String.format(Locale.getDefault(), "estimated total energy %d",calculateEnergy());

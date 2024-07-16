@@ -46,7 +46,6 @@ import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.ItemsWorker;
 import se.curtrune.lucy.workers.MentalWorker;
 import se.curtrune.lucy.workers.NotificationsWorker;
-import se.curtrune.lucy.workers.StatisticsWorker;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -82,7 +81,6 @@ public class CalenderFragment extends Fragment {
      * this fragment using the provided parameters.
      * @return A new instance of fragment CalenderFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static CalenderFragment newInstance() {
         return  new CalenderFragment();
 
@@ -110,13 +108,15 @@ public class CalenderFragment extends Fragment {
         initSwipe();
         initViewModel();
         setUserInterface(currentDate);
-        calculateEstimate();
+        //calculateEstimate();
         return view;
     }
+/*
     private void calculateEstimate(){
         if( VERBOSE)  log("...calculateEstimate()");
         StatisticsWorker.getEstimate(currentDate, getContext());
     }
+*/
 
     /**
      * deletes and item AND its mental if such exists
@@ -191,19 +191,16 @@ public class CalenderFragment extends Fragment {
             public void onLongClick(Item item) {
                 log("...onLongClick(Item)", item.getHeading());
                 EditItemDialog dialog = new EditItemDialog(item);
-                dialog.setCallback(new EditItemDialog.Callback() {
-                    @Override
-                    public void onUpdate(Item item) {
-                        log("EditItemDialog.Callback.onUpdate(Item)");
-                        log(item);
-                        int rowsAffected = ItemsWorker.update(item, getContext());
-                        if( rowsAffected != 1){
-                            log("ERROR updating item", item.getHeading());
-                        }else{
-                            log("...item updated");
-                            items.sort(Comparator.comparingLong(Item::compareTargetTime));
-                            adapter.notifyDataSetChanged();
-                        }
+                dialog.setCallback(item1 -> {
+                    log("EditItemDialog.Callback.onUpdate(Item)");
+                    log(item1);
+                    int rowsAffected = ItemsWorker.update(item1, getContext());
+                    if( rowsAffected != 1){
+                        log("ERROR updating item", item1.getHeading());
+                    }else{
+                        log("...item updated");
+                        items.sort(Comparator.comparingLong(Item::compareTargetTime));
+                        adapter.notifyDataSetChanged();
                     }
                 });
                 dialog.show(getChildFragmentManager(), "edit item");
@@ -290,11 +287,24 @@ public class CalenderFragment extends Fragment {
 
                 }else if( direction == ItemTouchHelper.RIGHT) {
                     PostponeDialog dialog = new PostponeDialog();
-                    dialog.setCallback(postpone -> {
+                    dialog.setCallback(new PostponeDialog.Callback() {
+                        @Override
+                        public void postpone(PostponeDialog.Postpone postpone) {
+                            log("PostponeDialog.postpone(Postpone)", postpone.toString());
+                            CalenderFragment.this.postpone(item, postpone);
+                        }
+
+                        @Override
+                        public void dismiss() {
+                            log("...dismiss()");
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+/*                    dialog.setCallback(postpone -> {
                         log("...postpone(Postpone)", postpone.toString());
                         postpone(item, postpone);
-                        adapter.notifyDataSetChanged();
-                    });
+                        //adapter.notifyDataSetChanged();
+                    });*/
                     dialog.show(getChildFragmentManager(), "postpone");
                 }
             }
@@ -324,7 +334,7 @@ public class CalenderFragment extends Fragment {
     private void postpone(Item item, PostponeDialog.Postpone postpone){
         log("...postpone(Item, Postpone)");
         if(item.isPrioritized()){
-            Toast.makeText(getContext(), "no no no, dont postpone prioritized items", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "no no no, don't postpone prioritized items", Toast.LENGTH_LONG).show();
             return;
         }
         log("...currentDate", currentDate.toString());
@@ -332,6 +342,7 @@ public class CalenderFragment extends Fragment {
             case ONE_HOUR:
                 LocalTime targetTime = item.getTargetTime();
                 item.setTargetTime(targetTime.plusHours(1));
+                items.sort(Comparator.comparingLong(Item::compareTargetTime));
                 break;
             case ONE_DAY:
                 item.setTargetDate(currentDate.plusDays(1));
@@ -351,6 +362,7 @@ public class CalenderFragment extends Fragment {
         if( rowsAffected != 1){
             Toast.makeText(getContext(), "error updating item", Toast.LENGTH_LONG).show();
         }
+        adapter.notifyDataSetChanged();
     }
 
     private void prevWeek(){

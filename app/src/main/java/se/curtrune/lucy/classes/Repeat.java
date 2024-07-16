@@ -2,57 +2,50 @@ package se.curtrune.lucy.classes;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import android.content.res.Resources;
+
+import androidx.annotation.NonNull;
+
 import com.google.gson.Gson;
 
 import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import se.curtrune.lucy.classes.calender.Week;
+import se.curtrune.lucy.R;
 
 
 public class Repeat implements Serializable {
 
     public static boolean   VERBOSE = false;
 
-    public Period getPeriod() {
-        return period;
+    public Unit getUnit() {
+        return unit;
     }
 
-    public void setCurrentDate(LocalDate currentDate) {
-        this.currentDate = currentDate;
-    }
-
-    public void setPeriod(int qualifier, Period period) {
+    public void setPeriod(int qualifier, Unit unit) {
         this.qualifier = qualifier;
-        this.period = period;
+        this.unit = unit;
     }
-
-    public enum Mode{
-        DAYS, DAY_OF_WEEKS
+    public enum Unit {
+        DAY, WEEK, MONTH, YEAR, DAYS_OF_WEEK, PENDING
     }
-    public enum Period{
-        DAY, WEEK, MONTH, YEAR, DAYS_OF_WEEK
-    }
-    private Period period;
-    private Mode mode = Mode.DAYS;
+    private Unit unit = Unit.PENDING;
     private int days;
-    private LocalTime time;
     private LocalDate firstDate;
-    private LocalDate currentDate;
     private LocalDate lastDate;
     private int qualifier = 1;
     private List<DayOfWeek> dayOfWeeks = new ArrayList<>();
     public Repeat(){
-        currentDate = LocalDate.now();
+        log("Repeat() constructor");
     }
-    public Repeat(LocalDate currentDate){
-        this.currentDate = currentDate;
 
+    public void add(DayOfWeek dayOfWeek){
+        unit = Unit.DAYS_OF_WEEK;
+        dayOfWeeks.add(dayOfWeek);
     }
     private LocalDate calculateNextDayOfWeek(){
         LocalDate date = LocalDate.now().plusDays(1);
@@ -71,18 +64,11 @@ public class Repeat implements Serializable {
     public LocalDate getLastDate(){
         return this.lastDate;
     }
-    public Mode getMode(){
-        return mode;
+
+    public int getQualifier() {
+        return qualifier;
     }
 
-    public void setDays(int days) {
-        mode = Mode.DAYS;
-        this.days = days;
-    }
-    public void add(DayOfWeek dayOfWeek){
-        mode = Mode.DAY_OF_WEEKS;
-        dayOfWeeks.add(dayOfWeek);
-    }
     private boolean isNextDate(LocalDate date){
         for(DayOfWeek dayOfWeek: dayOfWeeks){
             if( dayOfWeek.equals(date.getDayOfWeek())){
@@ -92,51 +78,43 @@ public class Repeat implements Serializable {
         return false;
     }
     public LocalDate getNextDate(){
-        if( mode.equals(Mode.DAY_OF_WEEKS)) {
-            return calculateNextDayOfWeek();
-        }
-        return LocalDate.now().plusDays(days);
+        return getNextDate(unit, qualifier);
     }
 
     /**
      *
-     * @param period, one of DAY, WEEK, MONTH and maybe YEAR
+     * @param unit, one of DAY, WEEK, MONTH and maybe YEAR
      * @param qualifier, for every other WEEK, qualifier 2
      * @return the next date that
      */
-    public LocalDate getNextDate(Period period, int qualifier){
-        log("Repeat.getNextDate(Period)");
+    private LocalDate getNextDate(Unit unit, int qualifier){
+        if( unit == null){
+            log("ERROR getNextDate(Unit, int)");
+            unit = Unit.DAY;//TODO, fix this HACK
+        }
+        log("Repeat.getNextDate(Unit)", unit.toString());
         if( qualifier < 1){
             log("WARNING, qualifier less than one, setting it to one");
             qualifier = 1;
         }
         LocalDate currentDate = LocalDate.now();
-        switch (period){
+        switch (unit){
             case DAY:
-                return currentDate.plusDays(1 * qualifier);
+                return currentDate.plusDays(qualifier);
             case WEEK:
-                return currentDate.plusWeeks(1 * qualifier);
+                return currentDate.plusWeeks(qualifier);
             case MONTH:
-                return currentDate.plusMonths(1 * qualifier);
+                return currentDate.plusMonths(qualifier);
             case YEAR:
-                return currentDate.plusYears(1 * qualifier);
+                return currentDate.plusYears(qualifier);
             case DAYS_OF_WEEK:
                 return calculateNextDayOfWeek();
         }
         return currentDate;
     }
-    public LocalDate getNextWeekDay(){
-        log("Repeat.getNextWeekDay()");
-        return LocalDate.now();
-    }
-    public LocalTime getTime(){
-        return time;
-    }
+
     public List<DayOfWeek> getWeekDays(){
         return dayOfWeeks;
-    }
-    public boolean isMode(Mode mode){
-        return this.mode.equals(mode);
     }
 
     public void setFirstDate(LocalDate firstDate){
@@ -145,12 +123,12 @@ public class Repeat implements Serializable {
     public void setLastDate(LocalDate lastDate){
         this.lastDate = lastDate;
     }
-    public void setPeriod(Period period){
-        log("Repeat.setPeriod(Period) ", period.toString());
-        this.period = period;
+    public void setUnit(Unit unit){
+        log("Repeat.setPeriod(Unit) ", unit.toString());
+        this.unit = unit;
     }
     public void setWeekDays(List<DayOfWeek> weekDays){
-        this.mode = Mode.DAY_OF_WEEKS;
+        this.unit = Unit.DAYS_OF_WEEK;
         this.dayOfWeeks = weekDays;
     }
     public void remove(DayOfWeek dayOfWeek){
@@ -163,15 +141,13 @@ public class Repeat implements Serializable {
         return new Gson().toJson(this, Repeat.class);
     }
 
+    @NonNull
     @Override
     public String toString() {
-        if( mode.equals(Mode.DAYS)) {
-            return String.format(Locale.getDefault(), "%d %s",days,  mode.toString());
-        }
-        String weekDays = "";
-        for( DayOfWeek dayOfWeek: dayOfWeeks){
-            weekDays += dayOfWeek.toString() + " ";
-        }
-        return String.format(Locale.getDefault(), "%s", weekDays);
+        return  String.format(Locale.getDefault(), "%s %d %s",
+                //Resources.getSystem().getString(R.string.every),//String resource not found
+                "each",
+                qualifier,
+                unit.toString());
     }
 }

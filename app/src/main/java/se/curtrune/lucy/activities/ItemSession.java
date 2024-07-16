@@ -48,9 +48,7 @@ import se.curtrune.lucy.classes.Reward;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.dialogs.AddCategoryDialog;
-import se.curtrune.lucy.dialogs.EstimateDialog;
 import se.curtrune.lucy.dialogs.AddItemDialog;
-import se.curtrune.lucy.dialogs.AddPeriodDialog;
 import se.curtrune.lucy.dialogs.DurationDialog;
 import se.curtrune.lucy.dialogs.NotificationDialog;
 import se.curtrune.lucy.util.Constants;
@@ -612,17 +610,18 @@ public class ItemSession extends AppCompatActivity implements
     private void repeatAction(){
         log("...repeatAction()");
         if( currentItem.hasPeriod()){
-            currentItem.setPeriod((Repeat) null);
+            currentItem.setRepeat((Repeat) null);
             imageViewRepeatAction.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.baseline_add_24));
         }else{
-            AddPeriodDialog dialog = new AddPeriodDialog();
+            log("...show dialog");
+/*            AddPeriodDialog dialog = new AddPeriodDialog();
             dialog.setListener(period -> {
                 log("...onPeriod(Repeat)");
                 currentItem.setPeriod(period);
                 imageViewRepeatAction.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.baseline_delete_24));
                 textViewPeriodDescription.setText(period.toString());
             });
-            dialog.show(getSupportFragmentManager(), "add repeat");
+            dialog.show(getSupportFragmentManager(), "add repeat");*/
         }
 
     }
@@ -840,7 +839,7 @@ public class ItemSession extends AppCompatActivity implements
     }
     private void showAddPeriodDialog(){
         log("...showPeriodDialog()");
-        AddPeriodDialog dialog = new AddPeriodDialog();
+/*        AddPeriodDialog dialog = new AddPeriodDialog();
         dialog.setListener(period -> {
             log("...onPeriod(Repeat)", period.toString());
             log(period);
@@ -851,7 +850,7 @@ public class ItemSession extends AppCompatActivity implements
                 Toast.makeText(this, "error updating item", Toast.LENGTH_LONG).show();
             }
         });
-        dialog.show(getSupportFragmentManager(), "add edit repeat");
+        dialog.show(getSupportFragmentManager(), "add edit repeat");*/
     }
     private void showCommentDialog(){
         log("...showCommentDialog()");
@@ -860,7 +859,7 @@ public class ItemSession extends AppCompatActivity implements
 
     private void showEstimateDialog(){
         log("...showEstimateDialog()");
-        EstimateDialog dialog = new EstimateDialog();
+/*        EstimateDialog dialog = new EstimateDialog();
         dialog.setCallback((estimate, mode) -> {
             log("...onEstimate(MentalStats)", mode.toString());
             log(estimate);
@@ -872,7 +871,7 @@ public class ItemSession extends AppCompatActivity implements
             }
             setUserInterface(estimate);
         });
-        dialog.show(getSupportFragmentManager(), "add estimate");
+        dialog.show(getSupportFragmentManager(), "add estimate");*/
     }
 
     /**

@@ -299,13 +299,13 @@ public class AddItemDialog extends BottomSheetDialogFragment {
     private void showRepeatDialog(){
         log("...showRepeatDialog()");
         RepeatDialog dialog = new RepeatDialog();
-        dialog.setCallback(period -> {
-            log("...onRepeat(Period)", period.toString());
-            currentAction.setTitle(period.toString());
+        dialog.setCallback(repeat -> {
+            log("...onRepeat(Unit)", repeat.toString());
+            currentAction.setTitle(repeat.toString());
+            newItem.setRepeat(repeat);
             actionAdapter.notifyDataSetChanged();
         });
         dialog.show(getChildFragmentManager(), "repeat");
-
     }
     private void showTimeDialog(){
         log("...showTimeDialog()");

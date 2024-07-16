@@ -4,8 +4,6 @@ import static se.curtrune.lucy.util.Logger.log;
 
 import android.content.Context;
 
-import androidx.fragment.app.Fragment;
-
 import java.sql.SQLException;
 
 import se.curtrune.lucy.R;
@@ -55,7 +53,7 @@ public class Lucinda {
     public void initTheApp(Context context) throws SQLException {
         log("Lucinda.initTheApp(Context)");
         DBAdmin.createTables(context);
-        DBAdmin.insertCategories(context);
+        //DBAdmin.insertCategories(context);
         DBAdmin.insertRootItems(context);
         Demo.insertDemo(context);
         setDefaultUserSettings(context);
@@ -84,8 +82,8 @@ public class Lucinda {
         User.setUseDarkMode(true, context);
 
     }
-    public void setIsInitialized(boolean b, Context context) {
+/*    public void setIsInitialized(boolean b, Context context) {
         log("Lucinda.setIsInitialized(boolean, Context");
         settings.setLucyIsInitialized(b, context);
-    }
+    }*/
 }

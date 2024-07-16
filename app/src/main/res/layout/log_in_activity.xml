@@ -11,7 +11,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:hint="password"
+        android:hint="@string/password"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -24,5 +24,5 @@
         android:id="@+id/logInActivity_buttonLogIn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="log in" />
+        android:text="@string/log_in"/>
 </LinearLayout>

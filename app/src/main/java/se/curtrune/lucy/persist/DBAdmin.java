@@ -26,8 +26,8 @@ public class DBAdmin {
         try(LocalDB  db = new LocalDB(context)) {
             db.executeSQL(Queeries.DROP_TABLE_MENTAL);
             db.executeSQL(Queeries.CREATE_TABLE_MENTAL);
-            db.executeSQL(Queeries.DROP_TABLE_CATEGORIES);
-            db.executeSQL(Queeries.CREATE_TABLE_CATEGORIES);
+            //db.executeSQL(Queeries.DROP_TABLE_CATEGORIES);
+            //db.executeSQL(Queeries.CREATE_TABLE_CATEGORIES);
             db.executeSQL(Queeries.DROP_TABLE_ITEMS);
             db.executeSQL(Queeries.CREATE_TABLE_ITEMS);
             db.executeSQL(EcQueeries.DROP_TABLE_TRANSACTIONS);
@@ -182,14 +182,14 @@ public class DBAdmin {
         return cv;
     }
 
-    public static void insertCategories(Context context) {
+/*    public static void insertCategories(Context context) {
         log("...insertCategories(Context)");
         try(LocalDB db = new LocalDB(context)) {
             for (String category : Settings.getCategories()) {
                 db.insertCategory(category);
             }
         }
-    }
+    }*/
     public static void insertRootItems(Context context) {
         log("...insertRootItems(Context)");
         Settings settings = Settings.getInstance(context);

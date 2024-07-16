@@ -58,7 +58,6 @@ public class LogInActivity extends AppCompatActivity {
         }else{
             log("...nightly alarm is already set");
         }
-        Lucinda.Dev = true;
         initComponents();
         initListeners();
         initDevMode();
@@ -66,9 +65,8 @@ public class LogInActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             checkNotificationPermission();
         }
-        if (User.usesPassword(this)) {
+        if (User.usesPassword(this) && !User.isDevMode(this)) {
             log("...using password");
-            //logIn();
         } else {
             startActivity(new Intent(this, MainActivity.class));
         }

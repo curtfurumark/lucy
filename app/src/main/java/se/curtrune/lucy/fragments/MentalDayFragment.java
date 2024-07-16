@@ -26,6 +26,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import se.curtrune.lucy.R;
@@ -62,15 +63,16 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
     private enum Mode{
         ESTIMATE, ACTUAL
     }
-    private Mode mode = Mode.ESTIMATE;
+    private Mode currentMode = Mode.ESTIMATE;
     LucindaViewModel viewModel;
     public static boolean VERBOSE = false;
     public MentalDayFragment(){
-
+        currentDate = LocalDate.now();
+        currentMode = Mode.ESTIMATE;
     }
     public MentalDayFragment(LocalDate date, boolean actual){
         currentDate = date;
-        mode = actual ? Mode.ACTUAL: Mode.ESTIMATE;
+        currentMode = actual ? Mode.ACTUAL: Mode.ESTIMATE;
     }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,7 +89,7 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
         initRecycler();
         initListeners();
         initViewModel();
-        initMentalStats();
+        initMentalStats(currentDate, currentMode);
         updateUserInterface();
         return view;
     }
@@ -146,8 +148,8 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
         if( VERBOSE) log("...initListeners()");
         switchActual.setOnClickListener(v -> {
             log("onClick(View) switch actual that is");
-            mode = switchActual.isChecked()? Mode.ACTUAL: Mode.ESTIMATE;
-            initMentalStats();
+            currentMode = switchActual.isChecked()? Mode.ACTUAL: Mode.ESTIMATE;
+            initMentalStats(currentDate, currentMode);
         });
         radioButtonEnergy.setOnClickListener(view->{
             mentalType = MentalAdapter.Mental.ENERGY;
@@ -189,21 +191,20 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
      * if mode estimate, get all items that are to be done this date
      * if mode action get all items that are done today
      */
-    private void initMentalStats(){
+    private void initMentalStats(LocalDate date, Mode mode){
         log("...initMentalStats()", mode.toString());
-        //date = LocalDate.now();
         List<Item> items;
-        if( currentDate.equals(LocalDate.now())) {
+        if( date.equals(LocalDate.now())) {
             if (mode.equals(Mode.ACTUAL)) {
-                items = ItemsWorker.selectDateState(currentDate, State.DONE, getContext());
+                items = ItemsWorker.selectDateState(date, State.DONE, getContext());
             } else {
-                items = ItemsWorker.selectTodayList(currentDate, getContext());
+                items = ItemsWorker.selectTodayList(date, getContext());
             }
         }else if( currentDate.isAfter(LocalDate.now())){
-            items = ItemsWorker.selectDateState(currentDate, State.TODO, getContext());
+            items = ItemsWorker.selectDateState(date, State.TODO, getContext());
         }else{
             switchActual.setVisibility(View.GONE);
-            items = ItemsWorker.selectDateState(currentDate,State.DONE,  getContext());
+            items = ItemsWorker.selectDateState(date,State.DONE,  getContext());
         }
         items.forEach(System.out::println);
         mentalStats = MentalWorker.getStatistics(items, getContext());
@@ -255,12 +256,22 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
         }
         viewModel.updateEnergy(true);
     }
+    private void setSwitchActual(LocalDate date){
+        log("...setSwitchActual()");
+        if( date.equals(LocalDate.now())){
+            switchActual.setVisibility(View.VISIBLE);
+            switchActual.setChecked(currentMode.equals(Mode.ACTUAL) ? true: false);
+        }else{
+            switchActual.setVisibility(View.INVISIBLE);
+        }
+
+
+    }
     private void showDateDialog(){
         if( VERBOSE) log("...showDateDialog()");
         DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext());
         datePickerDialog.setOnDateSetListener((view, year, month, dayOfMonth) ->
         {
-
             currentDate = LocalDate.of(year, month + 1, dayOfMonth);
             log("...onDateSet()", currentDate.toString());
             updateStatistics();
@@ -268,22 +279,22 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
         datePickerDialog.show();
     }
     private void showMentalDialog(){
-        log("...showMentalDialog()");
+        if( VERBOSE) log("...showMentalDialog()");
         MentalDialog dialog = new MentalDialog();
         dialog.setCallback(this);
         dialog.show(getChildFragmentManager(), "mental dialog");
     }
-
     /**
      */
     private void updateUserInterface(){
-        log("...updateUserInterface()", mentalType.toString());
+        if( VERBOSE) log("...updateUserInterface()", mentalType.toString());
         int total = 0;
+        setSwitchActual(currentDate);
         String mentalLabel = "Energy";
         switch (mentalType){
             case ENERGY:
                 total = mentalStats.getEnergy();
-                mentalLabel = getString(R.string.mental);
+                mentalLabel =  getString(R.string.energy);
                 break;
             case STRESS:
                 total = mentalStats.getStress();
@@ -298,7 +309,8 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
                 mentalLabel = getString(R.string.mood);
                 break;
         }
-        Collections.reverse(mentals);
+        mentals.sort(Comparator.comparingLong(Mental::compareTime));
+        //Collections.reverse(mentals); //TODO, ascending or descending that is the question
         adapter.setList(mentals);
         adapter.show(mentalType);
         textViewMentalLabel.setText(mentalLabel);
@@ -307,9 +319,7 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
     }
     private void updateStatistics(){
         log("...updateStatistics()", currentDate.toString());
-        initMentalStats();
+        initMentalStats(currentDate, currentMode);
         updateUserInterface();
     }
-
-
 }

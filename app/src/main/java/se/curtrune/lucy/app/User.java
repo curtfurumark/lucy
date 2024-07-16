@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import se.curtrune.lucy.activities.MainActivity;
 import se.curtrune.lucy.workers.SettingsWorker;
 
 public class User {
@@ -25,6 +26,7 @@ public class User {
     public static final String KEY_PANIC_URLS = "KEY_PANIC_URLS";
     public static final String KEY_LANGUAGE = "KEY_LANGUAGE";
     public static final String KEY_DEV_MODE = "KEY_DEV_MODE";
+    public static final String KEY_LOGGED_IN = "KEY_LOGGED_IN";
 
     public static void addCategory(String category, Context context){
         log("User.addCategory(String, Context)", category);
@@ -69,6 +71,9 @@ public class User {
     }
     public static void setIcePhoneNumber(int phoneNumber, Context context){
         Settings.addInt(ICE_PHONE_NUMBER, phoneNumber, context);
+    }
+    public static void setLoggedIn(boolean loggedIn, Context context){
+        Settings.addBoolean(KEY_LOGGED_IN, loggedIn, context);
     }
     public static void setUserName(String userName, Context context){
         Settings.addString(Settings.USER,userName,  context);
@@ -154,5 +159,9 @@ public class User {
 
     public static boolean isDevMode(Context context) {
         return Settings.getBoolean(KEY_DEV_MODE, false, context);
+    }
+
+    public static boolean loggedIn(Context context) {
+        return Settings.getBoolean(KEY_LOGGED_IN, false, context);
     }
 }

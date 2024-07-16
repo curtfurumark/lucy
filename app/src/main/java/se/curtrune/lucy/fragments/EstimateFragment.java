@@ -95,27 +95,16 @@ public class EstimateFragment extends Fragment {
         labelCurrent = view.findViewById(R.id.estimateFragment_labelActual);
         labelEstimate = view.findViewById(R.id.estimateFragment__labelEstimate);
     }
-    private void initViewModel(){
-        log("...initViewModel()");
-        viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
-    }
-    private void setUserInterfaceCurrent(){
-        log("...setUserInterfaceCurrent()");
-        String stringActualDuration = String.format(Locale.getDefault(), "%s: %s", getString(R.string.duration),Converter.formatSecondsWithHours(actualDuration));
-        String stringCurrentEnergy = String.format(Locale.getDefault(), "%s %d", getString(R.string.energy), currentStats.getEnergy());
-        String stringCurrentAnxiety = String.format(Locale.getDefault(), "%s %d", getString(R.string.anxiety), currentStats.getAnxiety());
-        String stringCurrentStress = String.format(Locale.getDefault(), "%s %d", getString(R.string.stress), currentStats.getStress());
-        String stringCurrentMood = String.format(Locale.getDefault(), "%s %d", getString(R.string.mood), currentStats.getMood());
-        textViewCurrentEnergy.setText(stringCurrentEnergy);
-        textViewCurrentAnxiety.setText(stringCurrentAnxiety);
-        textViewCurrentStress.setText(stringCurrentStress);
-        textViewCurrentMood.setText(stringCurrentMood);
-        textViewActualDuration.setText(stringActualDuration);
-    }
     private void initDefaults(){
         if( VERBOSE) log("...initDefaults()");
         date = LocalDate.now();
     }
+    private void initViewModel(){
+        if( VERBOSE)log("...initViewModel()");
+        viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
+    }
+
+
 
     /**
      * need to figure out a way to calculate coming days, but that will require some serious thing
@@ -123,10 +112,9 @@ public class EstimateFragment extends Fragment {
      * @param date the date currently only current date today whatever
      */
     private void initMentalStatsAndDuration(LocalDate date){
-        log("...initMentalStatsAndDuration(LocalDate)", date.toString());
+        if( VERBOSE) log("...initMentalStatsAndDuration(LocalDate)", date.toString());
         items = ItemsWorker.selectTodayList(date, getContext());
-        //items = ItemsWorker.selectCalenderItems(date, getContext());
-        items.forEach(System.out::println);
+        if( VERBOSE) items.forEach(System.out::println);
         estimatedStats = MentalWorker.getMentalStats(items, getContext());
         estimatedDuration =  DurationWorker.getEstimatedDuration(items, getContext());
         List<Item> doneItems = items.stream().filter(Item::isDone).collect(Collectors.toList());
@@ -139,9 +127,10 @@ public class EstimateFragment extends Fragment {
         textViewDate.setOnClickListener(view->showDateDialog());
         textViewActualDuration.setOnClickListener(view->printActualDuration());
         labelCurrent.setOnClickListener(view->printActualMental());
+        labelEstimate.setOnClickListener(view-> navigateToEstimateFragment());
     }
     private void initRecyclerDuration(){
-        log("...initRecyclerDuration()");
+        if( VERBOSE) log("...initRecyclerDuration()");
         adapterDuration = new ListableAdapter(new ArrayList<>(), new ListableAdapter.Callback() {
             @Override
             public void onItemClick(Listable item) {
@@ -157,6 +146,10 @@ public class EstimateFragment extends Fragment {
         recyclerDuration.setLayoutManager(layoutManager);
         recyclerDuration.setItemAnimator(new DefaultItemAnimator());
         recyclerDuration.setAdapter(adapterDuration);
+    }
+    private void navigateToEstimateFragment(){
+        log("...navigateToEstimateFragment()");
+        viewModel.updateFragment(new MentalDayFragment(date, false));
     }
     private void printActualDuration(){
         log("...printActualDuration()");
@@ -184,6 +177,19 @@ public class EstimateFragment extends Fragment {
         String textMood =String.format(Locale.getDefault(), "%s: %d",getString(R.string.mood), estimatedStats.getMood());
         textViewMood.setText(textMood);
         textViewDate.setText(date.toString());
+    }
+    private void setUserInterfaceCurrent(){
+        log("...setUserInterfaceCurrent()");
+        String stringActualDuration = String.format(Locale.getDefault(), "%s: %s", getString(R.string.duration),Converter.formatSecondsWithHours(actualDuration));
+        String stringCurrentEnergy = String.format(Locale.getDefault(), "%s %d", getString(R.string.energy), currentStats.getEnergy());
+        String stringCurrentAnxiety = String.format(Locale.getDefault(), "%s %d", getString(R.string.anxiety), currentStats.getAnxiety());
+        String stringCurrentStress = String.format(Locale.getDefault(), "%s %d", getString(R.string.stress), currentStats.getStress());
+        String stringCurrentMood = String.format(Locale.getDefault(), "%s %d", getString(R.string.mood), currentStats.getMood());
+        textViewCurrentEnergy.setText(stringCurrentEnergy);
+        textViewCurrentAnxiety.setText(stringCurrentAnxiety);
+        textViewCurrentStress.setText(stringCurrentStress);
+        textViewCurrentMood.setText(stringCurrentMood);
+        textViewActualDuration.setText(stringActualDuration);
     }
     private void showDateDialog(){
         log("...showDateDialog()");

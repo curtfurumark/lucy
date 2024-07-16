@@ -81,6 +81,9 @@ public class Mental implements Listable, Serializable {
     public long compare() {
         return (date * 3600 * 24 + time) * -1;
     }
+    public long compareTime(){
+        return time;
+    }
 
     public int getAnxiety() {
         return anxiety;

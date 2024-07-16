@@ -103,7 +103,7 @@ public class MentalWorker {
         MentalStats mentalEstimate = new MentalStats();
         for( Item item: items){
             if(item.isTemplate()){
-                log("item isTemplateTODO, something intelligent");
+                log("item isTemplate, TODO: something intelligent");
             }
             Mental mental = MentalWorker.getMental(item, context);
             mentalEstimate.add(mental);
@@ -207,5 +207,29 @@ public class MentalWorker {
         if( VERBOSE) log("MentalWorker.update(Mental, Context)");
         LocalDB db = new LocalDB(context);
         return db.update(mental);
+    }
+
+    /**
+     * selects all the "generated" mentals...sorry but this is conceptually wrong
+     *
+     * @param item, the parent
+     * @param context context,
+     * @return a list
+     */
+    public static List<Mental> getMentalChildren(Item item, Context context) {
+        log("...getMentalChildren(Item, Context)");
+        String queery = Queeries.selectMentalChildren(item);
+        try(LocalDB db = new LocalDB(context)){
+            return db.selectMentals(queery);
+        }
+    }
+
+    public static List<Mental> selectMentals(List<Item> children, Context context) {
+        log("...selectMentals(List<Item>, Context)");
+        List<Mental> mentals = new ArrayList<>();
+        for( Item item: children){
+            mentals.add(MentalWorker.getMental(item, context));
+        }
+        return mentals;
     }
 }

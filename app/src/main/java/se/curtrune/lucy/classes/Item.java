@@ -404,7 +404,7 @@ public class Item implements Serializable , Listable {
             repeat = new Gson().fromJson(strPeriod, Repeat.class);
         }
     }
-    public void setPeriod(Repeat repeat){
+    public void setRepeat(Repeat repeat){
         this.repeat = repeat;
     }
 
@@ -473,10 +473,10 @@ public class Item implements Serializable , Listable {
         return type == Type.APPOINTMENT.ordinal();
     }
 
-    public void setPeriod(Repeat.Period period) {
+    public void setPeriod(Repeat.Unit unit) {
         if( repeat == null){
             repeat = new Repeat();
         }
-        repeat.setPeriod(period);
+        repeat.setUnit(unit);
     }
 }

@@ -150,12 +150,8 @@ public class CustomizeFragment extends Fragment {
     private void initRecyclerCategories(){
         log("...initRecyclerCategories()");
         categories = new ArrayList<>(Arrays.asList( User.getCategories(getContext())));
-        categoryAdapter = new CategoryAdapter(categories, new CategoryAdapter.Callback() {
-            @Override
-            public void onItemClick(String category) {
-                log("...onItemClick(String)", category);
-            }
-        });
+        categoryAdapter = new CategoryAdapter(categories, category ->
+                log("...onItemClick(String)", category));
         recyclerCategories.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerCategories.setItemAnimator(new DefaultItemAnimator());
         recyclerCategories.setAdapter(categoryAdapter);
@@ -232,12 +228,9 @@ public class CustomizeFragment extends Fragment {
     private void showCategoryDialog(){
         log("...showCategoryDialog()");
         AddCategoryDialog dialog = new AddCategoryDialog();
-        dialog.setListener(new AddCategoryDialog.Callback() {
-            @Override
-            public void onNewCategory(String category) {
-                log("...onNewCategory(String)", category);
-                addCategory(category);
-            }
+        dialog.setListener(category -> {
+            log("...onNewCategory(String)", category);
+            addCategory(category);
         });
         dialog.show(getChildFragmentManager(), "add category");
     }

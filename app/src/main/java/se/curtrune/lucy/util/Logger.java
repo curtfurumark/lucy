@@ -1,7 +1,6 @@
 package se.curtrune.lucy.util;
 
 import java.net.URL;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -11,10 +10,10 @@ import java.util.Locale;
 import java.util.Map;
 
 import se.curtrune.lucy.activities.economy.classes.Transaction;
-import se.curtrune.lucy.classes.MentalStats;
 import se.curtrune.lucy.classes.EstimateDate;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
+import se.curtrune.lucy.classes.MentalStats;
 import se.curtrune.lucy.classes.Message;
 import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.classes.Repeat;
@@ -165,15 +164,8 @@ public class Logger {
             log("...repeat is null, i surrender");
             return;
         }
-        log("\tperiod", repeat.getPeriod().toString());
-        if( repeat.isMode(Repeat.Mode.DAYS)){
-            log("\tdays", repeat.getDays());
-        }else{
-            List<DayOfWeek> dayOfWeeks = repeat.getWeekDays();
-            dayOfWeeks.forEach(System.out::println);
-        }
-        //log("\tnextDate", repeat.getNextDate());
-        log("\ttime", repeat.getTime());
+        log("\tunit", repeat.getUnit().toString());
+        log("\tqualifier", repeat.getQualifier());
         log("\ttoJson", repeat.toJson());
         log("\tfirstDate", repeat.getFirstDate());
         log("\tlastDate", repeat.getLastDate());

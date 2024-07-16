@@ -342,8 +342,8 @@ public class DevActivity extends AppCompatActivity {
         RepeatDialog dialog = new RepeatDialog();
         dialog.setCallback(new RepeatDialog.Callback() {
             @Override
-            public void onRepeat(Repeat.Period period) {
-                log("...onRepeat(Period)", period.toString());
+            public void onRepeat(Repeat.Unit period) {
+                log("...onRepeat(Unit)", period.toString());
             }
         });
         dialog.show(getSupportFragmentManager(), "repeat dialog");

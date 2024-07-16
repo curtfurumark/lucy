@@ -151,6 +151,13 @@ public class LocalDB extends SQLiteOpenHelper {
         return null;
     }
 
+    /**
+     * insert the item into the local database
+     * this method also inserts this items' mental,
+     * @param item, the item to be inserted
+     * @return the inserted item, with its id set to whatever autoincrement
+     */
+
     public Item insert(Item item) {
         if( VERBOSE) log("LocalDB.insert(Item)", item.getHeading());
         if (VERBOSE) log(item);
@@ -162,10 +169,9 @@ public class LocalDB extends SQLiteOpenHelper {
             log("...item inserted with id ", id);
         }
         item.setId((int) id);
-        //TODO, think it over, getMental will always return null
-        //NO, getMental, wont always return null
         Mental mental = item.getMental();
         if( mental == null){
+            log("WARNING, inserting an item with no mental...");
             mental = new Mental(item);
         }
         mental.isDone(item.isDone());
@@ -177,15 +183,22 @@ public class LocalDB extends SQLiteOpenHelper {
         return item;
     }
 
+    /**
+     * inserts a  mental object into the mentals table
+     * @param mental
+     * @return
+     */
     public Mental insert(Mental mental) {
         if( VERBOSE) log("LocalDB.insert(Mental)");
         db = this.getWritableDatabase();
         long id = db.insert(TABLE_MENTAL, null, DBAdmin.getContentValues(mental));
         if (id == -1) {
             log("ERROR, inserting mental");
+            mental = null;
+        }else{
+            mental.setID(id);
         }
         db.close();
-        mental.setID(id);
         return mental;
     }
 
@@ -202,12 +215,12 @@ public class LocalDB extends SQLiteOpenHelper {
         return transaction;
     }
 
-    public void insertCategory(String category) {
+/*    public void insertCategory(String category) {
         if( VERBOSE) log("LocalDB.insertCategory(String)", category);
         db = this.getWritableDatabase();
         db.insert(TABLE_CATEGORIES, null, DBAdmin.getContentValues(category));
         db.close();
-    }
+    }*/
 
     public Item insertChild(Item parent, Item child) {
         if( VERBOSE) log("LocalDB.insertChild(Item, Item)");
@@ -308,6 +321,11 @@ public class LocalDB extends SQLiteOpenHelper {
         return selectItems(Queeries.selectItems());
     }
 
+    /**
+     * selects and item
+     * @param id, the id of the item to be selected
+     * @return the item with aforementioned id, or null if there's no such item
+     */
     public Item selectItem(long id) {
         if( VERBOSE) log("...selectItem(long id) ", id);
         String query = Queeries.selectItem(id);
@@ -317,7 +335,7 @@ public class LocalDB extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             item = DBAdmin.getItem(cursor);
         } else {
-            log("...error, no item with id", id);
+            log("...WARNING, not item with id ", id);
         }
         cursor.close();
         db.close();

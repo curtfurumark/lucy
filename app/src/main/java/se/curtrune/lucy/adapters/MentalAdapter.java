@@ -15,6 +15,7 @@ import java.util.List;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.util.Constants;
+import se.curtrune.lucy.util.Converter;
 
 
 public class MentalAdapter extends RecyclerView.Adapter<MentalAdapter.MyViewHolder>{
@@ -30,10 +31,8 @@ public class MentalAdapter extends RecyclerView.Adapter<MentalAdapter.MyViewHold
     private final Callback callback;
 
     public MentalAdapter(List<se.curtrune.lucy.classes.Mental> items, Callback callback) {
+        assert items != null;
         if( VERBOSE) log("MentalAdapter(List<Mental>, Context, Callback");
-        if (items == null){
-            log("...items is null");
-        }
         this.items = items;
         this.callback = callback;
     }
@@ -66,7 +65,8 @@ public class MentalAdapter extends RecyclerView.Adapter<MentalAdapter.MyViewHold
                 break;
         }
         holder.textViewHeading.setText(item.getHeading());
-        holder.textViewLabel.setText(item.getLabel());
+        //holder.textViewLabel.setText(item.getLabel());
+        holder.textViewLabel.setText(Converter.format(item.getTime()));
     }
 
 
