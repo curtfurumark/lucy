@@ -2,7 +2,7 @@ package se.curtrune.lucy.fragments;
 
 import static se.curtrune.lucy.util.Logger.log;
 
-import android.content.Intent;
+import android.app.AlertDialog;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,10 +13,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,20 +24,20 @@ import com.google.android.material.tabs.TabLayout;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.activities.ItemSession;
 import se.curtrune.lucy.adapters.ItemAdapter;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.Settings;
-import se.curtrune.lucy.classes.CallingActivity;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.ItemsWorker;
+import se.curtrune.lucy.workers.MentalWorker;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -100,6 +99,7 @@ public class ProjectsFragment extends Fragment implements
         initComponents(view);
         initListeners();
         initViewModel();
+        initSwipe();
         if( savedInstanceState != null){
             log("...savedInstanceState != null");
             currentParent = (Item) savedInstanceState.getSerializable(CURRENT_PARENT);
@@ -117,15 +117,33 @@ public class ProjectsFragment extends Fragment implements
         return view;
     }
     private void addTab(Item item){
-        log("...addTab(Item)", item.getHeading());
+        if( VERBOSE) log("...addTab(Item)", item.getHeading());
         TabLayout.Tab tab = tabLayout.newTab();
         tab.setText(item.getHeading());
         tab.setTag(item);
         tabLayout.addTab(tab, true);
     }
+    private void deleteItem(Item item){
+        if( VERBOSE) log("...deleteItem(Item)", item.getHeading());
+        int rowsAffected = MentalWorker.deleteMental(item, getContext());
+        if( rowsAffected != 1){
+            log("WARNING mental not deleted, possibly no mental to delete...");
+        }else{
+            log("...mental deleted from db");
+        }
+        boolean deleted = ItemsWorker.delete(item, getContext());
+        if( !deleted){
+            log("...error deleting item");
+            Toast.makeText(getContext(), "error deleting item", Toast.LENGTH_LONG).show();
+        }else {
+            log("...item deleted from DB");
+            items.remove(item);
+            adapter.notifyDataSetChanged();
+        }
+    }
     private void descend(Item item){
-        log("...descend()");
-        items = ItemsWorker.selectChildItems(item, getContext());
+        if( VERBOSE) log("...descend(Item)", item.getHeading());
+        items = ItemsWorker.selectChildren(item, getContext());
         Lucinda.currentParent = item;
         currentParent = item;
         adapter.setList(items);
@@ -135,7 +153,7 @@ public class ProjectsFragment extends Fragment implements
     private void initComponents(View view){
         if(VERBOSE)log("...initComponents()");
         recycler = view.findViewById(R.id.projectsFragment_recycler);
-        //dont delete this, might return
+        //don't delete this, might return
         //editTextSearch = view.findViewById(R.id.projectsFragment_search);
         buttonAddItem = view.findViewById(R.id.projectsFragment_addItem);
         tabLayout = view.findViewById(R.id.projectsFragment_tabLayout);
@@ -154,8 +172,25 @@ public class ProjectsFragment extends Fragment implements
     private void  initListeners(){
         if(VERBOSE) log("...initListeners()");
         buttonAddItem.setOnClickListener(view->showAddItemDialog());
-        //textViewGoToParentList.setOnClickListener(view->navigateUp());
         tabLayout.addOnTabSelectedListener(this);
+    }
+    private void initSwipe(){
+        if( VERBOSE) log("...initSwipe()");
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT ) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                Item item = items.get(viewHolder.getAdapterPosition());
+                if( direction == ItemTouchHelper.LEFT){
+                    showDeleteDialog(item);
+                }
+            }
+        });
+        itemTouchHelper.attachToRecyclerView(recycler);
     }
     private void initTabs(){
         log("...initTabs()");
@@ -163,7 +198,7 @@ public class ProjectsFragment extends Fragment implements
 
     }
     private void initViewModel(){
-        log("...initViewModel()");
+        if( VERBOSE) log("...initViewModel()");
         viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
     }
 
@@ -230,7 +265,7 @@ public class ProjectsFragment extends Fragment implements
         if( rowsAffected != 1){
             log("ERROR updating state of item", item.getHeading());
         }
-        items = ItemsWorker.selectChildItems(currentParent, getContext());
+        items = ItemsWorker.selectChildren(currentParent, getContext());
         items.sort(Comparator.comparingLong(Item::compare));
         adapter.notifyDataSetChanged();
 
@@ -244,23 +279,40 @@ public class ProjectsFragment extends Fragment implements
     private void showAddItemDialog(){
         if(VERBOSE) log("...showAddItemDialog()");
         AddItemDialog dialog = new AddItemDialog(currentParent, false);
-        dialog.setCallback(new AddItemDialog.Callback() {
-            @Override
-            public void onAddItem(Item item) {
-                log("...onAddItem(Item)", item.getHeading());
-                item = ItemsWorker.insert(item, getContext());
-                items.add(item);
-                items.sort(Comparator.comparingLong(Item::compare));
-                adapter.notifyDataSetChanged();
-            }
+        dialog.setCallback(item -> {
+            log("AddItemDialog.onAddItem(Item)", item.getHeading());
+            item = ItemsWorker.insert(item, getContext());
+            if(VERBOSE) log(item);
+            items.add(item);
+            items.sort(Comparator.comparingLong(Item::compare));
+            adapter.notifyDataSetChanged();
         });
         dialog.show(getChildFragmentManager(), "add item");
     }
     private void showChildren(TabLayout.Tab tab){
         log("...showChildren(Tab)", Objects.requireNonNull(tab.getText()).toString());
         Item parent = (Item) tab.getTag();
-        items = ItemsWorker.selectChildItems(parent, getContext());
+        items = ItemsWorker.selectChildren(parent, getContext());
         adapter.setList(items);
+    }
+    private void showDeleteDialog(Item item){
+        assert  item != null;
+        log("...showDeleteDialog(Item)", item.getHeading());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        String stringDialogTitle = String.format(Locale.getDefault(), "%s %s?", getString(R.string.delete), item.getHeading());
+        builder.setTitle(stringDialogTitle);
+        builder.setMessage(R.string.are_you_sure);
+        builder.setPositiveButton(getString(R.string.delete), (dialog, which) -> {
+            log("...on positive button click");
+            deleteItem(item);
+
+        });
+        builder.setNegativeButton(getString(R.string.dismiss), (dialog, which) -> {
+            log("...on negative button click");
+            adapter.notifyDataSetChanged();
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
 
     }
     private void startSequence(){
@@ -270,15 +322,6 @@ public class ProjectsFragment extends Fragment implements
             Toast.makeText(getContext(), "current parent is null", Toast.LENGTH_LONG).show();
             return;
         }
-        SequenceFragment    sequenceFragment = new SequenceFragment();
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        //TODO
-        //fragmentTransaction.replace(R.layout.main_activity, sequenceFragment);
-        fragmentTransaction.commit();
-/*        Toast.makeText(getContext(), "start sequence", Toast.LENGTH_LONG).show();
-        Intent intent = new Intent(getContext(), SequenceFragment.class);
-        intent.putExtra(Constants.INTENT_SEQUENCE_PARENT, currentParent);
-        startActivity(intent);*/
+        viewModel.updateFragment(new SequenceFragment(currentParent));
     }
 }

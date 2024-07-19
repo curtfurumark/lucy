@@ -23,7 +23,7 @@ public class StatisticsWorker {
         return new MentalStats(mentals);
     }
 
-    public static MentalStats getEstimate(Item item, Context context){
+/*    public static MentalStats getEstimate(Item item, Context context){
         log("StaticsWorker.getEstimate(Item, Context)", item.getHeading());
         if( !item.isTemplate()){
             return item.getEstimate();
@@ -37,7 +37,7 @@ public class StatisticsWorker {
             result.plusEnergy(item1.getEnergy());
         }
         return result.divide(children.size());
-    }
+    }*/
 
     public static MentalStats getMentalStats(Item item, Context context) {
         log("StatisticsWorker.getMentalStats(Item, Context)", item.getHeading());

@@ -2,6 +2,7 @@ package se.curtrune.lucy.dialogs;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -38,7 +39,6 @@ import se.curtrune.lucy.util.Converter;
 public class AddItemDialog extends BottomSheetDialogFragment {
     private EditText editText_heading;
     private TextView textViewParentList;
-    private String heading;
     private Button buttonSave;
     private Button buttonDismiss;
     private CheckBox checkBoxCalendarEvent;
@@ -76,7 +76,7 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         initComponents(view);
         initActionRecycler();
         initListeners();
-        editText_heading.setText(heading);
+        //initSwipe();
         initUserInterface(parent);
         return view;
     }
@@ -100,6 +100,8 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         Action dateAction = new Action();
         if( targetDate != null) {
             dateAction.setTitle(targetDate.toString());
+        }else{
+            dateAction.setTitle(getString(R.string.date));
         }
         dateAction.setType(Action.Type.DATE);
 
@@ -215,7 +217,8 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         buttonDismiss.setOnClickListener(view->dismiss());
     }
 
-    public void initUserInterface(Item parentItem){
+
+    private void initUserInterface(Item parentItem){
         log("...initUserInterface(Item)");
         String strParentList = String.format(Locale.getDefault(), "%s: %s",getString(R.string.add_to_list), parentItem.getHeading());
         textViewParentList.setText(strParentList);
@@ -230,9 +233,7 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         this.listener = callback;
     }
 
-    public void setHeading(String heading){
-        this.heading = heading;
-    }
+
     public void setCategory(String category){
         this.category = category;
     }
@@ -252,9 +253,16 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         });
         dialog.show(getChildFragmentManager(), "choose category");
     }
-    public void showDateDialog(){
+    public void showDateDialog() {
         log("...showDateDialog()");
-
+        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext());
+        datePickerDialog.setOnDateSetListener((view, year, month, dayOfMonth) -> {
+            log("DatePickerDialog.onDateSet(...)");
+            targetDate = LocalDate.of(year, month + 1, dayOfMonth);
+            newItem.setTargetDate(targetDate);
+            currentAction.setTitle(targetDate.toString());
+        });
+        datePickerDialog.show();
     }
     public void showDurationDialog(){
         log("...showDurationDialog()");

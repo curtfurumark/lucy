@@ -100,6 +100,12 @@ public class ItemsWorker {
         }
     }
 
+    /**
+     *
+     * @param item, the item to be inserted
+     * @param context
+     * @return the inserted item, with its id field set to whatever db decided, autoincrement
+     */
     public static Item insert(Item item, Context context)  {
         if( VERBOSE) log("ItemsWorker.insert(Item, Context)", item.getHeading());
         LocalDB db = new LocalDB(context);
@@ -120,7 +126,11 @@ public class ItemsWorker {
         }
     }
 
-
+    /**
+     * selects all the items
+     * @param context, context context
+     * @return all the items in the table items
+     */
     public static List<Item> selectItems(Context context) {
         if(VERBOSE) log("ItemsWorker.selectItems(Context");
         try (LocalDB db = new LocalDB(context)) {
@@ -143,6 +153,11 @@ public class ItemsWorker {
         }
     }
 
+    /**
+     * selects all the items with type set to Appointment
+     * @param context context context
+     * @return all the items matching
+     */
     public static List<Item> selectAppointments(Context context) {
         if(VERBOSE) log("ItemsWorker.selectAppointments(Context)");
         String query = Queeries.selectAppointments();
@@ -150,17 +165,11 @@ public class ItemsWorker {
             return db.selectItems(query);
         }
     }
-    public static List<Item> selectAppointments(LocalDate date, Context context) {
-        log("ItemsWorker.selectAppointments(LocalDate, Context)", date.toString());
-        String queery = Queeries.selectAppointments(date);
-        try (LocalDB db = new LocalDB(context)) {
-            return db.selectItems(queery);
-        }
-    }
-    public static List<Item> selectChildren(Item item, Context context){
+
+    public static List<Item> selectChildren(Item parent, Context context){
         if(VERBOSE) log("ItemsWorker.selectChildren(Item, Context)");
         try (LocalDB db = new LocalDB(context)) {
-            return db.selectChildren(item);
+            return db.selectItems(Queeries.selectChildren(parent));
         }
     }
     public static List<Item> selectDateState(LocalDate date, State state, Context context){
@@ -175,34 +184,19 @@ public class ItemsWorker {
             return db.selectItems(Queeries.selectItems(state));
         }
     }
+
+    /**
+     * not in use right now, but i suspect it will be need some time in the not so distant future
+     * @param type the type to be selected,
+     * @param context context context context
+     * @return a list of item of said type
+     */
     public static List<Item> selectItems(Type type, Context context) {
+        String query = Queeries.selectItems(type);
         try (LocalDB db = new LocalDB(context)) {
-            return db.selectItems(type);
+            return db.selectItems(query);
         }
     }
-
-    public static List<Item> selectItems(LocalDate date, Context context, State state){
-        if(VERBOSE) log("ItemsWorker.selectItems(LocalDate, Context, State");
-        List<Item> items;
-        try (LocalDB db = new LocalDB(context)) {
-            items = db.selectItems(date, state);
-        }
-        return items;
-    }
-
-    public static List<Item> selectChildItems(Item parent, Context context) {
-        if(VERBOSE) log("ItemsWorker.selectChildItems(Item, Context)", parent.getHeading());
-        try (LocalDB db = new LocalDB(context)) {
-            return db.selectItems(Queeries.selectChildren(parent));
-        }
-    }
-    public static List<Item> selectChildren(long id, Context context) {
-        if(VERBOSE) log("...selectChildren(long, Context)", id);
-        try (LocalDB db = new LocalDB(context)) {
-            return db.selectItems(Queeries.selectChildren(id));
-        }
-    }
-
     /**
      * calenderItems, done items and possibly targetDate == date
      * @param date, the date for which to select items
@@ -263,10 +257,7 @@ public class ItemsWorker {
 
     public static List<Item> selectCalenderItems(YearMonth yearMonth, Context context) {
         if (VERBOSE) log("ItemsWorker.selectCalenderItems(YearMonth)");
-        //LocalDate firstDate = yearMonth.atDay(1);
-        //LocalDate lastDate = yearMonth.atEndOfMonth();
         try (LocalDB db = new LocalDB(context)) {
-            //String queery = Queeries.selectItems(firstDate, lastDate, Type.APPOINTMENT);
             String queery = Queeries.selectCalendarMonth(yearMonth);
             return db.selectItems(queery);
         }
@@ -288,12 +279,6 @@ public class ItemsWorker {
         if(VERBOSE) log("queery", queery);
         try(LocalDB db = new LocalDB(context)){
             return db.selectItems(queery);
-        }
-    }
-    public void touch(Item currentItem, Context context) {
-        log("ItemsWorker.touch(Item, Context)");
-        try (LocalDB db = new LocalDB(context)) {
-            db.touch(currentItem);
         }
     }
     public  static void touchParents(Item item, Context context){

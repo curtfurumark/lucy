@@ -15,7 +15,6 @@ public class Lucinda {
     private static Lucinda instance;
     private final Settings settings;
     public static Item currentParent;
-    //public static Fragment currentFragment;
     public static boolean VERBOSE = false;
     public static boolean Dev = false;
     private static final String KEY_NIGHTLY_ALARM ="KEY_NIGHTLY_ALARM";
@@ -53,7 +52,6 @@ public class Lucinda {
     public void initTheApp(Context context) throws SQLException {
         log("Lucinda.initTheApp(Context)");
         DBAdmin.createTables(context);
-        //DBAdmin.insertCategories(context);
         DBAdmin.insertRootItems(context);
         Demo.insertDemo(context);
         setDefaultUserSettings(context);
@@ -67,7 +65,6 @@ public class Lucinda {
         log("Lucinda.reset(Context)");
         DBAdmin.dropTables(context);
         DBAdmin.createTables(context);
-        //DBAdmin.insertCategories(context);
         DBAdmin.insertRootItems(context);
         Demo.insertDemo(context);
         setDefaultUserSettings(context);
@@ -82,8 +79,4 @@ public class Lucinda {
         User.setUseDarkMode(true, context);
 
     }
-/*    public void setIsInitialized(boolean b, Context context) {
-        log("Lucinda.setIsInitialized(boolean, Context");
-        settings.setLucyIsInitialized(b, context);
-    }*/
 }

@@ -180,7 +180,7 @@ public class TodoFragment extends Fragment implements
         log("...onItemClick(Item)", item.getHeading());
         if( item.hasChild()){
             currentParent = item;
-            items = ItemsWorker.selectChildItems(currentParent, getContext());
+            items = ItemsWorker.selectChildren(currentParent, getContext());
             adapter.setList(items);
         }else{
             viewModel.updateFragment(new ItemSessionFragment(item));

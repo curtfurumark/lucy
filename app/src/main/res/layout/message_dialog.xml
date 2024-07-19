@@ -5,31 +5,52 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <EditText
-        android:id="@+id/messageDialog_subject"
+    <TextView
+        android:id="@+id/textView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/subject"
-        android:inputType="text"
-        android:minHeight="48dp" />
+        android:text="add a message to the message board" />
 
-    <EditText
-        android:id="@+id/messageDialog_content"
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="top"
-        android:hint="@string/content"
-        android:inputType="text"
-        android:lines="4"
-        android:minHeight="48dp" />
+        android:layout_marginTop="16dp"
+        android:hint="@string/subject">
 
-    <EditText
-        android:id="@+id/messageDialog_user"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/messageDialog_subject"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutComment"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/user"
-        android:inputType="text"
-        android:minHeight="48dp" />
+        android:hint="@string/content">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/messageDialog_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:lines="4" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="@string/user">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/messageDialog_user"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"

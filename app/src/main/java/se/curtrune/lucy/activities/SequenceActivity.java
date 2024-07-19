@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -90,11 +89,11 @@ public class SequenceActivity extends AppCompatActivity implements SequenceAdapt
     }
     private void initComponents(){
         log("...initComponents()");
-        textViewNumberItems = findViewById(R.id.sequenceActivity_nItems);
-        textViewParentHeading = findViewById(R.id.sequenceActivity_parentItem);
-        recycler = findViewById(R.id.sequenceActivity_recycler);
-        textViewEstimatedTotalDuration = findViewById(R.id.sequenceActivity_estimatedTotalTime);
-        textViewEstimatedEnergy = findViewById(R.id.sequenceActivity_estimatedTotalEnergy);
+        textViewNumberItems = findViewById(R.id.sequenceFragment_nItems);
+        textViewParentHeading = findViewById(R.id.sequenceFragment_parentItem);
+        recycler = findViewById(R.id.sequenceFragment_recycler);
+        textViewEstimatedTotalDuration = findViewById(R.id.sequeFragment_estimatedTotalTime);
+        textViewEstimatedEnergy = findViewById(R.id.seFragment_estimatedTotalEnergy);
     }
     private void initListeners(){
         log("...initListeners()");
@@ -143,7 +142,6 @@ public class SequenceActivity extends AppCompatActivity implements SequenceAdapt
         String textNumberItems = String.format(Locale.getDefault(), "number of activities in sequence %d", items.size());
         textViewNumberItems.setText(textNumberItems);
         textViewParentHeading.setText(parentItem.getHeading());
-
         updateUserInterface();
     }
 

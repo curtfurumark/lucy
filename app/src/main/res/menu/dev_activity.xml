@@ -15,8 +15,6 @@
         android:title="reset app"/>
     <item android:title="drop table mental"
         android:id="@+id/homeActivity_dropTableMental"/>
-    <item android:title="create table categories"
-        android:id="@+id/homeActivity_createTableCategories"/>
     <item
         android:id="@+id/homeActivity_createTodoList"
         android:title="create todo list" />

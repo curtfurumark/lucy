@@ -36,10 +36,8 @@ public class MessageDialog extends BottomSheetDialogFragment {
     private Callback listener;
 
     public MessageDialog(){
-
         if( VERBOSE) log("MessageDialog constructor");
     }
-
 
     @Nullable
     @Override
@@ -61,7 +59,6 @@ public class MessageDialog extends BottomSheetDialogFragment {
 
     }
     private void initComponents(View view){
-        if( VERBOSE) log("...initComponents(View)");
         editTextSubject = view.findViewById(R.id.messageDialog_subject);
         editTextContent = view.findViewById(R.id.messageDialog_content);
         editTextUser = view.findViewById(R.id.messageDialog_user);

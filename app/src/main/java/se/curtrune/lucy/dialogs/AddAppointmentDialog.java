@@ -101,7 +101,6 @@ public class AddAppointmentDialog extends BottomSheetDialogFragment {
             }
         });
         datePickerDialog.show();
-
     }
     private void showTimeDialog(){
         log("...showTimeDialog");

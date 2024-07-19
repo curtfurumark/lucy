@@ -39,7 +39,6 @@ import se.curtrune.lucy.workers.ItemsWorker;
 
 public class SequenceFragment extends Fragment implements SequenceAdapter.Callback{
 
-    //private TextView textViewHeading;
     private TextView textViewParentHeading;
     private TextView textViewEstimatedTotalDuration;
     private TextView textViewEstimatedEnergy;
@@ -54,14 +53,25 @@ public class SequenceFragment extends Fragment implements SequenceAdapter.Callba
     private RecyclerView recycler;
     private RecyclerView.LayoutManager layoutManager;
     private SequenceAdapter adapter;
+    public SequenceFragment(){
+        log("...SequenceFragment() constructor");
+    }
+    public SequenceFragment(Item parentItem){
+        assert  parentItem != null;
+        log("SequenceFragment(Item)");
+        this.parentItem = parentItem;
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //return super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.sequence_activity, container);
+        log("SequenceFragment.onCreateView(LayoutInflater, ViewGroup, Bundle)");
+        View view = inflater.inflate(R.layout.sequence_fragment, container, false);
         initComponents(view);
         initSequence();
+        initRecycler();
+        setUserInterface();
         return view;
     }
 
@@ -93,7 +103,7 @@ public class SequenceFragment extends Fragment implements SequenceAdapter.Callba
         return  items.stream().mapToInt(Item::getEnergy).sum();
     }
     private void initSequence(){
-        log("...init()");
+        log("...initSequence()");
         items = ItemsWorker.selectChildren(parentItem, getContext());
         items.sort(Comparator.comparingLong(Item::getTargetTimeSecondOfDay));
         log("...number of items in sequence", items.size());
@@ -105,11 +115,11 @@ public class SequenceFragment extends Fragment implements SequenceAdapter.Callba
     }
     private void initComponents(View view){
         log("...initComponents()");
-        textViewNumberItems = view.findViewById(R.id.sequenceActivity_nItems);
-        textViewParentHeading = view.findViewById(R.id.sequenceActivity_parentItem);
-        recycler = view.findViewById(R.id.sequenceActivity_recycler);
-        textViewEstimatedTotalDuration = view.findViewById(R.id.sequenceActivity_estimatedTotalTime);
-        textViewEstimatedEnergy = view.findViewById(R.id.sequenceActivity_estimatedTotalEnergy);
+        textViewNumberItems = view.findViewById(R.id.sequenceFragment_nItems);
+        textViewParentHeading = view.findViewById(R.id.sequenceFragment_parentItem);
+        recycler = view.findViewById(R.id.sequenceFragment_recycler);
+        textViewEstimatedTotalDuration = view.findViewById(R.id.sequeFragment_estimatedTotalTime);
+        textViewEstimatedEnergy = view.findViewById(R.id.seFragment_estimatedTotalEnergy);
     }
     private void initListeners(){
         log("...initListeners()");

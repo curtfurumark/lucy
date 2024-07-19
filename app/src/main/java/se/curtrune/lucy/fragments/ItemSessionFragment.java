@@ -23,6 +23,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Locale;
@@ -36,6 +38,7 @@ import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.MentalStats;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
+import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.dialogs.ChooseCategoryDialog;
 import se.curtrune.lucy.dialogs.DurationDialog;
 import se.curtrune.lucy.dialogs.MentalDialog;
@@ -79,6 +82,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
     private CheckBox checkBoxAppointment;
     private ActionAdapter actionAdapter;
     private RecyclerView actionRecycler;
+    private FloatingActionButton buttonAddItem;
     private Item currentItem;
     private LocalTime targetTime;
     private Kronos kronos;
@@ -239,6 +243,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         textViewTags = view.findViewById(R.id.itemSessionFragment_tags);
         textViewRepeat = view.findViewById(R.id.itemSessionFragment_repeat);
         textViewEstimatedEnergy = view.findViewById(R.id.itemSessionFragment_estimatedEnergy);
+        buttonAddItem = view.findViewById(R.id.itemSessionFragment_buttonAdd);
     }
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
@@ -246,6 +251,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         buttonTimer.setOnClickListener(view->toggleTimer());
         buttonSave.setOnClickListener(view->updateItem());
         textViewDuration.setOnClickListener(view -> showDurationDialogActual());
+        buttonAddItem.setOnClickListener(view -> showAddChildItemDialog());
     }
     private void setEstimatedTime(Item item){
         if( VERBOSE)log("...setEstimatedTime()");
@@ -298,7 +304,22 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         textViewType.setText(stringType);
         textViewTags.setText(stringTags);
         textViewRepeat.setText(stringRepeat);
+    }
 
+    private void showAddChildItemDialog(){
+        log("...showAddChildItemDialog()");
+        Toast.makeText(getContext(), "add child", Toast.LENGTH_SHORT).show();
+        AddItemDialog dialog = new AddItemDialog(currentItem, false);
+        dialog.setCallback(new AddItemDialog.Callback() {
+            @Override
+            public void onAddItem(Item item) {
+                log("AddItemDialog.onAddItem(Item)");
+                item = ItemsWorker.insertChild(currentItem, item, getContext());
+                if( VERBOSE ) log(item);
+                //getActivity().getSupportFragmentManager().popBackStackImmediate();
+            }
+        });
+        dialog.show(getChildFragmentManager(), "add child");
     }
     private void showCategoryDialog(){
         log("...showCategoryDialog()");

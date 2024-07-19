@@ -187,13 +187,20 @@ public class MainActivity extends AppCompatActivity {
         });
         viewModel.getFragment().observe(this, fragment -> navigate(fragment));
     }
+
+    /**
+     * sorry this one does two things
+     * navigates to fragment
+     * and sets current energy level ui
+     * @param fragment
+     */
     private void navigate(Fragment fragment){
         if( fragment == null){
             log("...navigate(Fragment) called with null fragment, i surrender");
             return;
         }
-        log("...navigate(Fragment) ", fragment.getClass().getName());
         setUserInterfaceCurrentEnergy();
+        log("MainActivity.navigate(Fragment) ", fragment.getClass().getName());
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.navigationDrawer_frameContainer, fragment)

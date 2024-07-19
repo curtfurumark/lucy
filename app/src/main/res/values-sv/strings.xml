@@ -161,5 +161,6 @@
     <string name="_1_week">1 Vecka</string>
     <string name="_1_month">1 Månad</string>
     <string name="postpone">Skjut upp</string>
+    <string name="are_you_sure">"Säkert?"</string>
 
 </resources>

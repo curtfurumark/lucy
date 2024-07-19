@@ -706,7 +706,7 @@ public class ItemSession extends AppCompatActivity implements
         }
         if( item.isTemplate()){
             log("...item is template");
-            setUserInterface(StatisticsWorker.getEstimate(item, this));
+            setUserInterface(StatisticsWorker.getMentalStats(item, this));
         }else{
             setUserInterface(item.getEstimate());
             log("...will calculate estimate");

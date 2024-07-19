@@ -208,8 +208,6 @@ public class DevActivity extends AppCompatActivity {
             dropTableMental();
         } else if (item.getItemId() == R.id.homeActivity_resetApp) {
             resetApp();
-        } else if (item.getItemId() == R.id.homeActivity_createTableCategories) {
-            createTableCategories();
         } else if (item.getItemId() == R.id.homeActivity_createEconomyTables) {
             createEconomyTables();
         }else if (item.getItemId() == R.id.devActivity_testNotification){
@@ -264,14 +262,6 @@ public class DevActivity extends AppCompatActivity {
         log("...dropTableMental()");
         try(LocalDB db = new LocalDB(this)){
             db.executeSQL(Queeries.DROP_TABLE_MENTAL);
-        }
-    }
-
-    private void createTableCategories() {
-        log("...createTableCategories()");
-        try(LocalDB db = new LocalDB(this)) {
-            db.executeSQL(Queeries.CREATE_TABLE_CATEGORIES);
-            populateCategories();
         }
     }
 

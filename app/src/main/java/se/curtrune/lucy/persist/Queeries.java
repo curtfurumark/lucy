@@ -159,6 +159,7 @@ public class Queeries {
     }
 
 
+
     public static String selectLatestMentals(int limit) {
         return String.format(Locale.getDefault(), "SELECT * FROM mental ORDER BY updated LIMIT %d", limit);
     }

@@ -123,46 +123,12 @@ public class Settings {
         return sharedPreferences.getBoolean(key,  defaultValue);
     }
 
-    public static Item getAppointmentsRoot() {
-        Item item = new Item("appointments");
-        item.setType(Type.ROOT);
-        return item;
-    }
+
     public static String getString(String key, String defaultValue, Context context){
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(key, defaultValue);
     }
 
-    /**
-     * these are the default categories, to be added or subtracted from
-     * @return, an array containing the default categories
-     */
-    public static String[] getCategories() {
-        return new String[]{"household", "work", "leisure", "read", "health"};
-    }
-    public static Item getPanicRoot(){
-        Item item  = new Item("panic");
-        item.setType(Type.ROOT);
-        return item;
-    }
-
-    public static Item getTodayRoot() {
-        Item item = new Item("today");
-        item.setType(Type.ROOT);
-        return item;
-    }
-
-    public static Item getTodoRoot() {
-        Item item = new Item("todo");
-        item.setType(Type.ROOT);
-        return item;
-    }
-
-    public static Item getProjectsRoot() {
-        Item item = new Item("projects");
-        item.setType(Type.ROOT);
-        return item;
-    }
     public long getRootID(Root root){
         switch (root){
             case DAILY:

@@ -300,11 +300,6 @@ public class CalenderFragment extends Fragment {
                             adapter.notifyDataSetChanged();
                         }
                     });
-/*                    dialog.setCallback(postpone -> {
-                        log("...postpone(Postpone)", postpone.toString());
-                        postpone(item, postpone);
-                        //adapter.notifyDataSetChanged();
-                    });*/
                     dialog.show(getChildFragmentManager(), "postpone");
                 }
             }

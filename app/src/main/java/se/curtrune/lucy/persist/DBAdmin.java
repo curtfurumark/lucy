@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 import se.curtrune.lucy.activities.economy.classes.Asset;
 import se.curtrune.lucy.activities.economy.classes.Transaction;
 import se.curtrune.lucy.activities.economy.persist.EcQueeries;
+import se.curtrune.lucy.app.App;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
@@ -26,8 +27,6 @@ public class DBAdmin {
         try(LocalDB  db = new LocalDB(context)) {
             db.executeSQL(Queeries.DROP_TABLE_MENTAL);
             db.executeSQL(Queeries.CREATE_TABLE_MENTAL);
-            //db.executeSQL(Queeries.DROP_TABLE_CATEGORIES);
-            //db.executeSQL(Queeries.CREATE_TABLE_CATEGORIES);
             db.executeSQL(Queeries.DROP_TABLE_ITEMS);
             db.executeSQL(Queeries.CREATE_TABLE_ITEMS);
             db.executeSQL(EcQueeries.DROP_TABLE_TRANSACTIONS);
@@ -41,7 +40,6 @@ public class DBAdmin {
     public static void dropTables(Context context){
         log("DBAdmin.dropTables()");
         try(LocalDB db = new LocalDB(context)) {
-            db.executeSQL(Queeries.DROP_TABLE_CATEGORIES);
             db.executeSQL(Queeries.DROP_TABLE_ITEMS);
             db.executeSQL(Queeries.DROP_TABLE_MENTAL);
             db.executeSQL(EcQueeries.DROP_TABLE_ASSETS);
@@ -169,10 +167,16 @@ public class DBAdmin {
         mental.isDone(cursor.getInt(14) ==1);
         return mental;
     }
+
+    /**
+     * once upon a time i thought this was a good item, but i changed my mind
+     * but i might change my mind again, it has been known to happen
+     * @param cursor
+     * @return, a mental object, from the mental field in items, stored as json
+     */
     public static Mental getMentalFromItem(Cursor cursor) {
         if( VERBOSE) log("DBAdmin.getMentalFromItem(Cursor)");
-        Mental mental = new Gson().fromJson(cursor.getString(0), Mental.class);
-        return mental;
+        return new Gson().fromJson(cursor.getString(0), Mental.class);
     }
 
     public static ContentValues getContentValues(String category) {
@@ -182,14 +186,13 @@ public class DBAdmin {
         return cv;
     }
 
-/*    public static void insertCategories(Context context) {
-        log("...insertCategories(Context)");
-        try(LocalDB db = new LocalDB(context)) {
-            for (String category : Settings.getCategories()) {
-                db.insertCategory(category);
-            }
-        }
-    }*/
+    /**
+     * creates default lists/items
+     * these being the ROOT of everything
+     * saves root ids in sharedPrefs...
+     * children to root: today, todo, projects, appointments, panic
+     * @param context, context context context
+     */
     public static void insertRootItems(Context context) {
         log("...insertRootItems(Context)");
         Settings settings = Settings.getInstance(context);
@@ -200,11 +203,12 @@ public class DBAdmin {
             root = db.insert(root);
             settings.addRootID(Settings.Root.THE_ROOT, root.getID(), context);
 
-            Item todayRoot = Settings.getTodayRoot();
-            Item todoRoot = Settings.getTodoRoot();
-            Item projectsRoot = Settings.getProjectsRoot();
-            Item appointmentsRoot = Settings.getAppointmentsRoot();
-            Item panicRoot = Settings.getPanicRoot();
+            Item todayRoot = App.getRootItem("today");
+            Item todoRoot = App.getRootItem("todo");
+            Item projectsRoot = App.getRootItem("projects");
+            Item appointmentsRoot = App.getRootItem("appointments");
+            Item panicRoot = App.getRootItem("panicList");
+            //Item panicAttacks = App.getRootItem("panicAttacks");
 
             appointmentsRoot = db.insertChild(root, appointmentsRoot);
             settings.addRootID(Settings.Root.APPOINTMENTS, appointmentsRoot.getID(), context);

@@ -46,8 +46,6 @@ public class LocalDB extends SQLiteOpenHelper {
         log("LocalDB.onCreate(SQLiteDatabase)");
         log("...creating table items");
         sqLiteDatabase.execSQL(Queeries.CREATE_TABLE_ITEMS);
-        log("...creating table categories");
-        sqLiteDatabase.execSQL(Queeries.CREATE_TABLE_CATEGORIES);
         log("....creating table mental;");
         sqLiteDatabase.execSQL(Queeries.CREATE_TABLE_MENTAL);
         log("...three tables created");
@@ -258,21 +256,21 @@ public class LocalDB extends SQLiteOpenHelper {
         return assets;
     }
 
-    public List<Item> selectChildren(Item parent) {
+/*    public List<Item> selectChildren(Item parent) {
         if( VERBOSE) log("LocalDB.selectChildren(Item)", parent != null ? parent.getHeading() : "parent id: 0");
         String queery = Queeries.selectChildren(parent);
         return selectItems(queery);
-    }
+    }*/
 
-    public List<Item> selectItems(LocalDate date, State state) {
+/*    public List<Item> selectItems(LocalDate date, State state) {
         if( VERBOSE) log("LocalDB.selectItems(LocalDate, State)", date.toString() + ", " + state.toString());
         String queery = Queeries.selectItems(date, state);
         return selectItems(queery);
-    }
+    }*/
 
-    public List<Item> selectItems(LocalDate date) {
+/*    public List<Item> selectItems(LocalDate date) {
         return selectItems(Queeries.selectItems(date));
-    }
+    }*/
 
     /**
      * this is the one, that actually gets a list of items
@@ -307,12 +305,6 @@ public class LocalDB extends SQLiteOpenHelper {
             items = db.selectItems(Queeries.selectItems(date));
         }
         return items;
-    }
-
-    public List<Item> selectItems(Type type) {
-        if( VERBOSE) log("LocalDB.selectItems(Type)");
-        return selectItems(Queeries.selectItems(type));
-
     }
 
 
@@ -402,6 +394,11 @@ public class LocalDB extends SQLiteOpenHelper {
         int rowsAffected = db.update(ITEMS_TABLE, cv, whereClause, null);
         log("...rowsAffected", rowsAffected);
     }
+
+    /**
+     * touches parents all the way to the topmost parent
+     * @param item, the item whose parents needs to be updated
+     */
 
     public void touchParents(Item item) {
         log("LocalDB.touchParents(Item)");
