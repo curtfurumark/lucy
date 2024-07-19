@@ -4,8 +4,11 @@ import static se.curtrune.lucy.util.Logger.log;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.ArraySet;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,7 +29,7 @@ public class Settings {
     private boolean isInitialized = false;
 
     public enum PanicAction{
-        GAME, URL, SEQUENCE, PENDING
+        GAME, URL, SEQUENCE, PENDING, ICE
     }
     public enum Root{
         TODO, DAILY, PROJECTS, APPOINTMENTS, PANIC, THE_ROOT
@@ -63,11 +66,14 @@ public class Settings {
         return sharedPreferences.getInt(key , defaultValue);
     }
 
-    public static Set<String> getList(String key, Context context) {
+    public static Set<String> getSet(String key, Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
         return new HashSet<>(sharedPreferences.getStringSet(key , new HashSet<>()));
     }
-
+    public static List<String> getList(String key, Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+        return new ArrayList<>(sharedPreferences.getStringSet(key , new ArraySet<>()));
+    }
     public void reload(Context context) {
         log("...reload(Context)");
         init(context);

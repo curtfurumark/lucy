@@ -3,6 +3,7 @@ package se.curtrune.lucy.adapters;
 import static se.curtrune.lucy.util.Logger.log;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
@@ -26,7 +27,7 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
     public static boolean VERBOSE = false;
 
     public void setList(List<Item> items) {
-        if( VERBOSE) log("CategoryAdapter.setList(List<Item>) size", items.size());
+        if( VERBOSE) log("SimpleAdapter.setList(List<Item>) size", items.size());
         this.items = items;
         notifyDataSetChanged();
     }
@@ -74,7 +75,8 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
             holder.itemView.setLayoutParams(params);
         }*/
         holder.textView_heading.setText(item.getHeading());
-        holder.textView_info.setText(item.getInfo());
+        //holder.textView_info.setText(item.getInfo());
+        holder.textView_info.setVisibility(View.GONE);
         holder.checkBox_state.setChecked(item.getState().equals(State.DONE));
         holder.textViewTime.setText(Converter.format(item.getTargetTime()));
     }

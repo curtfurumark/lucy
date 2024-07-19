@@ -117,7 +117,7 @@ public class ItemsWorker {
     public  static Item insertChild(Item parent, Item child, Context context)  {
         if(VERBOSE)log("ItemsWorker.insertChild(Item, Item, Context)");
         if( !parent.hasChild()){
-            log("....not children for this parent, yet");
+            log("....no children for this parent, yet, parent: ", parent.getHeading());
             setHasChild(parent, true, context);
         }
         child.setParentId(parent.getID());

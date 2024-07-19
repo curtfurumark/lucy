@@ -32,11 +32,12 @@ public class LogInActivity extends AppCompatActivity {
     private EditText editTextPwd;
     private Button buttonLogIn;
     private Lucinda lucinda;
+    public static boolean VERBOSE = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        log("LogInActivity.onCreate(Bundle of joy");
+        log("LogInActivity.onCreate(Bundle of joy)");
         setContentView(R.layout.log_in_activity);
         initCatchAllExceptionsHandler();
         setTitle("lucinda");
@@ -73,9 +74,9 @@ public class LogInActivity extends AppCompatActivity {
     }
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     private void checkNotificationPermission() {
-        log("...checkNotificationPermission()");
+        if( VERBOSE) log("...checkNotificationPermission()");
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-            log("PERMISSION_GRANTED");
+            log("...POST_NOTIFICATIONS.PERMISSION_GRANTED");
         } else if (ActivityCompat.shouldShowRequestPermissionRationale(
                 this, android.Manifest.permission.POST_NOTIFICATIONS)) {
             // In an educational UI, explain to the user why your app requires this
@@ -84,9 +85,9 @@ public class LogInActivity extends AppCompatActivity {
             // "cancel" or "no thanks" button that lets the user continue
             // using your app without granting the permission.
             //showInContextUI(...);
-            log("should show request permission rationale");
+            log("should show request POST_NOTIFICATIONS permission rationale");
         } else {
-            log("...will ask for permissions ");
+            log("...will ask for POST_NOTIFICATIONS permissions ");
             // You can directly ask for the permission.
             // The registered ActivityResultCallback gets the result of this request.
             //requestPermissionLauncher.launch(
@@ -96,7 +97,7 @@ public class LogInActivity extends AppCompatActivity {
     }
 
     private void initDevMode(){
-        log("...initDevMode()");
+        if( VERBOSE) log("...initDevMode()");
         Lucinda.Dev = User.isDevMode(this);
         log("...devMode", Lucinda.Dev);
 

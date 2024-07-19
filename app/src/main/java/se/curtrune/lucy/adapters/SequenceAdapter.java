@@ -76,8 +76,14 @@ public class SequenceAdapter extends RecyclerView.Adapter<SequenceAdapter.ViewHo
         holder.textViewTargetTime.setText(Converter.format(item.getTargetTime()));
         String txtEstimatedDuration = String.format(Locale.getDefault(), "estimated duration %s", Converter.formatSecondsWithHours(item.getEstimatedDuration()));
         holder.textViewEstimatedDuration.setText(txtEstimatedDuration);
-        String textEstimatedEnergy = String.format(Locale.getDefault(), "estimated energy %d", item.getEnergy());
+        String textEstimatedEnergy = String.format(Locale.getDefault(), "%s %d", holder.textViewEstimatedEnergy.getContext().getString(R.string.energy), item.getEnergy());
         holder.textViewEstimatedEnergy.setText(textEstimatedEnergy);
+        String textEstimatedStress = String.format(Locale.getDefault(), " %s %d", holder.textViewEstimatedStress.getContext().getString(R.string.stress),item.getMental().getStress());
+        holder.textViewEstimatedStress.setText(textEstimatedStress);
+        String textEstimatedAnxiety = String.format(Locale.getDefault(), "%s %d",holder.textViewEstimatedAnxiety.getContext().getString(R.string.anxiety) ,item.getMental().getAnxiety());
+        holder.textViewEstimatedAnxiety.setText(textEstimatedAnxiety);
+        String textEstimatedMood = String.format(Locale.getDefault(), "%s %d",holder.textViewEstimatedMood.getContext().getString(R.string.mood) ,item.getMental().getMood());
+        holder.textViewEstimatedMood.setText(textEstimatedMood);
     }
 
     @Override
@@ -95,6 +101,10 @@ public class SequenceAdapter extends RecyclerView.Adapter<SequenceAdapter.ViewHo
         private final TextView textViewTargetTime;
         private final TextView textViewEstimatedDuration;
         private final TextView textViewEstimatedEnergy;
+        private final TextView textViewEstimatedAnxiety;
+        private final TextView textViewEstimatedStress;
+        private final TextView textViewEstimatedMood;
+
         private final TextView textViewEdit;
         private final ImageView imageViewClock;
 
@@ -106,6 +116,9 @@ public class SequenceAdapter extends RecyclerView.Adapter<SequenceAdapter.ViewHo
             textViewTargetTime = itemView.findViewById(R.id.sequenceAdapter_targetTime);
             textViewEstimatedDuration = itemView.findViewById(R.id.sequenceAdapter_estimatedDuration);
             textViewEstimatedEnergy = itemView.findViewById(R.id.sequenceAdapter_estimatedEnergy);
+            textViewEstimatedStress = itemView.findViewById(R.id.sequenceAdapter_estimatedStress);
+            textViewEstimatedAnxiety = itemView.findViewById(R.id.sequenceAdapter_estimatedAnxiety);
+            textViewEstimatedMood = itemView.findViewById(R.id.sequenceAdapter_estimatedMood);
             textViewEdit = itemView.findViewById(R.id.sequenceAdapter_edit);
             imageViewClock  = itemView.findViewById(R.id.sequenceAdapter_clock);
             checkBox_state.setOnClickListener(view -> {

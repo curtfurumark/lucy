@@ -34,8 +34,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:text="@string/time"
-                android:textSize="34sp"
+                android:textSize="24sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@+id/sequenceAdapter_itemState"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -44,56 +45,81 @@
                 android:id="@+id/sequenceAdapter_itemHeading"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:text="@string/heading"
-                android:textSize="28sp"
+                android:textSize="24sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/sequenceAdapter_itemState" />
+                app:layout_constraintStart_toEndOf="@+id/sequenceAdapter_targetTime"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/sequenceAdapter_estimatedDuration"
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="estimated duration"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/sequenceAdapter_itemHeading" />
+                app:layout_constraintTop_toBottomOf="@+id/sequenceAdapter_itemHeading">
+                <TextView
+                    android:id="@+id/sequenceAdapter_estimatedDuration"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="estimated duration" />
+                <TextView
+                    android:id="@+id/sequenceAdapter_estimatedAnxiety"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/anxiety" />
+                <TextView
+                    android:id="@+id/sequenceAdapter_estimatedStress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/stress" />
+                <TextView
+                    android:id="@+id/sequenceAdapter_estimatedMood"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/energy" />
+                <TextView
+                    android:id="@+id/sequenceAdapter_estimatedEnergy"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/estimated_energy" />
 
-            <TextView
-                android:id="@+id/sequenceAdapter_estimatedEnergy"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="estimated energy"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/sequenceAdapter_estimatedDuration" />
+                <TextView
+                    android:id="@+id/sequenceAdapter_itemInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/info"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/sequenceAdapter_estimatedEnergy" />
 
-            <TextView
-                android:id="@+id/sequenceAdapter_itemInfo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/info"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/sequenceAdapter_estimatedEnergy" />
-            <ImageView
-                android:id="@+id/sequenceAdapter_clock"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginEnd="8dp"
-                app:layout_constraintTop_toBottomOf="@id/sequenceAdapter_itemInfo"
-                app:layout_constraintStart_toStartOf="parent"
-                app:srcCompat="@drawable/baseline_access_time_24" />
-            <TextView
-                android:id="@+id/sequenceAdapter_edit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@+id/sequenceAdapter_clock"
-                app:layout_constraintStart_toStartOf="parent"
-                android:text="edit"
-                android:textSize="34sp"/>
+                <ImageView
+                    android:id="@+id/sequenceAdapter_clock"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/sequenceAdapter_itemInfo"
+                    app:srcCompat="@drawable/baseline_access_time_24" />
+                <TextView
+                    android:id="@+id/sequenceAdapter_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@+id/sequenceAdapter_clock"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:text="edit"
+                    android:textSize="34sp"/>
+            </LinearLayout>
+
+
+
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

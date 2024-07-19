@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
@@ -34,6 +35,7 @@ import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.DurationDialog;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.util.Converter;
+import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.DurationWorker;
 import se.curtrune.lucy.workers.ItemsWorker;
 
@@ -53,6 +55,8 @@ public class SequenceFragment extends Fragment implements SequenceAdapter.Callba
     private RecyclerView recycler;
     private RecyclerView.LayoutManager layoutManager;
     private SequenceAdapter adapter;
+    private LucindaViewModel viewModel;
+    public static boolean VERBOSE = false;
     public SequenceFragment(){
         log("...SequenceFragment() constructor");
     }
@@ -71,6 +75,7 @@ public class SequenceFragment extends Fragment implements SequenceAdapter.Callba
         initComponents(view);
         initSequence();
         initRecycler();
+        initViewModel();
         setUserInterface();
         return view;
     }
@@ -155,7 +160,10 @@ public class SequenceFragment extends Fragment implements SequenceAdapter.Callba
                 log("...position",((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition());
             }
         });
-
+    }
+    private void initViewModel(){
+        if( VERBOSE)  log("...initViewModel()");
+        viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
     }
 
 /*    @Override
@@ -202,12 +210,8 @@ public class SequenceFragment extends Fragment implements SequenceAdapter.Callba
 
     @Override
     public void onItemClick(Item item) {
-        log("...onItemClick(Item)");
-        Intent intent = new Intent(getContext(), ItemSession.class);
-       // intent.putExtra(Constants.INTENT_ITEM_SESSION, true);
-        intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, item);
-        intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.SEQUENCE_ACTIVITY);
-        startActivity(intent);
+        log("...onItemClick(Item)", item.getHeading());
+        viewModel.updateFragment(new ItemSessionFragment(item));
     }
 
     @Override

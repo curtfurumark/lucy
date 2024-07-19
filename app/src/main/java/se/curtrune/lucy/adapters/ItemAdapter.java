@@ -69,7 +69,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
         if( VERBOSE) log("ItemAdapter.onBindViewHolder() position", position);
         Item item = items.get(position);
         holder.textView_heading.setText(item.getHeading());
-        holder.textView_info.setText(item.getInfo());
+        //holder.textView_info.setText(item.getInfo());
         holder.checkBox_state.setChecked(item.getState().equals(State.DONE));
         if( item.hasNotification()){
             holder.imageViewNotificationIcon.setVisibility(View.VISIBLE);
@@ -93,7 +93,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
     public class ViewHolder extends RecyclerView.ViewHolder{
         private final TextView textView_heading;
         private final CheckBox checkBox_state;
-        private final TextView textView_info;
+        //private final TextView textView_info;
         private final ImageView imageViewRepeatIcon;
         private final ImageView imageViewNotificationIcon;
         private final ImageView imageViewImportantIcon;
@@ -101,7 +101,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
         public ViewHolder(@NonNull android.view.View itemView) {
             super(itemView);
             textView_heading = itemView.findViewById(R.id.itemAdapter_itemHeading);
-            textView_info = itemView.findViewById(R.id.itemAdapter_itemInfo);
+            //textView_info = itemView.findViewById(R.id.itemAdapter_itemInfo);
             checkBox_state = itemView.findViewById(R.id.itemAdapter_itemState);
             imageViewNotificationIcon = itemView.findViewById(R.id.itemAdapter_notificationIcon);
             imageViewRepeatIcon = itemView.findViewById(R.id.itemAdapter_repeatIcon);

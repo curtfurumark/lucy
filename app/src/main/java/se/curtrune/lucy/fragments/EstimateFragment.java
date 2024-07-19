@@ -126,6 +126,7 @@ public class EstimateFragment extends Fragment {
         if( VERBOSE)log("...initListeners()");
         textViewDate.setOnClickListener(view->showDateDialog());
         textViewActualDuration.setOnClickListener(view->printActualDuration());
+        textViewEstimateDuration.setOnClickListener(view->printEstimatedDuration());
         labelCurrent.setOnClickListener(view->printActualMental());
         labelEstimate.setOnClickListener(view-> navigateToEstimateFragment());
     }
@@ -162,6 +163,14 @@ public class EstimateFragment extends Fragment {
         List<Mental> doneMentals = MentalWorker.getMentals(doneItems, getContext());
         doneMentals.forEach(System.out::println);
         viewModel.updateFragment(new MentalDayFragment(date, true));
+    }
+    private void printEstimatedDuration(){
+        log("...printEstimatedDuration()");
+        for( Item item: items){
+            long estimate = DurationWorker.getEstimatedDuration(item, getContext());
+            log(String.format(Locale.getDefault(),"%s %s",item.getHeading(), Converter.formatSecondsWithHours(estimate) ));
+        }
+
     }
     private void setUserInterfaceEstimate(){
         log("...setUserInterfaceEstimate()");

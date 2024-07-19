@@ -15,9 +15,9 @@ import java.util.List;
 import se.curtrune.lucy.R;
 
 
-public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyViewHolder>{
+public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.MyViewHolder>{
     private List<String> categories;
-    public boolean VERBOSE = true;
+    public boolean VERBOSE = false;
     public void setList(List<String> categories) {
         if( categories == null){
             log("ERROR,, CategoriesAdapter.setList(List<Transaction>) called with null items");
@@ -33,7 +33,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
     }
     private final Callback callback;
 
-    public CategoryAdapter(List<String> categories, Callback callback) {
+    public SimpleAdapter(List<String> categories, Callback callback) {
         if( VERBOSE) log("CategoriesAdapter(List<Item>, Context, Callback) size", categories.size());
         if (categories == null){
             log("WARNING, taskList is null");
@@ -45,20 +45,18 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
     @androidx.annotation.NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@androidx.annotation.NonNull ViewGroup parent, int viewType) {
-        if( VERBOSE) log("CategoryAdapter.onCreateViewHolder(...)");
+        if( VERBOSE) log("SimpleAdapter.onCreateViewHolder(...)");
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.category_adapter, parent, false);
         return new MyViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@androidx.annotation.NonNull final MyViewHolder holder, int position) {
-        if( VERBOSE) log("CategoryAdapter.onBindViewHolder();");
+        if( VERBOSE) log("SimpleAdapter.onBindViewHolder();");
         final String category = categories.get(position);
-        log("...category", category);
+        if(VERBOSE) log("...category", category);
         holder.textViewCategory.setText(category);
     }
-
-
     @Override
     public int getItemCount() {
         return categories.size();

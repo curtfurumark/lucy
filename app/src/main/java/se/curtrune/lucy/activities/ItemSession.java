@@ -642,10 +642,6 @@ public class ItemSession extends AppCompatActivity implements
                 Intent mainIntent = new Intent(this, MainActivity.class);
                 startActivity(mainIntent);
                 break;
-            case SEQUENCE_ACTIVITY:
-                Intent intentSequence = new Intent(this, SequenceActivity.class);
-                startActivity(intentSequence);
-                break;
             default:
                 Toast.makeText(this, "get your shit together, missing calling activity", Toast.LENGTH_LONG).show();
         }

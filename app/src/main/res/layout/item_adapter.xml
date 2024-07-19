@@ -42,13 +42,13 @@
                 app:layout_constraintStart_toEndOf="@+id/itemAdapter_itemState"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
+            <!--TextView
                 android:id="@+id/itemAdapter_itemInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toTopOf="@+id/itemAdapter_repeatIcon"
                 app:layout_constraintStart_toEndOf="@+id/itemAdapter_itemState"
-                app:layout_constraintTop_toBottomOf="@id/itemAdapter_itemHeading" />
+                app:layout_constraintTop_toBottomOf="@id/itemAdapter_itemHeading" /-->
 
             <ImageView
                 android:id="@+id/itemAdapter_repeatIcon"
@@ -59,7 +59,7 @@
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/itemAdapter_itemState"
-                app:layout_constraintTop_toBottomOf="@+id/itemAdapter_itemInfo"
+                app:layout_constraintTop_toBottomOf="@+id/itemAdapter_itemHeading"
                 app:srcCompat="@drawable/baseline_repeat_24" />
 
             <ImageView
@@ -71,7 +71,7 @@
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/itemAdapter_repeatIcon"
-                app:layout_constraintTop_toBottomOf="@+id/itemAdapter_itemInfo"
+                app:layout_constraintTop_toBottomOf="@+id/itemAdapter_itemHeading"
                 app:srcCompat="@drawable/baseline_notifications_24" />
             <ImageView
                 android:id="@+id/itemAdapter_importantIcon"
@@ -82,7 +82,7 @@
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/itemAdapter_repeatIcon"
-                app:layout_constraintTop_toBottomOf="@+id/itemAdapter_itemInfo"
+                app:layout_constraintTop_toBottomOf="@+id/itemAdapter_itemHeading"
                 app:srcCompat="@drawable/baseline_priority_high_24" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

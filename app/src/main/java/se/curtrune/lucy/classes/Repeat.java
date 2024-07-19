@@ -40,7 +40,7 @@ public class Repeat implements Serializable {
     private int qualifier = 1;
     private List<DayOfWeek> dayOfWeeks = new ArrayList<>();
     public Repeat(){
-        log("Repeat() constructor");
+        if(VERBOSE)log("Repeat() constructor");
     }
 
     public void add(DayOfWeek dayOfWeek){

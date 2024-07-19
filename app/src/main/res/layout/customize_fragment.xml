@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     tools:context=".fragments.CustomizeFragment">
 
     <LinearLayout
@@ -21,6 +22,28 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/dark_mode" />
+        <RadioGroup
+            android:id="@+id/customizeFragment_radioGroupLanguage"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="24sp"
+                android:text="@string/language"/>
+            <RadioButton
+                android:id="@+id/customizeFragment_radioButtonSwedish"
+                android:text="@string/swedish"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <RadioButton
+                android:id="@+id/customizeFragment_radioButtonEnglish"
+                android:text="@string/english"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </RadioGroup>
         <TextView
             android:id="@+id/customizeFragment_labelPanicButton"
             android:text="@string/panic_action"
@@ -31,8 +54,9 @@
         <LinearLayout
             android:id="@+id/customizeFragment_layoutPanicButton"
             android:layout_width="match_parent"
+            android:orientation="vertical"
             android:layout_height="wrap_content"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <RadioGroup
                 android:id="@+id/customizeFragment_radioGroupPanicAction"
@@ -60,51 +84,31 @@
                     android:layout_marginStart="24dp"
                     android:text="@string/sequence" />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                <RadioButton
+                    android:id="@+id/customizeFragment_radioButtonICE"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/customizeFragment_url"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="url" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <Button
-                    android:id="@+id/customizeFragment_buttonAddUrl"
-                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="add panic url" />
-
-                <ListView
-                    android:id="@+id/customizeFragment_panicUrls"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_marginStart="24dp"
+                    android:text="ICE" />
             </RadioGroup>
-        </LinearLayout>
-        <RadioGroup
-            android:id="@+id/customizeFragment_radioGroupLanguage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="24sp"
-                android:text="@string/language"/>
-            <RadioButton
-                android:id="@+id/customizeFragment_radioButtonSwedish"
-                android:text="@string/swedish"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-            <RadioButton
-                android:id="@+id/customizeFragment_radioButtonEnglish"
-                android:text="@string/english"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
 
-        </RadioGroup>
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/customizeFragment_editTextICE"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="ICE"
+                    android:inputType="number" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+
+        </LinearLayout>
+
         <TextView
             android:id="@+id/customizeFragment_labelCategory"
             android:text="@string/categories"
@@ -121,8 +125,39 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
         </LinearLayout>
+        <TextView
+            android:id="@+id/customizeFragment_labelICE"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:text="panic urls"
+            android:textSize="24sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/customizeFragment_panicUrls"
+            android:layout_marginStart="24dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_marginStart="24dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/customizeFragment_url"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="url" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/customizeFragment_buttonAddUrl"
+            android:layout_marginStart="24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="add panic url" />
     </LinearLayout>
 
-    <!-- TODO: Update blank fragment layout -->
-
-</FrameLayout>
+</ScrollView>

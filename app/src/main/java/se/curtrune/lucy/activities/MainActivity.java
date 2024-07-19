@@ -46,6 +46,7 @@ import se.curtrune.lucy.fragments.MentalDayFragment;
 import se.curtrune.lucy.fragments.MessageBoardFragment;
 import se.curtrune.lucy.fragments.MonthCalenderFragment;
 import se.curtrune.lucy.fragments.ProjectsFragment;
+import se.curtrune.lucy.fragments.SequenceFragment;
 import se.curtrune.lucy.fragments.TimerFragment;
 import se.curtrune.lucy.fragments.TodoFragment;
 import se.curtrune.lucy.fragments.TopTenFragment;
@@ -73,12 +74,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
         log("MainActivity.onCreate(Bundle of joy)");
-        checkLoggedIn();
         initComponents();
         initListeners();
         initViewModel();
         navigate(new CalenderFragment());
-        setUserInterfaceCurrentEnergy();
+        //setUserInterfaceCurrentEnergy();
     }
     private void boostMe(){
         if( VERBOSE) log("...boostMe()");
@@ -96,13 +96,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    private boolean checkLoggedIn(){
+/*    private boolean checkLoggedIn(){
         log("...checkLoggedIn()");
         if( User.usesPassword(this) && !User.loggedIn(this)){
             return false;
         }
         return true;
-    }
+    }*/
     private void initComponents(){
         if( VERBOSE) log("...initComponents()");
         toolbar = findViewById(R.id.navigationDrawer_toolbar);
@@ -256,12 +256,11 @@ public class MainActivity extends AppCompatActivity {
                 if (panicRoot == null) {
                     log("ERROR...panicRoot == null");
                 } else {
-                    Intent intent = new Intent(this, SequenceActivity.class);
-                    intent.putExtra(Constants.INTENT_SEQUENCE_PARENT, panicRoot);
-                    startActivity(intent);
+                    navigate(new SequenceFragment(panicRoot));
                 }
                 break;
             default:
+                //TODO, translate
                 Toast.makeText(this, "go to settings and set preferred panic action", Toast.LENGTH_LONG).show();
                 break;
         }

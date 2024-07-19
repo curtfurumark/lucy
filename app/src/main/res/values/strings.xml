@@ -210,6 +210,7 @@
     <string name="_1_week">1 week</string>
     <string name="_1_month">1 month</string>
     <string name="are_you_sure">"are you sure?"</string>
+    <string name="estimated_energy">estimated energy</string>
     <string-array name="periods">
         <item name="day">day</item>
         <item name="week">week</item>

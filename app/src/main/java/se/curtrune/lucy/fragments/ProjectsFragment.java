@@ -245,7 +245,7 @@ public class ProjectsFragment extends Fragment implements
     @Override
     public void onItemClick(Item item) {
         log("...onItemClick(Item)", item.getHeading());
-        if(item.hasChild() && !item.isTemplate()){
+        if(item.hasChild() ){
             descend(item);
         }else {
             viewModel.updateFragment(new ItemSessionFragment(item));
