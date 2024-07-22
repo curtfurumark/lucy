@@ -11,12 +11,11 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import se.curtrune.lucy.activities.MainActivity;
 import se.curtrune.lucy.workers.SettingsWorker;
 
 public class User {
     public static boolean VERBOSE = false;
-    public static final String ICE_PHONE_NUMBER = "ICE_PHONE_NUMBER";
+    public static final String KEY_ICE_PHONE_NUMBER = "KEY_ICE_PHONE_NUMBER";
     public static final String USE_DARK_MODE = "USE_DARK_MODE";
     public static final String USER_NAME = "USER_NAME";
     public static final String USES_PASSWORD = "USES_PASSWORD";
@@ -83,7 +82,7 @@ public class User {
     }
 
     public static void setIcePhoneNumber(int phoneNumber, Context context){
-        Settings.addInt(ICE_PHONE_NUMBER, phoneNumber, context);
+        Settings.addInt(KEY_ICE_PHONE_NUMBER, phoneNumber, context);
     }
 
     public static void setUsesPassword(boolean usesPassword, Context context){
@@ -150,5 +149,9 @@ public class User {
         }else{
             log("ERROR removing url", url);
         }
+    }
+
+    public static int getICE(Context context) {
+        return  Settings.getInt(KEY_ICE_PHONE_NUMBER, -1, context);
     }
 }

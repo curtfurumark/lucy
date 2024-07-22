@@ -3,8 +3,6 @@ package se.curtrune.lucy.fragments;
 import static se.curtrune.lucy.util.Logger.log;
 
 import android.app.AlertDialog;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +32,7 @@ import se.curtrune.lucy.adapters.SimpleAdapter;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.app.User;
 import se.curtrune.lucy.dialogs.AddCategoryDialog;
+import se.curtrune.lucy.dialogs.AddStringDialog;
 import se.curtrune.lucy.dialogs.PasswordDialog;
 
 /**
@@ -45,19 +44,24 @@ public class CustomizeFragment extends Fragment {
 
     private CheckBox checkBoxPassword;
     private CheckBox checkBoxDarkMode;
-    private EditText editTextUrl;
-    private Button buttonAddUrl;
-   // private ListView listViewPanicUrls;
+    //private EditText editTextUrl;
+    private EditText editTextICE;
+    private TextView textViewAddURL;
+    private TextView textViewAddICE;
+    private TextView textViewAddCategory;
+
     private RecyclerView recyclerPanicUrls;
     private RecyclerView recyclerCategories;
     private RadioButton radioButtonGame;
     private RadioButton radioButtonWeb;
     private RadioButton radioButtonSequence;
+    private RadioButton radioButtonPending;
     private RadioButton radioButtonICE;
     private RadioButton radioButtonSwedish;
     private RadioButton radioButtonEnglish;
     private RadioGroup radioGroupLanguage;
     private LinearLayout layoutPanicButton;
+    private LinearLayout layoutCategories;
     private TextView textViewPanicButton;
     private TextView labelCategories;
     private List<String> categories;
@@ -100,16 +104,34 @@ public class CustomizeFragment extends Fragment {
         categories.add(category);
         categoryAdapter.notifyDataSetChanged();
     }
-    private void addPanicUrl(){
+    private void addICE() {
+        log("...addICE");
+        String stringICE = editTextICE.getText().toString();
+        if (stringICE.isEmpty()) {
+            Toast.makeText(getContext(), getString(R.string.missing_telephone_number), Toast.LENGTH_LONG).show();
+            return;
+        }
+        int intPhoneNumber;
+        try {
+            intPhoneNumber = Integer.parseInt(stringICE);
+        } catch (NumberFormatException exception) {
+            log("EXCEPTION, parsing ice");
+            exception.printStackTrace();
+            Toast.makeText(getContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
+            return;
+        }
+        User.setIcePhoneNumber(intPhoneNumber, getContext());
+        Toast.makeText(getContext() ,getString( R.string.ice_added), Toast.LENGTH_LONG).show();
+
+    }
+    private void addPanicUrl(String url){
         log("...addPanicUrl()");
-        String url = editTextUrl.getText().toString();
         if(!URLUtil.isValidUrl(url)){
             log("...not a valid url");
             Toast.makeText(getContext(), "not a valid url", Toast.LENGTH_LONG).show();
             return;
         }
         User.addPanicUrl(url, getContext());
-        editTextUrl.setText("");
         initPanicURLS();
     }
     private void deletePanicURL(String url){
@@ -120,8 +142,7 @@ public class CustomizeFragment extends Fragment {
     }
     private void initComponents(View view){
         log("...initComponents(View view)");
-        editTextUrl = view.findViewById(R.id.customizeFragment_url);
-        buttonAddUrl = view.findViewById(R.id.customizeFragment_buttonAddUrl);
+        textViewAddURL = view.findViewById(R.id.customizeFragment_addURL);
         recyclerPanicUrls = view.findViewById(R.id.customizeFragment_panicUrls);
         checkBoxPassword = view.findViewById(R.id.customizeFragment_checkBoxPassword);
         checkBoxDarkMode = view.findViewById(R.id.customizeFragment_checkBoxDarkMode);
@@ -136,11 +157,18 @@ public class CustomizeFragment extends Fragment {
         recyclerCategories = view.findViewById(R.id.customizeFragment_recyclerCategories);
         labelCategories = view.findViewById(R.id.customizeFragment_labelCategory);
         radioButtonICE = view.findViewById(R.id.customizeFragment_radioButtonICE);
+        editTextICE = view.findViewById(R.id.customizeFragment_editTextICE);
+        textViewAddICE = view.findViewById(R.id.customizeFragment_addICE);
+        radioButtonPending = view.findViewById(R.id.customizeFragment_radioButtonPending);
+        labelCategories= view.findViewById(R.id.customizeFragment_labelCategory);
+        textViewAddCategory = view.findViewById(R.id.customizeFragment_addCategory);
+        layoutCategories = view.findViewById(R.id.customizeFragment_layoutCategories);
     }
     private void initListeners(){
         log("...initListeners()");
-        labelCategories.setOnClickListener(view->showCategoryDialog());
-        buttonAddUrl.setOnClickListener(view->addPanicUrl());
+        textViewAddCategory.setOnClickListener(view->showCategoryDialog());
+        labelCategories.setOnClickListener(view->toggleCategories());
+        textViewAddURL.setOnClickListener(view->showAddUrlDialog());
         checkBoxPassword.setOnClickListener(view->{
             if( checkBoxPassword.isChecked()){
                 if( !User.usesPassword(getContext())){
@@ -154,12 +182,14 @@ public class CustomizeFragment extends Fragment {
         radioButtonGame.setOnClickListener(view->panicAction(Settings.PanicAction.GAME));
         radioButtonWeb.setOnClickListener(view->panicAction(Settings.PanicAction.URL));
         radioButtonSequence.setOnClickListener(view->panicAction(Settings.PanicAction.SEQUENCE));
-        radioButtonICE.setOnClickListener(view->onClickICE());
+        radioButtonICE.setOnClickListener(view->panicAction(Settings.PanicAction.ICE));
+        radioButtonPending.setOnClickListener(view->panicAction(Settings.PanicAction.PENDING));
         radioGroupLanguage.setOnCheckedChangeListener((group, checkedId) -> {
             log("...onCheckChanged(RadioGroup, int)");
             setLanguage(checkedId);
         });
         textViewPanicButton.setOnClickListener(view->togglePanicButton());
+        textViewAddICE.setOnClickListener(view->addICE());
     }
     private void initRecyclerCategories(){
         log("...initRecyclerCategories()");
@@ -186,6 +216,7 @@ public class CustomizeFragment extends Fragment {
     }
     private void onClickICE(){
         log("...onClickICE()");
+
     }
 
     private void onPanicUrlClick(String url) {
@@ -215,15 +246,13 @@ public class CustomizeFragment extends Fragment {
     }
     private void panicAction(Settings.PanicAction panicAction){
         log("...panicAction(PanicAction)", panicAction.toString());
-/*        User.setPanicAction(panicAction, getContext());
-        switch (panicAction){
-            case URL:
-            case GAME:
-            case PENDING:
-            case SEQUENCE:
-            case ICE:
-                showPanic
-        }*/
+        if( panicAction.equals(Settings.PanicAction.ICE)){
+            if( User.getICE(getContext() )== -1){
+                Toast.makeText(getContext(), "please add an ice phone number", Toast.LENGTH_LONG).show();
+                return;
+            }
+        }
+        User.setPanicAction(panicAction, getContext());
     }
     private void printSharedPreferences(){
         Settings.printAll(requireContext());
@@ -278,8 +307,29 @@ public class CustomizeFragment extends Fragment {
             case SEQUENCE:
                 radioButtonSequence.setChecked(true);
                 break;
+            case ICE:
+                radioButtonICE.setChecked(true);
+                break;
+            case PENDING:
+                radioButtonPending.setChecked(true);
+                break;
         }
-
+        if( User.getICE(getContext()) != -1){
+            String stringICE = String.valueOf(User.getICE(getContext()));
+            editTextICE.setText(stringICE);
+        }
+    }
+    private void showAddUrlDialog(){
+        log("...showAddUrlDialog()");
+        AddStringDialog dialog =  new AddStringDialog();
+        dialog.setListener(new AddStringDialog.Callback() {
+            @Override
+            public void onNewString(String url) {
+                log("...onNewString(String)", url);
+                addPanicUrl(url);
+            }
+        });
+        dialog.show(getChildFragmentManager(), "add url");
     }
     private void showCategoryDialog(){
         log("...showCategoryDialog()");
@@ -303,6 +353,15 @@ public class CustomizeFragment extends Fragment {
             User.setPassword(pwd, getContext());
         });
         dialog.show(getChildFragmentManager(), "set password");
+    }
+    private void toggleCategories(){
+        log("...toggleCategories()");
+        if( layoutCategories.getVisibility() == View.VISIBLE){
+            layoutCategories.setVisibility(View.GONE);
+        }else{
+            layoutCategories.setVisibility(View.VISIBLE);
+        }
+
     }
     private void toggleDarkMode(){
         log("...toggleDarkMode()");

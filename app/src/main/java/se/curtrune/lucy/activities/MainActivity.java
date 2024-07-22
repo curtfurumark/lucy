@@ -34,6 +34,7 @@ import se.curtrune.lucy.app.User;
 import se.curtrune.lucy.classes.Affirmation;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.dialogs.BoostDialog;
+import se.curtrune.lucy.dialogs.PanicActionDialog;
 import se.curtrune.lucy.fragments.AppointmentsFragment;
 import se.curtrune.lucy.fragments.CalenderFragment;
 import se.curtrune.lucy.fragments.ContactFragment;
@@ -51,7 +52,6 @@ import se.curtrune.lucy.fragments.TimerFragment;
 import se.curtrune.lucy.fragments.TodoFragment;
 import se.curtrune.lucy.fragments.TopTenFragment;
 import se.curtrune.lucy.fragments.WeeklyCalenderFragment;
-import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.AffirmationWorker;
 import se.curtrune.lucy.workers.ItemsWorker;
@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
         if( VERBOSE) log("...initListeners()");
         textViewEnergy.setOnClickListener(view->showMentalDay());
         fapBoost.setOnClickListener(view->boostMe());
-        fapPanic.setOnClickListener(view->panic());
+        fapPanic.setOnClickListener(view->panic(User.getPanicAction(this)));
         textViewLucindaHome.setOnClickListener(view->openWebPage("https://curtfurumark.se/lucinda"));
     }
     private void initViewModel(){
@@ -238,10 +238,36 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this,"page not found", Toast.LENGTH_LONG).show();
         }
     }
-    private void panic(){
-        log("...panic()");
-        Toast.makeText(this, "DON'T PANIC!", Toast.LENGTH_LONG).show();
-        Settings.PanicAction panicAction = User.getPanicAction(this);
+    private void panicActionICE(){
+        log("...panicActionICE");
+        //FIX PERMISSION, IN CUSTOMIZEFRAGEMENT PERHAPS
+        int phoneNumber = User.getICE(this);
+        if( phoneNumber == -1){
+            Toast.makeText(this, "no phone number to call", Toast.LENGTH_LONG).show();
+            return;
+        }
+        String stringURI = String.format(Locale.getDefault(), "tel:%d", phoneNumber);
+        log("...stringURI", stringURI);
+        Intent intent = new Intent(Intent.ACTION_CALL);
+        intent.setData(Uri.parse(stringURI));
+        startActivity(intent);
+    }
+    private void panicActionPending(){
+        log("...panicActionPending()");
+        PanicActionDialog dialog = new PanicActionDialog();
+        dialog.setListener(new PanicActionDialog.Listener() {
+            @Override
+            public void onPanicAction(Settings.PanicAction panicAction) {
+                log("onPanicAction(PanicAction)");
+                panic(panicAction);
+
+            }
+        });
+        dialog.show(getSupportFragmentManager(),"panic action");
+    }
+    private void panic(Settings.PanicAction panicAction){
+        log("...panic(PanicAction))");
+        //Toast.makeText(this, "DON'T PANIC!", Toast.LENGTH_LONG).show();
         log("....panicAction", panicAction.toString());
         switch (panicAction) {
             case GAME:
@@ -259,9 +285,15 @@ public class MainActivity extends AppCompatActivity {
                     navigate(new SequenceFragment(panicRoot));
                 }
                 break;
+            case ICE:
+                panicActionICE();
+                break;
+            case PENDING:
+                panicActionPending();
+                break;
             default:
                 //TODO, translate
-                Toast.makeText(this, "go to settings and set preferred panic action", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "go to customize and set preferred panic action", Toast.LENGTH_LONG).show();
                 break;
         }
     }

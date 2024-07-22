@@ -8,7 +8,7 @@
 
     <LinearLayout
         android:orientation="vertical"
-        android:padding="8dp"
+        android:padding="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -22,41 +22,43 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/dark_mode" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:text="@string/language"/>
         <RadioGroup
             android:id="@+id/customizeFragment_radioGroupLanguage"
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="24sp"
-                android:text="@string/language"/>
+
             <RadioButton
                 android:id="@+id/customizeFragment_radioButtonSwedish"
                 android:text="@string/swedish"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <RadioButton
                 android:id="@+id/customizeFragment_radioButtonEnglish"
                 android:text="@string/english"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
         </RadioGroup>
+
         <TextView
             android:id="@+id/customizeFragment_labelPanicButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="@string/panic_action"
             android:textSize="24sp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
+            android:visibility="visible" />
         <LinearLayout
             android:id="@+id/customizeFragment_layoutPanicButton"
             android:layout_width="match_parent"
             android:orientation="vertical"
             android:layout_height="wrap_content"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <RadioGroup
                 android:id="@+id/customizeFragment_radioGroupPanicAction"
@@ -90,33 +92,66 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
                     android:text="ICE" />
-            </RadioGroup>
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/customizeFragment_editTextICE"
+                <RadioButton
+                    android:id="@+id/customizeFragment_radioButtonPending"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="ICE"
-                    android:inputType="number" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-
-
+                    android:layout_marginStart="24dp"
+                    android:text="pending" />
+            </RadioGroup>
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/customizeFragment_labelCategory"
-            android:text="@string/categories"
-            android:textSize="24sp"
+        <RelativeLayout
             android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <TextView
+            android:text="ICE"
+            android:textSize="24sp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/customizeFragment_addICE"
+                android:text="+"
+                android:textSize="24sp"
+                android:layout_alignParentEnd="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </RelativeLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_marginStart="24dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/customizeFragment_editTextICE"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="ICE"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/customizeFragment_labelCategory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/categories"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/customizeFragment_addCategory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="+"
+                android:textSize="24sp" />
+        </RelativeLayout>
         <LinearLayout
             android:id="@+id/customizeFragment_layoutCategories"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <androidx.recyclerview.widget.RecyclerView
@@ -129,35 +164,27 @@
             android:id="@+id/customizeFragment_labelICE"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
         <TextView
             android:text="panic urls"
             android:textSize="24sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/customizeFragment_addURL"
+                android:text="+"
+                android:textSize="24sp"
+                android:layout_alignParentEnd="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </RelativeLayout>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/customizeFragment_panicUrls"
             android:layout_marginStart="24dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_marginStart="24dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/customizeFragment_url"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="url" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <Button
-            android:id="@+id/customizeFragment_buttonAddUrl"
-            android:layout_marginStart="24dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="add panic url" />
     </LinearLayout>
 
 </ScrollView>

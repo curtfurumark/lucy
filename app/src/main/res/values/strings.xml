@@ -211,6 +211,9 @@
     <string name="_1_month">1 month</string>
     <string name="are_you_sure">"are you sure?"</string>
     <string name="estimated_energy">estimated energy</string>
+    <string name="ice_added">ICE ADDED</string>
+    <string name="missing_telephone_number">MISSING TELEPHONE NUMBER</string>
+    <string name="ice">ICE</string>
     <string-array name="periods">
         <item name="day">day</item>
         <item name="week">week</item>

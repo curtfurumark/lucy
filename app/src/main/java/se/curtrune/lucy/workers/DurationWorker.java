@@ -18,7 +18,7 @@ public class DurationWorker {
      * @return duration estimate in seconds
      */
     public static long calculateTemplateDuration(Item template, Context context){
-        log("DurationWorker.calculateTemplateDuration()");
+        if( VERBOSE) log("DurationWorker.calculateTemplateDuration()");
         long duration = 0;
         List<Item> children = ItemsWorker.selectChildren(template, context);
         //template that never has been actualized
@@ -39,7 +39,7 @@ public class DurationWorker {
      * @return the estimated duration
      */
     public static long getEstimatedDuration(Item item, Context context){
-        log("StaticsWorker.getEstimate(Item, Context)", item.getHeading());
+        if( VERBOSE) log("StaticsWorker.getEstimate(Item, Context)", item.getHeading());
         if( item.isTemplate()){
             return calculateTemplateDuration(item, context);
         }

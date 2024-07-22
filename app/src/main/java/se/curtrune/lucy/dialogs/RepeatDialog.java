@@ -69,10 +69,12 @@ public class RepeatDialog extends BottomSheetDialogFragment {
         log("...getUnit()");
         if( mode.equals(Mode.CUSTOM)){
             Repeat repeat = new Repeat();
-            String qualifier = editTextQualifier.getText().toString();
+            String stringQualifier = editTextQualifier.getText().toString();
+            int qualifier = Integer.parseInt(stringQualifier);
             log("...qualifier", qualifier);
             log("...dayWeekYearMonth", dayWeekMonthYear);
-            //listener.onRepeat();
+            repeat.setPeriod(qualifier, Repeat.Unit.valueOf(dayWeekMonthYear.toUpperCase()) );
+            listener.onRepeat(repeat);
             dismiss();
         }else{
             log("STRANGE, ");

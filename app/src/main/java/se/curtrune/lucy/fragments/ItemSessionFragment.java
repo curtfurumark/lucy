@@ -121,7 +121,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        log("ItemsFragment.onCreateView(LayoutInflater, ViewGroup, Bundle)");
+        log("ItemSessionFragment.onCreateView(LayoutInflater, ViewGroup, Bundle)");
         View view = inflater.inflate(R.layout.item_session_fragment, container, false);
         initComponents(view);
         initListeners();
@@ -137,7 +137,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
 
     }
     private void initActionRecycler(){
-        log("...initActionRecycler()");
+        if( VERBOSE) log("...initActionRecycler()");
         actionAdapter = new ActionAdapter(ActionAdapter.getActionList(currentItem, getContext()), action -> {
             log("...onAction(Action)", action.getTitle());
             log("...type", action.getType().toString());
@@ -175,11 +175,11 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         actionAdapter.notifyDataSetChanged();
     }
     private void initKronos(){
-        log("...initKronos()");
+        if( VERBOSE) log("...initKronos()");
         kronos = Kronos.getInstance(this);
     }
     private void initViewModel(){
-        log("...initViewModel()");
+        if( VERBOSE) log("...initViewModel()");
         viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
     }
 
@@ -207,7 +207,6 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         textViewDuration.setText(Converter.formatSecondsWithHours(secs));
     }
     private void showDateDialog() {
-        log("...showDateDialog()");
         DatePickerDialog datePickerDialog = new DatePickerDialog(getContext());
         datePickerDialog.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -257,6 +256,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         if( VERBOSE)log("...setEstimatedTime()");
         long estimatedDuration = DurationWorker.getEstimatedDuration(item, getContext());
         String stringEstimatedDuration = String.format(Locale.getDefault(), "estimated duration %s", Converter.formatSecondsWithHours(estimatedDuration));
+        log("..." , stringEstimatedDuration);
         textViewEstimatedTime.setText(stringEstimatedDuration);
     }
     private void setUserInterface(Item item){
@@ -275,10 +275,10 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         }
     }
     private void setEstimatedEnergy(Item item){
-        log("...setEstimatedEnergy(Item)");
-        //MentalStats stats = StatisticsWorker.getEstimate(item, getContext());
-        MentalStats stats1 = StatisticsWorker.getMentalStats(item, getContext());
-        String stringEstimatedEnergy = String.format(Locale.getDefault(), "estimated energy %s", stats1.getEnergy());
+        if( VERBOSE) log("...setEstimatedEnergy(Item)");
+        MentalStats stats = StatisticsWorker.getMentalStats(item, getContext());
+        String stringEstimatedEnergy = String.format(Locale.getDefault(), "estimated energy %s", stats.getEnergy());
+        log("...", stringEstimatedEnergy);
         textViewEstimatedEnergy.setText(stringEstimatedEnergy);
     }
 
