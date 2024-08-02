@@ -3,7 +3,6 @@ package se.curtrune.lucy.fragments;
 import static se.curtrune.lucy.util.Logger.log;
 
 import android.app.AlertDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -27,13 +26,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.activities.ItemSession;
 import se.curtrune.lucy.adapters.ItemAdapter;
-import se.curtrune.lucy.classes.CallingActivity;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.EditItemDialog;
-import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.ItemsWorker;
 

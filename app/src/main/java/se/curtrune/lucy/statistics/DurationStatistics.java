@@ -61,6 +61,9 @@ public class DurationStatistics {
     public List<Listable> getDateListables(){
         return dateListables;
     }
+    public List<Item> getItems(){
+        return items;
+    }
     private void init(LocalDate firstDate, LocalDate lastDate, Context context){
         log("DurationStatistics.init(LocalDate,LocalDate, Context");
         LocalDB db = new LocalDB(context);

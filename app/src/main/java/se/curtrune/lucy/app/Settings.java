@@ -18,6 +18,8 @@ import se.curtrune.lucy.classes.Type;
 public class Settings {
     private static final String PREFERENCES_NAME =  "PREFERENCES_NAME";
     private static final String IS_INITIALIZED = "IS_INITIALIZED";
+    public static final String DEV_EMAIL = "curt.furumark@gmail.com";
+
     public static final String USER = "USER";
     //public static final String PWD = "PWD";
     private long todoID;
@@ -27,6 +29,8 @@ public class Settings {
     private long panicID;
     private long theRootID;
     private boolean isInitialized = false;
+
+
 
     public enum PanicAction{
         GAME, URL, SEQUENCE, PENDING, ICE
@@ -174,7 +178,12 @@ public class Settings {
         SharedPreferences preferences = context.getSharedPreferences("Mypref", 0);
         preferences.edit().remove(key).commit();
     }
-    public static void saveList(String key,Set<String> list,  Context context) {
+    public static void saveList(String key, List<String> list, Context context) {
+        log("Settings.saveList(String, List<String>, Context)");
+        Set<String> stringSet = new HashSet<>(list);
+        saveSet(key, stringSet, context);
+    }
+    public static void saveSet(String key,Set<String> list,  Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putStringSet(key, list);

@@ -50,10 +50,9 @@ import se.curtrune.lucy.workers.NotificationsWorker;
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link CalenderFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * create an instance of this fragment.add
  */
 public class CalenderFragment extends Fragment {
-
 
     private Button buttonPrev;
     private Button buttonNext;

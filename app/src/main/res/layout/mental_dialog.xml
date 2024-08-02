@@ -140,16 +140,6 @@
         app:layout_constraintStart_toEndOf="@+id/mentalDialog_labelAnxiety"
         app:layout_constraintTop_toTopOf="@+id/mentalDialog_labelAnxiety" />
 
-    <Spinner
-        android:id="@+id/mentalDialog_spinnerCategories"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:minHeight="48dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutComment" />
-
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayoutComment"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -169,36 +159,55 @@
             android:lines="4" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <TextView
-        android:id="@+id/mentalDialog_mentalID"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/mentalDialog_layoutDev"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:text="mental id"
-        app:layout_constraintStart_toEndOf="@+id/mentalDialog_itemID"
-        app:layout_constraintTop_toBottomOf="@+id/mentalDialog_spinnerCategories" />
-
-    <TextView
-        android:id="@+id/mentalDialog_itemID"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="item id"
+        android:orientation="vertical"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/mentalDialog_mentalID" />
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutComment">
 
-    <CheckBox
-        android:id="@+id/mentalDialog_checkboxIsTemplate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:checked="false"
-        android:text="is template"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mentalDialog_itemID" />
+        <Spinner
+            android:id="@+id/mentalDialog_spinnerCategories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:minHeight="48dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textInputLayoutComment" />
 
+        <TextView
+            android:id="@+id/mentalDialog_mentalID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="mental id"
+            app:layout_constraintStart_toEndOf="@+id/mentalDialog_itemID"
+            app:layout_constraintTop_toBottomOf="@+id/mentalDialog_spinnerCategories" />
+
+        <TextView
+            android:id="@+id/mentalDialog_itemID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="item id"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/mentalDialog_mentalID" />
+
+        <CheckBox
+            android:id="@+id/mentalDialog_checkboxIsTemplate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:checked="false"
+            android:text="is template"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mentalDialog_itemID" />
+    </LinearLayout>
     <Button
         android:id="@+id/mentalDialog_delete"
         android:layout_width="wrap_content"
@@ -207,7 +216,7 @@
         android:layout_marginTop="16dp"
         android:text="@string/delete"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mentalDialog_checkboxIsTemplate" />
+        app:layout_constraintTop_toBottomOf="@+id/mentalDialog_layoutDev" />
 
     <Button
         android:id="@+id/mentalDialog_buttonDismiss"

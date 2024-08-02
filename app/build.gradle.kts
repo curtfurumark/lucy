@@ -10,8 +10,8 @@ android {
         applicationId = "se.curtrune.lucy"
         minSdk = 24
         targetSdk = 34
-        versionCode = 4
-        versionName = "1.0701501"
+        versionCode = 6
+        versionName = "1.072501"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -45,6 +45,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.jjoe64:graphview:4.2.2")
     implementation("androidx.preference:preference:1.2.1")
+    implementation ("com.github.skydoves:colorpickerview:2.3.0")
 
     implementation("androidx.annotation:annotation:1.8.0")
     testImplementation("junit:junit:4.13.2")

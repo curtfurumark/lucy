@@ -15,8 +15,8 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 
 import se.curtrune.lucy.R;
+import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Message;
-import se.curtrune.lucy.util.Settings;
 import se.curtrune.lucy.workers.MessageWorker;
 
 /**

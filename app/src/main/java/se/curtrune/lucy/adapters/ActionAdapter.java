@@ -6,6 +6,7 @@ import static se.curtrune.lucy.util.Logger.log;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Action;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.util.Converter;
+import se.curtrune.lucy.workers.DurationWorker;
 
 
 public class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ViewHolder>{
@@ -49,82 +51,73 @@ public class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         if( VERBOSE) log("ActionAdapter.onBindViewHolder() position", position);
         Action action = items.get(position);
-
-
         holder.textViewTitle.setText(action.getTitle());
-
-        //holder.textViewTitle.setCompoundDrawables();
-
+        holder.textViewValue.setText(action.getValue());
     }
     public static List<Action> getActionList(Item item, Context context){
         if( VERBOSE) log("ActionAdapter.getActionList(Item)");
-        Action time = new Action();
+        Action actionTime = new Action(context.getString(R.string.time));
         LocalTime targetTime = item.getTargetTime();
-        if( targetTime != null){
-            time.setTitle(targetTime.toString());
-        }else {
-            time.setTitle(context.getString(R.string.time));
+        if( targetTime != null) {
+            actionTime.setValue(targetTime.toString());
         }
-        time.setType(Action.Type.TIME);
+        actionTime.setType(Action.Type.TIME);
 
-        Action actionTags = new Action();
+        Action actionTags = new Action(context.getString(R.string.tags));
         String tags = item.getTags();
-        actionTags.setTitle(context.getString(R.string.tags));
+        actionTags.setValue(tags);
         actionTags.setType(Action.Type.TAGS);
 
-        Action notification = new Action();
+        Action notification = new Action(context.getString(R.string.notification));
         if(item.hasNotification()){
-            notification.setTitle(item.getNotification().toString());
-        }else{
-            notification.setTitle(context.getString(R.string.notification));
+            notification.setValue(item.getNotification().toString());
         }
+        notification.setTitle(context.getString(R.string.notification));
         notification.setType(Action.Type.NOTIFICATION);
 
-        Action dateAction = new Action();
+        Action dateAction = new Action(context.getString(R.string.date));
         if( item.getTargetDate() != null) {
-            dateAction.setTitle(item.getTargetDate().toString());
-        }else{
-            dateAction.setTitle(context.getString(R.string.date));
+            dateAction.setValue(item.getTargetDate().toString());
         }
         dateAction.setType(Action.Type.DATE);
 
-        Action repeat = new Action();
+        Action repeat = new Action(context.getString(R.string.repeat));
         if( item.hasPeriod()){
-            repeat.setTitle(item.getPeriod().toString());
-        }else{
-            repeat.setTitle(context.getString(R.string.repeat));
+            repeat.setValue(item.getPeriod().toString());
         }
         repeat.setType(Action.Type.REPEAT);
 
-        Action categoryAction = new Action();
+        Action categoryAction = new Action(context.getString(R.string.category));
         String category = item.getCategory();
         if( category != null && !category.isEmpty()){
-            categoryAction.setTitle(category);
-        }else {
-            categoryAction.setTitle(context.getString(R.string.category));
+            categoryAction.setValue(category);
         }
         categoryAction.setType(Action.Type.CATEGORY);
 
-        Action actionDuration = new Action();
+        Action actionDuration = new Action(context.getString(R.string.duration));
         if( item.isDone()){
-            actionDuration.setTitle(Converter.formatSecondsWithHours(item.getDuration()));
+            actionDuration.setValue(Converter.formatSecondsWithHours(item.getDuration()));
         }else{
-            actionDuration.setTitle(context.getString(R.string.duration));
+            long estimatedDuration = DurationWorker.getEstimatedDuration(item, context);
+            actionDuration.setValue(Converter.formatSecondsWithHours(estimatedDuration));
         }
         actionDuration.setType(Action.Type.DURATION);
 
-        Action actionMental = new Action();
-        actionMental.setTitle(context.getString(R.string.mental));
+        Action actionMental = new Action(context.getString(R.string.mental));
         actionMental.setType(Action.Type.MENTAL);
 
+        Action actionColor = new Action("color");
+        actionColor.setType(Action.Type.COLOR);
+
         ArrayList<Action> actionList = new ArrayList<>();
-        actionList.add(time);
+        actionList.add(actionTime);
         actionList.add(dateAction);
         actionList.add(repeat);
         actionList.add(notification);
         actionList.add(categoryAction);
         actionList.add(actionDuration);
         actionList.add(actionMental);
+        actionList.add(actionColor);
         return actionList;
     }
 
@@ -134,11 +127,15 @@ public class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ViewHolder
     }
     public class ViewHolder extends RecyclerView.ViewHolder{
         private final TextView textViewTitle;
+        private final TextView textViewValue;
+        private final LinearLayout layout;
 
         public ViewHolder(@NonNull android.view.View itemView) {
             super(itemView);
             textViewTitle = itemView.findViewById(R.id.actionAdapter_title);
-            textViewTitle.setOnClickListener(view -> callback.onAction(items.get(getAdapterPosition())));
+            textViewValue = itemView.findViewById(R.id.actionAdapter_value);
+            layout = itemView.findViewById(R.id.actionAdapter_layout);
+            layout.setOnClickListener(view -> callback.onAction(items.get(getAdapterPosition())));
         }
     }
 }

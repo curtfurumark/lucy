@@ -3,7 +3,6 @@ package se.curtrune.lucy.fragments;
 import static se.curtrune.lucy.util.Logger.log;
 
 import android.app.TimePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,13 +26,10 @@ import java.util.List;
 import java.util.Locale;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.activities.ItemSession;
 import se.curtrune.lucy.adapters.SequenceAdapter;
-import se.curtrune.lucy.classes.CallingActivity;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.DurationDialog;
-import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.util.Converter;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.DurationWorker;

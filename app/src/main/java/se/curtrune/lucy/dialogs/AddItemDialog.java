@@ -5,6 +5,7 @@ import static se.curtrune.lucy.util.Logger.log;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -125,6 +126,9 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         actionMental.setTitle(getString(R.string.mental));
         actionMental.setType(Action.Type.MENTAL);
 
+        Action actionColor = new Action("COLOR");
+        actionColor.setType(Action.Type.COLOR);
+
         ArrayList<Action> actionList = new ArrayList<>();
         actionList.add(time);
         actionList.add(dateAction);
@@ -133,6 +137,7 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         actionList.add(categoryAction);
         actionList.add(actionDuration);
         actionList.add(actionMental);
+        actionList.add(actionColor);
         return actionList;
     }
 
@@ -181,6 +186,8 @@ public class AddItemDialog extends BottomSheetDialogFragment {
                 case MENTAL:
                     showMentalDialog();
                     break;
+                case COLOR:
+                    showColorDialog();
             }
         });
 
@@ -253,6 +260,11 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         });
         dialog.show(getChildFragmentManager(), "choose category");
     }
+    private void showColorDialog(){
+        log("...showColorDialog()");
+        Toast.makeText(getContext(), "COLOR DIALOG", Toast.LENGTH_LONG).show();
+        newItem.setColor(Color.RED);
+    }
     public void showDateDialog() {
         log("...showDateDialog()");
         DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext());
@@ -297,7 +309,7 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         NotificationDialog dialog = new NotificationDialog(parent);
         dialog.setListener(notification -> {
             log("...onNotification(Notification)", notification.toString());
-            currentAction.setTitle(notification.toString());
+            currentAction.setValue(notification.toString());
             newItem.setNotification(notification);
             actionAdapter.notifyDataSetChanged();
         });

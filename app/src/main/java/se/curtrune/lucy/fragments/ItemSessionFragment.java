@@ -5,6 +5,15 @@ import static se.curtrune.lucy.util.Logger.log;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -12,26 +21,17 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.support.v4.os.IResultReceiver;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.DatePicker;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Locale;
+import java.util.Objects;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.ActionAdapter;
 import se.curtrune.lucy.app.Lucinda;
+import se.curtrune.lucy.app.User;
 import se.curtrune.lucy.classes.Action;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
@@ -61,7 +61,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
 
     private TextView textViewEstimatedTime;
     private TextView textViewEstimatedEnergy;
-    private TextView textViewHeading;
+    private EditText editTextHeading;
     private  TextView textViewType;
     private TextView textViewDuration;
     private TextView textViewID;
@@ -168,7 +168,6 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         });
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        //RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         actionRecycler.setLayoutManager(layoutManager);
         actionRecycler.setItemAnimator(new DefaultItemAnimator());
         actionRecycler.setAdapter(actionAdapter);
@@ -207,14 +206,13 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         textViewDuration.setText(Converter.formatSecondsWithHours(secs));
     }
     private void showDateDialog() {
-        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext());
-        datePickerDialog.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                LocalDate targetDate = LocalDate.of(year, month +1, dayOfMonth);
-                currentAction.setTitle(targetDate.toString());
-                currentItem.setTargetDate(targetDate);
-            }
+        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext());
+        datePickerDialog.setOnDateSetListener((view, year, month, dayOfMonth) -> {
+            log("DatePickerDialog.onDateSet(...)");
+            LocalDate targetDate = LocalDate.of(year, month +1, dayOfMonth);
+            log("...date", targetDate.toString());
+            currentAction.setValue(targetDate.toString());
+            currentItem.setTargetDate(targetDate);
         });
         datePickerDialog.show();
     }
@@ -222,7 +220,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
     private void initComponents(View view){
         if( VERBOSE) log("...initComponents()");
         textViewEstimatedTime = view.findViewById(R.id.itemSessionFragment_estimatedTime);
-        textViewHeading = view.findViewById(R.id.itemSessionFragment_heading);
+        editTextHeading = view.findViewById(R.id.itemSessionFragment_heading);
         checkBoxTemplate = view.findViewById(R.id.itemSessionFragment_checkboxTemplate);
         checkBoxPrioritized = view.findViewById(R.id.itemSessionFragment_checkboxPrioritized);
         checkBoxIsDone = view.findViewById(R.id.itemSessionFragment_checkboxIsDone);
@@ -262,7 +260,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
     private void setUserInterface(Item item){
         if( VERBOSE) log("...setUserInterface(Item)");
         checkBoxIsCalenderItem.setChecked(item.isCalenderItem());
-        textViewHeading.setText(item.getHeading());
+        editTextHeading.setText(item.getHeading());
         checkBoxTemplate.setChecked(item.isTemplate());
         checkBoxPrioritized.setChecked(item.isPrioritized());
         checkBoxIsDone.setChecked(item.isDone());
@@ -270,7 +268,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         setEstimatedTime(item);
         setEstimatedEnergy(item);
         log("Lucinda.Dev ", Lucinda.Dev);
-        if(Lucinda.Dev){
+        if(User.isDevMode(getContext())){
             setUserInterfaceDev(item);
         }
     }
@@ -307,17 +305,11 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
     }
 
     private void showAddChildItemDialog(){
-        log("...showAddChildItemDialog()");
-        Toast.makeText(getContext(), "add child", Toast.LENGTH_SHORT).show();
         AddItemDialog dialog = new AddItemDialog(currentItem, false);
-        dialog.setCallback(new AddItemDialog.Callback() {
-            @Override
-            public void onAddItem(Item item) {
-                log("AddItemDialog.onAddItem(Item)");
-                item = ItemsWorker.insertChild(currentItem, item, getContext());
-                if( VERBOSE ) log(item);
-                //getActivity().getSupportFragmentManager().popBackStackImmediate();
-            }
+        dialog.setCallback(item -> {
+            log("AddItemDialog.onAddItem(Item)");
+            item = ItemsWorker.insertChild(currentItem, item, getContext());
+            if( VERBOSE ) log(item);
         });
         dialog.show(getChildFragmentManager(), "add child");
     }
@@ -326,7 +318,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         ChooseCategoryDialog dialog = new ChooseCategoryDialog(currentItem.getCategory());
         dialog.setCallback(category -> {
             log("...onSelected(String)", category);
-            currentAction.setTitle(category);
+            currentAction.setValue(category);
             currentItem.setCategory(category);
             actionAdapter.notifyDataSetChanged();
         });
@@ -340,7 +332,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
             log("...onDurationDialog(Duration)");
             //item.setDuration(duration.getSeconds());
             currentItem.setEstimatedDuration(duration.getSeconds());
-            currentAction.setTitle(Converter.formatSecondsWithHours(duration.getSeconds()));
+            currentAction.setValue(Converter.formatSecondsWithHours(duration.getSeconds()));
             actionAdapter.notifyDataSetChanged();
         });
         dialog.show(getChildFragmentManager(), "duration");
@@ -385,7 +377,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         NotificationDialog dialog = new NotificationDialog(currentItem);
         dialog.setListener(notification -> {
             log("...onNotification(Notification)");
-            currentAction.setTitle(notification.toString());
+            currentAction.setValue(notification.toString());
             currentItem.setNotification(notification);
             actionAdapter.notifyDataSetChanged();
         });
@@ -397,9 +389,10 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         RepeatDialog dialog = new RepeatDialog();
         dialog.setCallback(repeat -> {
             log("...onRepeat(Unit)", repeat.toString());
-            currentAction.setTitle(repeat.toString());
+            currentAction.setValue(repeat.toString());
             currentItem.setRepeat(repeat);
             currentItem.setIsTemplate(true);
+            checkBoxTemplate.setChecked(true);
             actionAdapter.notifyDataSetChanged();
         });
         dialog.show(getChildFragmentManager(), "repeat");
@@ -413,7 +406,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         TimePickerDialog timePicker = new TimePickerDialog(getContext(), (view, hourOfDay, minute) -> {
             targetTime = LocalTime.of(hourOfDay, minute);
             currentItem.setTargetTime(targetTime);
-            currentAction.setTitle(targetTime.toString());
+            currentAction.setValue(targetTime.toString());
             actionAdapter.notifyDataSetChanged();
         }, hour, minutes, true);
         timePicker.show();
@@ -438,7 +431,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
     }
     private Item getItem(){
         log("...getItem()");
-        currentItem.setHeading(textViewHeading.getText().toString());
+        currentItem.setHeading(editTextHeading.getText().toString());
         currentItem.setState(checkBoxIsDone.isChecked() ? State.DONE: State.TODO);
         currentItem.setIsCalenderItem(checkBoxIsCalenderItem.isChecked());
         currentItem.setIsTemplate(checkBoxTemplate.isChecked());
@@ -455,9 +448,10 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
      */
     private void updateItem() {
         log("...updateItem()", currentItem.getHeading());
-/*        if(!validateInput()){
+        if( !validate()){
+            log("....item did not validate, i surrender");
             return;
-        }*/
+        }
         currentItem = getItem();
         log(currentItem);
         int rowsAffected = ItemsWorker.update(currentItem, getContext());
@@ -469,8 +463,15 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         }
 
         viewModel.updateEnergy(true);
-        getActivity().getSupportFragmentManager().popBackStackImmediate();
+        requireActivity().getSupportFragmentManager().popBackStackImmediate();
         kronos.reset();
-
+    }
+    private boolean validate(){
+        log("...validate");
+        if( editTextHeading.getText().toString().isEmpty()){
+            Toast.makeText(getContext(), getString(R.string.missing_heading), Toast.LENGTH_LONG).show();
+            return false;
+        }
+        return true;
     }
 }

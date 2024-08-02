@@ -93,7 +93,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
     public class ViewHolder extends RecyclerView.ViewHolder{
         private final TextView textView_heading;
         private final CheckBox checkBox_state;
-        //private final TextView textView_info;
         private final ImageView imageViewRepeatIcon;
         private final ImageView imageViewNotificationIcon;
         private final ImageView imageViewImportantIcon;

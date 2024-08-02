@@ -13,8 +13,6 @@ import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.Locale;
 
-import se.curtrune.lucy.util.Converter;
-
 public class Mental implements Listable, Serializable {
     private long id;
     private String heading;
@@ -22,7 +20,6 @@ public class Mental implements Listable, Serializable {
     private int anxiety;
     private long itemID;
     private int stress;
-    //private int depression;
     private int mood;
     private int energy;
     private long date;
@@ -135,12 +132,7 @@ public class Mental implements Listable, Serializable {
         return itemID;
     }
 
-    public String getLabel() {
-        if (LocalDate.now().toEpochDay() == date) {
-            return Converter.formatTime(time);
-        }
-        return Converter.formatDate(date);
-    }
+
 
     public int getMood() {
         return mood;

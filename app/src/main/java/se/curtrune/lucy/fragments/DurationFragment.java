@@ -92,6 +92,7 @@ public class DurationFragment extends Fragment implements ListableAdapter.Callba
         initRecycler();
         initListeners();
         setUserInterface();
+        filter("vila");
         return view;
     }
     private void initComponents(View view){
@@ -181,16 +182,24 @@ public class DurationFragment extends Fragment implements ListableAdapter.Callba
         datePickerDialog.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                log("DatePickerDialog.onDateSet(year, month, dayOfMonth)");
                 lastDate = LocalDate.of(year, month +1, dayOfMonth);
                 updateStatistics();
             }
         });
         datePickerDialog.show();
     }
+    private void filter(String str){
+        log("...filter()");
+        statistics.getItems().stream().filter(item -> item.contains(str)).forEach(System.out::println);
+        long duration = statistics.getItems().stream().filter(item -> item.contains(str)).mapToLong(Item::getDuration).sum();
+        log("duration vila", Converter.formatSecondsWithHours(duration));
+    }
     private void updateStatistics(){
         log("...updateStatistics()");
         statistics = new DurationStatistics(firstDate, lastDate, getContext());
         setUserInterface();
+        filter("vila");
 
     }
 }

@@ -44,7 +44,7 @@ public class NotificationsWorker {
         }
     }
     public static void setNotification(Item item, Context context){
-        log("...setNotification(Item)", item.getHeading());
+        log("NotificationWorker.setNotification(Item)", item.getHeading());
         EasyAlarm easyAlarm = new EasyAlarm(item);
         easyAlarm.setAlarm(context);
     }

@@ -214,6 +214,9 @@
     <string name="ice_added">ICE ADDED</string>
     <string name="missing_telephone_number">MISSING TELEPHONE NUMBER</string>
     <string name="ice">ICE</string>
+    <string name="add_webpage">add webpage</string>
+    <string name="pending">pending</string>
+    <string name="no_internet_connection">no internet connection</string>
     <string-array name="periods">
         <item name="day">day</item>
         <item name="week">week</item>

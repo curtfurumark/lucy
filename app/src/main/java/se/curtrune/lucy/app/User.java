@@ -31,13 +31,24 @@ public class User {
         log("User.addCategory(String, Context)", category);
         Set<String> setCategories = Settings.getSet(KEY_CATEGORIES, context);
         setCategories.add(category);
-        Settings.saveList( KEY_CATEGORIES, setCategories, context);
+        Settings.saveSet( KEY_CATEGORIES, setCategories, context);
     }
     public static void addPanicUrl(String url, Context context) {
         log("User.addPanicUrl(String, Context)", url);
         Set<String> panicUrls = Settings.getSet(KEY_PANIC_URLS, context);
         panicUrls.add(url);
-        Settings.saveList(KEY_PANIC_URLS, panicUrls, context);
+        Settings.saveSet(KEY_PANIC_URLS, panicUrls, context);
+    }
+    public static void deleteCategory(String category, Context context) {
+        log("...deleteCategory(String)", category);
+        List<String> categories = Settings.getList(KEY_CATEGORIES, context);
+        boolean stat = categories.remove(category);
+        if( !stat){
+            log("ERROR removing category");
+            return;
+        }
+        Settings.saveList(KEY_CATEGORIES, categories, context);
+
     }
     /**
      * list of categories, stored in sharedPreferences, settings whatever you want to call it
@@ -113,7 +124,7 @@ public class User {
     public static void setPanicUrls(String[] urlArray, Context context) {
         log("User.setPanicUrls()");
         Set<String> urlSet = new HashSet<>(Arrays.asList(urlArray));
-        Settings.saveList(KEY_PANIC_URLS,urlSet, context );
+        Settings.saveSet(KEY_PANIC_URLS,urlSet, context );
     }
 
     public static void setDevMode(boolean devMode, Context context){
@@ -137,7 +148,7 @@ public class User {
 
     public static void setCategories(String[] categories, Context context) {
         Set<String> urlSet = new HashSet<>(Arrays.asList(categories));
-        Settings.saveList(KEY_CATEGORIES,urlSet, context );
+        Settings.saveSet(KEY_CATEGORIES,urlSet, context );
     }
 
     public static void deletePanicUrl(String url, Context context) {
@@ -154,4 +165,6 @@ public class User {
     public static int getICE(Context context) {
         return  Settings.getInt(KEY_ICE_PHONE_NUMBER, -1, context);
     }
+
+
 }

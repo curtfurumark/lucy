@@ -22,7 +22,7 @@ import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.MessageAdapter;
 import se.curtrune.lucy.classes.Message;
 import se.curtrune.lucy.dialogs.MessageDialog;
-import se.curtrune.lucy.workers.HttpsTrustManager;
+import se.curtrune.lucy.workers.InternetWorker;
 import se.curtrune.lucy.workers.MessageWorker;
 
 /**
@@ -72,8 +72,9 @@ public class MessageBoardFragment extends Fragment {
         initComponents(view);
         initListeners();
         initRecycler();
+        //TODO, http?
         log("...will allowAllSSL");
-        HttpsTrustManager.allowAllSSL();
+        //HttpsTrustManager.allowAllSSL();
         log("...after allowing ssl");
         selectMessages();
         return view;
@@ -96,6 +97,11 @@ public class MessageBoardFragment extends Fragment {
     }
     private void selectMessages(){
         log("...selectMessages()");
+        if(!InternetWorker.isConnected(getContext())){
+            log("...not connected to the internet, cannot get messages");
+            Toast.makeText(getContext() , requireContext().getString(R.string.no_internet_connection), Toast.LENGTH_LONG).show();
+            return;
+        }
         MessageWorker.selectMessages(new MessageWorker.OnMessagesSelected() {
             @Override
             public void onMessages(List<Message> messageList) {
@@ -116,6 +122,11 @@ public class MessageBoardFragment extends Fragment {
         adapter.setList(messageList);
     }
     private void showMessageDialog(){
+        if( !InternetWorker.isConnected(getContext())){
+            log("...trying to add a message to messageboard without internet connection");
+            Toast.makeText(getContext(), getString(R.string.no_internet_connection), Toast.LENGTH_LONG).show();
+            return;
+        }
         MessageDialog dialog = new MessageDialog();
         dialog.setCallback(message -> {
             log("...onNewMessage(Message)", message.getSubject());

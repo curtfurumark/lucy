@@ -2,7 +2,6 @@ package se.curtrune.lucy.dialogs;
 
 import static se.curtrune.lucy.util.Logger.log;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,12 +22,14 @@ import java.util.Comparator;
 import java.util.List;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.activities.ItemSession;
 import se.curtrune.lucy.adapters.CalenderAdapter;
-import se.curtrune.lucy.classes.CallingActivity;
 import se.curtrune.lucy.classes.Item;
-import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.workers.ItemsWorker;
+
+/**
+ * dialog that shows a list of items supplied to its constructor
+ * used by MonthCalender, should be used in WeekCalendar, but is not, at least that's what i thing
+ */
 
 public class ItemsDialog extends DialogFragment {
     private TextView textViewDate;
@@ -45,21 +46,6 @@ public class ItemsDialog extends DialogFragment {
         this.items = items;
         items.forEach(System.out::println);
     }
-/*    @NonNull
-    @Override
-    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        setStyle(DialogFragment.STYLE_NORMAL,
-                android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-        return new AlertDialog.Builder(requireContext())
-                .setMessage(message)
-                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        log("BoostDialog.onClick()");
-                        dismiss();
-                    }
-                }).create();
-    }*/
 
     @Nullable
     @Override
@@ -104,11 +90,6 @@ public class ItemsDialog extends DialogFragment {
             @Override
             public void onItemClick(Item item) {
                 if (VERBOSE) log("...onItemClick(Item)", item.getHeading());
-                Intent intent = new Intent(getContext(), ItemSession.class);
-                //TODO, fix return to calling activity
-                intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.CALENDER_FRAGMENT);
-                intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, item);
-                startActivity(intent);
             }
 
             @Override

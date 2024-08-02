@@ -104,6 +104,7 @@ public class MentalDialog extends BottomSheetDialogFragment {
         this.date = item.getDateUpdated();
         this.time = item.getTimeUpdated();
         this.heading = item.getHeading();
+        this.category = item.getCategory();
     }
     public MentalDialog(Mental  mental){
         this();

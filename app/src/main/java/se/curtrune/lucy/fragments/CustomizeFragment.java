@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.URLUtil;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -25,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import se.curtrune.lucy.R;
@@ -32,8 +32,9 @@ import se.curtrune.lucy.adapters.SimpleAdapter;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.app.User;
 import se.curtrune.lucy.dialogs.AddCategoryDialog;
-import se.curtrune.lucy.dialogs.AddStringDialog;
+import se.curtrune.lucy.dialogs.AddPanicURLDialog;
 import se.curtrune.lucy.dialogs.PasswordDialog;
+import se.curtrune.lucy.workers.SettingsWorker;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -134,6 +135,11 @@ public class CustomizeFragment extends Fragment {
         User.addPanicUrl(url, getContext());
         initPanicURLS();
     }
+    private  void deleteCategory(String category){
+        log("...deleteCategory(String)", category);
+        User.deleteCategory(category, getContext());
+
+    }
     private void deletePanicURL(String url){
         log("...deletePanicURL()");
         User.deletePanicUrl(url, getContext());
@@ -192,10 +198,12 @@ public class CustomizeFragment extends Fragment {
         textViewAddICE.setOnClickListener(view->addICE());
     }
     private void initRecyclerCategories(){
-        log("...initRecyclerCategories()");
+        if( VERBOSE) log("...initRecyclerCategories()");
         categories = new ArrayList<>(Arrays.asList( User.getCategories(getContext())));
-        categoryAdapter = new SimpleAdapter(categories, category ->
-                log("...onItemClick(String)", category));
+        categoryAdapter = new SimpleAdapter(categories, category ->{
+            log("...onItemClick(String)", category);
+            showDeleteCategoryDialog();
+        });
         recyclerCategories.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerCategories.setItemAnimator(new DefaultItemAnimator());
         recyclerCategories.setAdapter(categoryAdapter);
@@ -214,22 +222,18 @@ public class CustomizeFragment extends Fragment {
         recyclerPanicUrls.setItemAnimator(new DefaultItemAnimator());
         recyclerPanicUrls.setAdapter(panicUrlAdapter);
     }
-    private void onClickICE(){
-        log("...onClickICE()");
-
-    }
-
     private void onPanicUrlClick(String url) {
         log("...onPanicUrlClick()", url);
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("delete" +  url);
-        builder.setMessage("are you sure? ");
-        builder.setPositiveButton("delete", (dialog, which) -> {
+        String deleteTitle = String.format(Locale.getDefault(), "%s %s?", getString(R.string.delete), url);
+        builder.setTitle(deleteTitle);
+        builder.setMessage(getString(R.string.are_you_sure));
+        builder.setPositiveButton(getString(R.string.delete), (dialog, which) -> {
             log("...on positive button click");
             User.deletePanicUrl(url, getContext());
             panicUrlAdapter.setList(new ArrayList<>(User.getPanicUrls(getContext())));
         });
-        builder.setNegativeButton("cancel", (dialog, which) -> {
+        builder.setNegativeButton(getString(R.string.dismiss), (dialog, which) -> {
             log("...on negative button click");
         });
         AlertDialog dialog = builder.create();
@@ -321,11 +325,11 @@ public class CustomizeFragment extends Fragment {
     }
     private void showAddUrlDialog(){
         log("...showAddUrlDialog()");
-        AddStringDialog dialog =  new AddStringDialog();
-        dialog.setListener(new AddStringDialog.Callback() {
+        AddPanicURLDialog dialog =  new AddPanicURLDialog();
+        dialog.setListener(new AddPanicURLDialog.Callback() {
             @Override
-            public void onNewString(String url) {
-                log("...onNewString(String)", url);
+            public void onNewPanicURL(String url) {
+                log("...onNewPanicURL(String)", url);
                 addPanicUrl(url);
             }
         });
@@ -340,8 +344,8 @@ public class CustomizeFragment extends Fragment {
         });
         dialog.show(getChildFragmentManager(), "add category");
     }
-    private void showPanicAction(){
-
+    private void showDeleteCategoryDialog(){
+        log("...showDeleteCategoryDialog()");
 
     }
     private void showPasswordDialog(){
@@ -365,8 +369,12 @@ public class CustomizeFragment extends Fragment {
     }
     private void toggleDarkMode(){
         log("...toggleDarkMode()");
-        Toast.makeText(getContext(), "light mode not implemented", Toast.LENGTH_LONG).show();
-        //User.setUseDarkMode(checkBoxDarkMode.isChecked(), getContext());
+        User.setUseDarkMode(checkBoxDarkMode.isChecked(), getContext());
+        if(checkBoxDarkMode.isChecked()){
+            SettingsWorker.setDarkMode();
+        }else{
+            SettingsWorker.setLightMode();
+        }
         //SettingsWorker.toggleDarkMode(getContext());
     }
     private void togglePanicButton(){

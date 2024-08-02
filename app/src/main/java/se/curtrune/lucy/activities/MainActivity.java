@@ -54,15 +54,13 @@ import se.curtrune.lucy.fragments.TopTenFragment;
 import se.curtrune.lucy.fragments.WeeklyCalenderFragment;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.AffirmationWorker;
+import se.curtrune.lucy.workers.InternetWorker;
 import se.curtrune.lucy.workers.ItemsWorker;
 import se.curtrune.lucy.workers.MentalWorker;
 
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
-    private MaterialToolbar toolbar;
-    private NavigationView navigationView;
-    private ActionBarDrawerToggle actionBarDrawerToggle;
     private LucindaViewModel viewModel;
     private FloatingActionButton fapPanic;
     private FloatingActionButton fapBoost;
@@ -96,27 +94,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-/*    private boolean checkLoggedIn(){
-        log("...checkLoggedIn()");
-        if( User.usesPassword(this) && !User.loggedIn(this)){
-            return false;
-        }
-        return true;
-    }*/
+
     private void initComponents(){
         if( VERBOSE) log("...initComponents()");
-        toolbar = findViewById(R.id.navigationDrawer_toolbar);
+        MaterialToolbar toolbar = findViewById(R.id.navigationDrawer_toolbar);
         setSupportActionBar(toolbar);
-        navigationView = findViewById(R.id.navigationDrawerActivity_navigationView);
         fapPanic = findViewById(R.id.mainActivity_panic);
         fapBoost = findViewById(R.id.mainActivity_buttonBoost);
         textViewEnergy = findViewById(R.id.mainActivity_energy);
         drawerLayout = findViewById(R.id.navigationDrawer_drawerLayout);
-        navigationView = findViewById(R.id.navigationDrawerActivity_navigationView);
-        //textViewLucindaHome = findViewById(R.id.navigationHeader_lucindaHome);
+        NavigationView navigationView = findViewById(R.id.navigationDrawerActivity_navigationView);;
         View view = navigationView.inflateHeaderView(R.layout.navigation_header);
         textViewLucindaHome = view.findViewById(R.id.navigationHeader_lucindaHome);
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
@@ -229,6 +219,10 @@ public class MainActivity extends AppCompatActivity {
     }
     private void openWebPage(String url){
         log("...openWebPage(String url)", url);
+        if(!InternetWorker.isConnected(this)){
+            Toast.makeText(this, R.string.no_internet_connection, Toast.LENGTH_LONG).show();
+            return;
+        }
         Uri webPage = Uri.parse(url);
         try {
             Intent intent = new Intent(Intent.ACTION_VIEW, webPage);
@@ -241,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
     private void panicActionICE(){
         log("...panicActionICE");
         //FIX PERMISSION, IN CUSTOMIZEFRAGEMENT PERHAPS
-        int phoneNumber = User.getICE(this);
+/*        int phoneNumber = User.getICE(this);
         if( phoneNumber == -1){
             Toast.makeText(this, "no phone number to call", Toast.LENGTH_LONG).show();
             return;
@@ -250,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
         log("...stringURI", stringURI);
         Intent intent = new Intent(Intent.ACTION_CALL);
         intent.setData(Uri.parse(stringURI));
-        startActivity(intent);
+        startActivity(intent)*/;
     }
     private void panicActionPending(){
         log("...panicActionPending()");

@@ -25,6 +25,7 @@ import java.util.Locale;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.User;
+import se.curtrune.lucy.workers.InternetWorker;
 import se.curtrune.lucy.workers.NotificationsWorker;
 import se.curtrune.lucy.workers.SettingsWorker;
 
@@ -62,6 +63,8 @@ public class LogInActivity extends AppCompatActivity {
         initComponents();
         initListeners();
         initDevMode();
+        initDayNightMode();
+        checkInternetConnection();
         NotificationsWorker.createNotificationChannel(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             checkNotificationPermission();
@@ -71,6 +74,15 @@ public class LogInActivity extends AppCompatActivity {
         } else {
             startActivity(new Intent(this, MainActivity.class));
         }
+    }
+    private void checkInternetConnection(){
+        log("...checkInternetConnection()");
+        boolean isConnected = InternetWorker.isConnected(this);
+        log("...isConnected", isConnected);
+        if( !isConnected){
+            Toast.makeText(this, "no internet connection", Toast.LENGTH_LONG).show();
+        }
+
     }
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     private void checkNotificationPermission() {
@@ -88,12 +100,18 @@ public class LogInActivity extends AppCompatActivity {
             log("should show request POST_NOTIFICATIONS permission rationale");
         } else {
             log("...will ask for POST_NOTIFICATIONS permissions ");
-            // You can directly ask for the permission.
-            // The registered ActivityResultCallback gets the result of this request.
-            //requestPermissionLauncher.launch(
-             //       android.Manifest.permission.POST_NOTIFICATIONS);
             requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 42);
         }
+    }
+
+    private void initDayNightMode(){
+        log("...initDayNightMode()");
+        if (User.getDarkMode(this)){
+            SettingsWorker.setDarkMode();
+        }else {
+            SettingsWorker.setLightMode();
+        }
+
     }
 
     private void initDevMode(){
@@ -182,11 +200,7 @@ public class LogInActivity extends AppCompatActivity {
             Toast.makeText(this, "incorrect password", Toast.LENGTH_LONG).show();
         }
     }
-    private void setDarkMode(){
-        log("...setDarkMode()");
-        SettingsWorker.setDarkMode();
 
-    }
     private boolean validateInput(){
         log("...validateInput()");
         if( editTextPwd.getText().toString().length() < 8){

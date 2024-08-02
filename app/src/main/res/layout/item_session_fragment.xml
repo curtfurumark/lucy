@@ -8,7 +8,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp"
         tools:context=".fragments.ItemSessionFragment">
@@ -117,9 +117,13 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/itemSessionFragment_buttonAdd"
-            android:layout_width="255dp"
+            android:layout_width="122dp"
             android:layout_height="wrap_content"
+            android:baselineAlignBottom="true"
+            android:contentDescription="add new item to parentList"
             android:clickable="true"
+            android:layout_weight="1"
+            android:layout_gravity="end"
             app:srcCompat="@drawable/baseline_add_24" />
 
         <LinearLayout

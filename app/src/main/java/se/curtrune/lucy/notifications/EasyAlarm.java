@@ -39,8 +39,8 @@ public class EasyAlarm  {
             return;
         }
         Notification notification = item.getNotification();
-        calendar.set(Calendar.MONTH, notification.getDate().getMonthValue());
-        calendar.set(Calendar.DATE, notification.getDate().getDayOfMonth());
+        //calendar.set(Calendar.MONTH, notification.getDate().getMonthValue());
+        //calendar.set(Calendar.DATE, notification.getDate().getDayOfMonth());
         calendar.set(Calendar.HOUR_OF_DAY,notification.getTime().getHour() );
         calendar.set(Calendar.MINUTE, notification.getTime().getMinute());
         calendar.set(Calendar.SECOND, 0);
@@ -68,13 +68,17 @@ public class EasyAlarm  {
             if( alarmManager.canScheduleExactAlarms()) {
                 log("...canScheduleExactAlarm");
                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+                //alarmManager.setRepeating();
+/*                if(item.hasPeriod()){
+                  alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), , );
+                }*/
             }else{
                 log("...cant schedule exact alarm");
                 log("...using nonExact");
                 alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
             }
         }else{
-
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
         }
     }
 }
