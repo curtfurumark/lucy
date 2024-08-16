@@ -44,6 +44,7 @@ import se.curtrune.lucy.fragments.EnchiladaFragment;
 import se.curtrune.lucy.fragments.EstimateFragment;
 import se.curtrune.lucy.fragments.GraphFragment;
 import se.curtrune.lucy.fragments.MentalDayFragment;
+import se.curtrune.lucy.fragments.MentaHistoryFragment;
 import se.curtrune.lucy.fragments.MessageBoardFragment;
 import se.curtrune.lucy.fragments.MonthCalenderFragment;
 import se.curtrune.lucy.fragments.ProjectsFragment;
@@ -146,8 +147,11 @@ public class MainActivity extends AppCompatActivity {
                 navigate(new TimerFragment());
             }else if ( item.getItemId() == R.id.navigationDrawer_customizeFragment){
                 navigate(new CustomizeFragment());
-            }else if( item.getItemId() == R.id.navigationDrawer_mentalFragment){
-                navigate( new MentalDayFragment());
+            }else if( item.getItemId() == R.id.navigationDrawer_mentalFragment) {
+                navigate(new MentalDayFragment());
+            }else if( item.getItemId() == R.id.navigationDrawer_mentalHistoryFragment){
+                log("mental history fragment");
+                navigate(new MentaHistoryFragment());
             }else if( item.getItemId() ==R.id.navigationDrawer_logOut){
                 log("...log out");
                 Intent intent = new Intent(this, LogInActivity.class);

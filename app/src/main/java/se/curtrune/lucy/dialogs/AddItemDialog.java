@@ -23,6 +23,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.skydoves.colorpickerview.ColorPickerDialog;
+import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -52,7 +54,7 @@ public class AddItemDialog extends BottomSheetDialogFragment {
     private RecyclerView actionRecycler;
     private final boolean isCalenderItem;
     private Action currentAction;
-    public static boolean VERBOSE = true;
+    public static boolean VERBOSE = false;
     private final Item parent;
     private Item newItem;
     public interface Callback{
@@ -67,6 +69,7 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         this.parent = parent;
         this.newItem = createNewItem(parent);
         this.isCalenderItem = isCalenderItem;
+
     }
 
     @Nullable
@@ -98,11 +101,9 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         notification.setTitle(getString(R.string.notification));
         notification.setType(Action.Type.NOTIFICATION);
 
-        Action dateAction = new Action();
+        Action dateAction = new Action(getString(R.string.date));
         if( targetDate != null) {
-            dateAction.setTitle(targetDate.toString());
-        }else{
-            dateAction.setTitle(getString(R.string.date));
+            dateAction.setValue(targetDate.toString());
         }
         dateAction.setType(Action.Type.DATE);
 
@@ -112,10 +113,9 @@ public class AddItemDialog extends BottomSheetDialogFragment {
 
         Action categoryAction = new Action();
         if( category != null && !category.isEmpty()){
-            categoryAction.setTitle(category);
-        }else {
-            categoryAction.setTitle(getString(R.string.category));
+            categoryAction.setValue(category);
         }
+        categoryAction.setTitle(getString(R.string.category));
         categoryAction.setType(Action.Type.CATEGORY);
 
         Action actionDuration = new Action();
@@ -264,6 +264,23 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         log("...showColorDialog()");
         Toast.makeText(getContext(), "COLOR DIALOG", Toast.LENGTH_LONG).show();
         newItem.setColor(Color.RED);
+        new ColorPickerDialog.Builder(getContext())
+                .setTitle("ColorPicker Dialog")
+                .setPreferenceName("MyColorPickerDialog")
+                .setPositiveButton(getString(R.string.ok),
+                        (ColorEnvelopeListener) (envelope, fromUser) -> {
+                            log("...onColorSelected(ColorEnvelope, boolean)");
+                            currentAction.setColor(envelope.getColor());
+                            currentAction.setValue(String.valueOf(envelope.getColor()));
+                            newItem.setColor(envelope.getColor());
+                            actionAdapter.notifyDataSetChanged();
+                        })
+                .setNegativeButton(getString(R.string.dismiss),
+                        (dialogInterface, i) -> dialogInterface.dismiss())
+                .attachAlphaSlideBar(true) // the default value is true.
+                .attachBrightnessSlideBar(true)  // the default value is true.
+                .setBottomSpace(12) // set a bottom space between the last slide bar and buttons.
+                .show();
     }
     public void showDateDialog() {
         log("...showDateDialog()");
@@ -272,7 +289,8 @@ public class AddItemDialog extends BottomSheetDialogFragment {
             log("DatePickerDialog.onDateSet(...)");
             targetDate = LocalDate.of(year, month + 1, dayOfMonth);
             newItem.setTargetDate(targetDate);
-            currentAction.setTitle(targetDate.toString());
+            currentAction.setValue(targetDate.toString());
+            actionAdapter.notifyDataSetChanged();
         });
         datePickerDialog.show();
     }
@@ -298,7 +316,7 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         if(VERBOSE) log("...showMentalDialog()");
         MentalDialog dialog = new MentalDialog();
         dialog.setCallback((mental, mode) -> {
-            log("...onMental(Mental, Mode)", mode.toString());
+            log("...onMental(MentalType, Mode)", mode.toString());
             log(mental);
             newItem.setMental( mental);
         });
@@ -335,7 +353,7 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         TimePickerDialog timePicker = new TimePickerDialog(getContext(), (view, hourOfDay, minute) -> {
             targetTime = LocalTime.of(hourOfDay, minute);
             newItem.setTargetTime(targetTime);
-            currentAction.setTitle(targetTime.toString());
+            currentAction.setValue(targetTime.toString());
             actionAdapter.notifyDataSetChanged();
         }, hour, minutes, true);
         timePicker.show();

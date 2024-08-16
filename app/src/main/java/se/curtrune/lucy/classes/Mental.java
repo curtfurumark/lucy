@@ -155,7 +155,7 @@ public class Mental implements Listable, Serializable {
     }
 
     public boolean isCategory(String category) {
-        //log("Mental.isCategory(String) ", category);
+        //log("MentalType.isCategory(String) ", category);
         if (this.category == null) {
             log("this.category == null returning false");
             return false;
@@ -253,7 +253,7 @@ public class Mental implements Listable, Serializable {
     @Override
     public String toString() {
         return String.format(Locale.getDefault(),
-                "Mental{%s, e=%d, s=%d, a=%d, m=%d date: %s}", heading,  energy, stress, anxiety, mood,LocalDate.ofEpochDay(date).toString());
+                "Mental{%s, e=%d, s=%d, a=%d, m=%d date: %s, done: %b}", heading,  energy, stress, anxiety, mood,LocalDate.ofEpochDay(date).toString(), isDone);
     }
 
     public void setCreated(LocalDateTime created) {

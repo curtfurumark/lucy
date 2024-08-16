@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,13 +17,10 @@ import androidx.annotation.Nullable;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.classes.Type;
 
 
 public class AddCategoryDialog extends BottomSheetDialogFragment {
 
-    private Button buttonSave;
-    private Button buttonDismiss;
     private TextView textViewCategory;
     public interface Callback{
         void onNewCategory(String category);
@@ -42,8 +38,8 @@ public class AddCategoryDialog extends BottomSheetDialogFragment {
         View view = inflater.inflate(R.layout.add_category_dialog, container, false);
 
         textViewCategory = view.findViewById(R.id.addCategoryDialog_category);
-        buttonSave = view.findViewById(R.id.addCategoryDialog_save);
-        buttonDismiss = view.findViewById(R.id.addCategoryDialog_dismiss);
+        Button buttonSave = view.findViewById(R.id.addCategoryDialog_save);
+        Button buttonDismiss = view.findViewById(R.id.addCategoryDialog_dismiss);
         buttonDismiss.setOnClickListener(v->dismiss());
         buttonSave.setOnClickListener(view1 -> {
             if( validateInput()) {

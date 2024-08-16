@@ -121,7 +121,7 @@ public class DBAdmin {
         return cv;
     }
     public static ContentValues getContentValues(Mental mental){
-        if(VERBOSE)log("DBAdmin.getContentValues(Mental)");
+        if(VERBOSE)log("DBAdmin.getContentValues(MentalType)");
         ContentValues cv = new ContentValues();
         cv.put("itemID", mental.getItemID());
         cv.put("heading", mental.getHeading());
@@ -172,18 +172,11 @@ public class DBAdmin {
      * once upon a time i thought this was a good item, but i changed my mind
      * but i might change my mind again, it has been known to happen
      * @param cursor
-     * @return, a mental object, from the mental field in items, stored as json
+     * @return MentalType a mental object, from the mental field in items, stored as json
      */
     public static Mental getMentalFromItem(Cursor cursor) {
         if( VERBOSE) log("DBAdmin.getMentalFromItem(Cursor)");
         return new Gson().fromJson(cursor.getString(0), Mental.class);
-    }
-
-    public static ContentValues getContentValues(String category) {
-        if(VERBOSE)log("DBAdmin.getContentValues(String category) ", category);
-        ContentValues cv = new ContentValues();
-        cv.put("name", category);
-        return cv;
     }
 
     /**

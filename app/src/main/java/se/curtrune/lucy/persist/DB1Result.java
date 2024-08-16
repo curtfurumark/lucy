@@ -1,11 +1,13 @@
 package se.curtrune.lucy.persist;
 
+import androidx.annotation.NonNull;
+
 import java.util.Arrays;
 
 public class DB1Result {
     private boolean status;
-    private String sql;
-    private String php_file;
+    private final String sql;
+    private final String php_file;
     /**
      * for client side exception
      */
@@ -23,17 +25,13 @@ public class DB1Result {
         this();
         this.exception = e.getMessage();
     }
-    public void addJson(String json){
-        this.json = json;
-    }
+
 
     public boolean isOK(){
         return status;
     }
 
-    public String  getException(){
-        return exception;
-    }
+
     public String getJson(){
         return json;
     }
@@ -49,10 +47,8 @@ public class DB1Result {
     public String getSql(){
         return sql;
     }
-    public boolean hasException(){
-        return exception != null;
-    }
 
+    @NonNull
     @Override
     public String toString() {
         return "DB1Result{" +

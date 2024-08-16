@@ -114,7 +114,6 @@ public class EnchiladaFragment extends Fragment implements
 
             }
         });
-
     }
 
     private void initRecycler(List<Item> items){

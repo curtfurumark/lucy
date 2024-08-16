@@ -260,7 +260,7 @@ public class EditItemDialog extends BottomSheetDialogFragment {
         Mental mental = MentalWorker.getMental(item, getContext());
         MentalDialog dialog = new MentalDialog(mental);
         dialog.setCallback((mental1, mode) -> {
-            log("...onMental(Mental, Mental)", mode.toString());
+            log("...onMental(MentalType, MentalType)", mode.toString());
             log("should only be mode edit");
             int res = MentalWorker.update(mental1, getContext());
             if( res != 1){

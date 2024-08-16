@@ -107,7 +107,6 @@ public class CalenderFragment extends Fragment {
         initSwipe();
         initViewModel();
         setUserInterface(currentDate);
-        //calculateEstimate();
         return view;
     }
 /*
@@ -209,7 +208,7 @@ public class CalenderFragment extends Fragment {
             public void onCheckboxClicked(Item item, boolean checked) {
                 if( VERBOSE) log("...onCheckboxClicked(Item, boolean)", checked);
                 item.setState(checked ? State.DONE: State.TODO);
-                item.setTargetTime(LocalTime.now());
+                //item.setTargetTime(LocalTime.now());
                 log(item);
                 int rowsAffected = ItemsWorker.update(item, getContext());
                 if( rowsAffected != 1){

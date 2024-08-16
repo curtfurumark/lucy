@@ -25,7 +25,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -59,7 +58,7 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
     private LocalDate currentDate;
     //private MentalStatistics mentalStatistics;
     private MentalStats mentalStats;
-    private MentalAdapter.Mental mentalType;
+    private MentalAdapter.MentalType mentalType;
     private enum Mode{
         ESTIMATE, ACTUAL
     }
@@ -94,7 +93,7 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
         return view;
     }
     private void delete(Mental mental){
-        log("...delete(Mental)", mental.getHeading());
+        log("...delete(MentalType)", mental.getHeading());
         int rowsAffected = MentalWorker.delete(mental, getContext());
         if( rowsAffected != 1) {
             log("...error deleting mental id", mental.getID());
@@ -152,19 +151,19 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
             initMentalStats(currentDate, currentMode);
         });
         radioButtonEnergy.setOnClickListener(view->{
-            mentalType = MentalAdapter.Mental.ENERGY;
+            mentalType = MentalAdapter.MentalType.ENERGY;
             updateUserInterface();
             });
         radioButtonMood.setOnClickListener(view->{
-            mentalType = MentalAdapter.Mental.MOOD;
+            mentalType = MentalAdapter.MentalType.MOOD;
             updateUserInterface();
         });
         radioButtonAnxiety.setOnClickListener(view->{
-            mentalType = MentalAdapter.Mental.ANXIETY;
+            mentalType = MentalAdapter.MentalType.ANXIETY;
             updateUserInterface();
         });
         radioButtonStress.setOnClickListener(view->{
-            mentalType = MentalAdapter.Mental.STRESS;
+            mentalType = MentalAdapter.MentalType.STRESS;
             updateUserInterface();
         });
         textViewDate.setOnClickListener(view->showDateDialog());
@@ -209,7 +208,7 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
         items.forEach(System.out::println);
         mentalStats = MentalWorker.getStatistics(items, getContext());
         mentals = mentalStats.getMentals();
-        mentalType = MentalAdapter.Mental.ENERGY;
+        mentalType = MentalAdapter.MentalType.ENERGY;
         radioButtonEnergy.setChecked(true);
         updateUserInterface();
     }
@@ -220,7 +219,7 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
 
     @Override
     public void onItemClick(Mental item) {
-        if( VERBOSE) log("...onItemClick(Mental)", item.getHeading());
+        if( VERBOSE) log("...onItemClick(MentalType)", item.getHeading());
         MentalDialog dialog = new MentalDialog(item);
         dialog.setCallback(this);
         dialog.show(requireActivity().getSupportFragmentManager(), "hello mental");
@@ -233,7 +232,7 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
      */
     @Override
     public void onMental(Mental mental, MentalDialog.Mode mode) {
-        log("MentalDayFragment.onMental(Mental, Mental", mode.toString());
+        log("MentalDayFragment.onMental(MentalType, MentalType", mode.toString());
         log("...onMental()", mode.toString());
         log(mental);
         switch (mode){

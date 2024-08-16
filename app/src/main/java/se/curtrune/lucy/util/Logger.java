@@ -122,7 +122,7 @@ public class Logger {
         log("\tpriority", item.getPriority());
     }
     public static void log(Mental mental){
-        log("log(Mental)");
+        log("log(MentalType)");
         if(mental == null){
             log("log mental called with null mental");
             return;

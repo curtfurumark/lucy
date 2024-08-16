@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -43,6 +44,7 @@ public class MentalDialog extends BottomSheetDialogFragment {
     private SeekBar seekBarAnxiety;
     private SeekBar seekBarStress;
     private SeekBar seekBarMood;
+    private LinearLayout layoutDev;
 
     private EditText editTextComment;
 
@@ -62,7 +64,6 @@ public class MentalDialog extends BottomSheetDialogFragment {
 
     private String heading;
     private Button buttonSave;
-    private Button buttonDelete;
     private Button buttonDismiss;
     private ArrayAdapter<String> arrayAdapter;
 
@@ -76,12 +77,11 @@ public class MentalDialog extends BottomSheetDialogFragment {
     private int anxiety;
 
     private long itemID = -1;
-    public static boolean VERBOSE = false;
+    public static boolean VERBOSE = true;
     private String category;
 
     public  enum Mode {
         CREATE, CREATE_WITH_ITEM, EDIT, DELETE
-
     }
     private Mode mode;
     public interface Callback{
@@ -93,22 +93,12 @@ public class MentalDialog extends BottomSheetDialogFragment {
         log("MentalDialog default constructor");
         this.heading = "";
         this.date = LocalDate.now();
+        this.mental = new Mental();
         this.time = LocalTime.now();
-    }
-    public MentalDialog(Item item ){
-        this();
-        log("MentalDialog(Item)");
-        mode = Mode.CREATE_WITH_ITEM;
-        this.item = item;
-        this.itemID = item.getID();
-        this.date = item.getDateUpdated();
-        this.time = item.getTimeUpdated();
-        this.heading = item.getHeading();
-        this.category = item.getCategory();
     }
     public MentalDialog(Mental  mental){
         this();
-        log("MentalDialog(Mental)");
+        log("MentalDialog(MentalType)");
         if( VERBOSE) log(mental);
         mode = Mode.EDIT;
         this.mental = mental;
@@ -177,9 +167,9 @@ public class MentalDialog extends BottomSheetDialogFragment {
         labelAnxiety = view.findViewById(R.id.mentalDialog_labelAnxiety);
         labelStress = view.findViewById(R.id.mentalDialog_labelStress);
         labelMood = view.findViewById(R.id.mentalDialog_labelMood);
-        buttonDelete = view.findViewById(R.id.mentalDialog_delete);
         checkBoxIsTemplate = view.findViewById(R.id.mentalDialog_checkboxIsTemplate);
         buttonDismiss = view.findViewById(R.id.mentalDialog_buttonDismiss);
+        layoutDev = view.findViewById(R.id.mentalDialog_layoutDev);
     }
     private void initDefaults(){
         if( VERBOSE) log("...initDefaults()");
@@ -194,10 +184,6 @@ public class MentalDialog extends BottomSheetDialogFragment {
         buttonSave.setOnClickListener(view1 -> {
             mental = getMental();
             listener.onMental(mental, mode);
-            dismiss();
-        });
-        buttonDelete.setOnClickListener(view->{
-            delete();
             dismiss();
         });
         textViewDate.setOnClickListener(view->showDateDialog());
@@ -276,13 +262,13 @@ public class MentalDialog extends BottomSheetDialogFragment {
         arrayAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, categories);
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
         spinnerCategory.setAdapter(arrayAdapter);
-        int pos = arrayAdapter.getPosition("PENDING");
-        log("...pos of PENDING", pos);
+        //int pos = arrayAdapter.getPosition("PENDING");
+        //log("...pos of PENDING", pos);
         spinnerCategory.setSelection(arrayAdapter.getPosition(category));
         spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //ItemEditor.this.type = Type.values()[position];
+                log("...onItemSelected()");
                 category = (String) spinnerCategory.getSelectedItem();
                 log("...category chosen", category);
             }
@@ -347,13 +333,8 @@ public class MentalDialog extends BottomSheetDialogFragment {
             seekBarEnergy.setProgress(mental.getEnergy() + Constants.ENERGY_OFFSET);
             seekBarStress.setProgress(mental.getStress() + Constants.STRESS_OFFSET);
             seekBarMood.setProgress(mental.getMood() + Constants.MOOD_OFFSET);
-            setSpinnerCategory(mental.getCategory());
             seekBarAnxiety.setProgress(mental.getAnxiety() + Constants.ANXIETY_OFFSET);
-            String strItemID = String.format(Locale.ENGLISH, "item id: %d", mental.getItemID());
-            textViewItemID.setText(strItemID);
-            String strMentalID = String.format(Locale.ENGLISH, "mental id: %d", mental.getID());
-            textViewMentalID.setText(strMentalID);
-            checkBoxIsTemplate.setChecked(mental.isTemplate());
+
         }else {
             energy = 0;
             anxiety = 0;
@@ -361,13 +342,27 @@ public class MentalDialog extends BottomSheetDialogFragment {
             mood = 0;
             setMentalLabels();
             setSeekBars();
-
+        }
+        if( User.isDevMode(getContext())){
+            setUserInterfaceDev();
         }
         updateUserInterface();
     }
     private void setSpinnerCategory(String category){
-        if(  VERBOSE) log("...setSpinnerCategory(String) ", category);
+        if(VERBOSE)log("...setSpinnerCategory(String) ", category);
         spinnerCategory.setSelection(arrayAdapter.getPosition(category));
+    }
+    private void setUserInterfaceDev(){
+        log("...setUserInterfaceDev()");
+        layoutDev.setVisibility(View.VISIBLE);
+        setSpinnerCategory(mental.getCategory());
+        //String stringCreated = String.format(Locale.getDefault(), "created")
+        String strItemID = String.format(Locale.getDefault(), "item id: %d", mental.getItemID());
+        textViewItemID.setText(strItemID);
+        String strMentalID = String.format(Locale.getDefault(), "mental id: %d", mental.getID());
+        textViewMentalID.setText(strMentalID);
+        checkBoxIsTemplate.setChecked(mental.isTemplate());
+
     }
     private void showDateDialog(){
         if( VERBOSE) log("...showDateDialog()");

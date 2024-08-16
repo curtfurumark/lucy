@@ -14,26 +14,27 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import se.curtrune.lucy.R;
+import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.util.Converter;
 
 
 public class MentalAdapter extends RecyclerView.Adapter<MentalAdapter.MyViewHolder>{
-    private List<se.curtrune.lucy.classes.Mental> items;
+    private List<Mental> mentalList;
     public boolean VERBOSE = false;
-    public enum Mental {
+    public enum MentalType {
         MOOD, ENERGY, ANXIETY, STRESS
     }
-    private Mental mode = Mental.ENERGY;
+    private MentalType mode = MentalType.ENERGY;
     public interface Callback{
-        void onItemClick(se.curtrune.lucy.classes.Mental item);
+        void onItemClick(Mental item);
     }
     private final Callback callback;
 
-    public MentalAdapter(List<se.curtrune.lucy.classes.Mental> items, Callback callback) {
+    public MentalAdapter(List<Mental> items, Callback callback) {
         assert items != null;
-        if( VERBOSE) log("MentalAdapter(List<Mental>, Context, Callback");
-        this.items = items;
+        if( VERBOSE) log("MentalAdapter(List<MentalType>, Context, Callback");
+        this.mentalList = items;
         this.callback = callback;
     }
 
@@ -48,7 +49,7 @@ public class MentalAdapter extends RecyclerView.Adapter<MentalAdapter.MyViewHold
     @Override
     public void onBindViewHolder(@androidx.annotation.NonNull final MyViewHolder holder, int position) {
         if( VERBOSE) log("MentalAdapter.onBindViewHolder() mode", mode.toString());
-        final se.curtrune.lucy.classes.Mental item = items.get(position);
+        final se.curtrune.lucy.classes.Mental item = mentalList.get(position);
         //log(item);
         switch (mode){
             case MOOD:
@@ -72,23 +73,23 @@ public class MentalAdapter extends RecyclerView.Adapter<MentalAdapter.MyViewHold
 
     @Override
     public int getItemCount() {
-        return items != null? items.size(): 0;
+        return mentalList != null? mentalList.size(): 0;
     }
-    public List<se.curtrune.lucy.classes.Mental> getItems(){
-        return items;
+    public List<se.curtrune.lucy.classes.Mental> getMentalList(){
+        return mentalList;
     }
 
-    public void setList(List<se.curtrune.lucy.classes.Mental> items) {
-        log("MentalAdapter.setList(List<Mental>) size",  items.size());
+    public void setList(List<Mental> items) {
+        log("MentalAdapter.setList(List<MentalType>) size",  items.size());
         if( items == null){
-            log("ItemsAdapter.setList(List<Item>) called with null items");
+            log("ItemsAdapter.setList(List<Item>) called with null mentalList");
             return;
         }
-        this.items = items;
+        this.mentalList = items;
         notifyDataSetChanged();
     }
-    public void show(Mental mode){
-        log("MentalAdapter.show(Mental)", mode.toString());
+    public void show(MentalType mode){
+        log("MentalAdapter.show(MentalType)", mode.toString());
         this.mode = mode;
         notifyDataSetChanged();
 
@@ -97,8 +98,8 @@ public class MentalAdapter extends RecyclerView.Adapter<MentalAdapter.MyViewHold
     public class MyViewHolder extends RecyclerView.ViewHolder{
 
         private final SeekBar seekBar;
-        private TextView textViewLabel;
-        private TextView textViewHeading;
+        private final TextView textViewLabel;
+        private final TextView textViewHeading;
 
 
         public MyViewHolder(@androidx.annotation.NonNull android.view.View itemView) {
@@ -111,7 +112,7 @@ public class MentalAdapter extends RecyclerView.Adapter<MentalAdapter.MyViewHold
             ConstraintLayout parentLayout = itemView.findViewById(R.id.mentalAdapter_layout);
             parentLayout.setOnClickListener(view -> {
                 if( callback != null){
-                    callback.onItemClick(items.get(getAdapterPosition()));
+                    callback.onItemClick(mentalList.get(getAdapterPosition()));
                 }
             });
         }

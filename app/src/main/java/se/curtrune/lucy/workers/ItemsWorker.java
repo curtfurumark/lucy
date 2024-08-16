@@ -30,6 +30,47 @@ public class ItemsWorker {
     public static boolean VERBOSE = false;
 
     /**
+     * spawns an item based on it's template Item
+     * @param template, the template to use
+     * @return, a brand new spanking item instance, b
+     */
+    private static Item createActualItem(Item template){
+        log("...createActual(Item)", template.getHeading());
+        Item item = new Item();
+        item.setType(item.getType().ordinal());
+        item.setHeading(template.getHeading());
+        item.setDuration(template.getDuration());
+        item.setCategory(template.getCategory());
+        item.setTags(template.getTags());
+        item.setTargetTime(template.getTargetTime());
+        item.setTargetDate(template.getTargetDate());
+        item.setEstimate(template.getEstimate());
+        item.setColor(template.getColor());
+        item.setState(State.DONE);
+        return item;
+    }
+    /**
+     * creates an action MentalType instance from a template
+     * date and time set to now
+     * is done set to true
+     * @param template, the template to use in the creation of the actual
+     * @return, an actual MentalType from the template MentalType
+     */
+    private static Mental createMentalFromTemplate(Mental template){
+        log("...createMentalFromTemplate(MentalType)");
+        Mental mental = new Mental();
+        mental.setEnergy(template.getEnergy());
+        mental.setMood(template.getMood());
+        mental.setAnxiety(template.getAnxiety());
+        mental.setStress(template.getStress());
+        mental.setCategory(template.getCategory());
+        mental.setComment(template.getComment());
+        mental.setHeading(template.getHeading());
+        mental.isDone(true);
+        return mental;
+    }
+
+    /**
      * deletes an item, but if it has children, //TODO delete children recursively
      * @param item, the item to delete from the db
      * @param context context context context
@@ -307,18 +348,23 @@ public class ItemsWorker {
             }
         }
     }
+
+    /**
+     * does loads of things, not clean code
+     * it updates the template, spawns stuff if the template item is done, otherwise it just updates the template
+     * creates actual item and actual mental, using the template item
+     * @param template, the template to user
+     * @param context, context bloody context
+     * @return 1 if success otherwise some kind of an error has occurred
+     */
     private static int updateTemplate(Item template, Context context) {
         log("ItemsWorker.updateTemplate(Item, Context)", template.getHeading());
         try (LocalDB db = new LocalDB(context)) {
             if (template.isDone()) {
                 if (VERBOSE) log("...template is done, will spawn a child");
                 template.setState(State.TODO);
-                Item child = new Item(template);
-                child.setState(State.DONE);
-                Mental mental = new Mental(template.getMental());
-                mental.isDone(true);
-                mental.setDate(LocalDate.now());
-                mental.setTime(LocalTime.now());
+                Item child = createActualItem(template);
+                Mental mental = createMentalFromTemplate(template.getMental());
                 child.setMental(mental);
                 child = db.insertChild(template, child);//creates and inserts mental, or rather insert(Item) does
                 if (template.hasPeriod()) {

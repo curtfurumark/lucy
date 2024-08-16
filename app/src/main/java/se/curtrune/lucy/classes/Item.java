@@ -45,7 +45,7 @@ public class Item implements Serializable , Listable {
     protected MentalStats estimate;
     protected Notification notification;
     protected Mental mental;
-    protected  int color;
+    protected  int color = -1;
     //protected Content content;
     public static boolean VERBOSE = false;
     protected Reward reward;
@@ -73,6 +73,11 @@ public class Item implements Serializable , Listable {
         this();
         this.heading = heading;
     }
+
+    /**
+     * when a template spawns a child
+     * @param item, the template item
+     */
     public Item(Item item){
         this();
         this.type = item.getType().ordinal();
@@ -83,6 +88,7 @@ public class Item implements Serializable , Listable {
         this.target_time = LocalTime.now().toSecondOfDay();
         this.target_date = LocalDate.now().toEpochDay();
         this.estimate = item.getEstimate();
+        this.color = item.getColor();
     }
     public void addChild(Item item){
         children.add(0, item);
@@ -218,6 +224,9 @@ public class Item implements Serializable , Listable {
     public boolean hasChild(){
         return has_child == 1;
     }
+    public boolean hasColor() {
+        return color != -1 && color != 0;
+    }
     public boolean hasEstimate(){
         return estimate != null;
     }
@@ -279,10 +288,7 @@ public class Item implements Serializable , Listable {
         long epoch = localDateTime.toEpochSecond(ZoneOffset.UTC);
         return updated >= epoch && updated <= epoch + (3600 * 24);
     }
-    public void postpone(){
 
-
-    }
 
     public void setChildren(List<Item> children){
         for(Item item: children){
@@ -355,7 +361,7 @@ public class Item implements Serializable , Listable {
 
     public void setMental(Mental mental){
         if(mental == null){
-            log("WARNING Item.setMental(Mental) is null");
+            log("WARNING Item.setMental(MentalType) is null");
         }
         this.mental = mental;
     }
@@ -367,7 +373,7 @@ public class Item implements Serializable , Listable {
         }else{
             log("...mental json", json);
         }
-        this.mental = new Gson().fromJson(json, Mental.class);
+        this.mental = new Gson().fromJson(json, MentalType.class);
     }*/
     public void setNotification(Notification notification){
         this.notification = notification;
@@ -479,4 +485,6 @@ public class Item implements Serializable , Listable {
         }
         repeat.setUnit(unit);
     }
+
+
 }

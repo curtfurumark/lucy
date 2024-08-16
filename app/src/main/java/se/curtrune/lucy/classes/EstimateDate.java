@@ -58,7 +58,7 @@ public class EstimateDate {
             if( item.isTemplate()){
                 log("...itemIsTemplate()");
             }else{
-                Mental mental = MentalWorker.getMental(item, context);
+                MentalType mental = MentalWorker.getMental(item, context);
             }
         }*/
         for( Item item: items) {

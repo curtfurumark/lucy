@@ -131,7 +131,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <TextView
                 android:id="@+id/itemSessionFragment_ID"
@@ -149,6 +149,7 @@
                 android:text="@string/parent_id"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/itemSession_infoID" />
+
             <TextView
                 android:id="@+id/itemSessionFragment_created"
                 android:layout_width="wrap_content"
@@ -177,7 +178,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/itemSession_infoUpdated" />
 
 
-
             <TextView
                 android:id="@+id/itemSessionFragment_tags"
                 android:layout_width="wrap_content"
@@ -186,6 +186,10 @@
                 android:text="@string/tags"
                 app:layout_constraintStart_toStartOf="@+id/itemSession_infoCreated"
                 app:layout_constraintTop_toBottomOf="@+id/itemSession_infoCreated" />
+            <TextView
+                android:id="@+id/itemSessionFragment_color"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
 
             <TextView
                 android:id="@+id/itemSessionFragment_hasChild"
@@ -204,6 +208,7 @@
                 android:text="@string/state"
                 app:layout_constraintStart_toStartOf="@+id/itemSession_infoHasChild"
                 app:layout_constraintTop_toBottomOf="@+id/itemSession_infoHasChild" />
+
             <TextView
                 android:id="@+id/itemSessionFragment_repeat"
                 android:layout_width="wrap_content"

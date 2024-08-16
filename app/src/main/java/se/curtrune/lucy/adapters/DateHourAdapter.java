@@ -26,8 +26,6 @@ public class DateHourAdapter extends RecyclerView.Adapter<DateHourAdapter.ViewHo
     private List<DateHourCell> dateHourCells;
     public static boolean VERBOSE = true;
 
-
-
     public interface Callback{
         void onClick(DateHourCell dateHourCell);
     }
@@ -52,6 +50,7 @@ public class DateHourAdapter extends RecyclerView.Adapter<DateHourAdapter.ViewHo
         DateHourCell dateHourCell = dateHourCells.get(position);
         log("...type", dateHourCell.getType().toString());
         DateHourCell.Type type = dateHourCell.getType();
+        holder.setIsRecyclable(false);
         switch (type){
             case EMPTY_CELL:
                 break;
@@ -64,7 +63,9 @@ public class DateHourAdapter extends RecyclerView.Adapter<DateHourAdapter.ViewHo
             case EVENT_CELL:
                 holder.textViewHourLabel.setVisibility(View.GONE);
                 if( dateHourCell.hasEvents()){
-                    holder.textViewDate.setText("+");
+                    String strEvents = String.format(Locale.getDefault(), "%d", dateHourCell.getEvents().size());
+                    holder.textViewDate.setText(strEvents);
+
                 }else {
                     holder.textViewDate.setText("X");
                 }

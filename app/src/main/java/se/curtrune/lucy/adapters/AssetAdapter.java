@@ -58,7 +58,7 @@ public class AssetAdapter extends RecyclerView.Adapter<AssetAdapter.MyViewHolder
     @Override
     public void onBindViewHolder(@androidx.annotation.NonNull final MyViewHolder holder, int position) {
         if( VERBOSE) log("ItemsAdapter.onBindViewHolder();");
-        final Asset asset=  assets.get(position);;
+        final Asset asset=  assets.get(position);
         //TODO rename textView
         holder.textView_heading.setText(asset.getHeading());
         holder.textView_info.setText(asset.getInfo());

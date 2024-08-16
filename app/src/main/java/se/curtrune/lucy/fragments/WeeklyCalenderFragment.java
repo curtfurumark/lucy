@@ -30,6 +30,7 @@ import se.curtrune.lucy.adapters.DateHourAdapter;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.calender.DateHourCell;
 import se.curtrune.lucy.classes.calender.Week;
+import se.curtrune.lucy.dialogs.ItemsDialog;
 import se.curtrune.lucy.util.Logger;
 import se.curtrune.lucy.workers.ItemsWorker;
 
@@ -37,7 +38,7 @@ public class WeeklyCalenderFragment extends Fragment {
     private Button buttonNext;
     private Button buttonPrev;
     public static boolean VERBOSE = true;
-    private CalenderDateAdapter calenderDateAdapter;
+    //private CalenderDateAdapter calenderDateAdapter;
     private DateHourAdapter dateHourAdapter;
     //private RecyclerView recyclerDates;
     private RecyclerView recyclerCells;
@@ -134,6 +135,7 @@ public class WeeklyCalenderFragment extends Fragment {
             log("...onDateHourCellSelected(DateHourCell)");
             log(dateHourCell);
             Toast.makeText(getContext(), dateHourCell.toString(), Toast.LENGTH_SHORT).show();
+            showItemsDialog(dateHourCell);
         });
         recyclerCells.setLayoutManager(new GridLayoutManager(getContext(), 8));
         recyclerCells.setItemAnimator(new DefaultItemAnimator());
@@ -161,6 +163,11 @@ public class WeeklyCalenderFragment extends Fragment {
         //dateHourAdapter.setList(getDateHourCells(currentWeek));
         //sometimes i wonder why i have to do this, wny is it not sufficient to set list and notify adapter
         initRecyclerCells();
+    }
+    private void showItemsDialog(DateHourCell dateHourCell){
+        log("...showItemsDialog()");
+        ItemsDialog dialog = new ItemsDialog(dateHourCell.getEvents(), dateHourCell.getDate());
+        dialog.show(getChildFragmentManager(), "show items");
 
     }
 }

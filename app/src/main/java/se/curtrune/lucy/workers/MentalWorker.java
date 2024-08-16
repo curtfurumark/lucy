@@ -36,7 +36,7 @@ public class MentalWorker {
         return mentals.stream().mapToInt(Mental::getEnergy).sum();
     }
     public static int delete(Mental mental, Context context) {
-        if( VERBOSE) log("MentalWorker.delete(Mental, Context");
+        if( VERBOSE) log("MentalWorker.delete(MentalType, Context");
         LocalDB db = new LocalDB(context);
         return db.delete(mental);
     }
@@ -161,7 +161,7 @@ public class MentalWorker {
 
 
     public static Mental insert(Mental mental, Context context) {
-        if( VERBOSE) log("MentalWorker.insert(Mental, Context)");
+        if( VERBOSE) log("MentalWorker.insert(MentalType, Context)");
         LocalDB db = new LocalDB(context);
         return db.insert(mental);
     }
@@ -204,7 +204,7 @@ public class MentalWorker {
      * @return rowsaffected, in other words, 1 is ok, all other is fail
      */
     public static int update(Mental mental, Context context) {
-        if( VERBOSE) log("MentalWorker.update(Mental, Context)");
+        if( VERBOSE) log("MentalWorker.update(MentalType, Context)");
         LocalDB db = new LocalDB(context);
         return db.update(mental);
     }

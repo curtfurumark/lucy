@@ -92,13 +92,11 @@ public class AddAppointmentDialog extends BottomSheetDialogFragment {
     }
     private void showDateDialog(){
         log("...showDateDialog()");
-        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext());
-        datePickerDialog.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                targetDate = LocalDate.of(year, month +1, dayOfMonth);
-                textViewDate.setText(targetDate.toString());
-            }
+        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext());
+        datePickerDialog.setOnDateSetListener((view, year, month, dayOfMonth) -> {
+            log("...onDateSet(...)");
+            targetDate = LocalDate.of(year, month +1, dayOfMonth);
+            textViewDate.setText(targetDate.toString());
         });
         datePickerDialog.show();
     }

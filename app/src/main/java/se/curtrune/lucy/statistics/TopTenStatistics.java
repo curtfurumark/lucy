@@ -12,7 +12,7 @@ import se.curtrune.lucy.persist.Queeries;
 
 public class TopTenStatistics {
     public static List<Mental> getItems(Context context) {
-        log("...getItems()");
+        log("...getMentalList()");
         String query = Queeries.selectTopTen();
         LocalDB db = new LocalDB(context);
         return db.selectMentals(query);

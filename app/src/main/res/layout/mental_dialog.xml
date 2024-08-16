@@ -96,7 +96,7 @@
         android:layout_height="wrap_content"
         android:text="@string/ok"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/mentalDialog_delete" />
+        app:layout_constraintTop_toTopOf="@+id/mentalDialog_buttonDismiss" />
 
     <TextView
         android:id="@+id/mentalDialog_labelStress"
@@ -166,7 +166,7 @@
         android:orientation="vertical"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutComment">
+        app:layout_constraintTop_toBottomOf="@+id/mentalDialog_buttonDismiss">
 
         <Spinner
             android:id="@+id/mentalDialog_spinnerCategories"
@@ -208,23 +208,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/mentalDialog_itemID" />
     </LinearLayout>
-    <Button
-        android:id="@+id/mentalDialog_delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/delete"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mentalDialog_layoutDev" />
 
     <Button
         android:id="@+id/mentalDialog_buttonDismiss"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="@string/dismiss"
-        app:layout_constraintEnd_toStartOf="@+id/mentalDialog_button"
-        app:layout_constraintStart_toEndOf="@+id/mentalDialog_delete"
-        app:layout_constraintTop_toTopOf="@+id/mentalDialog_delete" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutComment" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

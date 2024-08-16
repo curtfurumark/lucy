@@ -170,6 +170,7 @@
     <string name="pending">Avvakta</string>
     <string name="add">Lägg tilll</string>
     <string name="no_internet_connection">Ingen anslutning till internet.</string>
+    <string name="mental_history">Mental historia</string>
 
 
 </resources>

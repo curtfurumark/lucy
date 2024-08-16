@@ -11,12 +11,12 @@ import se.curtrune.lucy.classes.Affirmation;
 
 
 public class AffirmationThread extends Thread{
-    private static String GET_AFFIRMATION_URL = "https://www.affirmations.dev";
+    private static final String GET_AFFIRMATION_URL = "https://www.affirmations.dev";
     public interface AffirmationThreadCallback{
         void onRequestCompleted(Affirmation affirmation);
         void onError(String message);
     }
-    private AffirmationThreadCallback callback;
+    private final AffirmationThreadCallback callback;
 
 
     public AffirmationThread(AffirmationThreadCallback callback) {

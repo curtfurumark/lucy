@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -69,7 +70,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
         if( VERBOSE) log("ItemAdapter.onBindViewHolder() position", position);
         Item item = items.get(position);
         holder.textView_heading.setText(item.getHeading());
-        //holder.textView_info.setText(item.getInfo());
+        holder.setIsRecyclable(false);
         holder.checkBox_state.setChecked(item.getState().equals(State.DONE));
         if( item.hasNotification()){
             holder.imageViewNotificationIcon.setVisibility(View.VISIBLE);
@@ -79,6 +80,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
         }
         if(item.isPrioritized()){
             holder.imageViewImportantIcon.setVisibility(View.VISIBLE);
+        }
+        if( item.hasColor()){
+            holder.cardView.setCardBackgroundColor(item.getColor());
         }
     }
 
@@ -96,11 +100,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
         private final ImageView imageViewRepeatIcon;
         private final ImageView imageViewNotificationIcon;
         private final ImageView imageViewImportantIcon;
+        private final CardView cardView;
 
         public ViewHolder(@NonNull android.view.View itemView) {
             super(itemView);
             textView_heading = itemView.findViewById(R.id.itemAdapter_itemHeading);
-            //textView_info = itemView.findViewById(R.id.itemAdapter_itemInfo);
+            cardView = itemView.findViewById(R.id.itemAdapter_cardView);
             checkBox_state = itemView.findViewById(R.id.itemAdapter_itemState);
             imageViewNotificationIcon = itemView.findViewById(R.id.itemAdapter_notificationIcon);
             imageViewRepeatIcon = itemView.findViewById(R.id.itemAdapter_repeatIcon);

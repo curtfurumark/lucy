@@ -92,19 +92,16 @@ public class TodoFragment extends Fragment implements
     private void addItemDialog(){
         if( VERBOSE) log("...addItemDialog()");
         AddItemDialog dialog = new AddItemDialog(ItemsWorker.getRootItem(Settings.Root.TODO, getContext()), false);
-        dialog.setCallback(new AddItemDialog.Callback() {
-            @Override
-            public void onAddItem(Item item) {
-                log("...onAddItem(Item item)");
-                log(item);
-                item = ItemsWorker.insert(item, getContext());
-                items.add(item);
-                items.sort(Comparator.comparingLong(Item::compare));
-                adapter.notifyDataSetChanged();
-                if( item.hasNotification()){
-                    log("...item has notification, will set notification");
-                    NotificationsWorker.setNotification(item, getContext());
-                }
+        dialog.setCallback(item -> {
+            log("...onAddItem(Item item)");
+            log(item);
+            item = ItemsWorker.insert(item, getContext());
+            items.add(item);
+            items.sort(Comparator.comparingLong(Item::compare));
+            adapter.notifyDataSetChanged();
+            if( item.hasNotification()){
+                log("...item has notification, will set notification");
+                NotificationsWorker.setNotification(item, getContext());
             }
         });
         dialog.show(getChildFragmentManager(), "add item");
@@ -180,10 +177,6 @@ public class TodoFragment extends Fragment implements
             adapter.setList(items);
         }else{
             viewModel.updateFragment(new ItemSessionFragment(item));
-            //Intent intent = new Intent(getContext(), ItemSession.class);
-            //intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.TODO_FRAGMENT);
-            //intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, item);
-            //startActivity(intent);
         }
     }
 

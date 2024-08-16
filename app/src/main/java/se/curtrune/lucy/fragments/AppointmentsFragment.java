@@ -19,7 +19,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.List;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.adapters.ItemAdapter;
+import se.curtrune.lucy.adapters.AppointmentAdapter;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.AddAppointmentDialog;
@@ -33,10 +33,11 @@ import se.curtrune.lucy.workers.ItemsWorker;
  * create an instance of this fragment.
  */
 public class AppointmentsFragment extends Fragment implements
-        ItemAdapter.Callback{
+        AppointmentAdapter.Callback{
     private RecyclerView recycler;
     public static boolean VERBOSE = false;
-    private ItemAdapter adapter;
+    //private ItemAdapter adapter;
+    private AppointmentAdapter adapter;
     private List<Item> items;
     private FloatingActionButton buttonAdd;
     private LucindaViewModel viewModel;
@@ -105,7 +106,7 @@ public class AppointmentsFragment extends Fragment implements
 
     private void initRecycler(List<Item> items){
         if( VERBOSE) log("...initRecycler(List<Item>)", items.size());
-        adapter = new ItemAdapter(this.items, this);
+        adapter = new AppointmentAdapter(this.items, this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recycler.setLayoutManager(layoutManager);
         recycler.setItemAnimator(new DefaultItemAnimator());
@@ -114,6 +115,11 @@ public class AppointmentsFragment extends Fragment implements
     private void initViewModel(){
         if( VERBOSE)  log("...initViewModel()");
         viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
+    }
+
+    @Override
+    public void onEditTime(Item item) {
+        log("...onEditTime(Item item)");
     }
 
     @Override

@@ -4,6 +4,8 @@ import static se.curtrune.lucy.util.Logger.log;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +24,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.skydoves.colorpickerview.ColorEnvelope;
+import com.skydoves.colorpickerview.ColorPickerDialog;
+import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -71,6 +76,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
     private TextView textViewParentID;
     private TextView textViewHasChild;
     private TextView textViewTags;
+    private TextView textViewColor;
     private CheckBox checkBoxTemplate;
     private LinearLayout layoutDev;
     private Button buttonSave;
@@ -164,6 +170,9 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
                 case MENTAL:
                     showMentalDialog();
                     break;
+                case COLOR:
+                    showColorDialog();
+                    break;
             }
         });
 
@@ -241,6 +250,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         textViewRepeat = view.findViewById(R.id.itemSessionFragment_repeat);
         textViewEstimatedEnergy = view.findViewById(R.id.itemSessionFragment_estimatedEnergy);
         buttonAddItem = view.findViewById(R.id.itemSessionFragment_buttonAdd);
+        textViewColor = view.findViewById(R.id.itemSessionFragment_color);
     }
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
@@ -294,6 +304,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         String stringType = String.format(Locale.getDefault(), "type: %s", item.getType().toString());
         String stringTags = String.format(Locale.getDefault(), "tags: %s", item.getTags());
         String stringRepeat = String.format(Locale.getDefault(), "repeat: %b", item.hasPeriod());
+        String stringColor = String.format(Locale.getDefault(),"color; %d", item.getColor());
         textViewID.setText(stringID);
         textViewParentID.setText(stringParentID);
         textViewCreated.setText(stringCreated);
@@ -302,6 +313,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         textViewType.setText(stringType);
         textViewTags.setText(stringTags);
         textViewRepeat.setText(stringRepeat);
+        textViewColor.setText(stringColor);
     }
 
     private void showAddChildItemDialog(){
@@ -325,6 +337,35 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         dialog.show(getChildFragmentManager(), "choose category");
     }
 
+    private void showColorDialog(){
+        log("...showColorDialog()");
+        //newItem.setColor(Color.RED);
+        new ColorPickerDialog.Builder(getContext())
+                .setTitle("ColorPicker Dialog")
+                .setPreferenceName("MyColorPickerDialog")
+                .setPositiveButton(getString(R.string.ok),
+                        new ColorEnvelopeListener() {
+                            @Override
+                            public void onColorSelected(ColorEnvelope envelope, boolean fromUser) {
+                                log("...onColorSelected(ColorEnvelope, boolean)");
+                                currentAction.setColor(envelope.getColor());
+                                currentAction.setValue(String.valueOf(envelope.getColor()));
+                                currentItem.setColor(envelope.getColor());
+                                actionAdapter.notifyDataSetChanged();
+                            }
+                        })
+                .setNegativeButton(getString(R.string.dismiss),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        })
+                .attachAlphaSlideBar(true) // the default value is true.
+                .attachBrightnessSlideBar(true)  // the default value is true.
+                .setBottomSpace(12) // set a bottom space between the last slidebar and buttons.
+                .show();
+    }
     public void showDurationDialog(){
         log("...showDurationDialog()");
         DurationDialog dialog = new DurationDialog();
@@ -358,7 +399,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         Mental mental = MentalWorker.getMental(currentItem, getContext());
         MentalDialog dialog = new MentalDialog(mental);
         dialog.setCallback((mental1, mode) -> {
-            log("...onMental(Mental, Mental)", mode.toString());
+            log("...onMental(MentalType, MentalType)", mode.toString());
             log("should only be mode edit");
             currentItem.setMental(mental1);
             int res = MentalWorker.update(mental1, getContext());

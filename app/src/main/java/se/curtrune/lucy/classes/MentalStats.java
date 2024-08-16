@@ -33,7 +33,7 @@ public class MentalStats implements Serializable {
         if( VERBOSE) log("MentalStats()");
     }
     public MentalStats(List<Mental> mentals){
-        if( VERBOSE) log("MentalStats(List<Mental>)");
+        if( VERBOSE) log("MentalStats(List<MentalType>)");
         this.mentalList = mentals;
         calculate();
     }
@@ -76,7 +76,7 @@ public class MentalStats implements Serializable {
      * @param mental, the mental
      */
     private void calculate(Mental mental){
-        log("...calculate(Mental)");
+        log("...calculate(MentalType)");
         energy = mental.getEnergy();
         anxiety = mental.getAnxiety();
         stress = mental.getStress();

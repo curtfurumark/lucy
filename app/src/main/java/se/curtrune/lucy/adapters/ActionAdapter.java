@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.time.LocalTime;
@@ -53,6 +54,9 @@ public class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ViewHolder
         Action action = items.get(position);
         holder.textViewTitle.setText(action.getTitle());
         holder.textViewValue.setText(action.getValue());
+        if( action.hasColor()){
+            holder.cardView.setCardBackgroundColor(action.getColor());
+        }
     }
     public static List<Action> getActionList(Item item, Context context){
         if( VERBOSE) log("ActionAdapter.getActionList(Item)");
@@ -63,10 +67,9 @@ public class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ViewHolder
         }
         actionTime.setType(Action.Type.TIME);
 
-        Action actionTags = new Action(context.getString(R.string.tags));
-        String tags = item.getTags();
-        actionTags.setValue(tags);
-        actionTags.setType(Action.Type.TAGS);
+/*        Action actionTags = new Action(context.getString(R.string.tags));
+        actionTags.setValue(item.getTags());
+        actionTags.setType(Action.Type.TAGS);*/
 
         Action notification = new Action(context.getString(R.string.notification));
         if(item.hasNotification()){
@@ -108,6 +111,10 @@ public class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ViewHolder
 
         Action actionColor = new Action("color");
         actionColor.setType(Action.Type.COLOR);
+        if( item.hasColor()){
+            actionColor.setColor(item.getColor());
+            actionColor.setValue(String.valueOf(item.getColor()));
+        }
 
         ArrayList<Action> actionList = new ArrayList<>();
         actionList.add(actionTime);
@@ -128,13 +135,14 @@ public class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ViewHolder
     public class ViewHolder extends RecyclerView.ViewHolder{
         private final TextView textViewTitle;
         private final TextView textViewValue;
-        private final LinearLayout layout;
+        private final CardView cardView;
 
         public ViewHolder(@NonNull android.view.View itemView) {
             super(itemView);
             textViewTitle = itemView.findViewById(R.id.actionAdapter_title);
             textViewValue = itemView.findViewById(R.id.actionAdapter_value);
-            layout = itemView.findViewById(R.id.actionAdapter_layout);
+            cardView = itemView.findViewById(R.id.actionAdapter_cardView);
+            LinearLayout layout = itemView.findViewById(R.id.actionAdapter_layout);
             layout.setOnClickListener(view -> callback.onAction(items.get(getAdapterPosition())));
         }
     }
