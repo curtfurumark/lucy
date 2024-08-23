@@ -29,6 +29,9 @@ public class Mental implements Listable, Serializable {
     private long updated;
     private boolean isTemplate;
     private boolean isDone;
+    public enum Type{
+        ENERGY, ANXIETY, STRESS, MOOD
+    }
 
     public Mental() {
         created = updated = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
@@ -52,7 +55,7 @@ public class Mental implements Listable, Serializable {
      * @param other, the mental to partially copy
      * TODO, take a deeper look at this
      */
-    public Mental(Mental other) {
+/*    public Mental(Mental other) {
         this();
         this.energy = other.energy;
         this.mood = other.mood;
@@ -67,8 +70,7 @@ public class Mental implements Listable, Serializable {
         //this.itemID = other.itemID;
         this.heading = other.heading;
         //this.isTemplate = other.isTemplate;
-
-    }
+    }*/
 
     public boolean contains(String text) {
         return (heading + comment + category).toLowerCase().contains(text.toLowerCase());

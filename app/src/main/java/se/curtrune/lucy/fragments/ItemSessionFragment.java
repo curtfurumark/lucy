@@ -508,7 +508,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         kronos.reset();
     }
     private boolean validate(){
-        log("...validate");
+        if( VERBOSE) log("...validate");
         if( editTextHeading.getText().toString().isEmpty()){
             Toast.makeText(getContext(), getString(R.string.missing_heading), Toast.LENGTH_LONG).show();
             return false;

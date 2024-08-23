@@ -122,7 +122,7 @@ public class Logger {
         log("\tpriority", item.getPriority());
     }
     public static void log(Mental mental){
-        log("log(MentalType)");
+        log("log(Mental)");
         if(mental == null){
             log("log mental called with null mental");
             return;
@@ -132,6 +132,7 @@ public class Logger {
         log("\theading", mental.getHeading());
         log("\tcategory", mental.getCategory());
         log("\tgetInfo()", mental.getInfo());
+        log("\tisDone", mental.isDone());
         log("\ttime", mental.getTime());
         log("\tcomment", mental.getComment());
         log("\tdate", mental.getDate());

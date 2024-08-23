@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,12 +35,16 @@ public class GraphFragment extends Fragment {
 
 
     private GraphView graphView;
+    private RadioButton radioButtonStress;
+    private RadioButton radioButtonAnxiety;
+    private RadioButton radioButtonMood;
+    private RadioButton radioButtonEnergy;
 
     private TextView textViewDate;
+    private Mental.Type currentMentalType = Mental.Type.ENERGY;
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
     private LocalDate currentDate;
+
 
     public GraphFragment() {
         // Required empty public constructor
@@ -72,7 +77,8 @@ public class GraphFragment extends Fragment {
         initComponents(view);
         initListeners();
         currentDate = LocalDate.now();
-        setUserInterface(currentDate);
+        radioButtonEnergy.setChecked(true);
+        setUserInterface(currentDate, Mental.Type.ENERGY);
         return view;
     }
     private void chooseDate(){
@@ -85,7 +91,7 @@ public class GraphFragment extends Fragment {
                 log("...onDateSet(DatePicker, year, month, dayOfMonth");
                 currentDate = LocalDate.of(year, month +1, dayOfMonth);
                 textViewDate.setText(currentDate.toString());
-                setUserInterface(currentDate);
+                setUserInterface(currentDate, currentMentalType);
             }
         });
         datePickerDialog.show();
@@ -94,6 +100,10 @@ public class GraphFragment extends Fragment {
         log("...initComponents()");
         graphView = view.findViewById(R.id.graphActivity_graphView);
         textViewDate = view.findViewById(R.id.graphFragment_date);
+        radioButtonStress = view.findViewById(R.id.graphFragment_radioButtonStress);
+        radioButtonAnxiety = view.findViewById(R.id.graphFragment_radioButtonAnxiety);
+        radioButtonEnergy = view.findViewById(R.id.graphFragment_radioButtonEnergy);
+        radioButtonMood = view.findViewById(R.id.graphFragment_radioButtonMood);
     }
     private void initGraph(){
         log("...initGraph()");
@@ -131,18 +141,28 @@ public class GraphFragment extends Fragment {
     private void initListeners(){
         log("...initListeners()");
         textViewDate.setOnClickListener(view->chooseDate());
+        radioButtonMood.setOnClickListener(view->onRadioButtonClick(Mental.Type.MOOD));
+        radioButtonAnxiety.setOnClickListener(view->onRadioButtonClick(Mental.Type.ANXIETY));
+        radioButtonStress.setOnClickListener(view->onRadioButtonClick(Mental.Type.STRESS));
+        radioButtonEnergy.setOnClickListener(view->onRadioButtonClick(Mental.Type.ENERGY));
     }
-    private void setUserInterface(LocalDate date){
+    private void onRadioButtonClick(Mental.Type mentalType){
+        log("...onRadioButtonClick(MentalType)", mentalType.toString());
+        currentMentalType = mentalType;
+        //Toast.makeText(getContext(), "radiobutton clicked", Toast.LENGTH_SHORT).show();
+        setUserInterface(currentDate, currentMentalType);
+    }
+    private void setUserInterface(LocalDate date, Mental.Type mentalType){
         log("...setUserInterface(LocalDate) ", date);
         List<Mental> mentals = MentalWorker.getMentals(date, false, true, getContext());
-        DataPoint[] dataPoints = MentalWorker.getMentalsAsDataPoints(date, getContext());
+        DataPoint[] dataPoints = MentalWorker.getMentalsAsDataPoints(date,mentalType,  getContext());
         LineGraphSeries<DataPoint> lineGraphSeries = new LineGraphSeries<>(dataPoints);
         lineGraphSeries.setOnDataPointTapListener((series, dataPoint) -> {
             log("..onTap(Series, DataPointInterface)", dataPoint.toString());
             Mental mental = mentals.get((int) dataPoint.getX());
             Toast.makeText(getContext(), mental.getHeading(), Toast.LENGTH_LONG).show();
         });
-        graphView.setTitle("energy");
+        graphView.setTitle(currentMentalType.toString());
         graphView.setTitleTextSize(56);
         graphView.removeAllSeries();
         graphView.addSeries(lineGraphSeries);

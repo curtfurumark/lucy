@@ -191,7 +191,7 @@ public class MentalDayFragment extends Fragment implements MentalAdapter.Callbac
      * if mode action get all items that are done today
      */
     private void initMentalStats(LocalDate date, Mode mode){
-        log("...initMentalStats()", mode.toString());
+        log("...initMentalStats(LocalDate, Mode)", mode.toString());
         List<Item> items;
         if( date.equals(LocalDate.now())) {
             if (mode.equals(Mode.ACTUAL)) {

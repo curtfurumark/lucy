@@ -9,6 +9,31 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="mental history fragment" />
+    <RadioGroup
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <RadioButton
+            android:id="@+id/mentalHistoryFragment_buttonEnergy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/energy"/>
+        <RadioButton
+            android:id="@+id/mentalHistoryFragment_buttonMood"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mood"/>
+        <RadioButton
+            android:id="@+id/mentalHistoryFragment_buttonAnxiety"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/anxiety"/>
+        <RadioButton
+            android:id="@+id/mentalHistoryFragment_buttonStress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stress"/>
+    </RadioGroup>
     <com.jjoe64.graphview.GraphView
         android:id="@+id/mentalHistoryFragment_graphView"
         android:layout_marginTop="24dp"

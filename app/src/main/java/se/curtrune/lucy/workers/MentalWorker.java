@@ -58,6 +58,11 @@ public class MentalWorker {
             return db.delete(item.getMental());
         }
     }
+    public static int getAnxiety(LocalDate date, Context context){
+        if( VERBOSE) log("MentalWorker.getAnxiety(LocalDate)", date.toString());
+        List<Mental> mentals = getMentals(date,false, true,  context);
+        return mentals.stream().mapToInt(Mental::getAnxiety).sum();
+    }
 
     /**
      * the latest ten entries, notwithstanding date
@@ -124,6 +129,11 @@ public class MentalWorker {
         }
         return mentalList;
     }
+    public static int getMood(LocalDate date, Context context){
+        if( VERBOSE) log("MentalWorker.getMood(LocalDate)", date.toString());
+        List<Mental> mentals = getMentals(date,false, true,  context);
+        return mentals.stream().mapToInt(Mental::getMood).sum();
+    }
     public static MentalStats getStatistics(List<Item> items, Context context){
         log("MentalWorker.getStatistics(List<Item>, Context))");
         MentalStats stats = new MentalStats();
@@ -141,7 +151,13 @@ public class MentalWorker {
             stats.plusStress(mental.getStress());
             stats.plusMood(mental.getMood());
         }
+
         return stats;
+    }
+    public static int getStress(LocalDate date, Context context){
+        if( VERBOSE) log("MentalWorker.getStress(LocalDate)", date.toString());
+        List<Mental> mentals = getMentals(date,false, true,  context);
+        return mentals.stream().mapToInt(Mental::getStress).sum();
     }
 
     public static List<Mental> select(LocalDate firstDate, LocalDate lastDate, Context context) {
@@ -193,6 +209,34 @@ public class MentalWorker {
             currentEnergy +=  mentals.get(i).getEnergy();
             log(String.format(Locale.getDefault(), "adding point %d,%d", i, currentEnergy));
             dataPoints[i]  = new DataPoint(i, currentEnergy);
+        }
+        return dataPoints;
+    }
+    public static DataPoint[] getMentalsAsDataPoints(LocalDate date, Mental.Type mentalType, Context context){
+        log("MentalWorker.getMentalAdDataPoints(LocalDate, Mental.Type, Context)", date.toString());
+        log("...mentalType", mentalType.toString());
+        List<Mental> mentals = getMentals(date,false, true, context);
+        log("...number of mentals", mentals.size());
+        DataPoint[] dataPoints = new DataPoint[mentals.size()];
+        int currentLevel = 0;
+        for(int i = 0; i < mentals.size(); i++){
+            switch (mentalType){
+                case ENERGY:
+                    currentLevel +=  mentals.get(i).getEnergy();
+                    break;
+                case MOOD:
+                    currentLevel +=  mentals.get(i).getMood();
+                    break;
+                case STRESS:
+                    currentLevel +=  mentals.get(i).getStress();
+                    break;
+                case ANXIETY:
+                    currentLevel +=  mentals.get(i).getAnxiety();
+                    break;
+            }
+
+            log(String.format(Locale.getDefault(), "adding point %d,%d", i, currentLevel));
+            dataPoints[i]  = new DataPoint(i, currentLevel);
         }
         return dataPoints;
     }

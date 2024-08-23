@@ -27,7 +27,7 @@ import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
 
 public class ItemsWorker {
-    public static boolean VERBOSE = false;
+    public static boolean VERBOSE = true;
 
     /**
      * spawns an item based on it's template Item
@@ -43,7 +43,8 @@ public class ItemsWorker {
         item.setCategory(template.getCategory());
         item.setTags(template.getTags());
         item.setTargetTime(template.getTargetTime());
-        item.setTargetDate(template.getTargetDate());
+        //item.setTargetDate(template.getTargetDate());
+        item.setTargetDate(LocalDate.now());
         item.setEstimate(template.getEstimate());
         item.setColor(template.getColor());
         item.setState(State.DONE);
@@ -58,8 +59,10 @@ public class ItemsWorker {
      */
     private static Mental createMentalFromTemplate(Mental template){
         log("...createMentalFromTemplate(MentalType)");
+        //assert item != null;
         Mental mental = new Mental();
         mental.setEnergy(template.getEnergy());
+        //mental.setItemID(item.getID());
         mental.setMood(template.getMood());
         mental.setAnxiety(template.getAnxiety());
         mental.setStress(template.getStress());
@@ -214,7 +217,7 @@ public class ItemsWorker {
         }
     }
     public static List<Item> selectDateState(LocalDate date, State state, Context context){
-        if(VERBOSE) log("ItemsWorker.selectDateState()");
+        if(VERBOSE) log("ItemsWorker.selectDateState(Date, State, Context)");
         try (LocalDB db = new LocalDB(context)) {
             return db.selectItems(Queeries.selectItems(date, state));
         }
@@ -365,10 +368,13 @@ public class ItemsWorker {
                 template.setState(State.TODO);
                 Item child = createActualItem(template);
                 Mental mental = createMentalFromTemplate(template.getMental());
+                if( VERBOSE) log(mental);
                 child.setMental(mental);
                 child = db.insertChild(template, child);//creates and inserts mental, or rather insert(Item) does
                 if (template.hasPeriod()) {
                     template.updateTargetDate();
+                }else{
+                    template.setTargetDate(LocalDate.now());
                 }
                 template.setDuration(0);
             }

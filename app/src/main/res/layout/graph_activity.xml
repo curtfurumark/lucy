@@ -16,6 +16,37 @@
         android:minHeight="48dp"
         android:layout_height="wrap_content"
         tools:ignore="HardcodedText" />
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/graphFragment_radioButtonEnergy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/energy" />
+
+        <RadioButton
+            android:id="@+id/graphFragment_radioButtonAnxiety"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/anxiety" />
+
+        <RadioButton
+            android:id="@+id/graphFragment_radioButtonStress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stress" />
+
+        <RadioButton
+            android:id="@+id/graphFragment_radioButtonMood"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mood" />
+
+    </RadioGroup>
     <com.jjoe64.graphview.GraphView
         android:id="@+id/graphActivity_graphView"
         android:layout_marginTop="24dp"

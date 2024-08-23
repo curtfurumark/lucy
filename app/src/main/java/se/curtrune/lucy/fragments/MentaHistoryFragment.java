@@ -6,12 +6,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.helper.StaticLabelsFormatter;
 import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -33,6 +35,11 @@ public class MentaHistoryFragment extends Fragment {
     private GraphView graphView;
     //private TextView textViewDate;
 
+    private RadioButton buttonEnergy;
+    private RadioButton buttonStress;
+    private RadioButton buttonAnxiety;
+    private RadioButton buttonMood;
+    private int numberOfDays = 7;
     public MentaHistoryFragment() {
         // Required empty public constructor
     }
@@ -63,12 +70,22 @@ public class MentaHistoryFragment extends Fragment {
         log("MentalHistoryFragment.onCreateView(LayoutInflater, ViewGroup, Bundle);");
         View view = inflater.inflate(R.layout.mental_history_fragment, container, false);
         initComponents(view);
-        initGraph();
-        //initListeners();
+        buttonEnergy.setChecked(true);
+        initGraph(initData(Mental.Type.ENERGY));
+        initListeners();
         //currentDate = LocalDate.now();
         //setUserInterface(currentDate);
-        initData();
+        //initData();
         return view;
+    }
+    private String[] getHorizontalLabels(int numberOfDates){
+        String[] labels = new String[numberOfDates];
+        LocalDate currentDate = LocalDate.now().minusDays(numberOfDates -1);
+        for(int i = 0; i < numberOfDates; i++){
+            labels[i] = String.valueOf(currentDate.getDayOfMonth());
+            currentDate = currentDate.plusDays(1);
+        }
+        return labels;
     }
 /*    private void chooseDate(){
         log("...chooseDate()");
@@ -89,30 +106,41 @@ public class MentaHistoryFragment extends Fragment {
         log("...initComponents()");
         graphView = view.findViewById(R.id.mentalHistoryFragment_graphView);
         //textViewDate = view.findViewById(R.id.graphFragment_date);
+        buttonEnergy = view.findViewById(R.id.mentalHistoryFragment_buttonEnergy);
+        buttonStress = view.findViewById(R.id.mentalHistoryFragment_buttonStress);
+        buttonAnxiety = view.findViewById(R.id.mentalHistoryFragment_buttonAnxiety);
+        buttonMood = view.findViewById(R.id.mentalHistoryFragment_buttonMood);
     }
-    private void initData(){
-        log("...initData()");
-        LocalDate lastDate = LocalDate.now();
-        LocalDate currentDate = lastDate.minusDays(6);
-        //List<Mental> mentals = MentalWorker.select(firstDate, lastDate, getContext());
-        //MentalWorker.getMentals()
-        //mentals.forEach(System.out::println);
-        while(currentDate.isBefore(lastDate) || currentDate.equals(lastDate)){
-            List<Mental> mentals = MentalWorker.getMentals(currentDate, false, true, getContext());
-            int energy = MentalWorker.calculateEnergy(mentals);
-            log(String.format(Locale.getDefault(), "date %s, energy %d", currentDate.toString(), energy));
+    private DataPoint[] initData(Mental.Type mentalType){
+        log("...initData(Mental.Type)", mentalType.toString());
+        BarGraphSeries<DataPoint> barGraphSeries = new BarGraphSeries<>();
+        int mentalLevel = 0;
+        DataPoint[] dataPointsArray = new DataPoint[numberOfDays];
+        LocalDate currentDate = LocalDate.now().minusDays(numberOfDays);
+        for(int i = 0; i < numberOfDays; i++){
+            switch (mentalType){
+                case ENERGY:
+                    mentalLevel = MentalWorker.getEnergy(currentDate, getContext());
+                    break;
+                case MOOD:
+                    mentalLevel = MentalWorker.getMood(currentDate, getContext());
+                    break;
+                case STRESS:
+                    mentalLevel = MentalWorker.getStress(currentDate, getContext());
+                    break;
+                case ANXIETY:
+                    mentalLevel = MentalWorker.getAnxiety(currentDate, getContext());
+                    break;
+            }
+            System.out.printf("date %s, level %d\n", currentDate.toString(), mentalLevel);
+            dataPointsArray[i] = new DataPoint(i, mentalLevel);
             currentDate = currentDate.plusDays(1);
         }
+        return dataPointsArray;
     }
-    private void initGraph(){
-        log("...initGraph()");
-        BarGraphSeries<DataPoint> barGraphSeries = new BarGraphSeries<>(new DataPoint[]{
-                new DataPoint(0, 2),
-                new DataPoint(2, 3),
-                new DataPoint(3, 4),
-                new DataPoint(4, 5),
-                new DataPoint(5, 6)
-        });
+    private void initGraph(DataPoint[] dataPoints){
+        log("...initGraph(DataPoint[])");
+        BarGraphSeries<DataPoint> barGraphSeries = new BarGraphSeries<>(dataPoints);
 
         // after adding data to our line graph series.
         // on below line we are setting
@@ -126,14 +154,26 @@ public class MentaHistoryFragment extends Fragment {
         // on below line we are setting
         // our title text size.
         graphView.setTitleTextSize(18);
-
+        graphView.removeAllSeries();
+        StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graphView);
+        //staticLabelsFormatter.setHorizontalLabels( new String[]{"17", "18", "19","20", "21", "22", "23"});
+        staticLabelsFormatter.setHorizontalLabels(getHorizontalLabels(numberOfDays));
         // on below line we are adding
         // data series to our graph view.
+        graphView.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
         graphView.addSeries(barGraphSeries);
     }
     private void initListeners(){
         log("...initListeners()");
         //textViewDate.setOnClickListener(view->chooseDate());
+        buttonMood.setOnClickListener(view->onMentalCheckBox(Mental.Type.MOOD));
+        buttonAnxiety.setOnClickListener(view->onMentalCheckBox(Mental.Type.ANXIETY));
+        buttonStress.setOnClickListener(view->onMentalCheckBox(Mental.Type.STRESS));
+        buttonEnergy.setOnClickListener(view->onMentalCheckBox(Mental.Type.ENERGY));
+    }
+    private void onMentalCheckBox(Mental.Type mentalType){
+        log("...onMentalCheckBox(Mental.Type", mentalType.toString());
+        initGraph(initData(mentalType));
     }
     private void setUserInterface(LocalDate date){
         log("...setUserInterface(LocalDate) ", date);
