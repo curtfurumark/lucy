@@ -25,16 +25,14 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.adapters.CalenderDateAdapter;
 import se.curtrune.lucy.adapters.DateHourAdapter;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.calender.DateHourCell;
 import se.curtrune.lucy.classes.calender.Week;
 import se.curtrune.lucy.dialogs.ItemsDialog;
-import se.curtrune.lucy.util.Logger;
 import se.curtrune.lucy.workers.ItemsWorker;
 
-public class WeeklyCalenderFragment extends Fragment {
+public class OldWeeklyCalenderFragment extends Fragment {
     private Button buttonNext;
     private Button buttonPrev;
     public static boolean VERBOSE = true;
@@ -51,7 +49,7 @@ public class WeeklyCalenderFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         log("WeeklyCalendarFragment.onCreateView(...)");
-        View view = inflater.inflate(R.layout.weekly_fragment, container, false);
+        View view = inflater.inflate(R.layout.old_weekly_fragment, container, false);
         initDefaults();
         initComponents(view);
         items  = ItemsWorker.selectItems(currentWeek, getContext());

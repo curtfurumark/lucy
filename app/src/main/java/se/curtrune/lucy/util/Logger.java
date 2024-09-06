@@ -1,5 +1,7 @@
 package se.curtrune.lucy.util;
 
+import com.jjoe64.graphview.series.DataPoint;
+
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,6 +35,17 @@ public class Logger {
         log("\tminute", calendar.get(Calendar.MINUTE));
 
     }
+
+    /**
+     * precision 2 decimals
+     * @param dataPoint
+     */
+    public static void log(DataPoint dataPoint){
+        log("Logger.log(DataPoint)");
+        log(String.format(Locale.getDefault(), "x: %.2f, y: %.2f", dataPoint.getX(), dataPoint.getY()));
+
+
+    }
     public static void log(CategoryListable listable){
         log("log(CategoryListable)");
         log("\tcategory", listable.getCategory());
@@ -55,6 +68,10 @@ public class Logger {
                 log("\t\tmessage", message);
             }
         }
+    }
+    public static void log(String key, double value){
+        log(key + ": " + value);
+
     }
     public static void log(MentalStats estimate){
         log("Logger.log(MentalStats");

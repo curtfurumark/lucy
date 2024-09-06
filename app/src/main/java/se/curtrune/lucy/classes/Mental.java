@@ -255,7 +255,7 @@ public class Mental implements Listable, Serializable {
     @Override
     public String toString() {
         return String.format(Locale.getDefault(),
-                "Mental{%s, e=%d, s=%d, a=%d, m=%d date: %s, done: %b}", heading,  energy, stress, anxiety, mood,LocalDate.ofEpochDay(date).toString(), isDone);
+                "Mental{%s, e=%d, s=%d, a=%d, m=%d date: %s, time %s, done: %b}", heading,  energy, stress, anxiety, mood,LocalDate.ofEpochDay(date).toString(),LocalTime.ofSecondOfDay(time).toString(), isDone);
     }
 
     public void setCreated(LocalDateTime created) {

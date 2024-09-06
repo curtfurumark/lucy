@@ -49,10 +49,10 @@ import se.curtrune.lucy.workers.NotificationsWorker;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link CalenderFragment#newInstance} factory method to
+ * Use the {@link CalenderDateFragment#newInstance} factory method to
  * create an instance of this fragment.add
  */
-public class CalenderFragment extends Fragment {
+public class CalenderDateFragment extends Fragment {
 
     private Button buttonPrev;
     private Button buttonNext;
@@ -71,17 +71,20 @@ public class CalenderFragment extends Fragment {
     private List<Item> items;
     public static boolean VERBOSE = false;
     private LucindaViewModel viewModel;
-    public CalenderFragment() {
+    public CalenderDateFragment() {
         // Required empty public constructor
+    }
+    public CalenderDateFragment(LocalDate date){
+        this.currentDate = date;
     }
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     * @return A new instance of fragment CalenderFragment.
+     * @return A new instance of fragment CalenderDateFragment.
      */
-    public static CalenderFragment newInstance() {
-        return  new CalenderFragment();
+    public static CalenderDateFragment newInstance() {
+        return  new CalenderDateFragment();
 
     }
 
@@ -96,7 +99,7 @@ public class CalenderFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        log("CalenderFragment.onCreateView(...)");
+        log("CalenderDateFragment.onCreateView(...)");
         View view = inflater.inflate(R.layout.calender_fragment, container, false);
         requireActivity().setTitle("");
         initDefaults();
@@ -160,7 +163,9 @@ public class CalenderFragment extends Fragment {
     }
     private void initDefaults(){
         if( VERBOSE) log("...initDefaults()");
-        currentDate = LocalDate.now();
+        if( currentDate == null) {
+            currentDate = LocalDate.now();
+        }
         currentWeek = new Week(currentDate);
         items = new ArrayList<>();
     }
@@ -289,7 +294,7 @@ public class CalenderFragment extends Fragment {
                         @Override
                         public void postpone(PostponeDialog.Postpone postpone) {
                             log("PostponeDialog.postpone(Postpone)", postpone.toString());
-                            CalenderFragment.this.postpone(item, postpone);
+                            CalenderDateFragment.this.postpone(item, postpone);
                         }
 
                         @Override
@@ -321,7 +326,7 @@ public class CalenderFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        log("CalenderFragment.onOptionsItemSelected(MenuItem) ", Objects.requireNonNull(item.getTitle()).toString());
+        log("CalenderDateFragment.onOptionsItemSelected(MenuItem) ", Objects.requireNonNull(item.getTitle()).toString());
         return super.onOptionsItemSelected(item);
     }
     private void postpone(Item item, PostponeDialog.Postpone postpone){

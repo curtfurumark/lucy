@@ -27,7 +27,7 @@ import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
 
 public class ItemsWorker {
-    public static boolean VERBOSE = true;
+    public static boolean VERBOSE = false;
 
     /**
      * spawns an item based on it's template Item

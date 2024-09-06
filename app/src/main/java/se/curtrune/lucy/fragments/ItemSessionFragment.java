@@ -5,7 +5,6 @@ import static se.curtrune.lucy.util.Logger.log;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,7 +30,6 @@ import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Locale;
-import java.util.Objects;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.ActionAdapter;
@@ -139,7 +137,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
     }
     private void goToCalendar(){
         log("...goToCalendar()");
-        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.navigationDrawer_frameContainer, new CalenderFragment()).commit();
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.navigationDrawer_frameContainer, new CalenderDateFragment()).commit();
 
     }
     private void initActionRecycler(){

@@ -26,7 +26,7 @@ import se.curtrune.lucy.util.Converter;
 
 public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHolder>{
     private List<Item> items;
-    public static boolean VERBOSE = true;
+    public static boolean VERBOSE = false;
 
     public void setList(List<Item> items) {
         if( VERBOSE) log("SimpleAdapter.setList(List<Item>) size", items.size());

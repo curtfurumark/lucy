@@ -34,7 +34,7 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.MyViewHold
     private final Callback callback;
 
     public SimpleAdapter(List<String> categories, Callback callback) {
-        if( VERBOSE) log("CategoriesAdapter(List<Item>, Context, Callback) size", categories.size());
+        if( VERBOSE) log("SimpleAdapter(List<String>,Callback)");
         if (categories == null){
             log("WARNING, taskList is null");
         }

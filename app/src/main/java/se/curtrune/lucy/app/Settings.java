@@ -4,6 +4,7 @@ import static se.curtrune.lucy.util.Logger.log;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.util.ArraySet;
 
 import java.util.ArrayList;
@@ -13,12 +14,14 @@ import java.util.Map;
 import java.util.Set;
 
 import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.Type;
 
 public class Settings {
     private static final String PREFERENCES_NAME =  "PREFERENCES_NAME";
     private static final String IS_INITIALIZED = "IS_INITIALIZED";
     public static final String DEV_EMAIL = "curt.furumark@gmail.com";
+    public static final String KEY_START_ACTIVITY ="KEY_START_ACTIVITY";
 
     public static final String USER = "USER";
     //public static final String PWD = "PWD";
@@ -30,10 +33,11 @@ public class Settings {
     private long theRootID;
     private boolean isInitialized = false;
 
-
-
     public enum PanicAction{
         GAME, URL, SEQUENCE, PENDING, ICE
+    }
+    public enum StartActivity{
+        INDEX_ACTIVITY, TODAY_ACTIVITY
     }
     public enum Root{
         TODO, DAILY, PROJECTS, APPOINTMENTS, PANIC, THE_ROOT
@@ -69,6 +73,20 @@ public class Settings {
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getInt(key , defaultValue);
     }
+    public static int getMentalColour(Mental.Type mentalType){
+        switch(mentalType){
+            case ENERGY:
+                return Color.BLUE;
+            case MOOD:
+                return Color.RED;
+            case STRESS:
+                return Color.GREEN;
+            case ANXIETY:
+                return Color.CYAN;
+            default:
+                return Color.DKGRAY;
+        }
+    }
 
     public static Set<String> getSet(String key, Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -83,13 +101,15 @@ public class Settings {
         init(context);
     }
 
-
-
     public static Settings getInstance(Context context){
         if( instance == null){
             instance = new Settings(context);
         }
         return instance;
+    }
+    public static StartActivity getStartActivity(Context context) {
+        int ordinal = getInt(KEY_START_ACTIVITY, StartActivity.TODAY_ACTIVITY.ordinal(), context);
+        return StartActivity.values()[ordinal];
     }
     public static void removeAll(Context context){
         log("Settings.removeAll(Context)");

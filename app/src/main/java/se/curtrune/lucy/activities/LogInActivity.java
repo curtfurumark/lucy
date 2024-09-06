@@ -24,6 +24,7 @@ import java.util.Locale;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.app.Lucinda;
+import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.app.User;
 import se.curtrune.lucy.workers.InternetWorker;
 import se.curtrune.lucy.workers.NotificationsWorker;
@@ -199,6 +200,19 @@ public class LogInActivity extends AppCompatActivity {
         }else{
             Toast.makeText(this, "incorrect password", Toast.LENGTH_LONG).show();
         }
+    }
+    private void startUserActivity(){
+        log("...startUserActivity()");
+        Settings.StartActivity startActivity = Settings.getStartActivity(this);
+        switch (startActivity){
+            case INDEX_ACTIVITY:
+                startActivity(new Intent(this, IndexActivity.class));
+                break;
+            case TODAY_ACTIVITY:
+                startActivity(new Intent(this, MainActivity.class));
+                break;
+        }
+
     }
 
     private boolean validateInput(){

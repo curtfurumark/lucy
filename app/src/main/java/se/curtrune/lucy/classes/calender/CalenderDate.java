@@ -31,6 +31,12 @@ public class CalenderDate {
     public void setItems(List<Item> items){
         this.items = items;
     }
+    public CalenderDate(){
+
+    }
+    public CalenderDate(LocalDate date){
+        this.date = date;
+    }
 
     @NonNull
     @Override

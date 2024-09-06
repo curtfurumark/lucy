@@ -2,25 +2,24 @@ package se.curtrune.lucy.fragments;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.helper.StaticLabelsFormatter;
-import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Locale;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Mental;
@@ -33,22 +32,23 @@ import se.curtrune.lucy.workers.MentalWorker;
  */
 public class MentaHistoryFragment extends Fragment {
     private GraphView graphView;
-    //private TextView textViewDate;
+    private TextView textViewHeading;
+    private LocalDate firstDate;
+    private LocalDate lastDate;
 
-    private RadioButton buttonEnergy;
-    private RadioButton buttonStress;
-    private RadioButton buttonAnxiety;
-    private RadioButton buttonMood;
+    /**
+     * the number of dates to show, counting backwards from today
+     */
     private int numberOfDays = 7;
     public MentaHistoryFragment() {
-        // Required empty public constructor
+        log("MentalHistoryFragment");
     }
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
 
-     * @return A new instance of fragment GraphFragment.
+     * @return A new instance of fragment DailyGraphFragment.
      */
     // TODO: Rename and change types and number of parameters
     public static MentaHistoryFragment newInstance() {
@@ -70,13 +70,22 @@ public class MentaHistoryFragment extends Fragment {
         log("MentalHistoryFragment.onCreateView(LayoutInflater, ViewGroup, Bundle);");
         View view = inflater.inflate(R.layout.mental_history_fragment, container, false);
         initComponents(view);
-        buttonEnergy.setChecked(true);
-        initGraph(initData(Mental.Type.ENERGY));
+        initPeriodDefaults();
+        initGraph();
+        initMultipleLinesGraph();
         initListeners();
-        //currentDate = LocalDate.now();
+        setUserInterface();
         //setUserInterface(currentDate);
-        //initData();
         return view;
+    }
+
+    private void addDataPointsToGraph(DataPoint[] dataPoints, int color, String description){
+        log("...addDataPointsToGraph()");
+        LineGraphSeries<DataPoint> listDataPoints = new LineGraphSeries<>(dataPoints);
+        listDataPoints.setColor(color);
+        listDataPoints.setTitle(description);
+        graphView.addSeries(listDataPoints);
+
     }
     private String[] getHorizontalLabels(int numberOfDates){
         String[] labels = new String[numberOfDates];
@@ -103,20 +112,21 @@ public class MentaHistoryFragment extends Fragment {
         datePickerDialog.show();
     }*/
     private void initComponents(View view){
-        log("...initComponents()");
+        log("...initComponents(View)");
         graphView = view.findViewById(R.id.mentalHistoryFragment_graphView);
-        //textViewDate = view.findViewById(R.id.graphFragment_date);
-        buttonEnergy = view.findViewById(R.id.mentalHistoryFragment_buttonEnergy);
-        buttonStress = view.findViewById(R.id.mentalHistoryFragment_buttonStress);
-        buttonAnxiety = view.findViewById(R.id.mentalHistoryFragment_buttonAnxiety);
-        buttonMood = view.findViewById(R.id.mentalHistoryFragment_buttonMood);
+        textViewHeading = view.findViewById(R.id.mentalHistoryFragment_heading);
     }
-    private DataPoint[] initData(Mental.Type mentalType){
-        log("...initData(Mental.Type)", mentalType.toString());
-        BarGraphSeries<DataPoint> barGraphSeries = new BarGraphSeries<>();
+    private void initPeriodDefaults(){
+        log("...initPeriodDefaults()");
+        lastDate = LocalDate.now();
+        firstDate = lastDate.minusDays(numberOfDays -1);
+    }
+    private DataPoint[] getDataPoints(Mental.Type mentalType){
+        log("...getDataPoints(Mental.Type)", mentalType.toString());
         int mentalLevel = 0;
         DataPoint[] dataPointsArray = new DataPoint[numberOfDays];
-        LocalDate currentDate = LocalDate.now().minusDays(numberOfDays);
+        //LocalDate currentDate = LocalDate.now().minusDays(numberOfDays);
+        LocalDate currentDate = firstDate;
         for(int i = 0; i < numberOfDays; i++){
             switch (mentalType){
                 case ENERGY:
@@ -138,10 +148,21 @@ public class MentaHistoryFragment extends Fragment {
         }
         return dataPointsArray;
     }
+    private void initGraph(){
+        log("...initGraph()");
+        graphView.setTitle("week");
+        graphView.setTitleColor(R.color.purple_200);
+        graphView.setTitleTextSize(18);
+        graphView.removeAllSeries();
+        StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graphView);
+        staticLabelsFormatter.setHorizontalLabels(getHorizontalLabels(numberOfDays));
+        graphView.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
+        graphView.getLegendRenderer().setVisible(true);
+        graphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+    }
     private void initGraph(DataPoint[] dataPoints){
         log("...initGraph(DataPoint[])");
-        BarGraphSeries<DataPoint> barGraphSeries = new BarGraphSeries<>(dataPoints);
-
+        LineGraphSeries<DataPoint> lineGraphSeries = new LineGraphSeries<>(dataPoints);
         // after adding data to our line graph series.
         // on below line we are setting
         // title for our graph view.
@@ -161,19 +182,33 @@ public class MentaHistoryFragment extends Fragment {
         // on below line we are adding
         // data series to our graph view.
         graphView.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
-        graphView.addSeries(barGraphSeries);
+        //graphView.addSeries(barGraphSeries);
+        lineGraphSeries.setColor(Color.RED);
+        graphView.addSeries(lineGraphSeries);
+    }
+    private void initMultipleLinesGraph(){
+        log("...initMultipleLinesGraph");
+        DataPoint[] dataPointsEnergy = getDataPoints(Mental.Type.ENERGY);
+        addDataPointsToGraph(dataPointsEnergy, Color.RED, "energy");
+        DataPoint[] dataPointsMood = getDataPoints(Mental.Type.MOOD);
+        addDataPointsToGraph(dataPointsMood, Color.BLUE, "mood");
+        DataPoint[] dataPointsStress = getDataPoints(Mental.Type.STRESS);
+        addDataPointsToGraph(dataPointsStress, Color.CYAN, "stress");
+        DataPoint[] dataPointsAnxiety = getDataPoints(Mental.Type.ANXIETY);
+        addDataPointsToGraph( dataPointsAnxiety, Color.MAGENTA, "anxiety");
     }
     private void initListeners(){
         log("...initListeners()");
         //textViewDate.setOnClickListener(view->chooseDate());
-        buttonMood.setOnClickListener(view->onMentalCheckBox(Mental.Type.MOOD));
-        buttonAnxiety.setOnClickListener(view->onMentalCheckBox(Mental.Type.ANXIETY));
-        buttonStress.setOnClickListener(view->onMentalCheckBox(Mental.Type.STRESS));
-        buttonEnergy.setOnClickListener(view->onMentalCheckBox(Mental.Type.ENERGY));
     }
-    private void onMentalCheckBox(Mental.Type mentalType){
+/*    private void onMentalCheckBox(Mental.Type mentalType){
         log("...onMentalCheckBox(Mental.Type", mentalType.toString());
-        initGraph(initData(mentalType));
+        initGraph(getDataPoints(mentalType));
+    }*/
+    private void setUserInterface(){
+        log("...setUserInterface()");
+        String heading = String.format("%s - %s", firstDate.toString(), lastDate.toString());
+        textViewHeading.setText(heading);
     }
     private void setUserInterface(LocalDate date){
         log("...setUserInterface(LocalDate) ", date);

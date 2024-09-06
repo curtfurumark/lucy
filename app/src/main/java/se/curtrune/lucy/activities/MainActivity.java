@@ -36,13 +36,13 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.dialogs.BoostDialog;
 import se.curtrune.lucy.dialogs.PanicActionDialog;
 import se.curtrune.lucy.fragments.AppointmentsFragment;
-import se.curtrune.lucy.fragments.CalenderFragment;
+import se.curtrune.lucy.fragments.CalenderDateFragment;
 import se.curtrune.lucy.fragments.ContactFragment;
 import se.curtrune.lucy.fragments.CustomizeFragment;
+import se.curtrune.lucy.fragments.DailyGraphFragment;
 import se.curtrune.lucy.fragments.DurationFragment;
 import se.curtrune.lucy.fragments.EnchiladaFragment;
 import se.curtrune.lucy.fragments.EstimateFragment;
-import se.curtrune.lucy.fragments.GraphFragment;
 import se.curtrune.lucy.fragments.MentalDayFragment;
 import se.curtrune.lucy.fragments.MentaHistoryFragment;
 import se.curtrune.lucy.fragments.MessageBoardFragment;
@@ -52,7 +52,7 @@ import se.curtrune.lucy.fragments.SequenceFragment;
 import se.curtrune.lucy.fragments.TimerFragment;
 import se.curtrune.lucy.fragments.TodoFragment;
 import se.curtrune.lucy.fragments.TopTenFragment;
-import se.curtrune.lucy.fragments.WeeklyCalenderFragment;
+import se.curtrune.lucy.fragments.CalenderWeekFragment;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.AffirmationWorker;
 import se.curtrune.lucy.workers.InternetWorker;
@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         initComponents();
         initListeners();
         initViewModel();
-        navigate(new CalenderFragment());
+        navigate(new CalenderDateFragment());
         //setUserInterfaceCurrentEnergy();
     }
     private void boostMe(){
@@ -118,11 +118,11 @@ public class MainActivity extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(item -> {
             log("...onNavigationItemSelected(MenuItem) ", Objects.requireNonNull(item.getTitle()).toString());
             if( item.getItemId() == R.id.navigationDrawer_graphFragment){
-                navigate(new GraphFragment());
+                navigate(new DailyGraphFragment());
             }else if( item.getItemId() == R.id.navigationDrawer_monthCalender){
                 navigate(new MonthCalenderFragment());
             }else if( item.getItemId() == R.id.bottomNavigation_today){
-                navigate(new CalenderFragment());
+                navigate(new CalenderDateFragment());
             }else if ( item.getItemId() == R.id.navigationDrawer_topTen){
                 navigate( new TopTenFragment());
             }else if( item.getItemId() == R.id.bottomNavigation_todo){
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
             }else if( item.getItemId() == R.id.navigationDrawer_estimateFragment){
                 navigate(new EstimateFragment());
             }else if( item.getItemId() == R.id.navigationDrawer_weekly){
-                navigate(new WeeklyCalenderFragment());
+                navigate(new CalenderWeekFragment());
             }else if( item.getItemId() == R.id.navigationDrawer_contactFragment){
                 navigate(new ContactFragment());
             }else if( item.getItemId() == R.id.navigationDrawer_messageBoardFragment){
@@ -213,11 +213,11 @@ public class MainActivity extends AppCompatActivity {
         log("...onOptionsItemSelected(MenuItem item)", Objects.requireNonNull(item.getTitle()).toString());
         //TODO, remove
         if( item.getItemId() == R.id.navigationDrawer_graphFragment){
-            navigate( new GraphFragment());
+            navigate( new DailyGraphFragment());
         }else if( item.getItemId() == R.id.mainActivity_dev){
             startActivity(new Intent(this, DevActivity.class));
         }else if( item.getItemId() == R.id.mainActivity_calendar){
-            navigate(new CalenderFragment());
+            navigate(new CalenderDateFragment());
         }
         return super.onOptionsItemSelected(item);
     }
