@@ -107,10 +107,7 @@ public class Settings {
         }
         return instance;
     }
-    public static StartActivity getStartActivity(Context context) {
-        int ordinal = getInt(KEY_START_ACTIVITY, StartActivity.TODAY_ACTIVITY.ordinal(), context);
-        return StartActivity.values()[ordinal];
-    }
+
     public static void removeAll(Context context){
         log("Settings.removeAll(Context)");
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);

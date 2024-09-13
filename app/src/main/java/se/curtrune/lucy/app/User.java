@@ -26,6 +26,7 @@ public class User {
     public static final String KEY_LANGUAGE = "KEY_LANGUAGE";
     public static final String KEY_DEV_MODE = "KEY_DEV_MODE";
     public static final String KEY_LOGGED_IN = "KEY_LOGGED_IN";
+    public static final String KEY_FIRST_PAGE = "KEY_FIRST_PAGE";
 
     public static void addCategory(String category, Context context){
         log("User.addCategory(String, Context)", category);
@@ -63,6 +64,10 @@ public class User {
     public static boolean getDarkMode(Context context) {
         log("User.getDarkMode(Context)");
         return Settings.getBoolean(USE_DARK_MODE, false, context);
+    }
+    public static Settings.StartActivity getStartActivity(Context context) {
+        int ordinal = Settings.getInt(KEY_FIRST_PAGE, Settings.StartActivity.TODAY_ACTIVITY.ordinal(), context);
+        return Settings.StartActivity.values()[ordinal];
     }
 
     public static String getLanguage(Context context) {
@@ -115,6 +120,10 @@ public class User {
     }
 
 
+    public static void setFirstPage(Settings.StartActivity firstPage, Context context){
+        log("User.setFirstPage(StartActivity, Context);", firstPage.toString());
+        Settings.addInt(KEY_FIRST_PAGE, firstPage.ordinal(), context);
+    }
 
     public static void setUseDarkMode(boolean darkMode, Context context) {
         log("User.setUseDarkMode(boolean, Context)");

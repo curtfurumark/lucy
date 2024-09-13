@@ -37,28 +37,32 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/energy"
-                android:textSize="36sp"
+                android:textSize="28sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
+            <TextView
                 android:id="@+id/mainActivity_panic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="panic button"
-                app:backgroundTint="@color/red"
+                android:textSize="40sp"
+                android:text="p"
+                android:textColor="@color/red"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/baseline_electric_bolt_24" />
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
+            <TextView
                 android:id="@+id/mainActivity_buttonBoost"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:clickable="true"
+                android:text="+"
+                android:textSize="46dp"
+                android:textColor="@color/teal_700"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:srcCompat="@drawable/baseline_emoji_emotions_24" />

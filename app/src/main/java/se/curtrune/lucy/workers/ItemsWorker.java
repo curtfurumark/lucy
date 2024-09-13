@@ -209,6 +209,13 @@ public class ItemsWorker {
             return db.selectItems(query);
         }
     }
+    public static List<Item> selectAppointments(LocalDate date, Context context) {
+        if(VERBOSE) log("ItemsWorker.selectAppointments(LocalDate, Context)");
+        String query = Queeries.selectAppointments(date);
+        try (LocalDB db = new LocalDB(context)) {
+            return db.selectItems(query);
+        }
+    }
 
     public static List<Item> selectChildren(Item parent, Context context){
         if(VERBOSE) log("ItemsWorker.selectChildren(Item, Context)");
@@ -226,6 +233,13 @@ public class ItemsWorker {
         if(VERBOSE) log("ItemsWorker.selectItems(State state)", state.toString());
         try (LocalDB db = new LocalDB(context)) {
             return db.selectItems(Queeries.selectItems(state));
+        }
+    }
+
+    public static List<Item> selectItems(LocalDate date, Type type, Context context) {
+        if(VERBOSE) log("ItemsWorker.selectItems(LocalDate, Type, Context)", type.toString());
+        try (LocalDB db = new LocalDB(context)) {
+            return db.selectItems(Queeries.selectItems(date, type));
         }
     }
 
@@ -301,6 +315,14 @@ public class ItemsWorker {
 
     public static List<Item> selectCalenderItems(YearMonth yearMonth, Context context) {
         if (VERBOSE) log("ItemsWorker.selectCalenderItems(YearMonth)");
+        try (LocalDB db = new LocalDB(context)) {
+            String queery = Queeries.selectCalendarMonth(yearMonth);
+            return db.selectItems(queery);
+        }
+    }
+
+    public static List<Item> selectAppointments(YearMonth yearMonth, Context context) {
+        if (VERBOSE) log("ItemsWorker.selectAppointments(YearMonth)", yearMonth.toString());
         try (LocalDB db = new LocalDB(context)) {
             String queery = Queeries.selectCalendarMonth(yearMonth);
             return db.selectItems(queery);

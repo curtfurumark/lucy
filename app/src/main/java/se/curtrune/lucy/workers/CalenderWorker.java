@@ -30,6 +30,21 @@ public class CalenderWorker {
         }
         return calenderDates;
     }
+    public  static List<CalenderDate> getCalenderDates(Type type, LocalDate firstDate, LocalDate lastDate,Context context){
+        log("...getCalenderDates(Type, LocalDate, LocalDate, Context");
+        List<CalenderDate> calenderDates = new ArrayList<>();
+        LocalDate currentDate = firstDate;
+        while (currentDate.isBefore(lastDate) || currentDate.equals(lastDate)) {
+            CalenderDate calenderDate = new CalenderDate(currentDate);
+            List<Item> items = ItemsWorker.selectAppointments(currentDate, context);
+            calenderDate.setItems(items);
+            calenderDates.add(calenderDate);
+            currentDate = currentDate.plusDays(1);
+        }
+        return calenderDates;
+
+
+    }
 
     public static LocalDate getFirstDateOfWeek(LocalDate date) {
         TemporalField fieldISO = WeekFields.of(Locale.getDefault()).dayOfWeek();

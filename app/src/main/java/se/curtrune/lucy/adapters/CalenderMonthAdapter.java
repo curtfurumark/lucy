@@ -9,14 +9,20 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 
 import se.curtrune.lucy.R;
+import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.calender.CalenderDate;
 
-public class MonthAdapter extends RecyclerView.Adapter<MonthAdapter.ViewHolder> {
+public class CalenderMonthAdapter extends RecyclerView.Adapter<CalenderMonthAdapter.ViewHolder> {
+    private final RecyclerView.RecycledViewPool recycledViewPool = new RecyclerView.RecycledViewPool();
     public interface OnDateListener{
         void onDateClick(CalenderDate calenderDate);
     }
@@ -24,16 +30,11 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthAdapter.ViewHolder> 
     private List<CalenderDate> calenderDates;
     public static boolean VERBOSE = false;
 
-    public MonthAdapter(List<CalenderDate> calenderDates, OnDateListener listener) {
-        log("MonthAdapter(List<String>, OnItemListener), size", calenderDates.size());
+    public CalenderMonthAdapter(List<CalenderDate> calenderDates, OnDateListener listener) {
+        log("CalenderMonthAdapter(List<String>, OnItemListener), size", calenderDates.size());
         this.calenderDates = calenderDates;
         this.listener = listener;
     }
-/*    public MonthAdapter(List<String> daysOfMonth, OnItemListener listener) {
-        log("MonthAdapter(List<String>, OnItemListener), size", daysOfMonth.size());
-        this.daysOfMonth = daysOfMonth;
-        this.listener = listener;
-    }*/
 
     @NonNull
     @Override
@@ -45,7 +46,7 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthAdapter.ViewHolder> 
         return new ViewHolder(view);
     }
 
-    @Override
+/*    @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         if( VERBOSE) log("...onBindViewHolder(CalenderViewHolder, int) position", position);
         CalenderDate calenderDate = calenderDates.get(position);
@@ -55,7 +56,31 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthAdapter.ViewHolder> 
             holder.textViewDayOfMonth.setTextColor(Color.RED);
         }
         holder.textViewDayOfMonth.setText(String.valueOf(dayOfMonth));
+        /////////////////////////////////////////////////////////
+
+    }*/
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        CalenderDate dateItem =  calenderDates.get(position);
+        //holder.textViewDate.setText(dateItem.getDate().format(DateTimeFormatter.ofPattern("E d")));
+        holder.textViewDayOfMonth.setText(String.valueOf(dateItem.getDate().getDayOfMonth()));
+        //LinearLayoutManager linearLayoutManager = new LinearLayoutManager(holder.childRecycler.getContext(), LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(holder.recyclerView.getContext());
+        linearLayoutManager.setInitialPrefetchItemCount(dateItem.getItems().size());
+        dateItem.getItems().sort(Comparator.comparingLong(Item::compareTargetTime));
+        MinimalItemAdapter minimalItemAdapter = new MinimalItemAdapter(dateItem.getItems(), dateItem.getDate());
+        minimalItemAdapter.setListener(new MinimalItemAdapter.Listener() {
+            @Override
+            public void onDateClick(LocalDate date) {
+                log("...MinimalAdapter.onDateClick(LocalDate)", date.toString());
+            }
+        });
+        holder.recyclerView.setAdapter(minimalItemAdapter);
+        holder.recyclerView.setLayoutManager(linearLayoutManager);
+        holder.recyclerView.setRecycledViewPool( recycledViewPool);
+        //holder.layout.setOnClickListener(view->listener.onDateClick(dateItem.getDate()));
     }
+
+
     public void setList(List<CalenderDate> dates){
         this.calenderDates = dates;
         notifyDataSetChanged();
@@ -65,11 +90,14 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthAdapter.ViewHolder> 
     public int getItemCount() {
         return calenderDates.size();
     }
+
     class ViewHolder extends RecyclerView.ViewHolder{
-        private TextView textViewDayOfMonth;
+        protected final TextView textViewDayOfMonth;
+        private RecyclerView recyclerView;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewDayOfMonth = itemView.findViewById(R.id.calender_cell_day);
+            recyclerView = itemView.findViewById(R.id.calender_cell_recycler);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

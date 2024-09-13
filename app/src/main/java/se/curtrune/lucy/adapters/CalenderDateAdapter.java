@@ -32,7 +32,6 @@ public class CalenderDateAdapter extends RecyclerView.Adapter<CalenderDateAdapte
         notifyDataSetChanged();
     }
 
-
     public interface Callback{
         void onDateSelected(LocalDate date);
     }

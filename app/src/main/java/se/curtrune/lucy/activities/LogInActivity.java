@@ -73,7 +73,8 @@ public class LogInActivity extends AppCompatActivity {
         if (User.usesPassword(this) && !User.isDevMode(this)) {
             log("...using password");
         } else {
-            startActivity(new Intent(this, MainActivity.class));
+            //startActivity(new Intent(this, MainActivity.class));
+            startUserActivity();
         }
     }
     private void checkInternetConnection(){
@@ -196,14 +197,21 @@ public class LogInActivity extends AppCompatActivity {
         }
         String pwd = editTextPwd.getText().toString();
         if( User.validatePassword("user", pwd, this)){
-            startActivity(new Intent(this, MainActivity.class));
+            //startActivity(new Intent(this, MainActivity.class));
+            startUserActivity();
         }else{
             Toast.makeText(this, "incorrect password", Toast.LENGTH_LONG).show();
         }
     }
+
+    /**
+     * configurable by user
+     * at the time of writing this, the user can choose between going straight to the calender
+     * or going to an index page with links to various activities/fragments
+     */
     private void startUserActivity(){
         log("...startUserActivity()");
-        Settings.StartActivity startActivity = Settings.getStartActivity(this);
+        Settings.StartActivity startActivity = User.getStartActivity(this);
         switch (startActivity){
             case INDEX_ACTIVITY:
                 startActivity(new Intent(this, IndexActivity.class));

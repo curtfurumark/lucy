@@ -1,24 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout"
     android:layout_width="match_parent"
-    android:orientation="vertical"
     android:layout_height="match_parent"
     tools:context=".activities.IndexActivity">
+
     <TextView
         android:id="@+id/indexActivity_today"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="@string/today"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:textSize="34sp"
+        app:layout_constraintBottom_toTopOf="@+id/indexActivity_week"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/indexActivity_week"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/week"
+        android:textSize="34sp"
+        app:layout_constraintTop_toBottomOf="@+id/indexActivity_today"
+        app:layout_constraintBottom_toTopOf="@id/indexActivity_month"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/indexActivity_month"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/month"
+        android:textSize="34sp"
+        app:layout_constraintBottom_toTopOf="@id/indexActivity_todo"
+        app:layout_constraintTop_toBottomOf="@id/indexActivity_week"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
     <TextView
         android:id="@+id/indexActivity_todo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="@string/todo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:textSize="34sp"
+        app:layout_constraintBottom_toTopOf="@+id/indexActivity_appointments"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/indexActivity_month"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <TextView
         android:id="@+id/indexActivity_appointments"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="@string/appointments"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-</LinearLayout>
+        android:textSize="34sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/indexActivity_todo" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -29,6 +29,7 @@ import java.util.Objects;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.activities.flying_fish.GameActivity;
+import se.curtrune.lucy.app.FirstPage;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.app.User;
 import se.curtrune.lucy.classes.Affirmation;
@@ -37,22 +38,24 @@ import se.curtrune.lucy.dialogs.BoostDialog;
 import se.curtrune.lucy.dialogs.PanicActionDialog;
 import se.curtrune.lucy.fragments.AppointmentsFragment;
 import se.curtrune.lucy.fragments.CalenderDateFragment;
+import se.curtrune.lucy.fragments.CalenderMonthFragment;
 import se.curtrune.lucy.fragments.ContactFragment;
 import se.curtrune.lucy.fragments.CustomizeFragment;
 import se.curtrune.lucy.fragments.DailyGraphFragment;
+import se.curtrune.lucy.fragments.DevTodoFragment;
 import se.curtrune.lucy.fragments.DurationFragment;
 import se.curtrune.lucy.fragments.EnchiladaFragment;
 import se.curtrune.lucy.fragments.EstimateFragment;
 import se.curtrune.lucy.fragments.MentalDayFragment;
 import se.curtrune.lucy.fragments.MentaHistoryFragment;
 import se.curtrune.lucy.fragments.MessageBoardFragment;
-import se.curtrune.lucy.fragments.MonthCalenderFragment;
 import se.curtrune.lucy.fragments.ProjectsFragment;
 import se.curtrune.lucy.fragments.SequenceFragment;
 import se.curtrune.lucy.fragments.TimerFragment;
 import se.curtrune.lucy.fragments.TodoFragment;
 import se.curtrune.lucy.fragments.TopTenFragment;
 import se.curtrune.lucy.fragments.CalenderWeekFragment;
+import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.AffirmationWorker;
 import se.curtrune.lucy.workers.InternetWorker;
@@ -63,8 +66,10 @@ public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
     private LucindaViewModel viewModel;
-    private FloatingActionButton fapPanic;
-    private FloatingActionButton fapBoost;
+    //private FloatingActionButton fapPanic;
+    //private FloatingActionButton fapBoost;
+    private TextView textViewPanic;
+    private TextView textViewBoost;
     private TextView textViewEnergy;
     private TextView textViewLucindaHome;
     public static boolean VERBOSE = false;
@@ -76,8 +81,14 @@ public class MainActivity extends AppCompatActivity {
         initComponents();
         initListeners();
         initViewModel();
-        navigate(new CalenderDateFragment());
-        //setUserInterfaceCurrentEnergy();
+        Intent intent = getIntent();
+        String fragmentName = intent.getStringExtra(Constants.MAIN_ACTIVITY_CHILD_FRAGMENT);
+        if(fragmentName != null){
+            log("...fragmentName", fragmentName);
+            navigate(FirstPage.valueOf(fragmentName));
+        }else {
+            navigate(new CalenderDateFragment());
+        }
     }
     private void boostMe(){
         if( VERBOSE) log("...boostMe()");
@@ -100,11 +111,11 @@ public class MainActivity extends AppCompatActivity {
         if( VERBOSE) log("...initComponents()");
         MaterialToolbar toolbar = findViewById(R.id.navigationDrawer_toolbar);
         setSupportActionBar(toolbar);
-        fapPanic = findViewById(R.id.mainActivity_panic);
-        fapBoost = findViewById(R.id.mainActivity_buttonBoost);
+        textViewPanic = findViewById(R.id.mainActivity_panic);
+        textViewBoost = findViewById(R.id.mainActivity_buttonBoost);
         textViewEnergy = findViewById(R.id.mainActivity_energy);
         drawerLayout = findViewById(R.id.navigationDrawer_drawerLayout);
-        NavigationView navigationView = findViewById(R.id.navigationDrawerActivity_navigationView);;
+        NavigationView navigationView = findViewById(R.id.navigationDrawerActivity_navigationView);
         View view = navigationView.inflateHeaderView(R.layout.navigation_header);
         textViewLucindaHome = view.findViewById(R.id.navigationHeader_lucindaHome);
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
@@ -120,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
             if( item.getItemId() == R.id.navigationDrawer_graphFragment){
                 navigate(new DailyGraphFragment());
             }else if( item.getItemId() == R.id.navigationDrawer_monthCalender){
-                navigate(new MonthCalenderFragment());
+                navigate(new CalenderMonthFragment());
             }else if( item.getItemId() == R.id.bottomNavigation_today){
                 navigate(new CalenderDateFragment());
             }else if ( item.getItemId() == R.id.navigationDrawer_topTen){
@@ -149,9 +160,10 @@ public class MainActivity extends AppCompatActivity {
                 navigate(new CustomizeFragment());
             }else if( item.getItemId() == R.id.navigationDrawer_mentalFragment) {
                 navigate(new MentalDayFragment());
-            }else if( item.getItemId() == R.id.navigationDrawer_mentalHistoryFragment){
-                log("mental history fragment");
+            }else if( item.getItemId() == R.id.navigationDrawer_mentalHistoryFragment) {
                 navigate(new MentaHistoryFragment());
+            }else if(item.getItemId() == R.id.navigationDrawer_devToDo){
+                navigate(new DevTodoFragment());
             }else if( item.getItemId() ==R.id.navigationDrawer_logOut){
                 log("...log out");
                 Intent intent = new Intent(this, LogInActivity.class);
@@ -168,8 +180,8 @@ public class MainActivity extends AppCompatActivity {
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
         textViewEnergy.setOnClickListener(view->showMentalDay());
-        fapBoost.setOnClickListener(view->boostMe());
-        fapPanic.setOnClickListener(view->panic(User.getPanicAction(this)));
+        textViewBoost.setOnClickListener(view->boostMe());
+        textViewPanic.setOnClickListener(view->panic(User.getPanicAction(this)));
         textViewLucindaHome.setOnClickListener(view->openWebPage("https://curtfurumark.se/lucinda"));
     }
     private void initViewModel(){
@@ -186,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
      * sorry this one does two things
      * navigates to fragment
      * and sets current energy level ui
-     * @param fragment
+     * @param fragment, the fragment to go to
      */
     private void navigate(Fragment fragment){
         if( fragment == null){
@@ -200,6 +212,29 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.navigationDrawer_frameContainer, fragment)
                 .addToBackStack("previous fragment")
                 .commit();
+    }
+    private void navigate(FirstPage firstPage){
+        log("...navigate(FirstPage)", firstPage.toString());
+        switch (firstPage){
+            case CALENDER_DATE:
+                navigate(new CalenderDateFragment());
+                break;
+            case CALENDER_WEEK:
+                navigate(new CalenderWeekFragment());
+                break;
+            case CALENDER_MONTH:
+                navigate( new CalenderMonthFragment());
+                break;
+            case CALENDER_APPOINTMENTS:
+                navigate( new AppointmentsFragment());
+                break;
+            case TODO_FRAGMENT:
+                navigate( new TodoFragment());
+                break;
+            default:
+                log("WARNING UNKNOWN FRAGMENT");
+
+        }
     }
 
     @Override
@@ -248,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
         log("...stringURI", stringURI);
         Intent intent = new Intent(Intent.ACTION_CALL);
         intent.setData(Uri.parse(stringURI));
-        startActivity(intent)*/;
+        startActivity(intent)*/
     }
     private void panicActionPending(){
         log("...panicActionPending()");

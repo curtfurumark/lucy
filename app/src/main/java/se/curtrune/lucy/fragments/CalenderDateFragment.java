@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,7 +19,9 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SnapHelper;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -54,8 +55,10 @@ import se.curtrune.lucy.workers.NotificationsWorker;
  */
 public class CalenderDateFragment extends Fragment {
 
-    private Button buttonPrev;
-    private Button buttonNext;
+    //private Button buttonPrev;
+    private TextView textViewPrev;
+    private TextView textViewNext;
+    //private Button buttonNext;
     private Week currentWeek;
     private RecyclerView recycler;
     private RecyclerView recyclerDates;
@@ -100,7 +103,7 @@ public class CalenderDateFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         log("CalenderDateFragment.onCreateView(...)");
-        View view = inflater.inflate(R.layout.calender_fragment, container, false);
+        View view = inflater.inflate(R.layout.calender_date_fragment, container, false);
         requireActivity().setTitle("");
         initDefaults();
         initComponents(view);
@@ -154,8 +157,8 @@ public class CalenderDateFragment extends Fragment {
     }
     private void initComponents(View view){
         if( VERBOSE) log("...initComponents(View)");
-        buttonNext = view.findViewById(R.id.calenderFragment_buttonNext);
-        buttonPrev = view.findViewById(R.id.calenderFragment_buttonPrev);
+        textViewNext = view.findViewById(R.id.calenderFragment_buttonNext);
+        textViewPrev = view.findViewById(R.id.calenderFragment_buttonPrev);
         labelMonthYear = view.findViewById(R.id.calenderFragment_labelMonthYear);
         recycler = view.findViewById(R.id.calenderFragment_recycler);
         recyclerDates = view.findViewById(R.id.calenderFragment_recyclerDates);
@@ -171,8 +174,8 @@ public class CalenderDateFragment extends Fragment {
     }
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
-        buttonPrev.setOnClickListener(view->prevWeek());
-        buttonNext.setOnClickListener(view->nextWeek());
+        textViewPrev.setOnClickListener(view->prevWeek());
+        textViewNext.setOnClickListener(view->nextWeek());
         buttonAddItem.setOnClickListener(view->showAddItemDialog());
     }
     private void initRecycler(){
@@ -259,6 +262,8 @@ public class CalenderDateFragment extends Fragment {
         recyclerDates.setLayoutManager(new GridLayoutManager(getContext(), 7));
         recyclerDates.setItemAnimator(new DefaultItemAnimator());
         recyclerDates.setAdapter(calenderDateAdapter);
+        SnapHelper snapHelper = new PagerSnapHelper();
+        snapHelper.attachToRecyclerView(recyclerDates);
     }
     private void initSwipe() {
         if( VERBOSE) log("...initSwipe()");

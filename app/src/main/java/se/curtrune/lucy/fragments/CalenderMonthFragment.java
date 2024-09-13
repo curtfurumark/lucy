@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import se.curtrune.lucy.R;
+import se.curtrune.lucy.adapters.CalenderMonthAdapter;
 import se.curtrune.lucy.adapters.ItemAdapter;
-import se.curtrune.lucy.adapters.MonthAdapter;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.calender.CalenderDate;
 import se.curtrune.lucy.dialogs.ItemsDialog;
@@ -36,10 +36,10 @@ import se.curtrune.lucy.workers.ItemsWorker;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link MonthCalenderFragment#newInstance} factory method to
+ * Use the {@link CalenderMonthFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MonthCalenderFragment extends Fragment {
+public class CalenderMonthFragment extends Fragment {
     private TextView monthYearText;
     private Button buttonNext;
     private Button buttonPrev;
@@ -47,7 +47,7 @@ public class MonthCalenderFragment extends Fragment {
     private RecyclerView recyclerDay;
 
     private LocalDate selectedDate;
-    private MonthAdapter monthDayAdapter;
+    private CalenderMonthAdapter monthDayAdapter;
     private ItemAdapter itemAdapter;
     private List<CalenderDate> calenderDates;
     // TODO: Rename parameter arguments, choose names that match
@@ -56,7 +56,7 @@ public class MonthCalenderFragment extends Fragment {
     // TODO: Rename and change types of parameters
 
 
-    public MonthCalenderFragment() {
+    public CalenderMonthFragment() {
         // Required empty public constructor
     }
 
@@ -64,11 +64,11 @@ public class MonthCalenderFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
 
-     * @return A new instance of fragment MonthCalenderFragment.
+     * @return A new instance of fragment CalenderMonthFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static MonthCalenderFragment newInstance() {
-        return new MonthCalenderFragment();
+    public static CalenderMonthFragment newInstance() {
+        return new CalenderMonthFragment();
     }
 
     @Override
@@ -82,7 +82,7 @@ public class MonthCalenderFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.my_calender_activity, container, false);
+        View view =  inflater.inflate(R.layout.calender_month_fragment, container, false);
         initComponents(view);
         selectedDate = LocalDate.now();
         calenderDates = getCalenderDates(selectedDate);
@@ -100,9 +100,10 @@ public class MonthCalenderFragment extends Fragment {
         log("...firstDateOfMonth", firstDateOfMonth.toString());
         int daysInMonth = yearMonth.lengthOfMonth();
         log("...daysInMonth", daysInMonth);
-        List<Item> itemsMonth = ItemsWorker.selectCalenderItems(yearMonth, getContext());
+        //List<Item> itemsMonth = ItemsWorker.selectCalenderItems(yearMonth, getContext());
+        List<Item> itemsMonth = ItemsWorker.selectAppointments(yearMonth, getContext());
         log("...number of events this month", itemsMonth.size());
-        //itemsMonth.forEach(System.out::println);
+        itemsMonth.forEach(System.out::println);
         LocalDate currentDate = firstDateOfMonth;
         int numberDays = daysInMonth;
         int firstDate = firstDateOfMonth.getDayOfWeek().getValue();
@@ -160,7 +161,7 @@ public class MonthCalenderFragment extends Fragment {
     }
     private void initRecycler(List<CalenderDate> calenderDates){
         log("...initRecycler()");
-        monthDayAdapter = new MonthAdapter(calenderDates, calenderDate -> {
+        monthDayAdapter = new CalenderMonthAdapter(calenderDates, calenderDate -> {
             log("onDateClick(CalenderDate)", calenderDate.getDate().toString());
             showItemsDialog(calenderDate);
             Toast.makeText(getContext(), calenderDate.toString(), Toast.LENGTH_LONG).show();

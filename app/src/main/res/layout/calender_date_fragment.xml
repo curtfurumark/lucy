@@ -10,6 +10,7 @@
 
     <!-- TODO: Update blank fragment layout -->
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:padding="16dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
@@ -21,7 +22,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <Button
+            <TextView
                 android:id="@+id/calenderFragment_buttonPrev"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -38,7 +39,7 @@
                 android:text="april 2024"
                 android:textAlignment="center" />
 
-            <Button
+            <TextView
                 android:id="@+id/calenderFragment_buttonNext"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -52,6 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:layout_marginTop="16dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/calenderFragment_layoutCalenderNavigation">
             <androidx.recyclerview.widget.RecyclerView

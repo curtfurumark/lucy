@@ -88,7 +88,7 @@ public class Queeries {
                 Type.APPOINTMENT.ordinal());
     }
     public static String selectAppointments(LocalDate date) {
-        return String.format(Locale.getDefault(), "SELECT * FROM items WHERE (type = %d  OR isCalenderItem = 1)  AND targetDate = %d ORDER BY targetDate DESC",
+        return String.format(Locale.getDefault(), "SELECT * FROM items WHERE type = %d  AND targetDate = %d ORDER BY targetDate DESC",
                 Type.APPOINTMENT.ordinal(),date.toEpochDay());
     }
     public static String selectItems() {
@@ -100,11 +100,12 @@ public class Queeries {
     }
 
     public static String selectItems(LocalDate targetDate, State state) {
-        return String.format(Locale.ENGLISH, "SELECT * FROM items WHERE targetDate = %d AND state = %d", targetDate.toEpochDay(), state.ordinal());
+        return String.format(Locale.getDefault(), "SELECT * FROM items WHERE targetDate = %d AND state = %d", targetDate.toEpochDay(), state.ordinal());
     }
-/*    public static String selectCategories() {
-        return "SELECT name FROM categories ORDER BY name";
-    }*/
+    public static String  selectItems(LocalDate date, Type type){
+        return String.format(Locale.getDefault(), "SELECT * FROM items WHERE targetDate = %d AND type = %d",
+                date.toEpochDay(), type.ordinal());
+    }
 
     /**
      * selects direct items to given parent
@@ -246,6 +247,13 @@ public class Queeries {
         LocalDate firstDate = yearMonth.atDay(1);
         return String.format(Locale.getDefault(), "SELECT * FROM items WHERE targetDate >= %d AND targetDate <= %d AND isCalenderItem = 1 ORDER by targetDate DESC",
                 firstDate.toEpochDay(), lastDate.toEpochDay());
+
+    }
+    public static String selectAppointments(YearMonth yearMonth) {
+        LocalDate lastDate =  yearMonth.atEndOfMonth();
+        LocalDate firstDate = yearMonth.atDay(1);
+        return String.format(Locale.getDefault(), "SELECT * FROM items WHERE targetDate >= %d AND targetDate <= %d AND type = %d ORDER by targetDate DESC",
+                firstDate.toEpochDay(), lastDate.toEpochDay(), Type.APPOINTMENT);
 
     }
 

@@ -8,11 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.URLUtil;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +56,7 @@ public class CustomizeFragment extends Fragment {
 
     private RecyclerView recyclerPanicUrls;
     private RecyclerView recyclerCategories;
+    private Spinner spinnerFirstPage;
     private RadioButton radioButtonGame;
     private RadioButton radioButtonWeb;
     private RadioButton radioButtonSequence;
@@ -94,6 +98,7 @@ public class CustomizeFragment extends Fragment {
         initComponents(view);
         initPanicURLS();
         initRecyclerCategories();
+        initSpinnerFirstPage();
         initListeners();
         setUserInterface();
         printSharedPreferences();
@@ -144,8 +149,8 @@ public class CustomizeFragment extends Fragment {
         log("...deletePanicURL()");
         User.deletePanicUrl(url, getContext());
         initPanicURLS();
-
     }
+
     private void initComponents(View view){
         log("...initComponents(View view)");
         textViewAddURL = view.findViewById(R.id.customizeFragment_addURL);
@@ -169,6 +174,7 @@ public class CustomizeFragment extends Fragment {
         labelCategories= view.findViewById(R.id.customizeFragment_labelCategory);
         textViewAddCategory = view.findViewById(R.id.customizeFragment_addCategory);
         layoutCategories = view.findViewById(R.id.customizeFragment_layoutCategories);
+        spinnerFirstPage = view.findViewById(R.id.customizeFragment_spinnerSplashActivity);
     }
     private void initListeners(){
         log("...initListeners()");
@@ -221,6 +227,24 @@ public class CustomizeFragment extends Fragment {
         recyclerPanicUrls.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerPanicUrls.setItemAnimator(new DefaultItemAnimator());
         recyclerPanicUrls.setAdapter(panicUrlAdapter);
+    }
+    private void initSpinnerFirstPage(){
+        log("...initSpinnerFirstPage()");
+        ArrayAdapter<Settings.StartActivity> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item,Settings.StartActivity.values() );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+        spinnerFirstPage.setAdapter(adapter);
+        //spinnerFirstPage.setSelection(type.ordinal());
+        spinnerFirstPage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                log("spinner first page.onItemSelected(....)", adapter.getItem(position).toString());
+                User.setFirstPage(adapter.getItem(position), getContext());
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
     private void onPanicUrlClick(String url) {
         log("...onPanicUrlClick()", url);

@@ -9,16 +9,20 @@ import java.util.Locale;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import se.curtrune.lucy.workers.CalenderWorker;
+
 public class Week {
     private final LocalDate firstDate;
     private final  LocalDate lastDate;
     private LocalDate currentDate;
+    private int weekNumber;
     private List<LocalDate> dates;
     public static boolean VERBOSE = false;
     public Week(LocalDate date){
         if( VERBOSE) log("Week(LocalDate)", date.toString());
         this.currentDate = date;
         firstDate = calculateFirstDateOfTheWeek(currentDate);
+        weekNumber = CalenderWorker.getWeekNumber(firstDate);
         lastDate = firstDate.plusDays(6);
         dates = getDates();
     }

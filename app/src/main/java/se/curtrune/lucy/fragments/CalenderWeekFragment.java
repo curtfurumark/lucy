@@ -22,18 +22,21 @@ import java.util.Locale;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.CalenderWeekAdapter;
+import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.classes.calender.CalenderDate;
 import se.curtrune.lucy.classes.calender.Week;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.CalenderWorker;
 
 public class CalenderWeekFragment extends Fragment {
-    private Button buttonNext;
-    private Button buttonPrev;
+    //private Button buttonNext;
+    //private Button buttonPrev;
+    private TextView textViewNext;
+    private TextView textViewPrev;
     public static boolean VERBOSE = true;
     //private CalenderDateAdapter calenderDateAdapter;
     private CalenderWeekAdapter adapter;
-    //private RecyclerView recyclerDates;
+
     private RecyclerView recycler;
     private TextView textViewWeekNumber;
     private Week currentWeek;
@@ -50,6 +53,8 @@ public class CalenderWeekFragment extends Fragment {
         View view = inflater.inflate(R.layout.calender_week_fragment, container, false);
         initDefaults();
         initComponents(view);
+        initData();
+        initListeners();
         initRecycler();
         setUserInterface();
         initViewModel();
@@ -59,25 +64,30 @@ public class CalenderWeekFragment extends Fragment {
 
     private void initComponents(View view) {
         log("...initComponents(View)");
-        //buttonPrev = view.findViewById(R.id.weeklyFragment_buttonPrev);
-        //buttonNext = view.findViewById(R.id.weeklyFragment_buttonNext);
+        textViewPrev = view.findViewById(R.id.calenderWeekFragment_buttonPrev);
+        textViewNext = view.findViewById(R.id.calenderWeekFragment_buttonNext);
         recycler = view.findViewById(R.id.calenderWeekFragment_recycler);
         textViewWeekNumber = view.findViewById(R.id.calenderWeekFragment_weekNumber);
     }
+    private void initData(){
+        log("...initData()");
+        calenderDates = CalenderWorker.getCalenderDates(Type.APPOINTMENT, firstDate, lastDate, getContext());
+    }
     private void initDefaults(){
         log("...initDefaults()");
-        firstDate = CalenderWorker.getFirstDateOfWeek(LocalDate.now());
+        currentDate = firstDate = CalenderWorker.getFirstDateOfWeek(LocalDate.now());
         lastDate = firstDate.plusDays(6);
     }
     private void initListeners(){
         log("...initListeners()");
-        buttonPrev.setOnClickListener(view->previousWeek());
-        buttonNext.setOnClickListener(view->nextWeek());
+        textViewPrev.setOnClickListener(view->previousWeek());
+        textViewNext.setOnClickListener(view->nextWeek());
+        textViewWeekNumber.setOnClickListener(view->showWeekDialog());
     }
 
     private void initRecycler() {
         log("...initRecycler()");
-        calenderDates = CalenderWorker.getCalenderDates(firstDate, lastDate, getContext());
+
         adapter = new CalenderWeekAdapter(calenderDates, new CalenderWeekAdapter.Listener() {
             @Override
             public void onDateClick(LocalDate date) {
@@ -99,19 +109,30 @@ public class CalenderWeekFragment extends Fragment {
     private void nextWeek(){
         log("...nextWeek()");
         currentDate = currentDate.plusDays(6);
-        currentWeek = new Week(currentDate);
-        setUserInterface(currentDate);
+        setCalender(currentDate);
+        //currentWeek = new Week(currentDate);
+        //setUserInterface(currentDate);
     }
     private void previousWeek(){
         log("...previousWeek");
         currentDate = currentDate.minusDays(6);
-        currentWeek = new Week(currentDate);
-        setUserInterface(currentDate);
+        setCalender(currentDate);
+        //currentWeek = new Week(currentDate);
+        //setUserInterface(currentDate);
     }
     private void setUserInterface(){
         log("...setUserInterface()");
         int weekNumber = CalenderWorker.getWeekNumber(LocalDate.now());
         textViewWeekNumber.setText(String.format(Locale.getDefault(), "week %d", weekNumber));
+
+    }
+    private void setCalender(LocalDate date){
+        log("...setCalender(LocalDate)", date.toString());
+        currentWeek = new Week(date);
+        firstDate = currentWeek.getFirstDateOfWeek();
+        lastDate = currentWeek.getLastDateOfWeek();
+        adapter.setCalenderDates(CalenderWorker.getCalenderDates(Type.APPOINTMENT, firstDate, lastDate, getContext()));
+        textViewWeekNumber.setText(String.format(Locale.getDefault(), "week %d", currentWeek.getWeekNumber()));
 
     }
     private void setUserInterface(LocalDate date){
@@ -122,5 +143,9 @@ public class CalenderWeekFragment extends Fragment {
         //dateHourAdapter.setList(getDateHourCells(currentWeek));
         //sometimes i wonder why i have to do this, wny is it not sufficient to set list and notify adapter
         initRecyclerCells();*/
+    }
+    private void showWeekDialog(){
+        log("...showWeekDialog()");
+
     }
 }
