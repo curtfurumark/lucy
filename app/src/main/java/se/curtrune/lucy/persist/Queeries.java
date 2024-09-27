@@ -70,13 +70,12 @@ public class Queeries {
                     "isTemplate INTEGER, " +      //13
                     "isDone DEFAULT 0" +        //14
                     ")";
-/*    public static String CREATE_TABLE_CATEGORIES = "CREATE TABLE categories " +
-            "(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)";*/
+
 
     public static boolean VERBOSE = false;
     public static String insert(Message message) {
-        return String.format(Locale.getDefault(), "INSERT INTO messages(subject, content, user, created) values " +
-                "('%s', '%s', '%s', %d)", message.getSubject(), message.getContent(), message.getUser(), message.getCreatedEpoch());
+        return String.format(Locale.getDefault(), "INSERT INTO messages(subject, content, user, created, category) values " +
+                "('%s', '%s', '%s', %d, '%s')", message.getSubject(), message.getContent(), message.getUser(), message.getCreatedEpoch(), message.getCategory());
     }
 
     public static String insertCategory(String category) {
@@ -253,7 +252,7 @@ public class Queeries {
         LocalDate lastDate =  yearMonth.atEndOfMonth();
         LocalDate firstDate = yearMonth.atDay(1);
         return String.format(Locale.getDefault(), "SELECT * FROM items WHERE targetDate >= %d AND targetDate <= %d AND type = %d ORDER by targetDate DESC",
-                firstDate.toEpochDay(), lastDate.toEpochDay(), Type.APPOINTMENT);
+                firstDate.toEpochDay(), lastDate.toEpochDay(), Type.APPOINTMENT.ordinal());
 
     }
 
@@ -268,6 +267,11 @@ public class Queeries {
         return String.format(Locale.getDefault(), "SELECT * FROM mentals WHERE itemID = %d ORDER BY date DESC",
                 item.getID()
                 );
+    }
+
+    public static String selectLucindaTodo() {
+        return String.format(Locale.getDefault(), "SELECT * FROM lucinda_todo");
+
     }
 }
 

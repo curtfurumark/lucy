@@ -47,4 +47,19 @@ public class MessageWorker {
         });
         thread.start();
     }
+    public static void selectLucindaTodo(){
+        log("...selectLucindaTodo()");
+        String query = Queeries.selectLucindaTodo();
+        SelectThread thread = new SelectThread(query, new SelectThread.Callback() {
+            @Override
+            public void onRequestSelectError(String errMessage) {
+
+            }
+
+            @Override
+            public void onRequestSelectDone(String json) {
+
+            }
+        });
+    }
 }

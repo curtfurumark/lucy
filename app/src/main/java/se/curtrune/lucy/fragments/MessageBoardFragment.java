@@ -14,9 +14,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.MessageAdapter;
@@ -30,7 +32,7 @@ import se.curtrune.lucy.workers.MessageWorker;
  * Use the {@link MessageBoardFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MessageBoardFragment extends Fragment {
+public class MessageBoardFragment extends Fragment implements TabLayout.OnTabSelectedListener {
 
 
 
@@ -40,6 +42,11 @@ public class MessageBoardFragment extends Fragment {
     private RecyclerView recyclerMessages;
     private MessageAdapter adapter;
     private List<Message> messages;
+    private TabLayout tabLayout;
+    private TabLayout.Tab tabMessages;
+    private TabLayout.Tab tabWip;
+    private TabLayout.Tab tabSuggestions;
+    private TabLayout.Tab tabBugs;
     public static boolean VERBOSE = false;
 
     public MessageBoardFragment() {
@@ -70,22 +77,22 @@ public class MessageBoardFragment extends Fragment {
         log("MessageBoardFragment.onCreateView(...)");
         View view =  inflater.inflate(R.layout.message_board_fragment, container, false);
         initComponents(view);
+        initTabs();
         initListeners();
         initRecycler();
-        //TODO, http?
-        log("...will allowAllSSL");
-        //HttpsTrustManager.allowAllSSL();
-        log("...after allowing ssl");
         selectMessages();
         return view;
     }
-
     private void initComponents(View view){
+        log("...initComponents(View)");
         recyclerMessages = view.findViewById(R.id.messageBoardFragment_messages);
         addMessageButton = view.findViewById(R.id.messageBoardFragment_addMessage);
+        tabLayout = view.findViewById(R.id.messageBoardFragment_tabLayout);
     }
     private void initListeners(){
+        log("...initListeners()");
         addMessageButton.setOnClickListener(view->showMessageDialog());
+        tabLayout.addOnTabSelectedListener(this);
     }
     private void initRecycler(){
         if( VERBOSE) log("...initRecycler()");
@@ -94,6 +101,29 @@ public class MessageBoardFragment extends Fragment {
         recyclerMessages.setLayoutManager(layoutManager);
         recyclerMessages.setItemAnimator(new DefaultItemAnimator());
         recyclerMessages.setAdapter(adapter);
+    }
+    private void initTabs(){
+        log("...initTabs()");
+        tabMessages = tabLayout.newTab();
+        tabMessages.setText("messages");
+        tabMessages.setTag("message");
+
+        tabBugs = tabLayout.newTab();
+        tabBugs.setText("bugs");
+        tabBugs.setTag("bug");
+
+        tabSuggestions = tabLayout.newTab();
+        tabSuggestions.setText("suggestions");
+        tabSuggestions.setTag("suggestion");
+
+        tabWip = tabLayout.newTab();
+        tabWip.setText("wip");
+        tabWip.setTag("wip");
+
+        tabLayout.addTab(tabMessages);
+        tabLayout.addTab(tabBugs);
+        tabLayout.addTab(tabSuggestions);
+        tabLayout.addTab(tabWip);
     }
     private void selectMessages(){
         log("...selectMessages()");
@@ -117,13 +147,34 @@ public class MessageBoardFragment extends Fragment {
             }
         });
     }
+    private void selectTab(String category){
+        log("...selectTab()", category);
+        if( category.equals("bug")){
+            tabBugs.select();
+        }else if( category.equals("suggestion")){
+            tabSuggestions.select();
+        }else if( category.equals("wip")){
+            tabWip.select();
+        }else if( category.equals("message")){
+            tabMessages.select();
+        }else{
+            log("WARNING NO SUCH TAB");
+        }
+
+
+    }
     private void setUserInterface(List<Message> messageList){
         if( VERBOSE) log("...setUserInterface(List<Message>), size", messageList.size());
         adapter.setList(messageList);
     }
+    private void setUserInterface(String category){
+        log("...setUserInterface(String category)", category);
+        adapter.setList(messages.stream().filter(message -> message.getCategory().equals(category)).collect(Collectors.toList()));
+
+    }
     private void showMessageDialog(){
         if( !InternetWorker.isConnected(getContext())){
-            log("...trying to add a message to messageboard without internet connection");
+            log("...trying to add a message to message board without internet connection");
             Toast.makeText(getContext(), getString(R.string.no_internet_connection), Toast.LENGTH_LONG).show();
             return;
         }
@@ -135,10 +186,32 @@ public class MessageBoardFragment extends Fragment {
                 if( result.isOK()){
                     message.setID(result.getID());
                     messages.add(0, message);
+                    selectTab(message.getCategory());
                     adapter.notifyItemInserted(0);
+                }else{
+                    log("...error inserting message");
+                    log(result);
+                    Toast.makeText(getContext(), "error", Toast.LENGTH_LONG).show();
                 }
             });
         });
         dialog.show(getChildFragmentManager(), "add message");
+    }
+
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {
+        log("...onTabSelected(TabLayout.Tab)", tab.getText().toString());
+        log("\t\tmessages size", messages.size());
+        setUserInterface(tab.getTag().toString());
+    }
+
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {
+
+    }
+
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
+
     }
 }

@@ -324,7 +324,7 @@ public class ItemsWorker {
     public static List<Item> selectAppointments(YearMonth yearMonth, Context context) {
         if (VERBOSE) log("ItemsWorker.selectAppointments(YearMonth)", yearMonth.toString());
         try (LocalDB db = new LocalDB(context)) {
-            String queery = Queeries.selectCalendarMonth(yearMonth);
+            String queery = Queeries.selectAppointments(yearMonth);
             return db.selectItems(queery);
         }
     }

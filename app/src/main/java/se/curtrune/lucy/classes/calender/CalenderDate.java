@@ -43,12 +43,11 @@ public class CalenderDate {
     public String toString() {
         return String.format(Locale.getDefault(), "%s, %d events", date.toString(), items.size());
     }
-
-
     public DayOfWeek getFirstDayOfMonth(){
         LocalDate firstDate = date.withDayOfMonth(1);
         return firstDate.getDayOfWeek();
     }
-
-
+    public void addItems(List<Item> items) {
+        this.items.addAll(items);
+    }
 }

@@ -176,13 +176,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
         textViewEnergy.setOnClickListener(view->showMentalDay());
         textViewBoost.setOnClickListener(view->boostMe());
         textViewPanic.setOnClickListener(view->panic(User.getPanicAction(this)));
         textViewLucindaHome.setOnClickListener(view->openWebPage("https://curtfurumark.se/lucinda"));
+    }
+    private void initUnicode(){
+        log("...initUnicode()");
+        //char unicodeChar = 0x1F91A.toChar();
+        Integer hex = Integer.parseInt("1F91A");
+        textViewBoost.setText(hex.toString());
     }
     private void initViewModel(){
         if( VERBOSE) log("...initViewModel()");
@@ -350,6 +355,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void showMentalDay(){
         log("...showMentalDay");
-        navigate(new EstimateFragment());
+        //navigate(new EstimateFragment());
+        viewModel.toggleRecyclerMode();
     }
 }

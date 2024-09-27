@@ -7,8 +7,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,6 +21,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import java.time.LocalDateTime;
 
 import se.curtrune.lucy.R;
+import se.curtrune.lucy.app.Settings;
+import se.curtrune.lucy.app.User;
 import se.curtrune.lucy.classes.Message;
 
 
@@ -27,6 +32,8 @@ public class MessageDialog extends BottomSheetDialogFragment {
     private EditText editTextUser;
     private Button buttonSave;
     private Button buttonDismiss;
+    private String category;
+    private Spinner spinnerCategories;
     public static boolean VERBOSE = false;
 
     public interface Callback{
@@ -45,6 +52,7 @@ public class MessageDialog extends BottomSheetDialogFragment {
         log("MessageDialog.onCreateView(...)");
         View view = inflater.inflate(R.layout.message_dialog, container, false);
         initComponents(view);
+        initSpinner();
         initListeners();
         return view;
     }
@@ -55,6 +63,7 @@ public class MessageDialog extends BottomSheetDialogFragment {
         message.setContent(editTextContent.getText().toString());
         message.setSubject(editTextSubject.getText().toString());
         message.setCreated(LocalDateTime.now());
+        message.setCategory(category);
         return message;
 
     }
@@ -64,6 +73,7 @@ public class MessageDialog extends BottomSheetDialogFragment {
         editTextUser = view.findViewById(R.id.messageDialog_user);
         buttonSave = view.findViewById(R.id.messageDialog_publish);
         buttonDismiss = view.findViewById(R.id.messageDialog_dismiss);
+        spinnerCategories = view.findViewById(R.id.messageDialog_spinnerCategories);
     }
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
@@ -73,6 +83,26 @@ public class MessageDialog extends BottomSheetDialogFragment {
             dismiss();
         });
         buttonDismiss.setOnClickListener(view->dismiss());
+    }
+    private void initSpinner(){
+        log("...initSpinner()");
+        String[] messageCategories = getContext().getResources().getStringArray(R.array.message_categories);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item,messageCategories );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+        spinnerCategories.setAdapter(adapter);
+        spinnerCategories.setSelection(0);
+        spinnerCategories.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                log("...onItemSelected(...)", adapter.getItem(position).toString());
+                category = adapter.getItem(position);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
     }
     @Override
     public void onAttach(@NonNull Context context) {

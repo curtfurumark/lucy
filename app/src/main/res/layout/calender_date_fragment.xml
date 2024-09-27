@@ -23,30 +23,13 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:id="@+id/calenderFragment_buttonPrev"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/prev"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <TextView
                 android:id="@+id/calenderFragment_labelMonthYear"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
+                android:textSize="24sp"
                 android:text="april 2024"
                 android:textAlignment="center" />
-
-            <TextView
-                android:id="@+id/calenderFragment_buttonNext"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/next"
-                android:textSize="20sp"
-                android:textStyle="bold" />
         </LinearLayout>
         <LinearLayout
             android:id="@+id/calenderFragment_layoutWeekDays"

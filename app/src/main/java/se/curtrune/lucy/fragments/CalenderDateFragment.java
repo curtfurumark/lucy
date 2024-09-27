@@ -27,6 +27,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -39,11 +40,13 @@ import se.curtrune.lucy.adapters.CalenderDateAdapter;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
+import se.curtrune.lucy.classes.calender.OnSwipeClickListener;
 import se.curtrune.lucy.classes.calender.Week;
 import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.dialogs.EditItemDialog;
 import se.curtrune.lucy.dialogs.PostponeDialog;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
+import se.curtrune.lucy.workers.CalenderWorker;
 import se.curtrune.lucy.workers.ItemsWorker;
 import se.curtrune.lucy.workers.MentalWorker;
 import se.curtrune.lucy.workers.NotificationsWorker;
@@ -55,10 +58,6 @@ import se.curtrune.lucy.workers.NotificationsWorker;
  */
 public class CalenderDateFragment extends Fragment {
 
-    //private Button buttonPrev;
-    private TextView textViewPrev;
-    private TextView textViewNext;
-    //private Button buttonNext;
     private Week currentWeek;
     private RecyclerView recycler;
     private RecyclerView recyclerDates;
@@ -110,17 +109,13 @@ public class CalenderDateFragment extends Fragment {
         initRecycler();
         initRecyclerDates();
         initListeners();
-        initSwipe();
+        initSwipeItems();
+        initSwipeWeek();
         initViewModel();
         setUserInterface(currentDate);
         return view;
     }
-/*
-    private void calculateEstimate(){
-        if( VERBOSE)  log("...calculateEstimate()");
-        StatisticsWorker.getEstimate(currentDate, getContext());
-    }
-*/
+
 
     /**
      * deletes and item AND its mental if such exists
@@ -146,7 +141,10 @@ public class CalenderDateFragment extends Fragment {
     }
     private String getMonthYear(LocalDate date){
         if( VERBOSE) log("...getMonthYear(LocalDate)");
-        return String.format(Locale.getDefault(), "%s, %d", date.getMonth().toString(), date.getYear());
+        int weekNumber = CalenderWorker.getWeekNumber(date);
+        String  str = date.format(DateTimeFormatter.ofPattern("MMM u"));
+        //return String.format(Locale.getDefault(), "%s, %d", date.getMonth().toString(), date.getYear());
+        return String.format(Locale.getDefault(), "< %s %s %d >", str, getString(R.string.week), weekNumber);
     }
     private String getWeekNumber(){
         log("...getWeekNumber()");
@@ -157,8 +155,6 @@ public class CalenderDateFragment extends Fragment {
     }
     private void initComponents(View view){
         if( VERBOSE) log("...initComponents(View)");
-        textViewNext = view.findViewById(R.id.calenderFragment_buttonNext);
-        textViewPrev = view.findViewById(R.id.calenderFragment_buttonPrev);
         labelMonthYear = view.findViewById(R.id.calenderFragment_labelMonthYear);
         recycler = view.findViewById(R.id.calenderFragment_recycler);
         recyclerDates = view.findViewById(R.id.calenderFragment_recyclerDates);
@@ -174,8 +170,6 @@ public class CalenderDateFragment extends Fragment {
     }
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
-        textViewPrev.setOnClickListener(view->prevWeek());
-        textViewNext.setOnClickListener(view->nextWeek());
         buttonAddItem.setOnClickListener(view->showAddItemDialog());
     }
     private void initRecycler(){
@@ -264,9 +258,34 @@ public class CalenderDateFragment extends Fragment {
         recyclerDates.setAdapter(calenderDateAdapter);
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerDates);
+/*        OnSwipeClickListener onSwipeClickListener = new OnSwipeClickListener(getContext(), new OnSwipeClickListener.Listener() {
+            @Override
+            public void onSwipeRight() {
+                log("...dates swipe right");
+            }
+
+            @Override
+            public void onSwipeLeft() {
+                log("...dates swipe left");
+            }
+
+            @Override
+            public void onClick() {
+
+            }
+        });
+        recyclerDates.setOnTouchListener(onSwipeClickListener);*/
+/*        recyclerDates.setOnFlingListener(new RecyclerView.OnFlingListener() {
+            @Override
+            public boolean onFling(int velocityX, int velocityY) {
+                log("....velocityX", velocityX);
+                log("velocityY", velocityY);
+                return false;
+            }
+        });*/
     }
-    private void initSwipe() {
-        if( VERBOSE) log("...initSwipe()");
+    private void initSwipeItems() {
+        if( VERBOSE) log("...initSwipeItems()");
         itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -275,7 +294,7 @@ public class CalenderDateFragment extends Fragment {
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                int index = viewHolder.getAdapterPosition();
+                //int index = viewHolder.getAdapterPosition();
                 Item item = items.get(viewHolder.getAdapterPosition());
                 if( direction == ItemTouchHelper.LEFT){
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -314,9 +333,40 @@ public class CalenderDateFragment extends Fragment {
         });
         itemTouchHelper.attachToRecyclerView(recycler);
     }
+    private void initSwipeWeek(){
+        log("...initSwipeWeek()");
+        OnSwipeClickListener onSwipeClickListener = new OnSwipeClickListener(getContext(), new OnSwipeClickListener.Listener() {
+            @Override
+            public void onSwipeRight() {
+                 nextWeek();
+            }
+
+            @Override
+            public void onSwipeLeft() {
+                prevWeek();
+            }
+
+            @Override
+            public void onClick() {
+                showDatePicker();
+            }
+        });
+        labelMonthYear.setOnTouchListener(onSwipeClickListener);
+    }
     private void initViewModel(){
         if( VERBOSE)  log("...initViewModel()");
         viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
+        viewModel.setRecyclerMode(LucindaViewModel.RecyclerMode.DEFAULT);
+        viewModel.getRecyclerMode().observe(getViewLifecycleOwner(), recyclerMode ->{
+            log("CalenderDateFragment....recyclerMode", recyclerMode.toString());
+            if( recyclerMode.equals(LucindaViewModel.RecyclerMode.MENTAL_COLOURS)){
+                adapter.setList(CalenderWorker.getMentalColour(items));
+            }else{
+                log(" setting list to DEFAULT");
+                //adapter.setList(items);
+                setUserInterface(currentDate);
+            }
+        } );
     }
     private void loadFragment(Fragment fragment){
         viewModel.updateFragment(fragment);
@@ -405,6 +455,10 @@ public class CalenderDateFragment extends Fragment {
             updateAdapter();
         });
         dialog.show(getParentFragmentManager(), "add item");
+    }
+    private void showDatePicker(){
+        log("...showDatePicker()");
+        Toast.makeText(getContext(), "date picker", Toast.LENGTH_SHORT).show();
     }
 
     private void updateTargetTime(Item item){

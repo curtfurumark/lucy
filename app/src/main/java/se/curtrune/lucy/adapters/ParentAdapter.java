@@ -27,7 +27,7 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ParentHold
     @NonNull
     @Override
     public ParentHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.parent_adapter_layout, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.calender_week_adapter, parent, false);
         return new ParentHolder(view);
     }
 
@@ -70,8 +70,8 @@ public class ParentAdapter extends RecyclerView.Adapter<ParentAdapter.ParentHold
 
         public ParentHolder(@NonNull View itemView) {
             super(itemView);
-            textViewDate = itemView.findViewById(R.id.parentAdapter_textViewDate);
-            childRecycler = itemView.findViewById(R.id.parentAdapter_recycler);
+            textViewDate = itemView.findViewById(R.id.calenderWeekAdapter_textViewDate);
+            childRecycler = itemView.findViewById(R.id.calenderWeekAdapter_recycler);
         }
     }
 }

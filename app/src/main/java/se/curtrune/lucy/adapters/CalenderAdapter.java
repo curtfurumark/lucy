@@ -29,7 +29,7 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
     public static boolean VERBOSE = false;
 
     public void setList(List<Item> items) {
-        if( VERBOSE) log("SimpleAdapter.setList(List<Item>) size", items.size());
+        if( VERBOSE) log("CalenderAdapter.setList(List<Item>) size", items.size());
         this.items = items;
         notifyDataSetChanged();
     }
@@ -83,10 +83,12 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
         holder.checkBox_state.setChecked(item.getState().equals(State.DONE));
         holder.textViewTime.setText(Converter.format(item.getTargetTime()));
         holder.setIsRecyclable(false);
-        if( item.getColor() != -1 && item.getColor() != 0 ) {
-            log("....item", item.getHeading());
-            log("...color", item.getColor());
-            //holder.cardView.setCardBackgroundColor(item.getColor());
+        //if( item.getColor() != -1 && item.getColor() != 0 ) {
+        if(item.hasColor()){
+            if(VERBOSE) {
+                log("....item", item.getHeading());
+                log("...color", item.getColor());
+            }
             holder.cardView.setCardBackgroundColor(item.getColor());
         }
     }

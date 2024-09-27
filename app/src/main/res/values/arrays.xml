@@ -22,4 +22,10 @@
         <item>panic_list</item>
         <item>url</item>
     </string-array>
+    <string-array name="message_categories">
+        <item>message</item>
+        <item>bug</item>
+        <item>wip</item>
+        <item>suggestion</item>
+    </string-array>
 </resources>

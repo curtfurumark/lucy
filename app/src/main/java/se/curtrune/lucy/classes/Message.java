@@ -6,6 +6,7 @@ import java.time.ZoneOffset;
 public class Message {
     private String subject;
     private String content;
+    private String category;
     private String user;
     private long id;
     private long created;
@@ -22,6 +23,9 @@ public class Message {
         this.user = user;
         this.created = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
     }
+    public String getCategory(){
+        return category;
+    }
     public String getContent(){
         return content;
     }
@@ -37,12 +41,14 @@ public class Message {
     public String getUser(){
         return user;
     }
+    public void setCategory(String category){
+        this.category = category;
+    }
     public void setContent(String content){
         this.content = content;
     }
     public void setCreated(LocalDateTime created){
         this.created = created.toEpochSecond(ZoneOffset.UTC);
-
     }
     public void setSubject(String subject){
         this.subject = subject;

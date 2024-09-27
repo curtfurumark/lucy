@@ -22,7 +22,7 @@ import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.AppointmentAdapter;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
-import se.curtrune.lucy.dialogs.AddAppointmentDialog;
+import se.curtrune.lucy.dialogs.AppointmentDialog;
 import se.curtrune.lucy.dialogs.EditItemDialog;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.ItemsWorker;
@@ -80,7 +80,7 @@ public class AppointmentsFragment extends Fragment implements
     }
     private void addAppointment(){
         if( VERBOSE)log("...addAppointment()");
-        AddAppointmentDialog dialog = new AddAppointmentDialog();
+        AppointmentDialog dialog = new AppointmentDialog();
         dialog.setCallback(item -> {
             log("...onNewAppointment(Item item");
             item = ItemsWorker.insert(item, getContext());

@@ -5,7 +5,6 @@ import static se.curtrune.lucy.util.Logger.log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,7 +17,7 @@ import java.util.List;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Item;
 
-public class MinimalItemAdapter extends RecyclerView.Adapter<MinimalItemAdapter.ViewHolder> {
+public class WeekItemAdapter extends RecyclerView.Adapter<WeekItemAdapter.ViewHolder> {
     private List<Item> items;
     private LocalDate date;
     public interface Listener{
@@ -26,8 +25,8 @@ public class MinimalItemAdapter extends RecyclerView.Adapter<MinimalItemAdapter.
     }
     private Listener listener;
 
-    public MinimalItemAdapter(List<Item> items, LocalDate date) {
-        log("MinimalItemAdapter(List<Item>, LocalDate)");
+    public WeekItemAdapter(List<Item> items, LocalDate date) {
+        log("WeekItemAdapter(List<Item>, LocalDate)");
         System.out.printf("date %s, number of items %d\n", date.toString(), items.size());
         this.items = items;
         this.date = date;
@@ -42,6 +41,7 @@ public class MinimalItemAdapter extends RecyclerView.Adapter<MinimalItemAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        log("WeekItemAdapter.onBindViewHolder(ViewHolder, int) position", position);
         Item item = items.get(position);
         holder.textViewHeading.setText(item.getHeading());
         holder.textViewTime.setText(item.getTargetTime().toString());

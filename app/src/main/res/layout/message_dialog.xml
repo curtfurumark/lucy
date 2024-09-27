@@ -9,7 +9,13 @@
         android:id="@+id/textView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="add a message to the message board" />
+        android:text="@string/add_a_message_to_the_message_board" />
+
+    <Spinner
+        android:id="@+id/messageDialog_spinnerCategories"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp" />
 
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"

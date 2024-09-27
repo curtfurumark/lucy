@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -26,7 +25,7 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.util.Converter;
 
-public class AddAppointmentDialog extends BottomSheetDialogFragment {
+public class AppointmentDialog extends BottomSheetDialogFragment {
     private TextView textViewDate;
     private TextView textViewTime;
     private LocalTime targetTime;
@@ -40,13 +39,22 @@ public class AddAppointmentDialog extends BottomSheetDialogFragment {
         void onNewAppointment(Item item);
     }
     private OnNewAppointmentCallback callback;
+    public AppointmentDialog(){
+        this.targetTime = LocalTime.now();
+        this.targetDate = LocalDate.now();
+    }
+    public AppointmentDialog(LocalDate date){
+        this.targetDate = date;
+        this.targetTime = LocalTime.now();
+
+    }
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.add_appointment_dialog, container, false);
         initComponents(view);
         initListeners();
-        initDefaults();
+        //initDefaults();
         initUserInterface();
         return view;
     }
@@ -70,10 +78,10 @@ public class AddAppointmentDialog extends BottomSheetDialogFragment {
         editTextLocation = view.findViewById(R.id.addAppointmentDialog_location);
         buttonAdd = view.findViewById(R.id.addAppointmentDialog_button);
     }
-    private void initDefaults(){
+/*    private void initDefaults(){
         targetDate = LocalDate.now();
         targetTime = LocalTime.now();
-    }
+    }*/
     private void initListeners(){
         textViewDate.setOnClickListener(view->showDateDialog());
         textViewTime.setOnClickListener(view->showTimeDialog());

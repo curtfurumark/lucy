@@ -13,12 +13,15 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.List;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.DevTodoAdapter;
 import se.curtrune.lucy.classes.DevTodo;
+import se.curtrune.lucy.classes.Message;
+import se.curtrune.lucy.dialogs.MessageDialog;
 import se.curtrune.lucy.workers.DevWorker;
 
 /**
@@ -26,10 +29,11 @@ import se.curtrune.lucy.workers.DevWorker;
  * Use the {@link DevTodoFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class DevTodoFragment extends Fragment {
+public class DevTodoFragment extends Fragment implements TabLayout.OnTabSelectedListener {
     private RecyclerView recycler;
     private DevTodoAdapter adapter;
     private FloatingActionButton addToDoButton;
+    private TabLayout tabLayout;
     public DevTodoFragment() {
         // Required empty public constructor
     }
@@ -55,7 +59,7 @@ public class DevTodoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        log("DevTodoFragment.onCreateView(...)");
         View view  = inflater.inflate(R.layout.dev_todo_fragment, container, false);
         initViews(view);
         initListeners();
@@ -63,11 +67,14 @@ public class DevTodoFragment extends Fragment {
         return view;
     }
     private void initListeners(){
+        log("...initListeners()");
+        tabLayout.addOnTabSelectedListener(this);
         addToDoButton.setOnClickListener(view->showDialog());
     }
     private void initViews(View view){
         recycler = view.findViewById(R.id.devTodoFragment_recycler);
         addToDoButton = view.findViewById(R.id.devTodoFragment_buttonAdd);
+        tabLayout = view.findViewById(R.id.devTodoFragment_tabLayout);
     }
     private void requestData(){
         log("...requestData()");
@@ -81,6 +88,30 @@ public class DevTodoFragment extends Fragment {
 
     }
     private void showDialog(){
-        Toast.makeText(getContext(), "hello", Toast.LENGTH_LONG).show();
+        log("...showDialog()");
+        //Toast.makeText(getContext(), "hello", Toast.LENGTH_LONG).show();
+        MessageDialog dialog = new MessageDialog();
+        dialog.setCallback(new MessageDialog.Callback() {
+            @Override
+            public void onNewMessage(Message message) {
+                log("...onNewMessage(Message)");
+            }
+        });
+        dialog.show(getChildFragmentManager(), "add message");
+    }
+
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {
+        log("...onTabSelected(TabLayout.Tab tab)", tab.getText().toString());
+    }
+
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {
+
+    }
+
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
+
     }
 }
