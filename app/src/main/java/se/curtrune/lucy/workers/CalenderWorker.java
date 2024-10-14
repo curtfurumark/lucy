@@ -18,6 +18,7 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.classes.calender.CalenderDate;
 import se.curtrune.lucy.classes.calender.CalenderMonth;
+import se.curtrune.lucy.classes.calender.Week;
 
 public class CalenderWorker {
     public static final int COLOR_MINUS_5 = Color.RED;
@@ -45,9 +46,6 @@ public class CalenderWorker {
         }
         return calenderDates;
     }
-
-
-
     public static List<CalenderDate> getCalenderDates(LocalDate firstDate, LocalDate lastDate, Context context) {
         log("...getCalenderDates()");
         List<CalenderDate> calenderDates = new ArrayList<>();
@@ -75,6 +73,18 @@ public class CalenderWorker {
         }
         return calenderDates;
     }
+    public static List<CalenderDate> getCalenderDates(Week week,Context context){
+        log("CalendarWorker.getCalenderDates(Week)");
+        return getCalenderDates(week.getFirstDateOfWeek(), week.getLastDateOfWeek(), context);
+
+    }
+
+    public static List<CalenderDate> getEvents(Week week, Context context) {
+        log("CalendarWorker.getEvents(Week, Context)");
+        //List<Item> items = ItemsWorker.selectEvents(week, context);
+        return getCalenderDates(week, context);
+    }
+
     private CalenderMonth getCalenderMonth(YearMonth yearMonth, Context context){
         log("...getCalenderMonth(YearMonth)", yearMonth.toString());
         CalenderMonth calenderMonth = new CalenderMonth(yearMonth);

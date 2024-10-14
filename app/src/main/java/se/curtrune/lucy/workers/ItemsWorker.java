@@ -13,7 +13,6 @@ import android.widget.Toast;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.YearMonth;
 import java.util.List;
 
@@ -402,5 +401,25 @@ public class ItemsWorker {
             }
             return db.update(template);
         }
+    }
+
+    public static List<Item> selectEvents(Week week, Context context) {
+        log("ItemsWorker.selectEvents(Week, Context)");
+        String queery = Queeries.selectEvents(week);
+        List<Item> items;
+        try(LocalDB db = new LocalDB(context)){
+            items = db.selectItems(queery);
+        }
+        return items;
+    }
+
+    public static List<Item> selectItems(LocalDate date, Context context) {
+        log("ItemsWorker.selectItems(LocalDate, Context");
+        String queery = Queeries.selectItems(date);
+        List<Item> items;
+        try(LocalDB db = new LocalDB(context)){
+            items = db.selectItems(queery);
+        }
+        return items;
     }
 }

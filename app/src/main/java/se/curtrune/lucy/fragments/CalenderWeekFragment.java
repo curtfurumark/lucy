@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,23 +20,24 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.CalenderWeekAdapter;
+import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.classes.calender.CalenderDate;
 import se.curtrune.lucy.classes.calender.OnSwipeClickListener;
 import se.curtrune.lucy.classes.calender.Week;
+import se.curtrune.lucy.dialogs.AppointmentDialog;
+import se.curtrune.lucy.viewmodel.CalendarWeekViewModel;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.CalenderWorker;
+import se.curtrune.lucy.workers.ItemsWorker;
 
 public class CalenderWeekFragment extends Fragment {
-    //private Button buttonNext;
-    //private Button buttonPrev;
-    //private TextView textViewNext;
-    //private TextView textViewPrev;
     public static boolean VERBOSE = true;
     //private CalenderDateAdapter calenderDateAdapter;
     private CalenderWeekAdapter adapter;
@@ -43,27 +45,37 @@ public class CalenderWeekFragment extends Fragment {
     private RecyclerView recycler;
     private TextView textViewWeekNumber;
     private Week currentWeek;
-    private LocalDate firstDate;
-    private LocalDate lastDate;
-    private LocalDate currentDate;
-    private List<CalenderDate> calenderDates;
+    //private List<CalenderDate> calenderDates = new ArrayList<>();
     private LucindaViewModel viewModel;
+    private CalendarWeekViewModel calendarWeekViewModel;
+
+    public CalenderWeekFragment(){
+        log("CalenderWeekFragment()");
+        currentWeek = new Week(LocalDate.now());
+
+    }
+    public CalenderWeekFragment(LocalDate date) {
+        log("CalenderWeekFragment(LocalDate)", date.toString());
+        currentWeek = new Week(date);
+    }
+    public CalenderWeekFragment(CalenderDate calendarDate){
+        log("CalenderWeekFragment(CalenderDate)");
+        currentWeek = new Week(calendarDate.getDate());
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         log("CalenderWeekFragment.onCreateView(LayoutInflater, ViewGroup, Bundle)");
         View view = inflater.inflate(R.layout.calender_week_fragment, container, false);
-        initDefaults();
         initComponents(view);
-        initData();
-        initListeners();
-        initSwipeHeading();
-        initRecycler();
-        //setUserInterface();
         initViewModel();
-        setCalender(LocalDate.now());
-        //setUserInterface(LocalDate.now());
+        //initData();
+        initListeners();
+        //initSwipeHeading();
+        //initRecycler();
+
+        setCalendar(currentWeek);
         return view;
     }
 
@@ -81,14 +93,12 @@ public class CalenderWeekFragment extends Fragment {
     }
     private void initData(){
         log("...initData()");
-        calenderDates = CalenderWorker.getAppointments(firstDate, lastDate, getContext());
-        calenderDates.forEach(System.out::println);
+        //currentDate = firstDate = CalenderWorker.getFirstDateOfWeek(currentDate);
+        //lastDate = firstDate.plusDays(6);
+        //calenderDates = CalenderWorker.getAppointments(firstDate, lastDate, getContext());
+        //calenderDates = CalenderWorker.getEvents(currentWeek, getContext());
     }
-    private void initDefaults(){
-        log("...initDefaults()");
-        currentDate = firstDate = CalenderWorker.getFirstDateOfWeek(LocalDate.now());
-        lastDate = firstDate.plusDays(6);
-    }
+
     private void initListeners(){
         log("...initListeners()");
         textViewWeekNumber.setOnClickListener(view->showWeekDialog());
@@ -96,19 +106,21 @@ public class CalenderWeekFragment extends Fragment {
 
     private void initRecycler() {
         log("...initRecycler()");
-        adapter = new CalenderWeekAdapter(calenderDates, new CalenderWeekAdapter.Listener() {
+        adapter = new CalenderWeekAdapter(calendarWeekViewModel.getCalenderDates().getValue(), new CalenderWeekAdapter.Listener() {
             @Override
             public void onCalenderDateClick(CalenderDate calenderDate) {
                 log("CalenderWeekAdapter.onCalenderDateClick(CalenderDate)", calenderDate.getDate().toString());
-                viewModel.updateFragment(new CalenderDateFragment(calenderDate.getDate()));
+                if(calenderDate.getItems().size() == 0){
+                    showAppointmentDialog(calenderDate);
+                }else{
+                    viewModel.updateFragment(new CalenderDateFragment(calenderDate.getDate()));
+                }
             }
         });
         StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL);
-        //recycler.setLayoutManager(new GridLayoutManager(getContext(), 2));
         recycler.setLayoutManager(staggeredGridLayoutManager);
         recycler.setItemAnimator(new DefaultItemAnimator());
         recycler.setAdapter(adapter);
-        //recyclerCells.addItemDecoration( new DividerItemDecoration(getContext(), GridLayoutManager.VERTICAL));
     }
     @SuppressLint("ClickableViewAccessibility")
     private void initSwipeHeading(){
@@ -133,26 +145,61 @@ public class CalenderWeekFragment extends Fragment {
     }
     private void initViewModel(){
         viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
+        calendarWeekViewModel = new ViewModelProvider(requireActivity()).get(CalendarWeekViewModel.class);
+
+        calendarWeekViewModel.set(currentWeek, getContext());
+        initRecycler();
+        calendarWeekViewModel.getCalenderDates().observe(requireActivity(), new Observer<List<CalenderDate>>() {
+            @Override
+            public void onChanged(List<CalenderDate> calenderDates) {
+                adapter.setCalenderDates(calenderDates);
+            }
+        });
+
     }
     private void nextWeek(){
         log("...nextWeek()");
-        currentDate = currentDate.plusDays(6);
-        setCalender(currentDate);
+        currentWeek = currentWeek.getNextWeek();
+        calendarWeekViewModel.set(currentWeek, getContext());
+        setCalendar(currentWeek);
     }
     private void previousWeek(){
         log("...previousWeek");
-        currentDate = currentDate.minusDays(6);
-        setCalender(currentDate);
+        currentWeek = currentWeek.getPreviousWeek();
+        //currentDate = currentDate.minusDays(6);
+        calendarWeekViewModel.set(currentWeek, getContext());
+        setCalendar(currentWeek);
     }
-    private void setCalender(LocalDate date){
+/*    private void setCalender(LocalDate date){
         log("...setCalender(LocalDate)", date.toString());
         currentWeek = new Week(date);
-        firstDate = currentWeek.getFirstDateOfWeek();
+        //firstDate = currentWeek.getFirstDateOfWeek();
         lastDate = currentWeek.getLastDateOfWeek();
         adapter.setCalenderDates(CalenderWorker.getCalenderDates(Type.APPOINTMENT, firstDate, lastDate, getContext()));
-        //textViewWeekNumber.setText(String.format(Locale.getDefault(), "< %s %d >", getString(R.string.week), currentWeek.getWeekNumber()));
         textViewWeekNumber.setText(getYearMonthWeek(date));
+    }*/
+    private void setCalendar(Week week){
+        log("...setCalendar(Week)");
+        //calenderDates = CalenderWorker.getEvents(week, getContext());
+        //adapter.notifyDataSetChanged();
+        textViewWeekNumber.setText(getYearMonthWeek(week.getFirstDateOfWeek()));
     }
+    private void showAppointmentDialog(CalenderDate calenderDate){
+        log("...showAppointmentDialog()");
+        AppointmentDialog dialog = new AppointmentDialog(calenderDate.getDate());
+        dialog.setCallback(new AppointmentDialog.OnNewAppointmentCallback() {
+            @Override
+            public void onNewAppointment(Item item) {
+                log("...onNewAppointment(Item item");
+                item = ItemsWorker.insert(item, getContext());
+                calenderDate.add(item);
+                adapter.notifyDataSetChanged();
+
+            }
+        });
+        dialog.show(getChildFragmentManager(), "add appointment");
+    }
+
     private void showWeekDialog(){
         log("...showWeekDialog()");
         Toast.makeText(getContext(), "week dialog", Toast.LENGTH_SHORT).show();

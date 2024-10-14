@@ -18,11 +18,16 @@ public class Week {
     private int weekNumber;
     private List<LocalDate> dates;
     public static boolean VERBOSE = false;
+    public Week(){
+        currentDate = LocalDate.now();
+        firstDate = calculateFirstDateOfTheWeek(currentDate);
+        lastDate = firstDate.plusDays(6);
+    }
     public Week(LocalDate date){
         if( VERBOSE) log("Week(LocalDate)", date.toString());
         this.currentDate = date;
         firstDate = calculateFirstDateOfTheWeek(currentDate);
-        weekNumber = CalenderWorker.getWeekNumber(firstDate);
+        weekNumber = getWeekNumber();
         lastDate = firstDate.plusDays(6);
         dates = getDates();
     }
@@ -54,5 +59,13 @@ public class Week {
 
     public void setCurrentDate(LocalDate currentDate) {
         this.currentDate = currentDate;
+    }
+
+    public Week getNextWeek() {
+        return  new Week(firstDate.plusWeeks(1));
+    }
+
+    public Week getPreviousWeek() {
+        return new Week(firstDate.minusWeeks(1));
     }
 }

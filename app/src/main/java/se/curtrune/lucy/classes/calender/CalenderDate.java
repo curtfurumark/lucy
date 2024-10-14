@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -49,5 +50,13 @@ public class CalenderDate {
     }
     public void addItems(List<Item> items) {
         this.items.addAll(items);
+    }
+
+    public void add(Item item) {
+        if(items == null){
+            items = new ArrayList<>();
+        }
+        items.add(item);
+        //TODO sort items
     }
 }

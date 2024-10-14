@@ -37,6 +37,7 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.dialogs.BoostDialog;
 import se.curtrune.lucy.dialogs.PanicActionDialog;
 import se.curtrune.lucy.fragments.AppointmentsFragment;
+import se.curtrune.lucy.fragments.CalendarWeekHostFragment;
 import se.curtrune.lucy.fragments.CalenderDateFragment;
 import se.curtrune.lucy.fragments.CalenderMonthFragment;
 import se.curtrune.lucy.fragments.ContactFragment;
@@ -66,8 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
     private LucindaViewModel viewModel;
-    //private FloatingActionButton fapPanic;
-    //private FloatingActionButton fapBoost;
+    private Fragment currentFragment;
     private TextView textViewPanic;
     private TextView textViewBoost;
     private TextView textViewEnergy;
@@ -126,45 +126,45 @@ public class MainActivity extends AppCompatActivity {
             if( VERBOSE) log("... toolbar on click");
             drawerLayout.open();
         });
-        navigationView.setNavigationItemSelectedListener(item -> {
+        NavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener = item -> {
             log("...onNavigationItemSelected(MenuItem) ", Objects.requireNonNull(item.getTitle()).toString());
-            if( item.getItemId() == R.id.navigationDrawer_graphFragment){
+            if (item.getItemId() == R.id.navigationDrawer_graphFragment) {
                 navigate(new DailyGraphFragment());
-            }else if( item.getItemId() == R.id.navigationDrawer_monthCalender){
+            } else if (item.getItemId() == R.id.navigationDrawer_monthCalender) {
                 navigate(new CalenderMonthFragment());
-            }else if( item.getItemId() == R.id.bottomNavigation_today){
+            } else if (item.getItemId() == R.id.bottomNavigation_today) {
                 navigate(new CalenderDateFragment());
-            }else if ( item.getItemId() == R.id.navigationDrawer_topTen){
-                navigate( new TopTenFragment());
-            }else if( item.getItemId() == R.id.bottomNavigation_todo){
-                navigate( new TodoFragment());
-            }else if( item.getItemId() == R.id.bottomNavigation_appointments){
-                navigate( new AppointmentsFragment());
-            }else if( item.getItemId() == R.id.bottomNavigation_enchilada){
-                navigate( new EnchiladaFragment());
-            }else if (item.getItemId() == R.id.bottomNavigation_projects){
+            } else if (item.getItemId() == R.id.navigationDrawer_topTen) {
+                navigate(new TopTenFragment());
+            } else if (item.getItemId() == R.id.bottomNavigation_todo) {
+                navigate(new TodoFragment());
+            } else if (item.getItemId() == R.id.bottomNavigation_appointments) {
+                navigate(new AppointmentsFragment());
+            } else if (item.getItemId() == R.id.bottomNavigation_enchilada) {
+                navigate(new EnchiladaFragment());
+            } else if (item.getItemId() == R.id.bottomNavigation_projects) {
                 navigate(new ProjectsFragment());
-            }else if ( item.getItemId() == R.id.navigationDrawer_durationFragment){
+            } else if (item.getItemId() == R.id.navigationDrawer_durationFragment) {
                 navigate(new DurationFragment());
-            }else if( item.getItemId() == R.id.navigationDrawer_estimateFragment){
+            } else if (item.getItemId() == R.id.navigationDrawer_estimateFragment) {
                 navigate(new EstimateFragment());
-            }else if( item.getItemId() == R.id.navigationDrawer_weekly){
-                navigate(new CalenderWeekFragment());
-            }else if( item.getItemId() == R.id.navigationDrawer_contactFragment){
+            } else if (item.getItemId() == R.id.navigationDrawer_weekly) {
+                navigate(new CalendarWeekHostFragment());
+            } else if (item.getItemId() == R.id.navigationDrawer_contactFragment) {
                 navigate(new ContactFragment());
-            }else if( item.getItemId() == R.id.navigationDrawer_messageBoardFragment){
+            } else if (item.getItemId() == R.id.navigationDrawer_messageBoardFragment) {
                 navigate(new MessageBoardFragment());
-            }else if( item.getItemId() == R.id.navigationDrawer_countDownTimer){
+            } else if (item.getItemId() == R.id.navigationDrawer_countDownTimer) {
                 navigate(new TimerFragment());
-            }else if ( item.getItemId() == R.id.navigationDrawer_customizeFragment){
+            } else if (item.getItemId() == R.id.navigationDrawer_customizeFragment) {
                 navigate(new CustomizeFragment());
-            }else if( item.getItemId() == R.id.navigationDrawer_mentalFragment) {
+            } else if (item.getItemId() == R.id.navigationDrawer_mentalFragment) {
                 navigate(new MentalDayFragment());
-            }else if( item.getItemId() == R.id.navigationDrawer_mentalHistoryFragment) {
+            } else if (item.getItemId() == R.id.navigationDrawer_mentalHistoryFragment) {
                 navigate(new MentaHistoryFragment());
-            }else if(item.getItemId() == R.id.navigationDrawer_devToDo){
+            } else if (item.getItemId() == R.id.navigationDrawer_devToDo) {
                 navigate(new DevTodoFragment());
-            }else if( item.getItemId() ==R.id.navigationDrawer_logOut){
+            } else if (item.getItemId() == R.id.navigationDrawer_logOut) {
                 log("...log out");
                 Intent intent = new Intent(this, LogInActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -173,7 +173,8 @@ public class MainActivity extends AppCompatActivity {
             }
             drawerLayout.close();
             return true;
-        });
+        };
+        navigationView.setNavigationItemSelectedListener(onNavigationItemSelectedListener);
     }
 
     private void initListeners(){
@@ -182,12 +183,6 @@ public class MainActivity extends AppCompatActivity {
         textViewBoost.setOnClickListener(view->boostMe());
         textViewPanic.setOnClickListener(view->panic(User.getPanicAction(this)));
         textViewLucindaHome.setOnClickListener(view->openWebPage("https://curtfurumark.se/lucinda"));
-    }
-    private void initUnicode(){
-        log("...initUnicode()");
-        //char unicodeChar = 0x1F91A.toChar();
-        Integer hex = Integer.parseInt("1F91A");
-        textViewBoost.setText(hex.toString());
     }
     private void initViewModel(){
         if( VERBOSE) log("...initViewModel()");
@@ -210,7 +205,9 @@ public class MainActivity extends AppCompatActivity {
             log("...navigate(Fragment) called with null fragment, i surrender");
             return;
         }
+        currentFragment = fragment;
         setUserInterfaceCurrentEnergy();
+
         log("MainActivity.navigate(Fragment) ", fragment.getClass().getName());
         getSupportFragmentManager()
                 .beginTransaction()
@@ -225,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
                 navigate(new CalenderDateFragment());
                 break;
             case CALENDER_WEEK:
-                navigate(new CalenderWeekFragment());
+                navigate(new CalendarWeekHostFragment());
                 break;
             case CALENDER_MONTH:
                 navigate( new CalenderMonthFragment());
@@ -261,6 +258,14 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        log("MainActivity.onSaveInstanceState(Bundle)");
+        super.onSaveInstanceState(outState);
+        //getSupportFragmentManager().putFragment(outState, "fragmentState", currentFragment);
+    }
+
     private void openWebPage(String url){
         log("...openWebPage(String url)", url);
         if(!InternetWorker.isConnected(this)){

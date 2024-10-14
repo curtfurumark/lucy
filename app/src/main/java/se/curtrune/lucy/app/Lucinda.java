@@ -15,7 +15,7 @@ public class Lucinda {
 
     private static Lucinda instance;
     private final Settings settings;
-    public static Item currentParent;
+    //public static Item currentParent;
     public static boolean VERBOSE = false;
     public static boolean Dev = false;
     private static final String KEY_NIGHTLY_ALARM ="KEY_NIGHTLY_ALARM";

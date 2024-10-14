@@ -273,6 +273,12 @@ public class Queeries {
         return String.format(Locale.getDefault(), "SELECT * FROM lucinda_todo");
 
     }
+
+    public static String selectEvents(Week week) {
+        LocalDate firstDate = week.getFirstDateOfWeek();
+        LocalDate lastDate = week.getLastDateOfWeek();
+        return selectItems(firstDate, lastDate);
+    }
 }
 
 

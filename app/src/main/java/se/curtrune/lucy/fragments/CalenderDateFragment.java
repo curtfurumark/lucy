@@ -2,7 +2,9 @@ package se.curtrune.lucy.fragments;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -40,22 +43,20 @@ import se.curtrune.lucy.adapters.CalenderDateAdapter;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
+import se.curtrune.lucy.classes.calender.CalenderDate;
 import se.curtrune.lucy.classes.calender.OnSwipeClickListener;
 import se.curtrune.lucy.classes.calender.Week;
 import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.dialogs.EditItemDialog;
 import se.curtrune.lucy.dialogs.PostponeDialog;
+import se.curtrune.lucy.viewmodel.CalendarDateViewModel;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.CalenderWorker;
 import se.curtrune.lucy.workers.ItemsWorker;
 import se.curtrune.lucy.workers.MentalWorker;
 import se.curtrune.lucy.workers.NotificationsWorker;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link CalenderDateFragment#newInstance} factory method to
- * create an instance of this fragment.add
- */
+
 public class CalenderDateFragment extends Fragment {
 
     private Week currentWeek;
@@ -70,32 +71,19 @@ public class CalenderDateFragment extends Fragment {
     private ItemTouchHelper itemTouchHelper;
 
     private LocalDate currentDate;
+    private CalenderDate calenderDate;
     private List<Item> items;
     public static boolean VERBOSE = false;
     private LucindaViewModel viewModel;
+    private CalendarDateViewModel calendarDateViewModel;
     public CalenderDateFragment() {
-        // Required empty public constructor
+        currentDate = LocalDate.now();
     }
     public CalenderDateFragment(LocalDate date){
         this.currentDate = date;
     }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     * @return A new instance of fragment CalenderDateFragment.
-     */
-    public static CalenderDateFragment newInstance() {
-        return  new CalenderDateFragment();
-
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            log("...getArguments != null!");
-        }
+    public CalenderDateFragment(CalenderDate calenderDate){
+        log("CalendarDateFragment(CalendarDate)", calenderDate.getDate());
     }
 
     @Override
@@ -146,13 +134,7 @@ public class CalenderDateFragment extends Fragment {
         //return String.format(Locale.getDefault(), "%s, %d", date.getMonth().toString(), date.getYear());
         return String.format(Locale.getDefault(), "< %s %s %d >", str, getString(R.string.week), weekNumber);
     }
-    private String getWeekNumber(){
-        log("...getWeekNumber()");
-        //Calendar calendar = Calendar.getInstance(Locale.getDefault());
-        //calendar.set(currentDate.getYear(), currentDate.getMonthValue(), currentDate.getDayOfMonth());
-        //int weekOfYear = calendar.get(Calendar.WEEK_OF_YEAR);
-        return String.valueOf(currentWeek.getWeekNumber());
-    }
+
     private void initComponents(View view){
         if( VERBOSE) log("...initComponents(View)");
         labelMonthYear = view.findViewById(R.id.calenderFragment_labelMonthYear);
@@ -258,31 +240,6 @@ public class CalenderDateFragment extends Fragment {
         recyclerDates.setAdapter(calenderDateAdapter);
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerDates);
-/*        OnSwipeClickListener onSwipeClickListener = new OnSwipeClickListener(getContext(), new OnSwipeClickListener.Listener() {
-            @Override
-            public void onSwipeRight() {
-                log("...dates swipe right");
-            }
-
-            @Override
-            public void onSwipeLeft() {
-                log("...dates swipe left");
-            }
-
-            @Override
-            public void onClick() {
-
-            }
-        });
-        recyclerDates.setOnTouchListener(onSwipeClickListener);*/
-/*        recyclerDates.setOnFlingListener(new RecyclerView.OnFlingListener() {
-            @Override
-            public boolean onFling(int velocityX, int velocityY) {
-                log("....velocityX", velocityX);
-                log("velocityY", velocityY);
-                return false;
-            }
-        });*/
     }
     private void initSwipeItems() {
         if( VERBOSE) log("...initSwipeItems()");
@@ -333,6 +290,7 @@ public class CalenderDateFragment extends Fragment {
         });
         itemTouchHelper.attachToRecyclerView(recycler);
     }
+    @SuppressLint("ClickableViewAccessibility")
     private void initSwipeWeek(){
         log("...initSwipeWeek()");
         OnSwipeClickListener onSwipeClickListener = new OnSwipeClickListener(getContext(), new OnSwipeClickListener.Listener() {
@@ -363,10 +321,19 @@ public class CalenderDateFragment extends Fragment {
                 adapter.setList(CalenderWorker.getMentalColour(items));
             }else{
                 log(" setting list to DEFAULT");
-                //adapter.setList(items);
                 setUserInterface(currentDate);
             }
         } );
+        calendarDateViewModel = new ViewModelProvider(requireActivity()).get(CalendarDateViewModel.class);
+        if( calenderDate != null){
+            calendarDateViewModel.set(calenderDate);
+        }else {
+            calendarDateViewModel.set(currentDate, getContext());
+        }
+        calendarDateViewModel.getItems().observe(requireActivity(), items ->{
+            log("...onChanged(List<Item>");
+                this.items = items;
+            });
     }
     private void loadFragment(Fragment fragment){
         viewModel.updateFragment(fragment);
@@ -376,7 +343,6 @@ public class CalenderDateFragment extends Fragment {
         currentDate = currentDate.plusWeeks(1);
         currentWeek = new Week(currentDate);
         setUserInterface(currentDate);
-        calenderDateAdapter.setList(currentWeek);
     }
 
     @Override
@@ -423,10 +389,11 @@ public class CalenderDateFragment extends Fragment {
         currentDate = currentDate.minusWeeks(1);
         currentWeek = new Week(currentDate);
         setUserInterface(currentDate);
-        calenderDateAdapter.setList(currentWeek);
+        //calenderDateAdapter.setList(currentWeek);
     }
     private void setUserInterface(LocalDate date){
         if( VERBOSE) log("...setUserInterface()", date.toString());
+        currentWeek = new Week(date);
         labelMonthYear.setText(getMonthYear(currentDate));
         if( currentDate.equals(LocalDate.now())) {
             items = ItemsWorker.selectTodayList(currentDate, getContext());
@@ -437,6 +404,7 @@ public class CalenderDateFragment extends Fragment {
         }
         items.sort(Comparator.comparingLong(Item::compareTargetTime));
         adapter.setList(items);
+        calenderDateAdapter.setList(currentWeek);
         viewModel.updateEnergy(true);
     }
     private void showAddItemDialog(){
@@ -458,7 +426,13 @@ public class CalenderDateFragment extends Fragment {
     }
     private void showDatePicker(){
         log("...showDatePicker()");
-        Toast.makeText(getContext(), "date picker", Toast.LENGTH_SHORT).show();
+        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext());
+        datePickerDialog.setOnDateSetListener((view, year, month, dayOfMonth) -> {
+            log("...onDateSet(...)");
+            currentDate = LocalDate.of(year, month +1, dayOfMonth);
+            setUserInterface(currentDate);
+        });
+        datePickerDialog.show();
     }
 
     private void updateTargetTime(Item item){

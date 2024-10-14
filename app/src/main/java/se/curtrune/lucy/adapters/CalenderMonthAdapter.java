@@ -70,17 +70,6 @@ public class CalenderMonthAdapter extends RecyclerView.Adapter<CalenderMonthAdap
     }
     private CalenderDate getCalenderDate(LocalDate date){
         log("...findCalenderDate()");
-/*        AtomicInteger counter = new AtomicInteger(-1);
-        int index = calenderDates.stream().filter(calenderDate -> {
-            counter.getAndIncrement();
-            return date.equals(calenderDate.getDate());
-        }).mapToInt(calenderDate-> counter.get())
-                .findFirst()
-                .orElse(-1);
-        if( index == -1 ){
-            return null;
-        }
-        return calenderDates.get(index);*/
         for(int i = 0; i < calenderDates.size(); i++){
             if( calenderDates.get(i).getDate().equals(date)){
                 return calenderDates.get(i);

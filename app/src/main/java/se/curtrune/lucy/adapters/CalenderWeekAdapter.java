@@ -25,13 +25,15 @@ import se.curtrune.lucy.classes.calender.CalenderDate;
 public class CalenderWeekAdapter extends RecyclerView.Adapter<CalenderWeekAdapter.ParentHolder> {
 
     private List<CalenderDate> calenderDates;
+    public static boolean VERBOSE = false;
     private final RecyclerView.RecycledViewPool recycledViewPool = new RecyclerView.RecycledViewPool();
     public interface Listener{
         void onCalenderDateClick(CalenderDate calenderDate);
     }
     private final Listener listener;
     public CalenderWeekAdapter(List<CalenderDate> calenderDates, Listener listener) {
-        log("CalenderWeekAdapter(...)");
+        log("CalenderWeekAdapter(List<CalenderDate>, Listener)");
+        assert  calenderDates != null;
         this.calenderDates = calenderDates;
         this.listener = listener;
     }
@@ -45,7 +47,7 @@ public class CalenderWeekAdapter extends RecyclerView.Adapter<CalenderWeekAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ParentHolder holder, int position) {
-        log("CalenderWeekAdapter.onBindViewHolder(...) position", position);
+        if( VERBOSE) log("CalenderWeekAdapter.onBindViewHolder(...) position", position);
         CalenderDate dateItem =  calenderDates.get(position);
         holder.textViewDate.setText(dateItem.getDate().format(DateTimeFormatter.ofPattern("E d")));
         //LinearLayoutManager linearLayoutManager = new LinearLayoutManager(holder.childRecycler.getContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -56,7 +58,7 @@ public class CalenderWeekAdapter extends RecyclerView.Adapter<CalenderWeekAdapte
         weekItemAdapter.setListener(new WeekItemAdapter.Listener() {
             @Override
             public void onDateClick(LocalDate date) {
-                log("...MinimalAdapter.onDateClick(LocalDate)", date.toString());
+                log("...WeekItemAdapter.onDateClick(LocalDate)", date.toString());
                 CalenderDate calenderDate = getCalenderDate(date);
                 if( calenderDate != null){
                     listener.onCalenderDateClick(calenderDate);
@@ -68,11 +70,6 @@ public class CalenderWeekAdapter extends RecyclerView.Adapter<CalenderWeekAdapte
         holder.childRecycler.setAdapter(weekItemAdapter);
         holder.childRecycler.setLayoutManager(linearLayoutManager);
         holder.childRecycler.setRecycledViewPool( recycledViewPool);
-/*        holder.layout.setOnClickListener(view->
-        {
-            log("CalenderWeekAdapter, layout, onclick");
-            listener.onCalenderDateClick(calenderDates.get(position));
-        });*/
     }
 
     private CalenderDate getCalenderDate(LocalDate date){
@@ -101,12 +98,11 @@ public class CalenderWeekAdapter extends RecyclerView.Adapter<CalenderWeekAdapte
 
         public ParentHolder(@NonNull View itemView) {
             super(itemView);
-            log("ParentHolder(View)");
+            //log("ParentHolder(View)");
             textViewDate = itemView.findViewById(R.id.calenderWeekAdapter_textViewDate);
             childRecycler = itemView.findViewById(R.id.calenderWeekAdapter_recycler);
             layout = itemView.findViewById(R.id.calenderWeekAdapter_layout);
             layout.setOnClickListener(view->listener.onCalenderDateClick(calenderDates.get(getAdapterPosition())));
-            //itemView.setOnClickListener(view->listener.onDateClick(calenderDates.get(getAdapterPosition()).getDate()));
         }
     }
 }

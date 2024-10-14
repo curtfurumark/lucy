@@ -11,6 +11,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -30,7 +32,9 @@ import se.curtrune.lucy.classes.calender.CalenderDate;
 import se.curtrune.lucy.classes.calender.OnSwipeClickListener;
 import se.curtrune.lucy.dialogs.AppointmentDialog;
 import se.curtrune.lucy.dialogs.ItemsDialog;
+import se.curtrune.lucy.viewmodel.CalendarMonthViewModel;
 import se.curtrune.lucy.workers.CalenderWorker;
+import se.curtrune.lucy.workers.ItemsWorker;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -46,9 +50,10 @@ public class CalenderMonthFragment extends Fragment {
 
     private LocalDate selectedDate;
     private YearMonth currentYearMonth;
-    private CalenderMonthAdapter monthDayAdapter;
+    private CalenderMonthAdapter calenderMonthAdapter;
     //private ItemAdapter itemAdapter;
     private List<CalenderDate> calenderDates;
+    private CalendarMonthViewModel calendarMonthViewModel;
 
     public CalenderMonthFragment() {
         // Required empty public constructor
@@ -78,6 +83,7 @@ public class CalenderMonthFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.calender_month_fragment, container, false);
         initComponents(view);
+        initViewModel();
         selectedDate = LocalDate.now();
         currentYearMonth = YearMonth.now();
         calenderDates = getCalenderDates(selectedDate);
@@ -88,43 +94,26 @@ public class CalenderMonthFragment extends Fragment {
         setMonthYearLabel();
         return view;
     }
+    private void addItem(Item item){
+        log("...addItem(Item)");
+        item = ItemsWorker.insert(item, getContext());
+        for( CalenderDate calenderDate: calenderDates){
+            if(calenderDate.getDate().equals(item.getTargetDate())){
+                log("...found calendarDate");
+                calenderDate.add(item);
+                break;
+            }
+        }
+        calenderMonthAdapter.notifyDataSetChanged();
+
+    }
     private List<CalenderDate> getCalenderDates(LocalDate date){
         return CalenderWorker.getCalenderDates(YearMonth.from(date), getContext());
-/*        log("...getCalenderDate(LocalDate)", date.toString());
-        List<CalenderDate> calenderDates = new ArrayList<>();
-        YearMonth yearMonth = YearMonth.from(date);
-        log("...yearMonth", yearMonth.toString());
-        LocalDate firstDateOfMonth =  date.withDayOfMonth( 1);
-        log("...firstDateOfMonth", firstDateOfMonth.toString());
-        int daysInMonth = yearMonth.lengthOfMonth();
-        log("...daysInMonth", daysInMonth);
-        //List<Item> itemsMonth = ItemsWorker.selectCalenderItems(yearMonth, getContext());
-        List<Item> itemsMonth = ItemsWorker.selectAppointments(yearMonth, getContext());
-        log("...number of events this month", itemsMonth.size());
-        itemsMonth.forEach(System.out::println);
-        LocalDate currentDate = firstDateOfMonth;
-        //int numberDays = daysInMonth;
-        int firstDate = firstDateOfMonth.getDayOfWeek().getValue();
-        int offset = firstDate;
-        currentDate = currentDate.minusDays(offset - 1);
-        log("firstDate", firstDate);
-        for( int i = 1; i <= 42; i++){
-            CalenderDate calenderDate = new CalenderDate();
-            calenderDate.setDate(currentDate);
-            //calenderDate.setItems(new ArrayList<>());
-            LocalDate finalCurrentDate = currentDate;
-            calenderDate.setItems(itemsMonth.stream().filter(item -> item.isDate(finalCurrentDate)).collect(Collectors.toList()));
-            calenderDates.add(calenderDate);
-            currentDate = currentDate.plusDays(1);
-        }
-        return calenderDates;*/
     }
     private void initComponents(View view){
         log("...initComponents(View)");
         recyclerCalender = view.findViewById(R.id.monthCalenderFragment_recyclerDates);
         monthYearText = view.findViewById(R.id.calenderMonthFragment_heading);
-        //buttonPrev = view.findViewById(R.id.monthCalender_buttonPrev);
-        //buttonNext = view.findViewById(R.id.monthCalender_buttonNexgt);
     }
     private void initItemTouchHelper(){
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
@@ -149,10 +138,10 @@ public class CalenderMonthFragment extends Fragment {
     }
     private void initRecycler(List<CalenderDate> calenderDates){
         log("...initRecycler()");
-        monthDayAdapter = new CalenderMonthAdapter(calenderDates, calenderDate -> {
+        calenderMonthAdapter = new CalenderMonthAdapter(calenderDates, calenderDate -> {
             log("CalenderMonthAdapter.onCalenderDateClick(CalenderDate)", calenderDate.getDate().toString());
             if(calenderDate.getItems().size() == 0){
-                showAppointmentsDialog();
+                showAppointmentsDialog(calenderDate.getDate());
             }else {
                 showItemsDialog(calenderDate);
             }
@@ -161,9 +150,21 @@ public class CalenderMonthFragment extends Fragment {
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), 7);
         recyclerCalender.setLayoutManager(layoutManager);
         recyclerCalender.setItemAnimator(new DefaultItemAnimator());
-        recyclerCalender.setAdapter(monthDayAdapter);
+        recyclerCalender.setAdapter(calenderMonthAdapter);
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerCalender);
+    }
+    private void initViewModel(){
+        log("...initViewModel()");
+        calendarMonthViewModel = new ViewModelProvider(requireActivity()).get(CalendarMonthViewModel.class);
+        calendarMonthViewModel.setYearMonth(YearMonth.now());
+/*        calendarMonthViewModel.getCalendarDates().observe(requireActivity(), new Observer<List<CalenderDate>>() {
+            @Override
+            public void onChanged(List<CalenderDate> calenderDates) {
+                log("...calendarDates onChanged(List<CalendarDate>)");
+            }
+        });*/
+
     }
     private void initSwipeHeading(){
         log("...initSwipeHeading()");
@@ -203,27 +204,28 @@ public class CalenderMonthFragment extends Fragment {
     public void nextMonthAction(){
         log("...nextMonthAction()");
         selectedDate = selectedDate.plusMonths(1);
-        monthDayAdapter.setList(getCalenderDates(selectedDate));
+        calenderMonthAdapter.setList(getCalenderDates(selectedDate));
         setMonthYearLabel();
 
     }
     public void previousMonthAction(){
         log("...previousMonthAction()");
         selectedDate = selectedDate.minusMonths(1);
-        monthDayAdapter.setList(getCalenderDates(selectedDate));
+        calenderMonthAdapter.setList(getCalenderDates(selectedDate));
         setMonthYearLabel();
     }
     private void setMonthYearLabel(){
         monthYearText.setText(monthYearFromDate(selectedDate));
     }
-    private void showAppointmentsDialog(){
+    private void showAppointmentsDialog(LocalDate date){
         log("...showAppointmentsDialog()");
-        AppointmentDialog dialog = new AppointmentDialog();
+        AppointmentDialog dialog = new AppointmentDialog(date);
         dialog.setCallback(new AppointmentDialog.OnNewAppointmentCallback() {
             @Override
             public void onNewAppointment(Item item) {
                 log("...onNewAppointment(Item item)");
-                Toast.makeText(getContext(), "hello", Toast.LENGTH_SHORT).show();
+                //calendarMonthViewModel.add(item);
+                addItem(item);
             }
         });
         dialog.show(getChildFragmentManager(), "add appointment");

@@ -20,14 +20,15 @@ import se.curtrune.lucy.classes.Item;
 public class WeekItemAdapter extends RecyclerView.Adapter<WeekItemAdapter.ViewHolder> {
     private List<Item> items;
     private LocalDate date;
+    public static boolean VERBOSE = false;
     public interface Listener{
         void onDateClick(LocalDate date);
     }
     private Listener listener;
 
     public WeekItemAdapter(List<Item> items, LocalDate date) {
-        log("WeekItemAdapter(List<Item>, LocalDate)");
-        System.out.printf("date %s, number of items %d\n", date.toString(), items.size());
+        if( VERBOSE) log("WeekItemAdapter(List<Item>, LocalDate)");
+        if(VERBOSE) System.out.printf("\tdate %s, number of items %d\n", date.toString(), items.size());
         this.items = items;
         this.date = date;
     }
@@ -41,7 +42,7 @@ public class WeekItemAdapter extends RecyclerView.Adapter<WeekItemAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        log("WeekItemAdapter.onBindViewHolder(ViewHolder, int) position", position);
+        if( VERBOSE) log("WeekItemAdapter.onBindViewHolder(ViewHolder, int) position", position);
         Item item = items.get(position);
         holder.textViewHeading.setText(item.getHeading());
         holder.textViewTime.setText(item.getTargetTime().toString());

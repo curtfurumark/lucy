@@ -109,7 +109,7 @@ public class AppointmentDialog extends BottomSheetDialogFragment {
         datePickerDialog.show();
     }
     private void showTimeDialog(){
-        log("...showTimeDialog");
+        log("...showTimeDialog()");
         int minutes = LocalTime.now().getMinute();
         int hour = LocalTime.now().getHour();
         TimePickerDialog timePicker = new TimePickerDialog(getContext(), (view, hourOfDay, minute) -> {

@@ -3,7 +3,6 @@ package se.curtrune.lucy.fragments;
 import static se.curtrune.lucy.util.Logger.log;
 
 import android.app.AlertDialog;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -22,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -29,13 +29,13 @@ import java.util.Objects;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.ItemAdapter;
-import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
+import se.curtrune.lucy.viewmodel.ProjectsViewModel;
 import se.curtrune.lucy.workers.ItemsWorker;
 import se.curtrune.lucy.workers.MentalWorker;
 
@@ -53,8 +53,9 @@ public class ProjectsFragment extends Fragment implements
     private TabLayout tabLayout;
     private FloatingActionButton buttonAddItem;
     private ItemAdapter adapter;
+    private ProjectsViewModel projectsViewModel;
     private Item currentParent;
-    private List<Item> items;
+    private List<Item> items = new ArrayList<>();
     private LucindaViewModel viewModel;
     public static boolean VERBOSE = false;
 
@@ -82,12 +83,6 @@ public class ProjectsFragment extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         log("ProjectsFragment.onCreate(Bundle of joy))");
-        if (getArguments() != null) {
-            //TODO, solve this another way
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                currentParent = getArguments().getSerializable(Constants.INTENT_SERIALIZED_ITEM, Item.class);
-            }
-        }
     }
 
     @Override
@@ -97,34 +92,27 @@ public class ProjectsFragment extends Fragment implements
         View view = inflater.inflate(R.layout.projects_fragment, container, false);
         setHasOptionsMenu(true);
         initComponents(view);
+        initRecycler(items);
         initListeners();
-        initViewModel();
         initSwipe();
-        if( savedInstanceState != null){
-            log("...savedInstanceState != null");
-            currentParent = (Item) savedInstanceState.getSerializable(CURRENT_PARENT);
-        }else{
-            currentParent = ItemsWorker.getRootItem(Settings.Root.PROJECTS, getContext());
-        }
+        initViewModel();
         if( currentParent == null){
             log("ERROR, currentParent is null");
             Toast.makeText(getContext(), "ERROR, currentParent is null", Toast.LENGTH_LONG).show();
             return view;
         }
-        items = ItemsWorker.selectChildren(currentParent, getContext());
-        initRecycler(items);
-        initTabs();
+
         return view;
     }
     private void addTab(Item item){
-        if( VERBOSE) log("...addTab(Item)", item.getHeading());
+        log("...addTab(Item)", item.getHeading());
         TabLayout.Tab tab = tabLayout.newTab();
         tab.setText(item.getHeading());
         tab.setTag(item);
         tabLayout.addTab(tab, true);
     }
     private void deleteItem(Item item){
-        if( VERBOSE) log("...deleteItem(Item)", item.getHeading());
+        log("...deleteItem(Item)", item.getHeading());
         int rowsAffected = MentalWorker.deleteMental(item, getContext());
         if( rowsAffected != 1){
             log("WARNING mental not deleted, possibly no mental to delete...");
@@ -142,10 +130,10 @@ public class ProjectsFragment extends Fragment implements
         }
     }
     private void descend(Item item){
-        if( VERBOSE) log("...descend(Item)", item.getHeading());
+        log("...descend(Item)", item.getHeading());
         items = ItemsWorker.selectChildren(item, getContext());
-        Lucinda.currentParent = item;
         currentParent = item;
+        projectsViewModel.push(item);
         adapter.setList(items);
         addTab(currentParent);
 
@@ -192,14 +180,20 @@ public class ProjectsFragment extends Fragment implements
         });
         itemTouchHelper.attachToRecyclerView(recycler);
     }
-    private void initTabs(){
-        log("...initTabs()");
-        addTab(currentParent);
-
-    }
     private void initViewModel(){
-        if( VERBOSE) log("...initViewModel()");
+        log("...initViewModel()");
         viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
+        projectsViewModel = new ViewModelProvider(requireActivity()).get(ProjectsViewModel.class);
+        if( projectsViewModel.getCurrentParent() != null){
+            log("\t\tgot current parent", projectsViewModel.getCurrentParent().getHeading() );
+            setTabs(projectsViewModel.getStack());
+            currentParent = projectsViewModel.getCurrentParent();
+        }else{
+            log("\t\tempty stack, setting root/currentParent");
+            currentParent = ItemsWorker.getRootItem(Settings.Root.PROJECTS, getContext());
+            projectsViewModel.setRoot(currentParent);
+            addTab(currentParent);
+        }
     }
 
     @Override
@@ -212,23 +206,13 @@ public class ProjectsFragment extends Fragment implements
     }
 
     @Override
-    public void onPause() {
-        log("ProjectsFragment.onPause()");
-        super.onPause();
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        log("ProjectsFragment.onSaveInstanceState(Bundle of joy) ");
-        outState.putSerializable(CURRENT_PARENT, currentParent);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
     public void onTabSelected(TabLayout.Tab tab) {
-        log("...onTabSelected()");
-        log("...tab", Objects.requireNonNull(tab.getText()).toString());
-        removeTabs(tab.getPosition());
+        log("...onTabSelected(TabLayout.Tag)");
+        currentParent = (Item) tab.getTag();
+        log("\t\ttab", Objects.requireNonNull(tab.getText()).toString());
+        if( tab.getPosition() + 1 < tabLayout.getTabCount()){
+            removeTabs(tab.getPosition());
+        }
         showChildren(tab);
     }
 
@@ -248,6 +232,9 @@ public class ProjectsFragment extends Fragment implements
         if(item.hasChild() ){
             descend(item);
         }else {
+            log("\t\titem does not have  child -> ItemSessionFragment");
+            log("\t\tcurrent parent is", currentParent.getHeading());
+            projectsViewModel.setCurrentParent(currentParent);
             viewModel.updateFragment(new ItemSessionFragment(item));
         }
     }
@@ -259,7 +246,7 @@ public class ProjectsFragment extends Fragment implements
 
     @Override
     public void onCheckboxClicked(Item item, boolean checked) {
-        if( VERBOSE) log("...onCheckboxClicked(Item, boolean)", checked);
+        log("...onCheckboxClicked(Item, boolean)", checked);
         item.setState(checked ? State.DONE: State.TODO);
         int rowsAffected = ItemsWorker.update(item, getContext());
         if( rowsAffected != 1){
@@ -272,15 +259,18 @@ public class ProjectsFragment extends Fragment implements
     }
     private void removeTabs(int position){
         log("...removeTabs(int)", position);
-        for(int i = position + 1; i < tabLayout.getTabCount(); i++){
+        int tabCount = tabLayout.getTabCount();
+        log("...tabCount", tabCount);
+        for(int i = tabCount -1 ; i > position; i--){
             tabLayout.removeTabAt(i);
+            projectsViewModel.pop();
         }
     }
     private void showAddItemDialog(){
         if(VERBOSE) log("...showAddItemDialog()");
         AddItemDialog dialog = new AddItemDialog(currentParent, false);
         dialog.setCallback(item -> {
-            log("AddItemDialog.onAddItem(Item)", item.getHeading());
+            log("...AddItemDialog.onAddItem(Item)", item.getHeading());
             item = ItemsWorker.insert(item, getContext());
             if(VERBOSE) log(item);
             items.add(item);
@@ -303,20 +293,26 @@ public class ProjectsFragment extends Fragment implements
         builder.setTitle(stringDialogTitle);
         builder.setMessage(R.string.are_you_sure);
         builder.setPositiveButton(getString(R.string.delete), (dialog, which) -> {
-            log("...on positive button click");
+            log("\t\ton positive button click");
             deleteItem(item);
 
         });
         builder.setNegativeButton(getString(R.string.dismiss), (dialog, which) -> {
-            log("...on negative button click");
+            log("\t\ton negative button click");
             adapter.notifyDataSetChanged();
         });
         AlertDialog dialog = builder.create();
         dialog.show();
 
     }
+    private void setTabs(List<Item> itemStack){
+        log("...setTabs(List<Item>)");
+        for(Item item: itemStack){
+            addTab(item);
+        }
+    }
     private void startSequence(){
-        log("...startSequence()");
+        log("...startSequence() currentParent", currentParent.getHeading());
         if( currentParent == null){
             log("WARNING, current parent is null, surrender");
             Toast.makeText(getContext(), "current parent is null", Toast.LENGTH_LONG).show();

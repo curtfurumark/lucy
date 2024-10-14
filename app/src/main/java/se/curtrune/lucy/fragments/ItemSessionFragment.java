@@ -220,6 +220,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
             log("...date", targetDate.toString());
             currentAction.setValue(targetDate.toString());
             currentItem.setTargetDate(targetDate);
+            actionAdapter.notifyDataSetChanged();
         });
         datePickerDialog.show();
     }
@@ -257,6 +258,12 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         buttonSave.setOnClickListener(view->updateItem());
         textViewDuration.setOnClickListener(view -> showDurationDialogActual());
         buttonAddItem.setOnClickListener(view -> showAddChildItemDialog());
+    }
+    private void returnToPreviousFragment(){
+        log("...returnToPreviousFragment()");
+        //this.requireActivity().getSupportFragmentManager().popBackStackImmediate();
+        //requireActivity().getFragmentManager().
+        getParentFragmentManager().popBackStackImmediate();
     }
     private void setEstimatedTime(Item item){
         if( VERBOSE)log("...setEstimatedTime()");
@@ -315,13 +322,16 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
     }
 
     private void showAddChildItemDialog(){
+        log("...showAddChildItemDialog()");
         AddItemDialog dialog = new AddItemDialog(currentItem, false);
         dialog.setCallback(item -> {
             log("AddItemDialog.onAddItem(Item)");
             item = ItemsWorker.insertChild(currentItem, item, getContext());
             if( VERBOSE ) log(item);
+            returnToPreviousFragment();
         });
         dialog.show(getChildFragmentManager(), "add child");
+
     }
     private void showCategoryDialog(){
         log("...showCategoryDialog()");
