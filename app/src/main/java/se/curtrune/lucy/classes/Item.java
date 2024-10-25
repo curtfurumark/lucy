@@ -365,16 +365,7 @@ public class Item implements Serializable , Listable {
         }
         this.mental = mental;
     }
-    /*
-    public void setMentalJson(String json){
-        if( json == null || json.isEmpty()){
-            log("ERROR, setMentalJson, json is null or empty");
-            return;
-        }else{
-            log("...mental json", json);
-        }
-        this.mental = new Gson().fromJson(json, MentalType.class);
-    }*/
+
     public void setNotification(Notification notification){
         this.notification = notification;
     }
@@ -486,5 +477,7 @@ public class Item implements Serializable , Listable {
         repeat.setUnit(unit);
     }
 
-
+    public boolean hasMental() {
+        return mental != null;
+    }
 }

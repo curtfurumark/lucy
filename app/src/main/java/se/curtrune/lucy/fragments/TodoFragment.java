@@ -62,7 +62,7 @@ public class TodoFragment extends Fragment implements
      * this fragment using the provided parameters.
      *
 
-     * @return A new instance of fragment ProjectsFragment.
+     * @return A new instance of fragment ItemsFragment.
      */
     // TODO: Rename and change types and number of parameters
     public static TodoFragment newInstance() {

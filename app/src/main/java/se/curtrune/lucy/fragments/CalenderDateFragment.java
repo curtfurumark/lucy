@@ -47,14 +47,11 @@ import se.curtrune.lucy.classes.calender.CalenderDate;
 import se.curtrune.lucy.classes.calender.OnSwipeClickListener;
 import se.curtrune.lucy.classes.calender.Week;
 import se.curtrune.lucy.dialogs.AddItemDialog;
-import se.curtrune.lucy.dialogs.EditItemDialog;
 import se.curtrune.lucy.dialogs.PostponeDialog;
 import se.curtrune.lucy.viewmodel.CalendarDateViewModel;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.CalenderWorker;
 import se.curtrune.lucy.workers.ItemsWorker;
-import se.curtrune.lucy.workers.MentalWorker;
-import se.curtrune.lucy.workers.NotificationsWorker;
 
 
 public class CalenderDateFragment extends Fragment {
@@ -73,8 +70,8 @@ public class CalenderDateFragment extends Fragment {
     private LocalDate currentDate;
     private CalenderDate calenderDate;
     private List<Item> items;
-    public static boolean VERBOSE = false;
-    private LucindaViewModel viewModel;
+    public static boolean VERBOSE = true;
+    private LucindaViewModel lucindaViewModel;
     private CalendarDateViewModel calendarDateViewModel;
     public CalenderDateFragment() {
         currentDate = LocalDate.now();
@@ -82,8 +79,16 @@ public class CalenderDateFragment extends Fragment {
     public CalenderDateFragment(LocalDate date){
         this.currentDate = date;
     }
+    private enum Mode{
+        DEFAULT, CALENDAR_DATE
+    }
+    private Mode mode = Mode.DEFAULT;
     public CalenderDateFragment(CalenderDate calenderDate){
         log("CalendarDateFragment(CalendarDate)", calenderDate.getDate());
+        this.calenderDate = calenderDate;
+        this.currentWeek = new Week(calenderDate.getDate());
+        this.currentDate = calenderDate.getDate();
+        mode = Mode.CALENDAR_DATE;
     }
 
     @Override
@@ -94,13 +99,14 @@ public class CalenderDateFragment extends Fragment {
         requireActivity().setTitle("");
         initDefaults();
         initComponents(view);
+        initViewModels();
         initRecycler();
         initRecyclerDates();
         initListeners();
         initSwipeItems();
         initSwipeWeek();
-        initViewModel();
         setUserInterface(currentDate);
+        observe();
         return view;
     }
 
@@ -111,20 +117,10 @@ public class CalenderDateFragment extends Fragment {
      */
     private void deleteItem(Item item){
         log("....deleteItem(Item)", item.getHeading());
-        int rowsAffected = MentalWorker.deleteMental(item, getContext());
-        if( rowsAffected != 1){
-            log("WARNING mental not deleted, possibly no mental to delete...");
-        }else{
-            log("...mental deleted from db");
-        }
-        boolean deleted = ItemsWorker.delete(item, getContext());
-        if( !deleted){
-            log("...error deleting item");
-            Toast.makeText(getContext(), "error deleting item", Toast.LENGTH_LONG).show();
-        }else {
-            log("...item deleted from DB");
-            items.remove(item);
-            adapter.notifyDataSetChanged();
+        boolean stat = calendarDateViewModel.delete(item, getContext());
+        if(!stat){
+            log("ERROR, deleting", item.getHeading());
+            Toast.makeText(getContext(), "ERROR deleting, " + item.getHeading(), Toast.LENGTH_LONG).show();
         }
     }
     private String getMonthYear(LocalDate date){
@@ -156,7 +152,7 @@ public class CalenderDateFragment extends Fragment {
     }
     private void initRecycler(){
         if( VERBOSE) log("...initRecycler()");
-        adapter = new CalenderAdapter(items, new CalenderAdapter.Callback() {
+        adapter = new CalenderAdapter(calendarDateViewModel.getItems().getValue(), new CalenderAdapter.Callback() {
             @Override
             public void onEditTime(Item item) {
                 if( VERBOSE) log("...onEditTime(Item item");
@@ -172,7 +168,7 @@ public class CalenderDateFragment extends Fragment {
             @Override
             public void onLongClick(Item item) {
                 log("...onLongClick(Item)", item.getHeading());
-                EditItemDialog dialog = new EditItemDialog(item);
+/*                EditItemDialog dialog = new EditItemDialog(item);
                 dialog.setCallback(item1 -> {
                     log("EditItemDialog.Callback.onUpdate(Item)");
                     log(item1);
@@ -185,24 +181,19 @@ public class CalenderDateFragment extends Fragment {
                         adapter.notifyDataSetChanged();
                     }
                 });
-                dialog.show(getChildFragmentManager(), "edit item");
+                dialog.show(getChildFragmentManager(), "edit item");*/
             }
 
             @Override
             public void onCheckboxClicked(Item item, boolean checked) {
                 if( VERBOSE) log("...onCheckboxClicked(Item, boolean)", checked);
                 item.setState(checked ? State.DONE: State.TODO);
-                //item.setTargetTime(LocalTime.now());
-                log(item);
-                int rowsAffected = ItemsWorker.update(item, getContext());
-                if( rowsAffected != 1){
+                boolean stat = calendarDateViewModel.update(item, getContext());
+                if( !stat){
                     log("ERROR updating item", item.getHeading());
-                    Toast.makeText(getContext(),"error updating item", Toast.LENGTH_LONG).show();
-                    return;
+                    Toast.makeText(getContext(), "ERROR updating item", Toast.LENGTH_SHORT).show();
                 }else{
-                    items.sort(Comparator.comparingLong(Item::getTargetTimeSecondOfDay));
-                    adapter.notifyDataSetChanged();
-                    viewModel.updateEnergy(true);
+                    lucindaViewModel.updateEnergy(true);
                 }
                 if(item.hasReward()){
                     switch (item.getReward().getType()){
@@ -218,19 +209,23 @@ public class CalenderDateFragment extends Fragment {
                             break;
                     }
                 }
-                setUserInterface(currentDate);
+                //setUserInterface(currentDate);
             }
         });
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
         recycler.setItemAnimator(new DefaultItemAnimator());
         recycler.setAdapter(adapter);
-
     }
+
+    /**
+     * the horizontal recycler with dates, monday to sunday
+     */
     private void initRecyclerDates(){
         if( VERBOSE) log("...initRecyclerDates()");
         calenderDateAdapter = new CalenderDateAdapter(currentWeek, date -> {
             log("...onDateSelected(LocalDate)", date.toString());
             currentDate = date;
+            calendarDateViewModel.set(currentDate, getContext());
             currentWeek.setCurrentDate(currentDate);
             calenderDateAdapter.setList(currentWeek);
             setUserInterface(date);
@@ -252,7 +247,8 @@ public class CalenderDateFragment extends Fragment {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 //int index = viewHolder.getAdapterPosition();
-                Item item = items.get(viewHolder.getAdapterPosition());
+                //Item item = items.get(viewHolder.getAdapterPosition());
+                Item item = calendarDateViewModel.getItem(viewHolder.getAdapterPosition());
                 if( direction == ItemTouchHelper.LEFT){
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                     builder.setTitle("delete" + item.getHeading());
@@ -311,38 +307,55 @@ public class CalenderDateFragment extends Fragment {
         });
         labelMonthYear.setOnTouchListener(onSwipeClickListener);
     }
-    private void initViewModel(){
-        if( VERBOSE)  log("...initViewModel()");
-        viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
-        viewModel.setRecyclerMode(LucindaViewModel.RecyclerMode.DEFAULT);
-        viewModel.getRecyclerMode().observe(getViewLifecycleOwner(), recyclerMode ->{
+    private void initViewModels(){
+        if( VERBOSE)  log("...initViewModels()");
+        lucindaViewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
+        lucindaViewModel.setRecyclerMode(LucindaViewModel.RecyclerMode.DEFAULT);
+        lucindaViewModel.getRecyclerMode().observe(getViewLifecycleOwner(), recyclerMode ->{
             log("CalenderDateFragment....recyclerMode", recyclerMode.toString());
             if( recyclerMode.equals(LucindaViewModel.RecyclerMode.MENTAL_COLOURS)){
-                adapter.setList(CalenderWorker.getMentalColour(items));
+                calendarDateViewModel.setEnergyItems();
             }else{
                 log(" setting list to DEFAULT");
-                setUserInterface(currentDate);
+                //TODO
+                //setUserInterface(currentDate);
+                // calendarDateViewModel.set(currentDate, getContext());
             }
         } );
+        lucindaViewModel.updateEnergy(getContext());
         calendarDateViewModel = new ViewModelProvider(requireActivity()).get(CalendarDateViewModel.class);
         if( calenderDate != null){
+            log("...calendarDate != null");
             calendarDateViewModel.set(calenderDate);
         }else {
             calendarDateViewModel.set(currentDate, getContext());
         }
-        calendarDateViewModel.getItems().observe(requireActivity(), items ->{
-            log("...onChanged(List<Item>");
+/*        calendarDateViewModel.getItems().observe(requireActivity(), items ->{
+            log("...onChanged(List<Item>)");
                 this.items = items;
-            });
+                adapter.notifyDataSetChanged();
+            });*/
     }
     private void loadFragment(Fragment fragment){
-        viewModel.updateFragment(fragment);
+        lucindaViewModel.updateFragment(fragment);
     }
     private void nextWeek(){
         if( VERBOSE)log("...nextWeek()");
         currentDate = currentDate.plusWeeks(1);
         currentWeek = new Week(currentDate);
+        calendarDateViewModel.set(currentDate, getContext());
         setUserInterface(currentDate);
+    }
+    private void observe(){
+        log("...observe()");
+        calendarDateViewModel.getItems().observe(getViewLifecycleOwner(), new Observer<List<Item>>() {
+            @Override
+            public void onChanged(List<Item> items) {
+                log("...onChanged(List<Item>");
+                adapter.setList(items);
+                //adapter.notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
@@ -354,73 +367,42 @@ public class CalenderDateFragment extends Fragment {
         log("...postpone(Item, Postpone)");
         if(item.isPrioritized()){
             Toast.makeText(getContext(), "no no no, don't postpone prioritized items", Toast.LENGTH_LONG).show();
+            adapter.notifyDataSetChanged();
             return;
         }
         log("...currentDate", currentDate.toString());
-        switch (postpone){
-            case ONE_HOUR:
-                LocalTime targetTime = item.getTargetTime();
-                item.setTargetTime(targetTime.plusHours(1));
-                items.sort(Comparator.comparingLong(Item::compareTargetTime));
-                break;
-            case ONE_DAY:
-                item.setTargetDate(currentDate.plusDays(1));
-                items.remove(item);
-                break;
-            case ONE_WEEK:
-                item.setTargetDate(currentDate.plusWeeks(1));
-                items.remove(item);
-                break;
-            case ONE_MONTH:
-                item.setTargetDate(currentDate.plusMonths(1));
-                items.remove(item);
-                break;
-        }
-        int rowsAffected = ItemsWorker.update(item, getContext());
-        log(item);
-        if( rowsAffected != 1){
-            Toast.makeText(getContext(), "error updating item", Toast.LENGTH_LONG).show();
-        }
-        adapter.notifyDataSetChanged();
+        calendarDateViewModel.postpone(item, postpone, currentDate, getContext());
     }
 
     private void prevWeek(){
         if( VERBOSE) log("...prevWeek()");
         currentDate = currentDate.minusWeeks(1);
         currentWeek = new Week(currentDate);
+        calendarDateViewModel.set(currentDate, getContext());
         setUserInterface(currentDate);
-        //calenderDateAdapter.setList(currentWeek);
     }
     private void setUserInterface(LocalDate date){
         if( VERBOSE) log("...setUserInterface()", date.toString());
         currentWeek = new Week(date);
         labelMonthYear.setText(getMonthYear(currentDate));
-        if( currentDate.equals(LocalDate.now())) {
-            items = ItemsWorker.selectTodayList(currentDate, getContext());
-        }else{
-            ItemsWorker.VERBOSE = true;
-            items = ItemsWorker.selectCalenderItems(currentDate, getContext());
-            ItemsWorker.VERBOSE = false;
-        }
-        items.sort(Comparator.comparingLong(Item::compareTargetTime));
-        adapter.setList(items);
         calenderDateAdapter.setList(currentWeek);
-        viewModel.updateEnergy(true);
+
+        lucindaViewModel.updateEnergy(true);
     }
     private void showAddItemDialog(){
         log("...showAddItemDialog()");
-        AddItemDialog dialog = new AddItemDialog(ItemsWorker.getRootItem(Settings.Root.DAILY, getContext()), true);
-        dialog.setTargetDate(currentDate);
+        AddItemDialog dialog = new AddItemDialog(ItemsWorker.getRootItem(Settings.Root.DAILY, getContext()), currentDate);
         dialog.setCallback(item -> {
             log("...onNewItem(Item)");
-            item = ItemsWorker.insert(item, getContext());
-            items.add(item);
+            //item = ItemsWorker.insert(item, getContext());
+            calendarDateViewModel.add(item, getContext());
+/*            items.add(item);
             log(item);
             if(item.hasNotification()){
                 log("...item has notification");
                 NotificationsWorker.setNotification(item, getContext());
             }
-            updateAdapter();
+            updateAdapter();*/
         });
         dialog.show(getParentFragmentManager(), "add item");
     }
@@ -443,11 +425,12 @@ public class CalenderDateFragment extends Fragment {
         TimePickerDialog timePicker = new TimePickerDialog(getContext(), (view, hourOfDay, minute) -> {
             LocalTime targetTime = LocalTime.of(hourOfDay, minute);
             item.setTargetTime(targetTime);
-            int rowsAffected = ItemsWorker.update(item, getContext());
+            calendarDateViewModel.update(item, getContext());
+/*            int rowsAffected = ItemsWorker.update(item, getContext());
             if(rowsAffected != 1){
                 log("ERROR updating time of item",item.getHeading());
             }
-            updateAdapter();
+            updateAdapter();*/
         }, hour, minutes, true);
         timePicker.show();
     }
@@ -455,6 +438,6 @@ public class CalenderDateFragment extends Fragment {
         log("...updateAdapter()");
         items.sort(Comparator.comparingLong(Item::compareTargetTime));
         adapter.setList(items);
-        viewModel.updateEnergy(true);
+        lucindaViewModel.updateEnergy(true);
     }
 }

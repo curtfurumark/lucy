@@ -20,14 +20,15 @@ import se.curtrune.lucy.classes.Item;
 public class MonthItemAdapter extends RecyclerView.Adapter<MonthItemAdapter.ViewHolder> {
     private List<Item> items;
     private LocalDate date;
+    public static boolean VERBOSE = false;
     public interface Listener{
         void onDateClick(LocalDate date);
     }
     private Listener listener;
 
     public MonthItemAdapter(List<Item> items, LocalDate date, Listener listener) {
-        log("MonthItemAdapter(List<Item>, LocalDate)");
-        System.out.printf("date %s, number of items %d\n", date.toString(), items.size());
+        if(VERBOSE) log("MonthItemAdapter(List<Item>, LocalDate)", date.toString());
+        if(VERBOSE )System.out.printf("date %s, number of items %d\n", date.toString(), items.size());
         this.items = items;
         this.date = date;
         this.listener = listener;
@@ -42,9 +43,9 @@ public class MonthItemAdapter extends RecyclerView.Adapter<MonthItemAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        log("MonthItemAdapter.onBindViewHolder(ViewHolder, int)", position);
+        if( VERBOSE) log("MonthItemAdapter.onBindViewHolder(ViewHolder, int)", position);
         Item item = items.get(position);
-        log("...item", item.getHeading());
+        if(VERBOSE)log("...item", item.getHeading());
         holder.textViewHeading.setText(item.getHeading());
     }
 

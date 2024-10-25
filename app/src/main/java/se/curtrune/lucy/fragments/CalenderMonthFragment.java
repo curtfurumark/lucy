@@ -33,6 +33,7 @@ import se.curtrune.lucy.classes.calender.OnSwipeClickListener;
 import se.curtrune.lucy.dialogs.AppointmentDialog;
 import se.curtrune.lucy.dialogs.ItemsDialog;
 import se.curtrune.lucy.viewmodel.CalendarMonthViewModel;
+import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.CalenderWorker;
 import se.curtrune.lucy.workers.ItemsWorker;
 
@@ -43,20 +44,24 @@ import se.curtrune.lucy.workers.ItemsWorker;
  */
 public class CalenderMonthFragment extends Fragment {
     private TextView monthYearText;
-    //private Button buttonNext;
-    //private Button buttonPrev;
+
     private RecyclerView recyclerCalender;
-    //private RecyclerView recyclerDay;
+    public static boolean VERBOSE = false;
 
     private LocalDate selectedDate;
     private YearMonth currentYearMonth;
     private CalenderMonthAdapter calenderMonthAdapter;
     //private ItemAdapter itemAdapter;
-    private List<CalenderDate> calenderDates;
+    //private List<CalenderDate> calenderDates;
     private CalendarMonthViewModel calendarMonthViewModel;
+    private LucindaViewModel lucindaViewModel;
 
     public CalenderMonthFragment() {
-        // Required empty public constructor
+        log("CalenderMonthFragment()");
+    }
+    public CalenderMonthFragment(YearMonth yearMonth){
+        log("CalenderMonthFragment(YearMonth)", yearMonth.toString());
+        this.currentYearMonth = yearMonth;
     }
 
     /**
@@ -83,18 +88,16 @@ public class CalenderMonthFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.calender_month_fragment, container, false);
         initComponents(view);
-        initViewModel();
-        selectedDate = LocalDate.now();
-        currentYearMonth = YearMonth.now();
-        calenderDates = getCalenderDates(selectedDate);
-        initRecycler(calenderDates);
-        initListeners();
-        initSwipeHeading();
+        //initViewModel();
+        initRecycler();
+        //initListeners();
+        //initSwipeHeading();
         //initItemTouchHelper();
         setMonthYearLabel();
+        //observe();
         return view;
     }
-    private void addItem(Item item){
+/*    private void addItem(Item item){
         log("...addItem(Item)");
         item = ItemsWorker.insert(item, getContext());
         for( CalenderDate calenderDate: calenderDates){
@@ -105,8 +108,7 @@ public class CalenderMonthFragment extends Fragment {
             }
         }
         calenderMonthAdapter.notifyDataSetChanged();
-
-    }
+    }*/
     private List<CalenderDate> getCalenderDates(LocalDate date){
         return CalenderWorker.getCalenderDates(YearMonth.from(date), getContext());
     }
@@ -133,17 +135,20 @@ public class CalenderMonthFragment extends Fragment {
         }).attachToRecyclerView(recyclerCalender);
 
     }
-    private void initListeners(){
+/*    private void initListeners(){
         log("...initListeners()");
-    }
-    private void initRecycler(List<CalenderDate> calenderDates){
+    }*/
+    private void initRecycler(){
         log("...initRecycler()");
+        List<CalenderDate> calenderDates = CalenderWorker.getCalenderDates(currentYearMonth, getContext());
+        //calenderMonthAdapter = new CalenderMonthAdapter(calenderDates)
+        //calenderMonthAdapter = new CalenderMonthAdapter(calendarMonthViewModel.getCalendarDates().getValue(), calenderDate -> {
         calenderMonthAdapter = new CalenderMonthAdapter(calenderDates, calenderDate -> {
             log("CalenderMonthAdapter.onCalenderDateClick(CalenderDate)", calenderDate.getDate().toString());
             if(calenderDate.getItems().size() == 0){
                 showAppointmentsDialog(calenderDate.getDate());
             }else {
-                showItemsDialog(calenderDate);
+                lucindaViewModel.updateFragment(new CalenderDateFragment(calenderDate));
             }
         });
 
@@ -157,14 +162,11 @@ public class CalenderMonthFragment extends Fragment {
     private void initViewModel(){
         log("...initViewModel()");
         calendarMonthViewModel = new ViewModelProvider(requireActivity()).get(CalendarMonthViewModel.class);
-        calendarMonthViewModel.setYearMonth(YearMonth.now());
-/*        calendarMonthViewModel.getCalendarDates().observe(requireActivity(), new Observer<List<CalenderDate>>() {
-            @Override
-            public void onChanged(List<CalenderDate> calenderDates) {
-                log("...calendarDates onChanged(List<CalendarDate>)");
-            }
-        });*/
-
+        if( currentYearMonth == null){
+            currentYearMonth = YearMonth.now();
+        }
+        calendarMonthViewModel.setYearMonth(currentYearMonth, getContext());
+        lucindaViewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
     }
     private void initSwipeHeading(){
         log("...initSwipeHeading()");
@@ -194,7 +196,6 @@ public class CalenderMonthFragment extends Fragment {
                 return false;
             }
         });*/
-
     }
     private String monthYearFromDate(LocalDate date){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM yyyy");
@@ -206,7 +207,16 @@ public class CalenderMonthFragment extends Fragment {
         selectedDate = selectedDate.plusMonths(1);
         calenderMonthAdapter.setList(getCalenderDates(selectedDate));
         setMonthYearLabel();
-
+    }
+    private void observe(){
+        log("...observe()");
+        calendarMonthViewModel.getCalendarDates().observe(getViewLifecycleOwner(), new Observer<List<CalenderDate>>() {
+            @Override
+            public void onChanged(List<CalenderDate> calenderDates) {
+                log("...onChanged(List<CalenderDate>)");
+                log("doing nothing");
+            }
+        });
     }
     public void previousMonthAction(){
         log("...previousMonthAction()");
@@ -215,7 +225,9 @@ public class CalenderMonthFragment extends Fragment {
         setMonthYearLabel();
     }
     private void setMonthYearLabel(){
-        monthYearText.setText(monthYearFromDate(selectedDate));
+        log("...setMonthYearLabel()");
+        //monthYearText.setText(monthYearFromDate(selectedDate));
+        monthYearText.setText(currentYearMonth.toString());
     }
     private void showAppointmentsDialog(LocalDate date){
         log("...showAppointmentsDialog()");
@@ -225,7 +237,8 @@ public class CalenderMonthFragment extends Fragment {
             public void onNewAppointment(Item item) {
                 log("...onNewAppointment(Item item)");
                 //calendarMonthViewModel.add(item);
-                addItem(item);
+                calendarMonthViewModel.add(item);
+                calenderMonthAdapter.notifyDataSetChanged();
             }
         });
         dialog.show(getChildFragmentManager(), "add appointment");

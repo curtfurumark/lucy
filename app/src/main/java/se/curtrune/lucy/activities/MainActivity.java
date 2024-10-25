@@ -17,10 +17,10 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
 import java.time.LocalDate;
@@ -37,6 +37,7 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.dialogs.BoostDialog;
 import se.curtrune.lucy.dialogs.PanicActionDialog;
 import se.curtrune.lucy.fragments.AppointmentsFragment;
+import se.curtrune.lucy.fragments.CalendarMonthHostFragment;
 import se.curtrune.lucy.fragments.CalendarWeekHostFragment;
 import se.curtrune.lucy.fragments.CalenderDateFragment;
 import se.curtrune.lucy.fragments.CalenderMonthFragment;
@@ -47,15 +48,14 @@ import se.curtrune.lucy.fragments.DevTodoFragment;
 import se.curtrune.lucy.fragments.DurationFragment;
 import se.curtrune.lucy.fragments.EnchiladaFragment;
 import se.curtrune.lucy.fragments.EstimateFragment;
+import se.curtrune.lucy.fragments.ItemsFragment;
 import se.curtrune.lucy.fragments.MentalDayFragment;
 import se.curtrune.lucy.fragments.MentaHistoryFragment;
 import se.curtrune.lucy.fragments.MessageBoardFragment;
-import se.curtrune.lucy.fragments.ProjectsFragment;
 import se.curtrune.lucy.fragments.SequenceFragment;
 import se.curtrune.lucy.fragments.TimerFragment;
 import se.curtrune.lucy.fragments.TodoFragment;
 import se.curtrune.lucy.fragments.TopTenFragment;
-import se.curtrune.lucy.fragments.CalenderWeekFragment;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.AffirmationWorker;
@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
             if (item.getItemId() == R.id.navigationDrawer_graphFragment) {
                 navigate(new DailyGraphFragment());
             } else if (item.getItemId() == R.id.navigationDrawer_monthCalender) {
-                navigate(new CalenderMonthFragment());
+                navigate(new CalendarMonthHostFragment());
             } else if (item.getItemId() == R.id.bottomNavigation_today) {
                 navigate(new CalenderDateFragment());
             } else if (item.getItemId() == R.id.navigationDrawer_topTen) {
@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
             } else if (item.getItemId() == R.id.bottomNavigation_enchilada) {
                 navigate(new EnchiladaFragment());
             } else if (item.getItemId() == R.id.bottomNavigation_projects) {
-                navigate(new ProjectsFragment());
+                navigate(new ItemsFragment());
             } else if (item.getItemId() == R.id.navigationDrawer_durationFragment) {
                 navigate(new DurationFragment());
             } else if (item.getItemId() == R.id.navigationDrawer_estimateFragment) {
@@ -187,11 +187,36 @@ public class MainActivity extends AppCompatActivity {
     private void initViewModel(){
         if( VERBOSE) log("...initViewModel()");
         viewModel = new ViewModelProvider(this ).get(LucindaViewModel.class);
-        viewModel.updateEnergy().observe(this, energy->{
-            log("...energy updated", energy);
-            setUserInterfaceCurrentEnergy();
-        });
         viewModel.getFragment().observe(this, fragment -> navigate(fragment));
+        viewModel.init(LocalDate.now(), this);
+        viewModel.getEnergy().observe(this, new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer energy) {
+                log("...onChanged(Integer) energy", energy);
+                setTextViewEnergy(getString(R.string.energy), energy);
+            }
+        });
+        viewModel.getAnxiety().observe(this, new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer anxiety) {
+                log("...anxiety.onChanged(Integer)", anxiety);
+                setTextViewEnergy(getString(R.string.anxiety), anxiety);
+            }
+        });
+        viewModel.getStress().observe(this, new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer stress) {
+                log("...stress.onChanged(Integer)", stress);
+                setTextViewEnergy(getString(R.string.stress), stress);
+            }
+        });
+        viewModel.getMood().observe(this, new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer mood) {
+                log("...mood.onChanged(Integer)", mood);
+                setTextViewEnergy(getString(R.string.mood), mood);
+            }
+        });
     }
 
     /**
@@ -205,10 +230,9 @@ public class MainActivity extends AppCompatActivity {
             log("...navigate(Fragment) called with null fragment, i surrender");
             return;
         }
-        currentFragment = fragment;
-        setUserInterfaceCurrentEnergy();
-
         log("MainActivity.navigate(Fragment) ", fragment.getClass().getName());
+        currentFragment = fragment;
+        setTextViewEnergy(getString(R.string.energy), viewModel.getEnergy().getValue());
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.navigationDrawer_frameContainer, fragment)
@@ -225,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
                 navigate(new CalendarWeekHostFragment());
                 break;
             case CALENDER_MONTH:
-                navigate( new CalenderMonthFragment());
+                navigate( new CalendarMonthHostFragment());
                 break;
             case CALENDER_APPOINTMENTS:
                 navigate( new AppointmentsFragment());
@@ -340,9 +364,24 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
     }
-    private void setUserInterfaceCurrentEnergy(){
-        log("...setUserInterfaceCurrentEnergy()");
+    private void setTextViewEnergy(String label, int value){
+        log("...setTextViewEnergy(String, int)", value);
+        String strMentalState = String.format(Locale.getDefault(), "%s: %d",label ,value);
+        if( value <= -3){
+            textViewEnergy.setTextColor(Color.parseColor("#ff0000"));
+        }else if(value <= 2){
+            textViewEnergy.setTextColor(Color.parseColor("#ffff00"));
+        }else{
+            textViewEnergy.setTextColor(Color.parseColor("#00ff00"));
+        }
+        textViewEnergy.setText(strMentalState);
+
+    }
+/*    private void setUserInterfaceCurrentEnergy(){
+        log("MainActivity.setUserInterfaceCurrentEnergy()");
+        MentalWorker.VERBOSE = true;
         int energy = MentalWorker.getEnergy(LocalDate.now(), this);
+        MentalWorker.VERBOSE = false;
         String textEnergy = String.format(Locale.getDefault(), "%s: %d",getString(R.string.energy) ,energy);
         if( energy <= -3){
             textViewEnergy.setTextColor(Color.parseColor("#ff0000"));
@@ -352,7 +391,7 @@ public class MainActivity extends AppCompatActivity {
             textViewEnergy.setTextColor(Color.parseColor("#00ff00"));
         }
         textViewEnergy.setText(textEnergy);
-    }
+    }*/
 
     /**
      * loads fragment, stats about current day,

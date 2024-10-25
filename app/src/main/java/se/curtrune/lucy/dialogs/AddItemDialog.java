@@ -11,13 +11,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,10 +34,14 @@ import java.util.List;
 import java.util.Locale;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.adapters.ActionAdapter;
 import se.curtrune.lucy.classes.Action;
 import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.Mental;
+import se.curtrune.lucy.classes.State;
+import se.curtrune.lucy.item_settings.ItemSetting;
+import se.curtrune.lucy.item_settings.ItemSettingAdapter;
 import se.curtrune.lucy.util.Converter;
+import se.curtrune.lucy.viewmodel.ItemSessionViewModel;
 
 
 public class AddItemDialog extends BottomSheetDialogFragment {
@@ -44,23 +49,28 @@ public class AddItemDialog extends BottomSheetDialogFragment {
     private TextView textViewParentList;
     private Button buttonSave;
     private Button buttonDismiss;
-    private CheckBox checkBoxCalendarEvent;
-    private CheckBox checkBoxIsTemplate;
-    private CheckBox checkBoxIsPrioritized;
+    //private CheckBox checkBoxCalendarEvent;
+    //private CheckBox checkBoxIsTemplate;
+    //private CheckBox checkBoxIsPrioritized;
+    private SeekBar seekBarEnergy;
+    private SeekBar seekBarAnxiety;
+    private SeekBar seekBarStress;
+    private SeekBar seekBarMood;
     private String category;
     private LocalTime targetTime;
     private LocalDate targetDate;
-    private ActionAdapter actionAdapter;
+    //private ActionAdapter actionAdapter;
+    private ItemSettingAdapter itemSettingAdapter;
     private RecyclerView actionRecycler;
-    private final boolean isCalenderItem;
-    private Action currentAction;
+    private ItemSetting currentItemSetting;
+    //private Action currentAction;
     public static boolean VERBOSE = false;
     private final Item parent;
     private Item newItem;
+    private Mental mental;
     public interface Callback{
         void onAddItem(Item item);
     }
-
     private Callback listener;
 
     public AddItemDialog(Item parent, boolean isCalenderItem) {
@@ -68,7 +78,15 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         assert  parent != null;
         this.parent = parent;
         this.newItem = createNewItem(parent);
-        this.isCalenderItem = isCalenderItem;
+        this.newItem.setTargetDate(LocalDate.now());
+        newItem.setMental(new Mental());
+    }
+    public AddItemDialog(Item parent, LocalDate targetDate){
+        assert parent != null;
+        this.parent = parent;
+        this.newItem = createNewItem(parent);
+        this.newItem.setTargetDate(targetDate);
+        newItem.setMental(new Mental());
 
     }
 
@@ -78,9 +96,8 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         log("AddItemDialog.onCreateView(...)");
         View view = inflater.inflate(R.layout.add_item_dialog, container, false);
         initComponents(view);
-        initActionRecycler();
+        initItemSettingsRecycler();
         initListeners();
-        //initSwipe();
         initUserInterface(parent);
         return view;
     }
@@ -145,58 +162,11 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         if( VERBOSE) log("...getItem()");
         newItem.setHeading(editText_heading.getText().toString());
         newItem.setTags(parent.getTags());
-        newItem.setTargetDate(targetDate);
-        if(isCalenderItem) {
-            log("...item isCalenderItem, setting isCalenderItem to true");
-            newItem.setIsCalenderItem(true);
-        }
-        if( checkBoxIsTemplate.isChecked()){
-            newItem.setIsTemplate(true);
-        }
-        newItem.setPriority( checkBoxIsPrioritized.isChecked() ? 1:0);
+        //newItem.setTargetDate(targetDate);
         return newItem;
 
     }
-    private void initActionRecycler(){
-        log("...initActionRecycler()");
-        //ActionAdapter.VERBOSE = true;
-        actionAdapter = new ActionAdapter(getActionList(), action -> {
-            log("...onAction(Action)", action.getTitle());
-            log("...type", action.getType().toString());
-            currentAction = action;
-            switch (action.getType()){
-                case NOTIFICATION:
-                    showNotificationDialog();
-                    break;
-                case CATEGORY:
-                    showCategoryDialog();
-                    break;
-                case TIME:
-                    showTimeDialog();
-                    break;
-                case REPEAT:
-                    showRepeatDialog();
-                    break;
-                case DATE:
-                    showDateDialog();
-                    break;
-                case DURATION:
-                    showDurationDialog();
-                    break;
-                case MENTAL:
-                    showMentalDialog();
-                    break;
-                case COLOR:
-                    showColorDialog();
-            }
-        });
 
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        actionRecycler.setLayoutManager(layoutManager);
-        actionRecycler.setItemAnimator(new DefaultItemAnimator());
-        actionRecycler.setAdapter(actionAdapter);
-        actionAdapter.notifyDataSetChanged();
-    }
     private void initComponents(View view){
         if( VERBOSE) log("...initComponents(View)");
         editText_heading = view.findViewById(R.id.addItemDialog_heading);
@@ -204,24 +174,143 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         buttonDismiss = view.findViewById(R.id.addItemDialog_buttonDismiss);
         actionRecycler = view.findViewById(R.id.addItemDialog_actionRecycler);
         textViewParentList = view.findViewById(R.id.addItemDialog_parentList);
-        checkBoxCalendarEvent = view.findViewById(R.id.addItemDialog_checkBoxCalendarEvent);
-        checkBoxIsTemplate = view.findViewById(R.id.addItemDialog_checkBoxIsTemplate);
-        checkBoxIsPrioritized = view.findViewById(R.id.addItemDialog_checkBoxIsPrioritized);
+        seekBarAnxiety = view.findViewById(R.id.addItemDialog_seekBarAnxiety);
+        seekBarEnergy = view.findViewById(R.id.addItemDialog_seekBarEnergy);
+        seekBarMood = view.findViewById(R.id.addItemDialog_seekBarMood);
+        seekBarStress = view.findViewById(R.id.addItemDialog_seekBarStress);
+    }
+    private void initItemSettingsRecycler(){
+        log("...initItemSettingsRecycler()");
+        log("....initItemSettingRecycler");
+        ItemSessionViewModel itemSessionViewModel = new ViewModelProvider(requireActivity()).get(ItemSessionViewModel.class);
+        itemSettingAdapter = new ItemSettingAdapter(itemSessionViewModel.getItemSettings(newItem), new ItemSettingAdapter.Listener() {
+            @Override
+            public void onClick(ItemSetting setting) {
+                log("...onClick(ItemSetting)", setting.toString());
+                currentItemSetting = setting;
+                switch (setting.getKey()){
+                    case IS_CALENDAR_ITEM:
+                        newItem.setIsCalenderItem(setting.isChecked());
+                        break;
+                    case CATEGORY:
+                        showCategoryDialog();
+                        break;
+                    case COLOR:
+                        showColorDialog();
+                        break;
+                    case NOTIFICATION:
+                        showNotificationDialog();
+                        break;
+                    case REPEAT:
+                        showRepeatDialog();
+                        break;
+                    case TIME:
+                        showTimeDialog();
+                        break;
+                    case DATE:
+                        showDateDialog();
+                        break;
+                    case DONE:
+                        newItem.setState(setting.isChecked()? State.DONE: State.TODO);
+                        break;
+                    case TEMPLATE:
+                        newItem.setIsTemplate(setting.isChecked());
+                        break;
+                    case PRIORITIZED:
+                        newItem.setPriority(1);
+                        break;
+                    case TAGS:
+                        //showTagsDialog();
+                        break;
+
+                }
+            }
+        });
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        actionRecycler.setLayoutManager(layoutManager);
+        actionRecycler.setItemAnimator(new DefaultItemAnimator());
+        actionRecycler.setAdapter(itemSettingAdapter);
+        itemSettingAdapter.notifyDataSetChanged();
+
     }
 
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
         buttonSave.setOnClickListener(view1 -> {
-            log("...saveItem()");
+            log("...buttonSave.onClick()");
             if( !validateInput()){
                 return;
             }
             Item item = getItem();
-            log(item);
+            if( VERBOSE)log(item);
             listener.onAddItem(item);
             dismiss();
         });
         buttonDismiss.setOnClickListener(view->dismiss());
+        seekBarAnxiety.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        seekBarEnergy.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        seekBarMood.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        seekBarStress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
     }
 
 
@@ -229,7 +318,7 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         log("...initUserInterface(Item)");
         String strParentList = String.format(Locale.getDefault(), "%s: %s",getString(R.string.add_to_list), parentItem.getHeading());
         textViewParentList.setText(strParentList);
-        checkBoxCalendarEvent.setChecked(isCalenderItem);
+        //checkBoxCalendarEvent.setChecked(isCalenderItem);
     }
 
     @Override
@@ -254,9 +343,9 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         ChooseCategoryDialog dialog = new ChooseCategoryDialog(parent.getCategory());
         dialog.setCallback(category -> {
             log("...onSelected(String category)", category);
-            currentAction.setTitle(category);
+            currentItemSetting.setValue(category);
             newItem.setCategory(category);
-            actionAdapter.notifyDataSetChanged();
+            itemSettingAdapter.notifyDataSetChanged();
         });
         dialog.show(getChildFragmentManager(), "choose category");
     }
@@ -270,10 +359,10 @@ public class AddItemDialog extends BottomSheetDialogFragment {
                 .setPositiveButton(getString(R.string.ok),
                         (ColorEnvelopeListener) (envelope, fromUser) -> {
                             log("...onColorSelected(ColorEnvelope, boolean)");
-                            currentAction.setColor(envelope.getColor());
-                            currentAction.setValue(String.valueOf(envelope.getColor()));
+/*                            currentAction.setColor(envelope.getColor());
+                            currentAction.setValue(String.valueOf(envelope.getColor()));*/
                             newItem.setColor(envelope.getColor());
-                            actionAdapter.notifyDataSetChanged();
+                            itemSettingAdapter.notifyDataSetChanged();
                         })
                 .setNegativeButton(getString(R.string.dismiss),
                         (dialogInterface, i) -> dialogInterface.dismiss())
@@ -289,8 +378,8 @@ public class AddItemDialog extends BottomSheetDialogFragment {
             log("DatePickerDialog.onDateSet(...)");
             targetDate = LocalDate.of(year, month + 1, dayOfMonth);
             newItem.setTargetDate(targetDate);
-            currentAction.setValue(targetDate.toString());
-            actionAdapter.notifyDataSetChanged();
+            currentItemSetting.setValue(targetDate.toString());
+            itemSettingAdapter.notifyDataSetChanged();
         });
         datePickerDialog.show();
     }
@@ -300,8 +389,8 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         dialog.setCallback(duration -> {
             log("...onDurationDialog(Duration)", duration.getSeconds());
             newItem.setEstimatedDuration(duration.getSeconds());
-            currentAction.setTitle(Converter.formatSecondsWithHours(duration.getSeconds()));
-            actionAdapter.notifyDataSetChanged();
+            currentItemSetting.setValue(Converter.formatSecondsWithHours(duration.getSeconds()));
+            itemSettingAdapter.notifyDataSetChanged();
         });
         dialog.show(getChildFragmentManager(), "duration");
 
@@ -327,9 +416,9 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         NotificationDialog dialog = new NotificationDialog(parent);
         dialog.setListener(notification -> {
             log("...onNotification(Notification)", notification.toString());
-            currentAction.setValue(notification.toString());
+            currentItemSetting.setValue(notification.toString());
             newItem.setNotification(notification);
-            actionAdapter.notifyDataSetChanged();
+            itemSettingAdapter.notifyDataSetChanged();
         });
         dialog.show(getChildFragmentManager(), "notification ");
 
@@ -339,9 +428,9 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         RepeatDialog dialog = new RepeatDialog();
         dialog.setCallback(repeat -> {
             log("...onRepeat(Unit)", repeat.toString());
-            currentAction.setTitle(repeat.toString());
+            currentItemSetting.setValue(repeat.toString());
             newItem.setRepeat(repeat);
-            actionAdapter.notifyDataSetChanged();
+            itemSettingAdapter.notifyDataSetChanged();
         });
         dialog.show(getChildFragmentManager(), "repeat");
     }
@@ -353,8 +442,8 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         TimePickerDialog timePicker = new TimePickerDialog(getContext(), (view, hourOfDay, minute) -> {
             targetTime = LocalTime.of(hourOfDay, minute);
             newItem.setTargetTime(targetTime);
-            currentAction.setValue(targetTime.toString());
-            actionAdapter.notifyDataSetChanged();
+            currentItemSetting.setValue(targetTime.toString());
+            itemSettingAdapter.notifyDataSetChanged();
         }, hour, minutes, true);
         timePicker.show();
     }

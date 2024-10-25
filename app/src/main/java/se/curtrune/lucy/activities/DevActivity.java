@@ -11,7 +11,9 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +55,8 @@ public class DevActivity extends AppCompatActivity {
     private TextView textViewFirstInstalled;
     private TextView textViewUpdated;
     private TextView textViewModel;
+    private EditText editTextSql;
+    private Button buttonRunSQL;
     private CheckBox checkBoxDev;
 
 
@@ -63,12 +67,12 @@ public class DevActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dev_activity);
-        initCatchAllExceptionsHandler();
+        //initCatchAllExceptionsHandler();
         setTitle("lucinda");
         log("DevActivity.onCreate(Bundle)");
         printSystemInfo();
         lucinda = Lucinda.getInstance(this);
-        if (!lucinda.isInitialized(this)) {
+/*        if (!lucinda.isInitialized(this)) {
             log("...lucinda not initialized");
             try {
                 lucinda.initialize(this);
@@ -78,12 +82,13 @@ public class DevActivity extends AppCompatActivity {
             }
         } else {
             log("Lucinda is initialized!");
-        }
+        }*/
         initComponents();
         initListeners();
-        checkNotificationPermission();
-        setUserInterface();
-        NotificationsWorker.createNotificationChannel(this);
+        clearShowInCalendar();
+        //checkNotificationPermission();
+        //setUserInterface();
+        //NotificationsWorker.createNotificationChannel(this);
         openDB();
     }
     private void initCatchAllExceptionsHandler(){
@@ -108,13 +113,17 @@ public class DevActivity extends AppCompatActivity {
         });
     }
 
-    private void checkNotificationPermission() {
-        log("...checkNotificationPermission()");
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-            log("PERMISSION_GRANTED");
-        } else {
-            log("PERMISSION_DENIED");
+    private void clearShowInCalendar(){
+        log("...clearShowInCalendar()");
+        String queery = "UPDATE items set isCalenderItem = 0";
+        try(LocalDB db = new LocalDB(this)){
+            db.executeSQL(queery);
+            Toast.makeText(this, "items updated", Toast.LENGTH_LONG).show();
+        }catch (Exception e){
+            e.printStackTrace();
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
         }
+
     }
 
     private void createEconomyTables() {
@@ -131,6 +140,15 @@ public class DevActivity extends AppCompatActivity {
             db.executeSQL(queery);
         }
     }
+    private void executeSQL(){
+        log("...executeSQL()");
+        String queery = editTextSql.getText().toString();
+        if( queery.isEmpty()){
+            Toast.makeText(this, "a sql statement pleast", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+    }
 
     private void initComponents() {
         if( VERBOSE) log("...initComponents()");
@@ -144,6 +162,8 @@ public class DevActivity extends AppCompatActivity {
         textViewModel = findViewById(R.id.devActivity_model);
         textViewUpdated = findViewById(R.id.devActivity_updated);
         checkBoxDev = findViewById(R.id.devActivity_checkBoxDev);
+        buttonRunSQL = findViewById(R.id.devActivity_buttonRunSQL);
+        editTextSql = findViewById(R.id.devActivity_sql);
     }
 
     private void initListeners() {
@@ -155,6 +175,7 @@ public class DevActivity extends AppCompatActivity {
             User.setDevMode(isChecked,this );
             Lucinda.Dev = isChecked;
         });
+        buttonRunSQL.setOnClickListener(view->executeSQL());
     }
     private void printSystemInfo(){
         log("...printSystemInfo()");

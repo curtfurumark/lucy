@@ -88,6 +88,9 @@ public class MentalWorker {
     public static int getEnergy(LocalDate date, Context context){
         if( VERBOSE) log("MentalWorker.getEnergy(LocalDate)", date.toString());
         List<Mental> mentals = getMentals(date,false, true,  context);
+        if( VERBOSE){
+            mentals.forEach(System.out::println);
+        }
         return mentals.stream().mapToInt(Mental::getEnergy).sum();
     }
 

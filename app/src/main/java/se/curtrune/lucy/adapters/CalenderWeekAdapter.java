@@ -48,9 +48,8 @@ public class CalenderWeekAdapter extends RecyclerView.Adapter<CalenderWeekAdapte
     @Override
     public void onBindViewHolder(@NonNull ParentHolder holder, int position) {
         if( VERBOSE) log("CalenderWeekAdapter.onBindViewHolder(...) position", position);
-        CalenderDate dateItem =  calenderDates.get(position);
-        holder.textViewDate.setText(dateItem.getDate().format(DateTimeFormatter.ofPattern("E d")));
-        //LinearLayoutManager linearLayoutManager = new LinearLayoutManager(holder.childRecycler.getContext(), LinearLayoutManager.HORIZONTAL, false);
+        CalenderDate dateItem = getCalendarDate(position);
+        holder.textViewDate.setText(dateItem.getDate().format(DateTimeFormatter.ofPattern("d E")));
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(holder.childRecycler.getContext());
         linearLayoutManager.setInitialPrefetchItemCount(dateItem.getItems().size());
         dateItem.getItems().sort(Comparator.comparingLong(Item::compareTargetTime));
@@ -81,6 +80,29 @@ public class CalenderWeekAdapter extends RecyclerView.Adapter<CalenderWeekAdapte
         }
         return null;
     }
+    private CalenderDate getCalendarDate(int position){
+        switch (position){
+            case 0:
+                return calenderDates.get(0);
+            case 1:
+                return calenderDates.get(4);
+            case 2:
+                return calenderDates.get(1);
+            case 3:
+                return calenderDates.get(5);
+            case 4:
+                return calenderDates.get(2);
+            case 5:
+                return calenderDates.get(6);
+            case 6:
+                return calenderDates.get(3);
+        }
+        if(position % 2 == 0) {
+            return calenderDates.get(position / 2);
+        } else {
+            return calenderDates.get(calenderDates.size() / 2 + position / 2);
+        }
+    }
     @Override
     public int getItemCount() {
         return calenderDates.size();
@@ -97,12 +119,12 @@ public class CalenderWeekAdapter extends RecyclerView.Adapter<CalenderWeekAdapte
         private final ConstraintLayout layout;
 
         public ParentHolder(@NonNull View itemView) {
-            super(itemView);
-            //log("ParentHolder(View)");
+            super(itemView);;
             textViewDate = itemView.findViewById(R.id.calenderWeekAdapter_textViewDate);
             childRecycler = itemView.findViewById(R.id.calenderWeekAdapter_recycler);
             layout = itemView.findViewById(R.id.calenderWeekAdapter_layout);
-            layout.setOnClickListener(view->listener.onCalenderDateClick(calenderDates.get(getAdapterPosition())));
+            //layout.setOnClickListener(view->listener.onCalenderDateClick(calenderDates.get(getAdapterPosition())));
+            layout.setOnClickListener(view->listener.onCalenderDateClick(getCalendarDate(getAdapterPosition())));
         }
     }
 }

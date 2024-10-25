@@ -183,8 +183,8 @@ public class EditItemDialog extends BottomSheetDialogFragment {
         buttonDismiss = view.findViewById(R.id.addItemDialog_buttonDismiss);
         actionRecycler = view.findViewById(R.id.addItemDialog_actionRecycler);
         textViewParentList = view.findViewById(R.id.addItemDialog_parentList);
-        checkBoxCalendarEvent = view.findViewById(R.id.addItemDialog_checkBoxCalendarEvent);
-        checkBoxIsTemplate = view.findViewById(R.id.addItemDialog_checkBoxIsTemplate);
+        //checkBoxCalendarEvent = view.findViewById(R.id.addItemDialog_checkBoxCalendarEvent);
+        //checkBoxIsTemplate = view.findViewById(R.id.addItemDialog_checkBoxIsTemplate);
     }
     private void initDefaults(){
         log("...initDefaults()");

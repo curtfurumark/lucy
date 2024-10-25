@@ -18,21 +18,27 @@ import se.curtrune.lucy.classes.calender.CalenderMonth;
 import se.curtrune.lucy.workers.CalenderWorker;
 
 public class CalendarMonthViewModel extends ViewModel {
-    private MutableLiveData< List<CalenderDate>> mutableCalendarDates;
+    private MutableLiveData< List<CalenderDate>> mutableCalendarDates = new MutableLiveData<>();
     private List<CalenderDate> calenderDates;
     private YearMonth yearMonth;
 
-    public void setYearMonth(YearMonth yearMonth) {
+    public void setYearMonth(YearMonth yearMonth, Context context) {
+        log("CalenderMonthViewModel(YearMonth, Context)", yearMonth.toString());
         this.yearMonth = yearMonth;
+        calenderDates = CalenderWorker.getCalenderDates(yearMonth, context);
+        mutableCalendarDates.setValue(calenderDates);
     }
 
     public void add(Item item) {
-        log("...add(Item)");
+        log("CalendarMonthViewModel.add(Item)", item.getHeading());
         CalenderDate calenderDate = getCalendarDate(item.getTargetDate());
+        if(calenderDate == null){
+            log("ERROR, did not find calenderDate for", item.getTargetDate().toString());
+            return;
+        }
         calenderDate.add(item);
     }
     private CalenderDate getCalendarDate(LocalDate date){
-        List<CalenderDate> calenderDates = mutableCalendarDates.getValue();
         for(int i = 0; i < calenderDates.size(); i++){
             if( calenderDates.get(i).getDate().equals(date)){
                 return calenderDates.get(i);

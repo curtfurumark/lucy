@@ -33,6 +33,7 @@ public class CalenderWorker {
     public static final int COLOR_PLUS_3 = Color.rgb(9, 120, 5);
     public static final int COLOR_PLUS_4 = Color.rgb(9, 120, 5);
     public static final int COLOR_PLUS_5 = Color.rgb(9, 120, 5);
+    public static boolean VERBOSE = false;
     public static List<CalenderDate> getAppointments(LocalDate firstDate, LocalDate lastDate, Context context) {
         log("CalenderWorker.getAppointments(LocalDate, LocalDate, Context)");
         List<CalenderDate> calenderDates = new ArrayList<>();
@@ -46,14 +47,21 @@ public class CalenderWorker {
         }
         return calenderDates;
     }
+
+    /**
+     * this one is supposed to return items to be shown in week or month calender
+     * @param firstDate, i wonder
+     * @param lastDate, your guess is as good as mine
+     * @param context, i need context, we all need context, without context we are nothing
+     * @return a list of appointments as calendarDates
+     */
     public static List<CalenderDate> getCalenderDates(LocalDate firstDate, LocalDate lastDate, Context context) {
-        log("...getCalenderDates()");
+        log("CalendarWorker.getCalenderDates(LocalDate, LocalDate, Context)");
         List<CalenderDate> calenderDates = new ArrayList<>();
         LocalDate currentDate = firstDate;
         while (currentDate.isBefore(lastDate) || currentDate.equals(lastDate)) {
             CalenderDate calenderDate = new CalenderDate(currentDate);
             List<Item> items = ItemsWorker.selectCalenderItems(currentDate, context);
-            //List<Item> items = ItemsWorker.selectItems(Type.APPOINTMENT, )
             calenderDate.setItems(items);
             calenderDates.add(calenderDate);
             currentDate = currentDate.plusDays(1);
@@ -61,7 +69,7 @@ public class CalenderWorker {
         return calenderDates;
     }
     public  static List<CalenderDate> getCalenderDates(Type type, LocalDate firstDate, LocalDate lastDate,Context context){
-        log("...getCalenderDates(Type, LocalDate, LocalDate, Context");
+        log("CalenderWorker.getCalenderDates(Type, LocalDate, LocalDate, Context");
         List<CalenderDate> calenderDates = new ArrayList<>();
         LocalDate currentDate = firstDate;
         while (currentDate.isBefore(lastDate) || currentDate.equals(lastDate)) {
@@ -73,16 +81,10 @@ public class CalenderWorker {
         }
         return calenderDates;
     }
-    public static List<CalenderDate> getCalenderDates(Week week,Context context){
-        log("CalendarWorker.getCalenderDates(Week)");
-        return getCalenderDates(week.getFirstDateOfWeek(), week.getLastDateOfWeek(), context);
-
-    }
 
     public static List<CalenderDate> getEvents(Week week, Context context) {
         log("CalendarWorker.getEvents(Week, Context)");
-        //List<Item> items = ItemsWorker.selectEvents(week, context);
-        return getCalenderDates(week, context);
+        return getCalenderDates(week.getFirstDateOfWeek(),week.getLastDateOfWeek(), context);
     }
 
     private CalenderMonth getCalenderMonth(YearMonth yearMonth, Context context){
@@ -91,7 +93,7 @@ public class CalenderWorker {
         calenderMonth.setCalenderDates(getAppointments(calenderMonth.getFirstDate(), calenderMonth.getLastDate(), context));
         return calenderMonth;
     }
-    private static int getEnergyColor(int energy){
+    public static int getEnergyColor(int energy){
         if( energy < - 5){
             return COLOR_MINUS_5;
         }
@@ -147,32 +149,26 @@ public class CalenderWorker {
         return date.get(woy);
 
     }
-
-
     public static List<CalenderDate> getCalenderDates(YearMonth yearMonth, Context context) {
-        log("...getCalenderDates(YearMonth)", yearMonth.toString());
+        log("CalenderWorker.getCalenderDates(YearMonth, Context)", yearMonth.toString());
         List<CalenderDate> calenderDates = new ArrayList<>();
-        //yearMonth.atDay(1)
-        log("...yearMonth", yearMonth.toString());
-        //LocalDate firstDateOfMonth =  date.withDayOfMonth( 1);
         LocalDate firstDateOfMonth  = yearMonth.atDay(1);
-        log("...firstDateOfMonth", firstDateOfMonth.toString());
+        //log("...firstDateOfMonth", firstDateOfMonth.toString());
         int daysInMonth = yearMonth.lengthOfMonth();
-        log("...daysInMonth", daysInMonth);
-        //List<Item> itemsMonth = ItemsWorker.selectCalenderItems(yearMonth, getContext());
+        //log("...daysInMonth", daysInMonth);
         List<Item> itemsMonth = ItemsWorker.selectAppointments(yearMonth, context);
-        log("...number of events this month", itemsMonth.size());
-        itemsMonth.forEach(System.out::println);
+        if( VERBOSE) {
+            log("...number of events this month", itemsMonth.size());
+            itemsMonth.forEach(System.out::println);
+        }
         LocalDate currentDate = firstDateOfMonth;
-        //int numberDays = daysInMonth;
         int firstDate = firstDateOfMonth.getDayOfWeek().getValue();
         int offset = firstDate;
         currentDate = currentDate.minusDays(offset - 1);
-        log("firstDate", firstDate);
+        if(VERBOSE) log("firstDate", firstDate);
         for( int i = 1; i <= 42; i++){
             CalenderDate calenderDate = new CalenderDate();
             calenderDate.setDate(currentDate);
-            //calenderDate.setItems(new ArrayList<>());
             LocalDate finalCurrentDate = currentDate;
             calenderDate.setItems(itemsMonth.stream().filter(item -> item.isDate(finalCurrentDate)).collect(Collectors.toList()));
             calenderDates.add(calenderDate);

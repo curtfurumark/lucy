@@ -77,4 +77,18 @@
         android:layout_height="wrap_content"
         android:text="model" />
 
+    <EditText
+        android:id="@+id/devActivity_sql"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="text"
+        android:text="Name" />
+
+    <Button
+        android:id="@+id/devActivity_buttonRunSQL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="run sql" />
+
 </LinearLayout>

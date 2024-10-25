@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,26 +31,28 @@ import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Locale;
+import java.util.Objects;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.adapters.ActionAdapter;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.User;
-import se.curtrune.lucy.classes.Action;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.MentalStats;
 import se.curtrune.lucy.classes.State;
-import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.dialogs.ChooseCategoryDialog;
 import se.curtrune.lucy.dialogs.DurationDialog;
 import se.curtrune.lucy.dialogs.MentalDialog;
 import se.curtrune.lucy.dialogs.NotificationDialog;
 import se.curtrune.lucy.dialogs.RepeatDialog;
+import se.curtrune.lucy.item_settings.ItemSetting;
+import se.curtrune.lucy.item_settings.ItemSettingAdapter;
 import se.curtrune.lucy.util.Converter;
 import se.curtrune.lucy.util.Kronos;
+import se.curtrune.lucy.viewmodel.ItemSessionViewModel;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
+import se.curtrune.lucy.viewmodel.MentalViewModel;
 import se.curtrune.lucy.workers.DurationWorker;
 import se.curtrune.lucy.workers.ItemsWorker;
 import se.curtrune.lucy.workers.MentalWorker;
@@ -62,8 +65,6 @@ import se.curtrune.lucy.workers.StatisticsWorker;
  */
 public class ItemSessionFragment extends Fragment implements Kronos.Callback{
 
-    private TextView textViewEstimatedTime;
-    private TextView textViewEstimatedEnergy;
     private EditText editTextHeading;
     private  TextView textViewType;
     private TextView textViewDuration;
@@ -75,24 +76,35 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
     private TextView textViewHasChild;
     private TextView textViewTags;
     private TextView textViewColor;
-    private CheckBox checkBoxTemplate;
     private LinearLayout layoutDev;
     private Button buttonSave;
-    private CheckBox checkBoxIsCalenderItem;
     private Button buttonTimer;
     private CheckBox checkBoxIsDone;
-    private Action currentAction;
-    private CheckBox checkBoxPrioritized;
-    private CheckBox checkBoxAppointment;
-    private ActionAdapter actionAdapter;
+    //private Action currentAction;
+    private ItemSetting currentItemSetting;
+    private SeekBar seekBarEnergy;
+    private SeekBar seekBarAnxiety;
+    private SeekBar seekBarStress;
+    private SeekBar seekBarMood;
+    private int startEnergy;
+    private int endEnergy;
+    private int startAnxiety;
+    private int endAnxiety;
+    private int startMood;
+    private int endMood;
+    private int startStress;
+    private int endStress;
     private RecyclerView actionRecycler;
     private FloatingActionButton buttonAddItem;
     private Item currentItem;
     private LocalTime targetTime;
     private Kronos kronos;
-    private LucindaViewModel viewModel;
+    private LucindaViewModel lucindaViewModel;
+    private ItemSessionViewModel itemSessionViewModel;
+    private MentalViewModel mentalViewModel;
     private long duration;
     public static boolean VERBOSE = false;
+    private ItemSettingAdapter itemSettingAdapter;
 
     public ItemSessionFragment() {
         // Required empty public constructor
@@ -130,63 +142,86 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         initComponents(view);
         initListeners();
         initKronos();
-        initActionRecycler();
         initViewModel();
+        //initActionRecycler();
+        initItemSettingRecycler();
+        initMental();
         setUserInterface(currentItem);
         return view;
     }
-    private void goToCalendar(){
+/*    private void goToCalendar(){
         log("...goToCalendar()");
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.navigationDrawer_frameContainer, new CalenderDateFragment()).commit();
+    }*/
+    private void initItemSettingRecycler(){
+        log("....initItemSettingRecycler");
+        itemSettingAdapter = new ItemSettingAdapter(itemSessionViewModel.getItemSettings(currentItem), new ItemSettingAdapter.Listener() {
+            @Override
+            public void onClick(ItemSetting setting) {
+                log("...onClick(ItemSetting)", setting.toString());
+                currentItemSetting = setting;
+                switch (setting.getKey()){
+                    case APPOINTMENT:
+                        itemSessionViewModel.setIsEvent(setting.isChecked(), getContext());
+                        break;
+                    case CATEGORY:
+                        showCategoryDialog();
+                        break;
+                    case COLOR:
+                        showColorDialog();
+                        break;
+                    case NOTIFICATION:
+                        showNotificationDialog();
+                        break;
+                    case REPEAT:
+                        showRepeatDialog();
+                        break;
+                    case TIME:
+                        showTimeDialog();
+                        break;
+                    case DATE:
+                        showDateDialog();
+                        break;
+                    case DONE:
+                        currentItem.setState(setting.isChecked()? State.DONE: State.TODO);
+                        break;
+                    case TEMPLATE:
+                        currentItem.setIsTemplate(setting.isChecked());
+                        break;
+                    case PRIORITIZED:
+                        currentItem.setPriority(1);
+                        break;
+                    case TAGS:
+                        showTagsDialog();
+                        break;
 
-    }
-    private void initActionRecycler(){
-        if( VERBOSE) log("...initActionRecycler()");
-        actionAdapter = new ActionAdapter(ActionAdapter.getActionList(currentItem, getContext()), action -> {
-            log("...onAction(Action)", action.getTitle());
-            log("...type", action.getType().toString());
-            currentAction = action;
-            switch (action.getType()){
-                case NOTIFICATION:
-                    showNotificationDialog();
-                    break;
-                case CATEGORY:
-                    showCategoryDialog();
-                    break;
-                case TIME:
-                    showTimeDialog();
-                    break;
-                case REPEAT:
-                    showRepeatDialog();
-                    break;
-                case DATE:
-                    showDateDialog();
-                    break;
-                case DURATION:
-                    showDurationDialog();
-                    break;
-                case MENTAL:
-                    showMentalDialog();
-                    break;
-                case COLOR:
-                    showColorDialog();
-                    break;
+                }
             }
         });
-
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         actionRecycler.setLayoutManager(layoutManager);
         actionRecycler.setItemAnimator(new DefaultItemAnimator());
-        actionRecycler.setAdapter(actionAdapter);
-        actionAdapter.notifyDataSetChanged();
+        actionRecycler.setAdapter(itemSettingAdapter);
+        itemSettingAdapter.notifyDataSetChanged();
     }
     private void initKronos(){
         if( VERBOSE) log("...initKronos()");
         kronos = Kronos.getInstance(this);
     }
+    private void initMental(){
+        log("...initMental()");
+        seekBarStress.setProgress(itemSessionViewModel.getStress());
+        seekBarMood.setProgress(itemSessionViewModel.getMood());
+        seekBarEnergy.setProgress(itemSessionViewModel.getEnergy());
+        seekBarAnxiety.setProgress(itemSessionViewModel.getAnxiety());
+
+    }
     private void initViewModel(){
         if( VERBOSE) log("...initViewModel()");
-        viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
+        lucindaViewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
+        itemSessionViewModel = new ViewModelProvider(requireActivity()).get(ItemSessionViewModel.class);
+        itemSessionViewModel.init(currentItem);
+        mentalViewModel = new ViewModelProvider(requireActivity()).get(MentalViewModel.class);
     }
 
     @Override
@@ -218,26 +253,24 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
             log("DatePickerDialog.onDateSet(...)");
             LocalDate targetDate = LocalDate.of(year, month +1, dayOfMonth);
             log("...date", targetDate.toString());
-            currentAction.setValue(targetDate.toString());
+            currentItemSetting.setValue(targetDate.toString());
             currentItem.setTargetDate(targetDate);
-            actionAdapter.notifyDataSetChanged();
+            itemSessionViewModel.update(currentItem, getContext());
+            itemSettingAdapter.notifyDataSetChanged();
         });
         datePickerDialog.show();
     }
 
     private void initComponents(View view){
         if( VERBOSE) log("...initComponents()");
-        textViewEstimatedTime = view.findViewById(R.id.itemSessionFragment_estimatedTime);
+        //textViewEstimatedTime = view.findViewById(R.id.itemSessionFragment_estimatedTime);
         editTextHeading = view.findViewById(R.id.itemSessionFragment_heading);
-        checkBoxTemplate = view.findViewById(R.id.itemSessionFragment_checkboxTemplate);
-        checkBoxPrioritized = view.findViewById(R.id.itemSessionFragment_checkboxPrioritized);
         checkBoxIsDone = view.findViewById(R.id.itemSessionFragment_checkboxIsDone);
         actionRecycler = view.findViewById(R.id.itemSessionFragment_actionRecycler);
         buttonTimer = view.findViewById(R.id.itemSessionFragment_buttonTimer);
         textViewDuration = view.findViewById(R.id.itemSessionFragment_textViewDuration);
-        checkBoxIsCalenderItem = view.findViewById(R.id.itemSessionFragment_checkboxIsCalendarItem);
+        //checkBoxIsCalenderItem = view.findViewById(R.id.itemSessionFragment_checkboxIsCalendarItem);
         buttonSave = view.findViewById(R.id.itemSessionFragment_buttonSave);
-        checkBoxAppointment = view.findViewById(R.id.itemSessionFragment_checkboxAppointment);
         textViewID = view.findViewById(R.id.itemSessionFragment_ID);
         textViewParentID = view.findViewById(R.id.itemSessionFragment_parentID);
         textViewHasChild = view.findViewById(R.id.itemSessionFragment_hasChild);
@@ -247,53 +280,138 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         textViewType = view.findViewById(R.id.itemSessionFragment_type);
         textViewTags = view.findViewById(R.id.itemSessionFragment_tags);
         textViewRepeat = view.findViewById(R.id.itemSessionFragment_repeat);
-        textViewEstimatedEnergy = view.findViewById(R.id.itemSessionFragment_estimatedEnergy);
         buttonAddItem = view.findViewById(R.id.itemSessionFragment_buttonAdd);
         textViewColor = view.findViewById(R.id.itemSessionFragment_color);
+        seekBarEnergy = view.findViewById(R.id.itemSessionFragment_seekBarEnergy);
+        seekBarStress = view.findViewById(R.id.itemSessionFragment_seekBarStress);
+        seekBarAnxiety = view.findViewById(R.id.itemSessionFragment_seekBarAnxiety);
+        seekBarMood = view.findViewById(R.id.itemSessionFragment_seekBarMood);
     }
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
-        textViewEstimatedTime.setOnClickListener(view->goToCalendar());
         buttonTimer.setOnClickListener(view->toggleTimer());
         buttonSave.setOnClickListener(view->updateItem());
         textViewDuration.setOnClickListener(view -> showDurationDialogActual());
         buttonAddItem.setOnClickListener(view -> showAddChildItemDialog());
+        seekBarEnergy.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                log("....seekbar onProgressChanged()", progress);
+                if( fromUser) {
+                    lucindaViewModel.setEnergy(progress - 5);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                startEnergy = seekBar.getProgress();
+                log("...startEnergy", startEnergy);
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                log("...onStopTrackingTouch(SeekBar)", seekBar.getProgress());
+                endEnergy = seekBar.getProgress();
+                int energyChange = endEnergy - startEnergy;
+                log("energy changed", energyChange);
+                itemSessionViewModel.updateEnergy(energyChange, getContext());
+                //lucindaViewModel.updateEnergy(seekBar.getProgress(), getContext());
+
+            }
+        });
+        seekBarAnxiety.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if(fromUser) {
+                    //lucindaViewModel.estimateAnxiety(progress - 5, getContext());
+                    lucindaViewModel.setAnxiety(progress);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                log("seekBarAnxiety on startTracking(SeekBar)", seekBar.getProgress());
+                startAnxiety = seekBar.getProgress();
+                //lucindaViewModel.setAnxiety(seekBar.getProgress());
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                log("seekBarAnxiety.onStopTrackingTouch(SeekBar)", seekBar.getProgress());
+                endAnxiety = seekBar.getProgress();
+                int changeAnxiety = endAnxiety - startAnxiety;
+                itemSessionViewModel.updateAnxiety(changeAnxiety, getContext());
+
+            }
+        });
+        seekBarMood.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if(fromUser){
+                    lucindaViewModel.estimateMood(progress -5, getContext());
+                }
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                itemSessionViewModel.updateMood(seekBar.getProgress(), getContext());
+            }
+        });
+        seekBarStress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if(fromUser){
+                    lucindaViewModel.estimateStress( progress - 1, getContext());
+                }
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                itemSessionViewModel.updateStress(seekBar.getProgress(), getContext());
+            }
+        });
     }
     private void returnToPreviousFragment(){
         log("...returnToPreviousFragment()");
-        //this.requireActivity().getSupportFragmentManager().popBackStackImmediate();
-        //requireActivity().getFragmentManager().
         getParentFragmentManager().popBackStackImmediate();
+
     }
-    private void setEstimatedTime(Item item){
+/*    private void setEstimatedTime(Item item){
         if( VERBOSE)log("...setEstimatedTime()");
         long estimatedDuration = DurationWorker.getEstimatedDuration(item, getContext());
         String stringEstimatedDuration = String.format(Locale.getDefault(), "estimated duration %s", Converter.formatSecondsWithHours(estimatedDuration));
         log("..." , stringEstimatedDuration);
-        textViewEstimatedTime.setText(stringEstimatedDuration);
-    }
+        //textViewEstimatedTime.setText(stringEstimatedDuration);
+    }*/
     private void setUserInterface(Item item){
         if( VERBOSE) log("...setUserInterface(Item)");
-        checkBoxIsCalenderItem.setChecked(item.isCalenderItem());
         editTextHeading.setText(item.getHeading());
-        checkBoxTemplate.setChecked(item.isTemplate());
-        checkBoxPrioritized.setChecked(item.isPrioritized());
         checkBoxIsDone.setChecked(item.isDone());
-        checkBoxAppointment.setChecked(item.isAppointment());
-        setEstimatedTime(item);
-        setEstimatedEnergy(item);
+        textViewDuration.setText(Converter.formatSecondsWithHours(item.getDuration()));
         log("Lucinda.Dev ", Lucinda.Dev);
         if(User.isDevMode(getContext())){
             setUserInterfaceDev(item);
         }
     }
-    private void setEstimatedEnergy(Item item){
+/*    private void setEstimatedEnergy(Item item){
         if( VERBOSE) log("...setEstimatedEnergy(Item)");
         MentalStats stats = StatisticsWorker.getMentalStats(item, getContext());
         String stringEstimatedEnergy = String.format(Locale.getDefault(), "estimated energy %s", stats.getEnergy());
         log("...", stringEstimatedEnergy);
-        textViewEstimatedEnergy.setText(stringEstimatedEnergy);
-    }
+        //textViewEstimatedEnergy.setText(stringEstimatedEnergy);
+    }*/
 
     /**
      * everything about the item, things that are interesting to me, but not for you average user
@@ -330,7 +448,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
             if( VERBOSE ) log(item);
             returnToPreviousFragment();
         });
-        dialog.show(getChildFragmentManager(), "add child");
+        dialog.show(requireActivity().getSupportFragmentManager(), "add child");
 
     }
     private void showCategoryDialog(){
@@ -338,9 +456,9 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         ChooseCategoryDialog dialog = new ChooseCategoryDialog(currentItem.getCategory());
         dialog.setCallback(category -> {
             log("...onSelected(String)", category);
-            currentAction.setValue(category);
-            currentItem.setCategory(category);
-            actionAdapter.notifyDataSetChanged();
+            currentItemSetting.setValue(category);
+            itemSessionViewModel.setCategory(category, getContext());
+            itemSettingAdapter.notifyDataSetChanged();
         });
         dialog.show(getChildFragmentManager(), "choose category");
     }
@@ -356,10 +474,10 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
                             @Override
                             public void onColorSelected(ColorEnvelope envelope, boolean fromUser) {
                                 log("...onColorSelected(ColorEnvelope, boolean)");
-                                currentAction.setColor(envelope.getColor());
-                                currentAction.setValue(String.valueOf(envelope.getColor()));
+                                //currentItemSetting.setColor(envelope.getColor());
+                                currentItemSetting.setValue(String.valueOf(envelope.getColor()));
                                 currentItem.setColor(envelope.getColor());
-                                actionAdapter.notifyDataSetChanged();
+                                itemSettingAdapter.notifyDataSetChanged();
                             }
                         })
                 .setNegativeButton(getString(R.string.dismiss),
@@ -379,10 +497,9 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         DurationDialog dialog = new DurationDialog();
         dialog.setCallback(duration -> {
             log("...onDurationDialog(Duration)");
-            //item.setDuration(duration.getSeconds());
             currentItem.setEstimatedDuration(duration.getSeconds());
-            currentAction.setValue(Converter.formatSecondsWithHours(duration.getSeconds()));
-            actionAdapter.notifyDataSetChanged();
+            currentItemSetting.setValue(Converter.formatSecondsWithHours(duration.getSeconds()));
+            itemSettingAdapter.notifyDataSetChanged();
         });
         dialog.show(getChildFragmentManager(), "duration");
 
@@ -398,6 +515,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
             currentItem.setDuration(duration.getSeconds());
             textViewDuration.setText(Converter.formatSecondsWithHours(duration.getSeconds()));
             buttonTimer.setText(getString(R.string.ui_resume));
+            itemSessionViewModel.setDuration(duration, getContext());
             kronos.setElapsedTime(duration.getSeconds());
         });
         dialog.show(getChildFragmentManager(), "actual duration");
@@ -426,9 +544,9 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         NotificationDialog dialog = new NotificationDialog(currentItem);
         dialog.setListener(notification -> {
             log("...onNotification(Notification)");
-            currentAction.setValue(notification.toString());
+            currentItemSetting.setValue(notification.toString());
             currentItem.setNotification(notification);
-            actionAdapter.notifyDataSetChanged();
+            itemSettingAdapter.notifyDataSetChanged();
         });
         dialog.show(getChildFragmentManager(), "notification ");
 
@@ -438,13 +556,18 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         RepeatDialog dialog = new RepeatDialog();
         dialog.setCallback(repeat -> {
             log("...onRepeat(Unit)", repeat.toString());
-            currentAction.setValue(repeat.toString());
+            currentItemSetting.setValue(repeat.toString());
             currentItem.setRepeat(repeat);
             currentItem.setIsTemplate(true);
-            checkBoxTemplate.setChecked(true);
-            actionAdapter.notifyDataSetChanged();
+            itemSessionViewModel.update(currentItem, getContext());
+            itemSettingAdapter.notifyDataSetChanged();
         });
         dialog.show(getChildFragmentManager(), "repeat");
+
+    }
+    private void showTagsDialog(){
+        log("...showTagsDialog()");
+        Toast.makeText(getContext(), "NOT IMPLEMENTED", Toast.LENGTH_LONG).show();
 
     }
     private void showTimeDialog(){
@@ -454,9 +577,9 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         int hour = now.getHour();
         TimePickerDialog timePicker = new TimePickerDialog(getContext(), (view, hourOfDay, minute) -> {
             targetTime = LocalTime.of(hourOfDay, minute);
-            currentItem.setTargetTime(targetTime);
-            currentAction.setValue(targetTime.toString());
-            actionAdapter.notifyDataSetChanged();
+            currentItemSetting.setValue(targetTime.toString());
+            itemSessionViewModel.setTargetTime(targetTime, getContext());
+            itemSettingAdapter.notifyDataSetChanged();
         }, hour, minutes, true);
         timePicker.show();
     }
@@ -482,14 +605,14 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         log("...getItem()");
         currentItem.setHeading(editTextHeading.getText().toString());
         currentItem.setState(checkBoxIsDone.isChecked() ? State.DONE: State.TODO);
-        currentItem.setIsCalenderItem(checkBoxIsCalenderItem.isChecked());
-        currentItem.setIsTemplate(checkBoxTemplate.isChecked());
+        //currentItem.setIsCalenderItem(checkBoxIsCalenderItem.isChecked());
+        //currentItem.setIsTemplate(checkBoxTemplate.isChecked());
         currentItem.setDuration(duration);
-        if( checkBoxAppointment.isChecked()) {
+/*        if( checkBoxAppointment.isChecked()) {
             currentItem.setType(Type.APPOINTMENT);
         }else{
             currentItem.setType(Type.NODE);
-        }
+        }*/
         return currentItem;
     }
     /**
@@ -511,7 +634,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
             ItemsWorker.touchParents(currentItem, getContext());
         }
 
-        viewModel.updateEnergy(true);
+        lucindaViewModel.updateEnergy(true);
         requireActivity().getSupportFragmentManager().popBackStackImmediate();
         kronos.reset();
     }

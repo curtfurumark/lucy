@@ -143,7 +143,7 @@ public class Queeries {
         long endEpoch = startEpoch + (3600 * 24);
         return String.format(Locale.ENGLISH, "SELECT * FROM items WHERE " +
                         "(template = %d AND targetDate <= %d AND targetDate > 0)  OR " +      //INFINITE today or earlier
-                        "(targetDate = %d AND hasChild = 0 AND state = %d AND isCalenderItem = 1) OR " +   //items todo today
+                        "(targetDate = %d AND hasChild = 0 AND state = %d) OR " +   //items todo today
                         "(state = %d AND updated >= %d AND updated <= %d)", //items done today, but targetDate not today
                 1, date.toEpochDay(),
                 date.toEpochDay(), State.TODO.ordinal(),

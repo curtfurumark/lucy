@@ -63,6 +63,7 @@ public class AppointmentDialog extends BottomSheetDialogFragment {
         Item item = new Item();
         item.setHeading(editTextHeading.getText().toString());
         item.setType(Type.APPOINTMENT);
+        item.setIsCalenderItem(true);
         item.setComment(editTextComment.getText().toString());
         item.setDescription(editTextLocation.getText().toString());
         item.setTargetTime(targetTime);

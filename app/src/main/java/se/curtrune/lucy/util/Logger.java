@@ -118,12 +118,12 @@ public class Logger {
         log("\tupdated", item.getUpdated());
         log("\ttarget_date", item.getTargetDate());
         log("\ttarget_time", item.getTargetTime());
-        //log("\tdays", item.getDays());
         log("\tstate", item.getState());
         log("\tcategory", item.getCategory());
         log("\ttype", item.getType());
         log("\tis template", item.isTemplate());
         log("\thas estimate", item.hasEstimate());
+        log("\t\tisCalenderItem", item.isCalenderItem());
         if( item.hasEstimate()) {
             log("\titem has estimate");
             log("\t\tduration", item.getEstimate().getDuration());
@@ -133,10 +133,16 @@ public class Logger {
         if( item.hasPeriod()){
             log("\t\trepeat.toString", item.getPeriod().toString());
         }
-        //log("\thas mental", item.hasMental());
         log("\thas notification", item.hasNotification());
         log("\tcolor", item.getColor());
         log("\tpriority", item.getPriority());
+        if (item.hasMental()){
+            Mental mental = item.getMental();
+            log("\t\tenergy", mental.getEnergy());
+            log("\t\tanxiety", mental.getAnxiety());
+            log("\t\tmood", mental.getMood());
+            log("\t\tstress", mental.getStress());
+        }
     }
     public static void log(Mental mental){
         log("log(Mental)");

@@ -29,7 +29,7 @@ public class CalendarWeekViewModel extends ViewModel {
     }
 
     public void set(Week week, Context context) {
-        log("CalendarWeekViewModel.set(Week, Context)");
+        log("CalendarWeekViewModel.set(Week, Context)", week.toString());
         List<CalenderDate>  dates = CalenderWorker.getEvents(week, context);
         log("\t\tnumber of dates", dates.size());
         if( calenderDates == null){

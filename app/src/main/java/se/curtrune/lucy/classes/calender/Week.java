@@ -68,4 +68,13 @@ public class Week {
     public Week getPreviousWeek() {
         return new Week(firstDate.minusWeeks(1));
     }
+
+    @Override
+    public String toString() {
+        return "Week{" +
+                "firstDate=" + firstDate +
+                ", lastDate=" + lastDate +
+                ", weekNumber=" + weekNumber +
+                '}';
+    }
 }

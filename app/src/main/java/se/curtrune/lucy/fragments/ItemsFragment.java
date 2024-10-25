@@ -41,10 +41,10 @@ import se.curtrune.lucy.workers.MentalWorker;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link ProjectsFragment#newInstance} factory method to
+ * Use the {@link ItemsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ProjectsFragment extends Fragment implements
+public class ItemsFragment extends Fragment implements
         ItemAdapter.Callback,
         TabLayout.OnTabSelectedListener {
 
@@ -59,8 +59,8 @@ public class ProjectsFragment extends Fragment implements
     private LucindaViewModel viewModel;
     public static boolean VERBOSE = false;
 
-    public ProjectsFragment() {
-        if( VERBOSE) log("ProjectsFragment()");
+    public ItemsFragment() {
+        if( VERBOSE) log("ItemsFragment()");
     }
 
     /**
@@ -68,11 +68,11 @@ public class ProjectsFragment extends Fragment implements
      * this fragment using the provided parameters.
      *
      * @param parent, show children to this item
-     * @return A new instance of fragment ProjectsFragment.
+     * @return A new instance of fragment ItemsFragment.
      */
-    public static ProjectsFragment newInstance(Item parent) {
-        log("ProjectsFragment.newInstance(Item parent) ", parent.getHeading());
-        ProjectsFragment fragment = new ProjectsFragment();
+    public static ItemsFragment newInstance(Item parent) {
+        log("ItemsFragment.newInstance(Item parent) ", parent.getHeading());
+        ItemsFragment fragment = new ItemsFragment();
         Bundle args = new Bundle();
         args.putSerializable(Constants.INTENT_SERIALIZED_ITEM, parent);
         fragment.setArguments(args);
@@ -82,13 +82,13 @@ public class ProjectsFragment extends Fragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        log("ProjectsFragment.onCreate(Bundle of joy))");
+        log("ItemsFragment.onCreate(Bundle of joy))");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        log("ProjectsFragment.onCreateView(LayoutInflater, ViewGroup, Bundle)");
+        log("ItemsFragment.onCreateView(LayoutInflater, ViewGroup, Bundle)");
         View view = inflater.inflate(R.layout.projects_fragment, container, false);
         setHasOptionsMenu(true);
         initComponents(view);
@@ -241,7 +241,9 @@ public class ProjectsFragment extends Fragment implements
 
     @Override
     public void onLongClick(Item item) {
-        log("...onLongClick(Item item)");
+        log("...onLongClick(Item item)", item.getHeading());
+        projectsViewModel.setCurrentParent(currentParent);
+        viewModel.updateFragment( new ItemSessionFragment(item));
     }
 
     @Override

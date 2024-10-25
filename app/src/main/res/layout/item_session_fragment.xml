@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".activities.ItemSession">
+    tools:context=".fragments.ItemSessionFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -51,16 +51,6 @@
                 android:minHeight="48dp" />
         </com.google.android.material.textfield.TextInputLayout>
         <!-- TODO: Update blank fragment layout -->
-        <TextView
-            android:id="@+id/itemSessionFragment_estimatedTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="item session" />
-        <TextView
-            android:id="@+id/itemSessionFragment_estimatedEnergy"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="item session" />
 
 
         <LinearLayout
@@ -89,31 +79,88 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_marginTop="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/itemSessionFragment_labelEnergy"
+                android:text="@string/energy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
 
-        <CheckBox
-            android:id="@+id/itemSessionFragment_checkboxIsCalendarItem"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/show_in_calendar" />
+            <SeekBar
+                android:id="@+id/itemSessionFragment_seekBarEnergy"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:max="10"
+                android:min="0"
+                android:progress="5"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/itemSessionFragment_labelEnergy"
+                app:layout_constraintTop_toTopOf="@+id/itemSessionFragment_labelEnergy" />
+            <TextView
+                android:id="@+id/itemSessionFragment_labelAnxiety"
+                android:text="@string/anxiety"
+                android:layout_marginTop="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/itemSessionFragment_labelEnergy"
+                app:layout_constraintStart_toStartOf="parent"/>
 
+            <SeekBar
+                android:id="@+id/itemSessionFragment_seekBarAnxiety"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:max="10"
+                android:min="0"
+                android:progress="5"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/itemSessionFragment_labelAnxiety"
+                app:layout_constraintTop_toTopOf="@+id/itemSessionFragment_labelAnxiety" />
+            <TextView
+                android:id="@+id/itemSessionFragment_labelStress"
+                android:text="@string/stress"
+                android:layout_marginTop="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/itemSessionFragment_labelAnxiety"
+                app:layout_constraintStart_toStartOf="parent"/>
 
-        <CheckBox
-            android:id="@+id/itemSessionFragment_checkboxTemplate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/is_template" />
+            <SeekBar
+                android:id="@+id/itemSessionFragment_seekBarStress"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:max="10"
+                android:min="0"
+                android:progress="5"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/itemSessionFragment_labelStress"
+                app:layout_constraintTop_toTopOf="@+id/itemSessionFragment_labelStress" />
+            <TextView
+                android:id="@+id/itemSessionFragment_labelMood"
+                android:text="@string/mood"
+                android:layout_marginTop="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/itemSessionFragment_labelStress"
+                app:layout_constraintStart_toStartOf="parent"/>
 
-        <CheckBox
-            android:id="@+id/itemSessionFragment_checkboxPrioritized"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/is_prioritized" />
+            <SeekBar
+                android:id="@+id/itemSessionFragment_seekBarMood"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:max="10"
+                android:min="0"
+                android:progress="5"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/itemSessionFragment_labelMood"
+                app:layout_constraintTop_toTopOf="@+id/itemSessionFragment_labelMood" />
 
-        <CheckBox
-            android:id="@+id/itemSessionFragment_checkboxAppointment"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="appointment" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/itemSessionFragment_buttonAdd"

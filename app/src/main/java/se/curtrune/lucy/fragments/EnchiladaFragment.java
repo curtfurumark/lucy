@@ -64,14 +64,14 @@ public class EnchiladaFragment extends Fragment implements
     }
 
     public EnchiladaFragment() {
-        log("ProjectsFragment()");
+        log("ItemsFragment()");
     }
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment ProjectsFragment.
+     * @return A new instance of fragment ItemsFragment.
      */
     // TODO: Rename and change types and number of parameters
     public static EnchiladaFragment newInstance() {

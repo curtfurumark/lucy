@@ -30,6 +30,12 @@ import se.curtrune.lucy.workers.InternetWorker;
 import se.curtrune.lucy.workers.NotificationsWorker;
 import se.curtrune.lucy.workers.SettingsWorker;
 
+/**
+ * this is the first activity
+ * initializes stuff
+ * and starts user defined activity, today, week or month
+ */
+
 public class LogInActivity extends AppCompatActivity {
     private EditText editTextPwd;
     private Button buttonLogIn;

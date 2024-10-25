@@ -211,6 +211,7 @@ public class ItemsWorker {
     public static List<Item> selectAppointments(LocalDate date, Context context) {
         if(VERBOSE) log("ItemsWorker.selectAppointments(LocalDate, Context)");
         String query = Queeries.selectAppointments(date);
+        Queeries.selectCalenderItems(date);
         try (LocalDB db = new LocalDB(context)) {
             return db.selectItems(query);
         }
@@ -388,6 +389,7 @@ public class ItemsWorker {
                 if (VERBOSE) log("...template is done, will spawn a child");
                 template.setState(State.TODO);
                 Item child = createActualItem(template);
+                child.setType(Type.TEMPLATE_CHILD);
                 Mental mental = createMentalFromTemplate(template.getMental());
                 if( VERBOSE) log(mental);
                 child.setMental(mental);
