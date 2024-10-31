@@ -156,7 +156,8 @@ public class CalenderWorker {
         //log("...firstDateOfMonth", firstDateOfMonth.toString());
         int daysInMonth = yearMonth.lengthOfMonth();
         //log("...daysInMonth", daysInMonth);
-        List<Item> itemsMonth = ItemsWorker.selectAppointments(yearMonth, context);
+        //List<Item> itemsMonth = ItemsWorker.selectAppointments(yearMonth, context);
+        List<Item> itemsMonth = ItemsWorker.selectIsCalenderItems(yearMonth, context);
         if( VERBOSE) {
             log("...number of events this month", itemsMonth.size());
             itemsMonth.forEach(System.out::println);

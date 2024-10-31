@@ -108,6 +108,7 @@ public class Kronos {
                 startTime = System.currentTimeMillis() / 1000;
                 seconds++;
                 if ( callback != null){
+                    //TODO, kraschar, tappar callbacken
                     new Handler(Looper.getMainLooper()).post(() -> callback.onTimerTick(seconds));
                 }
             }

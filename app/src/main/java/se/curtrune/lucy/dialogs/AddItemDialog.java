@@ -79,14 +79,14 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         this.parent = parent;
         this.newItem = createNewItem(parent);
         this.newItem.setTargetDate(LocalDate.now());
-        newItem.setMental(new Mental());
+        //newItem.setMental(new Mental());
     }
     public AddItemDialog(Item parent, LocalDate targetDate){
         assert parent != null;
         this.parent = parent;
         this.newItem = createNewItem(parent);
         this.newItem.setTargetDate(targetDate);
-        newItem.setMental(new Mental());
+        //newItem.setMental(new Mental());
 
     }
 
@@ -407,7 +407,7 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         dialog.setCallback((mental, mode) -> {
             log("...onMental(MentalType, Mode)", mode.toString());
             log(mental);
-            newItem.setMental( mental);
+            //newItem.setMental( mental);
         });
         dialog.show(getChildFragmentManager(), "add mental");
     }

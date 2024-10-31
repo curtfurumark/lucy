@@ -22,24 +22,10 @@ public class BoostDialog extends DialogFragment {
     private String message;
     private Button buttonOK;
     private TextView textViewMessage;
+    public static boolean VERBOSE = false;
     public BoostDialog(String message){
         this.message = message;
     }
-/*    @NonNull
-    @Override
-    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        setStyle(DialogFragment.STYLE_NORMAL,
-                android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-        return new AlertDialog.Builder(requireContext())
-                .setMessage(message)
-                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        log("BoostDialog.onClick()");
-                        dismiss();
-                    }
-                }).create();
-    }*/
 
     @Nullable
     @Override
@@ -60,12 +46,12 @@ public class BoostDialog extends DialogFragment {
                 android.R.style.Theme_Black_NoTitleBar_Fullscreen);
     }
     public void initComponents(View view){
-        log("...initComponents()");
+        if( VERBOSE) log("...initComponents()");
         buttonOK = view.findViewById(R.id.boostMe_buttonOK);
         textViewMessage = view.findViewById(R.id.boostMe_message);
     }
     private void initListeners(){
-        log("...initListeners()");
+        if( VERBOSE)log("...initListeners()");
         buttonOK.setOnClickListener(view->dismiss());
 
     }

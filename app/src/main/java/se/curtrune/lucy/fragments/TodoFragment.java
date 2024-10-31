@@ -30,7 +30,6 @@ import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.AddItemDialog;
-import se.curtrune.lucy.dialogs.EditItemDialog;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.ItemsWorker;
 import se.curtrune.lucy.workers.NotificationsWorker;
@@ -183,7 +182,7 @@ public class TodoFragment extends Fragment implements
     @Override
     public void onLongClick(Item item) {
         log("...onLongClick(Item)", item.getHeading());
-        EditItemDialog dialog = new EditItemDialog(item);
+/*        EditItemDialog dialog = new EditItemDialog(item);
         dialog.setCallback(updatedItem -> {
             log("...onUpdate(Item)");
             log(updatedItem);
@@ -192,7 +191,7 @@ public class TodoFragment extends Fragment implements
                 log("ERROR updating item", updatedItem.getHeading());
             }
         });
-        dialog.show(getChildFragmentManager(), "edit item");
+        dialog.setMentalType(getChildFragmentManager(), "edit item");*/
     }
 
     @Override

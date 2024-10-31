@@ -8,7 +8,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -19,7 +18,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -67,52 +65,34 @@ public class DevActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dev_activity);
-        //initCatchAllExceptionsHandler();
         setTitle("lucinda");
         log("DevActivity.onCreate(Bundle)");
         printSystemInfo();
         lucinda = Lucinda.getInstance(this);
-/*        if (!lucinda.isInitialized(this)) {
-            log("...lucinda not initialized");
-            try {
-                lucinda.initialize(this);
-            } catch (SQLException e) {
-                Toast.makeText(this, "serious, failure to initialize the app", Toast.LENGTH_LONG).show();
-                return;
-            }
-        } else {
-            log("Lucinda is initialized!");
-        }*/
         initComponents();
         initListeners();
-        clearShowInCalendar();
-        //checkNotificationPermission();
-        //setUserInterface();
-        //NotificationsWorker.createNotificationChannel(this);
+        addMentalToItemTable();
+        setUserInterface();
         openDB();
     }
-    private void initCatchAllExceptionsHandler(){
-        Thread.setDefaultUncaughtExceptionHandler((paramThread, paramThrowable) -> {
 
-            new Thread() {
-                @Override
-                public void run() {
-                    Looper.prepare();
-                    Toast.makeText(DevActivity.this,paramThrowable.getMessage(), Toast.LENGTH_LONG).show();
-                    Looper.loop();
-                }
-            }.start();
-            try
-            {
-                Thread.sleep(4000); // Let the Toast display before app will get shutdown
-            }
-            catch (InterruptedException e) {
-                log("InterruptedException", e.getMessage());
-            }
-            System.exit(2);
-        });
+    private void addMentalToItemTable(){
+        log("...addMentalToItemTable()");
+        String queeryEnergy = "ALTER TABLE items ADD COLUMN energy INTEGER DEFAULT 0";
+        String queeryAnxiety = "ALTER TABLE items ADD COLUMN anxiety INTEGER DEFAULT 0";
+        String queeryStress = "ALTER TABLE items ADD COLUMN stress INTEGER DEFAULT 0";
+        String queeryMood = "ALTER TABLE items ADD COLUMN mood INTEGER DEFAULT 0";
+        try(LocalDB db = new LocalDB(this)){
+            //db.executeSQL(queeryEnergy);
+            db.executeSQL(queeryAnxiety);
+            db.executeSQL(queeryStress);
+            db.executeSQL(queeryMood);
+            log(" energy column created?");
+        }catch (Exception e){
+            log("an exception occurred");
+            e.printStackTrace();
+        }
     }
-
     private void clearShowInCalendar(){
         log("...clearShowInCalendar()");
         String queery = "UPDATE items set isCalenderItem = 0";
@@ -123,7 +103,6 @@ public class DevActivity extends AppCompatActivity {
             e.printStackTrace();
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
         }
-
     }
 
     private void createEconomyTables() {
@@ -142,11 +121,11 @@ public class DevActivity extends AppCompatActivity {
     }
     private void executeSQL(){
         log("...executeSQL()");
-        String queery = editTextSql.getText().toString();
+        addMentalToItemTable();
+/*        String queery = editTextSql.getText().toString();
         if( queery.isEmpty()){
-            Toast.makeText(this, "a sql statement pleast", Toast.LENGTH_LONG).show();
-            return;
-        }
+            Toast.makeText(this, "a sql statement pleast", Toast.LENGTH_LONG).setMentalType();
+        }*/
 
     }
 
@@ -251,11 +230,8 @@ public class DevActivity extends AppCompatActivity {
 
     private void openDB() {
         log("...openDB");
-        try (LocalDB db = new LocalDB(this)) {
-            db.open();
-        }catch (Exception e){
-            log(e.getMessage());
-        }
+        LocalDB db = new LocalDB(this);
+        db.open();
     }
 
     private void deleteItemsTable() {
@@ -357,7 +333,7 @@ public class DevActivity extends AppCompatActivity {
                 log("...onRepeat(Unit)", period.toString());
             }
         });
-        dialog.show(getSupportFragmentManager(), "repeat dialog");
+        dialog.setMentalType(getSupportFragmentManager(), "repeat dialog");
 
     }*/
     private void testNotification(){

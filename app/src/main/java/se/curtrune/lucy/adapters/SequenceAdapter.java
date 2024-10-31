@@ -2,7 +2,6 @@ package se.curtrune.lucy.adapters;
 
 import static se.curtrune.lucy.util.Logger.log;
 
-import android.app.TimePickerDialog;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -10,13 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.w3c.dom.Text;
-
-import java.time.LocalTime;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -25,7 +19,6 @@ import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.util.Converter;
-import se.curtrune.lucy.workers.ItemsWorker;
 
 
 public class SequenceAdapter extends RecyclerView.Adapter<SequenceAdapter.ViewHolder>{
@@ -78,11 +71,11 @@ public class SequenceAdapter extends RecyclerView.Adapter<SequenceAdapter.ViewHo
         holder.textViewEstimatedDuration.setText(txtEstimatedDuration);
         String textEstimatedEnergy = String.format(Locale.getDefault(), "%s %d", holder.textViewEstimatedEnergy.getContext().getString(R.string.energy), item.getEnergy());
         holder.textViewEstimatedEnergy.setText(textEstimatedEnergy);
-        String textEstimatedStress = String.format(Locale.getDefault(), " %s %d", holder.textViewEstimatedStress.getContext().getString(R.string.stress),item.getMental().getStress());
+        String textEstimatedStress = String.format(Locale.getDefault(), " %s %d", holder.textViewEstimatedStress.getContext().getString(R.string.stress),item.getStress());
         holder.textViewEstimatedStress.setText(textEstimatedStress);
-        String textEstimatedAnxiety = String.format(Locale.getDefault(), "%s %d",holder.textViewEstimatedAnxiety.getContext().getString(R.string.anxiety) ,item.getMental().getAnxiety());
+        String textEstimatedAnxiety = String.format(Locale.getDefault(), "%s %d",holder.textViewEstimatedAnxiety.getContext().getString(R.string.anxiety) ,item.getAnxiety());
         holder.textViewEstimatedAnxiety.setText(textEstimatedAnxiety);
-        String textEstimatedMood = String.format(Locale.getDefault(), "%s %d",holder.textViewEstimatedMood.getContext().getString(R.string.mood) ,item.getMental().getMood());
+        String textEstimatedMood = String.format(Locale.getDefault(), "%s %d",holder.textViewEstimatedMood.getContext().getString(R.string.mood) ,item.getMood());
         holder.textViewEstimatedMood.setText(textEstimatedMood);
     }
 

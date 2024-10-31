@@ -13,6 +13,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.calender.CalenderDate;
@@ -38,12 +39,12 @@ public class CalendarDateViewModel extends ViewModel {
 
     public boolean delete(Item item, Context context){
         log("CalendarDateViewModel.delete(Item, Context)", item.getHeading());
-        int rowsAffected = MentalWorker.deleteMental(item, context);
+/*        int rowsAffected = MentalWorker.deleteMental(item, context);
         if( rowsAffected != 1){
             log("WARNING mental not deleted, possibly no mental to delete...");
         }else{
             log("...mental deleted from db");
-        }
+        }*/
         boolean stat = ItemsWorker.delete(item, context);
         items.remove(item);
         mutableItems.setValue(items);
@@ -127,5 +128,10 @@ public class CalendarDateViewModel extends ViewModel {
                 break;
         }
         update(item, context);
+    }
+
+    public void filter(String filter) {
+        log("CalendarDateViewModel.filter(String)");
+        mutableItems.setValue(items.stream().filter(item->item.contains(filter)).collect(Collectors.toList()));
     }
 }

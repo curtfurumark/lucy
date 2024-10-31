@@ -4,8 +4,6 @@ import static se.curtrune.lucy.util.Logger.log;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -22,14 +21,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.tabs.TabLayout;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.ItemAdapter;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
-import se.curtrune.lucy.dialogs.EditItemDialog;
+import se.curtrune.lucy.viewmodel.EnchiladaViewModel;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.ItemsWorker;
 
@@ -45,9 +41,10 @@ public class EnchiladaFragment extends Fragment implements
     private RecyclerView recycler;
     private EditText editTextSearch;
     private ItemAdapter adapter;
-    private List<Item> items;
+    //private List<Item> items;
     public static boolean VERBOSE = false;
     private LucindaViewModel viewModel;
+    private EnchiladaViewModel enchiladaViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,11 +52,11 @@ public class EnchiladaFragment extends Fragment implements
         log("EnchiladaFragment.onCreateView(LayoutInflater, ViewGroup, Bundle)");
         View view = inflater.inflate(R.layout.todo_fragment, container, false);
         initComponents(view);
-        items = ItemsWorker.selectItems(getContext());
-        initRecycler(items);
+        initViewModel();
+        initRecycler();
         initSwipe();
         initListeners();
-        initViewModel();
+        //initViewModel();
         return view;
     }
 
@@ -85,10 +82,10 @@ public class EnchiladaFragment extends Fragment implements
             log("...getArguments != null");
         }
     }
-    private void filter(String str){
+/*    private void filter(String str){
         List<Item> filteredItems = items.stream().filter(item->item.contains(str)).collect(Collectors.toList());
         adapter.setList(filteredItems);
-    }
+    }*/
     private void initComponents(View view){
         if( VERBOSE) log("...initComponents()");
         recycler = view.findViewById(R.id.todoFragment_recycler);
@@ -96,7 +93,7 @@ public class EnchiladaFragment extends Fragment implements
     }
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
-        editTextSearch.addTextChangedListener(new TextWatcher() {
+/*        editTextSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -113,12 +110,12 @@ public class EnchiladaFragment extends Fragment implements
             public void afterTextChanged(Editable s) {
 
             }
-        });
+        });*/
     }
 
-    private void initRecycler(List<Item> items){
-        if( VERBOSE) log("...initRecycler(List<Item>)", items.size());
-        adapter = new ItemAdapter(this.items, this);
+    private void initRecycler(){
+        if( VERBOSE) log("...initRecycler()");
+        adapter = new ItemAdapter(enchiladaViewModel.getItems().getValue(), this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recycler.setLayoutManager(layoutManager);
         recycler.setItemAnimator(new DefaultItemAnimator());
@@ -135,7 +132,8 @@ public class EnchiladaFragment extends Fragment implements
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 //int index = viewHolder.getAdapterPosition();
-                Item item = items.get(viewHolder.getAdapterPosition());
+                //Item item = items.get(viewHolder.getAdapterPosition());
+                Item item = enchiladaViewModel.getItem(viewHolder.getAdapterPosition());
                 if (item.isPrioritized()) {
                     log("...item isPrioritized");
                     Toast.makeText(getContext(), "don't delete prioritized items", Toast.LENGTH_LONG).show();
@@ -147,13 +145,15 @@ public class EnchiladaFragment extends Fragment implements
                     builder.setMessage("are you sure? ");
                     builder.setPositiveButton(getString(R.string.delete), (dialog, which) -> {
                         log("...on positive button click");
+                        boolean res = enchiladaViewModel.delete(item, getContext());
                         boolean deleted = ItemsWorker.delete(item, getContext());
-                        if (!deleted) {
+                        if (!res) {
                             log("...error deleting item");
                             Toast.makeText(getContext(), "error deleting item", Toast.LENGTH_LONG).show();
                         } else {
                             log("...item deleted");
-                            items.remove(item);
+                            //items.remove(item);
+                            //enchiladaViewModel.remove()
                             adapter.notifyDataSetChanged();
                         }
                     });
@@ -170,7 +170,15 @@ public class EnchiladaFragment extends Fragment implements
     }
     private void initViewModel(){
         log("...initViewModel()");
+        enchiladaViewModel = new ViewModelProvider(requireActivity()).get(EnchiladaViewModel.class);
+        enchiladaViewModel.init(getContext());
         viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
+        viewModel.getFilter().observe(requireActivity(), new Observer<String>() {
+            @Override
+            public void onChanged(String filter) {
+                enchiladaViewModel.filter(filter);
+            }
+        });
 
     }
 
@@ -209,12 +217,7 @@ public class EnchiladaFragment extends Fragment implements
     @Override
     public void onLongClick(Item item) {
         log("...onLongClick(Item)", item.getHeading());
-        EditItemDialog dialog = new EditItemDialog(item);
-        dialog.setCallback(item1 -> {
-            log("...onUpdate(Item)");
-            update(item1);
-        });
-        dialog.show(getChildFragmentManager(), "edit item");
+
     }
 
     /**

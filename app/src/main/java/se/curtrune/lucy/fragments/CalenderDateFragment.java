@@ -181,7 +181,7 @@ public class CalenderDateFragment extends Fragment {
                         adapter.notifyDataSetChanged();
                     }
                 });
-                dialog.show(getChildFragmentManager(), "edit item");*/
+                dialog.setMentalType(getChildFragmentManager(), "edit item");*/
             }
 
             @Override
@@ -330,6 +330,13 @@ public class CalenderDateFragment extends Fragment {
         }else {
             calendarDateViewModel.set(currentDate, getContext());
         }
+        lucindaViewModel.getFilter().observe(requireActivity(), new Observer<String>() {
+            @Override
+            public void onChanged(String filter) {
+                log("onChanged/onFilter(String)", filter);
+                calendarDateViewModel.filter(filter);
+            }
+        });
 /*        calendarDateViewModel.getItems().observe(requireActivity(), items ->{
             log("...onChanged(List<Item>)");
                 this.items = items;

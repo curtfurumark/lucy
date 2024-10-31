@@ -26,26 +26,26 @@ public class ItemSessionViewModel extends ViewModel {
     private ItemSetting currentItemSetting;
     private static final int MENTAL_OFFSET = 5;
     private Item currentItem;
-    private Mental currentMental;
+    //private Mental currentMental;
     public void init(Item item){
         log("ItemSessionViewModel.init(Item)");
         this.currentItem = item;
-        this.currentMental = item.getMental();
-        assert currentMental != null;
+        //this.currentMental = item.getMental();
+        //assert currentMental != null;
         assert currentItem != null;
 
     }
     public int getStress() {
-        return currentMental.getStress() + MENTAL_OFFSET;
+        return currentItem.getStress();
     }
     public int getAnxiety(){
-        return currentMental.getAnxiety() + MENTAL_OFFSET;
+        return currentItem.getAnxiety();
     }
     public int getMood(){
-        return currentMental.getMood() + MENTAL_OFFSET;
+        return currentItem.getMood();
     }
     public int getEnergy(){
-        return currentMental.getEnergy() + MENTAL_OFFSET;
+        return currentItem.getEnergy() ;
     }
     public List<ItemSetting> getItemSettings(Item item) {
         assert item != null;
@@ -66,7 +66,7 @@ public class ItemSessionViewModel extends ViewModel {
             notificationValue = item.getNotification().toString();
         }
         KeyValueSetting notificationSetting = new KeyValueSetting("notification", notificationValue, ItemSetting.Key.NOTIFICATION);
-        CheckBoxSetting appointmentSetting = new CheckBoxSetting("appointment", false, ItemSetting.Key.IS_CALENDAR_ITEM);
+        //CheckBoxSetting appointmentSetting = new CheckBoxSetting("appointment", false, ItemSetting.Key.IS_CALENDAR_ITEM);
         CheckBoxSetting stateSetting = new CheckBoxSetting("done", item.isDone(), ItemSetting.Key.DONE);
         KeyValueSetting tagsSetting = new KeyValueSetting("tags", item.getTags(), ItemSetting.Key.TAGS);
         CheckBoxSetting calenderSetting = new CheckBoxSetting("calendar", item.isCalenderItem(), ItemSetting.Key.IS_CALENDAR_ITEM);
@@ -78,7 +78,7 @@ public class ItemSessionViewModel extends ViewModel {
         settings.add(categorySetting);
         settings.add(calenderSetting);
         settings.add(notificationSetting);
-        settings.add(appointmentSetting);
+        //settings.add(appointmentSetting);
         settings.add(prioritizedSetting);
         settings.add(templateSetting);
         settings.add(tagsSetting);
@@ -97,33 +97,28 @@ public class ItemSessionViewModel extends ViewModel {
                 itemSetting.setValue(item.getTargetDate().toString());
         }
     }
-    public boolean update(Mental mental, Context context){
-        log("...update(Mental, Context)");
-        int rowsAffected = MentalWorker.update(mental, context);
-        return rowsAffected == 1;
 
-    }
     public void updateAnxiety(int anxiety, Context context){
         log("...updateAnxiety(int)", anxiety);
-        currentMental.setAnxiety(anxiety - MENTAL_OFFSET);
-        update(currentMental, context);
+        //currentMental.setAnxiety(anxiety - MENTAL_OFFSET);
+        //update(currentMental, context);
 
     }
     public void updateEnergy(int  energy, Context context) {
         log("ItemSessionViewModel.updateEnergy(int)", energy);
-        currentItem.getMental().setEnergy(energy);
-        update(currentMental, context);
+        currentItem.setEnergy(energy);
+        update(currentItem, context);
     }
     public void updateMood(int mood, Context context){
         log("...updateMood()");
-        currentMental.setMood(mood - MENTAL_OFFSET);
-        update(currentMental, context);
+        currentItem.setMood(mood - MENTAL_OFFSET);
+        update(currentItem, context);
 
     }
     public void updateStress(int stress, Context context){
         log("...updateStress(int)", stress);
-        currentMental.setStress(stress - MENTAL_OFFSET);
-        update(currentMental, context);
+        currentItem.setStress(stress - MENTAL_OFFSET);
+        update(currentItem, context);
     }
     public void setIsEvent(boolean checked, Context context) {
         log("...setIsEvent(boolean()", checked);

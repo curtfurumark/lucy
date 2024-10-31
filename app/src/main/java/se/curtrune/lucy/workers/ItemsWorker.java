@@ -223,12 +223,21 @@ public class ItemsWorker {
             return db.selectItems(Queeries.selectChildren(parent));
         }
     }
-    public static List<Item> selectDateState(LocalDate date, State state, Context context){
-        if(VERBOSE) log("ItemsWorker.selectDateState(Date, State, Context)");
+
+    /**
+     *
+     * @param date, the date
+     * @param state , the state
+     * @param context, context context
+     * @return a list of items
+     */
+    public static List<Item> selectItems(LocalDate date, State state, Context context){
+        if(VERBOSE) log("ItemsWorker.selectItems(Date, State, Context)");
         try (LocalDB db = new LocalDB(context)) {
             return db.selectItems(Queeries.selectItems(date, state));
         }
     }
+
     public static List<Item> selectItems(State state, Context context) {
         if(VERBOSE) log("ItemsWorker.selectItems(State state)", state.toString());
         try (LocalDB db = new LocalDB(context)) {
@@ -313,10 +322,10 @@ public class ItemsWorker {
         }
     }
 
-    public static List<Item> selectCalenderItems(YearMonth yearMonth, Context context) {
+    public static List<Item> selectIsCalenderItems(YearMonth yearMonth, Context context) {
         if (VERBOSE) log("ItemsWorker.selectCalenderItems(YearMonth)");
         try (LocalDB db = new LocalDB(context)) {
-            String queery = Queeries.selectCalendarMonth(yearMonth);
+            String queery = Queeries.selectIsCalendarItems(yearMonth);
             return db.selectItems(queery);
         }
     }
@@ -390,15 +399,15 @@ public class ItemsWorker {
                 template.setState(State.TODO);
                 Item child = createActualItem(template);
                 child.setType(Type.TEMPLATE_CHILD);
-                Mental mental = createMentalFromTemplate(template.getMental());
+/*                Mental mental = createMentalFromTemplate(template.getMental());
                 if( VERBOSE) log(mental);
-                child.setMental(mental);
+                child.setMental(mental);*/
                 child = db.insertChild(template, child);//creates and inserts mental, or rather insert(Item) does
-                if (template.hasPeriod()) {
-                    template.updateTargetDate();
-                }else{
-                    template.setTargetDate(LocalDate.now());
-                }
+//                if (template.hasPeriod()) {
+//                    template.updateTargetDate();
+//                }else{
+//                    template.setTargetDate(LocalDate.now());
+//                }
                 template.setDuration(0);
             }
             return db.update(template);

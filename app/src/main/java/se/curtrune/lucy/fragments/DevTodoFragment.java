@@ -89,7 +89,7 @@ public class DevTodoFragment extends Fragment implements TabLayout.OnTabSelected
     }
     private void showDialog(){
         log("...showDialog()");
-        //Toast.makeText(getContext(), "hello", Toast.LENGTH_LONG).show();
+        //Toast.makeText(getContext(), "hello", Toast.LENGTH_LONG).setMentalType();
         MessageDialog dialog = new MessageDialog();
         dialog.setCallback(new MessageDialog.Callback() {
             @Override

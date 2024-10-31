@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,6 +31,7 @@ import se.curtrune.lucy.statistics.CategoryListable;
 import se.curtrune.lucy.statistics.DateListable;
 import se.curtrune.lucy.statistics.DurationStatistics;
 import se.curtrune.lucy.util.Converter;
+import se.curtrune.lucy.viewmodel.DurationViewModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -37,8 +39,6 @@ import se.curtrune.lucy.util.Converter;
  * create an instance of this fragment.
  */
 public class DurationFragment extends Fragment implements ListableAdapter.Callback{
-
-
 
     private TextView textViewFirstDate;
     private TextView textViewLastDate;
@@ -52,6 +52,7 @@ public class DurationFragment extends Fragment implements ListableAdapter.Callba
     private LocalDate firstDate;
     private LocalDate lastDate;
     private DurationStatistics statistics;
+    private DurationViewModel durationViewModel;
     private List<Listable> listables = new ArrayList<>();
 
     public DurationFragment() {
@@ -84,16 +85,22 @@ public class DurationFragment extends Fragment implements ListableAdapter.Callba
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         log("DurationFragment.onCreateView(...)");
         View view = inflater.inflate(R.layout.duration_fragment, container, false);
         initDefaults();
+        initViewModel();
         initComponents(view);
         initRecycler();
         initListeners();
         setUserInterface();
-        filter("vila");
+        //filter("vila");
         return view;
+    }
+    private void filter(String str){
+        log("DurationFragment.filter(String)", str);
+        statistics.getItems().stream().filter(item -> item.contains(str)).forEach(System.out::println);
+        long duration = statistics.getItems().stream().filter(item -> item.contains(str)).mapToLong(Item::getDuration).sum();
+        log("duration vila", Converter.formatSecondsWithHours(duration));
     }
     private void initComponents(View view){
         log("initComponents()");
@@ -124,7 +131,11 @@ public class DurationFragment extends Fragment implements ListableAdapter.Callba
         recycler.setLayoutManager(layoutManager);
         recycler.setItemAnimator(new DefaultItemAnimator());
         recycler.setAdapter(adapter);
-
+    }
+    private void initViewModel(){
+        log("...initViewModel()");
+        durationViewModel = new ViewModelProvider(requireActivity()).get(DurationViewModel.class);
+        durationViewModel.set(firstDate, lastDate, getContext());
     }
     @Override
     public void onItemClick(Listable item) {
@@ -156,14 +167,14 @@ public class DurationFragment extends Fragment implements ListableAdapter.Callba
     }
     private void showCategory(){
         log("...showCategory()");
-       //statistics.getCategoryListables().sort(Comparator.comparingLong(Listable::compare));
+        durationViewModel.getDurationByCategory();
         List<Listable> list = statistics.getCategoryListables();
         list.sort(Comparator.comparingLong(Listable::compare));
         adapter.setList(list);
     }
     private void showDate(){
         log("...showDate()");
-        adapter.setList(statistics.getDateListables());
+        adapter.setList(durationViewModel.getDurationByDate());
     }
 
     private void showDatePickerDialogFirstDate() {
@@ -189,17 +200,12 @@ public class DurationFragment extends Fragment implements ListableAdapter.Callba
         });
         datePickerDialog.show();
     }
-    private void filter(String str){
-        log("...filter()");
-        statistics.getItems().stream().filter(item -> item.contains(str)).forEach(System.out::println);
-        long duration = statistics.getItems().stream().filter(item -> item.contains(str)).mapToLong(Item::getDuration).sum();
-        log("duration vila", Converter.formatSecondsWithHours(duration));
-    }
+
     private void updateStatistics(){
         log("...updateStatistics()");
         statistics = new DurationStatistics(firstDate, lastDate, getContext());
         setUserInterface();
-        filter("vila");
+        //filter("vila");
 
     }
 }

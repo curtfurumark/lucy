@@ -76,6 +76,10 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
     private TextView textViewHasChild;
     private TextView textViewTags;
     private TextView textViewColor;
+    private TextView textViewAnxiety;
+    private TextView textViewStress;
+    private TextView textViewMood;
+    private TextView textViewEnergy;
     private LinearLayout layoutDev;
     private Button buttonSave;
     private Button buttonTimer;
@@ -143,16 +147,14 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         initListeners();
         initKronos();
         initViewModel();
-        //initActionRecycler();
         initItemSettingRecycler();
         initMental();
         setUserInterface(currentItem);
         return view;
     }
-/*    private void goToCalendar(){
-        log("...goToCalendar()");
-        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.navigationDrawer_frameContainer, new CalenderDateFragment()).commit();
-    }*/
+    private String formatMental(String label, int value){
+        return String.format(Locale.getDefault(), "%s: %d",label, value);
+    }
     private void initItemSettingRecycler(){
         log("....initItemSettingRecycler");
         itemSettingAdapter = new ItemSettingAdapter(itemSessionViewModel.getItemSettings(currentItem), new ItemSettingAdapter.Listener() {
@@ -161,7 +163,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
                 log("...onClick(ItemSetting)", setting.toString());
                 currentItemSetting = setting;
                 switch (setting.getKey()){
-                    case APPOINTMENT:
+                    case IS_CALENDAR_ITEM:
                         itemSessionViewModel.setIsEvent(setting.isChecked(), getContext());
                         break;
                     case CATEGORY:
@@ -210,10 +212,14 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
     }
     private void initMental(){
         log("...initMental()");
-        seekBarStress.setProgress(itemSessionViewModel.getStress());
-        seekBarMood.setProgress(itemSessionViewModel.getMood());
-        seekBarEnergy.setProgress(itemSessionViewModel.getEnergy());
-        seekBarAnxiety.setProgress(itemSessionViewModel.getAnxiety());
+        seekBarStress.setProgress(itemSessionViewModel.getStress() + 5);
+        textViewStress.setText(formatMental("stress", itemSessionViewModel.getStress()));
+        seekBarMood.setProgress(itemSessionViewModel.getMood() +5);
+        textViewMood.setText(formatMental("mood", itemSessionViewModel.getMood()));
+        seekBarEnergy.setProgress(itemSessionViewModel.getEnergy() +5);
+        textViewEnergy.setText(formatMental("energy", itemSessionViewModel.getEnergy()));
+        seekBarAnxiety.setProgress(itemSessionViewModel.getAnxiety() +5);
+        textViewAnxiety.setText(formatMental("anxiety", itemSessionViewModel.getAnxiety()));
 
     }
     private void initViewModel(){
@@ -263,13 +269,11 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
 
     private void initComponents(View view){
         if( VERBOSE) log("...initComponents()");
-        //textViewEstimatedTime = view.findViewById(R.id.itemSessionFragment_estimatedTime);
         editTextHeading = view.findViewById(R.id.itemSessionFragment_heading);
         checkBoxIsDone = view.findViewById(R.id.itemSessionFragment_checkboxIsDone);
         actionRecycler = view.findViewById(R.id.itemSessionFragment_actionRecycler);
         buttonTimer = view.findViewById(R.id.itemSessionFragment_buttonTimer);
         textViewDuration = view.findViewById(R.id.itemSessionFragment_textViewDuration);
-        //checkBoxIsCalenderItem = view.findViewById(R.id.itemSessionFragment_checkboxIsCalendarItem);
         buttonSave = view.findViewById(R.id.itemSessionFragment_buttonSave);
         textViewID = view.findViewById(R.id.itemSessionFragment_ID);
         textViewParentID = view.findViewById(R.id.itemSessionFragment_parentID);
@@ -286,6 +290,11 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         seekBarStress = view.findViewById(R.id.itemSessionFragment_seekBarStress);
         seekBarAnxiety = view.findViewById(R.id.itemSessionFragment_seekBarAnxiety);
         seekBarMood = view.findViewById(R.id.itemSessionFragment_seekBarMood);
+        textViewAnxiety = view.findViewById(R.id.itemSessionFragment_labelAnxiety);
+        textViewEnergy = view.findViewById(R.id.itemSessionFragment_labelEnergy);
+        textViewMood = view.findViewById(R.id.itemSessionFragment_labelMood);
+        textViewStress = view.findViewById(R.id.itemSessionFragment_labelStress);
+
     }
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
@@ -313,9 +322,9 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
                 log("...onStopTrackingTouch(SeekBar)", seekBar.getProgress());
                 endEnergy = seekBar.getProgress();
                 int energyChange = endEnergy - startEnergy;
-                log("energy changed", energyChange);
+                log("...energy changed", energyChange);
                 itemSessionViewModel.updateEnergy(energyChange, getContext());
-                //lucindaViewModel.updateEnergy(seekBar.getProgress(), getContext());
+                lucindaViewModel.setCurrentEnergy(seekBar.getProgress() - 5);
 
             }
         });
@@ -369,7 +378,6 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
                 if(fromUser){
                     lucindaViewModel.estimateStress( progress - 1, getContext());
                 }
-
             }
 
             @Override
@@ -520,24 +528,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         });
         dialog.show(getChildFragmentManager(), "actual duration");
     }
-    public void showMentalDialog(){
-        log("...showMentalDialog()");
-        Mental mental = MentalWorker.getMental(currentItem, getContext());
-        MentalDialog dialog = new MentalDialog(mental);
-        dialog.setCallback((mental1, mode) -> {
-            log("...onMental(MentalType, MentalType)", mode.toString());
-            log("should only be mode edit");
-            currentItem.setMental(mental1);
-            int res = MentalWorker.update(mental1, getContext());
-            if( res != 1){
-                log("ERROR updating mental");
-                Toast.makeText(getContext(), "ERROR updating mental", Toast.LENGTH_LONG).show();
-            }else{
-                log("...mental updated ok");
-            }
-        });
-        dialog.show(getChildFragmentManager(), "edit mental");
-    }
+
 
     public void showNotificationDialog(){
         log("...showNotificationDialog()");

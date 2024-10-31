@@ -136,13 +136,17 @@ public class Logger {
         log("\thas notification", item.hasNotification());
         log("\tcolor", item.getColor());
         log("\tpriority", item.getPriority());
-        if (item.hasMental()){
+        log("\t\tanxiety", item.getAnxiety());
+        log("\t\tenergy", item.getEnergy());
+        log("\t\tmood", item.getMood());
+        log("\t\tstress", item.getStress());
+/*        if (item.hasMental()){
             Mental mental = item.getMental();
             log("\t\tenergy", mental.getEnergy());
             log("\t\tanxiety", mental.getAnxiety());
             log("\t\tmood", mental.getMood());
             log("\t\tstress", mental.getStress());
-        }
+        }*/
     }
     public static void log(Mental mental){
         log("log(Mental)");

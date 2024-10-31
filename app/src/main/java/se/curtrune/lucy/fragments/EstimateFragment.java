@@ -150,7 +150,7 @@ public class EstimateFragment extends Fragment {
     }
     private void navigateToEstimateFragment(){
         log("...navigateToEstimateFragment()");
-        viewModel.updateFragment(new MentalDayFragment(date, false));
+        viewModel.updateFragment(new MentalDateFragment(date, false));
     }
     private void printActualDuration(){
         log("...printActualDuration()");
@@ -162,7 +162,7 @@ public class EstimateFragment extends Fragment {
         List<Item> doneItems = items.stream().filter(item -> item.isDone()).collect(Collectors.toList());
         List<Mental> doneMentals = MentalWorker.getMentals(doneItems, getContext());
         doneMentals.forEach(System.out::println);
-        viewModel.updateFragment(new MentalDayFragment(date, true));
+        viewModel.updateFragment(new MentalDateFragment(date, true));
     }
     private void printEstimatedDuration(){
         log("...printEstimatedDuration()");

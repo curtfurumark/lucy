@@ -105,7 +105,7 @@ public class LogInActivity extends AppCompatActivity {
             // "cancel" or "no thanks" button that lets the user continue
             // using your app without granting the permission.
             //showInContextUI(...);
-            log("should show request POST_NOTIFICATIONS permission rationale");
+            log("should setMentalType request POST_NOTIFICATIONS permission rationale");
         } else {
             log("...will ask for POST_NOTIFICATIONS permissions ");
             requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 42);
@@ -136,13 +136,15 @@ public class LogInActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     Looper.prepare();
+                    paramThrowable.printStackTrace();
+                    log(" exception message", paramThrowable.getMessage());
                     Toast.makeText(LogInActivity.this,paramThrowable.getMessage(), Toast.LENGTH_LONG).show();
                     Looper.loop();
                 }
             }.start();
             try
             {
-                Thread.sleep(4000); // Let the Toast display before app will get shutdown
+                Thread.sleep(10000); // Let the Toast display before app will get shutdown
             }
             catch (InterruptedException e) {
                 log(e.getMessage());

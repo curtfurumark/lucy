@@ -15,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -40,7 +41,6 @@ import se.curtrune.lucy.fragments.AppointmentsFragment;
 import se.curtrune.lucy.fragments.CalendarMonthHostFragment;
 import se.curtrune.lucy.fragments.CalendarWeekHostFragment;
 import se.curtrune.lucy.fragments.CalenderDateFragment;
-import se.curtrune.lucy.fragments.CalenderMonthFragment;
 import se.curtrune.lucy.fragments.ContactFragment;
 import se.curtrune.lucy.fragments.CustomizeFragment;
 import se.curtrune.lucy.fragments.DailyGraphFragment;
@@ -49,7 +49,7 @@ import se.curtrune.lucy.fragments.DurationFragment;
 import se.curtrune.lucy.fragments.EnchiladaFragment;
 import se.curtrune.lucy.fragments.EstimateFragment;
 import se.curtrune.lucy.fragments.ItemsFragment;
-import se.curtrune.lucy.fragments.MentalDayFragment;
+import se.curtrune.lucy.fragments.MentalDateFragment;
 import se.curtrune.lucy.fragments.MentaHistoryFragment;
 import se.curtrune.lucy.fragments.MessageBoardFragment;
 import se.curtrune.lucy.fragments.SequenceFragment;
@@ -58,10 +58,8 @@ import se.curtrune.lucy.fragments.TodoFragment;
 import se.curtrune.lucy.fragments.TopTenFragment;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
-import se.curtrune.lucy.workers.AffirmationWorker;
 import se.curtrune.lucy.workers.InternetWorker;
 import se.curtrune.lucy.workers.ItemsWorker;
-import se.curtrune.lucy.workers.MentalWorker;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -92,19 +90,8 @@ public class MainActivity extends AppCompatActivity {
     }
     private void boostMe(){
         if( VERBOSE) log("...boostMe()");
-        AffirmationWorker.requestAffirmation(new AffirmationWorker.RequestAffirmationCallback() {
-            @Override
-            public void onRequest(Affirmation affirmation) {
-                log("...onRequest(Affirmation)");
-                BoostDialog boostDialog = new BoostDialog(affirmation.getAffirmation());
-                boostDialog.show(getSupportFragmentManager(), "boost me");
-            }
+        viewModel.requestAffirmation();
 
-            @Override
-            public void onError(String message) {
-                Toast.makeText( MainActivity.this, message, Toast.LENGTH_LONG).show();
-            }
-        });
     }
 
     private void initComponents(){
@@ -159,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
             } else if (item.getItemId() == R.id.navigationDrawer_customizeFragment) {
                 navigate(new CustomizeFragment());
             } else if (item.getItemId() == R.id.navigationDrawer_mentalFragment) {
-                navigate(new MentalDayFragment());
+                navigate(new MentalDateFragment());
             } else if (item.getItemId() == R.id.navigationDrawer_mentalHistoryFragment) {
                 navigate(new MentaHistoryFragment());
             } else if (item.getItemId() == R.id.navigationDrawer_devToDo) {
@@ -181,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
         if( VERBOSE) log("...initListeners()");
         textViewEnergy.setOnClickListener(view->showMentalDay());
         textViewBoost.setOnClickListener(view->boostMe());
-        textViewPanic.setOnClickListener(view->panic(User.getPanicAction(this)));
+        textViewPanic.setOnClickListener(view->showPanicAction());
         textViewLucindaHome.setOnClickListener(view->openWebPage("https://curtfurumark.se/lucinda"));
     }
     private void initViewModel(){
@@ -193,28 +180,34 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(Integer energy) {
                 log("...onChanged(Integer) energy", energy);
-                setTextViewEnergy(getString(R.string.energy), energy);
+                setTextViewMental(getString(R.string.energy), energy);
             }
         });
         viewModel.getAnxiety().observe(this, new Observer<Integer>() {
             @Override
             public void onChanged(Integer anxiety) {
                 log("...anxiety.onChanged(Integer)", anxiety);
-                setTextViewEnergy(getString(R.string.anxiety), anxiety);
+                setTextViewMental(getString(R.string.anxiety), anxiety);
             }
         });
         viewModel.getStress().observe(this, new Observer<Integer>() {
             @Override
             public void onChanged(Integer stress) {
                 log("...stress.onChanged(Integer)", stress);
-                setTextViewEnergy(getString(R.string.stress), stress);
+                setTextViewMental(getString(R.string.stress), stress);
             }
         });
         viewModel.getMood().observe(this, new Observer<Integer>() {
             @Override
             public void onChanged(Integer mood) {
                 log("...mood.onChanged(Integer)", mood);
-                setTextViewEnergy(getString(R.string.mood), mood);
+                setTextViewMental(getString(R.string.mood), mood);
+            }
+        });
+        viewModel.getAffirmation().observe(this, new Observer<Affirmation>() {
+            @Override
+            public void onChanged(Affirmation affirmation) {
+                showBoostDialog(affirmation);
             }
         });
     }
@@ -232,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
         }
         log("MainActivity.navigate(Fragment) ", fragment.getClass().getName());
         currentFragment = fragment;
-        setTextViewEnergy(getString(R.string.energy), viewModel.getEnergy().getValue());
+        setTextViewMental(getString(R.string.energy), viewModel.getEnergy().getValue());
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.navigationDrawer_frameContainer, fragment)
@@ -266,6 +259,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_activity_menu, menu);
+        SearchView searchView = (SearchView) menu.findItem(R.id.mainActivity_search).getActionView();
+        searchView.setQueryHint("search");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                log("...onQueryTextSubmit(String)", query);
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String filter) {
+                log("...onQueryTextChange(String)", filter);
+                viewModel.filter(filter);
+                return false;
+            }
+        });
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -283,12 +293,11 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
+/*    @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         log("MainActivity.onSaveInstanceState(Bundle)");
         super.onSaveInstanceState(outState);
-        //getSupportFragmentManager().putFragment(outState, "fragmentState", currentFragment);
-    }
+    }*/
 
     private void openWebPage(String url){
         log("...openWebPage(String url)", url);
@@ -310,7 +319,7 @@ public class MainActivity extends AppCompatActivity {
         //FIX PERMISSION, IN CUSTOMIZEFRAGEMENT PERHAPS
 /*        int phoneNumber = User.getICE(this);
         if( phoneNumber == -1){
-            Toast.makeText(this, "no phone number to call", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "no phone number to call", Toast.LENGTH_LONG).setMentalType();
             return;
         }
         String stringURI = String.format(Locale.getDefault(), "tel:%d", phoneNumber);
@@ -334,7 +343,6 @@ public class MainActivity extends AppCompatActivity {
     }
     private void panic(Settings.PanicAction panicAction){
         log("...panic(PanicAction))");
-        //Toast.makeText(this, "DON'T PANIC!", Toast.LENGTH_LONG).show();
         log("....panicAction", panicAction.toString());
         switch (panicAction) {
             case GAME:
@@ -364,8 +372,8 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
     }
-    private void setTextViewEnergy(String label, int value){
-        log("...setTextViewEnergy(String, int)", value);
+    private void setTextViewMental(String label, int value){
+        log("MainActivity.setTextViewMental(String, int)", value);
         String strMentalState = String.format(Locale.getDefault(), "%s: %d",label ,value);
         if( value <= -3){
             textViewEnergy.setTextColor(Color.parseColor("#ff0000"));
@@ -392,6 +400,11 @@ public class MainActivity extends AppCompatActivity {
         }
         textViewEnergy.setText(textEnergy);
     }*/
+    private void showBoostDialog(Affirmation affirmation){
+        log("...showBoostDialog(Affirmation)");
+        BoostDialog boostDialog = new BoostDialog(affirmation.getAffirmation());
+        boostDialog.show(getSupportFragmentManager(), "boost me");
+    }
 
     /**
      * loads fragment, stats about current day,
@@ -399,7 +412,37 @@ public class MainActivity extends AppCompatActivity {
      */
     private void showMentalDay(){
         log("...showMentalDay");
-        //navigate(new EstimateFragment());
         viewModel.toggleRecyclerMode();
+    }
+    private void showPanicAction(){
+        Settings.PanicAction panicAction = viewModel.getPanicAction(this);
+        log("...showPanicAction()", panicAction.toString());
+        switch (panicAction) {
+            case GAME:
+                startActivity(new Intent(this, GameActivity.class));
+                break;
+            case URL:
+                String url = User.getRandomPanicUrl(this);
+                openWebPage(url);
+                break;
+            case SEQUENCE:
+                Item panicRoot = ItemsWorker.getPanicRoot(this);
+                if (panicRoot == null) {
+                    log("ERROR...panicRoot == null");
+                } else {
+                    navigate(new SequenceFragment(panicRoot));
+                }
+                break;
+            case ICE:
+                panicActionICE();
+                break;
+            case PENDING:
+                panicActionPending();
+                break;
+            default:
+                //TODO, translate
+                Toast.makeText(this, "go to customize and set preferred panic action", Toast.LENGTH_LONG).show();
+                break;
+        }
     }
 }

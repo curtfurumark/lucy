@@ -14,98 +14,15 @@ import java.util.Locale;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.MentalStats;
+import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.fragments.TopTenFragment;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
 import se.curtrune.lucy.util.Logger;
 
 public class MentalWorker {
-    private static MentalWorker instance;
     public static boolean VERBOSE = false;
-    private MentalWorker(){
-
-    }
-    public static MentalWorker getInstance() {
-        if( instance == null){
-            instance = new MentalWorker();
-        }
-        return instance;
-    }
-
-    public static  int calculateEnergy(List<Mental> mentals){
-        return mentals.stream().mapToInt(Mental::getEnergy).sum();
-    }
-    public static int delete(Mental mental, Context context) {
-        if( VERBOSE) log("MentalWorker.delete(MentalType, Context");
-        LocalDB db = new LocalDB(context);
-        return db.delete(mental);
-    }
-
-    /**
-     * deletes the mental associated with said item,
-     * if theres no mental to delete, this method just returns
-     * @param item the item for which you want to delete it's mental
-     * @param context context context context and more context
-     * @return 0 if no mental to delete, otherwise rowsAffected ( 1 = success, 0 = trouble)
-     */
-    public static int deleteMental(Item item, Context context){
-        log("MentalWorker.deleteMental(Item, Context)");
-        if( item.getMental() == null){
-            log("WARNING, no mental to delete");
-            return 0;
-        }
-        try(LocalDB db = new LocalDB(context)){
-            return db.delete(item.getMental());
-        }
-    }
-    public static int getAnxiety(LocalDate date, Context context){
-        if( VERBOSE) log("MentalWorker.getAnxiety(LocalDate)", date.toString());
-        List<Mental> mentals = getMentals(date,false, true,  context);
-        return mentals.stream().mapToInt(Mental::getAnxiety).sum();
-    }
-
-    /**
-     * the latest ten entries, notwithstanding date
-     * @param context, the f-ing context, what did you expect=
-     * @return energy as calculated from the ten latest mental entries
-     */
-    public static long getCurrentEnergy(Context context) {
-        log("MentalWorker.getCurrentEnergy(Context)");
-        long sum;
-        String query = "SELECT * FROM mental ORDER BY updated DESC LIMIT 10";
-        try(LocalDB db = new LocalDB(context)) {
-            List<Mental> items = db.selectMentals(query);
-            if (items.size() == 0) {
-                log("...no mental items in database");
-                return 0;
-            }
-            items.forEach(Logger::log);
-            sum = items.stream().mapToLong(Mental::getEnergy).sum();
-            log("...sum energy", sum);
-        }
-        return sum;
-    }
-    public static int getEnergy(LocalDate date, Context context){
-        if( VERBOSE) log("MentalWorker.getEnergy(LocalDate)", date.toString());
-        List<Mental> mentals = getMentals(date,false, true,  context);
-        if( VERBOSE){
-            mentals.forEach(System.out::println);
-        }
-        return mentals.stream().mapToInt(Mental::getEnergy).sum();
-    }
-
-    /**
-     * get the mental instance associated with this item
-     * @param item, the item you wish to get item for
-     * @param context so tired of contexts
-     * @return the mental, null if none?
-     */
-    public static Mental getMental(Item item, Context context){
-        if( VERBOSE) log("MentalWorker.getMental(Item)", item.getHeading());
-        LocalDB db = new LocalDB(context);
-        String query = String.format(Locale.ENGLISH,"SELECT * FROM mental WHERE itemID = %d", item.getID());
-        return db.selectMental(query);
-    }
+    @Deprecated
     public static MentalStats getMentalStats(List<Item> items, Context context) {
         log("MentalStats.getMentalStats(List<Item>, Context)");
         MentalStats mentalEstimate = new MentalStats();
@@ -113,34 +30,32 @@ public class MentalWorker {
             if(item.isTemplate()){
                 log("item isTemplate, TODO: something intelligent");
             }
-            Mental mental = MentalWorker.getMental(item, context);
+/*            Mental mental = MentalWorker.getMental(item, context);
             mentalEstimate.add(mental);
             mentalEstimate.plusEnergy(mental.getEnergy());
             mentalEstimate.plusAnxiety(mental.getAnxiety());
             mentalEstimate.plusStress(mental.getStress());
-            mentalEstimate.plusMood(mental.getMood());
+            mentalEstimate.plusMood(mental.getMood());*/
         }
         return mentalEstimate;
     }
+    @Deprecated
     public static List<Mental> getMentals(List<Item> items, Context context){
         log("...getMentals(List<Item>)");
         List<Mental> mentalList = new ArrayList<>();
-        for( Item item: items){
+/*        for( Item item: items){
             Mental mental = MentalWorker.getMental(item, context);
             assert  mental != null;
             mentalList.add(mental);
-        }
+        }*/
         return mentalList;
     }
-    public static int getMood(LocalDate date, Context context){
-        if( VERBOSE) log("MentalWorker.getMood(LocalDate)", date.toString());
-        List<Mental> mentals = getMentals(date,false, true,  context);
-        return mentals.stream().mapToInt(Mental::getMood).sum();
-    }
+
+    @Deprecated
     public static MentalStats getStatistics(List<Item> items, Context context){
         log("MentalWorker.getStatistics(List<Item>, Context))");
         MentalStats stats = new MentalStats();
-        for( Item item: items){
+/*        for( Item item: items){
             //if(item.isTemplate()){
             //    log("item isTemplateTODO, something intelligent");
             //}
@@ -153,39 +68,29 @@ public class MentalWorker {
             stats.plusAnxiety(mental.getAnxiety());
             stats.plusStress(mental.getStress());
             stats.plusMood(mental.getMood());
-        }
+        }*/
 
         return stats;
     }
-    public static int getStress(LocalDate date, Context context){
-        if( VERBOSE) log("MentalWorker.getStress(LocalDate)", date.toString());
-        List<Mental> mentals = getMentals(date,false, true,  context);
-        return mentals.stream().mapToInt(Mental::getStress).sum();
-    }
 
+
+    @Deprecated
     public static List<Mental> select(LocalDate firstDate, LocalDate lastDate, Context context) {
         if( VERBOSE) log("MentalWorker.select(LocalDate, LocalDate, Context");
-        String query = String.format("SELECT * FROM mental WHERE date >= %d AND date <= %d", firstDate.toEpochDay(), lastDate.toEpochDay());
+        String query = String.format(Locale.getDefault(), "SELECT * FROM mental WHERE date >= %d AND date <= %d", firstDate.toEpochDay(), lastDate.toEpochDay());
         try(LocalDB db = new LocalDB(context)){
             return db.selectMentals(query);
         }
     }
 
+    @Deprecated
     public static List<Mental> selectTopTen(TopTenFragment.Mode mode, Context context) {
         LocalDB db = new LocalDB(context);
         String query = Queeries.selectMentalTopTen(mode);
         return db.selectMentals(query);
     }
 
-
-
-    public static Mental insert(Mental mental, Context context) {
-        if( VERBOSE) log("MentalWorker.insert(MentalType, Context)");
-        LocalDB db = new LocalDB(context);
-        return db.insert(mental);
-    }
-
-
+    @Deprecated
     public static List<Mental> getLatestMentals(int limit, Context context){
         if( VERBOSE) log("...getLatestMentals(int, Context) limit", limit );
         LocalDB db = new LocalDB(context);
@@ -193,11 +98,9 @@ public class MentalWorker {
         return db.selectMentals(query);
     }
 
+    @Deprecated
     public static List<Mental> getMentals(LocalDate date, boolean includeTemplates, boolean done, Context context) {
         if( VERBOSE) log("MentalWorker.getMentals(LocalDate,boolean, boolean)", date.toString());
-        if( context == null){
-            log("...CONTEXT IS NULL, getMentals");
-        }
         String queery = Queeries.selectMentals(date, false, true);
         LocalDB db = new LocalDB(context);
         return db.selectMentals(queery);
@@ -244,39 +147,49 @@ public class MentalWorker {
         return dataPoints;
     }
 
-    /**
-     * update a mental item whatever
-     * @param mental, the mental item to updated
-     * @param context and context is still just context
-     * @return rowsaffected, in other words, 1 is ok, all other is fail
-     */
-    public static int update(Mental mental, Context context) {
-        if( VERBOSE) log("MentalWorker.update(MentalType, Context)");
-        LocalDB db = new LocalDB(context);
-        return db.update(mental);
-    }
 
     /**
-     * selects all the "generated" mentals...sorry but this is conceptually wrong
      *
-     * @param item, the parent
-     * @param context context,
-     * @return a list
+     * @param date the date you wish to examine
+     * @param context, context
+     * @return a Mental representing the sum of all the item said date
      */
-    public static List<Mental> getMentalChildren(Item item, Context context) {
-        log("...getMentalChildren(Item, Context)");
-        String queery = Queeries.selectMentalChildren(item);
-        try(LocalDB db = new LocalDB(context)){
-            return db.selectMentals(queery);
-        }
+    public static Mental getMental(LocalDate date, Context context) {
+        log("MentalWorker.getMental(LocalDate, Context)");
+        List<Item> items = ItemsWorker.selectItems(date, context);
+        int anxiety = 0, energy = 0, mood = 0, stress = 0;
+        anxiety = items.stream().mapToInt(Item::getAnxiety).sum();
+        energy = items.stream().mapToInt(Item::getEnergy).sum();
+        mood = items.stream().mapToInt(Item::getMood).sum();
+        stress = items.stream().mapToInt(Item::getStress).sum();
+        return new Mental(anxiety, energy, mood, stress);
     }
 
-    public static List<Mental> selectMentals(List<Item> children, Context context) {
-        log("...selectMentals(List<Item>, Context)");
-        List<Mental> mentals = new ArrayList<>();
-        for( Item item: children){
-            mentals.add(MentalWorker.getMental(item, context));
+    /**
+     *
+     * @param date the date to interrogate
+     * @param context, context
+     * @return Mental sum for done items
+     */
+    public static Mental getCurrentMental(LocalDate date, Context context) {
+        log("MentalWorker.getCurrentMental(LocalDate)", date.toString());
+        String queery = Queeries.selectItems(date, State.DONE);
+        List<Item> items;
+        int anxiety = 0;
+        int energy = 0;
+        int mood = 0;
+        int stress = 0;
+        try(LocalDB db = new LocalDB(context)){
+            items = db.selectItems(queery);
+            items.forEach(Logger::log);
+            anxiety = items.stream().mapToInt(Item::getAnxiety).sum();
+            energy = items.stream().mapToInt(Item::getEnergy).sum();
+            mood = items.stream().mapToInt(Item::getMood).sum();
+            stress = items.stream().mapToInt(Item::getStress).sum();
+        }catch (Exception exception){
+            exception.printStackTrace();
+            log(exception.getMessage());
         }
-        return mentals;
+        return new Mental(anxiety, energy, mood, stress);
     }
 }

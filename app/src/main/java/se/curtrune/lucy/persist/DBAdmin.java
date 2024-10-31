@@ -77,6 +77,10 @@ public class DBAdmin {
         item.setReward(cursor.getString(20));
         item.setColor(cursor.getInt(21));
         item.setPriority(cursor.getInt(22));
+        item.setEnergy(cursor.getInt(23));
+        item.setAnxiety(cursor.getInt(24));
+        item.setStress(cursor.getInt(25));
+        item.setMood(cursor.getInt(26));
         return item;
     }
     public static ContentValues getContentValues(Asset asset){
@@ -116,6 +120,10 @@ public class DBAdmin {
         cv.put("template", item.isTemplate()? 1:0);
         cv.put("color", item.getColor());
         cv.put("priority", item.getPriority());
+        cv.put("energy", item.getEnergy());
+        cv.put("anxiety", item.getAnxiety());
+        cv.put("stress", item.getStress());
+        cv.put("mood", item.getMood());
         //cv.put("content", item.getContent());
         //cv.put("mental", item.getMental().toJson());
         return cv;

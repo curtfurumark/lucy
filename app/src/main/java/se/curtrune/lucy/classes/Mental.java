@@ -29,6 +29,15 @@ public class Mental implements Listable, Serializable {
     private long updated;
     private boolean isTemplate;
     private boolean isDone;
+
+    public Mental(int anxiety, int energy, int mood, int stress) {
+        log("Mental(int, int, int, int)");
+        this.anxiety = anxiety;
+        this.energy = energy;
+        this.mood = mood;
+        this.stress = stress;
+    }
+
     public enum Type{
         ENERGY, ANXIETY, STRESS, MOOD
     }

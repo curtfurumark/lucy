@@ -39,12 +39,14 @@ public class Item implements Serializable , Listable {
     protected boolean isCalenderItem;
     protected Item parent;
     protected List<Item> children;
-    //protected int days;
-    protected int energy;
     protected Repeat repeat;
     protected MentalStats estimate;
     protected Notification notification;
-    protected Mental mental;
+    //protected Mental mental;
+    protected int energy;
+    protected int anxiety;
+    protected int stress;
+    protected  int mood;
     protected  int color = -1;
     //protected Content content;
     public static boolean VERBOSE = false;
@@ -105,6 +107,9 @@ public class Item implements Serializable , Listable {
     public boolean contains(String str) {
         return (heading + description + comment + tags).contains(str);
     }
+    public int getAnxiety(){
+        return anxiety;
+    }
     public String getCategory() {
         return category;
     }
@@ -131,7 +136,8 @@ public class Item implements Serializable , Listable {
         return duration;
     }
     public int getEnergy(){
-        return mental != null? mental.getEnergy():0;
+        //return mental != null? mental.getEnergy():0;
+        return energy;
     }
     public MentalStats getEstimate(){
         return estimate;
@@ -165,8 +171,11 @@ public class Item implements Serializable , Listable {
         }
         return 0;
     }
+    public int getMood(){
+        return mood;
+    }
     public Mental getMental(){
-        return mental;
+        return new Mental(anxiety, energy, mood, stress);
     }
     public Notification getNotification(){
         return this.notification;
@@ -190,6 +199,9 @@ public class Item implements Serializable , Listable {
     }
     public State getState() {
         return State.values()[state];
+    }
+    public int getStress(){
+        return stress;
     }
     public String getTags() {
         return tags;
@@ -289,13 +301,8 @@ public class Item implements Serializable , Listable {
         return updated >= epoch && updated <= epoch + (3600 * 24);
     }
 
-
-    public void setChildren(List<Item> children){
-        for(Item item: children){
-            item.setParent(this);
-        }
-        this.children = children;
-
+    public void setAnxiety(int anxiety){
+        this.anxiety = anxiety;
     }
     public void setCategory(String category) {
         //log("Item.setCategory(String)", category);
@@ -318,10 +325,7 @@ public class Item implements Serializable , Listable {
     public void setCreated(long created){
         this.created = created;
     }
-/*    @Deprecated
-    public void setDays(int days){
-        this.days = days;
-    }*/
+
     public void setEnergy(int energy){
         this.energy = energy;
     }
@@ -359,12 +363,12 @@ public class Item implements Serializable , Listable {
         this.heading = heading;
     }
 
-    public void setMental(Mental mental){
+/*    public void setMental(Mental mental){
         if(mental == null){
             log("WARNING Item.setMental(MentalType) is null");
         }
         this.mental = mental;
-    }
+    }*/
 
     public void setNotification(Notification notification){
         this.notification = notification;
@@ -387,6 +391,9 @@ public class Item implements Serializable , Listable {
     }
     public void setIsTemplate(boolean isTemplate){
         this.templateType = isTemplate ? 1:0;
+    }
+    public void setMood(int mood){
+        this.mood = mood;
     }
     public void setParent(Item parent){
         this.parent_id = parent.getID();
@@ -415,6 +422,9 @@ public class Item implements Serializable , Listable {
         this.reward = new Gson().fromJson(json, Reward.class);
     }
 
+    public void setStress(int stress){
+        this.stress = stress;
+    }
     public void setState(int state){
         this.state = state;
     }
@@ -452,8 +462,6 @@ public class Item implements Serializable , Listable {
     @NonNull
     @Override
     public String toString() {
-/*        return String.format(Locale.getDefault(),
-                "%s (%d), parent: %d, has child: %b", heading,id, parent_id, hasChild());*/
         return String.format(Locale.getDefault(), "%s, %s,  d:%s", getHeading(), getTargetTime().toString(), Converter.formatSecondsWithHours(duration));
     }
     /**
@@ -477,7 +485,7 @@ public class Item implements Serializable , Listable {
         repeat.setUnit(unit);
     }
 
-    public boolean hasMental() {
-        return mental != null;
-    }
+//    public boolean hasMental() {
+//        return mental != null;
+//    }
 }

@@ -90,7 +90,7 @@ public class SequenceFragment extends Fragment implements SequenceAdapter.Callba
             parentItem = (Item) intent.getSerializableExtra(Constants.INTENT_SEQUENCE_PARENT);
             if( parentItem == null){
                 log("ERROR iam deeply sorry but parentItem is null, i surrender");
-                Toast.makeText(this, "no parentItem", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "no parentItem", Toast.LENGTH_LONG).setMentalType();
                 return;
             }
         }

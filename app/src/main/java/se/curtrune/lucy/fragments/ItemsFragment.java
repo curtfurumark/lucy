@@ -67,7 +67,7 @@ public class ItemsFragment extends Fragment implements
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param parent, show children to this item
+     * @param parent, setMentalType children to this item
      * @return A new instance of fragment ItemsFragment.
      */
     public static ItemsFragment newInstance(Item parent) {
@@ -113,12 +113,12 @@ public class ItemsFragment extends Fragment implements
     }
     private void deleteItem(Item item){
         log("...deleteItem(Item)", item.getHeading());
-        int rowsAffected = MentalWorker.deleteMental(item, getContext());
+/*        int rowsAffected = MentalWorker.deleteMental(item, getContext());
         if( rowsAffected != 1){
             log("WARNING mental not deleted, possibly no mental to delete...");
         }else{
             log("...mental deleted from db");
-        }
+        }*/
         boolean deleted = ItemsWorker.delete(item, getContext());
         if( !deleted){
             log("...error deleting item");

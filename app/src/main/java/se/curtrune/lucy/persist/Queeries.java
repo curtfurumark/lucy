@@ -178,6 +178,7 @@ public class Queeries {
     }
 
     public static String selectItems(LocalDate firstDate, LocalDate lastDate, State state) {
+        //log();
         LocalDateTime localDateTimeFirst = firstDate.atStartOfDay();
         long startEpoch = localDateTimeFirst.toEpochSecond(ZoneOffset.UTC);
         long endEpoch = lastDate.atStartOfDay().toEpochSecond(ZoneOffset.UTC) + (3600 * 24);
@@ -253,7 +254,12 @@ public class Queeries {
         LocalDate firstDate = yearMonth.atDay(1);
         return String.format(Locale.getDefault(), "SELECT * FROM items WHERE targetDate >= %d AND targetDate <= %d AND type = %d ORDER by targetDate DESC",
                 firstDate.toEpochDay(), lastDate.toEpochDay(), Type.APPOINTMENT.ordinal());
-
+    }
+    public static String selectIsCalendarItems(YearMonth yearMonth) {
+        LocalDate lastDate =  yearMonth.atEndOfMonth();
+        LocalDate firstDate = yearMonth.atDay(1);
+        return String.format(Locale.getDefault(), "SELECT * FROM items WHERE targetDate >= %d AND targetDate <= %d AND isCalenderItem = 1 ORDER by targetDate DESC",
+                firstDate.toEpochDay(), lastDate.toEpochDay(), Type.APPOINTMENT.ordinal());
     }
 
     public static String selectCalenderItems(LocalDate date) {

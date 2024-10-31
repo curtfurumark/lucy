@@ -23,7 +23,6 @@ import se.curtrune.lucy.adapters.AppointmentAdapter;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.AppointmentDialog;
-import se.curtrune.lucy.dialogs.EditItemDialog;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.ItemsWorker;
 
@@ -130,15 +129,9 @@ public class AppointmentsFragment extends Fragment implements
 
     @Override
     public void onLongClick(Item item) {
-        assert item != null;
-        log("...onLongClick(ItemI)", item.getHeading());
-        EditItemDialog dialog = new EditItemDialog(item);
-        dialog.setCallback(item1 -> {
-            log("...onUpdate(Item)");
-            log(item1);
-        });
-        dialog.show(getChildFragmentManager(), "edit item");
+        log("...onLongClick(Item)");
     }
+
 
     @Override
     public void onCheckboxClicked(Item item, boolean checked) {

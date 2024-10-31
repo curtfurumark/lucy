@@ -26,6 +26,7 @@ public class PanicActionDialog extends DialogFragment {
     private RadioButton radioButtonGame;
     private Button buttonDismiss;
     private Settings.PanicAction panicAction;
+    public static boolean VERBOSE = false;
 
     public interface Listener{
         void onPanicAction(Settings.PanicAction panicAction);
@@ -37,34 +38,32 @@ public class PanicActionDialog extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        log("...onCreateView(...)");
+        if( VERBOSE) log("PanicActionDialog.onCreateView(...)");
         View view = inflater.inflate(R.layout.panic_action_dialog, container);
         initComponents(view);
         initListeners();
         setDefaultPanicAction();
-        setUserInterface();
         return view;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        log("PanicActionDialog.onCreate(Bundle)");
+        if( VERBOSE) log("PanicActionDialog.onCreate(Bundle)");
         setStyle(DialogFragment.STYLE_NORMAL,
                 android.R.style.Theme_Black_NoTitleBar_Fullscreen);
     }
     public void initComponents(View view){
-        log("...initComponents()");
+        if( VERBOSE) log("...initComponents()");
         buttonOK = view.findViewById(R.id.panicActionDialog_ok);
         buttonDismiss = view.findViewById(R.id.panicActionDialog_dismiss);
-        //textViewMessage = view.findViewById(R.id.boostMe_message);
         radioButtonICE = view.findViewById(R.id.panicActionDialog_radioButtonICE);
         radioButtonURL = view.findViewById(R.id.panicActionDialog_radioURL);
         radioButtonSequence = view.findViewById(R.id.panicActionDialog_radioButtonSequence);
         radioButtonGame = view.findViewById(R.id.panicActionDialog_radioButtonGame);
     }
     private void initListeners(){
-        log("...initListeners()");
+        if( VERBOSE) log("...initListeners()");
         buttonDismiss.setOnClickListener(view->dismiss());
         buttonOK.setOnClickListener(view-> {
                 listener.onPanicAction(panicAction);
@@ -80,17 +79,12 @@ public class PanicActionDialog extends DialogFragment {
         this.panicAction = panicAction;
     }
     public void setListener(Listener listener){
-        log("...setListener(Listener)");
+        if( VERBOSE) log("...setListener(Listener)");
         this.listener = listener;
     }
     private void setDefaultPanicAction(){
-        log("...setDefaultPanicAction()");
+        if(VERBOSE)log("...setDefaultPanicAction()");
         radioButtonSequence.setChecked(true);
         panicAction = Settings.PanicAction.SEQUENCE;
     }
-    private void setUserInterface(){
-        log("...setUserInterface()");
-        //textViewMessage.setText(message);
-    }
-
 }

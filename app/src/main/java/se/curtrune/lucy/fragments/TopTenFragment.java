@@ -97,7 +97,7 @@ public class TopTenFragment extends Fragment implements TopTenAdapter.Callback {
 
     }
     private void show(Mode mode){
-        log("...show()", mode.toString());
+        log("...setMentalType()", mode.toString());
         List<Mental> mentals = MentalWorker.selectTopTen(mode, getContext());
         adapter.setList(new ArrayList<>(mentals), mode);
     }

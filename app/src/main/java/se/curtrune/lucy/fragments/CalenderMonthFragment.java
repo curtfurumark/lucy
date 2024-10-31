@@ -88,7 +88,7 @@ public class CalenderMonthFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.calender_month_fragment, container, false);
         initComponents(view);
-        //initViewModel();
+        initViewModel();
         initRecycler();
         //initListeners();
         //initSwipeHeading();
@@ -148,6 +148,7 @@ public class CalenderMonthFragment extends Fragment {
             if(calenderDate.getItems().size() == 0){
                 showAppointmentsDialog(calenderDate.getDate());
             }else {
+                log(" will move to calender date fragment");
                 lucindaViewModel.updateFragment(new CalenderDateFragment(calenderDate));
             }
         });
@@ -161,11 +162,11 @@ public class CalenderMonthFragment extends Fragment {
     }
     private void initViewModel(){
         log("...initViewModel()");
-        calendarMonthViewModel = new ViewModelProvider(requireActivity()).get(CalendarMonthViewModel.class);
+        //calendarMonthViewModel = new ViewModelProvider(requireActivity()).get(CalendarMonthViewModel.class);
         if( currentYearMonth == null){
             currentYearMonth = YearMonth.now();
         }
-        calendarMonthViewModel.setYearMonth(currentYearMonth, getContext());
+        //calendarMonthViewModel.setYearMonth(currentYearMonth, getContext());
         lucindaViewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
     }
     private void initSwipeHeading(){
@@ -246,7 +247,7 @@ public class CalenderMonthFragment extends Fragment {
     private void showItemsDialog(CalenderDate calenderDate){
         log("...showItemsDialog()");
         ItemsDialog dialog = new ItemsDialog(calenderDate.getItems(), calenderDate.getDate());
-        dialog.show(getChildFragmentManager(), "show items");
+        dialog.show(getChildFragmentManager(), "setMentalType items");
     }
     private void showMonthPicker(){
         log("...showMonthPicker()");

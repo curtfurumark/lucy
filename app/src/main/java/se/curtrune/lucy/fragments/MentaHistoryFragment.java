@@ -37,7 +37,7 @@ public class MentaHistoryFragment extends Fragment {
     private LocalDate lastDate;
 
     /**
-     * the number of dates to show, counting backwards from today
+     * the number of dates to setMentalType, counting backwards from today
      */
     private int numberOfDays = 7;
     public MentaHistoryFragment() {
@@ -109,7 +109,7 @@ public class MentaHistoryFragment extends Fragment {
                 setUserInterface(currentDate);
             }
         });
-        datePickerDialog.show();
+        datePickerDialog.setMentalType();
     }*/
     private void initComponents(View view){
         log("...initComponents(View)");
@@ -128,18 +128,19 @@ public class MentaHistoryFragment extends Fragment {
         //LocalDate currentDate = LocalDate.now().minusDays(numberOfDays);
         LocalDate currentDate = firstDate;
         for(int i = 0; i < numberOfDays; i++){
+            Mental mental = MentalWorker.getMental(currentDate, getContext());
             switch (mentalType){
                 case ENERGY:
-                    mentalLevel = MentalWorker.getEnergy(currentDate, getContext());
+                    mentalLevel = mental.getEnergy();
                     break;
                 case MOOD:
-                    mentalLevel = MentalWorker.getMood(currentDate, getContext());
+                    mentalLevel = mental.getMood();
                     break;
                 case STRESS:
-                    mentalLevel = MentalWorker.getStress(currentDate, getContext());
+                    mentalLevel = mental.getStress();
                     break;
                 case ANXIETY:
-                    mentalLevel = MentalWorker.getAnxiety(currentDate, getContext());
+                    mentalLevel = mental.getAnxiety();
                     break;
             }
             System.out.printf("date %s, level %d\n", currentDate.toString(), mentalLevel);

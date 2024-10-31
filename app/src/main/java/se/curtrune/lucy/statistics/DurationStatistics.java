@@ -25,8 +25,10 @@ public class DurationStatistics {
     private List<Mental> mentals;
     private List<Listable> categoryListables = new ArrayList<>();
     private List<Listable> dateListables = new ArrayList<>();
+    public static boolean VERBOSE = false;
 
     public DurationStatistics(LocalDate firstDate, LocalDate lastDate, Context context) {
+        log("DurationStatistics(LocalDate, LocalDate, Context)");
         this.firstDate = firstDate;
         this.lastDate = lastDate;
         init(firstDate, lastDate, context);
@@ -34,8 +36,7 @@ public class DurationStatistics {
         createDateListables();
     }
     private void createCategoryListables(Context context){
-        log("createCategoryListables(List<Item>");
-        LocalDB localDB = new LocalDB(context);
+        log("createCategoryListables(Context))");
         String[] categories = User.getCategories(context);
         for(String category : categories){
             List<Item> categoryItems = items.stream().filter(item->item.isCategory(category)).collect(Collectors.toList());
@@ -69,8 +70,10 @@ public class DurationStatistics {
         LocalDB db = new LocalDB(context);
         String queery = Queeries.selectItems(firstDate, lastDate, State.DONE);
         items =  db.selectItems(queery);
-        log("...items on parade");
-        items.forEach(Logger::log);
+        if( VERBOSE) {
+            log("...items on parade");
+            items.forEach(Logger::log);
+        }
         queery = Queeries.selectMentals(firstDate, lastDate, false, true);
         mentals = db.selectMentals(queery);
     }

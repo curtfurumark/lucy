@@ -5,6 +5,7 @@ import static se.curtrune.lucy.util.Logger.log;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -86,7 +87,13 @@ public class LocalDB extends SQLiteOpenHelper {
     public void executeSQL(String sql) {
         log("LocalDB.executeSQL(String sql)", sql);
         db = this.getWritableDatabase();
-        db.execSQL(sql);
+        try {
+            db.execSQL(sql);
+            log("...sql executed");
+        }catch (SQLException exception){
+            exception.printStackTrace();
+            log(exception.getMessage());
+        }
         db.close();
     }
 
@@ -130,11 +137,12 @@ public class LocalDB extends SQLiteOpenHelper {
         long id = db.insert(ITEMS_TABLE, null, DBAdmin.getContentValues(item));
         if (id == -1) {
             log("ERROR: LocalDB.insert(Item) insert returned -1, not good enough");
-        } else {
+        } else if( VERBOSE){
             if( VERBOSE) log("...item inserted with id ", id);
+            log(item);
         }
         item.setId((int) id);
-        Mental mental = item.getMental();
+/*        Mental mental = item.getMental();
         if( mental == null){
             log("WARNING, inserting an item with no mental...");
             mental = new Mental(item);
@@ -146,7 +154,7 @@ public class LocalDB extends SQLiteOpenHelper {
         mental.setIsTemplate(item.isTemplate());
         mental.setItemID(item.getID());
         mental = insert(mental);
-        item.setMental(mental);
+        item.setMental(mental);*/
         db.close();
         return item;
     }
@@ -233,11 +241,11 @@ public class LocalDB extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Item item = DBAdmin.getItem(cursor);
-                Mental mental = selectMental(Queeries.selectMental(item));
+/*                Mental mental = selectMental(Queeries.selectMental(item));
                 if( mental == null){
                     mental = new Mental(item);
                 }
-                item.setMental(mental);
+                item.setMental(mental);*/
                 items.add(item);
             } while (cursor.moveToNext());
         }
@@ -370,22 +378,22 @@ public class LocalDB extends SQLiteOpenHelper {
         String whereClause = String.format(Locale.getDefault(), "id = %d", item.getID());
         int rowsAffected = db.update(ITEMS_TABLE, DBAdmin.getContentValues(item), whereClause, null);
         log("...update item ok: ", rowsAffected == 1);
-        Mental mental = item.getMental();
+/*        Mental mental = item.getMental();
         mental.isDone(item.isDone());
         if( VERBOSE) log(mental);
         rowsAffected = update(item.getMental());
-        if( VERBOSE) log("...update mental ok: ", rowsAffected == 1);
+        if( VERBOSE) log("...update mental ok: ", rowsAffected == 1);*/
         db.close();
         return rowsAffected;
     }
 
     public int update(Mental mental) {
-        log("LocalDB.update(MentalType)");
-        log(mental);
+        log("LocalDB.update(Mental)");
+        if( VERBOSE) log(mental);
         db = this.getWritableDatabase();
         String whereClause = String.format(Locale.getDefault(), "id = %d", mental.getID());
         int rowsAffected = db.update(TABLE_MENTAL, DBAdmin.getContentValues(mental), whereClause, null);
-        log("...rowsAffected", rowsAffected);
+        if( VERBOSE) log("...rowsAffected", rowsAffected);
         db.close();
         return rowsAffected;
     }

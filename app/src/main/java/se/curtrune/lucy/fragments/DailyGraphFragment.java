@@ -114,7 +114,7 @@ public class DailyGraphFragment extends Fragment {
             log("...date chosen", currentDate);
             graphView.removeAllSeries();
             textViewDate.setText(currentDate.toString());
-            //Toast.makeText(getContext(), "not implemented", Toast.LENGTH_LONG).show();
+            //Toast.makeText(getContext(), "not implemented", Toast.LENGTH_LONG).setMentalType();
             initMentals(currentDate);
             initMentalsToGraph(currentDate);
             //setUserInterface();

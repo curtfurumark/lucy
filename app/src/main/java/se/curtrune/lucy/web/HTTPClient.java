@@ -12,8 +12,8 @@ import static se.curtrune.lucy.util.Logger.log;
 public class HTTPClient {
 
     public static int TIMEOUT = 10000;
-    public static final String SELECT_URL = "https://curtfurumark.se/projects/select.php";
-    public static final String INSERT_URL = "https://curtfurumark.se/projects/insert.php";
+    public static final String SELECT_URL = "http://curtfurumark.se/projects/select.php";
+    public static final String INSERT_URL = "http://curtfurumark.se/projects/insert.php";
     private static final String VERSION = "0.7";
     public  static  boolean VERBOSE = false;
 

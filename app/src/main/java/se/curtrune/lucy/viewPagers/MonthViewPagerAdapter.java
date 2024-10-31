@@ -28,8 +28,8 @@ public class MonthViewPagerAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
         log("...createFragment(int)", position);
-        return new DummyMonthFragment(getYearMonth(position), position);
-        //return new CalenderMonthFragment(getYearMonth(position));
+        //return new DummyMonthFragment(getYearMonth(position), position);
+        return new CalenderMonthFragment(getYearMonth(position));
 /*        if( fragments.get(position) == null){
             //fragments.set(position, new CalenderMonthFragment(getYearMonth(position)));
             YearMonth yearMonth = getYearMonth(position);

@@ -269,7 +269,7 @@ public class CustomizeFragment extends Fragment {
             startActivity(intent);
         } catch (Exception e) {
             log("EXCEPTION, probably not valid ur");
-            Toast.makeText(getContext(), "page not found", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "page not found", Toast.LENGTH_LONG).setMentalType();
         }*/
     }
     private void panicAction(Settings.PanicAction panicAction){

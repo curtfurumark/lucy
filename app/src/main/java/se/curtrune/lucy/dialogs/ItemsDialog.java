@@ -95,7 +95,7 @@ public class ItemsDialog extends DialogFragment {
             @Override
             public void onLongClick(Item item) {
                 log("...onLongClick(Item)", item.getHeading());
-                EditItemDialog dialog = new EditItemDialog(item);
+/*                EditItemDialog dialog = new EditItemDialog(item);
                 dialog.setCallback(new EditItemDialog.Callback() {
                     @Override
                     public void onUpdate(Item item) {
@@ -111,7 +111,7 @@ public class ItemsDialog extends DialogFragment {
                         }
                     }
                 });
-                dialog.show(getChildFragmentManager(), "edit item");
+                dialog.setMentalType(getChildFragmentManager(), "edit item");*/
             }
 
             @Override
