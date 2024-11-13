@@ -43,14 +43,6 @@
                 app:layout_constraintStart_toEndOf="@+id/itemAdapter_itemState"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <!--TextView
-                android:id="@+id/itemAdapter_itemInfo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@+id/itemAdapter_repeatIcon"
-                app:layout_constraintStart_toEndOf="@+id/itemAdapter_itemState"
-                app:layout_constraintTop_toBottomOf="@id/itemAdapter_itemHeading" /-->
-
             <ImageView
                 android:id="@+id/itemAdapter_repeatIcon"
                 android:layout_width="wrap_content"

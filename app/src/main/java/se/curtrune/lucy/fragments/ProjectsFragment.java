@@ -26,6 +26,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.ItemAdapter;
@@ -33,22 +34,14 @@ import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.AddItemDialog;
-import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.viewmodel.ProjectsViewModel;
 import se.curtrune.lucy.workers.ItemsWorker;
-import se.curtrune.lucy.workers.MentalWorker;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ItemsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class ItemsFragment extends Fragment implements
+public class ProjectsFragment extends Fragment implements
         ItemAdapter.Callback,
         TabLayout.OnTabSelectedListener {
 
-    private static final String CURRENT_PARENT = "CURRENT_PARENT";
     private RecyclerView recycler;
     private TabLayout tabLayout;
     private FloatingActionButton buttonAddItem;
@@ -56,52 +49,36 @@ public class ItemsFragment extends Fragment implements
     private ProjectsViewModel projectsViewModel;
     private Item currentParent;
     private List<Item> items = new ArrayList<>();
-    private LucindaViewModel viewModel;
+    private LucindaViewModel mainViewModel;
     public static boolean VERBOSE = false;
 
-    public ItemsFragment() {
-        if( VERBOSE) log("ItemsFragment()");
+    public ProjectsFragment() {
+        if( VERBOSE) log("ProjectsFragment()");
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param parent, setMentalType children to this item
-     * @return A new instance of fragment ItemsFragment.
-     */
-    public static ItemsFragment newInstance(Item parent) {
-        log("ItemsFragment.newInstance(Item parent) ", parent.getHeading());
-        ItemsFragment fragment = new ItemsFragment();
-        Bundle args = new Bundle();
-        args.putSerializable(Constants.INTENT_SERIALIZED_ITEM, parent);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        log("ItemsFragment.onCreate(Bundle of joy))");
+        log("ProjectsFragment.onCreate(Bundle of joy))");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        log("ItemsFragment.onCreateView(LayoutInflater, ViewGroup, Bundle)");
+        log("ProjectsFragment.onCreateView(LayoutInflater, ViewGroup, Bundle)");
         View view = inflater.inflate(R.layout.projects_fragment, container, false);
-        setHasOptionsMenu(true);
+        //setHasOptionsMenu(true);
         initComponents(view);
         initRecycler(items);
-        initListeners();
         initSwipe();
         initViewModel();
-        if( currentParent == null){
+/*        if( currentParent == null){
             log("ERROR, currentParent is null");
             Toast.makeText(getContext(), "ERROR, currentParent is null", Toast.LENGTH_LONG).show();
             return view;
-        }
-
+        }*/
+        initListeners();
         return view;
     }
     private void addTab(Item item){
@@ -136,7 +113,11 @@ public class ItemsFragment extends Fragment implements
         projectsViewModel.push(item);
         adapter.setList(items);
         addTab(currentParent);
-
+    }
+    private void filter(String filter){
+        log("...filter(String)", filter);
+        List<Item> filteredItems = items.stream().filter(item->item.contains(filter)).collect(Collectors.toList());
+        adapter.setList(filteredItems);
     }
     private void initComponents(View view){
         if(VERBOSE)log("...initComponents()");
@@ -161,6 +142,21 @@ public class ItemsFragment extends Fragment implements
         if(VERBOSE) log("...initListeners()");
         buttonAddItem.setOnClickListener(view->showAddItemDialog());
         tabLayout.addOnTabSelectedListener(this);
+        if( projectsViewModel.getCurrentParent() != null){
+            log("\t\tgot current parent", projectsViewModel.getCurrentParent().getHeading() );
+            setTabs(projectsViewModel.getStack());
+            currentParent = projectsViewModel.getCurrentParent();
+        }else{
+            log("\t\tempty stack, setting root/currentParent");
+            currentParent = ItemsWorker.getRootItem(Settings.Root.PROJECTS, getContext());
+            projectsViewModel.setRoot(currentParent);
+            addTab(currentParent);
+        }
+        mainViewModel.getFilter().observe(requireActivity(), filter -> {
+            log("ProjectsFragment.getFilter(String))", filter);
+            filter(filter);
+            //projectsViewModel.filter(filter);
+        });
     }
     private void initSwipe(){
         if( VERBOSE) log("...initSwipe()");
@@ -182,18 +178,9 @@ public class ItemsFragment extends Fragment implements
     }
     private void initViewModel(){
         log("...initViewModel()");
-        viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
+        mainViewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
         projectsViewModel = new ViewModelProvider(requireActivity()).get(ProjectsViewModel.class);
-        if( projectsViewModel.getCurrentParent() != null){
-            log("\t\tgot current parent", projectsViewModel.getCurrentParent().getHeading() );
-            setTabs(projectsViewModel.getStack());
-            currentParent = projectsViewModel.getCurrentParent();
-        }else{
-            log("\t\tempty stack, setting root/currentParent");
-            currentParent = ItemsWorker.getRootItem(Settings.Root.PROJECTS, getContext());
-            projectsViewModel.setRoot(currentParent);
-            addTab(currentParent);
-        }
+
     }
 
     @Override
@@ -235,7 +222,7 @@ public class ItemsFragment extends Fragment implements
             log("\t\titem does not have  child -> ItemSessionFragment");
             log("\t\tcurrent parent is", currentParent.getHeading());
             projectsViewModel.setCurrentParent(currentParent);
-            viewModel.updateFragment(new ItemSessionFragment(item));
+            mainViewModel.updateFragment(new ItemSessionFragment(item));
         }
     }
 
@@ -243,7 +230,7 @@ public class ItemsFragment extends Fragment implements
     public void onLongClick(Item item) {
         log("...onLongClick(Item item)", item.getHeading());
         projectsViewModel.setCurrentParent(currentParent);
-        viewModel.updateFragment( new ItemSessionFragment(item));
+        mainViewModel.updateFragment( new ItemSessionFragment(item));
     }
 
     @Override
@@ -320,6 +307,6 @@ public class ItemsFragment extends Fragment implements
             Toast.makeText(getContext(), "current parent is null", Toast.LENGTH_LONG).show();
             return;
         }
-        viewModel.updateFragment(new SequenceFragment(currentParent));
+        mainViewModel.updateFragment(new SequenceFragment(currentParent));
     }
 }

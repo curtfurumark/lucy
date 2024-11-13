@@ -25,11 +25,18 @@ public class Repeat implements Serializable {
     public Unit getUnit() {
         return unit;
     }
+    private LocalDate untilDate;
+
 
     public void setPeriod(int qualifier, Unit unit) {
         this.qualifier = qualifier;
         this.unit = unit;
     }
+
+    public boolean hasLastDate() {
+        return lastDate != null;
+    }
+
     public enum Unit {
         DAY, WEEK, MONTH, YEAR, DAYS_OF_WEEK, PENDING
     }

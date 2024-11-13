@@ -51,8 +51,7 @@ public class CalenderMonthFragment extends Fragment {
     private LocalDate selectedDate;
     private YearMonth currentYearMonth;
     private CalenderMonthAdapter calenderMonthAdapter;
-    //private ItemAdapter itemAdapter;
-    //private List<CalenderDate> calenderDates;
+    private List<CalenderDate> calenderDates;
     private CalendarMonthViewModel calendarMonthViewModel;
     private LucindaViewModel lucindaViewModel;
 
@@ -97,8 +96,8 @@ public class CalenderMonthFragment extends Fragment {
         //observe();
         return view;
     }
-/*    private void addItem(Item item){
-        log("...addItem(Item)");
+    private void addEvent(Item item){
+        log("...addEvent(Item)");
         item = ItemsWorker.insert(item, getContext());
         for( CalenderDate calenderDate: calenderDates){
             if(calenderDate.getDate().equals(item.getTargetDate())){
@@ -108,7 +107,7 @@ public class CalenderMonthFragment extends Fragment {
             }
         }
         calenderMonthAdapter.notifyDataSetChanged();
-    }*/
+    }
     private List<CalenderDate> getCalenderDates(LocalDate date){
         return CalenderWorker.getCalenderDates(YearMonth.from(date), getContext());
     }
@@ -140,7 +139,7 @@ public class CalenderMonthFragment extends Fragment {
     }*/
     private void initRecycler(){
         log("...initRecycler()");
-        List<CalenderDate> calenderDates = CalenderWorker.getCalenderDates(currentYearMonth, getContext());
+        calenderDates = CalenderWorker.getCalenderDates(currentYearMonth, getContext());
         //calenderMonthAdapter = new CalenderMonthAdapter(calenderDates)
         //calenderMonthAdapter = new CalenderMonthAdapter(calendarMonthViewModel.getCalendarDates().getValue(), calenderDate -> {
         calenderMonthAdapter = new CalenderMonthAdapter(calenderDates, calenderDate -> {
@@ -236,9 +235,9 @@ public class CalenderMonthFragment extends Fragment {
         dialog.setCallback(new AppointmentDialog.OnNewAppointmentCallback() {
             @Override
             public void onNewAppointment(Item item) {
-                log("...onNewAppointment(Item item)");
-                //calendarMonthViewModel.add(item);
-                calendarMonthViewModel.add(item);
+                log("...onNewAppointment(Item item)", item.getHeading());
+                //calendarMonthViewModel.add(item);'
+                addEvent(item);
                 calenderMonthAdapter.notifyDataSetChanged();
             }
         });

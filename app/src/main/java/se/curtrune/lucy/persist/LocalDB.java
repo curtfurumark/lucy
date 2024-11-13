@@ -283,7 +283,7 @@ public class LocalDB extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             item = DBAdmin.getItem(cursor);
         } else {
-            log("...WARNING, not item with id ", id);
+            log("...WARNING, no item with id ", id);
         }
         cursor.close();
         db.close();

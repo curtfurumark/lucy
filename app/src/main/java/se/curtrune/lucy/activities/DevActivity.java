@@ -18,6 +18,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -34,11 +36,14 @@ import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.app.User;
 import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.Media;
 import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.persist.DBAdmin;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
 import se.curtrune.lucy.util.Logger;
+import se.curtrune.lucy.viewmodel.UpdateLucindaViewModel;
+import se.curtrune.lucy.web.VersionInfo;
 import se.curtrune.lucy.workers.ItemsWorker;
 import se.curtrune.lucy.workers.NotificationsWorker;
 import se.curtrune.lucy.workers.SettingsWorker;
@@ -55,6 +60,7 @@ public class DevActivity extends AppCompatActivity {
     private TextView textViewModel;
     private EditText editTextSql;
     private Button buttonRunSQL;
+    private Button buttonRunCode;
     private CheckBox checkBoxDev;
 
 
@@ -71,10 +77,12 @@ public class DevActivity extends AppCompatActivity {
         lucinda = Lucinda.getInstance(this);
         initComponents();
         initListeners();
-        addMentalToItemTable();
+        //addMentalToItemTable();
         setUserInterface();
-        openDB();
+        checkForLucindaUpdate();
+        //openDB();
     }
+
 
     private void addMentalToItemTable(){
         log("...addMentalToItemTable()");
@@ -103,6 +111,17 @@ public class DevActivity extends AppCompatActivity {
             e.printStackTrace();
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
         }
+    }
+    private void checkForLucindaUpdate(){
+        log("...checkForLucindaUpdate()");
+        UpdateLucindaViewModel updateLucindaViewModel = new ViewModelProvider(this).get(UpdateLucindaViewModel.class);
+        updateLucindaViewModel.checkForNewVersion();
+        updateLucindaViewModel.getVersionInfo().observe(this, new Observer<VersionInfo>() {
+            @Override
+            public void onChanged(VersionInfo versionInfo) {
+                log("...onChanged, VersionInfo available", versionInfo.toString());
+            }
+        });
     }
 
     private void createEconomyTables() {
@@ -143,6 +162,7 @@ public class DevActivity extends AppCompatActivity {
         checkBoxDev = findViewById(R.id.devActivity_checkBoxDev);
         buttonRunSQL = findViewById(R.id.devActivity_buttonRunSQL);
         editTextSql = findViewById(R.id.devActivity_sql);
+        buttonRunCode = findViewById(R.id.devActivity_buttonRunCode);
     }
 
     private void initListeners() {
@@ -155,6 +175,7 @@ public class DevActivity extends AppCompatActivity {
             Lucinda.Dev = isChecked;
         });
         buttonRunSQL.setOnClickListener(view->executeSQL());
+        buttonRunCode.setOnClickListener(view->runCode());
     }
     private void printSystemInfo(){
         log("...printSystemInfo()");
@@ -284,6 +305,40 @@ public class DevActivity extends AppCompatActivity {
         } catch (SQLException e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
         }
+    }
+    private void createFamilyItems(){
+        log("...createFamilyItems()");
+        Item rootItem = new Item("rootItem");
+        rootItem = ItemsWorker.insertChild(ItemsWorker.getDailyRoot(this), rootItem, this);
+        Item child1 = new Item("child1");
+        child1 = ItemsWorker.insertChild(rootItem, child1, this);
+        Item child2 = new Item("child2");
+        child2 = ItemsWorker.insertChild(rootItem, child2, this);
+        Item grandchild1 = new Item("grandChild1");
+        grandchild1 = ItemsWorker.insertChild(child1, grandchild1, this);
+        Item grandChild2 = new Item("grandChild2");
+        grandChild2 = ItemsWorker.insertChild(child1, grandChild2, this);
+        log("rootItem id", rootItem.getID());
+    }
+    private void deleteTree(Item parent){
+        log("...deleteTree(Item)", parent.getHeading());
+        ItemsWorker.deleteTree(parent, this);
+    }
+    private void creteItemWithMedia(){
+        log("...createItemWithMedia()");
+        Item item = new Item("item with media");
+        Media media = new Media();
+        media.setFileType(Media.FileType.TEXT);
+        media.setFilePath("dkjdkj");
+        item.setContent(media);
+        item = ItemsWorker.insertChild(ItemsWorker.getRootItem(Settings.Root.PROJECTS, this), item, this);
+        log("...item inserted with id", item.getID());
+    }
+    private void runCode(){
+        log("...runCode()");
+        //Item item = ItemsWorker.selectItem(4244, this);
+        //log("...item", item.getHeading());
+        //deleteTree(item);
     }
     private void setDefaultUserSettings(){
         log("...setDefaultUserSettings");

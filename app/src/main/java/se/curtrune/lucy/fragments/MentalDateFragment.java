@@ -14,6 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -44,10 +45,8 @@ public class MentalDateFragment extends Fragment implements MentalAdapter.Callba
     private RadioButton radioButtonStress;
     private RadioButton radioButtonEnergy;
     private MentalAdapter adapter;
-    private TextView textViewMentalLabel;
-    private TextView textViewMentalTotal;
+
     private TextView textViewDate;
-    private List<Mental> mentals = new ArrayList<>();
     private LucindaViewModel lucindaViewModel;
 
     private Switch switchActual;
@@ -81,12 +80,11 @@ public class MentalDateFragment extends Fragment implements MentalAdapter.Callba
         log("MentalDateFragment.onCreateView(...)");
         initDefaults();
         initComponents(view);
-        initListeners();
         initViewModel();
         initRecycler();
-        //initMentalStats(currentDate, currentMode);
         updateUserInterface();
         radioButtonEnergy.setChecked(true);
+        initListeners();
         return view;
     }
 
@@ -103,8 +101,6 @@ public class MentalDateFragment extends Fragment implements MentalAdapter.Callba
         radioButtonEnergy = view.findViewById(R.id. mentalList_radioButtonEnergy);
         radioButtonMood = view. findViewById(R.id.mentalList_radioButtonMood);
         radioButtonStress = view.findViewById(R.id.mentalList_radioButtonStress);
-        textViewMentalLabel = view.findViewById(R.id.mentalFragment_mentalLabel);
-        textViewMentalTotal = view.findViewById(R.id.mentalFragment__mentalTotal);
         textViewDate = view.findViewById(R.id.mentalDayFragment_date);
         switchActual = view.findViewById(R.id.mentalDayFragment_modeSwitch);
     }
@@ -112,8 +108,6 @@ public class MentalDateFragment extends Fragment implements MentalAdapter.Callba
         log("...initDefaults()");
         currentDate = LocalDate.now();
         mentalType = MentalAdapter.MentalType.ENERGY;
-        //radioButtonEnergy.setChecked(true);
-
     }
     private void initRecycler(){
         if( VERBOSE)log("...initRecycler()");
@@ -152,6 +146,14 @@ public class MentalDateFragment extends Fragment implements MentalAdapter.Callba
             updateLucindaViewModel();
         });
         textViewDate.setOnClickListener(view->showDateDialog());
+        mentalDateViewModel.getItems().observe(requireActivity(), new Observer<List<Item>>() {
+            @Override
+            public void onChanged(List<Item> items) {
+                log("MentalDateFragment.onChanged(List<Item>)");
+                adapter.setList(items);
+                textViewDate.setText(currentDate.toString());
+            }
+        });
     }
 
     /**
@@ -199,8 +201,6 @@ public class MentalDateFragment extends Fragment implements MentalAdapter.Callba
         mentalDateViewModel.updateItem(item, type, progress, getContext());
         if(item.getState().equals(State.DONE)){
             lucindaViewModel.resetMental(getContext(), type);
-        }else{
-            //lucindaViewModel.updateMental();
         }
     }
 
@@ -252,20 +252,10 @@ public class MentalDateFragment extends Fragment implements MentalAdapter.Callba
                 mentalLabel = getString(R.string.mood);
                 break;
         }
-/*        mentals.sort(Comparator.comparingLong(Mental::compareTime));
-        //Collections.reverse(mentals); //TODO, ascending or descending that is the question
-        adapter.setMentalType(mentalType);*/
-        textViewMentalLabel.setText(mentalLabel);
-        //textViewMentalTotal.setText(String.valueOf(total));
         textViewDate.setText(currentDate.toString());
     }
     private void updateLucindaViewModel(){
         log("...updateLucindaViewModel()");
         lucindaViewModel.setMentalType(mentalType);
-    }
-    private void updateStatistics(){
-        log("...updateStatistics()", currentDate.toString());
-        initMentalStats(currentDate, currentMode);
-        updateUserInterface();
     }
 }

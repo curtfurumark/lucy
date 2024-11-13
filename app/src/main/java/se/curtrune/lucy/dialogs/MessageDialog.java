@@ -33,17 +33,27 @@ public class MessageDialog extends BottomSheetDialogFragment {
     private Button buttonSave;
     private Button buttonDismiss;
     private String category;
+    private Message message;
+    public enum Mode{
+        CREATE, EDIT
+    }
+    private Mode mode = Mode.CREATE;
     private Spinner spinnerCategories;
+    private ArrayAdapter<String> categoryAdapter;
     public static boolean VERBOSE = false;
 
     public interface Callback{
-        void onNewMessage(Message message);
+        void onMessage(Message message, Mode mode);
     }
 
     private Callback listener;
 
     public MessageDialog(){
         if( VERBOSE) log("MessageDialog constructor");
+    }
+    public MessageDialog(Message message){
+        this.message = message;
+        mode = Mode.EDIT;
     }
 
     @Nullable
@@ -54,15 +64,18 @@ public class MessageDialog extends BottomSheetDialogFragment {
         initComponents(view);
         initSpinner();
         initListeners();
+        setUserInterface();
         return view;
     }
     private Message getMessage(){
         if( VERBOSE) log("...getMessage()");
-        Message message = new Message();
+        if(mode.equals(Mode.CREATE)) {
+            Message message = new Message();
+            message.setCreated(LocalDateTime.now());
+        }
         message.setUser(editTextUser.getText().toString());
         message.setContent(editTextContent.getText().toString());
         message.setSubject(editTextSubject.getText().toString());
-        message.setCreated(LocalDateTime.now());
         message.setCategory(category);
         return message;
 
@@ -79,7 +92,7 @@ public class MessageDialog extends BottomSheetDialogFragment {
         if( VERBOSE) log("...initListeners()");
         buttonSave.setOnClickListener(view1 -> {
             Message message = getMessage();
-            listener.onNewMessage(message);
+            listener.onMessage(message, mode);
             dismiss();
         });
         buttonDismiss.setOnClickListener(view->dismiss());
@@ -87,15 +100,15 @@ public class MessageDialog extends BottomSheetDialogFragment {
     private void initSpinner(){
         log("...initSpinner()");
         String[] messageCategories = getContext().getResources().getStringArray(R.array.message_categories);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item,messageCategories );
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
-        spinnerCategories.setAdapter(adapter);
+        categoryAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item,messageCategories );
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+        spinnerCategories.setAdapter(categoryAdapter);
         spinnerCategories.setSelection(0);
         spinnerCategories.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                log("...onItemSelected(...)", adapter.getItem(position).toString());
-                category = adapter.getItem(position);
+                log("...onItemSelected(...)", categoryAdapter.getItem(position).toString());
+                category = categoryAdapter.getItem(position);
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -103,6 +116,17 @@ public class MessageDialog extends BottomSheetDialogFragment {
             }
         });
 
+    }
+    private void setUserInterface(){
+        log("...setUserInterface()");
+        if(mode.equals(Mode.EDIT)){
+            editTextUser.setText(message.getUser());
+            editTextContent.setText(message.getContent());
+            editTextSubject.setText(message.getSubject());
+            int position = categoryAdapter.getPosition(message.getCategory());
+            spinnerCategories.setSelection(position);
+            buttonSave.setText(getString(R.string.update));
+        }
     }
     @Override
     public void onAttach(@NonNull Context context) {

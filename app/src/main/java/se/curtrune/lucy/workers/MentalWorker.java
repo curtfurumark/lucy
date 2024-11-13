@@ -13,75 +13,50 @@ import java.util.Locale;
 
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
-import se.curtrune.lucy.classes.MentalStats;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.fragments.TopTenFragment;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
-import se.curtrune.lucy.util.Logger;
 
 public class MentalWorker {
     public static boolean VERBOSE = false;
-    @Deprecated
-    public static MentalStats getMentalStats(List<Item> items, Context context) {
+/*    @Deprecated
+    public static MentalStats getMentalStats(List<Item> items, Context  context) {
         log("MentalStats.getMentalStats(List<Item>, Context)");
         MentalStats mentalEstimate = new MentalStats();
         for( Item item: items){
             if(item.isTemplate()){
                 log("item isTemplate, TODO: something intelligent");
             }
-/*            Mental mental = MentalWorker.getMental(item, context);
+*//*            Mental mental = MentalWorker.getMental(item, context);
             mentalEstimate.add(mental);
             mentalEstimate.plusEnergy(mental.getEnergy());
             mentalEstimate.plusAnxiety(mental.getAnxiety());
             mentalEstimate.plusStress(mental.getStress());
-            mentalEstimate.plusMood(mental.getMood());*/
+            mentalEstimate.plusMood(mental.getMood());*//*
         }
         return mentalEstimate;
-    }
+    }*/
     @Deprecated
-    public static List<Mental> getMentals(List<Item> items, Context context){
+    public static List<Mental> getMentals(List<Item> items){
         log("...getMentals(List<Item>)");
         List<Mental> mentalList = new ArrayList<>();
-/*        for( Item item: items){
-            Mental mental = MentalWorker.getMental(item, context);
+       for( Item item: items){
+            Mental mental = item.getMental();
             assert  mental != null;
             mentalList.add(mental);
-        }*/
+        }
         return mentalList;
     }
 
-    @Deprecated
-    public static MentalStats getStatistics(List<Item> items, Context context){
-        log("MentalWorker.getStatistics(List<Item>, Context))");
-        MentalStats stats = new MentalStats();
-/*        for( Item item: items){
-            //if(item.isTemplate()){
-            //    log("item isTemplateTODO, something intelligent");
-            //}
-            Mental mental = MentalWorker.getMental(item, context);
-            if( mental == null){
-                log("...mental is null for item", item.getHeading());
-            }
-            stats.add(mental);
-            stats.plusEnergy(mental.getEnergy());
-            stats.plusAnxiety(mental.getAnxiety());
-            stats.plusStress(mental.getStress());
-            stats.plusMood(mental.getMood());
-        }*/
-
-        return stats;
-    }
-
-
-    @Deprecated
+/*    @Deprecated
     public static List<Mental> select(LocalDate firstDate, LocalDate lastDate, Context context) {
         if( VERBOSE) log("MentalWorker.select(LocalDate, LocalDate, Context");
         String query = String.format(Locale.getDefault(), "SELECT * FROM mental WHERE date >= %d AND date <= %d", firstDate.toEpochDay(), lastDate.toEpochDay());
         try(LocalDB db = new LocalDB(context)){
             return db.selectMentals(query);
         }
-    }
+    }*/
 
     @Deprecated
     public static List<Mental> selectTopTen(TopTenFragment.Mode mode, Context context) {
@@ -181,7 +156,7 @@ public class MentalWorker {
         int stress = 0;
         try(LocalDB db = new LocalDB(context)){
             items = db.selectItems(queery);
-            items.forEach(Logger::log);
+            //items.forEach(Logger::log);
             anxiety = items.stream().mapToInt(Item::getAnxiety).sum();
             energy = items.stream().mapToInt(Item::getEnergy).sum();
             mood = items.stream().mapToInt(Item::getMood).sum();

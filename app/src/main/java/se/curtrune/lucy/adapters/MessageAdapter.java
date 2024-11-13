@@ -4,6 +4,7 @@ import static se.curtrune.lucy.util.Logger.log;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import kotlin.io.LineReader;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Message;
 import se.curtrune.lucy.util.Converter;
@@ -71,6 +73,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         return messages.size();
     }
     public class ViewHolder extends RecyclerView.ViewHolder{
+        private LinearLayout parentLayout;
         private final TextView textViewSubject;
         private final TextView textViewContent;
         private final TextView textViewUser;
@@ -82,6 +85,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             textViewContent = itemView.findViewById(R.id.messageAdapter_content);
             textViewUser = itemView.findViewById(R.id.messageAdapter_user);
             textViewCreated = itemView.findViewById(R.id.messageAdapter_created);
+            parentLayout = itemView.findViewById(R.id.messageAdapter_parentLayout);
+            parentLayout.setOnClickListener(view->{
+                callback.onItemClick(messages.get(getAdapterPosition()));
+            });
         }
     }
 }

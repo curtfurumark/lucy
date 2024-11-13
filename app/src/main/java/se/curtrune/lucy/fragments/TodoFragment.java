@@ -2,27 +2,25 @@ package se.curtrune.lucy.fragments;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.tabs.TabLayout;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.ItemAdapter;
@@ -30,44 +28,29 @@ import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.AddItemDialog;
+import se.curtrune.lucy.dialogs.PostponeDialog;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
+import se.curtrune.lucy.viewmodel.TodoFragmentViewModel;
 import se.curtrune.lucy.workers.ItemsWorker;
 import se.curtrune.lucy.workers.NotificationsWorker;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link TodoFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class TodoFragment extends Fragment implements
-        ItemAdapter.Callback,
-        TabLayout.OnTabSelectedListener {
+        ItemAdapter.Callback{
 
     private FloatingActionButton buttonAdd;
     private RecyclerView recycler;
-    private EditText editTextSearch;
     private ItemAdapter adapter;
-    private List<Item> items;
     private Item currentParent;
     public static boolean VERBOSE = false;
-    private LucindaViewModel viewModel;
+    private LucindaViewModel mainViewModel;
+    private TodoFragmentViewModel todoFragmentViewModel;
+    private ItemTouchHelper itemTouchHelper;
 
     public TodoFragment() {
         if( VERBOSE) log("ToDoFragment()");
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-
-     * @return A new instance of fragment ItemsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static TodoFragment newInstance() {
-        return  new TodoFragment();
-
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,11 +63,10 @@ public class TodoFragment extends Fragment implements
         log("ToDoFragment.onCreateView(LayoutInflater, ViewGroup, Bundle)");
         View view = inflater.inflate(R.layout.todo_fragment, container, false);
         requireActivity().setTitle("todo");
+        initViewModels();
         initComponents(view);
-        items = ItemsWorker.selectItems(State.TODO, getContext());
-        items.sort(Comparator.comparingLong(Item::compare));
-        initRecycler(items);
-        initViewModel();
+        initSwipe();
+        initRecycler();
         initListeners();
         return view;
     }
@@ -93,11 +75,8 @@ public class TodoFragment extends Fragment implements
         AddItemDialog dialog = new AddItemDialog(ItemsWorker.getRootItem(Settings.Root.TODO, getContext()), false);
         dialog.setCallback(item -> {
             log("...onAddItem(Item item)");
-            log(item);
-            item = ItemsWorker.insert(item, getContext());
-            items.add(item);
-            items.sort(Comparator.comparingLong(Item::compare));
-            adapter.notifyDataSetChanged();
+            //log(item);
+            todoFragmentViewModel.insert(item, getContext());
             if( item.hasNotification()){
                 log("...item has notification, will set notification");
                 NotificationsWorker.setNotification(item, getContext());
@@ -105,77 +84,74 @@ public class TodoFragment extends Fragment implements
         });
         dialog.show(getChildFragmentManager(), "add item");
     }
-    private void filter(String str){
-        List<Item> filteredItems = items.stream().filter(item->item.contains(str)).collect(Collectors.toList());
-        adapter.setList(filteredItems);
-    }
+
     private void initComponents(View view){
         if( VERBOSE) log("...initComponents()");
         recycler = view.findViewById(R.id.todoFragment_recycler);
-        editTextSearch = view.findViewById(R.id.todoFragment_search);
         buttonAdd = view.findViewById(R.id.todoFragment_buttonAdd);
     }
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
         buttonAdd.setOnClickListener(view->addItemDialog());
-        editTextSearch.addTextChangedListener(new TextWatcher() {
+        mainViewModel.getFilter().observe(requireActivity(), filter ->{
+            log("TodoFragment.onFilter(String)", filter);
+            todoFragmentViewModel.filter(filter);
+        });
+        todoFragmentViewModel.getItems().observe(requireActivity(), new Observer<List<Item>>() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                log("...onTextChanged(CharSequence, int, int, int)");
-                filter(s.toString());
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
+            public void onChanged(List<Item> items) {
+                log("...onGetItems(List<Item>)");
+                adapter.setList(items);
             }
         });
-
     }
 
-    private void initRecycler(List<Item> items){
-        if( VERBOSE) log("...initRecycler(List<Item>)", items.size());
-        adapter = new ItemAdapter(this.items, this);
+    private void initRecycler(){
+        if( VERBOSE) log("...initRecycler()");
+        adapter = new ItemAdapter(todoFragmentViewModel.getItems().getValue(), this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recycler.setLayoutManager(layoutManager);
         recycler.setItemAnimator(new DefaultItemAnimator());
         recycler.setAdapter(adapter);
+        itemTouchHelper.attachToRecyclerView(recycler);
     }
-    private void initViewModel(){
-        if( VERBOSE)  log("...initViewModel()");
-        viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
+    private void initSwipe(){
+        log("...initSwipe()");
+        itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                log("...onSwiped(...)");
+                Item item = todoFragmentViewModel.getItem(viewHolder.getAdapterPosition());
+                if (direction == ItemTouchHelper.LEFT) {
+                    showDeleteDialog(item);
+                } else if (direction == ItemTouchHelper.RIGHT) {
+                    showPostponeDialog(item);
+                }
+            }
+        });
     }
-
-    @Override
-    public void onTabSelected(TabLayout.Tab tab) {
-        log("...onTabSelected()");
-    }
-
-    @Override
-    public void onTabUnselected(TabLayout.Tab tab) {
-
-    }
-
-    @Override
-    public void onTabReselected(TabLayout.Tab tab) {
-
+    private void initViewModels(){
+        if( VERBOSE)  log("...initViewModels()");
+        mainViewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
+        todoFragmentViewModel = new ViewModelProvider(requireActivity()).get(TodoFragmentViewModel.class);
+        todoFragmentViewModel.init(getContext());
     }
 
     @Override
     public void onItemClick(Item item) {
         log("...onItemClick(Item)", item.getHeading());
         if( item.hasChild()){
-            currentParent = item;
+            Toast.makeText(getContext(), "WORKING ON IT", Toast.LENGTH_LONG).show();
+/*            currentParent = item;
             items = ItemsWorker.selectChildren(currentParent, getContext());
-            adapter.setList(items);
+            adapter.setList(items);*/
         }else{
-            viewModel.updateFragment(new ItemSessionFragment(item));
+            mainViewModel.updateFragment(new ItemSessionFragment(item));
         }
     }
 
@@ -206,4 +182,40 @@ public class TodoFragment extends Fragment implements
             Toast.makeText(getContext(), "item updated", Toast.LENGTH_LONG).show();
         }
     }
+
+        private void showDeleteDialog(Item item){
+            log("...showDeleteDialog(Item)", item.getHeading());
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("delete" + item.getHeading());
+            builder.setMessage("are you sure? ");
+            builder.setPositiveButton("delete", (dialog, which) -> {
+                log("...on positive button click");
+                todoFragmentViewModel.delete(item, getContext());
+
+            });
+            builder.setNegativeButton("cancel", (dialog, which) -> {
+                log("...on negative button click");
+                adapter.notifyDataSetChanged();
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+        private void showPostponeDialog(Item item){
+            log("showPostponeDialog(Item)");
+            PostponeDialog dialog = new PostponeDialog();
+            dialog.setCallback(new PostponeDialog.Callback() {
+                @Override
+                public void postpone(PostponeDialog.Postpone postpone) {
+                    log("PostponeDialog.postpone(Postpone)", postpone.toString());
+                    todoFragmentViewModel.postpone(item, postpone, getContext());
+                }
+                @Override
+                public void dismiss() {
+                    log("...dismiss()");
+                    adapter.notifyDataSetChanged();
+                }
+            });
+            dialog.show(getChildFragmentManager(), "postpone");
+
+        }
 }

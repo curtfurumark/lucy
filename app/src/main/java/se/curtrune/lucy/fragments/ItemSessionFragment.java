@@ -1,11 +1,18 @@
 package se.curtrune.lucy.fragments;
 
+import static android.app.Activity.RESULT_OK;
 import static se.curtrune.lucy.util.Logger.log;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +24,12 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -28,43 +40,41 @@ import com.skydoves.colorpickerview.ColorEnvelope;
 import com.skydoves.colorpickerview.ColorPickerDialog;
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Date;
 import java.util.Locale;
-import java.util.Objects;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.User;
+import se.curtrune.lucy.classes.Media;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
-import se.curtrune.lucy.classes.MentalStats;
 import se.curtrune.lucy.classes.State;
+import se.curtrune.lucy.dialogs.ChooseChildTypeDialog;
 import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.dialogs.ChooseCategoryDialog;
 import se.curtrune.lucy.dialogs.DurationDialog;
-import se.curtrune.lucy.dialogs.MentalDialog;
 import se.curtrune.lucy.dialogs.NotificationDialog;
 import se.curtrune.lucy.dialogs.RepeatDialog;
+import se.curtrune.lucy.dialogs.TagsDialog;
 import se.curtrune.lucy.item_settings.ItemSetting;
 import se.curtrune.lucy.item_settings.ItemSettingAdapter;
+import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.util.Converter;
 import se.curtrune.lucy.util.Kronos;
 import se.curtrune.lucy.viewmodel.ItemSessionViewModel;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.viewmodel.MentalViewModel;
-import se.curtrune.lucy.workers.DurationWorker;
 import se.curtrune.lucy.workers.ItemsWorker;
-import se.curtrune.lucy.workers.MentalWorker;
-import se.curtrune.lucy.workers.StatisticsWorker;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ItemSessionFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ItemSessionFragment extends Fragment implements Kronos.Callback{
 
+    private static final int CAMERA_REQUEST_CODE = 101;
     private EditText editTextHeading;
     private  TextView textViewType;
     private TextView textViewDuration;
@@ -84,20 +94,12 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
     private Button buttonSave;
     private Button buttonTimer;
     private CheckBox checkBoxIsDone;
-    //private Action currentAction;
     private ItemSetting currentItemSetting;
     private SeekBar seekBarEnergy;
     private SeekBar seekBarAnxiety;
     private SeekBar seekBarStress;
     private SeekBar seekBarMood;
-    private int startEnergy;
-    private int endEnergy;
-    private int startAnxiety;
-    private int endAnxiety;
-    private int startMood;
-    private int endMood;
-    private int startStress;
-    private int endStress;
+
     private RecyclerView actionRecycler;
     private FloatingActionButton buttonAddItem;
     private Item currentItem;
@@ -119,36 +121,15 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         this.currentItem = item;
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters..
-     * @return A new instance of fragment ItemSessionFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ItemSessionFragment newInstance(Item item) {
-        return new ItemSessionFragment(item);
-
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            log("...getArguments != null");
-        }
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         log("ItemSessionFragment.onCreateView(LayoutInflater, ViewGroup, Bundle)");
         View view = inflater.inflate(R.layout.item_session_fragment, container, false);
+        initViewModel();
         initComponents(view);
         initListeners();
-        initKronos();
-        initViewModel();
         initItemSettingRecycler();
-        initMental();
         setUserInterface(currentItem);
         return view;
     }
@@ -157,7 +138,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
     }
     private void initItemSettingRecycler(){
         log("....initItemSettingRecycler");
-        itemSettingAdapter = new ItemSettingAdapter(itemSessionViewModel.getItemSettings(currentItem), new ItemSettingAdapter.Listener() {
+        itemSettingAdapter = new ItemSettingAdapter(itemSessionViewModel.getItemSettings(currentItem, getContext()), new ItemSettingAdapter.Listener() {
             @Override
             public void onClick(ItemSetting setting) {
                 log("...onClick(ItemSetting)", setting.toString());
@@ -185,10 +166,11 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
                         showDateDialog();
                         break;
                     case DONE:
+                        itemSessionViewModel.setDone(setting.isChecked());
                         currentItem.setState(setting.isChecked()? State.DONE: State.TODO);
                         break;
                     case TEMPLATE:
-                        currentItem.setIsTemplate(setting.isChecked());
+                        itemSessionViewModel.setIsTemplate(setting.isChecked(), getContext());
                         break;
                     case PRIORITIZED:
                         currentItem.setPriority(1);
@@ -212,14 +194,15 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
     }
     private void initMental(){
         log("...initMental()");
-        seekBarStress.setProgress(itemSessionViewModel.getStress() + 5);
-        textViewStress.setText(formatMental("stress", itemSessionViewModel.getStress()));
-        seekBarMood.setProgress(itemSessionViewModel.getMood() +5);
-        textViewMood.setText(formatMental("mood", itemSessionViewModel.getMood()));
-        seekBarEnergy.setProgress(itemSessionViewModel.getEnergy() +5);
-        textViewEnergy.setText(formatMental("energy", itemSessionViewModel.getEnergy()));
-        seekBarAnxiety.setProgress(itemSessionViewModel.getAnxiety() +5);
-        textViewAnxiety.setText(formatMental("anxiety", itemSessionViewModel.getAnxiety()));
+        log(itemSessionViewModel.getMental());
+        seekBarStress.setProgress(itemSessionViewModel.getStress() + Constants.STRESS_OFFSET);
+        setMentalLabel(itemSessionViewModel.getStress(), Mental.Type.STRESS);
+        seekBarMood.setProgress(itemSessionViewModel.getMood() + Constants.MOOD_OFFSET);
+        setMentalLabel(itemSessionViewModel.getMood(), Mental.Type.MOOD);
+        seekBarEnergy.setProgress(itemSessionViewModel.getEnergy() + Constants.ENERGY_OFFSET);
+        setMentalLabel(itemSessionViewModel.getEnergy(), Mental.Type.ENERGY);
+        seekBarAnxiety.setProgress(itemSessionViewModel.getAnxiety() +  Constants.ANXIETY_OFFSET);
+        setMentalLabel(itemSessionViewModel.getAnxiety(), Mental.Type.ANXIETY);
 
     }
     private void initViewModel(){
@@ -253,19 +236,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         this.duration = secs;
         textViewDuration.setText(Converter.formatSecondsWithHours(secs));
     }
-    private void showDateDialog() {
-        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext());
-        datePickerDialog.setOnDateSetListener((view, year, month, dayOfMonth) -> {
-            log("DatePickerDialog.onDateSet(...)");
-            LocalDate targetDate = LocalDate.of(year, month +1, dayOfMonth);
-            log("...date", targetDate.toString());
-            currentItemSetting.setValue(targetDate.toString());
-            currentItem.setTargetDate(targetDate);
-            itemSessionViewModel.update(currentItem, getContext());
-            itemSettingAdapter.notifyDataSetChanged();
-        });
-        datePickerDialog.show();
-    }
+
 
     private void initComponents(View view){
         if( VERBOSE) log("...initComponents()");
@@ -301,30 +272,30 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         buttonTimer.setOnClickListener(view->toggleTimer());
         buttonSave.setOnClickListener(view->updateItem());
         textViewDuration.setOnClickListener(view -> showDurationDialogActual());
-        buttonAddItem.setOnClickListener(view -> showAddChildItemDialog());
+        buttonAddItem.setOnClickListener(view -> showChooseChildTypeDialog(currentItem));
         seekBarEnergy.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 log("....seekbar onProgressChanged()", progress);
                 if( fromUser) {
-                    lucindaViewModel.setEnergy(progress - 5);
+                    //int energyChange = progress - startEnergy;
+                    if(currentItem.isDone()){
+                        itemSessionViewModel.update(currentItem, getContext());
+                    }else{
+                        lucindaViewModel.estimateEnergy(progress - Constants.ENERGY_OFFSET);
+                        setMentalLabel(progress - Constants.ENERGY_OFFSET, Mental.Type.ENERGY);
+                    }
                 }
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                startEnergy = seekBar.getProgress();
-                log("...startEnergy", startEnergy);
+            public void onStartTrackingTouch(SeekBar seekBar){
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 log("...onStopTrackingTouch(SeekBar)", seekBar.getProgress());
-                endEnergy = seekBar.getProgress();
-                int energyChange = endEnergy - startEnergy;
-                log("...energy changed", energyChange);
-                itemSessionViewModel.updateEnergy(energyChange, getContext());
-                lucindaViewModel.setCurrentEnergy(seekBar.getProgress() - 5);
+                itemSessionViewModel.updateEnergy(seekBar.getProgress(), getContext());
 
             }
         });
@@ -332,24 +303,22 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if(fromUser) {
-                    //lucindaViewModel.estimateAnxiety(progress - 5, getContext());
-                    lucindaViewModel.setAnxiety(progress);
+                    //int anxietyChange = progress - startAnxiety;
+                    setMentalLabel(progress - Constants.ANXIETY_OFFSET, Mental.Type.ANXIETY);
+                    lucindaViewModel.estimateAnxiety(progress - Constants.ANXIETY_OFFSET, getContext());
                 }
+
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
                 log("seekBarAnxiety on startTracking(SeekBar)", seekBar.getProgress());
-                startAnxiety = seekBar.getProgress();
-                //lucindaViewModel.setAnxiety(seekBar.getProgress());
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 log("seekBarAnxiety.onStopTrackingTouch(SeekBar)", seekBar.getProgress());
-                endAnxiety = seekBar.getProgress();
-                int changeAnxiety = endAnxiety - startAnxiety;
-                itemSessionViewModel.updateAnxiety(changeAnxiety, getContext());
+                itemSessionViewModel.updateAnxiety(seekBar.getProgress(), getContext());
 
             }
         });
@@ -357,9 +326,9 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if(fromUser){
-                    lucindaViewModel.estimateMood(progress -5, getContext());
+                    lucindaViewModel.estimateMood(progress - Constants.MOOD_OFFSET, getContext());
+                    setMentalLabel(progress - Constants.MOOD_OFFSET, Mental.Type.MOOD);
                 }
-
             }
 
             @Override
@@ -369,14 +338,15 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                itemSessionViewModel.updateMood(seekBar.getProgress(), getContext());
+                itemSessionViewModel.updateMood(seekBar.getProgress() , getContext());
             }
         });
         seekBarStress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if(fromUser){
-                    lucindaViewModel.estimateStress( progress - 1, getContext());
+                    lucindaViewModel.estimateStress( progress - Constants.STRESS_OFFSET , getContext());
+                    setMentalLabel(progress - Constants.STRESS_OFFSET, Mental.Type.STRESS);
                 }
             }
 
@@ -390,10 +360,26 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
                 itemSessionViewModel.updateStress(seekBar.getProgress(), getContext());
             }
         });
+        itemSessionViewModel.getError().observe(requireActivity(), new Observer<String>() {
+            @Override
+            public void onChanged(String error) {
+                log("...getError(String)", error);
+                Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
+            }
+        });
     }
     private void returnToPreviousFragment(){
         log("...returnToPreviousFragment()");
         getParentFragmentManager().popBackStackImmediate();
+
+    }
+    private void setKronos(long duration){
+        log("...setKronos(long)", duration);
+        kronos = Kronos.getInstance(this);
+        if(duration > 0){
+            kronos.setElapsedTime(duration);
+            buttonTimer.setText(getString(R.string.ui_resume));
+        }
 
     }
 /*    private void setEstimatedTime(Item item){
@@ -412,6 +398,11 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         if(User.isDevMode(getContext())){
             setUserInterfaceDev(item);
         }
+        if( !item.isDone()){
+            lucindaViewModel.estimateEnergy(item.getEnergy());
+        }
+        setKronos(item.getDuration());
+        initMental();
     }
 /*    private void setEstimatedEnergy(Item item){
         if( VERBOSE) log("...setEstimatedEnergy(Item)");
@@ -445,6 +436,29 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         textViewTags.setText(stringTags);
         textViewRepeat.setText(stringRepeat);
         textViewColor.setText(stringColor);
+    }
+    private void showChooseChildTypeDialog(Item item){
+        log("...showChooseChildTypeDialog(Item)");
+        ChooseChildTypeDialog dialog = new ChooseChildTypeDialog(item, new ChooseChildTypeDialog.Listener() {
+            @Override
+            public void onClick(ChooseChildTypeDialog.ChildType childType) {
+                log("...onClick(ChildType)", childType.toString());
+                switch (childType){
+                    case CHILD:
+                        showAddChildItemDialog();
+                        break;
+                    case LIST:
+                        lucindaViewModel.updateFragment(new EditableListFragment(currentItem));
+                        break;
+                    case PHOTOGRAPH:
+                        //Toast.makeText(getContext(), "NOT IMPLEMENTED", Toast.LENGTH_LONG).show();
+                        //takePhoto();
+                        openCameraAndSaveImage();
+                        break;
+                }
+            }
+        });
+        dialog.show(getChildFragmentManager(), "choose type");
     }
 
     private void showAddChildItemDialog(){
@@ -499,6 +513,19 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
                 .attachBrightnessSlideBar(true)  // the default value is true.
                 .setBottomSpace(12) // set a bottom space between the last slidebar and buttons.
                 .show();
+    }
+    private void showDateDialog() {
+        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext());
+        datePickerDialog.setOnDateSetListener((view, year, month, dayOfMonth) -> {
+            log("DatePickerDialog.onDateSet(...)");
+            LocalDate targetDate = LocalDate.of(year, month +1, dayOfMonth);
+            log("...date", targetDate.toString());
+            currentItemSetting.setValue(targetDate.toString());
+            currentItem.setTargetDate(targetDate);
+            itemSessionViewModel.update(currentItem, getContext());
+            itemSettingAdapter.notifyDataSetChanged();
+        });
+        datePickerDialog.show();
     }
     public void showDurationDialog(){
         log("...showDurationDialog()");
@@ -558,8 +585,15 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
     }
     private void showTagsDialog(){
         log("...showTagsDialog()");
-        Toast.makeText(getContext(), "NOT IMPLEMENTED", Toast.LENGTH_LONG).show();
-
+        TagsDialog dialog = new TagsDialog(new TagsDialog.Callback() {
+            @Override
+            public void onTags(String tags) {
+                log("...onTags(String)", tags);
+                itemSessionViewModel.addTags(tags, getContext());
+                //itemSessionViewModel.update();
+            }
+        });
+        dialog.show(getChildFragmentManager(), "add edit tags");
     }
     private void showTimeDialog(){
         log("...showTimeDialog()");
@@ -596,14 +630,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         log("...getItem()");
         currentItem.setHeading(editTextHeading.getText().toString());
         currentItem.setState(checkBoxIsDone.isChecked() ? State.DONE: State.TODO);
-        //currentItem.setIsCalenderItem(checkBoxIsCalenderItem.isChecked());
-        //currentItem.setIsTemplate(checkBoxTemplate.isChecked());
         currentItem.setDuration(duration);
-/*        if( checkBoxAppointment.isChecked()) {
-            currentItem.setType(Type.APPOINTMENT);
-        }else{
-            currentItem.setType(Type.NODE);
-        }*/
         return currentItem;
     }
     /**
@@ -628,6 +655,134 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         lucindaViewModel.updateEnergy(true);
         requireActivity().getSupportFragmentManager().popBackStackImmediate();
         kronos.reset();
+    }
+    private void setMentalLabel(int energy, Mental.Type type){
+        if( VERBOSE) log("...setMentalLabel(int)", energy);
+        switch(type) {
+            case ENERGY:
+                textViewEnergy.setText(formatMental(getString(R.string.energy), energy));
+                break;
+            case  ANXIETY:
+                textViewAnxiety.setText(formatMental(getString(R.string.anxiety), energy));
+                break;
+            case STRESS:
+                textViewStress.setText(formatMental(getString(R.string.stress), energy));
+                break;
+            case MOOD:
+                textViewMood.setText(formatMental(getString(R.string.mood), energy));
+                break;
+        }
+    }
+    private void takePhoto(){
+        log("...takePhoto()");
+        askCameraPermission();
+    }
+    private void openCameraAndSaveImage(){
+        log("...openCameraAndSaveImage()");
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        File photoFile = null;
+        try {
+            photoFile = createImageFile();
+            log("...photoFile path", photoFile.getAbsolutePath());
+        } catch (IOException e) {
+            log("EXCEPTION occurred creating image file");
+            e.printStackTrace();
+            return;
+        }
+        if( photoFile == null){
+            log("ERROR no photoFile created");
+            return;
+        }
+        Uri photoUri = FileProvider.getUriForFile(getContext(), "curtfurumark.se", photoFile);
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+        cameraIntent.putExtra(Constants.IMAGE_FILE_PATH, photoFile.getAbsolutePath());
+        startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
+    }
+    private void askCameraPermission(){
+        log("...askCameraPermissionU()");
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            log("...camera permission not granted");
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST_CODE);
+
+        } else {
+            //Toast.makeText(getContext(), "YOU GOT CAMERA PERMISSION", Toast.LENGTH_SHORT).show();
+            //dispatchTakePictureIntent();
+            openCamera();
+            //openCameraAndSaveImage();
+        }
+    }
+    private void openCamera() {
+        log("...openCamera()");
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+/*        File photoFile = null;
+        try {
+            photoFile = createImageFile();
+        } catch (IOException e) {
+            log("EXCEPTION occurred creating image file");
+            e.printStackTrace();
+            return;
+        }
+        if( photoFile == null){
+            log("ERROR no photoFile created");
+            return;
+        }
+        Uri photoUri = FileProvider.getUriForFile(getContext(), "curtfurumark.se", photoFile);
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);*/
+        startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
+    }
+    private File createImageFile() throws IOException {
+        log("...createImageFile()");
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+        String currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        log("...onActivityResult(...)");
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case CAMERA_REQUEST_CODE:
+                    log("PICTURE TAKEN, DO SOMETHING");
+                    // Handle the image taken from the camera
+                    Media media = new Media();
+                    String imagePath =data.getStringExtra(Constants.IMAGE_FILE_PATH);
+                    media.setFilePath(imagePath);
+                    media.setFileType(Media.FileType.IMAGE_JPEG);
+                    Item item = new Item("my first image");
+                    item.setContent(media);
+                    item = ItemsWorker.insert(item, getContext());
+                    log("item inserted with id", item.getID());
+/*                    Bundle extras = data.getExtras();
+                    Bitmap imageBitmap = (Bitmap) extras.get("data");
+                    ImageDialog dialog = new ImageDialog(imageBitmap);
+                    dialog.show(getChildFragmentManager(), "show image");*/
+                    //item.setContent(new Media());
+                    //Bundle extras = data.getExtras();
+                    //Item
+                    //Bitmap imageBitmap = (Bitmap) extras.get("data");
+                    //imageView.setImageBitmap(imageBitmap);
+                    //addImageToGallery();
+                    break;
+
+            }
+        } else {
+            log("Result code was not OK: ",resultCode);
+        }
+    }
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == CAMERA_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                //openCamera();
+                Toast.makeText(getContext(), "YEAH CAMERA PERMISSION GRANTED", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getContext(), "Camera permission is required to use camera.", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
     private boolean validate(){
         if( VERBOSE) log("...validate");

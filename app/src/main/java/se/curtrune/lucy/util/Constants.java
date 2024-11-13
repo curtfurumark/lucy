@@ -10,4 +10,6 @@ public class Constants {
     public static final int STRESS_OFFSET = 5;
     public static final int ANXIETY_OFFSET = 5;
 
+    public static final String IMAGE_FILE_PATH = "IMAGE_FILE_PATH" ;
+    public static final String UPDATE_MESSAGES_URL = "https://curtfurumark.se/projects/update.php";
 }

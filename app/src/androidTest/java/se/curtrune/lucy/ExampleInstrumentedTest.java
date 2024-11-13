@@ -9,6 +9,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.junit.Assert.*;
+import static se.curtrune.lucy.util.Logger.log;
+
+import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.workers.ItemsWorker;
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -22,5 +26,15 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         assertEquals("se.curtrune.lucy", appContext.getPackageName());
+    }
+    @Test
+    public void testMediaItem(){
+        log("...testMediaItem()");
+        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        Item item = ItemsWorker.selectItem(4244, appContext);
+        if(item != null){
+            log("item heading", item.getHeading());
+        }
+        assertEquals("root", item.getHeading());
     }
 }

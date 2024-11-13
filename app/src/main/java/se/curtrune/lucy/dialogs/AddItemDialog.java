@@ -183,7 +183,7 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         log("...initItemSettingsRecycler()");
         log("....initItemSettingRecycler");
         ItemSessionViewModel itemSessionViewModel = new ViewModelProvider(requireActivity()).get(ItemSessionViewModel.class);
-        itemSettingAdapter = new ItemSettingAdapter(itemSessionViewModel.getItemSettings(newItem), new ItemSettingAdapter.Listener() {
+        itemSettingAdapter = new ItemSettingAdapter(itemSessionViewModel.getItemSettings(newItem, getContext()), new ItemSettingAdapter.Listener() {
             @Override
             public void onClick(ItemSetting setting) {
                 log("...onClick(ItemSetting)", setting.toString());

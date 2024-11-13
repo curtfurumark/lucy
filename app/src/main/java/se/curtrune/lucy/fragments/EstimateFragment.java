@@ -115,10 +115,10 @@ public class EstimateFragment extends Fragment {
         if( VERBOSE) log("...initMentalStatsAndDuration(LocalDate)", date.toString());
         items = ItemsWorker.selectTodayList(date, getContext());
         if( VERBOSE) items.forEach(System.out::println);
-        estimatedStats = MentalWorker.getMentalStats(items, getContext());
+        //estimatedStats = MentalWorker.getMentalStats(items, getContext());
         estimatedDuration =  DurationWorker.getEstimatedDuration(items, getContext());
         List<Item> doneItems = items.stream().filter(Item::isDone).collect(Collectors.toList());
-        currentStats = MentalWorker.getMentalStats(doneItems, getContext());
+        //currentStats = MentalWorker.getMentalStats(doneItems, getContext());
         actualDuration = doneItems.stream().mapToLong(Item::getDuration).sum();
 
     }
@@ -160,8 +160,8 @@ public class EstimateFragment extends Fragment {
     private void printActualMental(){
         log("...printActualMental()");
         List<Item> doneItems = items.stream().filter(item -> item.isDone()).collect(Collectors.toList());
-        List<Mental> doneMentals = MentalWorker.getMentals(doneItems, getContext());
-        doneMentals.forEach(System.out::println);
+        List<Mental> doneMentals = MentalWorker.getMentals(doneItems);
+        //doneMentals.forEach(System.out::println);
         viewModel.updateFragment(new MentalDateFragment(date, true));
     }
     private void printEstimatedDuration(){

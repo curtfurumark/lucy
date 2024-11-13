@@ -13,17 +13,17 @@ import se.curtrune.lucy.classes.Message;
 import se.curtrune.lucy.persist.DB1Result;
 import se.curtrune.lucy.persist.Queeries;
 import se.curtrune.lucy.web.InsertThread;
+import se.curtrune.lucy.web.UpdateMessageThread;
 
 public class MessageWorker {
+
+
 
     public interface OnMessagesSelected{
         void onMessages(List<Message> messageList);
         void onError(String message);
     }
 
-    public interface OnInsertedCallback{
-        void onInserted(Message message, DB1Result db1Result);
-    }
     public static void insert(Message message, InsertThread.Callback callback){
         String queery = Queeries.insert(message);
         InsertThread thread = new InsertThread(queery, callback);
@@ -47,19 +47,10 @@ public class MessageWorker {
         });
         thread.start();
     }
-    public static void selectLucindaTodo(){
-        log("...selectLucindaTodo()");
-        String query = Queeries.selectLucindaTodo();
-        SelectThread thread = new SelectThread(query, new SelectThread.Callback() {
-            @Override
-            public void onRequestSelectError(String errMessage) {
+    public static void update(Message message, UpdateMessageThread.Callback callback) {
+        log("MessageWorker.update(Message)");
+        UpdateMessageThread thread = new UpdateMessageThread(message, callback);
+        thread.start();
 
-            }
-
-            @Override
-            public void onRequestSelectDone(String json) {
-
-            }
-        });
     }
 }

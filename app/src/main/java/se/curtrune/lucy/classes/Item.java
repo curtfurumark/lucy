@@ -26,6 +26,7 @@ public class Item implements Serializable , Listable {
     protected String heading;
     protected String description;
     protected String comment;
+    protected Media content;
     protected String tags;
     protected long created;
     protected long updated;
@@ -48,7 +49,7 @@ public class Item implements Serializable , Listable {
     protected int stress;
     protected  int mood;
     protected  int color = -1;
-    //protected Content content;
+    //protected Media content;
     public static boolean VERBOSE = false;
     protected Reward reward;
     protected int priority;
@@ -92,9 +93,6 @@ public class Item implements Serializable , Listable {
         this.estimate = item.getEstimate();
         this.color = item.getColor();
     }
-    public void addChild(Item item){
-        children.add(0, item);
-    }
     public long compare(){
         if( type == Type.APPOINTMENT.ordinal()){return target_date;}
         return (state == State.DONE.ordinal() ? Long.MIN_VALUE + updated: updated ) * -1;
@@ -105,16 +103,13 @@ public class Item implements Serializable , Listable {
     }
     @Override
     public boolean contains(String str) {
-        return (heading + description + comment + tags).contains(str);
+        return (heading + description + comment + tags + category).contains(str);
     }
     public int getAnxiety(){
         return anxiety;
     }
     public String getCategory() {
         return category;
-    }
-    public List<Item> getChildren(){
-        return children;
     }
     public int getColor(){
         return color;
@@ -314,10 +309,14 @@ public class Item implements Serializable , Listable {
         this.color = color;
     }
     public void setContent(String json){
-
+        //log("Item.setContent(String)", json);
+        //TODO, something something, something
     }
     public void setComment(String comment) {
         this.comment = comment;
+    }
+    public void setContent(Media content){
+        this.content = content;
     }
     public void setCreated(LocalDateTime created) {
         this.updated = created.toEpochSecond(ZoneOffset.UTC);
@@ -329,6 +328,12 @@ public class Item implements Serializable , Listable {
     public void setEnergy(int energy){
         this.energy = energy;
     }
+
+    /**
+     * TODO, use this one as extra, ie link if type is content/file
+     * or maybe not
+     * @param description
+     */
     public void setDescription(String description) {
         this.description = description;
     }
@@ -403,11 +408,11 @@ public class Item implements Serializable , Listable {
         this.parent_id = parent_id;
     }
 
-    public void setPeriod(String strPeriod){
+/*    public void setPeriod(String strPeriod){
         if( strPeriod != null && !strPeriod.isEmpty()){
             repeat = new Gson().fromJson(strPeriod, Repeat.class);
         }
-    }
+    }*/
     public void setRepeat(Repeat repeat){
         this.repeat = repeat;
     }
@@ -478,14 +483,10 @@ public class Item implements Serializable , Listable {
         return type == Type.APPOINTMENT.ordinal();
     }
 
-    public void setPeriod(Repeat.Unit unit) {
-        if( repeat == null){
-            repeat = new Repeat();
-        }
-        repeat.setUnit(unit);
+    public void setMental(Mental mental) {
+        energy = mental.getEnergy();
+        mood = mental.getMood();
+        anxiety = mental.getAnxiety();
+        stress = mental.getStress();
     }
-
-//    public boolean hasMental() {
-//        return mental != null;
-//    }
 }

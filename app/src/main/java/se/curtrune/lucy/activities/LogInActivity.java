@@ -26,6 +26,7 @@ import se.curtrune.lucy.R;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.app.User;
+import se.curtrune.lucy.persist.DBAdmin;
 import se.curtrune.lucy.workers.InternetWorker;
 import se.curtrune.lucy.workers.NotificationsWorker;
 import se.curtrune.lucy.workers.SettingsWorker;
@@ -72,6 +73,8 @@ public class LogInActivity extends AppCompatActivity {
         initDevMode();
         initDayNightMode();
         checkInternetConnection();
+        //checkForUpdates();
+        updateDatabase();
         NotificationsWorker.createNotificationChannel(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             checkNotificationPermission();
@@ -79,7 +82,6 @@ public class LogInActivity extends AppCompatActivity {
         if (User.usesPassword(this) && !User.isDevMode(this)) {
             log("...using password");
         } else {
-            //startActivity(new Intent(this, MainActivity.class));
             startUserActivity();
         }
     }
@@ -228,7 +230,22 @@ public class LogInActivity extends AppCompatActivity {
                 startActivity(new Intent(this, MainActivity.class));
                 break;
         }
-
+    }
+    private void updateDatabase(){
+        log("...updateDataBase()");
+        PackageInfo packageInfo = null;
+        try {
+            packageInfo = this.getPackageManager().getPackageInfo(this.getPackageName(), 0);
+            String versionName = packageInfo.versionName;
+            int versionCode = packageInfo.versionCode;
+            if(versionCode < 10){
+                log("....add columns to database");
+                DBAdmin.addMentalColumnsToItemsTable(this);
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            log("...updateDataBase()");
+            e.printStackTrace();
+        }
     }
 
     private boolean validateInput(){

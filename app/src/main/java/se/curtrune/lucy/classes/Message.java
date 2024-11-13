@@ -60,4 +60,16 @@ public class Message {
     public void setID(long id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "subject='" + subject + '\'' +
+                ", content='" + content + '\'' +
+                ", category='" + category + '\'' +
+                ", user='" + user + '\'' +
+                ", id=" + id +
+                ", created=" + created +
+                '}';
+    }
 }

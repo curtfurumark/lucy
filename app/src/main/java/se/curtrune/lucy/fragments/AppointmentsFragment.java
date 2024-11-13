@@ -2,15 +2,19 @@ package se.curtrune.lucy.fragments;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,45 +27,23 @@ import se.curtrune.lucy.adapters.AppointmentAdapter;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.AppointmentDialog;
+import se.curtrune.lucy.dialogs.PostponeDialog;
+import se.curtrune.lucy.viewmodel.AppointmentsViewModel;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.ItemsWorker;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link AppointmentsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class AppointmentsFragment extends Fragment implements
         AppointmentAdapter.Callback{
     private RecyclerView recycler;
     public static boolean VERBOSE = false;
-    //private ItemAdapter adapter;
     private AppointmentAdapter adapter;
-    private List<Item> items;
     private FloatingActionButton buttonAdd;
-    private LucindaViewModel viewModel;
+    private LucindaViewModel mainViewModel;
+    private AppointmentsViewModel appointmentsViewModel;
+    private ItemTouchHelper itemTouchHelper;
 
     public AppointmentsFragment() {
-
         if( VERBOSE) log("AppointmentsFragment()");
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     */
-    // TODO: Rename and change types and number of parameters
-    public static AppointmentsFragment newInstance() {
-        return new AppointmentsFragment();
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            log("...getArguments != null");
-        }
     }
 
     @Override
@@ -69,12 +51,13 @@ public class AppointmentsFragment extends Fragment implements
                              Bundle savedInstanceState) {
         log("AppointmentsFragment.onCreateView(LayoutInflater, ViewGroup, Bundle)");
         View view = inflater.inflate(R.layout.appintments_fragment, container, false);
+        initViewModel();
         initComponents(view);
         requireActivity().setTitle(getString(R.string.appointments));
-        items = ItemsWorker.selectAppointments(getContext());
-        initRecycler(items);
+        initSwipe();
+        initRecycler();
         initListeners();
-        initViewModel();
+
         return view;
     }
     private void addAppointment(){
@@ -82,10 +65,7 @@ public class AppointmentsFragment extends Fragment implements
         AppointmentDialog dialog = new AppointmentDialog();
         dialog.setCallback(item -> {
             log("...onNewAppointment(Item item");
-            item = ItemsWorker.insert(item, getContext());
-            log(item);
-            items.add(item);
-            adapter.notifyDataSetChanged();
+            appointmentsViewModel.add(item, getContext());
 
         });
         dialog.show(getParentFragmentManager(), "add appointment");
@@ -101,19 +81,50 @@ public class AppointmentsFragment extends Fragment implements
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
         buttonAdd.setOnClickListener(view->addAppointment());
+        mainViewModel.getFilter().observe(requireActivity(), filter -> {
+            log("...onFilter(String)", filter);
+            appointmentsViewModel.filter(filter);
+        });
+        appointmentsViewModel.getEvents().observe(requireActivity(), items -> {
+            log("...getEvents(List<Item>)");
+            adapter.setList(items);
+        });
     }
 
-    private void initRecycler(List<Item> items){
-        if( VERBOSE) log("...initRecycler(List<Item>)", items.size());
-        adapter = new AppointmentAdapter(this.items, this);
+    private void initRecycler(){
+        if( VERBOSE) log("...initRecycler()");
+        adapter = new AppointmentAdapter(appointmentsViewModel.getEvents().getValue(), this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recycler.setLayoutManager(layoutManager);
         recycler.setItemAnimator(new DefaultItemAnimator());
         recycler.setAdapter(adapter);
+        itemTouchHelper.attachToRecyclerView(recycler);
+    }
+    private void initSwipe(){
+        log("...initSwipe()");
+        itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                log("...onSwiped(...)");
+                Item item = appointmentsViewModel.getItem(viewHolder.getAdapterPosition());
+                if (direction == ItemTouchHelper.LEFT) {
+                    showDeleteDialog(item);
+                } else if (direction == ItemTouchHelper.RIGHT) {
+                    showPostponeDialog(item);
+                }
+            }
+        });
     }
     private void initViewModel(){
         if( VERBOSE)  log("...initViewModel()");
-        viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
+        mainViewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
+        appointmentsViewModel = new ViewModelProvider(requireActivity()).get(AppointmentsViewModel.class);
+        appointmentsViewModel.init(getContext());
     }
 
     @Override
@@ -124,7 +135,7 @@ public class AppointmentsFragment extends Fragment implements
     @Override
     public void onItemClick(Item item) {
         if( VERBOSE) log("...onItemClick(Item)", item.getHeading());
-        viewModel.updateFragment(new ItemSessionFragment(item));
+        mainViewModel.updateFragment(new ItemSessionFragment(item));
     }
 
     @Override
@@ -137,9 +148,41 @@ public class AppointmentsFragment extends Fragment implements
     public void onCheckboxClicked(Item item, boolean checked) {
         log("...onCheckBoxClicked(Item, boolean)", checked);
         item.setState(checked? State.DONE: State.TODO);
-        int rowsAffected = ItemsWorker.update(item, getContext());
-        if( rowsAffected != 1){
-            Toast.makeText(getContext(), "error updating appointment", Toast.LENGTH_SHORT).show();
-        }
+        appointmentsViewModel.update(item, getContext());
+    }
+    private void showDeleteDialog(Item item){
+        log("...showDeleteDialog(Item)", item.getHeading());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("delete" + item.getHeading());
+        builder.setMessage("are you sure? ");
+        builder.setPositiveButton("delete", (dialog, which) -> {
+            log("...on positive button click");
+            appointmentsViewModel.delete(item, getContext());
+
+        });
+        builder.setNegativeButton("cancel", (dialog, which) -> {
+            log("...on negative button click");
+            adapter.notifyDataSetChanged();
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+    private void showPostponeDialog(Item item){
+        log("showPostponeDialog(Item)");
+        PostponeDialog dialog = new PostponeDialog();
+        dialog.setCallback(new PostponeDialog.Callback() {
+            @Override
+            public void postpone(PostponeDialog.Postpone postpone) {
+                log("PostponeDialog.postpone(Postpone)", postpone.toString());
+                appointmentsViewModel.postpone(item, postpone, getContext());
+            }
+            @Override
+            public void dismiss() {
+                log("...dismiss()");
+                adapter.notifyDataSetChanged();
+            }
+        });
+        dialog.show(getChildFragmentManager(), "postpone");
+
     }
 }

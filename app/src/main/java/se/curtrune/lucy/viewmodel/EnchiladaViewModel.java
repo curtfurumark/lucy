@@ -21,6 +21,7 @@ public class EnchiladaViewModel extends ViewModel {
         log("EnchiladaViewModel()");
     }
     public void filter(String filter) {
+        log("EnchiladaViewModel.filter(String)", filter);
         List<Item> filteredItems = items.stream().filter(item->item.contains(filter)).collect(Collectors.toList());
         mutableItems.setValue(filteredItems);
     }

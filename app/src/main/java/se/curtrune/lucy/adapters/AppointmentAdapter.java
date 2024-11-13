@@ -25,7 +25,7 @@ import se.curtrune.lucy.util.Converter;
 
 public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.ViewHolder>{
     private List<Item> items;
-    public static boolean VERBOSE = true;
+    public static boolean VERBOSE = false;
 
     public void setList(List<Item> items) {
         if( VERBOSE) log("AppointmentAdapter.setList(List<Item>) size", items.size());
@@ -56,7 +56,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if( VERBOSE) log("appointmentAdapter.onCreateViewHolder(...)");
+        if( VERBOSE) log("AppointmentAdapter.onCreateViewHolder(...)");
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.appointment_adapter, parent, false);
         return new ViewHolder(itemView);
     }

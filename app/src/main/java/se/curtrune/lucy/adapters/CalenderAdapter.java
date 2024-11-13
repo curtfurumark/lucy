@@ -91,6 +91,9 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
             }
             holder.cardView.setCardBackgroundColor(item.getColor());
         }
+        if(item.hasChild()){
+            holder.textViewHasChild.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -104,6 +107,7 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
     public class ViewHolder extends RecyclerView.ViewHolder{
         private final TextView textView_heading;
         private final CheckBox checkBox_state;
+        private final TextView textViewHasChild;
         private final TextView textView_info;
         private final TextView textViewTime;
         private final ConstraintLayout layout;
@@ -112,6 +116,7 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
         public ViewHolder(@NonNull android.view.View itemView) {
             super(itemView);
             textView_heading = itemView.findViewById(R.id.calenderAdapter_itemHeading);
+            textViewHasChild = itemView.findViewById(R.id.calenderAdapter_textViewHasChildren);
             textView_info = itemView.findViewById(R.id.calenderAdapter_itemInfo);
             checkBox_state = itemView.findViewById(R.id.calenderAdapter_itemState);
             textViewTime = itemView.findViewById(R.id.calenderAdapter_time);

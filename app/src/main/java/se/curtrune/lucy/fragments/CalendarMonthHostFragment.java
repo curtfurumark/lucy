@@ -32,7 +32,7 @@ public class CalendarMonthHostFragment extends Fragment {
         viewPagerAdapter.setNumberFragments(24);
         viewPagerAdapter.setInitialPosition(12);
         viewPager.setAdapter(viewPagerAdapter);
-        viewPager.setCurrentItem(12);
+        //viewPager.setCurrentItem(12);
         viewPager.setOffscreenPageLimit(1);
         //viewPager.setOffscreenPageLimit(1);
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {

@@ -30,13 +30,8 @@ public class LucindaViewModel extends ViewModel {
     private MutableLiveData<Integer> mutableMood = new MutableLiveData<>();
     private MutableLiveData<Affirmation> mutableAffirmation = new MutableLiveData<>();
     private MutableLiveData<String> mutableFilter = new MutableLiveData<>();
-    private int initialEnergy;
     private MentalAdapter.MentalType mentalType = MentalAdapter.MentalType.ENERGY;
-    private int initialAnxiety;
-    private int initialStress;
-    private int initialMood;
     private Mental currentMental;
-
     private LocalDate date;
     public LiveData<Integer> getEnergy(){
         return mutableEnergy;
@@ -54,7 +49,6 @@ public class LucindaViewModel extends ViewModel {
     public void init(LocalDate date, Context context) {
         log("LucindaViewModel.init(LocalDate)", date.toString());
         this.date = date;
-        //initialEnergy = MentalWorker.getEnergy(date, context);
         currentMental = MentalWorker.getCurrentMental(date, context);
         switch (mentalType){
             case STRESS:
@@ -70,7 +64,6 @@ public class LucindaViewModel extends ViewModel {
                 mutableAnxiety.setValue(currentMental.getAnxiety());
                 break;
         }
-
     }
 
     public void toggleRecyclerMode() {
@@ -81,30 +74,25 @@ public class LucindaViewModel extends ViewModel {
         recyclerMode.setValue(rm);
     }
 
-/*    public void estimateAnxiety(int estimatedAnxiety, Context context) {
-        log("...estimateAnxiety(int, Context)");
-        int anxiety = MentalWorker.getAnxiety(date, context);
-        mutableAnxiety.setValue(anxiety + estimatedAnxiety);
-    }*/
     /**
-     *
-     * @param estimatedEnergy
+     * for calculating what anxiety wil be if this change in anxiety is made ( item saved state done)
+     * @param anxiety
      * @param context
      */
-/*    public void estimateEnergy(int estimatedEnergy, Context context){
-        log("...estimateEnergy(int)", estimatedEnergy);
-        int currentEnergy = MentalWorker.getEnergy(LocalDate.now(), context);
-        mutableEnergy.setValue(currentEnergy + estimatedEnergy);
-    }*/
-    public void estimateMood(int estimatedMood, Context context){
-        log("...estimateMood(int, Context)", estimatedMood);
-        //int currentMood = MentalWorker.getMood(date, context);
-        //mutableMood.setValue(currentMood + estimatedMood);
+    public void estimateAnxiety(int anxiety, Context context) {
+        log("LucindaViewModel.estimateAnxiety(int, Context)", anxiety);
+        int estimatedAnxiety = currentMental.getAnxiety() + anxiety;
+        mutableAnxiety.setValue(estimatedAnxiety);
+    }
+
+    public void estimateMood(int mood, Context context){
+        int estimatedMood = currentMental.getMood() + mood;
+        mutableMood.setValue(estimatedMood);
     }
     public void estimateStress(int stress, Context context){
         log("LucindaViewModel.estimateStress(int, Context)", stress);
-        //int currentStress = MentalWorker.getStress(date, context);
-        //mutableStress.setValue(currentStress + stress);
+        int estimatedStress = currentMental.getStress() + stress;
+        mutableStress.setValue(estimatedStress);
     }
     public void filter(String query) {
         log("LucindaViewModel.filter(query)", query);
@@ -169,6 +157,12 @@ public class LucindaViewModel extends ViewModel {
                 mutableMood.setValue(currentMental.getMood());
                 break;
         }
+    }
+
+    public void estimateEnergy(int energy) {
+        log("ItemSessionViewModel.estimateEnergy(int)", energy);
+        int estimatedEnergy = currentMental.getEnergy() + energy;
+        mutableEnergy.setValue(estimatedEnergy);
     }
 
 

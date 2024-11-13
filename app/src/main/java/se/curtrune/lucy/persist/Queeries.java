@@ -108,12 +108,13 @@ public class Queeries {
 
     /**
      * selects direct items to given parent
-     *
+     * does not return template children
      * @param parent, the parent, if is null, selects root items
      * @return a list of children , or an empty list if none found
      */
     public static String selectChildren(Item parent) {
-        return String.format(Locale.ENGLISH, "SELECT * FROM items WHERE parentID = %d ORDER by updated DESC", parent != null ? parent.getID() : 0);
+        return String.format(Locale.ENGLISH, "SELECT * FROM items WHERE parentID = %d AND type != %d ORDER by updated DESC",
+                parent != null ? parent.getID() : 0, Type.TEMPLATE_CHILD.ordinal());
     }
 
 
@@ -143,7 +144,8 @@ public class Queeries {
         long endEpoch = startEpoch + (3600 * 24);
         return String.format(Locale.ENGLISH, "SELECT * FROM items WHERE " +
                         "(template = %d AND targetDate <= %d AND targetDate > 0)  OR " +      //INFINITE today or earlier
-                        "(targetDate = %d AND hasChild = 0 AND state = %d) OR " +   //items todo today
+                        //"(targetDate = %d AND hasChild = 0 AND state = %d) OR " +   //items todo today
+                        "(targetDate = %d AND state = %d) OR " +
                         "(state = %d AND updated >= %d AND updated <= %d)", //items done today, but targetDate not today
                 1, date.toEpochDay(),
                 date.toEpochDay(), State.TODO.ordinal(),
@@ -284,6 +286,16 @@ public class Queeries {
         LocalDate firstDate = week.getFirstDateOfWeek();
         LocalDate lastDate = week.getLastDateOfWeek();
         return selectItems(firstDate, lastDate);
+    }
+
+    public static String selectTemplateChildren(Item parent) {
+        return String.format(Locale.getDefault(), "SELECT * FROM item WHERE parentId = %d AND type = %d ORDER BY updated DESC",
+                parent.getID(), Type.TEMPLATE_CHILD);
+    }
+
+    public static String updateMessage(Message message) {
+        return String.format(Locale.getDefault(), "UPDATE messages SET subject = '%s', content = '%s', user = '%s', category = '%s'",
+                message.getSubject(), message.getContent(), message.getUser(), message.getCategory());
     }
 }
 

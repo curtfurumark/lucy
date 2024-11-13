@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -44,11 +45,10 @@ import se.curtrune.lucy.fragments.CalenderDateFragment;
 import se.curtrune.lucy.fragments.ContactFragment;
 import se.curtrune.lucy.fragments.CustomizeFragment;
 import se.curtrune.lucy.fragments.DailyGraphFragment;
-import se.curtrune.lucy.fragments.DevTodoFragment;
 import se.curtrune.lucy.fragments.DurationFragment;
 import se.curtrune.lucy.fragments.EnchiladaFragment;
 import se.curtrune.lucy.fragments.EstimateFragment;
-import se.curtrune.lucy.fragments.ItemsFragment;
+import se.curtrune.lucy.fragments.ProjectsFragment;
 import se.curtrune.lucy.fragments.MentalDateFragment;
 import se.curtrune.lucy.fragments.MentaHistoryFragment;
 import se.curtrune.lucy.fragments.MessageBoardFragment;
@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
             } else if (item.getItemId() == R.id.bottomNavigation_enchilada) {
                 navigate(new EnchiladaFragment());
             } else if (item.getItemId() == R.id.bottomNavigation_projects) {
-                navigate(new ItemsFragment());
+                navigate(new ProjectsFragment());
             } else if (item.getItemId() == R.id.navigationDrawer_durationFragment) {
                 navigate(new DurationFragment());
             } else if (item.getItemId() == R.id.navigationDrawer_estimateFragment) {
@@ -149,8 +149,6 @@ public class MainActivity extends AppCompatActivity {
                 navigate(new MentalDateFragment());
             } else if (item.getItemId() == R.id.navigationDrawer_mentalHistoryFragment) {
                 navigate(new MentaHistoryFragment());
-            } else if (item.getItemId() == R.id.navigationDrawer_devToDo) {
-                navigate(new DevTodoFragment());
             } else if (item.getItemId() == R.id.navigationDrawer_logOut) {
                 log("...log out");
                 Intent intent = new Intent(this, LogInActivity.class);
@@ -257,6 +255,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        log("MainActivity.onBackPressed()");
+        //super.onBackPressed();
+        if( drawerLayout.isDrawerOpen(GravityCompat.START)){
+            log("...drawerLayout is open, closing");
+            drawerLayout.close();
+        }else{
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_activity_menu, menu);
         SearchView searchView = (SearchView) menu.findItem(R.id.mainActivity_search).getActionView();
@@ -293,11 +303,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-/*    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        log("MainActivity.onSaveInstanceState(Bundle)");
-        super.onSaveInstanceState(outState);
-    }*/
+
 
     private void openWebPage(String url){
         log("...openWebPage(String url)", url);

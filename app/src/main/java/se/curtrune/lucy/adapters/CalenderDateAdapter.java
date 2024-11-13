@@ -56,7 +56,6 @@ public class CalenderDateAdapter extends RecyclerView.Adapter<CalenderDateAdapte
         if( VERBOSE) log("CalenderDateAdapter.onBindViewHolder() position", position);
         LocalDate date = dates.get(position);
         if( date.equals(week.getCurrentDate())){
-            //log("...selectedDate true", date.toString());
             holder.textViewDateNumber.setTextColor(Color.rgb(160,32,240));
             holder.textViewDateName.setTextColor(Color.rgb(160,32,240));
         }else{
@@ -84,7 +83,6 @@ public class CalenderDateAdapter extends RecyclerView.Adapter<CalenderDateAdapte
             layout = itemView.findViewById(R.id.calenderDateFragment_rootLayout);
             layout.setOnClickListener(view->{
                 log("...layout onClick");
-                //selectedDate = dates.get(getAdapterPosition());
                 callback.onDateSelected(dates.get(getAdapterPosition()));
             });
         }

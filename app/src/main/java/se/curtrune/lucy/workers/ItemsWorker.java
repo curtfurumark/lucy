@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.List;
 
+import se.curtrune.lucy.activities.DevActivity;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
@@ -42,35 +43,18 @@ public class ItemsWorker {
         item.setCategory(template.getCategory());
         item.setTags(template.getTags());
         item.setTargetTime(template.getTargetTime());
-        //item.setTargetDate(template.getTargetDate());
         item.setTargetDate(LocalDate.now());
         item.setEstimate(template.getEstimate());
         item.setColor(template.getColor());
         item.setState(State.DONE);
+        item.setType(Type.TEMPLATE_CHILD);
+        item.setAnxiety(template.getAnxiety());
+        item.setEnergy(template.getEnergy());
+        item.setMood(template.getMood());
+        item.setStress(template.getStress());
         return item;
     }
-    /**
-     * creates an action MentalType instance from a template
-     * date and time set to now
-     * is done set to true
-     * @param template, the template to use in the creation of the actual
-     * @return, an actual MentalType from the template MentalType
-     */
-    private static Mental createMentalFromTemplate(Mental template){
-        log("...createMentalFromTemplate(MentalType)");
-        //assert item != null;
-        Mental mental = new Mental();
-        mental.setEnergy(template.getEnergy());
-        //mental.setItemID(item.getID());
-        mental.setMood(template.getMood());
-        mental.setAnxiety(template.getAnxiety());
-        mental.setStress(template.getStress());
-        mental.setCategory(template.getCategory());
-        mental.setComment(template.getComment());
-        mental.setHeading(template.getHeading());
-        mental.isDone(true);
-        return mental;
-    }
+
 
     /**
      * deletes an item, but if it has children, //TODO delete children recursively
@@ -223,7 +207,22 @@ public class ItemsWorker {
             return db.selectItems(Queeries.selectChildren(parent));
         }
     }
+    public static List<Item> selectTemplateChildren(Item parent, Context context){
+        try(LocalDB db = new LocalDB(context)){
+            return db.selectItems(Queeries.selectTemplateChildren(parent));
+        }
+    }
 
+    public static Item selectItem(long id, Context context) {
+        log("ItemsWorker.selectItem(long, Context)");
+        Item item = null;
+        try(LocalDB db = new LocalDB(context)){
+            item = db.selectItem(id);
+        }catch (Exception e){
+            log("EXCEPTION", e.getMessage());
+        }
+        return item;
+    }
     /**
      *
      * @param date, the date
@@ -378,6 +377,8 @@ public class ItemsWorker {
         }else {
             try (LocalDB db = new LocalDB(context)) {
                 item.setUpdated(LocalDateTime.now());
+/*                if(item.hasPeriod()){
+                }*/
                 return db.update(item);
             }
         }
@@ -399,15 +400,12 @@ public class ItemsWorker {
                 template.setState(State.TODO);
                 Item child = createActualItem(template);
                 child.setType(Type.TEMPLATE_CHILD);
-/*                Mental mental = createMentalFromTemplate(template.getMental());
-                if( VERBOSE) log(mental);
-                child.setMental(mental);*/
                 child = db.insertChild(template, child);//creates and inserts mental, or rather insert(Item) does
-//                if (template.hasPeriod()) {
-//                    template.updateTargetDate();
-//                }else{
-//                    template.setTargetDate(LocalDate.now());
-//                }
+                if (template.hasPeriod()) {
+                    template.updateTargetDate();
+                }else{
+                    template.setTargetDate(LocalDate.now());
+                }
                 template.setDuration(0);
             }
             return db.update(template);
@@ -432,5 +430,26 @@ public class ItemsWorker {
             items = db.selectItems(queery);
         }
         return items;
+    }
+
+
+    /**
+     * deletes parent Item and all of its children
+     * @param parent, parent Item
+     * @param context, context
+     */
+    public static void deleteTree(Item parent, Context context) {
+        log("ItemsWorker.deleteTree(Item, Context)", parent.getHeading());
+        if( parent.hasChild()){
+            List<Item> children = ItemsWorker.selectChildren(parent, context);
+            for(Item item: children){
+                deleteTree(item, context);
+            }
+        }
+        log("DELETE ME", parent.getHeading());
+        boolean stat = ItemsWorker.delete(parent, context);
+        if(!stat){
+            log("ERROR DELETING ITEM");
+        }
     }
 }

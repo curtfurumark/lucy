@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,6 +26,7 @@ import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.MessageAdapter;
 import se.curtrune.lucy.classes.Message;
 import se.curtrune.lucy.dialogs.MessageDialog;
+import se.curtrune.lucy.viewmodel.MessageBoardViewModel;
 import se.curtrune.lucy.workers.InternetWorker;
 import se.curtrune.lucy.workers.MessageWorker;
 
@@ -48,6 +51,7 @@ public class MessageBoardFragment extends Fragment implements TabLayout.OnTabSel
     private TabLayout.Tab tabSuggestions;
     private TabLayout.Tab tabBugs;
     public static boolean VERBOSE = false;
+    private MessageBoardViewModel messageBoardViewModel;
 
     public MessageBoardFragment() {
         // Required empty public constructor
@@ -78,9 +82,12 @@ public class MessageBoardFragment extends Fragment implements TabLayout.OnTabSel
         View view =  inflater.inflate(R.layout.message_board_fragment, container, false);
         initComponents(view);
         initTabs();
-        initListeners();
+        initViewModels();
+
         initRecycler();
-        selectMessages();
+        //selectMessages();
+        initListeners();
+        observe();
         return view;
     }
     private void initComponents(View view){
@@ -93,10 +100,21 @@ public class MessageBoardFragment extends Fragment implements TabLayout.OnTabSel
         log("...initListeners()");
         addMessageButton.setOnClickListener(view->showMessageDialog());
         tabLayout.addOnTabSelectedListener(this);
+        tabMessages.select();
+    }
+    private void initViewModels(){
+        log("...initViewModels()");
+        messageBoardViewModel = new ViewModelProvider(requireActivity()).get(MessageBoardViewModel.class);
+        messageBoardViewModel.init("message");
     }
     private void initRecycler(){
         if( VERBOSE) log("...initRecycler()");
-        adapter = new MessageAdapter(new ArrayList<>(), message -> log("...onMessageClick(Message)"));
+        adapter = new MessageAdapter(new ArrayList<>(), message ->
+        {
+            //log("...onMessageClick(Message)");
+            //Toast.makeText(getContext(), message.toString(), Toast.LENGTH_LONG).show();
+            showMessageDialog(message);
+        });
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerMessages.setLayoutManager(layoutManager);
         recyclerMessages.setItemAnimator(new DefaultItemAnimator());
@@ -125,7 +143,7 @@ public class MessageBoardFragment extends Fragment implements TabLayout.OnTabSel
         tabLayout.addTab(tabSuggestions);
         tabLayout.addTab(tabWip);
     }
-    private void selectMessages(){
+/*    private void selectMessages(){
         log("...selectMessages()");
         if(!InternetWorker.isConnected(getContext())){
             log("...not connected to the internet, cannot get messages");
@@ -144,6 +162,15 @@ public class MessageBoardFragment extends Fragment implements TabLayout.OnTabSel
             public void onError(String message) {
                 log("...onError(String message)");
                 Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+            }
+        });
+    }*/
+    private void observe(){
+        messageBoardViewModel.getMessages().observe(requireActivity(), new Observer<List<Message>>() {
+            @Override
+            public void onChanged(List<Message> messages) {
+                log("...observe messages");
+                adapter.setList(messages);
             }
         });
     }
@@ -179,21 +206,12 @@ public class MessageBoardFragment extends Fragment implements TabLayout.OnTabSel
             return;
         }
         MessageDialog dialog = new MessageDialog();
-        dialog.setCallback(message -> {
-            log("...onNewMessage(Message)", message.getSubject());
-            MessageWorker.insert(message, result -> {
-                log("...onItemInserted(DB1Result)");
-                if( result.isOK()){
-                    message.setID(result.getID());
-                    messages.add(0, message);
-                    selectTab(message.getCategory());
-                    adapter.notifyItemInserted(0);
-                }else{
-                    log("...error inserting message");
-                    log(result);
-                    Toast.makeText(getContext(), "error", Toast.LENGTH_LONG).show();
-                }
-            });
+        dialog.setCallback(new MessageDialog.Callback() {
+            @Override
+            public void onMessage(Message message, MessageDialog.Mode mode) {
+                log("...onMessage(Message, Mode)", message.getSubject());
+                messageBoardViewModel.insert(message, getContext());
+            }
         });
         dialog.show(getChildFragmentManager(), "add message");
     }
@@ -201,8 +219,9 @@ public class MessageBoardFragment extends Fragment implements TabLayout.OnTabSel
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
         log("...onTabSelected(TabLayout.Tab)", tab.getText().toString());
-        log("\t\tmessages size", messages.size());
-        setUserInterface(tab.getTag().toString());
+        //log("\t\tmessages size", messages.size());
+        //setUserInterface(tab.getTag().toString());
+        messageBoardViewModel.filter((String) tab.getTag());
     }
 
     @Override
@@ -212,6 +231,19 @@ public class MessageBoardFragment extends Fragment implements TabLayout.OnTabSel
 
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
+
+    }
+    private void showMessageDialog(Message message){
+        log("...showMessageDialog(Message)");
+        MessageDialog dialog = new MessageDialog(message);
+        dialog.setCallback(new MessageDialog.Callback() {
+            @Override
+            public void onMessage(Message message, MessageDialog.Mode mode) {
+                log("...onMessage updated(Message, Mode)");
+                messageBoardViewModel.update(message, getContext());
+            }
+        });
+        dialog.show(getChildFragmentManager(), "edit message");
 
     }
 }

@@ -24,14 +24,16 @@ import se.curtrune.lucy.workers.MentalWorker;
 
 public class CalendarDateViewModel extends ViewModel {
     private MutableLiveData<List<Item>> mutableItems =  new MutableLiveData<>();
+    private MutableLiveData<String> mutableError = new MutableLiveData<>();
     private List<Item> items;
+    private Item currentParent;
     private LocalDate date;
     public static boolean VERBOSE = false;
 
     public void add(Item item, Context context) {
         log("CalendarDateViewModel.add(Item, Context)", item.getHeading());
         item = ItemsWorker.insert(item, context);
-        log(item);
+        if(VERBOSE)log(item);
         items.add(item);
         sort();
         mutableItems.setValue(items);
@@ -39,19 +41,28 @@ public class CalendarDateViewModel extends ViewModel {
 
     public boolean delete(Item item, Context context){
         log("CalendarDateViewModel.delete(Item, Context)", item.getHeading());
-/*        int rowsAffected = MentalWorker.deleteMental(item, context);
-        if( rowsAffected != 1){
-            log("WARNING mental not deleted, possibly no mental to delete...");
-        }else{
-            log("...mental deleted from db");
-        }*/
         boolean stat = ItemsWorker.delete(item, context);
+        if(!stat){
+            log("ERROR deleting item", item.getHeading());
+            return false;
+        }
         items.remove(item);
         mutableItems.setValue(items);
-        return stat;
+        return true;
+    }
+    public Item getCurrentParent() {
+        return currentParent;
+    }
+    public Item getItem(int index) {
+        log("CalendarDateViewModel.getItem(int)", index);
+        return mutableItems.getValue().get(index);
     }
     public LiveData<List<Item>> getItems(){
         return mutableItems;
+    }
+    public void selectGenerated(Item parent, Context context) {
+        List<Item> items = ItemsWorker.selectTemplateChildren(parent, context);
+        mutableItems.setValue(items);
     }
     public void set(LocalDate date, Context context) {
         log("CalendarDateViewModel.set(LocalDate, Context)");
@@ -64,33 +75,25 @@ public class CalendarDateViewModel extends ViewModel {
         sort();
         mutableItems.setValue(items);
     }
+    public void setParent(Item parent, Context context) {
+        log("CalendarDateViewModel.setParent(Item, Context)");
+        this.currentParent = parent;
+        items = ItemsWorker.selectChildren(parent, context);
+        mutableItems.setValue(items);
+    }
     public void sort(){
         log("CalendarDateViewModel.sort()");
         items.sort(Comparator.comparingLong(Item::compareTargetTime));
-        if( VERBOSE){
-            items.forEach(System.out::println);
-        }
-
-    }
-    public boolean update(Item item, Context context){
-        log("CalendarDateViewModel.update(Item)", item.getHeading());
-        int rowsAffected = ItemsWorker.update(item, context);
-        if( rowsAffected != 1){
-            log("ERROR updating item");
-            return false;
-        }
-        set(date, context);
-        return true;
     }
 
     public void set(CalenderDate calenderDate) {
         log("CalendarDateViewModel.set(CalendarDate)");
         this.date = calenderDate.getDate();
-        mutableItems.setValue(calenderDate.getItems());
+        this.items = calenderDate.getItems();
+        mutableItems.setValue(items);
     }
     public void setEnergyItems(){
         log("CalendarDateViewModel.setEnergyItems()");
-        log("...getMentalColor(List<Item>)");
         List<Item> colouredItems = new ArrayList<>();
         int currentEnergy = 0;
         for(int i = 0; i < items.size(); i++){
@@ -102,10 +105,7 @@ public class CalendarDateViewModel extends ViewModel {
         mutableItems.setValue(colouredItems);
     }
 
-    public Item getItem(int index) {
-        log("CalendarDateViewModel.getItem(int)", index);
-        return items.get(index);
-    }
+
 
     public void postpone(Item item, PostponeDialog.Postpone postpone, LocalDate date, Context context) {
         switch (postpone){
@@ -134,4 +134,17 @@ public class CalendarDateViewModel extends ViewModel {
         log("CalendarDateViewModel.filter(String)");
         mutableItems.setValue(items.stream().filter(item->item.contains(filter)).collect(Collectors.toList()));
     }
+    public boolean update(Item item, Context context){
+        log("CalendarDateViewModel.update(Item)", item.getHeading());
+        int rowsAffected = ItemsWorker.update(item, context);
+        if( rowsAffected != 1){
+            log("ERROR updating item");
+            return false;
+        }
+        set(date, context);
+        return true;
+    }
+
+
+
 }

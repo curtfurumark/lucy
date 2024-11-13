@@ -27,38 +27,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mentalDayFragment_date" />
 
-    <TextView
-        android:id="@+id/mentalFragment_mentalLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:ems="5"
-        android:text="mental label"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toStartOf="@+id/mentalFragment__mentalTotal"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mentalDayFragment_modeSwitch"
-        tools:ignore="HardcodedText" />
-
-    <TextView
-        android:id="@+id/mentalFragment__mentalTotal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/mental_sum"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/mentalFragment_mentalLabel"
-        app:layout_constraintTop_toTopOf="@+id/mentalFragment_mentalLabel" />
-
     <RadioGroup
         android:id="@+id/mentalDayFragment_radioGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mentalFragment_mentalLabel">
+        app:layout_constraintTop_toBottomOf="@+id/mentalDayFragment_modeSwitch">
 
         <RadioButton
             android:id="@+id/mentalList_radioButtonEnergy"
@@ -94,16 +70,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mentalDayFragment_radioGroup" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/mentalFragment_addMentalButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:contentDescription="@string/add_mental"
-        android:src="@android:drawable/ic_input_add"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

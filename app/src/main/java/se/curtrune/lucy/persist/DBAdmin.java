@@ -8,6 +8,8 @@ import android.database.Cursor;
 
 import com.google.gson.Gson;
 
+import java.time.Period;
+
 import se.curtrune.lucy.activities.economy.classes.Asset;
 import se.curtrune.lucy.activities.economy.classes.Transaction;
 import se.curtrune.lucy.activities.economy.persist.EcQueeries;
@@ -15,6 +17,8 @@ import se.curtrune.lucy.app.App;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
+import se.curtrune.lucy.classes.Notification;
+import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.classes.Type;
 
 public class DBAdmin {
@@ -53,6 +57,7 @@ public class DBAdmin {
     }
     public static Item getItem(Cursor cursor){
         Item item = new Item();
+        Gson gson = new Gson();
         item.setId(cursor.getLong(0));
         item.setHeading(cursor.getString(1));
         item.setComment(cursor.getString(2));
@@ -68,13 +73,17 @@ public class DBAdmin {
         item.setDuration(cursor.getLong(12));
         item.setParentId(cursor.getInt(13));
         item.setIsCalenderItem(cursor.getInt(14) == 1);
-        item.setPeriod(cursor.getString(15));
-        item.setEstimate(cursor.getString(16));
-        item.setNotification(cursor.getString(17));
+        String jsonRepeat = cursor.getString(15);
+        if( jsonRepeat != null){
+            Repeat repeat = gson.fromJson(jsonRepeat, Repeat.class);
+            item.setRepeat(repeat);
+        }
+        Notification notification = gson.fromJson(cursor.getString(17), Notification.class);
+        //item.setNotification(cursor.getString(17));
         item.setIsTemplate(cursor.getInt(18) != 0);
         //item.setMentalJson(cursor.getString(19));
         item.setContent(cursor.getString(19));
-        item.setReward(cursor.getString(20));
+        //item.setReward(cursor.getString(20));
         item.setColor(cursor.getInt(21));
         item.setPriority(cursor.getInt(22));
         item.setEnergy(cursor.getInt(23));
@@ -93,6 +102,7 @@ public class DBAdmin {
 
     public static ContentValues getContentValues(Item item) {
         if( VERBOSE) log("DBAdmin.getContentValues(Item)");
+        Gson gson = new Gson();
         ContentValues cv = new ContentValues();
         cv.put("heading", item.getHeading());
         cv.put("comment", item.getComment());
@@ -124,6 +134,9 @@ public class DBAdmin {
         cv.put("anxiety", item.getAnxiety());
         cv.put("stress", item.getStress());
         cv.put("mood", item.getMood());
+        if( item.getType().equals(Type.MEDIA)){
+            //cv.put("content",gson.toJson(item.getMedia()) );
+        }
         //cv.put("content", item.getContent());
         //cv.put("mental", item.getMental().toJson());
         return cv;
@@ -228,6 +241,27 @@ public class DBAdmin {
         log("DBAdmin.listTables()");
         try(LocalDB db = new LocalDB(context)) {
             db.getTableNames().forEach(System.out::println);
+        }
+    }
+
+    public static void addMentalColumnsToItemsTable(Context context) {
+        log("...addMentalColumnsToItemsTable()");
+        String queeryEnergy = "ALTER TABLE items ADD COLUMN energy INTEGER DEFAULT 0";
+        String queeryAnxiety = "ALTER TABLE items ADD COLUMN anxiety INTEGER DEFAULT 0";
+        String queeryStress = "ALTER TABLE items ADD COLUMN stress INTEGER DEFAULT 0";
+        String queeryMood = "ALTER TABLE items ADD COLUMN mood INTEGER DEFAULT 0";
+        try(LocalDB db = new LocalDB(context)){
+            db.executeSQL(queeryEnergy);
+            log("column energy added");
+            db.executeSQL(queeryAnxiety);
+            log("column anxiety added");
+            db.executeSQL(queeryStress);
+            log("column stress added");
+            db.executeSQL(queeryMood);
+            log("column mood created?");
+        }catch (Exception e){
+            log("an exception occurred");
+            e.printStackTrace();
         }
     }
 }

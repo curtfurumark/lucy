@@ -96,7 +96,7 @@ public class StatisticsPeriod {
         log("...initStats()");
         items = ItemsWorker.selectItems(firstDate, lastDate, context);
         log("...number of items", items.size());
-        mentalList = MentalWorker.select(firstDate, lastDate, context);
+        //mentalList = MentalWorker.select(firstDate, lastDate, context);
         log("...number of mentals", mentalList.size());
     }
 

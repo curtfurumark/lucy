@@ -91,4 +91,11 @@
         android:layout_height="wrap_content"
         android:text="run sql" />
 
+    <Button
+        android:id="@+id/devActivity_buttonRunCode"
+        android:layout_marginTop="24dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Button" />
+
 </LinearLayout>

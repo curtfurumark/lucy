@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,7 +18,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.tabs.TabLayout;
+import java.util.List;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.ItemAdapter;
@@ -35,40 +34,37 @@ import se.curtrune.lucy.workers.ItemsWorker;
  * create an instance of this fragment.
  */
 public class EnchiladaFragment extends Fragment implements
-        ItemAdapter.Callback,
-        TabLayout.OnTabSelectedListener {
+        ItemAdapter.Callback{
 
     private RecyclerView recycler;
-    private EditText editTextSearch;
+    //private EditText editTextSearch;
     private ItemAdapter adapter;
-    //private List<Item> items;
     public static boolean VERBOSE = false;
     private LucindaViewModel viewModel;
     private EnchiladaViewModel enchiladaViewModel;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         log("EnchiladaFragment.onCreateView(LayoutInflater, ViewGroup, Bundle)");
-        View view = inflater.inflate(R.layout.todo_fragment, container, false);
+        View view = inflater.inflate(R.layout.enchilada_fragment, container, false);
         initComponents(view);
         initViewModel();
         initRecycler();
         initSwipe();
         initListeners();
-        //initViewModel();
+        observe();
         return view;
     }
 
     public EnchiladaFragment() {
-        log("ItemsFragment()");
+        log("ProjectsFragment()");
     }
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment ItemsFragment.
+     * @return A new instance of fragment ProjectsFragment.
      */
     // TODO: Rename and change types and number of parameters
     public static EnchiladaFragment newInstance() {
@@ -82,35 +78,13 @@ public class EnchiladaFragment extends Fragment implements
             log("...getArguments != null");
         }
     }
-/*    private void filter(String str){
-        List<Item> filteredItems = items.stream().filter(item->item.contains(str)).collect(Collectors.toList());
-        adapter.setList(filteredItems);
-    }*/
+
     private void initComponents(View view){
         if( VERBOSE) log("...initComponents()");
-        recycler = view.findViewById(R.id.todoFragment_recycler);
-        editTextSearch = view.findViewById(R.id.todoFragment_search);
+        recycler = view.findViewById(R.id.enchiladaFragment_recycler);
     }
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
-/*        editTextSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                log("...onTextChanged(CharSequence, int, int, int)");
-                filter(s.toString());
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });*/
     }
 
     private void initRecycler(){
@@ -131,8 +105,6 @@ public class EnchiladaFragment extends Fragment implements
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                //int index = viewHolder.getAdapterPosition();
-                //Item item = items.get(viewHolder.getAdapterPosition());
                 Item item = enchiladaViewModel.getItem(viewHolder.getAdapterPosition());
                 if (item.isPrioritized()) {
                     log("...item isPrioritized");
@@ -182,31 +154,20 @@ public class EnchiladaFragment extends Fragment implements
 
     }
 
-    @Override
-    public void onTabSelected(TabLayout.Tab tab) {
-        log("...onTabSelected()");
-    }
-
-    @Override
-    public void onTabUnselected(TabLayout.Tab tab) {
-
-    }
-
-    @Override
-    public void onTabReselected(TabLayout.Tab tab) {
-
+    private void observe(){
+        log("...observe()");
+        enchiladaViewModel.getItems().observe(requireActivity(), new Observer<List<Item>>() {
+            @Override
+            public void onChanged(List<Item> items) {
+                adapter.setList(items);
+            }
+        });
     }
 
     @Override
     public void onItemClick(Item item) {
         log("...onItemClick(Item)", item.getHeading());
         viewModel.updateFragment( new ItemSessionFragment(item));
-
-/*        Intent intent = new Intent(getContext(), ItemSession.class);
-        //intent.putExtra(Constants.INTENT_ITEM_SESSION, true);
-        intent.putExtra(Constants.INTENT_CALLING_ACTIVITY, CallingActivity.ENCHILADA_FRAGMENT);
-        intent.putExtra(Constants.INTENT_SERIALIZED_ITEM, item);
-        startActivity(intent);*/
     }
 
     /**

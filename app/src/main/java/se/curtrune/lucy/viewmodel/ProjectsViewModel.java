@@ -14,6 +14,10 @@ public class ProjectsViewModel extends ViewModel {
 
     public ProjectsViewModel(){
     }
+    public void filter(String filter) {
+        List<Item> filteredList = new ArrayList<>();
+        //filteredList = items
+    }
     public Item getCurrentParent(){
         return currentParent;
     }
@@ -40,4 +44,6 @@ public class ProjectsViewModel extends ViewModel {
         currentParent = root;
         stack.add(root);
     }
+
+
 }
