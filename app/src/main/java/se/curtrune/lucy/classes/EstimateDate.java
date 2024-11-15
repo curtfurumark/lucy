@@ -10,6 +10,7 @@ import java.util.List;
 
 import se.curtrune.lucy.workers.ItemsWorker;
 
+@Deprecated
 public class EstimateDate {
     private LocalDate date;
     private List<Item> items;
@@ -61,9 +62,9 @@ public class EstimateDate {
                 MentalType mental = MentalWorker.getMental(item, context);
             }
         }*/
-        for( Item item: items) {
+/*        for( Item item: items) {
             estimates.add(item.getEstimate());
-        }
+        }*/
     }
     public int getAnxiety(){
         return estimates.stream().mapToInt(MentalStats::getAnxiety).sum();

@@ -76,6 +76,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
 
     private static final int CAMERA_REQUEST_CODE = 101;
     private EditText editTextHeading;
+    private EditText editTextComment;
     private  TextView textViewType;
     private TextView textViewDuration;
     private TextView textViewID;
@@ -241,6 +242,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
     private void initComponents(View view){
         if( VERBOSE) log("...initComponents()");
         editTextHeading = view.findViewById(R.id.itemSessionFragment_heading);
+        editTextComment = view.findViewById(R.id.itemSessionFragment_comment);
         checkBoxIsDone = view.findViewById(R.id.itemSessionFragment_checkboxIsDone);
         actionRecycler = view.findViewById(R.id.itemSessionFragment_actionRecycler);
         buttonTimer = view.findViewById(R.id.itemSessionFragment_buttonTimer);
@@ -303,7 +305,6 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if(fromUser) {
-                    //int anxietyChange = progress - startAnxiety;
                     setMentalLabel(progress - Constants.ANXIETY_OFFSET, Mental.Type.ANXIETY);
                     lucindaViewModel.estimateAnxiety(progress - Constants.ANXIETY_OFFSET, getContext());
                 }
@@ -371,7 +372,6 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
     private void returnToPreviousFragment(){
         log("...returnToPreviousFragment()");
         getParentFragmentManager().popBackStackImmediate();
-
     }
     private void setKronos(long duration){
         log("...setKronos(long)", duration);
@@ -392,6 +392,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
     private void setUserInterface(Item item){
         if( VERBOSE) log("...setUserInterface(Item)");
         editTextHeading.setText(item.getHeading());
+        editTextComment.setText(item.getComment());
         checkBoxIsDone.setChecked(item.isDone());
         textViewDuration.setText(Converter.formatSecondsWithHours(item.getDuration()));
         log("Lucinda.Dev ", Lucinda.Dev);
@@ -629,28 +630,30 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
     private Item getItem(){
         log("...getItem()");
         currentItem.setHeading(editTextHeading.getText().toString());
+        currentItem.setComment(editTextComment.getText().toString());
         currentItem.setState(checkBoxIsDone.isChecked() ? State.DONE: State.TODO);
         currentItem.setDuration(duration);
         return currentItem;
     }
     /**
-     * update item and mental
+     * update item
      */
     private void updateItem() {
         log("...updateItem()", currentItem.getHeading());
         if( !validate()){
-            log("....item did not validate, i surrender");
+            log("....item did not validate, i surrender, missing heading?");
             return;
         }
         currentItem = getItem();
-        log(currentItem);
+        itemSessionViewModel.update(currentItem, getContext());
+/*        log(currentItem);
         int rowsAffected = ItemsWorker.update(currentItem, getContext());
         if(rowsAffected != 1){
             Toast.makeText(getContext(), "error updating item", Toast.LENGTH_LONG).show();
             return;
         }else{
             ItemsWorker.touchParents(currentItem, getContext());
-        }
+        }*/
 
         lucindaViewModel.updateEnergy(true);
         requireActivity().getSupportFragmentManager().popBackStackImmediate();

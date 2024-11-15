@@ -44,6 +44,7 @@ public class CalendarDateViewModel extends ViewModel {
         boolean stat = ItemsWorker.delete(item, context);
         if(!stat){
             log("ERROR deleting item", item.getHeading());
+            mutableError.setValue("ERROR, deleting item " + item.getHeading());
             return false;
         }
         items.remove(item);

@@ -43,6 +43,7 @@ import se.curtrune.lucy.fragments.CalendarMonthHostFragment;
 import se.curtrune.lucy.fragments.CalendarWeekHostFragment;
 import se.curtrune.lucy.fragments.CalenderDateFragment;
 import se.curtrune.lucy.fragments.ContactFragment;
+import se.curtrune.lucy.fragments.ContactsFragment;
 import se.curtrune.lucy.fragments.CustomizeFragment;
 import se.curtrune.lucy.fragments.DailyGraphFragment;
 import se.curtrune.lucy.fragments.DurationFragment;
@@ -149,6 +150,8 @@ public class MainActivity extends AppCompatActivity {
                 navigate(new MentalDateFragment());
             } else if (item.getItemId() == R.id.navigationDrawer_mentalHistoryFragment) {
                 navigate(new MentaHistoryFragment());
+            }else if(item.getItemId() == R.id.navigationDrawer_contactsFragment){
+                navigate(new ContactsFragment());
             } else if (item.getItemId() == R.id.navigationDrawer_logOut) {
                 log("...log out");
                 Intent intent = new Intent(this, LogInActivity.class);

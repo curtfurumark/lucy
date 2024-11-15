@@ -121,9 +121,9 @@ public class DBAdmin {
         if( item.getPeriod() != null) {
             cv.put("repeat", item.getPeriod().toJson());
         }
-        if( item.getEstimate() != null){
+/*        if( item.getEstimate() != null){
             cv.put("estimate", item.getEstimate().toJson());
-        }
+        }*/
         if( item.hasNotification()){
             cv.put("notification", item.getNotification().toJson());
         }

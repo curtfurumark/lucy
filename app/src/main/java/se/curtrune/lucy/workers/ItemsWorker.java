@@ -44,7 +44,7 @@ public class ItemsWorker {
         item.setTags(template.getTags());
         item.setTargetTime(template.getTargetTime());
         item.setTargetDate(LocalDate.now());
-        item.setEstimate(template.getEstimate());
+        //item.setEstimate(template.getEstimate());
         item.setColor(template.getColor());
         item.setState(State.DONE);
         item.setType(Type.TEMPLATE_CHILD);

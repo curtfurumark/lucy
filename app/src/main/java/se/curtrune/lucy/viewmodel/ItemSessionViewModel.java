@@ -99,6 +99,8 @@ public class ItemSessionViewModel extends ViewModel {
         int rowsAffected = ItemsWorker.update(item, context);
         if( rowsAffected != 1){
             mutableError.setValue("ERROR, updating item");
+        }else{
+            ItemsWorker.touchParents(item, context);
         }
         return rowsAffected == 1;
     }

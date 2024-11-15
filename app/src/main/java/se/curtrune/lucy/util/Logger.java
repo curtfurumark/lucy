@@ -126,8 +126,8 @@ public class Logger {
         log("\t\tisCalenderItem", item.isCalenderItem());
         if( item.hasEstimate()) {
             log("\titem has estimate");
-            log("\t\tduration", item.getEstimate().getDuration());
-            log("\t\tenergy", item.getEstimate().getEnergy());
+/*            log("\t\tduration", item.getEstimate().getDuration());
+            log("\t\tenergy", item.getEstimate().getEnergy());*/
         }
         log("\thas repeat", item.hasPeriod());
         if( item.hasPeriod()){

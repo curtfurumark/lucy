@@ -54,6 +54,8 @@
         android:title="@string/contact_curt_rune"/>
     <item android:id="@+id/navigationDrawer_messageBoardFragment"
         android:title="@string/message_board"/>
+    <item android:id="@+id/navigationDrawer_contactsFragment"
+        android:title="contacts"/>
     <item android:id="@+id/navigationDrawer_countDownTimer"
         android:visible="false"
         android:title="@string/timer"/>

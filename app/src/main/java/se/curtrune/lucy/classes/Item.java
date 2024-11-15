@@ -27,6 +27,7 @@ public class Item implements Serializable , Listable {
     protected String description;
     protected String comment;
     protected Media content;
+    protected Contact contact;
     protected String tags;
     protected long created;
     protected long updated;
@@ -41,7 +42,7 @@ public class Item implements Serializable , Listable {
     protected Item parent;
     protected List<Item> children;
     protected Repeat repeat;
-    protected MentalStats estimate;
+    //protected MentalStats estimate;
     protected Notification notification;
     //protected Mental mental;
     protected int energy;
@@ -70,7 +71,7 @@ public class Item implements Serializable , Listable {
         type = Type.NODE.ordinal();
         has_child = 0;
         children = new ArrayList<>();
-        estimate = new MentalStats();
+        //estimate = new MentalStats();
     }
     public Item(String heading){
         this();
@@ -90,7 +91,7 @@ public class Item implements Serializable , Listable {
         this.tags = item.getTags();
         this.target_time = LocalTime.now().toSecondOfDay();
         this.target_date = LocalDate.now().toEpochDay();
-        this.estimate = item.getEstimate();
+        //this.estimate = item.getEstimate();
         this.color = item.getColor();
     }
     public long compare(){
@@ -117,6 +118,9 @@ public class Item implements Serializable , Listable {
     public String getComment() {
         return comment;
     }
+    public Contact getContact(){
+        return contact;
+    }
     public LocalDateTime getCreated() {
         return LocalDateTime.ofEpochSecond(created, 0, ZoneOffset.UTC);
     }
@@ -134,9 +138,9 @@ public class Item implements Serializable , Listable {
         //return mental != null? mental.getEnergy():0;
         return energy;
     }
-    public MentalStats getEstimate(){
+/*    public MentalStats getEstimate(){
         return estimate;
-    }
+    }*/
     public String getHeading() {
         return heading;
     }
@@ -161,9 +165,10 @@ public class Item implements Serializable , Listable {
         return getUpdated().toLocalDate();
     }
     public long getEstimatedDuration(){
-        if( hasEstimate()){
+/*        if( hasEstimate()){
             return estimate.getDuration();
-        }
+        }*/
+        //TODO, implement some sort of duration worker getInstances children add duration divide by number of instances
         return 0;
     }
     public int getMood(){
@@ -235,7 +240,8 @@ public class Item implements Serializable , Listable {
         return color != -1 && color != 0;
     }
     public boolean hasEstimate(){
-        return estimate != null;
+        //return estimate != null;
+        return false;
     }
     public boolean hasItemParent(){
         return parent != null;
@@ -315,6 +321,9 @@ public class Item implements Serializable , Listable {
     public void setComment(String comment) {
         this.comment = comment;
     }
+    public void setContact(Contact contact){
+        this.contact = contact;
+    }
     public void setContent(Media content){
         this.content = content;
     }
@@ -350,20 +359,20 @@ public class Item implements Serializable , Listable {
     public void setDuration(LocalDateTime now){
         duration  = now.toEpochSecond(ZoneOffset.UTC) - updated;
     }
-    public void setEstimate(MentalStats estimate){
+/*    public void setEstimate(MentalStats estimate){
         this.estimate = estimate;
-    }
+    }*/
     public void setEstimatedDuration(long seconds) {
-        if( estimate == null){
+/*        if( estimate == null){
             estimate = new MentalStats();
         }
-        estimate.setDuration(seconds);
+        estimate.setDuration(seconds);*/
     }
-    public void setEstimate(String json){
+/*    public void setEstimate(String json){
         if( json != null){
             this.estimate = new Gson().fromJson(json, MentalStats.class);
         }
-    }
+    }*/
     public void setHeading(String heading) {
         this.heading = heading;
     }

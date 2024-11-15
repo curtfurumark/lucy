@@ -399,15 +399,23 @@ public class CalenderDateFragment extends Fragment {
     }
     private void showDeleteDialog(Item item){
         log("...showDeleteDialog(Item)", item.getHeading());
+        if( item.hasChild()){
+            log("attempt to delete tree");
+            Toast.makeText(getContext(), "delete of tree not implemented", Toast.LENGTH_LONG).show();
+            return;
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("delete" + item.getHeading());
-        builder.setMessage("are you sure? ");
-        builder.setPositiveButton("delete", (dialog, which) -> {
+        builder.setTitle(getString(R.string.delete) + ": "  + item.getHeading());
+        builder.setMessage(getString(R.string.are_you_sure));
+        builder.setPositiveButton(getString(R.string.delete), (dialog, which) -> {
             log("...on positive button click");
-            deleteItem(item);
-
+            calendarDateViewModel.delete(item, getContext());
+            if(item.isDone()){
+                log("...item is done, update mental");
+                lucindaViewModel.resetMental(getContext(), MentalAdapter.MentalType.ENERGY);
+            }
         });
-        builder.setNegativeButton("cancel", (dialog, which) -> {
+        builder.setNegativeButton(getString(R.string.dismiss), (dialog, which) -> {
             log("...on negative button click");
             adapter.notifyDataSetChanged();
         });
