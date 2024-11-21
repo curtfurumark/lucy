@@ -20,9 +20,11 @@ import se.curtrune.lucy.activities.DevActivity;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
+import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.classes.calender.Week;
+import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
 
@@ -377,10 +379,14 @@ public class ItemsWorker {
         }else {
             try (LocalDB db = new LocalDB(context)) {
                 item.setUpdated(LocalDateTime.now());
-/*                if(item.hasPeriod()){
-                }*/
                 return db.update(item);
             }
+        }
+    }
+    public static int update(Repeat repeat, Context context){
+        log("ItemsWorker.update(Repeat, Context)");
+        try(LocalDB db = new LocalDB(context)){
+            return db.update(repeat);
         }
     }
 
@@ -392,6 +398,7 @@ public class ItemsWorker {
      * @param context, context bloody context
      * @return 1 if success otherwise some kind of an error has occurred
      */
+    @Deprecated
     private static int updateTemplate(Item template, Context context) {
         log("ItemsWorker.updateTemplate(Item, Context)", template.getHeading());
         try (LocalDB db = new LocalDB(context)) {
@@ -450,6 +457,31 @@ public class ItemsWorker {
         boolean stat = ItemsWorker.delete(parent, context);
         if(!stat){
             log("ERROR DELETING ITEM");
+        }
+    }
+
+    public static void insert(List<Item> items, Context context) {
+        log("ItemsWorker(List<Item>, Context)");
+        try(LocalDB db = new LocalDB(context)){
+            db.insert(items);
+        }
+    }
+
+    public static Repeat insert(Repeat repeat, Context context) {
+        log("ItemsWorker.insert(Repeat, Context)");
+        try(LocalDB db = new LocalDB(context)){
+            repeat = db.insert(repeat);
+        }catch (Exception e){
+            log("EXCEPTION", e.getMessage());
+            return null;
+        }
+        return repeat;
+    }
+
+    public static Repeat selectRepeat(long id, Context context) {
+        log("ItemsWorker.selectRepeat(long, Context)");
+        try(LocalDB db = new LocalDB(context)){
+            return db.selectRepeat(id);
         }
     }
 }

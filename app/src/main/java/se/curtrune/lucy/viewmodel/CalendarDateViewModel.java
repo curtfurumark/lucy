@@ -51,8 +51,23 @@ public class CalendarDateViewModel extends ViewModel {
         mutableItems.setValue(items);
         return true;
     }
+    public void filter(String filter) {
+        log("CalendarDateViewModel.filter(String)");
+        mutableItems.setValue(items.stream().filter(item->item.contains(filter)).collect(Collectors.toList()));
+    }
+
     public Item getCurrentParent() {
         return currentParent;
+    }
+    public int getIndex(Item item) {
+        log("CalendarDateViewModel.getIndex(Item)", item.getHeading());
+        //return items.indexOf(item); objects not equal...
+        for(int index = 0; index < items.size(); index++){
+            if( items.get(index).getID() == item.getID()){
+                return index;
+            }
+        }
+        return -1;
     }
     public Item getItem(int index) {
         log("CalendarDateViewModel.getItem(int)", index);
@@ -64,6 +79,20 @@ public class CalendarDateViewModel extends ViewModel {
     public void selectGenerated(Item parent, Context context) {
         List<Item> items = ItemsWorker.selectTemplateChildren(parent, context);
         mutableItems.setValue(items);
+    }
+    public int getNextTimePosition(LocalTime time) {
+        log("CalendarDateViewModel.getNextTimePosition(LocalTime) ", time.toString());
+        int position = 0;
+        //DO NOT SCROLL IF ALL ITEMS ARE SHOWN, 8 IS A COMPLETELY RANDOM NUMBER, BY THE WAY
+        //TODO
+        if(items.size() < 8){
+            return 0;
+        }
+        Item item =items.get(position);
+        while(item.getTargetTime().isBefore(time)){
+            item = items.get(++position);
+        }
+        return position -1;
     }
     public void set(LocalDate date, Context context) {
         log("CalendarDateViewModel.set(LocalDate, Context)");
@@ -105,9 +134,6 @@ public class CalendarDateViewModel extends ViewModel {
         }
         mutableItems.setValue(colouredItems);
     }
-
-
-
     public void postpone(Item item, PostponeDialog.Postpone postpone, LocalDate date, Context context) {
         switch (postpone){
             case ONE_HOUR:
@@ -131,10 +157,7 @@ public class CalendarDateViewModel extends ViewModel {
         update(item, context);
     }
 
-    public void filter(String filter) {
-        log("CalendarDateViewModel.filter(String)");
-        mutableItems.setValue(items.stream().filter(item->item.contains(filter)).collect(Collectors.toList()));
-    }
+
     public boolean update(Item item, Context context){
         log("CalendarDateViewModel.update(Item)", item.getHeading());
         int rowsAffected = ItemsWorker.update(item, context);
@@ -142,10 +165,8 @@ public class CalendarDateViewModel extends ViewModel {
             log("ERROR updating item");
             return false;
         }
-        set(date, context);
+        sort();
+        mutableItems.setValue(items);
         return true;
     }
-
-
-
 }

@@ -52,20 +52,7 @@ public class RepeatTest {
         LocalDate nextDate = repeat.getNextDate();
         assertEquals(LocalDate.now().plusDays(1), nextDate);
     }
-    @Test
-    public void testRepeatWorker(){
-        log("testRepeatWorker()");
-        Item item = new Item();
-        Repeat repeat = new Repeat();
-        repeat.setPeriod(2, Repeat.Unit.WEEK);
-        repeat.setLastDate(LocalDate.of(2024, 12, 31));
-        repeat.setFirstDate(LocalDate.of(2025, 11, 9));
-        item.setRepeat(repeat);
-        int nInstances = RepeatWorker.createInstances(item);
-        log("...nInstances", nInstances);
-        assertEquals(nInstances, 3);
 
-    }
     @Test
     public void repeatMonday(){
         log("...repeatMonday");

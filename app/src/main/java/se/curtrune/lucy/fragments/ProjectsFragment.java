@@ -68,16 +68,10 @@ public class ProjectsFragment extends Fragment implements
                              Bundle savedInstanceState) {
         log("ProjectsFragment.onCreateView(LayoutInflater, ViewGroup, Bundle)");
         View view = inflater.inflate(R.layout.projects_fragment, container, false);
-        //setHasOptionsMenu(true);
         initComponents(view);
         initRecycler(items);
         initSwipe();
         initViewModel();
-/*        if( currentParent == null){
-            log("ERROR, currentParent is null");
-            Toast.makeText(getContext(), "ERROR, currentParent is null", Toast.LENGTH_LONG).show();
-            return view;
-        }*/
         initListeners();
         return view;
     }
@@ -122,8 +116,6 @@ public class ProjectsFragment extends Fragment implements
     private void initComponents(View view){
         if(VERBOSE)log("...initComponents()");
         recycler = view.findViewById(R.id.projectsFragment_recycler);
-        //don't delete this, might return
-        //editTextSearch = view.findViewById(R.id.projectsFragment_search);
         buttonAddItem = view.findViewById(R.id.projectsFragment_addItem);
         tabLayout = view.findViewById(R.id.projectsFragment_tabLayout);
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);

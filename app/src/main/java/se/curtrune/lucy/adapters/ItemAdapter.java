@@ -84,6 +84,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
         if( item.hasColor()){
             holder.cardView.setCardBackgroundColor(item.getColor());
         }
+        if( item.hasChild()){
+            holder.textViewHasChild.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -97,6 +100,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
     public class ViewHolder extends RecyclerView.ViewHolder{
         private final TextView textView_heading;
         private final CheckBox checkBox_state;
+        private final TextView textViewHasChild;
         private final ImageView imageViewRepeatIcon;
         private final ImageView imageViewNotificationIcon;
         private final ImageView imageViewImportantIcon;
@@ -107,6 +111,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
             textView_heading = itemView.findViewById(R.id.itemAdapter_itemHeading);
             cardView = itemView.findViewById(R.id.itemAdapter_cardView);
             checkBox_state = itemView.findViewById(R.id.itemAdapter_itemState);
+            textViewHasChild = itemView.findViewById(R.id.itemAdapter_textViewHasChild);
             imageViewNotificationIcon = itemView.findViewById(R.id.itemAdapter_notificationIcon);
             imageViewRepeatIcon = itemView.findViewById(R.id.itemAdapter_repeatIcon);
             imageViewImportantIcon = itemView.findViewById(R.id.itemAdapter_importantIcon);

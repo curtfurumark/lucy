@@ -2,6 +2,7 @@ package se.curtrune.lucy.dialogs;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,12 +14,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+
+import java.time.LocalDate;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Repeat;
@@ -30,6 +34,8 @@ public class RepeatDialog extends BottomSheetDialogFragment {
     private TextView textViewEveryMonth;
     private TextView textViewEveryYear;
     private TextView textViewCustom;
+    private TextView textViewFirstDate;
+    private TextView textViewLastDate;
     private EditText editTextQualifier;
     private LinearLayout layoutSimple;
     private LinearLayout layoutCustom;
@@ -38,10 +44,15 @@ public class RepeatDialog extends BottomSheetDialogFragment {
     ArrayAdapter<CharSequence> adapter;
     private Button buttonOK;
     private Button buttonDismiss;
+    private Repeat repeat;
+    private Switch switchInfinity;
 
     public static boolean VERBOSE = false;
     private enum Mode{
         SIMPLE, CUSTOM
+    }
+    private enum Date{
+        FIRST, LAST
     }
     private Mode mode;
 
@@ -53,6 +64,11 @@ public class RepeatDialog extends BottomSheetDialogFragment {
     public RepeatDialog(){
         if( VERBOSE) log("RepeatDialog constructor");
         mode = Mode.SIMPLE;
+        repeat = new Repeat();
+        repeat.setFirstDate(LocalDate.now());
+    }
+    public RepeatDialog(Repeat repeat){
+
     }
 
     @Nullable
@@ -63,6 +79,7 @@ public class RepeatDialog extends BottomSheetDialogFragment {
         initComponents(view);
         initListeners();
         initSpinner();
+        initUserInterface();
         return view;
     }
     private void getPeriod(){
@@ -87,6 +104,8 @@ public class RepeatDialog extends BottomSheetDialogFragment {
         textViewEveryWeek = view.findViewById(R.id.repeatDialog_everyWeek);
         textViewEveryMonth = view.findViewById(R.id.repeatDialog_everyMonth);
         textViewEveryYear = view.findViewById(R.id.repeatDialog_everyYear);
+        textViewFirstDate = view.findViewById(R.id.repeatDialog_textViewFirstDate);
+        textViewLastDate = view.findViewById(R.id.repeatDialog_textViewLastDate);
         textViewCustom = view.findViewById(R.id.repeatDialog_custom);
         buttonDismiss = view.findViewById(R.id.repeatDialog_buttonDismiss);
         buttonOK = view.findViewById(R.id.repeatDialog_buttonOK);
@@ -94,6 +113,7 @@ public class RepeatDialog extends BottomSheetDialogFragment {
         layoutSimple = view.findViewById(R.id.repeatDialog_layoutSimple);
         spinnerPeriods = view.findViewById(R.id.repeatDialog_spinnerPeriod);
         editTextQualifier = view.findViewById(R.id.repeatDialog_qualifier);
+        switchInfinity = view.findViewById(R.id.repeatDialog_switchInfinity);
     }
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
@@ -104,6 +124,15 @@ public class RepeatDialog extends BottomSheetDialogFragment {
         textViewCustom.setOnClickListener(view->toggleCustom());
         buttonDismiss.setOnClickListener(view->dismiss());
         buttonOK.setOnClickListener(view->getPeriod());
+        textViewFirstDate.setOnClickListener(view->showDateDialog(Date.FIRST));
+        textViewLastDate.setOnClickListener(view->showDateDialog(Date.LAST));
+        switchInfinity.setOnClickListener(view->onInfinityClick());
+    }
+    private void initUserInterface(){
+        log("...initUserInterface(()");
+        textViewFirstDate.setText(repeat.getFirstDate().toString());
+        toggleInfinityLastDate();
+
     }
     private void initSpinner(){
         if( VERBOSE) log("...initSpinner");
@@ -132,14 +161,35 @@ public class RepeatDialog extends BottomSheetDialogFragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
     }
+    private void onInfinityClick(){
+        log("...onInfinityClick()");
+        repeat.setInfinity(switchInfinity.isChecked());
+    }
     private void onRepeat(Repeat.Unit unit){
-        Repeat repeat = new Repeat();
+        log("...onRepeat(Unit)", unit.toString());
         repeat.setPeriod(1, unit);
         listener.onRepeat(repeat);
         dismiss();
     }
     public void setCallback(Callback callback){
         this.listener = callback;
+    }
+    public void showDateDialog(Date firstOrLast){
+        log("...showDateDialog(Date)", firstOrLast.toString());
+        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext());
+        datePickerDialog.setOnDateSetListener((view, year, month, dayOfMonth) -> {
+            log("DatePickerDialog.onDateSet(...)");
+            LocalDate date = LocalDate.of(year, month +1, dayOfMonth);
+            log("...date", date.toString());
+            if( firstOrLast.equals(Date.FIRST)){
+                repeat.setFirstDate(date);
+                textViewFirstDate.setText(date.toString());
+            }else{
+                repeat.setLastDate(date);
+                textViewLastDate.setText(date.toString());
+            }
+        });
+        datePickerDialog.show();
     }
     private void toggleCustom(){
         log("...toggleCustom()");
@@ -152,6 +202,10 @@ public class RepeatDialog extends BottomSheetDialogFragment {
             layoutSimple.setVisibility(View.VISIBLE);
             mode = Mode.SIMPLE;
         }
+    }
+    private void toggleInfinityLastDate(){
+
+
     }
 
 }

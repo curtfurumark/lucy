@@ -7,6 +7,12 @@
     android:orientation="vertical"
     android:padding="8dp"
     tools:context=".activities.DevActivity">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/devActivity_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <TextView
         android:id="@+id/devActivity_mainActivity"
         android:layout_width="wrap_content"
@@ -29,53 +35,6 @@
         android:minHeight="48dp"
         android:layout_marginTop="24sp"
         android:textSize="34sp" />
-
-    <TextView
-        android:id="@+id/devActivity_lucindaVersionCode"
-        android:layout_marginTop="16dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:text="lucinda version code" />
-    <TextView
-        android:id="@+id/devActivity_lucindaVersionName"
-        android:layout_marginTop="8dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:text="lucinda version name" />
-
-    <TextView
-        android:id="@+id/devActivity_androidVersion"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="android version" />
-
-    <TextView
-        android:id="@+id/devActivity_language"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/language" />
-    <TextView
-        android:id="@+id/devActivity_firstInstalled"
-        android:layout_marginTop="8dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="first installed" />
-    <TextView
-        android:id="@+id/devActivity_updated"
-        android:layout_marginTop="8dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="updated" />
-    <TextView
-        android:id="@+id/devActivity_model"
-        android:layout_marginTop="8dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="model" />
 
     <EditText
         android:id="@+id/devActivity_sql"

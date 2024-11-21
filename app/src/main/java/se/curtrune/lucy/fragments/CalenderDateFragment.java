@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -30,8 +29,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import se.curtrune.lucy.R;
@@ -44,8 +41,8 @@ import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.calender.CalenderDate;
 import se.curtrune.lucy.classes.calender.OnSwipeClickListener;
 import se.curtrune.lucy.classes.calender.Week;
-import se.curtrune.lucy.dialogs.ChooseChildTypeDialog;
 import se.curtrune.lucy.dialogs.AddItemDialog;
+import se.curtrune.lucy.dialogs.ChooseChildTypeDialog;
 import se.curtrune.lucy.dialogs.PostponeDialog;
 import se.curtrune.lucy.dialogs.UpdateChildrenDialog;
 import se.curtrune.lucy.viewmodel.CalendarDateViewModel;
@@ -65,11 +62,9 @@ public class CalenderDateFragment extends Fragment {
 
     private TextView labelMonthYear;
 
-    private ItemTouchHelper itemTouchHelper;
-
     private LocalDate currentDate;
     private CalenderDate calenderDate;
-    private List<Item> items;
+    //private List<Item> items;
     public static boolean VERBOSE = false;
     private LucindaViewModel lucindaViewModel;
     private CalendarDateViewModel calendarDateViewModel;
@@ -96,39 +91,40 @@ public class CalenderDateFragment extends Fragment {
                              Bundle savedInstanceState) {
         log("CalenderDateFragment.onCreateView(...)");
         View view = inflater.inflate(R.layout.calender_date_fragment, container, false);
-        requireActivity().setTitle("");
-        initDefaults();
-        initComponents(view);
-        initViewModels();
-        initRecycler();
-        initRecyclerDates();
-        initListeners();
-        initSwipeItems();
-        initSwipeWeek();
-        setUserInterface(currentDate);
-        observe();
+        try {
+            requireActivity().setTitle("");
+            initDefaults();
+            initComponents(view);
+            initViewModels();
+            initRecycler();
+            initRecyclerDates();
+            initListeners();
+            initSwipeItems();
+            initSwipeWeek();
+            setUserInterface(currentDate);
+            observe();
+            scrollToCurrentTime();
+        }catch (Exception e){
+            log("EXCEPTION", e.getMessage());
+            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+        }
         return view;
     }
-
-    /**
-     * deletes and item AND its mental if such exists
-     * @param item, the item to be deleted
-     */
-    private void deleteItem(Item item){
-        log("....deleteItem(Item)", item.getHeading());
-        boolean stat = calendarDateViewModel.delete(item, getContext());
-        if(!stat){
-            log("ERROR, deleting", item.getHeading());
-            Toast.makeText(getContext(), "ERROR deleting, " + item.getHeading(), Toast.LENGTH_LONG).show();
+    private void scrollToCurrentTime(){
+        log("...scrollToCurrentTime()");
+        int position = calendarDateViewModel.getNextTimePosition(LocalTime.now());
+        recycler.scrollToPosition(position);
+    }
+    private void scrollToItem(Item item){
+        log("...scrollToItem(Item)");
+        int position = calendarDateViewModel.getIndex(item);
+        if( position == -1){
+            log("STRANGENESS, item not found");
             return;
         }
-        //if item is/was done, need to updateMental
-        if(item.isDone()){
-            log("...item is done, update mental");
-            lucindaViewModel.resetMental(getContext(), MentalAdapter.MentalType.ENERGY);
-        }
-
+        recycler.scrollToPosition(position);
     }
+
     private String getMonthYear(LocalDate date){
         if( VERBOSE) log("...getMonthYear(LocalDate)");
         int weekNumber = CalenderWorker.getWeekNumber(date);
@@ -149,7 +145,6 @@ public class CalenderDateFragment extends Fragment {
             currentDate = LocalDate.now();
         }
         currentWeek = new Week(currentDate);
-        items = new ArrayList<>();
     }
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
@@ -167,24 +162,21 @@ public class CalenderDateFragment extends Fragment {
             @Override
             public void onItemClick(Item item) {
                 if(VERBOSE)log("...onItemClick(Item)", item.getHeading());
-                UpdateChildrenDialog dialog = new UpdateChildrenDialog(new UpdateChildrenDialog.Callback() {
-                    @Override
-                    public void onClick(UpdateChildrenDialog.Action action) {
-                        log("...onClick(Action)", action.toString());
-                        switch (action){
-                            case EDIT:
-                                loadFragment(new ItemSessionFragment(item));
-                                break;
-                            case SET_GENERATED:
-                                log("set children generated");
-                                break;
-                            case SHOW_CHILDREN:
-                                calendarDateViewModel.setParent(item, getContext());
-                                break;
-                            case SHOW_GENERATED:
-                                calendarDateViewModel.selectGenerated(item, getContext());
-                                break;
-                        }
+                UpdateChildrenDialog dialog = new UpdateChildrenDialog(action -> {
+                    log("...onClick(Action), add child", action.toString());
+                    switch (action){
+                        case EDIT:
+                            loadFragment(new ItemSessionFragment(item));
+                            break;
+                        case SET_GENERATED:
+                            log("set children generated");
+                            break;
+                        case SHOW_CHILDREN:
+                            calendarDateViewModel.setParent(item, getContext());
+                            break;
+                        case SHOW_GENERATED:
+                            calendarDateViewModel.selectGenerated(item, getContext());
+                            break;
                     }
                 });
                 dialog.show(getChildFragmentManager(), "update children");
@@ -250,7 +242,7 @@ public class CalenderDateFragment extends Fragment {
     }
     private void initSwipeItems() {
         if( VERBOSE) log("...initSwipeItems()");
-        itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 return false;
@@ -259,9 +251,9 @@ public class CalenderDateFragment extends Fragment {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 Item item = calendarDateViewModel.getItem(viewHolder.getAdapterPosition());
-                if( direction == ItemTouchHelper.LEFT){
+                if (direction == ItemTouchHelper.LEFT) {
                     showDeleteDialog(item);
-                }else if( direction == ItemTouchHelper.RIGHT) {
+                } else if (direction == ItemTouchHelper.RIGHT) {
                     showPostponeDialog(item);
                 }
             }
@@ -312,12 +304,9 @@ public class CalenderDateFragment extends Fragment {
         }else {
             calendarDateViewModel.set(currentDate, getContext());
         }
-        lucindaViewModel.getFilter().observe(requireActivity(), new Observer<String>() {
-            @Override
-            public void onChanged(String filter) {
-                log("onChanged/onFilter(String)", filter);
-                calendarDateViewModel.filter(filter);
-            }
+        lucindaViewModel.getFilter().observe(requireActivity(), filter -> {
+            log("onChanged, getFilter.(String)", filter);
+            calendarDateViewModel.filter(filter);
         });
     }
     private void loadFragment(Fragment fragment){
@@ -332,12 +321,9 @@ public class CalenderDateFragment extends Fragment {
     }
     private void observe(){
         log("...observe()");
-        calendarDateViewModel.getItems().observe(getViewLifecycleOwner(), new Observer<List<Item>>() {
-            @Override
-            public void onChanged(List<Item> items) {
-                log("...onChanged(List<Item>");
-                adapter.setList(items);
-            }
+        calendarDateViewModel.getItems().observe(getViewLifecycleOwner(), items -> {
+            log("...onItems(List<Item>)");
+            adapter.setList(items);
         });
     }
 
@@ -438,7 +424,6 @@ public class CalenderDateFragment extends Fragment {
             }
         });
         dialog.show(getChildFragmentManager(), "postpone");
-
     }
 
     private void updateTargetTime(Item item){
@@ -452,6 +437,8 @@ public class CalenderDateFragment extends Fragment {
             boolean stat = calendarDateViewModel.update(item, getContext());
             if( !stat){
                 Toast.makeText(getContext(), "ERROR updating time", Toast.LENGTH_LONG).show();
+            }else{
+                scrollToItem(item);
             }
         }, hour, minutes, true);
         timePicker.show();

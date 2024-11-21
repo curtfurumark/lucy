@@ -29,9 +29,10 @@ public class Mental implements Listable, Serializable {
     private long updated;
     private boolean isTemplate;
     private boolean isDone;
+    public static boolean VERBOSE = false;
 
     public Mental(int anxiety, int energy, int mood, int stress) {
-        log("Mental(int, int, int, int)");
+        if( VERBOSE) log("Mental(int, int, int, int)");
         this.anxiety = anxiety;
         this.energy = energy;
         this.mood = mood;

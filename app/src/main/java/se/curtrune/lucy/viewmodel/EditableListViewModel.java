@@ -39,6 +39,7 @@ public class EditableListViewModel extends ViewModel {
         log("EditableListViewModel.getItems()");
         return mutableItems;
     }
+
     public void saveAll(Context context){
         log("...saveAll()");
         List<Item> items = mutableItems.getValue();
@@ -49,19 +50,11 @@ public class EditableListViewModel extends ViewModel {
         }
     }
 
-    /**
-     * this is the one that actually saves the item
-     * heading is required
-     * @param heading, heading of the tag
-     * @param index, the index of the item of which you wish to set its heading
-     */
+
     public void setHeading(String heading, int index, Context context){
         log("...setHeading(String, int, Context)", heading);
         mutableItems.getValue().get(index).setHeading(heading);
-        //ItemsWorker.insertChild(parent, mutableItems.getValue().get(index), context);
     }
-
-
     private Item createChild(Item parent){
         log("...createChild(Item)");
         Item child = new Item();

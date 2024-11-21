@@ -8,7 +8,7 @@ import android.database.Cursor;
 
 import com.google.gson.Gson;
 
-import java.time.Period;
+import java.io.File;
 
 import se.curtrune.lucy.activities.economy.classes.Asset;
 import se.curtrune.lucy.activities.economy.classes.Transaction;
@@ -25,6 +25,37 @@ public class DBAdmin {
 
     public static boolean VERBOSE = false;
     public static Settings settings;
+    public static void addColumnRepeatIdToTableItems(Context context){
+        log("DBAdmin.alterColumnRepeatIdToTableItems(Context)");
+        String queery = Queeries.addColumnRepeatIdToTableItems();
+        try(LocalDB db = new LocalDB(context)){
+            db.executeSQL(queery);
+        }
+    }
+
+
+
+    /**
+     * todo, add check if columns exists
+     * @param context
+     */
+    private void addMentalToItemTable(Context context){
+        log("...addMentalToItemTable()");
+        String queeryEnergy = "ALTER TABLE items ADD COLUMN energy INTEGER DEFAULT 0";
+        String queeryAnxiety = "ALTER TABLE items ADD COLUMN anxiety INTEGER DEFAULT 0";
+        String queeryStress = "ALTER TABLE items ADD COLUMN stress INTEGER DEFAULT 0";
+        String queeryMood = "ALTER TABLE items ADD COLUMN mood INTEGER DEFAULT 0";
+        try(LocalDB db = new LocalDB(context)){
+            db.executeSQL(queeryEnergy);
+            db.executeSQL(queeryAnxiety);
+            db.executeSQL(queeryStress);
+            db.executeSQL(queeryMood);
+            log(" energy column created?");
+        }catch (Exception e){
+            log("an exception occurred");
+            e.printStackTrace();
+        }
+    }
 
     public static void createTables(Context context) {
         log("DBAdmin.createTables()");
@@ -38,6 +69,40 @@ public class DBAdmin {
             db.executeSQL(EcQueeries.DROP_TABLE_ASSETS);
             db.executeSQL(EcQueeries.CREATE_TABLE_ASSETS);
             log("...tables created");
+        }
+    }
+    private void createLoggerTable(Context context){
+        log("...createLoggerTable()");
+        String queery = Queeries.CREATE_TABLE_LOGGER;
+        try(LocalDB db = new LocalDB(context)){
+            log("...queery", queery);
+            db.executeSQL(queery);
+        }
+    }
+
+
+
+    public File getDataBaseFile(){
+        log("...getDataBaseFile()");
+
+        return null;
+    }
+    public static void createRepeatTable(Context context){
+        log("...createRepeatTable");
+        try(LocalDB db = new LocalDB(context)){
+            db.executeSQL(Queeries.CREATE_TABLE_REPEAT);
+
+        }
+    }
+    public static void dropTableItems(Context context) {
+        try(LocalDB db = new LocalDB(context)) {
+            db.executeSQL(Queeries.DROP_TABLE_ITEMS);
+        }
+    }
+    public static void dropTableRepeat(Context context){
+        log("...dropTableRepeat(Context)");
+        try(LocalDB db = new LocalDB(context)){
+            db.executeSQL(Queeries.DROP_TABLE_REPEAT);
         }
     }
 
@@ -90,6 +155,7 @@ public class DBAdmin {
         item.setAnxiety(cursor.getInt(24));
         item.setStress(cursor.getInt(25));
         item.setMood(cursor.getInt(26));
+        item.setRepeatID(cursor.getInt(27));
         return item;
     }
     public static ContentValues getContentValues(Asset asset){
@@ -138,7 +204,7 @@ public class DBAdmin {
             //cv.put("content",gson.toJson(item.getMedia()) );
         }
         //cv.put("content", item.getContent());
-        //cv.put("mental", item.getMental().toJson());
+        cv.put("repeat_id", item.getRepeatID());
         return cv;
     }
     public static ContentValues getContentValues(Mental mental){
@@ -158,6 +224,14 @@ public class DBAdmin {
         cv.put("time", mental.getTimeSecondOfDay());
         cv.put("isTemplate", mental.isTemplate());
         cv.put("isDone", mental.isDone() ? 1:0);
+        return cv;
+    }
+
+    public static ContentValues getContentValues(Repeat repeat) {
+        log("DBAdmin.getContentValues(Repeat)");
+        ContentValues cv = new ContentValues();
+        Gson gson = new Gson();
+        cv.put("json",gson.toJson(repeat) );
         return cv;
     }
     public static ContentValues getContentValues(Transaction transaction){
@@ -188,17 +262,16 @@ public class DBAdmin {
         mental.isDone(cursor.getInt(14) ==1);
         return mental;
     }
-
-    /**
-     * once upon a time i thought this was a good item, but i changed my mind
-     * but i might change my mind again, it has been known to happen
-     * @param cursor
-     * @return MentalType a mental object, from the mental field in items, stored as json
-     */
-    public static Mental getMentalFromItem(Cursor cursor) {
-        if( VERBOSE) log("DBAdmin.getMentalFromItem(Cursor)");
-        return new Gson().fromJson(cursor.getString(0), Mental.class);
+    public static Repeat getRepeat(Cursor cursor) {
+        log("...getRepeat(Cursor)");
+        long id = cursor.getLong(0);
+        String json = cursor.getString(1);
+        Repeat repeat =  new Gson().fromJson(json, Repeat.class);
+        repeat.setID(id);
+        return repeat;
     }
+
+
 
     /**
      * creates default lists/items

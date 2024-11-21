@@ -27,12 +27,10 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.ItemStatistics;
 import se.curtrune.lucy.classes.Listable;
 import se.curtrune.lucy.classes.Mental;
-import se.curtrune.lucy.classes.MentalStats;
 import se.curtrune.lucy.util.Converter;
 import se.curtrune.lucy.viewmodel.EstiimateViewModel;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.DurationWorker;
-import se.curtrune.lucy.workers.ItemsWorker;
 import se.curtrune.lucy.workers.MentalWorker;
 
 public class EstimateFragment extends Fragment {

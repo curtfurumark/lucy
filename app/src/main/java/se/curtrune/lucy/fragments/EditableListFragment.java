@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -36,6 +37,7 @@ public class EditableListFragment extends Fragment {
     }
     public EditableListFragment(Item parent){
         log("EditableListFragment(Item parent)", parent.getHeading());
+        assert  parent != null;
         this.parent = parent;
     }
 
@@ -43,30 +45,19 @@ public class EditableListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.editable_list_fragment, container, false);
-        initViews(view);
-        initViewModel();
-        initRecycler();
-        initListeners();
+        try {
+            initViews(view);
+            initViewModel();
+            initRecycler();
+            initListeners();
+        }catch (Exception e){
+            log("EXCEPTION", e.getMessage());
+            e.printStackTrace();
+            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+        }
         return view;
     }
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        log("EditableListFragment.onAttach()");
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        log("EditableListFragment.onDetach()");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        log("EditableListFragment.onStop()");
-    }
     private void initListeners(){
         log("...initListeners()");
         buttonSave.setOnClickListener(view->saveList());
@@ -95,13 +86,8 @@ public class EditableListFragment extends Fragment {
     }
     private void initViewModel(){
         log("...initViewModel()");
-        try {
-            viewModel = new ViewModelProvider(requireActivity()).get(EditableListViewModel.class);
-            viewModel.init(parent);
-        }catch (Exception e){
-            log("EXCEPTION");
-            e.printStackTrace();
-        }
+        viewModel = new ViewModelProvider(requireActivity()).get(EditableListViewModel.class);
+        viewModel.init(parent);
     }
     private void initViews(View view){
         log("...initViews()");
@@ -113,5 +99,6 @@ public class EditableListFragment extends Fragment {
     private void saveList(){
         log("...saveList()");
         viewModel.saveAll(getContext());
+        getParentFragmentManager().popBackStackImmediate();
     }
 }

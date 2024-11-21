@@ -49,9 +49,7 @@ public class AddItemDialog extends BottomSheetDialogFragment {
     private TextView textViewParentList;
     private Button buttonSave;
     private Button buttonDismiss;
-    //private CheckBox checkBoxCalendarEvent;
-    //private CheckBox checkBoxIsTemplate;
-    //private CheckBox checkBoxIsPrioritized;
+
     private SeekBar seekBarEnergy;
     private SeekBar seekBarAnxiety;
     private SeekBar seekBarStress;
@@ -431,6 +429,7 @@ public class AddItemDialog extends BottomSheetDialogFragment {
             currentItemSetting.setValue(repeat.toString());
             newItem.setRepeat(repeat);
             itemSettingAdapter.notifyDataSetChanged();
+            log(repeat);
         });
         dialog.show(getChildFragmentManager(), "repeat");
     }

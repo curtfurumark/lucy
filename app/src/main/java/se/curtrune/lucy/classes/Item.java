@@ -22,7 +22,7 @@ public class Item implements Serializable , Listable {
 
     protected long id;
     protected long parent_id;
-
+    protected long repeatID;
     protected String heading;
     protected String description;
     protected String comment;
@@ -32,6 +32,7 @@ public class Item implements Serializable , Listable {
     protected long created;
     protected long updated;
     protected long duration;
+
     protected long target_date;
     protected int target_time;
     protected int type;
@@ -71,7 +72,6 @@ public class Item implements Serializable , Listable {
         type = Type.NODE.ordinal();
         has_child = 0;
         children = new ArrayList<>();
-        //estimate = new MentalStats();
     }
     public Item(String heading){
         this();
@@ -196,6 +196,9 @@ public class Item implements Serializable , Listable {
     }
     public Reward getReward(){
         return reward;
+    }
+    public long getRepeatID(){
+        return repeatID;
     }
     public State getState() {
         return State.values()[state];
@@ -425,6 +428,9 @@ public class Item implements Serializable , Listable {
     public void setRepeat(Repeat repeat){
         this.repeat = repeat;
     }
+    public void setRepeatID(long id){
+        this.repeatID = id;
+    }
 
     public void setPriority(int priority){
         this.priority = priority;
@@ -476,7 +482,8 @@ public class Item implements Serializable , Listable {
     @NonNull
     @Override
     public String toString() {
-        return String.format(Locale.getDefault(), "%s, %s,  d:%s", getHeading(), getTargetTime().toString(), Converter.formatSecondsWithHours(duration));
+        return String.format(Locale.getDefault(), "%s, time: %s, date: :%s", getHeading(), getTargetTime().toString(), getTargetDate().toString());
+        //return String.format(Locale.getDefault(), "%s, %s,  d:%s", getHeading(), getTargetTime().toString(), Converter.formatSecondsWithHours(duration));
     }
     /**
      * sets the next targetDate,

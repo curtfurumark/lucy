@@ -20,10 +20,17 @@ public class Queeries {
     //public static final String DROP_TABLE_CATEGORIES = "DROP TABLE IF EXISTS categories";
     public static final String DROP_TABLE_LOGGER = "DROP TABLE IF EXISTS logger";
     public static final String DROP_TABLE_MENTAL = "DROP TABLE IF EXISTS mental";
+    public static final String DROP_TABLE_REPEAT = "DROP TABLE IF EXISTS repeat";
     public static final String CREATE_TABLE_LOGGER = " CREATE TABLE logger " +
             "(id INTEGER PRIMARY KEY AUTOINCREMENT, " +
             "created INTEGER, " +
             "message TEXT)";
+    public static final String CREATE_TABLE_REPEAT = "CREATE TABLE repeat " +
+            "(" +
+            "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "json TEXT" +
+            ")";
+
     //TODO
 
     public static String CREATE_TABLE_ITEMS =
@@ -296,6 +303,21 @@ public class Queeries {
     public static String updateMessage(Message message) {
         return String.format(Locale.getDefault(), "UPDATE messages SET subject = '%s', content = '%s', user = '%s', category = '%s'",
                 message.getSubject(), message.getContent(), message.getUser(), message.getCategory());
+    }
+
+    public static String selectRepeat(long id) {
+        return String.format(Locale.getDefault(), "SELECT * FROM repeat WHERE id = %d", id);
+    }
+
+    /**
+     * adds a column repeat_id, referencing an optional Repeat
+     * @return
+     */
+    public static String addColumnRepeatIdToTableItems() {
+        //String queeryRenameColumn = String.format(Locale.getDefault(), "ALTER TABLE item DROP COLUMN period");
+        return  String.format(Locale.getDefault(), "ALTER TABLE items ADD COLUMN repeat_id INTEGER DEFAULT 0");
+
+
     }
 }
 

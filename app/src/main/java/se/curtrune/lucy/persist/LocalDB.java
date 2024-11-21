@@ -23,6 +23,7 @@ import se.curtrune.lucy.activities.economy.classes.Transaction;
 import se.curtrune.lucy.activities.economy.persist.ECDBAdmin;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
+import se.curtrune.lucy.classes.Repeat;
 
 public class LocalDB extends SQLiteOpenHelper {
     private static final String DB_NAME = "lucy.db";
@@ -31,13 +32,15 @@ public class LocalDB extends SQLiteOpenHelper {
     //private static final String TABLE_CATEGORIES = "categories";
     private static final String TABLE_TRANSACTIONS = "transactions";
     private static final String TABLE_ASSETS = "assets";
-    private static final int DB_VERSION = 1;
+    private static final String TABLE_REPEAT = "repeat";
+    private static final int DB_VERSION = 2;
     public static boolean VERBOSE = false;
 
     private SQLiteDatabase db;
 
     public LocalDB(@Nullable Context context) {
         super(context, DB_NAME, null, DB_VERSION);
+        if( VERBOSE) log("LocalDB(Context)");
     }
 
     @Override
@@ -47,11 +50,13 @@ public class LocalDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(Queeries.CREATE_TABLE_ITEMS);
         log("....creating table mental;");
         sqLiteDatabase.execSQL(Queeries.CREATE_TABLE_MENTAL);
-        log("...three tables created");
+        log("...two tables created");
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
+        log("LocalDB.onUpgrade(SQLiteDatabase, int, int)");
+        log(String.format(Locale.getDefault(), "oldVersion %d newVersion %d", oldVersion, newVersion));
 
     }
 
@@ -121,6 +126,9 @@ public class LocalDB extends SQLiteOpenHelper {
     public List<Item> getChildren(Item item) {
         return selectItems(Queeries.selectChildren(item));
     }
+    public static int getDbVersion(){
+        return DB_VERSION;
+    }
 
     /**
      * insert the item into the local database
@@ -142,21 +150,20 @@ public class LocalDB extends SQLiteOpenHelper {
             log(item);
         }
         item.setId((int) id);
-/*        Mental mental = item.getMental();
-        if( mental == null){
-            log("WARNING, inserting an item with no mental...");
-            mental = new Mental(item);
-        }
-        mental.setHeading(item.getHeading());
-        mental.setTime(item.getTargetTime());
-        mental.setDate(item.getTargetDate());
-        mental.isDone(item.isDone());
-        mental.setIsTemplate(item.isTemplate());
-        mental.setItemID(item.getID());
-        mental = insert(mental);
-        item.setMental(mental);*/
         db.close();
         return item;
+    }
+    public void insert(List<Item> items) {
+        log("LocalDB.insert(List<Item>)");
+        db = this.getWritableDatabase();
+        for(Item item: items){
+            long id = db.insert(ITEMS_TABLE, null, DBAdmin.getContentValues(item));
+            if( id == -1){
+                log("ERROR inserting item", item.getHeading());
+            }else {
+                item.setId(id);
+            }
+        }
     }
 
     /**
@@ -164,6 +171,7 @@ public class LocalDB extends SQLiteOpenHelper {
      * @param mental, the mental to be inserted
      * @return the inserted mental, but now with a valid id
      */
+    @Deprecated
     public Mental insert(Mental mental) {
         if( VERBOSE) log("LocalDB.insert(MentalType)");
         db = this.getWritableDatabase();
@@ -176,6 +184,18 @@ public class LocalDB extends SQLiteOpenHelper {
         }
         db.close();
         return mental;
+    }
+    public Repeat insert(Repeat repeat){
+        log("LocalDB.insert(Repeat)");
+        db = this.getWritableDatabase();
+        long id = db.insert(TABLE_REPEAT, null, DBAdmin.getContentValues(repeat));
+        if(id == -1){
+            log("ERROR  inserting repeat");
+            return null;
+        }
+        repeat.setID(id);
+        return repeat;
+
     }
 
     public Transaction insert(Transaction transaction) {
@@ -241,11 +261,6 @@ public class LocalDB extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Item item = DBAdmin.getItem(cursor);
-/*                Mental mental = selectMental(Queeries.selectMental(item));
-                if( mental == null){
-                    mental = new Mental(item);
-                }
-                item.setMental(mental);*/
                 items.add(item);
             } while (cursor.moveToNext());
         }
@@ -307,6 +322,7 @@ public class LocalDB extends SQLiteOpenHelper {
         return mental;
     }
 
+    @Deprecated
     public List<Mental> selectMentals(String query) {
         if( VERBOSE) log("LocalDB.selectMentals(String)", query);
         List<Mental> items = new ArrayList<>();
@@ -320,6 +336,21 @@ public class LocalDB extends SQLiteOpenHelper {
         db.close();
         cursor.close();
         return items;
+    }
+    public Repeat selectRepeat(long id) {
+        if( VERBOSE) log("...selectRepeat(long id) ", id);
+        String query = Queeries.selectRepeat(id);
+        Repeat repeat = null;
+        db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor.moveToFirst()) {
+            repeat = DBAdmin.getRepeat(cursor);
+        } else {
+            log("...WARNING, no item with id ", id);
+        }
+        cursor.close();
+        db.close();
+        return repeat;
     }
 
     /**
@@ -378,11 +409,6 @@ public class LocalDB extends SQLiteOpenHelper {
         String whereClause = String.format(Locale.getDefault(), "id = %d", item.getID());
         int rowsAffected = db.update(ITEMS_TABLE, DBAdmin.getContentValues(item), whereClause, null);
         log("...update item ok: ", rowsAffected == 1);
-/*        Mental mental = item.getMental();
-        mental.isDone(item.isDone());
-        if( VERBOSE) log(mental);
-        rowsAffected = update(item.getMental());
-        if( VERBOSE) log("...update mental ok: ", rowsAffected == 1);*/
         db.close();
         return rowsAffected;
     }
@@ -428,6 +454,42 @@ public class LocalDB extends SQLiteOpenHelper {
             asset = null;
         }
         return asset;
+    }
+
+
+    public int update(Repeat repeat){
+        if( VERBOSE) log("LocalDB.update(Repeat)");
+        if( VERBOSE) log(repeat);
+        db = this.getWritableDatabase();
+        String whereClause = String.format(Locale.getDefault(), "id = %d", repeat.getID());
+        int rowsAffected = db.update(TABLE_REPEAT, DBAdmin.getContentValues(repeat), whereClause, null);
+        log("...update item ok: ", rowsAffected == 1);
+        db.close();
+        return rowsAffected;
+    }
+
+    public void getColumns(String tableName) {
+        log("LocalDB.getColumns(String)", tableName);
+        //String queery = String.format(Locale.getDefault(),"SELECT sql FROM sqlite_master WHERE tbl_name = '%s' AND type = 'table'", tableName);
+        //String queery = String.format(Locale.getDefault(), "PRAGMA table_info(%s)", tableName);
+        String queery = String.format(Locale.getDefault(),"SELECT * FROM %s LIMIT 1", tableName);
+        log(queery);
+        db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(queery, null, null);
+        //cursor.moveToFirst();
+        if(cursor == null){
+            log("...cursor is null, returning");
+            return;
+        }
+        while(cursor.moveToNext()) {
+            String[] columnNames = cursor.getColumnNames();
+            for (int i = 0; i < columnNames.length; i++) {
+                String name = columnNames[i];
+                int type = cursor.getType(i);
+                String strColumnInfo = String.format(Locale.getDefault(), "name[%d] %s: %d", i, name, type);
+                log(strColumnInfo);
+            }
+        }
     }
 }
 

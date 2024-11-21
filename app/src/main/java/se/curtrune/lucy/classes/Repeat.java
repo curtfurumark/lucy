@@ -2,8 +2,6 @@ package se.curtrune.lucy.classes;
 
 import static se.curtrune.lucy.util.Logger.log;
 
-import android.content.res.Resources;
-
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
@@ -15,33 +13,42 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import se.curtrune.lucy.R;
-
 
 public class Repeat implements Serializable {
 
     public static boolean   VERBOSE = false;
+    private long id;
+    private long templateID;
+    private LocalDate lastInstanceDate;
+    private boolean infinity = false;
 
     public Unit getUnit() {
         return unit;
     }
-    private LocalDate untilDate;
-
-
-    public void setPeriod(int qualifier, Unit unit) {
-        this.qualifier = qualifier;
-        this.unit = unit;
-    }
-
     public boolean hasLastDate() {
         return lastDate != null;
     }
 
+    public boolean isInfinite() {
+        return infinity;
+    }
+
+    public void setID(long id) {
+        this.id = id;
+    }
+
+    public long getID() {
+        return id;
+    }
+
+    public void setMaxDate(LocalDate maxDate) {
+        this.lastInstanceDate = maxDate;
+    }
+
     public enum Unit {
-        DAY, WEEK, MONTH, YEAR, DAYS_OF_WEEK, PENDING
+        DAY, WEEK, MONTH, YEAR, DAYS_OF_WEEK, PENDING, HOUR
     }
     private Unit unit = Unit.PENDING;
-    private int days;
     private LocalDate firstDate;
     private LocalDate lastDate;
     private int qualifier = 1;
@@ -61,10 +68,13 @@ public class Repeat implements Serializable {
         }
         return date;
     }
-
-    public int getDays() {
-        return days;
+    private boolean checkPeriod(LocalDate date){
+        if( infinity){
+            return !date.isAfter(lastInstanceDate);
+        }
+        return (date.isAfter(firstDate) || date.equals(firstDate)) && (date.isBefore(lastDate) || date.equals(lastDate));
     }
+
     public LocalDate getFirstDate(){
         return this.firstDate;
     }
@@ -75,7 +85,15 @@ public class Repeat implements Serializable {
     public int getQualifier() {
         return qualifier;
     }
-
+    public LocalDate getLastInstanceDate(){
+        return lastInstanceDate;
+    }
+    public LocalDate getNextDate(){
+        return getNextDate(unit, qualifier);
+    }
+    public long getTemplateID(){
+        return templateID;
+    }
     private boolean isNextDate(LocalDate date){
         for(DayOfWeek dayOfWeek: dayOfWeeks){
             if( dayOfWeek.equals(date.getDayOfWeek())){
@@ -84,9 +102,7 @@ public class Repeat implements Serializable {
         }
         return false;
     }
-    public LocalDate getNextDate(){
-        return getNextDate(unit, qualifier);
-    }
+
 
     /**
      *
@@ -95,10 +111,7 @@ public class Repeat implements Serializable {
      * @return the next date that
      */
     private LocalDate getNextDate(Unit unit, int qualifier){
-        if( unit == null){
-            log("ERROR getNextDate(Unit, int)");
-            unit = Unit.DAY;//TODO, fix this HACK
-        }
+        assert unit != null;
         log("Repeat.getNextDate(Unit)", unit.toString());
         if( qualifier < 1){
             log("WARNING, qualifier less than one, setting it to one");
@@ -119,33 +132,68 @@ public class Repeat implements Serializable {
         }
         return currentDate;
     }
+    public LocalDate getNextDate(LocalDate previousDate){
+        log("...getNextDate(LocalDate)", previousDate.toString());
+        LocalDate nextDate = null;
+        switch (unit){
+            case DAY:
+                nextDate =  previousDate.plusDays(qualifier);
+                break;
+            case WEEK:
+                nextDate = previousDate.plusWeeks(qualifier);
+                break;
+            case MONTH:
+                nextDate= previousDate.plusMonths(qualifier);
+                break;
+            case YEAR:
+                nextDate = previousDate.plusYears(qualifier);
+                break;
+            case DAYS_OF_WEEK:
+                return calculateNextDayOfWeek();
+        }
+        if( !checkPeriod(nextDate)){
+            return null;
+        }
+        return nextDate;
+    }
 
     public List<DayOfWeek> getWeekDays(){
         return dayOfWeeks;
     }
 
-    public void setFirstDate(LocalDate firstDate){
-        this.firstDate = firstDate;
-    }
-    public void setLastDate(LocalDate lastDate){
-        this.lastDate = lastDate;
-    }
-    public void setUnit(Unit unit){
-        log("Repeat.setPeriod(Unit) ", unit.toString());
-        this.unit = unit;
-    }
-    public void setWeekDays(List<DayOfWeek> weekDays){
-        this.unit = Unit.DAYS_OF_WEEK;
-        this.dayOfWeeks = weekDays;
-    }
     public void remove(DayOfWeek dayOfWeek){
         if( VERBOSE) log("Repeat.remove(DayOfWeek)", dayOfWeek.toString());
         boolean found = dayOfWeeks.remove(dayOfWeek);
         log("...dayOfWeek removed? ", found);
     }
+    public void setFirstDate(LocalDate firstDate){
+        this.firstDate = firstDate;
+    }
+    public void setInfinity(boolean infinity){
+        this.infinity = infinity;
+    }
+    public void setLastDate(LocalDate lastDate){
+        this.lastDate = lastDate;
+    }
+    public void setLastInstanceDate(LocalDate lastInstanceDate){
+        this.lastInstanceDate = lastInstanceDate;
+
+    }
+    public void setWeekDays(List<DayOfWeek> weekDays){
+        this.unit = Unit.DAYS_OF_WEEK;
+        this.dayOfWeeks = weekDays;
+    }
+    public void setTemplateID(long id){
+        this.templateID = id;
+    }
+
     public String toJson(){
         if( VERBOSE) log("Repeat.toJson()");
         return new Gson().toJson(this, Repeat.class);
+    }
+    public void setPeriod(int qualifier, Unit unit) {
+        this.qualifier = qualifier;
+        this.unit = unit;
     }
 
     @NonNull

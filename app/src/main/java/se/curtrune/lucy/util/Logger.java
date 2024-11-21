@@ -12,10 +12,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import se.curtrune.lucy.activities.economy.classes.Transaction;
-import se.curtrune.lucy.classes.EstimateDate;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
-import se.curtrune.lucy.classes.MentalStats;
 import se.curtrune.lucy.classes.Message;
 import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.classes.Repeat;
@@ -73,19 +71,8 @@ public class Logger {
         log(key + ": " + value);
 
     }
-    public static void log(MentalStats estimate){
-        log("Logger.log(MentalStats");
-        log("\tenergy", estimate.getEnergy());
-        log("\tduration", estimate.getDuration());
-    }
-    public static void log(EstimateDate estimateDate){
-        log("log(EstimateDate)");
-        log("...date", estimateDate.getDate().toString());
-        log("...duration", estimateDate.getDurationEstimate());
-        log("...energy", estimateDate.getEnergyEstimate());
-        log("...anxiety", estimateDate.getAnxiety());
 
-    }
+
     public static void log(HTTPRequest request){
         log("log HTTPRequest...");
         if( request == null){
@@ -140,13 +127,7 @@ public class Logger {
         log("\t\tenergy", item.getEnergy());
         log("\t\tmood", item.getMood());
         log("\t\tstress", item.getStress());
-/*        if (item.hasMental()){
-            Mental mental = item.getMental();
-            log("\t\tenergy", mental.getEnergy());
-            log("\t\tanxiety", mental.getAnxiety());
-            log("\t\tmood", mental.getMood());
-            log("\t\tstress", mental.getStress());
-        }*/
+        log("\t\trepeat_id", item.getRepeatID());
     }
     public static void log(Mental mental){
         log("log(Mental)");
@@ -192,11 +173,13 @@ public class Logger {
             log("...repeat is null, i surrender");
             return;
         }
+        log("\tid", repeat.getID());
         log("\tunit", repeat.getUnit().toString());
         log("\tqualifier", repeat.getQualifier());
         log("\ttoJson", repeat.toJson());
         log("\tfirstDate", repeat.getFirstDate());
         log("\tlastDate", repeat.getLastDate());
+        log("\tinfinity", repeat.isInfinite());
     }
     public static void log(StatisticsPeriod statisticsPeriod){
         log("log StatisticsPeriod...");

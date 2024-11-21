@@ -65,6 +65,7 @@ public class EditableListAdapter extends RecyclerView.Adapter<EditableListAdapte
         Item item  = items.get(position);
         if(item.getHeading().isEmpty()){
             holder.editTextListItem.setHint("type here");
+            //log("IS THIS THE OFFENDING ONE");
         }else {
             holder.editTextListItem.setText(getBulletSpannableString(item.getHeading()));
         }
@@ -82,7 +83,6 @@ public class EditableListAdapter extends RecyclerView.Adapter<EditableListAdapte
     }
     public void setFocus(int position){
         currentItem = position;
-
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{

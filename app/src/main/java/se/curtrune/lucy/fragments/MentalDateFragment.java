@@ -21,14 +21,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.MentalAdapter;
 import se.curtrune.lucy.classes.Item;
-import se.curtrune.lucy.classes.Mental;
-import se.curtrune.lucy.classes.MentalStats;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.viewmodel.MentalDateViewModel;
@@ -51,7 +48,7 @@ public class MentalDateFragment extends Fragment implements MentalAdapter.Callba
 
     private Switch switchActual;
     private LocalDate currentDate;
-    private MentalStats mentalStats;
+    //private MentalStats mentalStats;
     private MentalAdapter.MentalType mentalType;
     private enum Mode{
         ESTIMATE, ACTUAL
@@ -89,7 +86,7 @@ public class MentalDateFragment extends Fragment implements MentalAdapter.Callba
     }
 
     private void filter(String str){
-        List<Mental> filteredList = mentalStats.getMentals();
+        //List<Mental> filteredList = mentalStats.getMentals();
         //adapter.setList(mentalStatistics.filter(str));t
         updateUserInterface();
     }

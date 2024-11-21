@@ -20,6 +20,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -32,37 +35,39 @@ import java.util.Locale;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.activities.economy.EconomyActivity;
 import se.curtrune.lucy.activities.economy.persist.ECDBAdmin;
+import se.curtrune.lucy.adapters.DevActivityAdapter;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.app.User;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Media;
 import se.curtrune.lucy.classes.Notification;
+import se.curtrune.lucy.classes.Repeat;
+import se.curtrune.lucy.dev.RepeatTest;
+import se.curtrune.lucy.dialogs.AddItemDialog;
+import se.curtrune.lucy.dialogs.RepeatDialog;
 import se.curtrune.lucy.persist.DBAdmin;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
 import se.curtrune.lucy.util.Logger;
+import se.curtrune.lucy.viewmodel.DevActivityViewModel;
 import se.curtrune.lucy.viewmodel.UpdateLucindaViewModel;
 import se.curtrune.lucy.web.VersionInfo;
 import se.curtrune.lucy.workers.ItemsWorker;
 import se.curtrune.lucy.workers.NotificationsWorker;
+import se.curtrune.lucy.workers.RepeatWorker;
 import se.curtrune.lucy.workers.SettingsWorker;
 
 public class DevActivity extends AppCompatActivity {
     private TextView textViewSwipeAble;
     private TextView textViewNewMain;
-    private TextView textViewVersionName;
-    private TextView textViewLucindaVersion;
-    private  TextView textViewAndroidVersion;
-    private TextView textViewLanguage;
-    private TextView textViewFirstInstalled;
-    private TextView textViewUpdated;
-    private TextView textViewModel;
     private EditText editTextSql;
     private Button buttonRunSQL;
     private Button buttonRunCode;
     private CheckBox checkBoxDev;
-
+    private DevActivityAdapter adapter;
+    private DevActivityViewModel devActivityViewModel;
+    private RecyclerView recyclerView;
 
     private Lucinda lucinda;
     public static boolean VERBOSE = false;
@@ -74,33 +79,18 @@ public class DevActivity extends AppCompatActivity {
         setTitle("lucinda");
         log("DevActivity.onCreate(Bundle)");
         printSystemInfo();
+        initViewModel();
         lucinda = Lucinda.getInstance(this);
         initComponents();
         initListeners();
+        initRecycler();
         //addMentalToItemTable();
         setUserInterface();
-        checkForLucindaUpdate();
+        listTables();
+        listColumns();
         //openDB();
     }
 
-
-    private void addMentalToItemTable(){
-        log("...addMentalToItemTable()");
-        String queeryEnergy = "ALTER TABLE items ADD COLUMN energy INTEGER DEFAULT 0";
-        String queeryAnxiety = "ALTER TABLE items ADD COLUMN anxiety INTEGER DEFAULT 0";
-        String queeryStress = "ALTER TABLE items ADD COLUMN stress INTEGER DEFAULT 0";
-        String queeryMood = "ALTER TABLE items ADD COLUMN mood INTEGER DEFAULT 0";
-        try(LocalDB db = new LocalDB(this)){
-            //db.executeSQL(queeryEnergy);
-            db.executeSQL(queeryAnxiety);
-            db.executeSQL(queeryStress);
-            db.executeSQL(queeryMood);
-            log(" energy column created?");
-        }catch (Exception e){
-            log("an exception occurred");
-            e.printStackTrace();
-        }
-    }
     private void clearShowInCalendar(){
         log("...clearShowInCalendar()");
         String queery = "UPDATE items set isCalenderItem = 0";
@@ -130,17 +120,10 @@ public class DevActivity extends AppCompatActivity {
         Toast.makeText(this, "tables created, possibly", Toast.LENGTH_LONG).show();
         DBAdmin.listTables(this);
     }
-    private void createLoggerTable(){
-        log("...createLoggerTable()");
-        String queery = Queeries.CREATE_TABLE_LOGGER;
-        try(LocalDB db = new LocalDB(this)){
-            log("...queery", queery);
-            db.executeSQL(queery);
-        }
-    }
+
     private void executeSQL(){
         log("...executeSQL()");
-        addMentalToItemTable();
+        //addMentalToItemTable();
 /*        String queery = editTextSql.getText().toString();
         if( queery.isEmpty()){
             Toast.makeText(this, "a sql statement pleast", Toast.LENGTH_LONG).setMentalType();
@@ -151,18 +134,12 @@ public class DevActivity extends AppCompatActivity {
     private void initComponents() {
         if( VERBOSE) log("...initComponents()");
         textViewNewMain = findViewById(R.id.devActivity_mainActivity);
-        textViewLucindaVersion = findViewById(R.id.devActivity_lucindaVersionCode);
-        textViewAndroidVersion = findViewById(R.id.devActivity_androidVersion);
         textViewSwipeAble = findViewById(R.id.devActivity_economy);
-        textViewLanguage = findViewById(R.id.devActivity_language);
-        textViewFirstInstalled = findViewById(R.id.devActivity_firstInstalled);
-        textViewVersionName = findViewById(R.id.devActivity_lucindaVersionName);
-        textViewModel = findViewById(R.id.devActivity_model);
-        textViewUpdated = findViewById(R.id.devActivity_updated);
         checkBoxDev = findViewById(R.id.devActivity_checkBoxDev);
         buttonRunSQL = findViewById(R.id.devActivity_buttonRunSQL);
         editTextSql = findViewById(R.id.devActivity_sql);
         buttonRunCode = findViewById(R.id.devActivity_buttonRunCode);
+        recyclerView = findViewById(R.id.devActivity_recycler);
     }
 
     private void initListeners() {
@@ -176,6 +153,19 @@ public class DevActivity extends AppCompatActivity {
         });
         buttonRunSQL.setOnClickListener(view->executeSQL());
         buttonRunCode.setOnClickListener(view->runCode());
+    }
+    private void initRecycler(){
+        log("...initRecycler()");
+        adapter = new DevActivityAdapter(devActivityViewModel.getLucindaInfo());
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setItemAnimator( new DefaultItemAnimator());
+        recyclerView.setAdapter(adapter);
+
+    }
+    private void initViewModel(){
+        log("...initViewModel()");
+        devActivityViewModel = new ViewModelProvider(this).get(DevActivityViewModel.class);
+        devActivityViewModel.init(this);
     }
     private void printSystemInfo(){
         log("...printSystemInfo()");
@@ -198,12 +188,20 @@ public class DevActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+    private void listColumns(){
+        log("...listColumns");
+        devActivityViewModel.listColumns(this);
+    }
 
     private void listTables() {
         log("...listTables()");
         try(LocalDB db = new LocalDB(this)) {
             List<String> tables = db.getTableNames();
-            tables.forEach(Logger::log);
+            for(String tableName: tables){
+                log("***************************************");
+                log("tableName", tableName);
+                db.getColumns(tableName);
+            }
         }
     }
 
@@ -221,8 +219,6 @@ public class DevActivity extends AppCompatActivity {
             createItemsTable();
         } else if (item.getItemId() == R.id.homeActivity_dropTableItems) {
             deleteItemsTable();
-        } else if (item.getItemId() == R.id.homeActivity_createTableMental) {
-            createTableMental();
         } else if (item.getItemId() == R.id.homeActivity_listTables) {
             listTables();
         } else if (item.getItemId() == R.id.homeActivity_dropTableMental) {
@@ -241,7 +237,7 @@ public class DevActivity extends AppCompatActivity {
             //Settings.removeAll(this);
             Toast.makeText(this, "don't do this", Toast.LENGTH_LONG).show();
         }else if( item.getItemId() == R.id.devActivity_repeatDialog){
-            //showRepeatDialog();
+            showRepeatDialog();
             Toast.makeText(this, "for future use", Toast.LENGTH_LONG).show();
         }else if( item.getItemId() == R.id.homeActivity_setNotifications){
             setNotifications();
@@ -257,9 +253,7 @@ public class DevActivity extends AppCompatActivity {
 
     private void deleteItemsTable() {
         log("...deleteItemsTable()");
-        try(LocalDB db = new LocalDB(this)) {
-            db.executeSQL(Queeries.DROP_TABLE_ITEMS);
-        }
+        DBAdmin.dropTableItems(this);
     }
 
     private void createItemsTable() {
@@ -269,31 +263,10 @@ public class DevActivity extends AppCompatActivity {
         }
     }
 
-    private void createTableMental() {
-        log("...createTableMental()");
-        try(LocalDB db = new LocalDB(this)) {
-            db.executeSQL(Queeries.CREATE_TABLE_MENTAL);
-        }
-    }
-
     private void dropTableMental() {
         log("...dropTableMental()");
         try(LocalDB db = new LocalDB(this)){
             db.executeSQL(Queeries.DROP_TABLE_MENTAL);
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    private void populateCategories() {
-        log("...populateCategories()");
-        try(LocalDB db = new LocalDB(this)) {
-            for (String category : Lucinda.CATEGORIES) {
-                db.executeSQL(Queeries.insertCategory(category));
-            }
         }
     }
 
@@ -336,9 +309,25 @@ public class DevActivity extends AppCompatActivity {
     }
     private void runCode(){
         log("...runCode()");
+        //RepeatTest.repeatTest01(this);
+        //RepeatTest.insertRepeatTest(this);
+        //RepeatTest.selectRepeat(this);
+        //RepeatTest.updateRepeat(this);//
+        //RepeatTest.deleteRepeat();
+        //RepeatTest.addColumnRepeatID(this);
+        //RepeatTest.listColumns("items", this);
         //Item item = ItemsWorker.selectItem(4244, this);
         //log("...item", item.getHeading());
-        //deleteTree(item);
+        //deleteTree(item)
+        showAddItemDialog();
+    }
+
+    private void printTableNames(){
+        log("...printTableNames()");
+        try(LocalDB db = new LocalDB(this)){
+            List<String> names = db.getTableNames();
+            names.forEach(System.out::println);
+        }
     }
     private void setDefaultUserSettings(){
         log("...setDefaultUserSettings");
@@ -353,44 +342,55 @@ public class DevActivity extends AppCompatActivity {
         try {
             //checkBoxDev.setChecked(User);
             PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-            String stringVersionCode = String.format(Locale.getDefault(), "VERSION_CODE: %d", pInfo.versionCode );
-            textViewLucindaVersion.setText(stringVersionCode);
-            String stringVersionName = String.format(Locale.getDefault(), "VERSION NAME: %s", pInfo.versionName);
-            textViewVersionName.setText(stringVersionName);
-            String stringAndroidVersion = String.format(Locale.getDefault(), "SDK_INT: %d",Build.VERSION.SDK_INT );
-            textViewAndroidVersion.setText(stringAndroidVersion);
-            String stringLanguage = String.format(Locale.getDefault(), "LANGUAGE: %s", SettingsWorker.getLanguage());
-            textViewLanguage.setText(stringLanguage);
+            ApplicationInfo applicationInfo = pInfo.applicationInfo;
+            //applicationInfo.
 
             long firstInstallTime = pInfo.firstInstallTime;
             LocalDateTime installTime = LocalDateTime.ofEpochSecond(firstInstallTime /1000 , 0, ZoneOffset.UTC);
             String stringFirstInstalled = String.format(Locale.getDefault(), "FIRST INSTALLED: %s", installTime.toString());
-            textViewFirstInstalled.setText(stringFirstInstalled);
+            //textViewFirstInstalled.setText(stringFirstInstalled);
 
             LocalDateTime updated = LocalDateTime.ofEpochSecond(pInfo.lastUpdateTime /1000, 0, ZoneOffset.UTC);
             String stringUpdated = String.format(Locale.getDefault(), "UPDATED: %s",updated.toString());
-            textViewUpdated.setText(stringUpdated);
-
-            String stringModel = String.format(Locale.getDefault(), "MODEL: %s",Build.MODEL);
-            textViewModel.setText(stringModel);
+            //textViewUpdated.setText(stringUpdated);
             checkBoxDev.setChecked(User.isDevMode(this));
 
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
     }
-/*    private void showRepeatDialog(){
+    private void showAddItemDialog(){
+        log("...showAddItemDialog()");
+        Item parent = ItemsWorker.getRootItem(Settings.Root.TODO, this);
+        AddItemDialog dialog = new AddItemDialog(parent, null);
+        dialog.setCallback(new AddItemDialog.Callback() {
+            @Override
+            public void onAddItem(Item item) {
+                log("...onAddItem(Item)", item.getHeading());
+                //log(item);
+                if( item.hasPeriod()){
+                    log(item);
+                    RepeatWorker.insertItemWithRepeat(item, getApplicationContext());
+                }else{
+                    log("Item without repeat, do nothing");
+                }
+            }
+        });
+        dialog.show(getSupportFragmentManager(), "addItem");
+    }
+    private void showRepeatDialog(){
         log("...showRepeatDialog()");
         RepeatDialog dialog = new RepeatDialog();
         dialog.setCallback(new RepeatDialog.Callback() {
             @Override
-            public void onRepeat(Repeat.Unit period) {
-                log("...onRepeat(Unit)", period.toString());
+            public void onRepeat(Repeat repeat) {
+                log("...onRepeat(Repeat)", repeat.toString());
+                log(repeat);
             }
         });
-        dialog.setMentalType(getSupportFragmentManager(), "repeat dialog");
+        dialog.show(getSupportFragmentManager(), "repeat dialog");
 
-    }*/
+    }
     private void testNotification(){
         log("...testNotification()");
         Notification notification = new Notification();
