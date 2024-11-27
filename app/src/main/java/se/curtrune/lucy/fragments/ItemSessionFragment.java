@@ -43,21 +43,25 @@ import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.User;
-import se.curtrune.lucy.classes.Media;
 import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.Media;
 import se.curtrune.lucy.classes.Mental;
+import se.curtrune.lucy.classes.Notification;
+import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.classes.State;
-import se.curtrune.lucy.dialogs.ChooseChildTypeDialog;
 import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.dialogs.ChooseCategoryDialog;
+import se.curtrune.lucy.dialogs.ChooseChildTypeDialog;
 import se.curtrune.lucy.dialogs.DurationDialog;
 import se.curtrune.lucy.dialogs.NotificationDialog;
 import se.curtrune.lucy.dialogs.RepeatDialog;
@@ -69,10 +73,10 @@ import se.curtrune.lucy.util.Converter;
 import se.curtrune.lucy.util.Kronos;
 import se.curtrune.lucy.viewmodel.ItemSessionViewModel;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
-import se.curtrune.lucy.viewmodel.MentalViewModel;
 import se.curtrune.lucy.workers.ItemsWorker;
+import se.curtrune.lucy.workers.NotificationsWorker;
 
-public class ItemSessionFragment extends Fragment implements Kronos.Callback{
+public class ItemSessionFragment extends Fragment{
 
     private static final int CAMERA_REQUEST_CODE = 101;
     private EditText editTextHeading;
@@ -105,11 +109,8 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
     private FloatingActionButton buttonAddItem;
     private Item currentItem;
     private LocalTime targetTime;
-    private Kronos kronos;
     private LucindaViewModel lucindaViewModel;
     private ItemSessionViewModel itemSessionViewModel;
-    private MentalViewModel mentalViewModel;
-    private long duration;
     public static boolean VERBOSE = false;
     private ItemSettingAdapter itemSettingAdapter;
 
@@ -139,7 +140,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
     }
     private void initItemSettingRecycler(){
         log("....initItemSettingRecycler");
-        itemSettingAdapter = new ItemSettingAdapter(itemSessionViewModel.getItemSettings(currentItem, getContext()), new ItemSettingAdapter.Listener() {
+        itemSettingAdapter = new ItemSettingAdapter(itemSessionViewModel.getItemSettings(currentItem, requireContext()), new ItemSettingAdapter.Listener() {
             @Override
             public void onClick(ItemSetting setting) {
                 log("...onClick(ItemSetting)", setting.toString());
@@ -154,6 +155,9 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
                     case COLOR:
                         showColorDialog();
                         break;
+                    case DURATION:
+                        showDurationDialog();
+                        break;
                     case NOTIFICATION:
                         showNotificationDialog();
                         break;
@@ -166,20 +170,17 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
                     case DATE:
                         showDateDialog();
                         break;
-                    case DONE:
-                        itemSessionViewModel.setDone(setting.isChecked());
-                        currentItem.setState(setting.isChecked()? State.DONE: State.TODO);
-                        break;
                     case TEMPLATE:
                         itemSessionViewModel.setIsTemplate(setting.isChecked(), getContext());
                         break;
                     case PRIORITIZED:
-                        currentItem.setPriority(1);
+                        itemSessionViewModel.setIsPrioritized(currentItemSetting.isChecked(), getContext());
                         break;
                     case TAGS:
                         showTagsDialog();
                         break;
-
+                    default:
+                        log("unknown SETTING", setting.toString());
                 }
             }
         });
@@ -189,10 +190,7 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         actionRecycler.setAdapter(itemSettingAdapter);
         itemSettingAdapter.notifyDataSetChanged();
     }
-    private void initKronos(){
-        if( VERBOSE) log("...initKronos()");
-        kronos = Kronos.getInstance(this);
-    }
+
     private void initMental(){
         log("...initMental()");
         log(itemSessionViewModel.getMental());
@@ -210,34 +208,18 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         if( VERBOSE) log("...initViewModel()");
         lucindaViewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
         itemSessionViewModel = new ViewModelProvider(requireActivity()).get(ItemSessionViewModel.class);
-        itemSessionViewModel.init(currentItem);
-        mentalViewModel = new ViewModelProvider(requireActivity()).get(MentalViewModel.class);
+        itemSessionViewModel.init(currentItem, getContext());
+        //mentalViewModel = new ViewModelProvider(requireActivity()).get(MentalViewModel.class);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        kronos.removeCallback();
-        if( VERBOSE) log("MusicSessionActivity.onPause()");
     }
     @Override
     public void onResume() {
         super.onResume();
-        //setButtonText();
-        kronos.setCallback(this);
-        if( VERBOSE) log("ItemSession.onResume()");
     }
-    /**
-     * callback for Kronos, called once every second whenever Kronos is running
-     * @param secs, number of seconds elapsed since start of timer
-     */
-    @Override
-    public void onTimerTick(long secs) {
-        if(VERBOSE) log("ItemSession.onTimerClick() secs", secs);
-        this.duration = secs;
-        textViewDuration.setText(Converter.formatSecondsWithHours(secs));
-    }
-
 
     private void initComponents(View view){
         if( VERBOSE) log("...initComponents()");
@@ -272,8 +254,14 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
         buttonTimer.setOnClickListener(view->toggleTimer());
+        buttonTimer.setOnLongClickListener(v -> {
+            log("...onLongClick(View) cancel timer please");
+            itemSessionViewModel.cancelTimer();
+            buttonTimer.setText(getString(R.string.ui_start));
+            return true;
+        });
         buttonSave.setOnClickListener(view->updateItem());
-        textViewDuration.setOnClickListener(view -> showDurationDialogActual());
+        textViewDuration.setOnClickListener(view -> showDurationDialogActual(false));
         buttonAddItem.setOnClickListener(view -> showChooseChildTypeDialog(currentItem));
         seekBarEnergy.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -361,11 +349,17 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
                 itemSessionViewModel.updateStress(seekBar.getProgress(), getContext());
             }
         });
-        itemSessionViewModel.getError().observe(requireActivity(), new Observer<String>() {
+        itemSessionViewModel.getError().observe(requireActivity(), error -> {
+            log("ItemSessionViewModel.getError(String)", error);
+            Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
+        });
+        itemSessionViewModel.getDuration().observe(requireActivity(), secs -> {
+            textViewDuration.setText(Converter.formatSecondsWithHours(secs));
+        });
+        itemSessionViewModel.getTimerState().observe(requireActivity(), new Observer<Kronos.State>() {
             @Override
-            public void onChanged(String error) {
-                log("...getError(String)", error);
-                Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
+            public void onChanged(Kronos.State state) {
+                log("...getTimerState.onChanged(State)", state.toString());
             }
         });
     }
@@ -373,24 +367,9 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         log("...returnToPreviousFragment()");
         getParentFragmentManager().popBackStackImmediate();
     }
-    private void setKronos(long duration){
-        log("...setKronos(long)", duration);
-        kronos = Kronos.getInstance(this);
-        if(duration > 0){
-            kronos.setElapsedTime(duration);
-            buttonTimer.setText(getString(R.string.ui_resume));
-        }
-
-    }
-/*    private void setEstimatedTime(Item item){
-        if( VERBOSE)log("...setEstimatedTime()");
-        long estimatedDuration = DurationWorker.getEstimatedDuration(item, getContext());
-        String stringEstimatedDuration = String.format(Locale.getDefault(), "estimated duration %s", Converter.formatSecondsWithHours(estimatedDuration));
-        log("..." , stringEstimatedDuration);
-        //textViewEstimatedTime.setText(stringEstimatedDuration);
-    }*/
     private void setUserInterface(Item item){
         if( VERBOSE) log("...setUserInterface(Item)");
+        itemSessionViewModel.getItem();
         editTextHeading.setText(item.getHeading());
         editTextComment.setText(item.getComment());
         checkBoxIsDone.setChecked(item.isDone());
@@ -402,17 +381,8 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         if( !item.isDone()){
             lucindaViewModel.estimateEnergy(item.getEnergy());
         }
-        setKronos(item.getDuration());
         initMental();
     }
-/*    private void setEstimatedEnergy(Item item){
-        if( VERBOSE) log("...setEstimatedEnergy(Item)");
-        MentalStats stats = StatisticsWorker.getMentalStats(item, getContext());
-        String stringEstimatedEnergy = String.format(Locale.getDefault(), "estimated energy %s", stats.getEnergy());
-        log("...", stringEstimatedEnergy);
-        //textViewEstimatedEnergy.setText(stringEstimatedEnergy);
-    }*/
-
     /**
      * everything about the item, things that are interesting to me, but not for you average user
      */
@@ -440,23 +410,20 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
     }
     private void showChooseChildTypeDialog(Item item){
         log("...showChooseChildTypeDialog(Item)");
-        ChooseChildTypeDialog dialog = new ChooseChildTypeDialog(item, new ChooseChildTypeDialog.Listener() {
-            @Override
-            public void onClick(ChooseChildTypeDialog.ChildType childType) {
-                log("...onClick(ChildType)", childType.toString());
-                switch (childType){
-                    case CHILD:
-                        showAddChildItemDialog();
-                        break;
-                    case LIST:
-                        lucindaViewModel.updateFragment(new EditableListFragment(currentItem));
-                        break;
-                    case PHOTOGRAPH:
-                        //Toast.makeText(getContext(), "NOT IMPLEMENTED", Toast.LENGTH_LONG).show();
-                        //takePhoto();
-                        openCameraAndSaveImage();
-                        break;
-                }
+        ChooseChildTypeDialog dialog = new ChooseChildTypeDialog(item, childType -> {
+            log("...ChooseChildTypeDialog.onClick(ChildType)", childType.toString());
+            switch (childType){
+                case CHILD:
+                    showAddChildItemDialog();
+                    break;
+                case LIST:
+                    lucindaViewModel.updateFragment(new EditableListFragment(currentItem));
+                    break;
+                case PHOTOGRAPH:
+                    //Toast.makeText(getContext(), "NOT IMPLEMENTED", Toast.LENGTH_LONG).show();
+                    //takePhoto();
+                    openCameraAndSaveImage();
+                    break;
             }
         });
         dialog.show(getChildFragmentManager(), "choose type");
@@ -530,29 +497,29 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
     }
     public void showDurationDialog(){
         log("...showDurationDialog()");
-        DurationDialog dialog = new DurationDialog();
-        dialog.setCallback(duration -> {
-            log("...onDurationDialog(Duration)");
-            currentItem.setEstimatedDuration(duration.getSeconds());
-            currentItemSetting.setValue(Converter.formatSecondsWithHours(duration.getSeconds()));
-            itemSettingAdapter.notifyDataSetChanged();
+        DurationDialog dialog = new DurationDialog(Duration.ofSeconds(0), new DurationDialog.Callback() {
+            @Override
+            public void onDurationDialog(Duration duration) {
+                log("...onDurationDialog(Duration)");
+                itemSessionViewModel.setDuration(duration, getContext());
+                currentItemSetting.setValue(Converter.formatSecondsWithHours(duration.getSeconds()));
+                itemSettingAdapter.notifyDataSetChanged();
+            }
         });
         dialog.show(getChildFragmentManager(), "duration");
 
     }
-    private void showDurationDialogActual(){
+    private void showDurationDialogActual(boolean durationEstimate){
         log("...showDurationDialog()");
-        DurationDialog dialog = new DurationDialog();
-        dialog.setCallback(duration -> {
-            log("...onDurationDialog(Duration)");
+        Item item = itemSessionViewModel.getItem();
+        DurationDialog dialog = new DurationDialog(Duration.ofSeconds(item.getDuration()), duration -> {
+            log("DurationDialog.onDurationDialog(Duration)");
             log("..onDurationDialog(Duration duration)", duration.toString());
             log("...seconds", duration.getSeconds());
-            this.duration = duration.getSeconds();
-            currentItem.setDuration(duration.getSeconds());
             textViewDuration.setText(Converter.formatSecondsWithHours(duration.getSeconds()));
             buttonTimer.setText(getString(R.string.ui_resume));
+            itemSessionViewModel.setElapsedDuration(duration.getSeconds());
             itemSessionViewModel.setDuration(duration, getContext());
-            kronos.setElapsedTime(duration.getSeconds());
         });
         dialog.show(getChildFragmentManager(), "actual duration");
     }
@@ -561,18 +528,44 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
     public void showNotificationDialog(){
         log("...showNotificationDialog()");
         NotificationDialog dialog = new NotificationDialog(currentItem);
-        dialog.setListener(notification -> {
-            log("...onNotification(Notification)");
-            currentItemSetting.setValue(notification.toString());
-            currentItem.setNotification(notification);
-            itemSettingAdapter.notifyDataSetChanged();
+        dialog.setListener(new NotificationDialog.Callback() {
+            @Override
+            public void onNotification(Notification notification, NotificationDialog.Action action) {
+                log("...onNotification(Notification, Action)", action.toString());
+                switch (action){
+                    case INSERT:
+                        currentItemSetting.setValue(notification.toString());
+                        currentItem.setNotification(notification);
+                        itemSettingAdapter.notifyDataSetChanged();
+                        NotificationsWorker.setNotification(currentItem, getContext());
+                        break;
+                    case EDIT:
+                        Toast.makeText(getContext(), "edit not implemented", Toast.LENGTH_LONG).show();
+                        NotificationsWorker.cancelNotification(currentItem, getContext());
+                        NotificationsWorker.setNotification(currentItem, getContext());
+                        itemSessionViewModel.updateNotification(getContext());
+                        break;
+                    case DELETE:
+                        //NotificationsWorker.cancelNotification(currentItem, getContext());
+                        //Toast.makeText(getContext(), "delete not implemented", Toast.LENGTH_LONG).show();
+                        itemSessionViewModel.cancelNotification(getContext());
+                        break;
+                }
+
+            }
         });
-        dialog.show(getChildFragmentManager(), "notification ");
+        dialog.show(getChildFragmentManager(), "set notification ");
 
     }
     private void showRepeatDialog(){
         log("...showRepeatDialog()");
+        if( itemSessionViewModel.itemHasRepeat()){
+            Repeat repeat = Objects.requireNonNull(itemSessionViewModel.getCurrentItem().getValue()).getPeriod();
+            log("...item has repeat");
+            log(repeat);
+        }
         RepeatDialog dialog = new RepeatDialog();
+
         dialog.setCallback(repeat -> {
             log("...onRepeat(Unit)", repeat.toString());
             currentItemSetting.setValue(repeat.toString());
@@ -586,15 +579,17 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
     }
     private void showTagsDialog(){
         log("...showTagsDialog()");
-        TagsDialog dialog = new TagsDialog(new TagsDialog.Callback() {
+        Item item = itemSessionViewModel.getItem();
+        TagsDialog dialog = new TagsDialog(item.getTags(), new TagsDialog.Callback() {
             @Override
             public void onTags(String tags) {
                 log("...onTags(String)", tags);
                 itemSessionViewModel.addTags(tags, getContext());
-                //itemSessionViewModel.update();
+                currentItemSetting.setValue(tags);
+                itemSettingAdapter.notifyDataSetChanged();
             }
         });
-        dialog.show(getChildFragmentManager(), "add edit tags");
+        dialog.show(getChildFragmentManager(), "add/edit tags");
     }
     private void showTimeDialog(){
         log("...showTimeDialog()");
@@ -610,32 +605,38 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         timePicker.show();
     }
     private void toggleTimer() {
-        log("...toggleTimer()", kronos.getState().toString());
-        switch (kronos.getState()) {
+        log("...toggleTimer()");
+        Kronos.State state = itemSessionViewModel.getTimerState().getValue();
+        log("...current timer state", state.toString());
+        switch (state) {
             case PENDING:
             case STOPPED:
-                kronos.start(currentItem.getID());
+                itemSessionViewModel.startTimer();
                 buttonTimer.setText(R.string.ui_pause);
                 break;
             case RUNNING:
-                kronos.pause();
+                itemSessionViewModel.pauseTimer();
                 buttonTimer.setText(R.string.ui_resume);
                 break;
             case PAUSED:
-                kronos.resume();
-
+                itemSessionViewModel.resumeTimer();
                 buttonTimer.setText(R.string.ui_pause);
         }
     }
+
+    /**
+     * TODO, use the itemSessionViewModel
+     * @return
+     */
     private Item getItem(){
         log("...getItem()");
         currentItem.setHeading(editTextHeading.getText().toString());
         currentItem.setComment(editTextComment.getText().toString());
         currentItem.setState(checkBoxIsDone.isChecked() ? State.DONE: State.TODO);
-        currentItem.setDuration(duration);
+        //TODO, this feels like a hack
+        currentItem.setDuration(itemSessionViewModel.getDuration().getValue());
         return currentItem;
-    }
-    /**
+    }/**
      * update item
      */
     private void updateItem() {
@@ -646,18 +647,9 @@ public class ItemSessionFragment extends Fragment implements Kronos.Callback{
         }
         currentItem = getItem();
         itemSessionViewModel.update(currentItem, getContext());
-/*        log(currentItem);
-        int rowsAffected = ItemsWorker.update(currentItem, getContext());
-        if(rowsAffected != 1){
-            Toast.makeText(getContext(), "error updating item", Toast.LENGTH_LONG).show();
-            return;
-        }else{
-            ItemsWorker.touchParents(currentItem, getContext());
-        }*/
-
         lucindaViewModel.updateEnergy(true);
+        itemSessionViewModel.cancelTimer();
         requireActivity().getSupportFragmentManager().popBackStackImmediate();
-        kronos.reset();
     }
     private void setMentalLabel(int energy, Mental.Type type){
         if( VERBOSE) log("...setMentalLabel(int)", energy);

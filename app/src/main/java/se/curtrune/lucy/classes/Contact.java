@@ -9,20 +9,15 @@ public class Contact implements Content{
     public String getDisplayName() {
         return displayName;
     }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+    public boolean hasEmailAddress() {
+        return !email.isEmpty();
     }
 
+    public boolean hasPhoneNumber() {
+        return !phoneNumber.isEmpty();
+    }
     public String getEmail() {
         return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-    public void setId(long id){
-        this.id = id;
     }
 
     public long getId(){
@@ -30,6 +25,15 @@ public class Contact implements Content{
     }
     public String getPhoneNumber() {
         return phoneNumber;
+    }
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    public void setId(long id){
+        this.id = id;
     }
 
     public void setPhoneNumber(String phoneNumber) {
@@ -45,4 +49,7 @@ public class Contact implements Content{
                 ", id=" + id +
                 '}';
     }
+
+
+
 }

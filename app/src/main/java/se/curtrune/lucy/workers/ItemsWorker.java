@@ -130,16 +130,25 @@ public class ItemsWorker {
     }
 
     /**
-     *
+     * if item hasRepeat, creates instance up until RepeatWorker.maxDate
+     * return the the template
+     * if item has notification, sets notification
      * @param item, the item to be inserted
      * @param context
      * @return the inserted item, with its id field set to whatever db decided, autoincrement
      */
     public static Item insert(Item item, Context context)  {
         if( VERBOSE) log("ItemsWorker.insert(Item, Context)", item.getHeading());
-        LocalDB db = new LocalDB(context);
-        item = db.insert(item);
-        db.close();
+        if( item.hasNotification()){
+            NotificationsWorker.setNotification(item, context);
+        }
+        if (item.hasPeriod()){
+            return insertRepeat(item, context);
+        }else {
+            try (LocalDB db = new LocalDB(context)) {
+                item = db.insert(item);
+            }
+        }
         return item;
     }
 
@@ -150,9 +159,22 @@ public class ItemsWorker {
             setHasChild(parent, true, context);
         }
         child.setParentId(parent.getID());
+        if(child.hasPeriod()){
+            return insertRepeat(child, context);
+        }
         try (LocalDB db = new LocalDB(context)) {
             return db.insert(child);
         }
+    }
+
+    /**
+     * @param template, the template to use for creating instances
+     * @param context, context
+     * @return, the saved item with id
+     */
+    public static Item insertRepeat(Item template, Context context){
+        log("ItemsWorker.insertRepeat(Item, Context)", template.getHeading());
+        return RepeatWorker.insertItemWithRepeat(template, context);
     }
 
     /**
@@ -430,7 +452,7 @@ public class ItemsWorker {
     }
 
     public static List<Item> selectItems(LocalDate date, Context context) {
-        log("ItemsWorker.selectItems(LocalDate, Context");
+        if( VERBOSE )log("ItemsWorker.selectItems(LocalDate, Context)");
         String queery = Queeries.selectItems(date);
         List<Item> items;
         try(LocalDB db = new LocalDB(context)){

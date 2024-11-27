@@ -124,7 +124,6 @@ public class Queeries {
                 parent != null ? parent.getID() : 0, Type.TEMPLATE_CHILD.ordinal());
     }
 
-
     public static String selectItems(State state) {
         if (VERBOSE) log("Queeries.selectItems(State)", state.toString());
         return String.format(Locale.getDefault(), "SELECT * FROM items WHERE state = %d  AND type != %d AND hasChild = 0 ORDER BY targetDate DESC", state.ordinal(), Type.ROOT.ordinal());
@@ -296,8 +295,8 @@ public class Queeries {
     }
 
     public static String selectTemplateChildren(Item parent) {
-        return String.format(Locale.getDefault(), "SELECT * FROM item WHERE parentId = %d AND type = %d ORDER BY updated DESC",
-                parent.getID(), Type.TEMPLATE_CHILD);
+        return String.format(Locale.getDefault(), "SELECT * FROM items WHERE parentId = %d AND type = %d ORDER BY updated DESC",
+                parent.getID(), Type.TEMPLATE_CHILD.ordinal());
     }
 
     public static String updateMessage(Message message) {

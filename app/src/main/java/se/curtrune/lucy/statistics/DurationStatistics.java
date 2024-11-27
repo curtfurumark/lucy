@@ -22,7 +22,6 @@ public class DurationStatistics {
     private LocalDate firstDate;
     private LocalDate lastDate;
     private List<Item> items;
-    private List<Mental> mentals;
     private List<Listable> categoryListables = new ArrayList<>();
     private List<Listable> dateListables = new ArrayList<>();
     public static boolean VERBOSE = false;
@@ -36,12 +35,11 @@ public class DurationStatistics {
         createDateListables();
     }
     private void createCategoryListables(Context context){
-        log("createCategoryListables(Context))");
+        log("DurationStatistics.createCategoryListables(Context))");
         String[] categories = User.getCategories(context);
         for(String category : categories){
             List<Item> categoryItems = items.stream().filter(item->item.isCategory(category)).collect(Collectors.toList());
-            List<Mental> categoryMentals = mentals.stream().filter(mental->mental.isCategory(category)).collect(Collectors.toList());
-            categoryListables.add(new CategoryListable(category, categoryItems, categoryMentals));
+            categoryListables.add(new CategoryListable(category, categoryItems));
         }
     }
     private void createDateListables(){
@@ -67,15 +65,14 @@ public class DurationStatistics {
     }
     private void init(LocalDate firstDate, LocalDate lastDate, Context context){
         log("DurationStatistics.init(LocalDate,LocalDate, Context");
-        LocalDB db = new LocalDB(context);
-        String queery = Queeries.selectItems(firstDate, lastDate, State.DONE);
-        items =  db.selectItems(queery);
-        if( VERBOSE) {
-            log("...items on parade");
-            items.forEach(Logger::log);
+        try(LocalDB db = new LocalDB(context)) {
+            String queery = Queeries.selectItems(firstDate, lastDate, State.DONE);
+            items = db.selectItems(queery);
+            if (VERBOSE) {
+                log("...items on parade");
+                items.forEach(Logger::log);
+            }
         }
-        queery = Queeries.selectMentals(firstDate, lastDate, false, true);
-        mentals = db.selectMentals(queery);
     }
 
     public long getTotalDuration() {

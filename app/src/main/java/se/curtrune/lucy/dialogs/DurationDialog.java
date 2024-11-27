@@ -25,6 +25,7 @@ public class DurationDialog extends BottomSheetDialogFragment {
     private EditText editTextMinutes;
     private EditText editTextSeconds;
     private Button buttonSave;
+    private Duration duration;
     private Button buttonDismiss;
     public static boolean VERBOSE = false;
 
@@ -36,9 +37,10 @@ public class DurationDialog extends BottomSheetDialogFragment {
     private enum Mode{
         CREATE, EDIT
     }
-    public DurationDialog(){
-
-        if( VERBOSE) log("DurationDialog constructor");
+    public DurationDialog(Duration duration, Callback callback){
+        if( VERBOSE) log("DurationDialog(Duration, Callback)");
+        this.duration = duration;
+        this.listener = callback;
     }
 
 
@@ -49,6 +51,7 @@ public class DurationDialog extends BottomSheetDialogFragment {
         View view = inflater.inflate(R.layout.duration_dialog, container, false);
         initComponents(view);
         initListeners();
+        initUserInterface();
         return view;
     }
     private Duration getDuration(){
@@ -79,6 +82,12 @@ public class DurationDialog extends BottomSheetDialogFragment {
             dismiss();
         });
         buttonDismiss.setOnClickListener(view->dismiss());
+    }
+    private void initUserInterface(){
+        log("initUserInterface()");
+        editTextHours.setText(String.valueOf(duration.getSeconds()% 3600));
+        editTextMinutes.setText(String.valueOf(duration.getSeconds() % 3600 ));
+        editTextSeconds.setText(String.valueOf(duration.getSeconds() % 3600));
     }
     @Override
     public void onAttach(@NonNull Context context) {

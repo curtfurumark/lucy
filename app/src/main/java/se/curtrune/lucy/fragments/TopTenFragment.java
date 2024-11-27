@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -57,9 +58,10 @@ public class TopTenFragment extends Fragment implements TopTenAdapter.Callback {
         initComponents(view);
         initListeners();
         initRecycler();
-        List<Mental> mentals = TopTenStatistics.getItems(getContext());
+        Toast.makeText(getContext(), "not implemented", Toast.LENGTH_LONG).show();
+/*        List<Mental> mentals = TopTenStatistics.getItems(getContext());
         mentals.forEach(Logger::log);
-        show(Mode.ENERGY);
+        show(Mode.ENERGY);*/
         return view;
     }
     private void initComponents(View view){

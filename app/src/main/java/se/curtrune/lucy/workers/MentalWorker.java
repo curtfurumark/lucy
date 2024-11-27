@@ -20,49 +20,14 @@ import se.curtrune.lucy.persist.Queeries;
 
 public class MentalWorker {
     public static boolean VERBOSE = false;
-/*    @Deprecated
-    public static MentalStats getMentalStats(List<Item> items, Context  context) {
-        log("MentalStats.getMentalStats(List<Item>, Context)");
-        MentalStats mentalEstimate = new MentalStats();
-        for( Item item: items){
-            if(item.isTemplate()){
-                log("item isTemplate, TODO: something intelligent");
-            }
-*//*            Mental mental = MentalWorker.getMental(item, context);
-            mentalEstimate.add(mental);
-            mentalEstimate.plusEnergy(mental.getEnergy());
-            mentalEstimate.plusAnxiety(mental.getAnxiety());
-            mentalEstimate.plusStress(mental.getStress());
-            mentalEstimate.plusMood(mental.getMood());*//*
-        }
-        return mentalEstimate;
-    }*/
-    @Deprecated
-    public static List<Mental> getMentals(List<Item> items){
-        log("...getMentals(List<Item>)");
-        List<Mental> mentalList = new ArrayList<>();
-       for( Item item: items){
-            Mental mental = item.getMental();
-            assert  mental != null;
-            mentalList.add(mental);
-        }
-        return mentalList;
-    }
 
-/*    @Deprecated
-    public static List<Mental> select(LocalDate firstDate, LocalDate lastDate, Context context) {
-        if( VERBOSE) log("MentalWorker.select(LocalDate, LocalDate, Context");
-        String query = String.format(Locale.getDefault(), "SELECT * FROM mental WHERE date >= %d AND date <= %d", firstDate.toEpochDay(), lastDate.toEpochDay());
-        try(LocalDB db = new LocalDB(context)){
-            return db.selectMentals(query);
-        }
-    }*/
 
     @Deprecated
     public static List<Mental> selectTopTen(TopTenFragment.Mode mode, Context context) {
         LocalDB db = new LocalDB(context);
         String query = Queeries.selectMentalTopTen(mode);
-        return db.selectMentals(query);
+        //return db.selectMentals(query);
+        return null;
     }
 
     @Deprecated
@@ -70,7 +35,8 @@ public class MentalWorker {
         if( VERBOSE) log("...getLatestMentals(int, Context) limit", limit );
         LocalDB db = new LocalDB(context);
         String query = Queeries.selectLatestMentals(limit);
-        return db.selectMentals(query);
+        //return db.selectMentals(query);
+        return null;
     }
 
     @Deprecated
@@ -78,7 +44,8 @@ public class MentalWorker {
         if( VERBOSE) log("MentalWorker.getMentals(LocalDate,boolean, boolean)", date.toString());
         String queery = Queeries.selectMentals(date, false, true);
         LocalDB db = new LocalDB(context);
-        return db.selectMentals(queery);
+        //return db.selectMentals(queery);
+        return null;
     }
     public static DataPoint[] getMentalsAsDataPoints(LocalDate date, Context context){
         log("MentalWorker.getMentalAdDataPoints(LocalDate, Context)", date.toString());

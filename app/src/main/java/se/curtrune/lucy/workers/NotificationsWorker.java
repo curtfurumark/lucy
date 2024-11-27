@@ -2,9 +2,12 @@ package se.curtrune.lucy.workers;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -12,11 +15,20 @@ import java.util.List;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Notification;
+import se.curtrune.lucy.notifications.AlarmReceiver;
 import se.curtrune.lucy.notifications.EasyAlarm;
 
 public class NotificationsWorker {
     public static final String CHANNEL_ONE = "CHANNEL_ONE";
     private static final String CHANNEL_ONE_NAME = "lucinda notifications";
+    public static void cancelNotification(Item item, Context context){
+        log("...cancelNotification(Item, Context)", item.getHeading());
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, (int) item.getID(), intent, PendingIntent.FLAG_MUTABLE);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
+
+    }
 
     public static void createNotificationChannel(Context context){
         log("NotificationsWorker.createNotificationChannel(Context)");

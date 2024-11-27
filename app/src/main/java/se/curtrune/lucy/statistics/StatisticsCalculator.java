@@ -18,7 +18,7 @@ public class StatisticsCalculator {
         List<Mental> mentals = new ArrayList<>();
         for( Item item: items){
             String queery = Queeries.selectMental(item);
-            mentals.add( db.selectMental(queery));
+            //mentals.add( db.selectMental(queery));
         }
         return mentals.stream().mapToInt(Mental::getAnxiety).sum();
     }

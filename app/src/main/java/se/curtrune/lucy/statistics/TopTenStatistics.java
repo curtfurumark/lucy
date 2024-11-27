@@ -11,10 +11,10 @@ import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
 
 public class TopTenStatistics {
-    public static List<Mental> getItems(Context context) {
+/*    public static List<Mental> getItems(Context context) {
         log("...getMentalList()");
         String query = Queeries.selectTopTen();
         LocalDB db = new LocalDB(context);
-        return db.selectMentals(query);
-    }
+        //return db.selectMentals(query);
+    }*/
 }

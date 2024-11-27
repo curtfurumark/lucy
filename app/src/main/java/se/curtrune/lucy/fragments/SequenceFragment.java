@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
+import java.time.Duration;
 import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
@@ -229,8 +230,7 @@ public class SequenceFragment extends Fragment implements SequenceAdapter.Callba
     @Override
     public void onEditDuration(Item item) {
         log("...onEditDuration(Item)");
-        DurationDialog dialog = new DurationDialog();
-        dialog.setCallback(duration -> {
+        DurationDialog dialog = new DurationDialog(Duration.ofSeconds(0), duration->{
             log("...onDurationDialog(Duration)");
             item.setDuration(duration.getSeconds());
             ItemsWorker.update(item, getContext());

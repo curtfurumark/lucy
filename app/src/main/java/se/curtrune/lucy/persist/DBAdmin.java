@@ -5,13 +5,16 @@ import static se.curtrune.lucy.util.Logger.log;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
 import java.io.File;
+import java.util.List;
 
 import se.curtrune.lucy.activities.economy.classes.Asset;
 import se.curtrune.lucy.activities.economy.classes.Transaction;
+import se.curtrune.lucy.activities.economy.persist.ECDBAdmin;
 import se.curtrune.lucy.activities.economy.persist.EcQueeries;
 import se.curtrune.lucy.app.App;
 import se.curtrune.lucy.app.Settings;
@@ -79,13 +82,23 @@ public class DBAdmin {
             db.executeSQL(queery);
         }
     }
-
-
+    public static void createEconomyTables(Context context) {
+        log("...createEconomyTables()");
+        ECDBAdmin.createEconomyTables(context);
+        //Toast.makeText(this, "tables created, possibly", Toast.LENGTH_LONG).show();
+        DBAdmin.listTables(context);
+    }
 
     public File getDataBaseFile(){
         log("...getDataBaseFile()");
 
         return null;
+    }
+    public static  void createItemsTable(Context context) {
+        log("DBAdmin.createItemsTable()");
+        try(LocalDB db = new LocalDB(context)) {
+            db.executeSQL(Queeries.CREATE_TABLE_ITEMS);
+        }
     }
     public static void createRepeatTable(Context context){
         log("...createRepeatTable");
@@ -97,6 +110,12 @@ public class DBAdmin {
     public static void dropTableItems(Context context) {
         try(LocalDB db = new LocalDB(context)) {
             db.executeSQL(Queeries.DROP_TABLE_ITEMS);
+        }
+    }
+    public static  void dropTableMental(Context context) {
+        log("DBAdmin.dropTableMental(Context)");
+        try(LocalDB db = new LocalDB(context)){
+            db.executeSQL(Queeries.DROP_TABLE_MENTAL);
         }
     }
     public static void dropTableRepeat(Context context){
@@ -144,7 +163,7 @@ public class DBAdmin {
             item.setRepeat(repeat);
         }
         Notification notification = gson.fromJson(cursor.getString(17), Notification.class);
-        //item.setNotification(cursor.getString(17));
+        item.setNotification(notification);
         item.setIsTemplate(cursor.getInt(18) != 0);
         //item.setMentalJson(cursor.getString(19));
         item.setContent(cursor.getString(19));
@@ -314,6 +333,12 @@ public class DBAdmin {
         log("DBAdmin.listTables()");
         try(LocalDB db = new LocalDB(context)) {
             db.getTableNames().forEach(System.out::println);
+        }
+    }
+    public static List<String> getTableNames(Context context){
+        log("DBAdmin.listTables()");
+        try(LocalDB db = new LocalDB(context)) {
+            return db.getTableNames();
         }
     }
 

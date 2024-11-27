@@ -33,11 +33,7 @@ import se.curtrune.lucy.statistics.DurationStatistics;
 import se.curtrune.lucy.util.Converter;
 import se.curtrune.lucy.viewmodel.DurationViewModel;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link DurationFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class DurationFragment extends Fragment implements ListableAdapter.Callback{
 
     private TextView textViewFirstDate;
@@ -51,35 +47,13 @@ public class DurationFragment extends Fragment implements ListableAdapter.Callba
 
     private LocalDate firstDate;
     private LocalDate lastDate;
-    private DurationStatistics statistics;
+    private DurationStatistics durationStatistics;
     private DurationViewModel durationViewModel;
     private List<Listable> listables = new ArrayList<>();
 
     public DurationFragment() {
         log("DurationFragment()");
         // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-
-     * @return A new instance of fragment DurationFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static DurationFragment newInstance() {
-        return  new DurationFragment();
-
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        log("...onCreate(Bundle)");
-        if (getArguments() != null) {
-            log("...getArguments.onCreate(Bundle)");
-        }
     }
 
     @Override
@@ -96,12 +70,7 @@ public class DurationFragment extends Fragment implements ListableAdapter.Callba
         //filter("vila");
         return view;
     }
-    private void filter(String str){
-        log("DurationFragment.filter(String)", str);
-        statistics.getItems().stream().filter(item -> item.contains(str)).forEach(System.out::println);
-        long duration = statistics.getItems().stream().filter(item -> item.contains(str)).mapToLong(Item::getDuration).sum();
-        log("duration vila", Converter.formatSecondsWithHours(duration));
-    }
+
     private void initComponents(View view){
         log("initComponents()");
         textViewFirstDate = view.findViewById(R.id.durationFragment_firstDate);
@@ -122,7 +91,6 @@ public class DurationFragment extends Fragment implements ListableAdapter.Callba
         log("...initDefaults()");
         lastDate = LocalDate.now();
         firstDate = lastDate.minusDays(6);
-        statistics = new DurationStatistics(firstDate, lastDate, getContext());
     }
     private void initRecycler(){
         log("...initRecycler()");
@@ -136,6 +104,8 @@ public class DurationFragment extends Fragment implements ListableAdapter.Callba
         log("...initViewModel()");
         durationViewModel = new ViewModelProvider(requireActivity()).get(DurationViewModel.class);
         durationViewModel.set(firstDate, lastDate, getContext());
+        durationStatistics = durationViewModel.getDurationStatistics();
+
     }
     @Override
     public void onItemClick(Listable item) {
@@ -161,14 +131,14 @@ public class DurationFragment extends Fragment implements ListableAdapter.Callba
         textViewFirstDate.setText(firstDate.toString());
         textViewLastDate.setText(lastDate.toString());
         buttonCategory.setChecked(true);
-        textViewTotalDuration.setText(Converter.formatSecondsWithHours(statistics.getTotalDuration()));
-        listables = statistics.getCategoryListables();
+        textViewTotalDuration.setText(Converter.formatSecondsWithHours(durationStatistics.getTotalDuration()));
+        listables = durationStatistics.getCategoryListables();
         adapter.setList(listables);
     }
     private void showCategory(){
         log("...showCategory()");
-        durationViewModel.getDurationByCategory();
-        List<Listable> list = statistics.getCategoryListables();
+        List<Listable> list = durationViewModel.getDurationByCategory();
+        //List<Listable> list = statistics.getCategoryListables();
         list.sort(Comparator.comparingLong(Listable::compare));
         adapter.setList(list);
     }
@@ -203,7 +173,7 @@ public class DurationFragment extends Fragment implements ListableAdapter.Callba
 
     private void updateStatistics(){
         log("...updateStatistics()");
-        statistics = new DurationStatistics(firstDate, lastDate, getContext());
+        durationViewModel.set(firstDate, lastDate, getContext());
         setUserInterface();
         //filter("vila");
 

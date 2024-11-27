@@ -29,6 +29,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 
 import se.curtrune.lucy.R;
@@ -37,14 +38,16 @@ import se.curtrune.lucy.adapters.CalenderDateAdapter;
 import se.curtrune.lucy.adapters.MentalAdapter;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.ItemStatistics;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.calender.CalenderDate;
 import se.curtrune.lucy.classes.calender.OnSwipeClickListener;
 import se.curtrune.lucy.classes.calender.Week;
 import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.dialogs.ChooseChildTypeDialog;
+import se.curtrune.lucy.dialogs.ItemStatisticsDialog;
 import se.curtrune.lucy.dialogs.PostponeDialog;
-import se.curtrune.lucy.dialogs.UpdateChildrenDialog;
+import se.curtrune.lucy.dialogs.ChooseActionDialog;
 import se.curtrune.lucy.viewmodel.CalendarDateViewModel;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.CalenderWorker;
@@ -71,9 +74,7 @@ public class CalenderDateFragment extends Fragment {
     public CalenderDateFragment() {
         currentDate = LocalDate.now();
     }
-    public CalenderDateFragment(LocalDate date){
-        this.currentDate = date;
-    }
+
     private enum Mode{
         DEFAULT, CALENDAR_DATE
     }
@@ -162,29 +163,36 @@ public class CalenderDateFragment extends Fragment {
             @Override
             public void onItemClick(Item item) {
                 if(VERBOSE)log("...onItemClick(Item)", item.getHeading());
-                UpdateChildrenDialog dialog = new UpdateChildrenDialog(action -> {
-                    log("...onClick(Action), add child", action.toString());
-                    switch (action){
-                        case EDIT:
-                            loadFragment(new ItemSessionFragment(item));
-                            break;
-                        case SET_GENERATED:
-                            log("set children generated");
-                            break;
-                        case SHOW_CHILDREN:
-                            calendarDateViewModel.setParent(item, getContext());
-                            break;
-                        case SHOW_GENERATED:
-                            calendarDateViewModel.selectGenerated(item, getContext());
-                            break;
-                    }
-                });
-                dialog.show(getChildFragmentManager(), "update children");
+                if( item.hasChild()){
+                    calendarDateViewModel.setParent(item, getContext());
+                }else{
+                    lucindaViewModel.updateFragment(new ItemSessionFragment(item));
+                }
             }
 
             @Override
             public void onLongClick(Item item) {
                 log("...onLongClick(Item)", item.getHeading());
+                //showChooseActionDialog();
+                //showItemStatisticsDialog(item);
+                ChooseActionDialog dialog = new ChooseActionDialog(item, action -> {
+                    log("...onClick(Action), add child", action.toString());
+                    switch (action){
+                        case EDIT:
+                            loadFragment(new ItemSessionFragment(item));
+                            break;
+                        case START_TIMER:
+                            Toast.makeText(getContext(), "not implemented", Toast.LENGTH_LONG).show();
+                            break;
+                        case SHOW_CHILDREN:
+                            calendarDateViewModel.setParent(item, getContext());
+                            break;
+                        case SHOW_STATS:
+                            showItemStatisticsDialog(item);
+                            break;
+                    }
+                });
+                dialog.show(getChildFragmentManager(), "update children");
             }
 
             @Override
@@ -359,6 +367,7 @@ public class CalenderDateFragment extends Fragment {
 
             }
         });
+        dialog.show(getChildFragmentManager(), "add child");
     }
     private void showAddItemDialog(){
         log("...showAddItemDialog()");
@@ -407,6 +416,18 @@ public class CalenderDateFragment extends Fragment {
         });
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+    private void showItemStatisticsDialog(Item item){
+        log("...showItemStatisticsDialog()");
+        if( !item.isTemplate()){
+            Toast.makeText(getContext(), "not a template", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        List<Item> items = ItemsWorker.selectTemplateChildren(item, getContext());
+        ItemStatistics statistics = new ItemStatistics(items);
+        ItemStatisticsDialog dialog = new ItemStatisticsDialog(statistics);
+        log(statistics);
+
     }
     private void showPostponeDialog(Item item){
         log("showPostponeDialog(Item)");

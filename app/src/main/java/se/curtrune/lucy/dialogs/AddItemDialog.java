@@ -27,6 +27,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.skydoves.colorpickerview.ColorPickerDialog;
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Action;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
+import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.item_settings.ItemSetting;
 import se.curtrune.lucy.item_settings.ItemSettingAdapter;
@@ -383,15 +385,16 @@ public class AddItemDialog extends BottomSheetDialogFragment {
     }
     public void showDurationDialog(){
         log("...showDurationDialog()");
-        DurationDialog dialog = new DurationDialog();
-        dialog.setCallback(duration -> {
-            log("...onDurationDialog(Duration)", duration.getSeconds());
-            newItem.setEstimatedDuration(duration.getSeconds());
-            currentItemSetting.setValue(Converter.formatSecondsWithHours(duration.getSeconds()));
-            itemSettingAdapter.notifyDataSetChanged();
+        DurationDialog dialog = new DurationDialog(Duration.ofSeconds(0), new DurationDialog.Callback() {
+            @Override
+            public void onDurationDialog(Duration duration) {
+                log("...onDurationDialog(Duration)", duration.getSeconds());
+                newItem.setEstimatedDuration(duration.getSeconds());
+                currentItemSetting.setValue(Converter.formatSecondsWithHours(duration.getSeconds()));
+                itemSettingAdapter.notifyDataSetChanged();
+            }
         });
         dialog.show(getChildFragmentManager(), "duration");
-
     }
 
     /**
@@ -412,13 +415,28 @@ public class AddItemDialog extends BottomSheetDialogFragment {
     private void showNotificationDialog(){
         if( VERBOSE) log("...showNotificationDialog()");
         NotificationDialog dialog = new NotificationDialog(parent);
-        dialog.setListener(notification -> {
-            log("...onNotification(Notification)", notification.toString());
-            currentItemSetting.setValue(notification.toString());
-            newItem.setNotification(notification);
-            itemSettingAdapter.notifyDataSetChanged();
+        dialog.setListener(new NotificationDialog.Callback() {
+            @Override
+            public void onNotification(Notification notification, NotificationDialog.Action action) {
+                log("...onNotification(Notification, Action )", notification.toString());
+                switch (action){
+                    case INSERT:
+                        currentItemSetting.setValue(notification.toString());
+                        newItem.setNotification(notification);
+                        itemSettingAdapter.notifyDataSetChanged();
+                        break;
+                    case DELETE:
+                        Toast.makeText(getContext(), "delete not implemented", Toast.LENGTH_LONG).show();
+                        break;
+                    case EDIT:
+                        Toast.makeText(getContext(), "edit not implemented", Toast.LENGTH_LONG).show();
+                        break;
+
+                }
+
+            }
         });
-        dialog.show(getChildFragmentManager(), "notification ");
+        dialog.show(getChildFragmentManager(), "notification/alarm ");
 
     }
     private void showRepeatDialog(){

@@ -10,6 +10,8 @@ import android.os.Build;
 
 import androidx.lifecycle.ViewModel;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,8 +60,11 @@ public class DevActivityViewModel extends ViewModel {
             //String version = pInfo.versionName;
             log("...versionName", pInfo.versionName);
             lucindaInfoList.add(createLucindaInfo("versionName", pInfo.versionName));
-            lucindaInfoList.add(createLucindaInfo("first installed", Converter.epochToDate(pInfo.firstInstallTime).toString()));
-            lucindaInfoList.add(createLucindaInfo("last updated", Converter.epochToDate(pInfo.lastUpdateTime).toString()));
+
+            LocalDateTime installDateTime = LocalDateTime.ofEpochSecond(pInfo.firstInstallTime /1000 , 0, ZoneOffset.UTC);
+            lucindaInfoList.add(createLucindaInfo("first installed", installDateTime.toString()));
+            LocalDateTime updateDateTime = LocalDateTime.ofEpochSecond(pInfo.lastUpdateTime / 1000, 0, ZoneOffset.UTC);
+            lucindaInfoList.add(createLucindaInfo("last updated", updateDateTime.toString()));
             lucindaInfoList.add(createLucindaInfo("versionCode", pInfo.versionCode));
             log("...packageName", pInfo.packageName);
             lucindaInfoList.add(createLucindaInfo("packageName", pInfo.packageName));
@@ -67,6 +72,10 @@ public class DevActivityViewModel extends ViewModel {
             log("...dataDir", applicationInfo.dataDir);
             lucindaInfoList.add(createLucindaInfo("dataDir", applicationInfo.dataDir));
         } catch (PackageManager.NameNotFoundException e) {
+            log("NameNotFoundException", e.getMessage());
+            e.printStackTrace();
+        }catch (Exception e){
+            log("Exception e", e.getMessage());
             e.printStackTrace();
         }
     }

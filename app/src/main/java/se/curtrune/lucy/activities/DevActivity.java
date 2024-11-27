@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -28,35 +29,33 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Locale;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.activities.economy.EconomyActivity;
-import se.curtrune.lucy.activities.economy.persist.ECDBAdmin;
 import se.curtrune.lucy.adapters.DevActivityAdapter;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.app.User;
+import se.curtrune.lucy.dev.AlarmTest;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Media;
 import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.classes.Repeat;
-import se.curtrune.lucy.dev.RepeatTest;
+import se.curtrune.lucy.dev.NotificationTest;
 import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.dialogs.RepeatDialog;
 import se.curtrune.lucy.persist.DBAdmin;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
-import se.curtrune.lucy.util.Logger;
+import se.curtrune.lucy.util.Converter;
 import se.curtrune.lucy.viewmodel.DevActivityViewModel;
 import se.curtrune.lucy.viewmodel.UpdateLucindaViewModel;
 import se.curtrune.lucy.web.VersionInfo;
 import se.curtrune.lucy.workers.ItemsWorker;
 import se.curtrune.lucy.workers.NotificationsWorker;
 import se.curtrune.lucy.workers.RepeatWorker;
-import se.curtrune.lucy.workers.SettingsWorker;
 
 public class DevActivity extends AppCompatActivity {
     private TextView textViewSwipeAble;
@@ -68,6 +67,7 @@ public class DevActivity extends AppCompatActivity {
     private DevActivityAdapter adapter;
     private DevActivityViewModel devActivityViewModel;
     private RecyclerView recyclerView;
+    private boolean alarmRinging = false;
 
     private Lucinda lucinda;
     public static boolean VERBOSE = false;
@@ -86,8 +86,8 @@ public class DevActivity extends AppCompatActivity {
         initRecycler();
         //addMentalToItemTable();
         setUserInterface();
-        listTables();
-        listColumns();
+        //listTables();
+        //listColumns();
         //openDB();
     }
 
@@ -114,12 +114,7 @@ public class DevActivity extends AppCompatActivity {
         });
     }
 
-    private void createEconomyTables() {
-        log("...createEconomyTables()");
-        ECDBAdmin.createEconomyTables(this);
-        Toast.makeText(this, "tables created, possibly", Toast.LENGTH_LONG).show();
-        DBAdmin.listTables(this);
-    }
+
 
     private void executeSQL(){
         log("...executeSQL()");
@@ -182,6 +177,9 @@ public class DevActivity extends AppCompatActivity {
             log("...versionName", pInfo.versionName);
             log("...versionCode", pInfo.versionCode);
             log("...packageName", pInfo.packageName);
+            long firstInstallTime = pInfo.firstInstallTime ;
+            log("firstInstallTime", firstInstallTime);
+            log("converted install time", Converter.epochToDate(firstInstallTime/1000));
             ApplicationInfo applicationInfo = pInfo.applicationInfo;
             log("...dataDir", applicationInfo.dataDir);
         } catch (PackageManager.NameNotFoundException e) {
@@ -195,14 +193,7 @@ public class DevActivity extends AppCompatActivity {
 
     private void listTables() {
         log("...listTables()");
-        try(LocalDB db = new LocalDB(this)) {
-            List<String> tables = db.getTableNames();
-            for(String tableName: tables){
-                log("***************************************");
-                log("tableName", tableName);
-                db.getColumns(tableName);
-            }
-        }
+        DBAdmin.getTableNames(this).forEach(System.out::println);
     }
 
     @Override
@@ -216,17 +207,17 @@ public class DevActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.homeActivity_openDB) {
             openDB();
         } else if (item.getItemId() == R.id.homeActivity_createTableItems) {
-            createItemsTable();
+            DBAdmin.createItemsTable(this);
         } else if (item.getItemId() == R.id.homeActivity_dropTableItems) {
-            deleteItemsTable();
+            DBAdmin.dropTableItems(this);
         } else if (item.getItemId() == R.id.homeActivity_listTables) {
             listTables();
         } else if (item.getItemId() == R.id.homeActivity_dropTableMental) {
-            dropTableMental();
+            DBAdmin.dropTableMental(this);
         } else if (item.getItemId() == R.id.homeActivity_resetApp) {
             resetApp();
         } else if (item.getItemId() == R.id.homeActivity_createEconomyTables) {
-            createEconomyTables();
+            DBAdmin.createEconomyTables(this);
         }else if (item.getItemId() == R.id.devActivity_testNotification){
             testNotification();
         }else if( item.getItemId() == R.id.homeActivity_logInActivity){
@@ -251,24 +242,6 @@ public class DevActivity extends AppCompatActivity {
         db.open();
     }
 
-    private void deleteItemsTable() {
-        log("...deleteItemsTable()");
-        DBAdmin.dropTableItems(this);
-    }
-
-    private void createItemsTable() {
-        log("...createItemsTable()");
-        try(LocalDB db = new LocalDB(this)) {
-            db.executeSQL(Queeries.CREATE_TABLE_ITEMS);
-        }
-    }
-
-    private void dropTableMental() {
-        log("...dropTableMental()");
-        try(LocalDB db = new LocalDB(this)){
-            db.executeSQL(Queeries.DROP_TABLE_MENTAL);
-        }
-    }
 
     private void resetApp() {
         log("...resetApp()");
@@ -319,7 +292,32 @@ public class DevActivity extends AppCompatActivity {
         //Item item = ItemsWorker.selectItem(4244, this);
         //log("...item", item.getHeading());
         //deleteTree(item)
-        showAddItemDialog();
+/*        if( alarmRinging){
+            AlarmTest.stopAlarm();
+            alarmRinging = false;
+            buttonRunCode.setText("start alarm");
+        }else {
+            alarmRinging = true;
+            buttonRunCode.setText("stop alarm");
+            AlarmTest.soundAlarm(this);
+        }*/
+        if( NotificationTest.notificationSet){
+            log("will cancel alarm");
+            NotificationTest.cancelAlarm(NotificationTest.notificationItem.getID(), this);
+        }else {
+            LocalDateTime dateTime = LocalDateTime.now().plusMinutes(10);
+            String heading = String.format(Locale.getDefault(), "notification %s", dateTime.toString());
+            NotificationTest.setNotification(heading, "hello content", dateTime, this);
+            buttonRunCode.setText("cancel alarm");
+        }
+/*        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.SET_ALARM) == PackageManager.PERMISSION_GRANTED){
+            log("...got myself permission to set alarm, yeah");
+            AlarmTest.setAlarmUsingIntent(this, 16, 40);
+        }else{
+            Toast.makeText(this, "need to ask permission to set alarm", Toast.LENGTH_LONG).show();
+        }*/
+
+        //showAddItemDialog();
     }
 
     private void printTableNames(){
@@ -339,25 +337,7 @@ public class DevActivity extends AppCompatActivity {
     }
     private void setUserInterface(){
         log("...setUserInterface()");
-        try {
-            //checkBoxDev.setChecked(User);
-            PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-            ApplicationInfo applicationInfo = pInfo.applicationInfo;
-            //applicationInfo.
-
-            long firstInstallTime = pInfo.firstInstallTime;
-            LocalDateTime installTime = LocalDateTime.ofEpochSecond(firstInstallTime /1000 , 0, ZoneOffset.UTC);
-            String stringFirstInstalled = String.format(Locale.getDefault(), "FIRST INSTALLED: %s", installTime.toString());
-            //textViewFirstInstalled.setText(stringFirstInstalled);
-
-            LocalDateTime updated = LocalDateTime.ofEpochSecond(pInfo.lastUpdateTime /1000, 0, ZoneOffset.UTC);
-            String stringUpdated = String.format(Locale.getDefault(), "UPDATED: %s",updated.toString());
-            //textViewUpdated.setText(stringUpdated);
-            checkBoxDev.setChecked(User.isDevMode(this));
-
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
+        checkBoxDev.setChecked(User.isDevMode(this));
     }
     private void showAddItemDialog(){
         log("...showAddItemDialog()");

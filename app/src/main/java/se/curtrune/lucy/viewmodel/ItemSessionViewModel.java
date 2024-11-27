@@ -16,31 +16,64 @@ import java.util.List;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
+import se.curtrune.lucy.classes.Notification;
+import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.item_settings.CheckBoxSetting;
 import se.curtrune.lucy.item_settings.ItemSetting;
 import se.curtrune.lucy.item_settings.KeyValueSetting;
+import se.curtrune.lucy.util.Converter;
+import se.curtrune.lucy.util.Kronos;
 import se.curtrune.lucy.workers.ItemsWorker;
+import se.curtrune.lucy.workers.NotificationsWorker;
 
 public class ItemSessionViewModel extends ViewModel {
     private MutableLiveData<Item> mutableItem;
     private ItemSetting currentItemSetting;
-    private MutableLiveData<String> mutableError = new MutableLiveData<>();
-    private MutableLiveData<Item> mutableCurrentItem = new MutableLiveData<>();
+    private final MutableLiveData<Kronos.State> mutableTimerState = new MutableLiveData<>();
+    private final MutableLiveData<Long> mutableDuration = new MutableLiveData<>();
+    private final MutableLiveData<String> mutableError = new MutableLiveData<>();
+    private final MutableLiveData<Item> mutableCurrentItem = new MutableLiveData<>();
     private static final int MENTAL_OFFSET = 5;
+    public static boolean VERBOSE = false;
     private Item currentItem;
+    private Item currentTimerItem;
+    private Kronos kronos;
     public void addTags(String tags, Context context) {
         currentItem.setTags(tags);
         update(currentItem, context);
     }
-    public void init(Item item){
+    public void cancelNotification(Context context) {
+        log("ItemSessionViewModel.cancelNotification(Context)");
+        NotificationsWorker.cancelNotification(currentItem, context);
+        currentItem.setNotification(null);
+        update(currentItem, context);
+    }
+    public void cancelTimer(){
+        log("ItemSessionViewModel.cancelTimer()");
+        if( kronos == null){
+            return;
+        }
+        kronos.reset();
+        mutableDuration.setValue(0L);
+        mutableTimerState.setValue(Kronos.State.STOPPED);
+    }
+    public void init(Item item, Context context){
         log("ItemSessionViewModel.init(Item)");
         assert  item != null;
         this.currentItem = item;
+        if(currentItem.getRepeatID() > 0){
+            Repeat repeat = ItemsWorker.selectRepeat(currentItem.getRepeatID(), context);
+            currentItem.setRepeat( repeat);
+        }
         this.mutableCurrentItem.setValue(currentItem);
+        this.mutableDuration.setValue(currentItem.getDuration());
 
     }
     public LiveData<Item> getCurrentItem(){
         return mutableCurrentItem;
+    }
+    public LiveData<Long> getDuration(){
+        return mutableDuration;
     }
     public LiveData<String> getError(){
         return mutableError;
@@ -71,12 +104,13 @@ public class ItemSessionViewModel extends ViewModel {
         KeyValueSetting colourSetting = new KeyValueSetting(context.getString(R.string.color), String.valueOf(item.getColor()), ItemSetting.Key.COLOR);
         CheckBoxSetting templateSetting = new CheckBoxSetting(context.getString(R.string.is_template), item.isTemplate(), ItemSetting.Key.TEMPLATE);
         CheckBoxSetting prioritizedSetting = new CheckBoxSetting( context.getString(R.string.is_prioritized), item.isPrioritized(), ItemSetting.Key.PRIORITIZED);
-  /*      String notificationValue = "";
+        KeyValueSetting durationSetting = new KeyValueSetting(context.getString(R.string.duration), Converter.formatSecondsWithHours(item.getDuration()),ItemSetting.Key.DURATION);
+        String notificationValue = "";
+
         if( item.hasNotification()){
             notificationValue = item.getNotification().toString();
-        }*/
-        //KeyValueSetting notificationSetting = new KeyValueSetting("notification", notificationValue, ItemSetting.Key.NOTIFICATION);
-        //CheckBoxSetting stateSetting = new CheckBoxSetting("done", item.isDone(), ItemSetting.Key.DONE);
+        }
+        KeyValueSetting notificationSetting = new KeyValueSetting("notification", notificationValue, ItemSetting.Key.NOTIFICATION);
         KeyValueSetting tagsSetting = new KeyValueSetting(context.getString(R.string.tags), item.getTags(), ItemSetting.Key.TAGS);
         CheckBoxSetting calenderSetting = new CheckBoxSetting(context.getString(R.string.is_calender), item.isCalenderItem(), ItemSetting.Key.IS_CALENDAR_ITEM);
         KeyValueSetting categorySetting = new KeyValueSetting(context.getString(R.string.category), item.getCategory(), ItemSetting.Key.CATEGORY);
@@ -86,13 +120,48 @@ public class ItemSessionViewModel extends ViewModel {
         settings.add(repeatSetting);
         settings.add(categorySetting);
         settings.add(calenderSetting);
-        //settings.add(notificationSetting);
+        settings.add(notificationSetting);
+        settings.add(durationSetting);
         settings.add(prioritizedSetting);
         settings.add(templateSetting);
         settings.add(tagsSetting);
-        //settings.add(stateSetting);
         settings.add(colourSetting);
         return settings;
+    }
+    public Mental getMental() {
+        log("ItemSessionViewModel.getMental()");
+        return currentItem.getMental();
+    }
+    public void pauseTimer(){
+        log("ItemSessionViewModel.pauseTimer()");
+        if( kronos == null){
+            return;
+        }
+        mutableTimerState.setValue(Kronos.State.PAUSED);
+        kronos.pause();
+    }
+    public void resumeTimer(){
+        log("ItemSessionViewModel.resumeTimer()");
+        if(kronos == null){
+            log("WARNING, trying to resume a null Timer");
+            return;
+        }
+        mutableTimerState.setValue(Kronos.State.RUNNING);
+        kronos.resume();
+    }
+    public void setElapsedDuration(long secs){
+        log("ItemSessionViewModel.setElapsedDuration(long)", secs);
+        if( kronos != null) {
+            kronos.setElapsedTime(secs);
+        }
+    }
+    public void stopTimer(){
+        log("ItemSessionViewModel.stopTimer()");
+        if( kronos == null){
+            log("WARNING, stopTimer() called with null kronos");
+        }
+
+        kronos.stop();
     }
     public boolean update(Item item, Context context){
         log("ItemSessionViewMode.update(Item)", item.getHeading());
@@ -116,13 +185,12 @@ public class ItemSessionViewModel extends ViewModel {
         log("...updateAnxiety(int)", anxiety);
         currentItem.setAnxiety(anxiety - MENTAL_OFFSET);
         update(currentItem, context);
-
     }
 
     /**
      * updates currentItems energy field and saves it
-     * @param energy 0 - 20
-     * @param context
+     * @param energy 0 - 10
+     * @param context, context context
      */
     public void updateEnergy(int  energy, Context context) {
         log("ItemSessionViewModel.updateEnergy(int)", energy);
@@ -133,7 +201,7 @@ public class ItemSessionViewModel extends ViewModel {
     /**
      *
      * @param mood 0 - 10
-     * @param context
+     * @param context, context context
      */
     public void updateMood(int mood, Context context){
         log("...updateMood()");
@@ -171,6 +239,7 @@ public class ItemSessionViewModel extends ViewModel {
     public void setDuration(Duration duration, Context context) {
         log("...setDuration(Duration, Context)");
         currentItem.setDuration(duration.getSeconds());
+        mutableDuration.setValue(duration.getSeconds());
         update(currentItem, context);
     }
 
@@ -178,9 +247,17 @@ public class ItemSessionViewModel extends ViewModel {
         //currentItem.setDone();
     }
 
-    public Mental getMental() {
-        log("ItemSessionViewModel.getMental()");
-        return currentItem.getMental();
+    public void startTimer(){
+        log("ItemSessionViewModel.startTimer()");
+        currentTimerItem = currentItem;
+        kronos = Kronos.getInstance(secs -> {
+            if(VERBOSE )log("Kronos.onTimerTick(long)", secs);
+            mutableDuration.setValue(secs);
+        });
+        mutableTimerState.setValue(Kronos.State.RUNNING);
+        kronos.setElapsedTime(currentTimerItem.getDuration());
+        kronos.start(currentTimerItem.getID());
+
     }
 
     public void setIsTemplate(boolean isTemplate, Context context) {
@@ -188,6 +265,31 @@ public class ItemSessionViewModel extends ViewModel {
         currentItem.setIsTemplate(isTemplate);
         update(currentItem, context);
     }
+    public Item getItem() {
+        log("ItemSessionViewModel.getItem()");
+        return currentItem;
+    }
+
+    public boolean itemHasRepeat() {
+        log("ItemSessionViewModel.itemHasRepeat(Context)");
+        return currentItem.getRepeatID() > 0;
+    }
+
+    public void setIsPrioritized(boolean checked, Context context) {
+        currentItem.setPriority(checked ? 1:0);
+        update(currentItem, context);
+    }
+
+    public LiveData<Kronos.State> getTimerState() {
+        log("ItemSessionViewModel.getTimerState()");
+        if(kronos == null){
+            mutableTimerState.setValue(Kronos.State.PENDING);
+        }
+        return mutableTimerState;
+    }
 
 
+    public void updateNotification(Context context) {
+        log("ItemSessionViewModel.updateNotification(Context)");
+    }
 }

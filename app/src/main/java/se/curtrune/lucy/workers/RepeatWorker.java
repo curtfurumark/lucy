@@ -10,6 +10,7 @@ import java.util.List;
 
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Repeat;
+import se.curtrune.lucy.persist.LocalDB;
 
 public class RepeatWorker {
     public static boolean VERBOSE = false;
@@ -53,24 +54,24 @@ public class RepeatWorker {
         instance.setMental(template.getMental());
         return instance;
     }
-    public static void insertItemWithRepeat(Item item, Context context){
-        log("RepeatTest.insertItemWithRepeat(Item)", item.getHeading());
-        if( !item.hasPeriod()){
-            log("ERROR, missing repeat");
-            return;
+    public static Item insertItemWithRepeat(Item template, Context context){
+        log("RepeatTest.insertItemWithRepeat(Item)", template.getHeading());
+        try(LocalDB db = new LocalDB(context)) {
+            template.setIsTemplate(true);
+            //template = ItemsWorker.insert(template, context);
+            template = db.insert(template);
+            Repeat repeat = template.getPeriod();
+            repeat.setTemplateID(template.getID());
+            repeat = ItemsWorker.insert(repeat, context);
+            template.setRepeatID(repeat.getID());
+            db.update(template);
+            List<Item> items = RepeatWorker.createInstances(template);
+            for (Item instance : items) {
+                instance.setRepeatID(repeat.getID());
+            }
+            ItemsWorker.insert(items, context);
         }
-        item.setIsTemplate(true);
-        item = ItemsWorker.insert(item, context);
-        Repeat repeat = item.getPeriod();
-        repeat.setTemplateID(item.getID());
-        repeat = ItemsWorker.insert(repeat, context);
-        item.setRepeatID(repeat.getID());
-        ItemsWorker.update(item, context);
-        List<Item> items = RepeatWorker.createInstances(item);
-        for(Item instance : items){
-            instance.setRepeatID(repeat.getID());
-        }
-        ItemsWorker.insert(items, context);
+        return template;
     }
     public static void setMaxDate(LocalDate date){
         maxDate = date;

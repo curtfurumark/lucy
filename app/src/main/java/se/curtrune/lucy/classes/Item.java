@@ -390,13 +390,13 @@ public class Item implements Serializable , Listable {
     public void setNotification(Notification notification){
         this.notification = notification;
     }
-    public void setNotification(String json){
+/*    public void setNotification(String json){
         if( json != null && json.startsWith("{")) {
             if( VERBOSE) log("...setNotification, json", json);
             notification = new Gson().fromJson(json, Notification.class);
             if( VERBOSE) log(notification);
         }
-    }
+    }*/
     public void setId(long id) {
         this.id = id;
     }

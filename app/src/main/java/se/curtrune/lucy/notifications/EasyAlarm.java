@@ -39,8 +39,9 @@ public class EasyAlarm  {
             return;
         }
         Notification notification = item.getNotification();
-        //calendar.set(Calendar.MONTH, notification.getDate().getMonthValue());
-        //calendar.set(Calendar.DATE, notification.getDate().getDayOfMonth());
+        calendar.set(Calendar.YEAR, notification.getDate().getYear());
+        calendar.set(Calendar.MONTH, notification.getDate().getMonthValue() -1);
+        calendar.set(Calendar.DATE, notification.getDate().getDayOfMonth() );
         calendar.set(Calendar.HOUR_OF_DAY,notification.getTime().getHour() );
         calendar.set(Calendar.MINUTE, notification.getTime().getMinute());
         calendar.set(Calendar.SECOND, 0);

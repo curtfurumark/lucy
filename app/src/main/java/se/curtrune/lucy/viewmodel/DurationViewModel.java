@@ -18,6 +18,9 @@ public class DurationViewModel extends ViewModel {
         log("DurationViewModel.set(LocalDate, LocalDate, Context)");
         durationStatistics = new DurationStatistics(firstDate, lastDate, context);
     }
+    public DurationStatistics getDurationStatistics(){
+        return durationStatistics;
+    }
     public List<Listable> getDurationByCategory(){
         return durationStatistics.getCategoryListables();
     }

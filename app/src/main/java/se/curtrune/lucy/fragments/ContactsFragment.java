@@ -20,6 +20,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -35,6 +37,9 @@ import se.curtrune.lucy.classes.Contact;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Media;
 import se.curtrune.lucy.classes.Type;
+import se.curtrune.lucy.dialogs.ContactDialog;
+import se.curtrune.lucy.util.Logger;
+import se.curtrune.lucy.viewmodel.ContactsViewModel;
 
 
 public class ContactsFragment extends Fragment {
@@ -43,12 +48,11 @@ public class ContactsFragment extends Fragment {
     private RecyclerView recyclerContacts;
     private FloatingActionButton buttonAddContact;
 
+    private ContactsViewModel contactsViewModel;
     private ContactsAdapter contactsAdapter;
     public ContactsFragment() {
         // Required empty public constructor
     }
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,9 +60,11 @@ public class ContactsFragment extends Fragment {
         log("ContactsFragment.onCreateView(...)");
         View view =  inflater.inflate(R.layout.contacts_fragment, container, false);
         initViews(view);
+        //checkPermission();
         initViewModel();
         initRecycler();
-        pleaseListContacts();
+        //pleaseListContacts();
+        initListeners();
         return view;
     }
     private void pleaseListContacts(){
@@ -83,7 +89,7 @@ public class ContactsFragment extends Fragment {
     }
     private void initRecycler(){
         log("...initRecycler()");
-        contactsAdapter = new ContactsAdapter(new ArrayList<>(), new ContactsAdapter.Callback() {
+        contactsAdapter = new ContactsAdapter(contactsViewModel.getContacts().getValue(), new ContactsAdapter.Callback() {
             @Override
             public void onItemClick(Item item) {
                 log("...onItemClick(Item)");
@@ -105,12 +111,25 @@ public class ContactsFragment extends Fragment {
         recyclerContacts.setAdapter(contactsAdapter);
 
     }
+    private void initListeners(){
+        log("...initListeners()");
+        buttonAddContact.setOnClickListener(view->showAddContactDialog());
+        contactsViewModel.getError().observe(requireActivity(), new Observer<String>() {
+            @Override
+            public void onChanged(String error) {
+                log("ContactsViewModel.getError()", error);
+                Toast.makeText(getContext(), error, Toast.LENGTH_LONG);
+            }
+        });
+    }
     private void initViewModel(){
-
+        contactsViewModel = new ViewModelProvider(requireActivity()).get(ContactsViewModel.class);
+        contactsViewModel.init(requireActivity());
     }
     private void initViews(View view){
         log("...initViews(View)");
         recyclerContacts = view.findViewById(R.id.contactsFragment_recyclerContacts);
+        buttonAddContact = view.findViewById(R.id.contactsFragment_buttonAdd);
     }
     private void listContacts(){
         log("...listContacts()");
@@ -138,6 +157,23 @@ public class ContactsFragment extends Fragment {
             log("NO CONTACTS FOUND ON THIS DEVICE");
         }
         contactsAdapter.setList(contactItems);
+    }
+    private void showAddContactDialog(){
+        log("...showAddContactDialog()");
+        ContactDialog dialog = new ContactDialog(new ContactDialog.Callback() {
+            @Override
+            public void onSave(Contact contact) {
+                log("...onSave(Contact)", contact.toString());
+                Logger.log(contact);
+                if( contact.getDisplayName().isEmpty()){
+                    Toast.makeText(getContext(), "name is required", Toast.LENGTH_LONG).show();
+                }else {
+                    log("will insert contact");
+                    //contactsViewModel.insertContact(contact, getContext());
+                }
+            }
+        });
+        dialog.show(getChildFragmentManager(), "add contact");
     }
     private Item createContactItem(String displayName, String phoneNumber, long id){
         log("...createContactItem");

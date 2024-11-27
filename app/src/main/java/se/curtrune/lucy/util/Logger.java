@@ -12,7 +12,9 @@ import java.util.Locale;
 import java.util.Map;
 
 import se.curtrune.lucy.activities.economy.classes.Transaction;
+import se.curtrune.lucy.classes.Contact;
 import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.ItemStatistics;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.Message;
 import se.curtrune.lucy.classes.Notification;
@@ -29,9 +31,11 @@ public class Logger {
 
     public static void log(Calendar calendar){
         log("log(Calendar)");
+        log("\tyear", calendar.get(Calendar.YEAR));
+        log("\tmonth", calendar.get(Calendar.MONTH -1));
+        log("\tdate", calendar.get(Calendar.DATE));
         log("\thour", calendar.get(Calendar.HOUR_OF_DAY));
         log("\tminute", calendar.get(Calendar.MINUTE));
-
     }
 
     /**
@@ -67,14 +71,12 @@ public class Logger {
             }
         }
     }
-    public static void log(String key, double value){
-        log(key + ": " + value);
+    public static void log(String description, double value){
+        log(description + ": " + value);
 
     }
-
-
     public static void log(HTTPRequest request){
-        log("log HTTPRequest...");
+        log("log(HTTPRequest)");
         if( request == null){
             log("...request is null");
             return;
@@ -252,6 +254,21 @@ public class Logger {
         }
         log(description, type.toString());
     }
+    public static void log(ItemStatistics itemStatistics){
+        log("log(ItemStatistics)");
+        if(itemStatistics == null){
+            log("WARNING itemStatistics is null");
+            return;
+        }
+        log("\tnumber of items", itemStatistics.getNumberOfItems());
+        log("\ttotal duration", Converter.formatSecondsWithHours( itemStatistics.getDuration()));
+        log("\taverage energy", itemStatistics.getAverageEnergy());
+        log("\ttotal energy", itemStatistics.getEnergy());
+        log("\ttotal anxiety", itemStatistics.getAnxiety());
+        log("\taverage anxiety", itemStatistics.getAverageAnxiety());
+        log("\ttotal stress", itemStatistics.getStress());
+        log("\ttotal mood", itemStatistics.getMood());
+    }
     public static void log(Transaction transaction){
         log("log(Transaction)...");
         log("\tid", transaction.getID());
@@ -280,7 +297,17 @@ public class Logger {
             String str = String.format(Locale.getDefault(),"%d %s", i, dateHourCells.get(i).toString() );
             log(str);
         }
+    }
 
-
+    public static void log(Contact contact) {
+        log("log(Contact)");
+        if( contact == null){
+            log("cannot log a null contact");
+            return;
+        }
+        log("\tdisplayName", contact.getDisplayName());
+        log("\tphoneNumber", contact.getPhoneNumber());
+        log("\temail", contact.getEmail());
+        log("\tid", contact.getId());
     }
 }

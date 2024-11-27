@@ -1,5 +1,7 @@
 package se.curtrune.lucy.dialogs;
 
+import static se.curtrune.lucy.util.Logger.log;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,21 +11,24 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
+
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import se.curtrune.lucy.R;
 
-public class TagsDialog extends DialogFragment {
+public class TagsDialog extends BottomSheetDialogFragment {
     private Button buttonDismiss;
     private Button buttonOK;
     private TextView textViewTags;
+    private final String tags;
     public interface Callback{
         void onTags(String tags);
     }
-    private Callback callback;
-    public TagsDialog(Callback callback){
-        this.callback = callback;
+    private final Callback callback;
 
+    public TagsDialog(String tags, Callback callback){
+        this.tags = tags;
+        this.callback = callback;
     }
     @Nullable
     @Override
@@ -31,11 +36,18 @@ public class TagsDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.tags_dialog, container, false);
         initViews(view);
         initListeners();
+        initUserInterface();
         return view;
     }
     private void initListeners(){
         buttonDismiss.setOnClickListener(view->dismiss());
         buttonOK.setOnClickListener(view->onButtonOK());
+    }
+    private void initUserInterface(){
+        log("...initUserInterface()");
+        if( tags != null && !tags.isEmpty()){
+            textViewTags.setText(tags);
+        }
     }
     private void initViews(View view){
         buttonDismiss = view.findViewById(R.id.tagsDialog_buttonDismiss);

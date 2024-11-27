@@ -2,6 +2,7 @@ package se.curtrune.lucy.fragments;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -31,7 +33,6 @@ import se.curtrune.lucy.util.Converter;
 import se.curtrune.lucy.viewmodel.EstiimateViewModel;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.DurationWorker;
-import se.curtrune.lucy.workers.MentalWorker;
 
 public class EstimateFragment extends Fragment {
 
@@ -50,22 +51,13 @@ public class EstimateFragment extends Fragment {
     private TextView labelEstimate;
     private ListableAdapter adapterDuration;
     private RecyclerView recyclerDuration;
-    //private MentalStats estimatedStats;
     private EstiimateViewModel estiimateViewModel;
-    //private MentalStats currentStats;
     private LucindaViewModel viewModel;
     private LocalDate currentDate;
-    //private long estimatedDuration;
-   // private long actualDuration;
+
     private List<Item> items;
     public static boolean VERBOSE = false;
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-           log("WTF, getArguments != null");
-        }
-    }
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         log("EstimateFragment.onCreateView(LayoutInflater, ViewGroup, Bundle)");
@@ -76,9 +68,6 @@ public class EstimateFragment extends Fragment {
             initComponents(view);
             initRecyclerDuration();
             initListeners();
-
-            //initUserInterface();
-            //initMentalStatsAndDuration(date);
             setUserInterfaceCurrent();
             setUserInterfaceEstimate();
         }catch (Exception e){
@@ -116,16 +105,24 @@ public class EstimateFragment extends Fragment {
         estiimateViewModel.init(currentDate, getContext());
     }
 
-
-
-
     private void initListeners(){
         if( VERBOSE)log("...initListeners()");
         textViewDate.setOnClickListener(view->showDateDialog());
         textViewActualDuration.setOnClickListener(view->printActualDuration());
-        textViewEstimateDuration.setOnClickListener(view->printEstimatedDuration());
-        labelCurrent.setOnClickListener(view->printActualMental());
-        labelEstimate.setOnClickListener(view-> navigateToEstimateFragment());
+        estiimateViewModel.getEstimatedItemStatistics().observe(requireActivity(), new Observer<ItemStatistics>() {
+            @Override
+            public void onChanged(ItemStatistics itemStatistics) {
+                log("EstimateViewModel.getEstimatedStatistics.onChanged(ItemStatistics)");
+                setUserInterfaceEstimate();
+            }
+        });
+        estiimateViewModel.getMentalEstimate().observe(requireActivity(), new Observer<Mental>() {
+            @Override
+            public void onChanged(Mental mental) {
+                log("EstimateViewModel.getItemEstimate.onChanged(Mental)");
+                setUserInterfaceEstimate();
+            }
+        });
     }
     private void initRecyclerDuration(){
         if( VERBOSE) log("...initRecyclerDuration()");
@@ -147,26 +144,15 @@ public class EstimateFragment extends Fragment {
     }
     private void initUserInterface(){
         log("...initUserInterface()");
-        Mental currentMental = estiimateViewModel.getCurrentMental().getValue();
-        Mental estimateMental = estiimateViewModel.getMentalEstimate().getValue();
         textViewDate.setText(currentDate.toString());
     }
-    private void navigateToEstimateFragment(){
-        log("...navigateToEstimateFragment()");
-        //viewModel.updateFragment(new MentalDateFragment(date, false));
-    }
+
     private void printActualDuration(){
         log("...printActualDuration()");
         List<Item> doneItems = items.stream().filter(item -> item.isDone()).collect(Collectors.toList());
         doneItems.forEach(System.out::println);
     }
-    private void printActualMental(){
-        log("...printActualMental()");
-        List<Item> doneItems = items.stream().filter(item -> item.isDone()).collect(Collectors.toList());
-        List<Mental> doneMentals = MentalWorker.getMentals(doneItems);
-        //doneMentals.forEach(System.out::println);
-        //viewModel.updateFragment(new MentalDateFragment(date, true));
-    }
+
     private void printEstimatedDuration(){
         log("...printEstimatedDuration()");
         for( Item item: items){
@@ -206,6 +192,12 @@ public class EstimateFragment extends Fragment {
     }
     private void showDateDialog(){
         log("...showDateDialog()");
-
+        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext());
+        datePickerDialog.setOnDateSetListener((view, year, month, dayOfMonth) -> {
+            log("DatePickerDialog.onDateSet(...)");
+            LocalDate date = LocalDate.of(year, month +1, dayOfMonth);
+            estiimateViewModel.init(date, getContext());
+        });
+        datePickerDialog.show();
     }
 }

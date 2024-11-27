@@ -42,19 +42,21 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="text"
-        android:text="Name" />
+        android:text="Name"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/devActivity_buttonRunSQL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="run sql" />
+        android:text="run sql"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/devActivity_buttonRunCode"
         android:layout_marginTop="24dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Button" />
+        android:text="run test" />
 
 </LinearLayout>

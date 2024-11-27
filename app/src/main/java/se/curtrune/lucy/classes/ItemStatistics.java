@@ -11,6 +11,7 @@ public class ItemStatistics {
     private int mood;
     private int stress;
     private long duration;
+    public static boolean VERBOSE = true;
     public ItemStatistics(List<Item> items){
         this.items = items;
         init();
@@ -26,6 +27,12 @@ public class ItemStatistics {
     public int getAnxiety() {
         return anxiety;
     }
+    public double getAverageAnxiety(){
+        return items.stream().mapToDouble(Item::getAnxiety).average().getAsDouble();
+    }
+    public double getAverageEnergy(){
+        return items.stream().mapToDouble(Item::getEnergy).average().getAsDouble();
+    }
     public int getEnergy() {
         return energy;
     }
@@ -35,6 +42,9 @@ public class ItemStatistics {
 
     public int getMood() {
         return mood;
+    }
+    public int getNumberOfItems(){
+        return items.size();
     }
 
     public int getStress() {

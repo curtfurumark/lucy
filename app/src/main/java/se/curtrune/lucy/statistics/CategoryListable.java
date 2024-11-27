@@ -13,28 +13,20 @@ import se.curtrune.lucy.util.Converter;
 public class CategoryListable implements Listable {
     private String category;
     private List<Item> items;
-    private List<Mental> mentals;
 
-    public CategoryListable(String category, List<Item> categoryItems, List<Mental> mentals) {
+    public CategoryListable(String category, List<Item> categoryItems) {
         this.category = category;
         this.items = categoryItems;
-        this.mentals = mentals;
-    }
-
-    public int getAnxiety(){
-        //TODO, what is this, or rather do i need this?
-        //return StatisticsCalculator.getAnxiety(items , xxxx);
-        return 0;
     }
 
     public String getCategory(){
         return this.category;
     }
     public long getDuration(){
-        return StatisticsCalculator.getDuration(items);
+        return items.stream().mapToLong(Item::getDuration).sum();
     }
     public long getEnergy(){
-        return StatisticsCalculator.getEnergy(mentals);
+        return items.stream().mapToLong(Item::getDuration).sum();
     }
     @Override
     public String getHeading() {
@@ -54,7 +46,6 @@ public class CategoryListable implements Listable {
 
     @Override
     public long compare() {
-        //log("category listable compare");
         return getDuration() * -1;
     }
 

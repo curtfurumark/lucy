@@ -84,8 +84,9 @@ public class RepeatDialog extends BottomSheetDialogFragment {
     }
     private void getPeriod(){
         log("...getUnit()");
+        assert repeat != null;
         if( mode.equals(Mode.CUSTOM)){
-            Repeat repeat = new Repeat();
+            //Repeat repeat = new Repeat();
             String stringQualifier = editTextQualifier.getText().toString();
             int qualifier = Integer.parseInt(stringQualifier);
             log("...qualifier", qualifier);

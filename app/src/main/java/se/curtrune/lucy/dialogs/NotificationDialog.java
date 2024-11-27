@@ -34,16 +34,21 @@ public class NotificationDialog extends BottomSheetDialogFragment {
     private RadioButton radioButtonNotification;
 
     private Button buttonSave;
+    private Button buttonDelete;
     private Button buttonDismiss;
     private LocalDate targetDate;
     private LocalTime targetTime;
     private Notification notification;
-    private Item item;
+    private final Item item;
     public static boolean VERBOSE = false;
 
+    public enum Action{
+        INSERT, EDIT, DELETE
+    }
+    private final Action action;
 
     public interface Callback{
-        void onNotification(Notification notification);
+        void onNotification(Notification notification, Action action);
     }
 
     private Callback listener;
@@ -53,8 +58,12 @@ public class NotificationDialog extends BottomSheetDialogFragment {
         assert item != null;
         log("NotificationDialog(Item)", item.getHeading());
         this.item = item;
+        if( item.hasNotification()){
+            action = Action.EDIT;
+        }else{
+            action = Action.INSERT;
+        }
     }
-
 
     @Nullable
     @Override
@@ -65,7 +74,6 @@ public class NotificationDialog extends BottomSheetDialogFragment {
         initComponents(view);
         initListeners();
         initUserInterface();
-
         return view;
     }
     private Notification getNotification(){
@@ -87,7 +95,7 @@ public class NotificationDialog extends BottomSheetDialogFragment {
         radioButtonNotification = view.findViewById(R.id.notificationDialog_notification);
         buttonSave = view.findViewById(R.id.notificationDialog_save);
         buttonDismiss = view.findViewById(R.id.notificationDialog_dismiss);
-        log("...buttonDismiss is null", buttonDismiss == null ? "true": "false");
+        buttonDelete = view.findViewById(R.id.notificationDialog_buttonDelete);
     }
     private  void initDefaults(Item item){
         if( VERBOSE )log("...initDefaults(Item)");
@@ -103,21 +111,34 @@ public class NotificationDialog extends BottomSheetDialogFragment {
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
         buttonSave.setOnClickListener(view1 -> {
-            listener.onNotification(notification);
+            listener.onNotification(notification, action);
             dismiss();
         });
         buttonDismiss.setOnClickListener(view->dismiss());
         textViewTime.setOnClickListener(view->showTimeDialog());
         textViewDate.setOnClickListener(view->showDateDialog());
+        buttonDelete.setOnClickListener(view->onDelete());
     }
     private void initUserInterface(){
         if( VERBOSE) log("...initUserInterface()");
         textViewTime.setText(Converter.format(targetTime));
         textViewDate.setText(targetDate.toString());
+        if( action.equals(Action.EDIT)){
+            buttonSave.setText(getString(R.string.update));
+            if(notification.getType().equals(Notification.Type.NOTIFICATION)){
+                radioButtonNotification.setChecked(true);
+            }else{
+                radioButtonAlarm.setChecked(true);
+            }
+        }
     }
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+    }
+    private void onDelete(){
+        log("...onDelete()");
+        listener.onNotification(notification, Action.DELETE );
     }
     public void setListener(Callback callback){
         this.listener = callback;

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:padding="16dp"
-    android:layout_width="match_parent"
+    android:layout_width="400dp"
     android:layout_height="wrap_content">
 
     <com.google.android.material.textfield.TextInputLayout
@@ -36,7 +36,6 @@
         android:layout_height="wrap_content"
         android:text="@string/ok"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tagsDialog_buttonDismiss"
         app:layout_constraintTop_toTopOf="@+id/tagsDialog_buttonDismiss" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

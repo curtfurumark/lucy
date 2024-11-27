@@ -23,6 +23,7 @@ public class EstiimateViewModel extends ViewModel {
     private List<Item> doneItems;
     private ItemStatistics currentStats;
     private ItemStatistics estimatedStats;
+    public static boolean VERBOSE = false;
     private MutableLiveData<Mental> mutableMentalEstimate = new MutableLiveData<>();
     private MutableLiveData<Mental> mutableMentalCurrent = new MutableLiveData<>();
     private MutableLiveData<ItemStatistics> mutableCurrentStats = new MutableLiveData<>();
@@ -30,13 +31,13 @@ public class EstiimateViewModel extends ViewModel {
 
     private LocalDate date;
     public void init(LocalDate date, Context context){
-        log("EstimateViewModel.init()");
+        log("EstimateViewModel.init(LocalDate, Context)", date.toString());
         this.date = date;
         items = ItemsWorker.selectItems(date, context);
-        items.forEach(System.out::println);
+        if( VERBOSE) items.forEach(System.out::println);
         doneItems = items.stream().filter(item -> item.isDone()).collect(Collectors.toList());
-        currentStats = new ItemStatistics(items);
-        estimatedStats = new ItemStatistics(doneItems);
+        currentStats = new ItemStatistics(doneItems);
+        estimatedStats = new ItemStatistics(items);
         mutableCurrentStats.setValue(currentStats);
         mutableEstimatedStats.setValue(estimatedStats);
     }
@@ -46,8 +47,6 @@ public class EstiimateViewModel extends ViewModel {
     public LiveData<ItemStatistics> getEstimatedItemStatistics(){
         return mutableEstimatedStats;
     }
-
-
     public LiveData<Mental> getMentalEstimate(){
         return mutableMentalEstimate;
     }

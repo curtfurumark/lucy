@@ -80,14 +80,14 @@ public class LocalDB extends SQLiteOpenHelper {
         return rowsAffected;
     }
 
-    public int delete(Mental mental) {
+/*    public int delete(Mental mental) {
         if( VERBOSE) log("LocalDb.delete(MentalType)");
         db = this.getWritableDatabase();
         String whereClause = String.format(Locale.getDefault(), "id =%d", mental.getID());
         int rowsAffected = db.delete(TABLE_MENTAL, whereClause, null);
         db.close();
         return rowsAffected;
-    }
+    }*/
 
     public void executeSQL(String sql) {
         log("LocalDB.executeSQL(String sql)", sql);
@@ -171,8 +171,8 @@ public class LocalDB extends SQLiteOpenHelper {
      * @param mental, the mental to be inserted
      * @return the inserted mental, but now with a valid id
      */
-    @Deprecated
-    public Mental insert(Mental mental) {
+    //@Deprecated
+/*    public Mental insert(Mental mental) {
         if( VERBOSE) log("LocalDB.insert(MentalType)");
         db = this.getWritableDatabase();
         long id = db.insert(TABLE_MENTAL, null, DBAdmin.getContentValues(mental));
@@ -184,7 +184,7 @@ public class LocalDB extends SQLiteOpenHelper {
         }
         db.close();
         return mental;
-    }
+    }*/
     public Repeat insert(Repeat repeat){
         log("LocalDB.insert(Repeat)");
         db = this.getWritableDatabase();
@@ -309,7 +309,7 @@ public class LocalDB extends SQLiteOpenHelper {
      * @param query the query to be executed
      * @return MentalType if there is such a thing or null if not found
      */
-    public Mental selectMental(String query) {
+/*    public Mental selectMental(String query) {
         if (VERBOSE) log("LocalDB.selectMentals(String)", query);
         db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query, null);
@@ -320,9 +320,9 @@ public class LocalDB extends SQLiteOpenHelper {
         db.close();
         cursor.close();
         return mental;
-    }
+    }*/
 
-    @Deprecated
+/*    @Deprecated
     public List<Mental> selectMentals(String query) {
         if( VERBOSE) log("LocalDB.selectMentals(String)", query);
         List<Mental> items = new ArrayList<>();
@@ -336,7 +336,7 @@ public class LocalDB extends SQLiteOpenHelper {
         db.close();
         cursor.close();
         return items;
-    }
+    }*/
     public Repeat selectRepeat(long id) {
         if( VERBOSE) log("...selectRepeat(long id) ", id);
         String query = Queeries.selectRepeat(id);
@@ -413,7 +413,7 @@ public class LocalDB extends SQLiteOpenHelper {
         return rowsAffected;
     }
 
-    public int update(Mental mental) {
+/*    public int update(Mental mental) {
         log("LocalDB.update(Mental)");
         if( VERBOSE) log(mental);
         db = this.getWritableDatabase();
@@ -422,7 +422,7 @@ public class LocalDB extends SQLiteOpenHelper {
         if( VERBOSE) log("...rowsAffected", rowsAffected);
         db.close();
         return rowsAffected;
-    }
+    }*/
 
     public List<Transaction> selectTransactions(String queery) {
         log("LocalDB.selectTransactions(String)", queery);
