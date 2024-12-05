@@ -40,6 +40,7 @@ import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.dialogs.ContactDialog;
 import se.curtrune.lucy.util.Logger;
 import se.curtrune.lucy.viewmodel.ContactsViewModel;
+import se.curtrune.lucy.viewmodel.LucindaViewModel;
 
 
 public class ContactsFragment extends Fragment {
@@ -49,6 +50,7 @@ public class ContactsFragment extends Fragment {
     private FloatingActionButton buttonAddContact;
 
     private ContactsViewModel contactsViewModel;
+    private LucindaViewModel mainViewModel;
     private ContactsAdapter contactsAdapter;
     public ContactsFragment() {
         // Required empty public constructor
@@ -63,7 +65,7 @@ public class ContactsFragment extends Fragment {
         //checkPermission();
         initViewModel();
         initRecycler();
-        //pleaseListContacts();
+        pleaseListContacts();
         initListeners();
         return view;
     }
@@ -121,10 +123,24 @@ public class ContactsFragment extends Fragment {
                 Toast.makeText(getContext(), error, Toast.LENGTH_LONG);
             }
         });
+        mainViewModel.getFilter().observe(requireActivity(), new Observer<String>() {
+            @Override
+            public void onChanged(String filter) {
+                log("MainViewModel.getFilter(String)", filter);
+                contactsViewModel.filterContacts(filter);
+            }
+        });
+        contactsViewModel.getContacts().observe(requireActivity(), new Observer<List<Item>>() {
+            @Override
+            public void onChanged(List<Item> items) {
+                contactsAdapter.setList(items);
+            }
+        });
     }
     private void initViewModel(){
+        log("...initViewModel()");
         contactsViewModel = new ViewModelProvider(requireActivity()).get(ContactsViewModel.class);
-        contactsViewModel.init(requireActivity());
+        mainViewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
     }
     private void initViews(View view){
         log("...initViews(View)");
@@ -133,7 +149,8 @@ public class ContactsFragment extends Fragment {
     }
     private void listContacts(){
         log("...listContacts()");
-        List<Item> contactItems = new ArrayList<>();
+        contactsViewModel.init(requireActivity());
+/*        List<Item> contactItems = new ArrayList<>();
         ContentResolver contentResolver = requireActivity().getContentResolver();
         Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
         Cursor cursor = contentResolver.query(uri, null, null, null, null);
@@ -156,7 +173,7 @@ public class ContactsFragment extends Fragment {
         }else{
             log("NO CONTACTS FOUND ON THIS DEVICE");
         }
-        contactsAdapter.setList(contactItems);
+        contactsAdapter.setList(contactItems);*/
     }
     private void showAddContactDialog(){
         log("...showAddContactDialog()");
@@ -169,7 +186,7 @@ public class ContactsFragment extends Fragment {
                     Toast.makeText(getContext(), "name is required", Toast.LENGTH_LONG).show();
                 }else {
                     log("will insert contact");
-                    //contactsViewModel.insertContact(contact, getContext());
+                    contactsViewModel.insertContact(contact, getContext());
                 }
             }
         });

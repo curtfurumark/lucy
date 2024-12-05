@@ -43,9 +43,12 @@ public class MentalWorker {
     public static List<Mental> getMentals(LocalDate date, boolean includeTemplates, boolean done, Context context) {
         if( VERBOSE) log("MentalWorker.getMentals(LocalDate,boolean, boolean)", date.toString());
         String queery = Queeries.selectMentals(date, false, true);
-        LocalDB db = new LocalDB(context);
-        //return db.selectMentals(queery);
-        return null;
+        List<Mental> mentals = new ArrayList<>();
+        List<Item> items = ItemsWorker.selectItems(date, context);
+        for(Item item: items){
+            mentals.add(item.getMental());
+        }
+        return mentals;
     }
     public static DataPoint[] getMentalsAsDataPoints(LocalDate date, Context context){
         log("MentalWorker.getMentalAdDataPoints(LocalDate, Context)", date.toString());

@@ -8,7 +8,7 @@ import android.os.Looper;
 import com.google.gson.Gson;
 
 public class CheckForUpdateThread extends Thread{
-    private static final String VERSION_URL = "http://curtfurumark.se/lucinda/apk/auto.json";
+    private static final String VERSION_URL = "http://curtfurumark.se/lucinda/apk/lucinda.json";
     public interface Callback {
         void onRequestComplete(VersionInfo versionInfo, boolean res);
     }

@@ -55,6 +55,7 @@ public class RepeatDialog extends BottomSheetDialogFragment {
         FIRST, LAST
     }
     private Mode mode;
+    private  boolean editRepeat = false;
 
     public interface Callback{
         void onRepeat(Repeat repeat);
@@ -68,7 +69,8 @@ public class RepeatDialog extends BottomSheetDialogFragment {
         repeat.setFirstDate(LocalDate.now());
     }
     public RepeatDialog(Repeat repeat){
-
+        this.repeat = repeat;
+        this.editRepeat = true;
     }
 
     @Nullable
@@ -131,9 +133,16 @@ public class RepeatDialog extends BottomSheetDialogFragment {
     }
     private void initUserInterface(){
         log("...initUserInterface(()");
-        textViewFirstDate.setText(repeat.getFirstDate().toString());
-        toggleInfinityLastDate();
 
+        if( editRepeat){
+            textViewFirstDate.setText(repeat.getFirstDate().toString());
+            if(repeat.getLastDate() != null){
+                textViewLastDate.setText(repeat.getLastDate().toString());
+                switchInfinity.setChecked(repeat.isInfinite());
+            }
+        }else {
+            textViewFirstDate.setText(repeat.getFirstDate().toString());
+        }
     }
     private void initSpinner(){
         if( VERBOSE) log("...initSpinner");

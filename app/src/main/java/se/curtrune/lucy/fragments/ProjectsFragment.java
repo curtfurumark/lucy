@@ -176,15 +176,6 @@ public class ProjectsFragment extends Fragment implements
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if( VERBOSE) log("...onOptionsItemSelected(MenuItem) ", Objects.requireNonNull(item.getTitle()).toString());
-        if( item.getItemId() == R.id.mainActivity_startSequence){
-            startSequence();
-        }
-        return true;
-    }
-
-    @Override
     public void onTabSelected(TabLayout.Tab tab) {
         log("...onTabSelected(TabLayout.Tag)");
         currentParent = (Item) tab.getTag();

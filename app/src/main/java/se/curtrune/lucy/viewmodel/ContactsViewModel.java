@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import se.curtrune.lucy.classes.Contact;
 import se.curtrune.lucy.classes.Item;
@@ -25,6 +26,7 @@ public class ContactsViewModel extends ViewModel {
     private MutableLiveData<String> mutableError = new MutableLiveData<>();
     private MutableLiveData<List<Item>> mutableContacts = new MutableLiveData<>();
     public void init(Context context){
+        log("ContactsViewModel.init(Context)");
         items = getContacts(context);
         mutableContacts.setValue(items);
     }
@@ -45,6 +47,12 @@ public class ContactsViewModel extends ViewModel {
         contact.setId(id);
         item.setContact(contact);
         return item;
+    }
+    public void filterContacts(String filter) {
+        log("ContactsViewModel.filterContacts(String)", filter);
+        List<Item> filteredList = new ArrayList<>();
+        filteredList = items.stream().filter(item-> item.getContact().contains(filter)).collect(Collectors.toList());
+        mutableContacts.setValue(filteredList);
     }
     public LiveData<List<Item>> getContacts(){
         return mutableContacts;
@@ -103,4 +111,22 @@ public class ContactsViewModel extends ViewModel {
         }
         context.startActivity(intent);
     }
+    private void getAddress(Context context, int contactId){
+        log("ContactsViewModel.getAddress(Context, int) contactID", contactId);
+        Uri postal_uri = ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_URI;
+        Cursor postal_cursor  = context.getContentResolver().query(postal_uri,null,  ContactsContract.Data.CONTACT_ID + "="+contactId, null,null);
+        while(postal_cursor.moveToNext())
+        {
+            int streetIndex = postal_cursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.STREET);
+            if( streetIndex > 0) {
+                String Strt = postal_cursor.getString(streetIndex);
+            }
+            //String Cty = postal_cursor.getString(postal_cursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.CITY));
+            //String cntry = postal_cursor.getString(postal_cursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.COUNTRY));
+        }
+        postal_cursor.close();
+
+    }
+
+
 }

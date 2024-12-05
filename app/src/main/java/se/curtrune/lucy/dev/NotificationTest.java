@@ -17,12 +17,13 @@ public class NotificationTest {
     public static boolean notificationSet = false;
     public static Item notificationItem;
     public static void cancelAlarm(long itemID, Context context){
-        log("NotificationTest.cancelAlarm(long, Context)");
+        log("NotificationTest.cancelAlarm(long, Context), itemID", itemID);
         Item item = ItemsWorker.selectItem(itemID, context);
         if( item == null){
             log("ERROR item is null");
             return;
         }
+        //log(item);
         NotificationsWorker.cancelNotification(item, context);
 
     }

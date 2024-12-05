@@ -30,11 +30,32 @@ public class ItemStatistics {
     public double getAverageAnxiety(){
         return items.stream().mapToDouble(Item::getAnxiety).average().getAsDouble();
     }
+
+    /**
+     * should return average duration
+     * @return, average duration in seconds rounded according to some rules
+     */
+    public long  getAverageDuration(){
+        long average = (long) items.stream().mapToLong(Item::getDuration).average().getAsDouble();
+        return average;
+    }
     public double getAverageEnergy(){
         return items.stream().mapToDouble(Item::getEnergy).average().getAsDouble();
     }
+    public double getAverageMood() {
+        return items.stream().mapToDouble(Item::getMood).average().getAsDouble();
+    }
+    public double getAverageStress(){
+        return items.stream().mapToDouble(Item::getStress).average().getAsDouble();
+    }
     public int getEnergy() {
         return energy;
+    }
+    public String getHeading(){
+        if( items.size() > 0){
+            return items.get(0).getHeading();
+        }
+        return "";
     }
     public List<Item> getItems() {
         return items;
@@ -54,4 +75,6 @@ public class ItemStatistics {
     public long getDuration() {
         return duration;
     }
+
+
 }

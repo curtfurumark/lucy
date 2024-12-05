@@ -3,6 +3,9 @@ package se.curtrune.lucy.app;
 import static se.curtrune.lucy.util.Logger.log;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 
 import java.sql.SQLException;
 
@@ -10,6 +13,7 @@ import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.notifications.EasyAlarm;
 import se.curtrune.lucy.persist.DBAdmin;
+import se.curtrune.lucy.util.Converter;
 
 public class Lucinda {
 
@@ -19,7 +23,6 @@ public class Lucinda {
     public static boolean VERBOSE = false;
     public static boolean Dev = false;
     private static final String KEY_NIGHTLY_ALARM ="KEY_NIGHTLY_ALARM";
-    public static String[] CATEGORIES = new String[] {"household", "work", "health", "play"};
 
     private Lucinda(Context context){
         if( VERBOSE) log("Lucinda(Context)");
@@ -30,6 +33,22 @@ public class Lucinda {
             instance = new Lucinda(context);
         }
         return instance;
+    }
+
+    /**
+     * returns info about this application
+     * @param context, context context and more context
+     * @return, PackageInfo or null if not package name found
+     */
+    public static PackageInfo getPackageInfo(Context context){
+        log("Lucinda.getPackageInfo()");
+        PackageInfo packageInfo = null;
+        try {
+            packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return packageInfo;
     }
 
     public static void setNightlyAlarm(Context context) {

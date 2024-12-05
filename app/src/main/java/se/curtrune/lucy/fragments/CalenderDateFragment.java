@@ -187,6 +187,10 @@ public class CalenderDateFragment extends Fragment {
                         case SHOW_CHILDREN:
                             calendarDateViewModel.setParent(item, getContext());
                             break;
+                        case ADD_LIST:
+                            //Toast.makeText(getContext(), "not implemented", Toast.LENGTH_LONG).show();
+                            lucindaViewModel.updateFragment(new EditableListFragment(item));
+                            break;
                         case SHOW_STATS:
                             showItemStatisticsDialog(item);
                             break;
@@ -394,11 +398,6 @@ public class CalenderDateFragment extends Fragment {
     }
     private void showDeleteDialog(Item item){
         log("...showDeleteDialog(Item)", item.getHeading());
-        if( item.hasChild()){
-            log("attempt to delete tree");
-            Toast.makeText(getContext(), "delete of tree not implemented", Toast.LENGTH_LONG).show();
-            return;
-        }
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle(getString(R.string.delete) + ": "  + item.getHeading());
         builder.setMessage(getString(R.string.are_you_sure));
@@ -426,6 +425,7 @@ public class CalenderDateFragment extends Fragment {
         List<Item> items = ItemsWorker.selectTemplateChildren(item, getContext());
         ItemStatistics statistics = new ItemStatistics(items);
         ItemStatisticsDialog dialog = new ItemStatisticsDialog(statistics);
+        dialog.show(getChildFragmentManager(), "show statistics");
         log(statistics);
 
     }

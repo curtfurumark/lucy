@@ -51,7 +51,7 @@ public class EasyAlarm  {
     public static void cancelAlarm(Item item, Context context){
         log("...cancelAlarm(Item, Context)", item.getHeading());
         Intent intent = new Intent(context, AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, (int) item.getID(), intent, PendingIntent.FLAG_MUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, (int) item.getID(), intent, PendingIntent.FLAG_IMMUTABLE);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);
     }
@@ -59,11 +59,15 @@ public class EasyAlarm  {
     private void setAlarm(Calendar calendar, Context context){
         log("EasyAlarm.setAlarm(Calender, Context)");
         log(calendar);
+        //log("item with notification...coming right up");
+        log("item id", item.getID());
+
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, AlarmReceiver.class);
         intent.putExtra(INTENT_MESSAGE,item.getInfo());
         intent.putExtra(INTENT_TITLE, item.getHeading());
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, (int) item.getID(), intent, PendingIntent.FLAG_MUTABLE);
+        intent.putExtra(INTENT_ITEM_ID, item.getID());
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, (int) item.getID(), intent, PendingIntent.FLAG_IMMUTABLE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             log("SDK VERSION GREATER OR EQUAL TO 31");
             if( alarmManager.canScheduleExactAlarms()) {

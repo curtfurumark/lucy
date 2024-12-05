@@ -1,15 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="16dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/itemStatisticsDialog_heading"
+        android:textSize="24sp"
+        android:text="@string/heading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/itemStatisticsDialog_totalDuration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="20sp"
+        android:text="@string/total_duration" />
+
+    <TextView
+        android:id="@+id/itemStatisticsDialog_avgDuration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginTop="8dp"
+        android:textSize="20sp"
+        android:text="average duration" />
+
+    <TextView
+        android:id="@+id/itemStatisticsDialog_averageEnergy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginTop="8dp"
+        android:textSize="20sp"
+        android:text="TextView" />
+
+    <TextView
+        android:id="@+id/itemStatisticsDialog_avgStress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textSize="20sp"
+        android:layout_weight="1"
+        android:text="average stress" />
+
+    <TextView
+        android:id="@+id/itemStatisticsDialog_avgMood"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginTop="8dp"
+        android:textSize="20sp"
+        android:text="average mood" />
+
+    <TextView
+        android:id="@+id/itemStatisticsDialog_avgAnxiety"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginTop="8dp"
+        android:textSize="20sp"
+        android:text="average anxiety" />
+    <TextView
+        android:id="@+id/itemStatisticsDialog_numberOccasions"
+        android:text="number of occasions"
+        android:layout_marginTop="8dp"
+        android:textSize="20sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
     <Button
         android:id="@+id/itemStatisticsDialog_buttonOK"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/ok"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_gravity="center"
+        android:layout_marginTop="8dp"
+        android:textSize="20sp"
+        android:text="@string/ok" />
+</LinearLayout>

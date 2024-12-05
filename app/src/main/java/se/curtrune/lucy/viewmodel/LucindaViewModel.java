@@ -3,6 +3,8 @@ package se.curtrune.lucy.viewmodel;
 import static se.curtrune.lucy.util.Logger.log;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.os.Build;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
@@ -12,15 +14,22 @@ import androidx.lifecycle.ViewModel;
 import java.time.LocalDate;
 
 import se.curtrune.lucy.adapters.MentalAdapter;
+import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.app.User;
 import se.curtrune.lucy.classes.Affirmation;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
+import se.curtrune.lucy.util.Constants;
+import se.curtrune.lucy.web.CheckForUpdateThread;
+import se.curtrune.lucy.web.VersionInfo;
 import se.curtrune.lucy.workers.AffirmationWorker;
+import se.curtrune.lucy.workers.InternetWorker;
 import se.curtrune.lucy.workers.MentalWorker;
 
 public class LucindaViewModel extends ViewModel {
+    private MutableLiveData<VersionInfo> mutableVersionInfo = new MutableLiveData<>();
+    private MutableLiveData<String> mutableMessage = new MutableLiveData<>();
     public MutableLiveData<RecyclerMode> getRecyclerMode() {
         return recyclerMode;
     }
@@ -32,6 +41,7 @@ public class LucindaViewModel extends ViewModel {
     private MutableLiveData<String> mutableFilter = new MutableLiveData<>();
     private MentalAdapter.MentalType mentalType = MentalAdapter.MentalType.ENERGY;
     private Mental currentMental;
+    private boolean updatedAvailableChecked = false;
     private LocalDate date;
     public LiveData<Integer> getEnergy(){
         return mutableEnergy;
@@ -64,6 +74,40 @@ public class LucindaViewModel extends ViewModel {
                 mutableAnxiety.setValue(currentMental.getAnxiety());
                 break;
         }
+        if(InternetWorker.isConnected( context) && !updatedAvailableChecked) {
+            checkIfUpdateAvailable(context);
+            updatedAvailableChecked = true;
+        }else{
+            log("not connected");
+        }
+    }
+    public void checkIfUpdateAvailable(Context context){
+        log("LucindaViewModel.checkIfUpdateAvailable(Context)");
+        CheckForUpdateThread thread = new CheckForUpdateThread(new CheckForUpdateThread.Callback() {
+            @Override
+            public void onRequestComplete(VersionInfo versionInfo, boolean res) {
+                log("...onRequestComplete(VersionInfo, boolean)");
+                log(versionInfo);
+                PackageInfo packageInfo = Lucinda.getPackageInfo(context);
+                if( packageInfo != null){
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        if( packageInfo.getLongVersionCode() < versionInfo.getVersionCode()){
+                            mutableVersionInfo.setValue(versionInfo);
+                        }else{
+                            mutableMessage.setValue("lucinda is up to date");
+                        }
+                    }else{
+                        if( packageInfo.versionCode < versionInfo.getVersionCode()){
+                            mutableVersionInfo.setValue(versionInfo);
+                        }else{
+                            mutableMessage.setValue("lucinda is up to date");
+                        }
+                    }
+                }
+            }
+        });
+        thread.start();
+
     }
 
     public void toggleRecyclerMode() {
@@ -101,7 +145,9 @@ public class LucindaViewModel extends ViewModel {
     public Settings.PanicAction getPanicAction(Context context){
         log("LucindaViewModel.getPanicAction()");
         return User.getPanicAction(context);
-
+    }
+    public LiveData<String> getMessage(){
+        return mutableMessage;
     }
 
     public void requestAffirmation() {
@@ -202,5 +248,9 @@ public class LucindaViewModel extends ViewModel {
     public void setRecyclerMode(RecyclerMode recyclerMode) {
         log("ViewModel.setRecyclerMode()");
         this.recyclerMode.setValue(recyclerMode);
+    }
+    public LiveData<VersionInfo> updateAvailable(){
+        log("LucindaViewModel.updateAvailable()");
+        return mutableVersionInfo;
     }
 }

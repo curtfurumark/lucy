@@ -10,8 +10,8 @@ android {
         applicationId = "se.curtrune.lucy"
         minSdk = 24
         targetSdk = 34
-        versionCode = 10
-        versionName = "1.24110801"
+        versionCode = 12
+        versionName = "the whole of the law"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

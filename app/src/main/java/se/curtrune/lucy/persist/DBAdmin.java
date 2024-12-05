@@ -28,64 +28,32 @@ public class DBAdmin {
 
     public static boolean VERBOSE = false;
     public static Settings settings;
+
+    @Deprecated
     public static void addColumnRepeatIdToTableItems(Context context){
         log("DBAdmin.alterColumnRepeatIdToTableItems(Context)");
-        String queery = Queeries.addColumnRepeatIdToTableItems();
+        String queery = Queeries.ADD_COLUMN_REPEAT_ID_TO_ITEMS;
         try(LocalDB db = new LocalDB(context)){
             db.executeSQL(queery);
         }
     }
-
-
-
-    /**
-     * todo, add check if columns exists
-     * @param context
-     */
-    private void addMentalToItemTable(Context context){
-        log("...addMentalToItemTable()");
-        String queeryEnergy = "ALTER TABLE items ADD COLUMN energy INTEGER DEFAULT 0";
-        String queeryAnxiety = "ALTER TABLE items ADD COLUMN anxiety INTEGER DEFAULT 0";
-        String queeryStress = "ALTER TABLE items ADD COLUMN stress INTEGER DEFAULT 0";
-        String queeryMood = "ALTER TABLE items ADD COLUMN mood INTEGER DEFAULT 0";
-        try(LocalDB db = new LocalDB(context)){
-            db.executeSQL(queeryEnergy);
-            db.executeSQL(queeryAnxiety);
-            db.executeSQL(queeryStress);
-            db.executeSQL(queeryMood);
-            log(" energy column created?");
-        }catch (Exception e){
-            log("an exception occurred");
-            e.printStackTrace();
-        }
-    }
-
     public static void createTables(Context context) {
         log("DBAdmin.createTables()");
         try(LocalDB  db = new LocalDB(context)) {
-            db.executeSQL(Queeries.DROP_TABLE_MENTAL);
-            db.executeSQL(Queeries.CREATE_TABLE_MENTAL);
             db.executeSQL(Queeries.DROP_TABLE_ITEMS);
             db.executeSQL(Queeries.CREATE_TABLE_ITEMS);
             db.executeSQL(EcQueeries.DROP_TABLE_TRANSACTIONS);
             db.executeSQL(EcQueeries.CREATE_TABLE_TRANSACTIONS);
             db.executeSQL(EcQueeries.DROP_TABLE_ASSETS);
             db.executeSQL(EcQueeries.CREATE_TABLE_ASSETS);
+            db.executeSQL(Queeries.DROP_TABLE_REPEAT);
+            db.executeSQL(Queeries.CREATE_TABLE_REPEAT);
             log("...tables created");
         }
     }
-    private void createLoggerTable(Context context){
-        log("...createLoggerTable()");
-        String queery = Queeries.CREATE_TABLE_LOGGER;
-        try(LocalDB db = new LocalDB(context)){
-            log("...queery", queery);
-            db.executeSQL(queery);
-        }
-    }
     public static void createEconomyTables(Context context) {
-        log("...createEconomyTables()");
+        log(".DBAdmin.createEconomyTables(Context)");
         ECDBAdmin.createEconomyTables(context);
-        //Toast.makeText(this, "tables created, possibly", Toast.LENGTH_LONG).show();
         DBAdmin.listTables(context);
     }
 
@@ -130,6 +98,7 @@ public class DBAdmin {
         try(LocalDB db = new LocalDB(context)) {
             db.executeSQL(Queeries.DROP_TABLE_ITEMS);
             db.executeSQL(Queeries.DROP_TABLE_MENTAL);
+            db.executeSQL(Queeries.DROP_TABLE_REPEAT);
             db.executeSQL(EcQueeries.DROP_TABLE_ASSETS);
             db.executeSQL(EcQueeries.DROP_TABLE_TRANSACTIONS);
         }
@@ -157,11 +126,11 @@ public class DBAdmin {
         item.setDuration(cursor.getLong(12));
         item.setParentId(cursor.getInt(13));
         item.setIsCalenderItem(cursor.getInt(14) == 1);
-        String jsonRepeat = cursor.getString(15);
+/*        String jsonRepeat = cursor.getString(15);
         if( jsonRepeat != null){
             Repeat repeat = gson.fromJson(jsonRepeat, Repeat.class);
             item.setRepeat(repeat);
-        }
+        }*/
         Notification notification = gson.fromJson(cursor.getString(17), Notification.class);
         item.setNotification(notification);
         item.setIsTemplate(cursor.getInt(18) != 0);
@@ -260,27 +229,6 @@ public class DBAdmin {
         cv.put("date", transaction.getDate().toEpochDay());
         return cv;
     }
-
-    public static Mental getMental(Cursor cursor) {
-        if( VERBOSE) log("DBAdmin.getMental(Cursor)");
-        Mental mental = new Mental();
-        mental.setID(cursor.getLong(0));
-        mental.setItemID(cursor.getLong(1));
-        mental.setHeading(cursor.getString(2));
-        mental.setComment(cursor.getString(3));
-        mental.setCategory(cursor.getString(4));
-        mental.setDate(cursor.getLong(5));
-        mental.setTime(cursor.getInt(6));
-        mental.setEnergy(cursor.getInt(7));
-        mental.setMood(cursor.getInt(8));
-        mental.setAnxiety(cursor.getInt(9));
-        mental.setStress(cursor.getInt(10));
-        mental.setCreated(cursor.getLong(11));
-        mental.setUpdated(cursor.getLong(12));
-        mental.setIsTemplate(cursor.getInt(13) == 1);
-        mental.isDone(cursor.getInt(14) ==1);
-        return mental;
-    }
     public static Repeat getRepeat(Cursor cursor) {
         log("...getRepeat(Cursor)");
         long id = cursor.getLong(0);
@@ -343,20 +291,16 @@ public class DBAdmin {
     }
 
     public static void addMentalColumnsToItemsTable(Context context) {
-        log("...addMentalColumnsToItemsTable()");
-        String queeryEnergy = "ALTER TABLE items ADD COLUMN energy INTEGER DEFAULT 0";
-        String queeryAnxiety = "ALTER TABLE items ADD COLUMN anxiety INTEGER DEFAULT 0";
-        String queeryStress = "ALTER TABLE items ADD COLUMN stress INTEGER DEFAULT 0";
-        String queeryMood = "ALTER TABLE items ADD COLUMN mood INTEGER DEFAULT 0";
+        log("DBAdmin.addMentalColumnsToItemsTable(Context)");
         try(LocalDB db = new LocalDB(context)){
-            db.executeSQL(queeryEnergy);
-            log("column energy added");
-            db.executeSQL(queeryAnxiety);
+            db.executeSQL(Queeries.ADD_COLUMN_ANXIETY_TO_ITEMS);
             log("column anxiety added");
-            db.executeSQL(queeryStress);
-            log("column stress added");
-            db.executeSQL(queeryMood);
-            log("column mood created?");
+            db.executeSQL(Queeries.ADD_COLUMN_ENERGY_TO_ITEMS);
+            log("column energy added");
+            db.executeSQL(Queeries.ADD_COLUMN_MOOD_TO_ITEMS);
+            log("column mood added");
+            db.executeSQL(Queeries.ADD_COLUMN_STRESS_TO_ITEMS);
+            log("column stress created?");
         }catch (Exception e){
             log("an exception occurred");
             e.printStackTrace();

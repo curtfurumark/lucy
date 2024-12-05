@@ -22,7 +22,7 @@ public class RepeatWorkerTest {
         repeat.setLastDate(LocalDate.of(2024, 12, 31));
         repeat.setFirstDate(LocalDate.of(2025, 11, 9));
         item.setRepeat(repeat);
-        List<Item> items =  RepeatWorker.createInstances(item);
+        List<Item> items =  RepeatWorker.createInstances2(item);
         log("...number of items", items.size());
         assertEquals(items.size(), 1);
     }
@@ -45,7 +45,7 @@ public class RepeatWorkerTest {
         repeat.setLastDate(LocalDate.of(2024, 11, 25));
         Item item = new Item("4 mondays");
         item.setRepeat(repeat);
-        List<Item> items = RepeatWorker.createInstances(item);
+        List<Item> items = RepeatWorker.createInstances2(item);
         printDates(items);
         assertEquals(4, items.size());
     }
@@ -66,7 +66,7 @@ public class RepeatWorkerTest {
         repeat.setLastDate(LocalDate.of(2024, 11, 24));
         Item item = new Item("3 mondays");
         item.setRepeat(repeat);
-        List<Item> items = RepeatWorker.createInstances(item);
+        List<Item> items = RepeatWorker.createInstances2(item);
         printDates(items);
         assertEquals(3, items.size());
     }
@@ -87,9 +87,25 @@ public class RepeatWorkerTest {
         Item item = new Item("brush your teeth");
         item.setRepeat(repeat);
         RepeatWorker.setMaxDate(LocalDate.of(2024, 1, 30));
-        List<Item> items = RepeatWorker.createInstances(item);
+        List<Item> items = RepeatWorker.createInstances2(item);
         assertEquals(30, items.size());
         printDates(items);
+        //log(repeat);
+    }
+    @Test
+    public void testLogRepeat(){
+        log("...testLogRepeat()");
+        Repeat repeat = new Repeat();
+        repeat.setPeriod(1, Repeat.Unit.DAY);
+        repeat.setFirstDate(LocalDate.now());
+        repeat.setInfinity(true);
+        log(repeat);
+        assertEquals(repeat.getUnit(), Repeat.Unit.DAY);
+
+    }
+    @Test
+    public void testUpdate(){
+        log("...testUpdate()");
     }
     private void printDates(List<Item> items){
         log("...printDates(List<Item>)");

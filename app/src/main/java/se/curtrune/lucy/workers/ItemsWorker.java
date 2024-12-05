@@ -9,22 +9,18 @@ import static se.curtrune.lucy.app.Settings.Root.TODO;
 import static se.curtrune.lucy.util.Logger.log;
 
 import android.content.Context;
-import android.widget.Toast;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.List;
 
-import se.curtrune.lucy.activities.DevActivity;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Item;
-import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.classes.calender.Week;
-import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
 
@@ -34,7 +30,7 @@ public class ItemsWorker {
     /**
      * spawns an item based on it's template Item
      * @param template, the template to use
-     * @return, a brand new spanking item instance, b
+     * @return a brand new spanking item instance, b
      */
     private static Item createActualItem(Item template){
         log("...createActual(Item)", template.getHeading());
@@ -65,21 +61,22 @@ public class ItemsWorker {
      * @return true if item was deleted false otherwise
      */
     public static boolean delete(Item item, Context context) {
-        if( VERBOSE) log("ItemsWorker.delete(Item, Context)");
+        if( VERBOSE) log("ItemsWorker.delete(Item, Context)", item.getHeading());
         boolean res = false;
-        if( item.hasChild()){
+/*        if( item.hasChild()){
+            log("item has child");
             Toast.makeText(context, "unlink not implemented", Toast.LENGTH_LONG).show();
-        }else{
-            int rowsAffected;
-            try (LocalDB db = new LocalDB(context)) {
-                rowsAffected = db.delete(item);
-            }
-            if( rowsAffected != 1){
-                Toast.makeText(context, "error deleting item", Toast.LENGTH_LONG).show();
-            }else{
-                res = true;
-            }
+        }else{*/
+        int rowsAffected;
+        try (LocalDB db = new LocalDB(context)) {
+            rowsAffected = db.delete(item);
         }
+        if( rowsAffected != 1){
+            log("ERROR deleting item ", item.getID());
+        }else{
+            res = true;
+        }
+        //}
         return res;
     }
 
@@ -134,7 +131,7 @@ public class ItemsWorker {
      * return the the template
      * if item has notification, sets notification
      * @param item, the item to be inserted
-     * @param context
+     * @param context context context
      * @return the inserted item, with its id field set to whatever db decided, autoincrement
      */
     public static Item insert(Item item, Context context)  {
@@ -170,7 +167,7 @@ public class ItemsWorker {
     /**
      * @param template, the template to use for creating instances
      * @param context, context
-     * @return, the saved item with id
+     * @return the saved item with id
      */
     public static Item insertRepeat(Item template, Context context){
         log("ItemsWorker.insertRepeat(Item, Context)", template.getHeading());
@@ -287,6 +284,14 @@ public class ItemsWorker {
             return db.selectItems(query);
         }
     }
+    public static List<Repeat> selectRepeats(Context context){
+        log("ItemsWorker.selectRepeats()");
+        String queery = Queeries.selectRepeats();
+        try(LocalDB db = new LocalDB(context)){
+            return  db.selectRepeats();
+        }
+    }
+
     /**
      * calenderItems, done items and possibly targetDate == date
      * @param date, the date for which to select items
@@ -489,6 +494,12 @@ public class ItemsWorker {
         }
     }
 
+    /**
+     *
+     * @param repeat, the instance of repeat to be inserted into the repeat table
+     * @param context, context, context
+     * @return the inserted Repeat or null if insert failed
+     */
     public static Repeat insert(Repeat repeat, Context context) {
         log("ItemsWorker.insert(Repeat, Context)");
         try(LocalDB db = new LocalDB(context)){

@@ -84,9 +84,10 @@ public class DailyGraphFragment extends Fragment {
         currentDate = LocalDate.now();
         //radioButtonEnergy.setChecked(true);
         initGraph();
+        Toast.makeText(getContext(), "working on it", Toast.LENGTH_LONG).show();
         initMentals(currentDate);
         initMentalsToGraph(currentDate);
-        setUserInterface();
+        //setUserInterface();
         //setUserInterface(LocalDate.now(), Mental.Type.ENERGY);
         /*initLineSeries();
         setUserInterface();

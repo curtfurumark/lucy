@@ -21,6 +21,7 @@ import java.util.Locale;
 import se.curtrune.lucy.activities.economy.classes.Asset;
 import se.curtrune.lucy.activities.economy.classes.Transaction;
 import se.curtrune.lucy.activities.economy.persist.ECDBAdmin;
+import se.curtrune.lucy.activities.economy.persist.EcQueeries;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.Repeat;
@@ -46,18 +47,26 @@ public class LocalDB extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         log("LocalDB.onCreate(SQLiteDatabase)");
-        log("...creating table items");
+        log("...creating table items", Queeries.CREATE_TABLE_ITEMS);
         sqLiteDatabase.execSQL(Queeries.CREATE_TABLE_ITEMS);
-        log("....creating table mental;");
-        sqLiteDatabase.execSQL(Queeries.CREATE_TABLE_MENTAL);
-        log("...two tables created");
+        log("...creating table repeat", Queeries.CREATE_TABLE_REPEAT);
+        sqLiteDatabase.execSQL(Queeries.CREATE_TABLE_REPEAT);
+        log("...creating transactions and assets  tables");
+        sqLiteDatabase.execSQL(EcQueeries.CREATE_TABLE_TRANSACTIONS);
+        sqLiteDatabase.execSQL(EcQueeries.CREATE_TABLE_ASSETS);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
         log("LocalDB.onUpgrade(SQLiteDatabase, int, int)");
         log(String.format(Locale.getDefault(), "oldVersion %d newVersion %d", oldVersion, newVersion));
-
+        sqLiteDatabase.execSQL(Queeries.CREATE_TABLE_REPEAT);
+        sqLiteDatabase.execSQL(Queeries.DROP_TABLE_MENTAL);
+        sqLiteDatabase.execSQL(Queeries.ADD_COLUMN_ANXIETY_TO_ITEMS);
+        sqLiteDatabase.execSQL(Queeries.ADD_COLUMN_ENERGY_TO_ITEMS);
+        sqLiteDatabase.execSQL(Queeries.ADD_COLUMN_MOOD_TO_ITEMS);
+        sqLiteDatabase.execSQL(Queeries.ADD_COLUMN_STRESS_TO_ITEMS);
+        sqLiteDatabase.execSQL(Queeries.ADD_COLUMN_REPEAT_ID_TO_ITEMS);
     }
 
     public void close() {
@@ -79,15 +88,6 @@ public class LocalDB extends SQLiteOpenHelper {
         db.close();
         return rowsAffected;
     }
-
-/*    public int delete(Mental mental) {
-        if( VERBOSE) log("LocalDb.delete(MentalType)");
-        db = this.getWritableDatabase();
-        String whereClause = String.format(Locale.getDefault(), "id =%d", mental.getID());
-        int rowsAffected = db.delete(TABLE_MENTAL, whereClause, null);
-        db.close();
-        return rowsAffected;
-    }*/
 
     public void executeSQL(String sql) {
         log("LocalDB.executeSQL(String sql)", sql);
@@ -166,25 +166,6 @@ public class LocalDB extends SQLiteOpenHelper {
         }
     }
 
-    /**
-     * inserts a  mental object into the mentals table
-     * @param mental, the mental to be inserted
-     * @return the inserted mental, but now with a valid id
-     */
-    //@Deprecated
-/*    public Mental insert(Mental mental) {
-        if( VERBOSE) log("LocalDB.insert(MentalType)");
-        db = this.getWritableDatabase();
-        long id = db.insert(TABLE_MENTAL, null, DBAdmin.getContentValues(mental));
-        if (id == -1) {
-            log("ERROR, inserting mental");
-            mental = null;
-        }else{
-            mental.setID(id);
-        }
-        db.close();
-        return mental;
-    }*/
     public Repeat insert(Repeat repeat){
         log("LocalDB.insert(Repeat)");
         db = this.getWritableDatabase();
@@ -305,38 +286,6 @@ public class LocalDB extends SQLiteOpenHelper {
         return item;
     }
 
-    /**
-     * @param query the query to be executed
-     * @return MentalType if there is such a thing or null if not found
-     */
-/*    public Mental selectMental(String query) {
-        if (VERBOSE) log("LocalDB.selectMentals(String)", query);
-        db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-        Mental mental = null;
-        if (cursor.moveToFirst()) {
-            mental = DBAdmin.getMental(cursor);
-        }
-        db.close();
-        cursor.close();
-        return mental;
-    }*/
-
-/*    @Deprecated
-    public List<Mental> selectMentals(String query) {
-        if( VERBOSE) log("LocalDB.selectMentals(String)", query);
-        List<Mental> items = new ArrayList<>();
-        db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-        if (cursor.moveToFirst()) {
-            do {
-                items.add(DBAdmin.getMental(cursor));
-            } while (cursor.moveToNext());
-        }
-        db.close();
-        cursor.close();
-        return items;
-    }*/
     public Repeat selectRepeat(long id) {
         if( VERBOSE) log("...selectRepeat(long id) ", id);
         String query = Queeries.selectRepeat(id);
@@ -351,6 +300,21 @@ public class LocalDB extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return repeat;
+    }
+    public List<Repeat> selectRepeats(){
+        log("LocalDB.selectRepeats(Context)");
+        List<Repeat> repeats = new ArrayList<>();
+        String queery = "SELECT * FROM repeat";
+        db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(queery, null);
+        if(cursor.moveToFirst()){
+            do {
+                repeats.add(DBAdmin.getRepeat(cursor));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return repeats;
     }
 
     /**

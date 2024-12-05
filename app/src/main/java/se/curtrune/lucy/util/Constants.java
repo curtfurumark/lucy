@@ -12,4 +12,5 @@ public class Constants {
 
     public static final String IMAGE_FILE_PATH = "IMAGE_FILE_PATH" ;
     public static final String UPDATE_MESSAGES_URL = "https://curtfurumark.se/projects/update.php";
+    public static final String DOWNLOAD_LUCINDA_URL = "http://curtfurumark.se/lucinda/apk/app-debug.apk";
 }

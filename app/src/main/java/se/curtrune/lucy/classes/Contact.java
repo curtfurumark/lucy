@@ -5,6 +5,9 @@ public class Contact implements Content{
     private String email;
     private String phoneNumber;
     private long id;
+    public boolean contains(String string){
+        return (displayName + email + phoneNumber).toLowerCase().contains(string.toLowerCase());
+    }
 
     public String getDisplayName() {
         return displayName;

@@ -50,7 +50,6 @@ public class LogInActivity extends AppCompatActivity {
         setContentView(R.layout.log_in_activity);
         initCatchAllExceptionsHandler();
         setTitle("lucinda");
-        printSystemInfo();
         lucinda = Lucinda.getInstance(this);
         if (!lucinda.isInitialized(this)) {
             log("...lucinda not initialized");
@@ -73,17 +72,20 @@ public class LogInActivity extends AppCompatActivity {
         initDevMode();
         initDayNightMode();
         checkInternetConnection();
-        //checkForUpdates();
-        updateDatabase();
+        checkForUpdates();
+        //updateDatabase();
         NotificationsWorker.createNotificationChannel(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             checkNotificationPermission();
         }
-        if (User.usesPassword(this) && !User.isDevMode(this)) {
+       /* if (User.usesPassword(this) && !User.isDevMode(this)) {
             log("...using password");
         } else {
-            startUserActivity();
-        }
+*/            startUserActivity();
+        //}
+    }
+    private void checkForUpdates(){
+        log("...checkForUpdates()");
     }
     private void checkInternetConnection(){
         log("...checkInternetConnection()");
@@ -169,30 +171,6 @@ public class LogInActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    private void printSystemInfo(){
-        log("...printSystemInfo()");
-        log("\tSDK_INT", Build.VERSION.SDK_INT);
-        log("\tDEVICE", Build.DEVICE);
-        log("\tUSER", Build.USER);
-        log("\tHARDWARE", Build.HARDWARE);
-        log("\tBRAND", Build.BRAND);
-        try {
-            PackageInfo packageInfo = this.getPackageManager().getPackageInfo(this.getPackageName(), 0);
-            String versionName = packageInfo.versionName;
-            int versionCode = packageInfo.versionCode;
-            log("\tversionName", versionName);
-            log("\tversionCode", versionCode);
-            log("\tlanguage", SettingsWorker.getLanguage());
-        } catch (PackageManager.NameNotFoundException e) {
-            log("....EXCEPTION getting  packageInfo");
-            log(e.getMessage());
-        }
-        Locale locale = Locale.getDefault();
-        log("...language" , locale.getLanguage());
-        log("...country", locale.getCountry());
-    }
-
-
     private void initComponents(){
         editTextPwd = findViewById(R.id.logInActivity_pwd);
         buttonLogIn = findViewById(R.id.logInActivity_buttonLogIn);
@@ -207,7 +185,6 @@ public class LogInActivity extends AppCompatActivity {
         }
         String pwd = editTextPwd.getText().toString();
         if( User.validatePassword("user", pwd, this)){
-            //startActivity(new Intent(this, MainActivity.class));
             startUserActivity();
         }else{
             Toast.makeText(this, "incorrect password", Toast.LENGTH_LONG).show();
@@ -231,23 +208,6 @@ public class LogInActivity extends AppCompatActivity {
                 break;
         }
     }
-    private void updateDatabase(){
-        log("...updateDataBase()");
-        PackageInfo packageInfo = null;
-        try {
-            packageInfo = this.getPackageManager().getPackageInfo(this.getPackageName(), 0);
-            String versionName = packageInfo.versionName;
-            int versionCode = packageInfo.versionCode;
-            if(versionCode < 10){
-                log("....add columns to database");
-                DBAdmin.addMentalColumnsToItemsTable(this);
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-            log("...updateDataBase()");
-            e.printStackTrace();
-        }
-    }
-
     private boolean validateInput(){
         log("...validateInput()");
         if( editTextPwd.getText().toString().length() < 8){

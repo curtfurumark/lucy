@@ -33,6 +33,7 @@
         android:layout_marginTop="16dp"
         android:textSize="24sp"
         android:hint="telephone_number"
+        android:inputType="phone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/contactDialog_displayName" />

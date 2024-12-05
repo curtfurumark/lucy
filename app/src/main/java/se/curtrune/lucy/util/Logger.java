@@ -26,6 +26,8 @@ import se.curtrune.lucy.persist.DB1Result;
 import se.curtrune.lucy.statistics.CategoryListable;
 import se.curtrune.lucy.statistics.StatisticsPeriod;
 import se.curtrune.lucy.web.HTTPRequest;
+import se.curtrune.lucy.web.VersionInfo;
+import se.curtrune.lucy.workers.ItemsWorker;
 
 public class Logger {
 
@@ -175,12 +177,15 @@ public class Logger {
             log("...repeat is null, i surrender");
             return;
         }
+        //Item template = ItemsWorker.selectItem(repeat.getTemplateID(),)
         log("\tid", repeat.getID());
         log("\tunit", repeat.getUnit().toString());
         log("\tqualifier", repeat.getQualifier());
-        log("\ttoJson", repeat.toJson());
+        //log("\ttoJson", repeat.toJson());
+        log("\ttemplateID",repeat.getTemplateID());
         log("\tfirstDate", repeat.getFirstDate());
         log("\tlastDate", repeat.getLastDate());
+        log("\tupdated", repeat.getUpdated());
         log("\tinfinity", repeat.isInfinite());
     }
     public static void log(StatisticsPeriod statisticsPeriod){
@@ -309,5 +314,15 @@ public class Logger {
         log("\tphoneNumber", contact.getPhoneNumber());
         log("\temail", contact.getEmail());
         log("\tid", contact.getId());
+    }
+
+    public static void log(VersionInfo versionInfo) {
+        log("log(VersionInfo)");
+        log("\t\turl", versionInfo.getUrl());
+        log("\t\tfileName", versionInfo.getFileName());
+        log("\t\tversionCode", versionInfo.getVersionCode());
+        log("\t\tversionName", versionInfo.getVersionName());
+        log("\t\tinfo", versionInfo.getVersionInfo());
+
     }
 }

@@ -38,6 +38,7 @@ import se.curtrune.lucy.classes.Affirmation;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.dialogs.BoostDialog;
 import se.curtrune.lucy.dialogs.PanicActionDialog;
+import se.curtrune.lucy.dialogs.UpdateDialog;
 import se.curtrune.lucy.fragments.AppointmentsFragment;
 import se.curtrune.lucy.fragments.CalendarMonthHostFragment;
 import se.curtrune.lucy.fragments.CalendarWeekHostFragment;
@@ -59,6 +60,7 @@ import se.curtrune.lucy.fragments.TodoFragment;
 import se.curtrune.lucy.fragments.TopTenFragment;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
+import se.curtrune.lucy.web.VersionInfo;
 import se.curtrune.lucy.workers.InternetWorker;
 import se.curtrune.lucy.workers.ItemsWorker;
 
@@ -92,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
     private void boostMe(){
         if( VERBOSE) log("...boostMe()");
         viewModel.requestAffirmation();
-
     }
 
     private void initComponents(){
@@ -211,6 +212,28 @@ public class MainActivity extends AppCompatActivity {
                 showBoostDialog(affirmation);
             }
         });
+        viewModel.updateAvailable().observe(this, new Observer<VersionInfo>() {
+            @Override
+            public void onChanged(VersionInfo versionInfo) {
+                log("...updateAvailable(VersionInfo)");
+                UpdateDialog dialog = new UpdateDialog(versionInfo, new UpdateDialog.Callback() {
+                    @Override
+                    public void onClick() {
+                        log("here we go");
+                        Toast.makeText(getApplicationContext(), "here we go,", Toast.LENGTH_LONG).show();
+                        log("updated url" ,versionInfo.getUrl());
+                        openWebPage(versionInfo.getUrl());
+                    }
+                });
+                dialog.show(getSupportFragmentManager(), "update lucinda");
+            }
+        });
+        viewModel.getMessage().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String message) {
+                Toast.makeText(getApplicationContext(),message, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     /**
@@ -298,8 +321,10 @@ public class MainActivity extends AppCompatActivity {
         //TODO, remove
         if( item.getItemId() == R.id.navigationDrawer_graphFragment){
             navigate( new DailyGraphFragment());
-        }else if( item.getItemId() == R.id.mainActivity_dev){
+        }else if( item.getItemId() == R.id.mainActivity_dev) {
             startActivity(new Intent(this, DevActivity.class));
+        }else if( item.getItemId() == R.id.mainActivityCheckForUpdate){
+            viewModel.checkIfUpdateAvailable(this);
         }else if( item.getItemId() == R.id.mainActivity_calendar){
             navigate(new CalenderDateFragment());
         }

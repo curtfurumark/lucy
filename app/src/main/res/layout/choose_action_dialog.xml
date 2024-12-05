@@ -5,55 +5,70 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <TextView
+        android:textSize="24sp"
+        android:text="choose action"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
     <Button
         android:id="@+id/updateChildrenDialog_buttonSetGenerated"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="set generated"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/updateChildrenDialog_showChildren"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/updateChildrenDialog_showChildren"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="show children"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/updateChildrenDialog_buttonEdit"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/updateChildrenDialog_buttonSetGenerated"
-        app:layout_constraintVertical_bias="0.5" />
+        app:layout_constraintTop_toBottomOf="@+id/updateChildrenDialog_buttonSetGenerated" />
 
     <Button
         android:id="@+id/updateChildrenDialog_buttonEdit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/edit"
+        android:layout_gravity="center"
         app:layout_constraintBottom_toTopOf="@+id/updateChildrenDialog_buttonShowGenerated"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/updateChildrenDialog_showChildren"
         app:layout_constraintVertical_bias="0.5" />
+
     <Button
         android:id="@+id/chooseActionDialog_buttonStatistics"
-        android:text="statistics"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="statistics"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/updateChildrenDialog_buttonShowGenerated"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="select generated"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/updateChildrenDialog_buttonEdit" />
+
+    <Button
+        android:id="@+id/chooseActionDialog_buttonAddList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="add list" />
 </LinearLayout>

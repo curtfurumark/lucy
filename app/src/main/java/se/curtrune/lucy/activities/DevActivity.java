@@ -18,7 +18,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -27,7 +26,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Locale;
@@ -38,17 +36,17 @@ import se.curtrune.lucy.adapters.DevActivityAdapter;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.app.User;
-import se.curtrune.lucy.dev.AlarmTest;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Media;
 import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.classes.Repeat;
-import se.curtrune.lucy.dev.NotificationTest;
+import se.curtrune.lucy.dev.ItemsTest;
+import se.curtrune.lucy.dev.RepeatTest;
+import se.curtrune.lucy.dev.UpdaterTest;
 import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.dialogs.RepeatDialog;
 import se.curtrune.lucy.persist.DBAdmin;
 import se.curtrune.lucy.persist.LocalDB;
-import se.curtrune.lucy.persist.Queeries;
 import se.curtrune.lucy.util.Converter;
 import se.curtrune.lucy.viewmodel.DevActivityViewModel;
 import se.curtrune.lucy.viewmodel.UpdateLucindaViewModel;
@@ -176,6 +174,9 @@ public class DevActivity extends AppCompatActivity {
             //String version = pInfo.versionName;
             log("...versionName", pInfo.versionName);
             log("...versionCode", pInfo.versionCode);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                log("...long versionCode", pInfo.getLongVersionCode());
+            }
             log("...packageName", pInfo.packageName);
             long firstInstallTime = pInfo.firstInstallTime ;
             log("firstInstallTime", firstInstallTime);
@@ -252,24 +253,8 @@ public class DevActivity extends AppCompatActivity {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
-    private void createFamilyItems(){
-        log("...createFamilyItems()");
-        Item rootItem = new Item("rootItem");
-        rootItem = ItemsWorker.insertChild(ItemsWorker.getDailyRoot(this), rootItem, this);
-        Item child1 = new Item("child1");
-        child1 = ItemsWorker.insertChild(rootItem, child1, this);
-        Item child2 = new Item("child2");
-        child2 = ItemsWorker.insertChild(rootItem, child2, this);
-        Item grandchild1 = new Item("grandChild1");
-        grandchild1 = ItemsWorker.insertChild(child1, grandchild1, this);
-        Item grandChild2 = new Item("grandChild2");
-        grandChild2 = ItemsWorker.insertChild(child1, grandChild2, this);
-        log("rootItem id", rootItem.getID());
-    }
-    private void deleteTree(Item parent){
-        log("...deleteTree(Item)", parent.getHeading());
-        ItemsWorker.deleteTree(parent, this);
-    }
+
+
     private void creteItemWithMedia(){
         log("...createItemWithMedia()");
         Item item = new Item("item with media");
@@ -282,6 +267,13 @@ public class DevActivity extends AppCompatActivity {
     }
     private void runCode(){
         log("...runCode()");
+        //RepeatTest.createRepeatItemDecember(this);
+        //RepeatTest.selectRepeats(this);
+        //RepeatTest.listInstances(6, this);
+        //RepeatTest.setLastDate(6, LocalDate.of(2024, 12, 22), this);
+        //UpdaterTest.checkForUpdate(this);
+        //RepeatTest.updateRepeat(this);
+        RepeatTest.updateRepeats(this);
         //RepeatTest.repeatTest01(this);
         //RepeatTest.insertRepeatTest(this);
         //RepeatTest.selectRepeat(this);
@@ -301,15 +293,21 @@ public class DevActivity extends AppCompatActivity {
             buttonRunCode.setText("stop alarm");
             AlarmTest.soundAlarm(this);
         }*/
-        if( NotificationTest.notificationSet){
+        //RepeatTest.selectRepeats(this);
+        //ItemsTest.testDeleteTree(this);
+        //ItemsTest.createTree(this);
+        //ItemsTest.deleteTree(4924, this);
+/*        if( NotificationTest.notificationSet){
             log("will cancel alarm");
             NotificationTest.cancelAlarm(NotificationTest.notificationItem.getID(), this);
+            Toast.makeText(this, "notification cancelled????", Toast.LENGTH_LONG).show();
         }else {
-            LocalDateTime dateTime = LocalDateTime.now().plusMinutes(10);
+            LocalDateTime dateTime = LocalDateTime.now().plusMinutes(5);
             String heading = String.format(Locale.getDefault(), "notification %s", dateTime.toString());
             NotificationTest.setNotification(heading, "hello content", dateTime, this);
             buttonRunCode.setText("cancel alarm");
-        }
+            Toast.makeText(this, "notification set", Toast.LENGTH_LONG).show();
+        }*/
 /*        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.SET_ALARM) == PackageManager.PERMISSION_GRANTED){
             log("...got myself permission to set alarm, yeah");
             AlarmTest.setAlarmUsingIntent(this, 16, 40);

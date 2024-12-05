@@ -19,9 +19,16 @@ public class Repeat implements Serializable {
     public static boolean   VERBOSE = false;
     private long id;
     private long templateID;
-    private LocalDate lastInstanceDate;
+    private LocalDate updated;
     private boolean infinity = false;
+    private Unit unit = Unit.PENDING;
+    private LocalDate firstDate;
+    private LocalDate lastDate;
+    private int qualifier = 1;
 
+    public long getID() {
+        return id;
+    }
     public Unit getUnit() {
         return unit;
     }
@@ -37,21 +44,10 @@ public class Repeat implements Serializable {
         this.id = id;
     }
 
-    public long getID() {
-        return id;
-    }
-
-    public void setMaxDate(LocalDate maxDate) {
-        this.lastInstanceDate = maxDate;
-    }
-
     public enum Unit {
         DAY, WEEK, MONTH, YEAR, DAYS_OF_WEEK, PENDING, HOUR
     }
-    private Unit unit = Unit.PENDING;
-    private LocalDate firstDate;
-    private LocalDate lastDate;
-    private int qualifier = 1;
+
     private List<DayOfWeek> dayOfWeeks = new ArrayList<>();
     public Repeat(){
         if(VERBOSE)log("Repeat() constructor");
@@ -68,12 +64,12 @@ public class Repeat implements Serializable {
         }
         return date;
     }
-    private boolean checkPeriod(LocalDate date){
+/*    private boolean checkPeriod(LocalDate date){
         if( infinity){
-            return !date.isAfter(lastInstanceDate);
+            return !date.isAfter(lastDate);
         }
         return (date.isAfter(firstDate) || date.equals(firstDate)) && (date.isBefore(lastDate) || date.equals(lastDate));
-    }
+    }*/
 
     public LocalDate getFirstDate(){
         return this.firstDate;
@@ -85,9 +81,7 @@ public class Repeat implements Serializable {
     public int getQualifier() {
         return qualifier;
     }
-    public LocalDate getLastInstanceDate(){
-        return lastInstanceDate;
-    }
+
     public LocalDate getNextDate(){
         return getNextDate(unit, qualifier);
     }
@@ -102,7 +96,6 @@ public class Repeat implements Serializable {
         }
         return false;
     }
-
 
     /**
      *
@@ -132,7 +125,7 @@ public class Repeat implements Serializable {
         }
         return currentDate;
     }
-    public LocalDate getNextDate(LocalDate previousDate){
+/*    public LocalDate getNextDate(LocalDate previousDate){
         log("...getNextDate(LocalDate)", previousDate.toString());
         LocalDate nextDate = null;
         switch (unit){
@@ -155,6 +148,9 @@ public class Repeat implements Serializable {
             return null;
         }
         return nextDate;
+    }*/
+    public LocalDate getUpdated(){
+        return updated;
     }
 
     public List<DayOfWeek> getWeekDays(){
@@ -175,8 +171,9 @@ public class Repeat implements Serializable {
     public void setLastDate(LocalDate lastDate){
         this.lastDate = lastDate;
     }
-    public void setLastInstanceDate(LocalDate lastInstanceDate){
-        this.lastInstanceDate = lastInstanceDate;
+
+    public void setUpdated(LocalDate updated){
+        this.updated = updated;
 
     }
     public void setWeekDays(List<DayOfWeek> weekDays){
