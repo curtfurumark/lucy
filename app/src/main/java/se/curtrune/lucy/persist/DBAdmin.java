@@ -104,9 +104,11 @@ public class DBAdmin {
         }
         log("...tables dropped");
     }
-
-    public static String getCategory(Cursor cursor) {
-        return cursor.getString(    0);
+    public static void listColumns(String table, Context context){
+        log("RepeatTest.listColumns(String table)");
+        try(LocalDB db = new LocalDB(context)){
+            db.getColumns(table);
+        }
     }
     public static Item getItem(Cursor cursor){
         Item item = new Item();
@@ -230,7 +232,7 @@ public class DBAdmin {
         return cv;
     }
     public static Repeat getRepeat(Cursor cursor) {
-        log("...getRepeat(Cursor)");
+        if( VERBOSE)log("...getRepeat(Cursor)");
         long id = cursor.getLong(0);
         String json = cursor.getString(1);
         Repeat repeat =  new Gson().fromJson(json, Repeat.class);

@@ -377,17 +377,6 @@ public class LocalDB extends SQLiteOpenHelper {
         return rowsAffected;
     }
 
-/*    public int update(Mental mental) {
-        log("LocalDB.update(Mental)");
-        if( VERBOSE) log(mental);
-        db = this.getWritableDatabase();
-        String whereClause = String.format(Locale.getDefault(), "id = %d", mental.getID());
-        int rowsAffected = db.update(TABLE_MENTAL, DBAdmin.getContentValues(mental), whereClause, null);
-        if( VERBOSE) log("...rowsAffected", rowsAffected);
-        db.close();
-        return rowsAffected;
-    }*/
-
     public List<Transaction> selectTransactions(String queery) {
         log("LocalDB.selectTransactions(String)", queery);
         db = this.getReadableDatabase();

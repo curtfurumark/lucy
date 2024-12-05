@@ -29,6 +29,7 @@ import se.curtrune.lucy.app.User;
 import se.curtrune.lucy.persist.DBAdmin;
 import se.curtrune.lucy.workers.InternetWorker;
 import se.curtrune.lucy.workers.NotificationsWorker;
+import se.curtrune.lucy.workers.RepeatWorker;
 import se.curtrune.lucy.workers.SettingsWorker;
 
 /**
@@ -72,8 +73,7 @@ public class LogInActivity extends AppCompatActivity {
         initDevMode();
         initDayNightMode();
         checkInternetConnection();
-        checkForUpdates();
-        //updateDatabase();
+        //updateRepeats();
         NotificationsWorker.createNotificationChannel(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             checkNotificationPermission();
@@ -84,9 +84,7 @@ public class LogInActivity extends AppCompatActivity {
 */            startUserActivity();
         //}
     }
-    private void checkForUpdates(){
-        log("...checkForUpdates()");
-    }
+
     private void checkInternetConnection(){
         log("...checkInternetConnection()");
         boolean isConnected = InternetWorker.isConnected(this);
@@ -207,6 +205,10 @@ public class LogInActivity extends AppCompatActivity {
                 startActivity(new Intent(this, MainActivity.class));
                 break;
         }
+    }
+    private void updateRepeats(){
+        log("...updateRepeats()");
+        RepeatWorker.updateRepeats(this);
     }
     private boolean validateInput(){
         log("...validateInput()");

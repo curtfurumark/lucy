@@ -152,12 +152,6 @@ public class Item implements Serializable , Listable {
         if(type == Type.APPOINTMENT.ordinal()){
            return String.format("%s %s", Converter.format(Converter.epochToDate(target_date)), Converter.epochTimeToFormattedString(target_time));
         }
-/*        if( state == State.DONE.ordinal()){
-            return String.format("%s %s", Converter.formatDateTimeUI(updated), Converter.formatSecondsWithHours(duration));
-        }else if( isTemplate()){
-            return String.format("template, %s", Converter.epochToDate(target_date));
-        }
-        return String.format("%s", Converter.formatDateTimeUI(updated));*/
         return String.format(Locale.getDefault(), "%s", getTargetDate().toString());
     }
 

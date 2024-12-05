@@ -28,36 +28,7 @@ public class RepeatWorker {
         }while ((currentDate = getNextDate(currentDate, repeat)) != null);
         return instances;
     }
-    public static List<Item> createInstances2(Item template){
-        log("RepeatWorker.createInstances2(Item)", template.getHeading());
-        Repeat repeat = template.getPeriod();
-        if( repeat.isInfinite()){
-            repeat.setLastDate(maxDate);
-        }
-        List<Item> instances = new ArrayList<>();
-        LocalDate currentDate = repeat.getFirstDate();
-        do{
-            instances.add(createInstance(template, currentDate));
-        }while( (currentDate = getNextDate(currentDate, repeat)) != null);
-        return instances;
-    }
-    public static List<Item> updateRepeatedItems(Item template){
-        log("RepeatWorker.updateRepeatedItems(Item)", template.getHeading());
-        Repeat repeat = template.getPeriod();
-        LocalDate firstDate = repeat.getLastDate();
-        repeat.setFirstDate(firstDate);
-        repeat.setLastDate(maxDate);
-        repeat.setUpdated(LocalDate.now());
-        return createInstances2(template);
-    }
-    public static List<Item> updateRepeatedItems(Repeat repeat, Context context){
-        log("...updateRepeatedItems(Repeat, Context");
-        Item template = ItemsWorker.selectItem(repeat.getTemplateID(), context);
-        if( template == null){
 
-        }
-        return null;
-    }
     private static Item createInstance(Item template, LocalDate targetDate){
         if(VERBOSE)log("RepeatWorker.createInstance(Item, LocalDate)");
         Item instance = new Item();
@@ -90,7 +61,7 @@ public class RepeatWorker {
                 repeat.setUpdated(LocalDate.now());
                 template.setRepeatID(repeat.getID());
                 db.update(template);
-                List<Item> items = RepeatWorker.createInstances2(template);
+                List<Item> items = RepeatWorker.createInstances(repeat, context);
                 for (Item instance : items) {
                     instance.setRepeatID(repeat.getID());
                 }
@@ -140,6 +111,11 @@ public class RepeatWorker {
     public static void setMaxDate(LocalDate date){
         maxDate = date;
     }
+
+    /**
+     * this is the one
+     * @param context
+     */
     public static void updateRepeats(Context context){
         log("RepeatWorker.updateRepeats(Context)");
         List<Repeat> repeats = ItemsWorker.selectRepeats(context);
@@ -163,20 +139,23 @@ public class RepeatWorker {
     }
     public static boolean updateNeeded(Repeat repeat){
         log("...updateNeeded(Repeat)");
-        if( repeat.hasLastDate() && repeat.getLastDate().isAfter(LocalDate.now().minusDays(30))){
+        LocalDate breakPointDate = repeat.getLastDate().minusMonths(1);
+        if( VERBOSE){
+            log("...repeat last date", repeat.getLastDate());
+            log("...breakPointDate", breakPointDate);
+        }
+        if( LocalDate.now().isAfter(breakPointDate)){
             return true;
         }
         return false;
     }
-    public static void update(List<Repeat> repeats) {
-        log("RepeatWorker.update(List<Repeat>)");
-        for(Repeat repeat: repeats){
-            if( repeat.isInfinite()){
-                log("...found infinite repeat");
-                log(repeat);
-            }
-        }
-    }
+
+    /**
+     * resets the repeat object for the next period
+     * @param repeat, the repeat object
+     * @param context, context context
+     * @return repeat updated in database
+     */
     public static Repeat updateRepeat(Repeat repeat, Context context){
         log("...updateRepeat(Repeat) id", repeat.getID());
         log(repeat);

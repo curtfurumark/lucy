@@ -271,16 +271,9 @@ public class DevActivity extends AppCompatActivity {
         //RepeatTest.selectRepeats(this);
         //RepeatTest.listInstances(6, this);
         //RepeatTest.setLastDate(6, LocalDate.of(2024, 12, 22), this);
-        //UpdaterTest.checkForUpdate(this);
-        //RepeatTest.updateRepeat(this);
-        RepeatTest.updateRepeats(this);
-        //RepeatTest.repeatTest01(this);
-        //RepeatTest.insertRepeatTest(this);
-        //RepeatTest.selectRepeat(this);
-        //RepeatTest.updateRepeat(this);//
-        //RepeatTest.deleteRepeat();
-        //RepeatTest.addColumnRepeatID(this);
-        //RepeatTest.listColumns("items", this);
+        //RepeatTest.updateRepeats(this);
+        RepeatTest.listRepeats(this);
+
         //Item item = ItemsWorker.selectItem(4244, this);
         //log("...item", item.getHeading());
         //deleteTree(item)
