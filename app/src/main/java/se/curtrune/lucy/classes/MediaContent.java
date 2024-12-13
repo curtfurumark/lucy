@@ -1,6 +1,6 @@
 package se.curtrune.lucy.classes;
 
-public class Media {
+public class MediaContent implements Content{
     private String filePath;
     private FileType fileType;
 

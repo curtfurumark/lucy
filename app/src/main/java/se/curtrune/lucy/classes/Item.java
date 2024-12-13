@@ -26,8 +26,8 @@ public class Item implements Serializable , Listable {
     protected String heading;
     protected String description;
     protected String comment;
-    protected Media content;
     protected Contact contact;
+    protected Content content;
     protected String tags;
     protected long created;
     protected long updated;
@@ -51,7 +51,7 @@ public class Item implements Serializable , Listable {
     protected int stress;
     protected  int mood;
     protected  int color = -1;
-    //protected Media content;
+    //protected MediaContent content;
     public static boolean VERBOSE = false;
     protected Reward reward;
     protected int priority;
@@ -114,6 +114,9 @@ public class Item implements Serializable , Listable {
     }
     public int getColor(){
         return color;
+    }
+    public Content getContent(){
+        return content;
     }
     public String getComment() {
         return comment;
@@ -311,18 +314,14 @@ public class Item implements Serializable , Listable {
     public void setColor(int color){
         this.color = color;
     }
-    public void setContent(String json){
-        //log("Item.setContent(String)", json);
-        //TODO, something something, something
+    public void setContent(Content content){
+        this.content = content;
     }
     public void setComment(String comment) {
         this.comment = comment;
     }
     public void setContact(Contact contact){
         this.contact = contact;
-    }
-    public void setContent(Media content){
-        this.content = content;
     }
     public void setCreated(LocalDateTime created) {
         this.updated = created.toEpochSecond(ZoneOffset.UTC);

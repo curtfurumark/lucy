@@ -46,23 +46,23 @@ public class MessageBoardViewModel extends ViewModel {
         });
     }
     public void insert(Message message, Context context) {
-        log("MessageBoardViewModel.insert(Message, Context)");
-        /*            MessageWorker.insert(message, result -> {
-                log("...onItemInserted(DB1Result)");
-                if( result.isOK()){
-                    message.setID(result.getID());
-                    messages.add(0, message);
-                    selectTab(message.getCategory());
-                    adapter.notifyItemInserted(0);
-                }else{
-                    log("...error inserting message");
-                    log(result);
-                    Toast.makeText(getContext(), "error", Toast.LENGTH_LONG).show();
-                }
-            });*/
+        log("MessageBoardViewModel.insert(Message, Context)", message.getSubject());
+        MessageWorker.insert(message, result -> {
+            log("...onItemInserted(DB1Result)");
+            if( result.isOK()){
+                message.setID(result.getID());
+                messages.add(0, message);
+                mutableMessages.setValue(messages);
+            }else{
+                log("...error inserting message");
+                log(result);
+                mutableError.setValue("error inserting message");
+            }
+        });
     }
 
     public void filter(String category) {
+        log("MessageBoardViewModel.filter(String)", category);
         List<Message> filteredMessages = messages.stream().filter(message -> message.getCategory().equals(category)).collect(Collectors.toList());
         mutableMessages.setValue(filteredMessages);
     }

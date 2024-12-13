@@ -320,8 +320,8 @@ public class Queeries {
     }
 
     public static String updateMessage(Message message) {
-        return String.format(Locale.getDefault(), "UPDATE messages SET subject = '%s', content = '%s', user = '%s', category = '%s'",
-                message.getSubject(), message.getContent(), message.getUser(), message.getCategory());
+        return String.format(Locale.getDefault(), "UPDATE messages SET subject = '%s', content = '%s', user = '%s', category = '%s' WHERE id =%d",
+                message.getSubject(), message.getContent(), message.getUser(), message.getCategory(), message.getId());
     }
 
     public static String selectRepeat(long id) {

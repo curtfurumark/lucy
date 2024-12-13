@@ -37,6 +37,21 @@ public class RepeatTest {
 
     }
     @Test
+    public void testIntervalMilliSecondsOneDay(){
+        log("...testIntervalMilliSecondsOneDay()");
+        Repeat repeat = new Repeat();
+        repeat.setPeriod(1, Repeat.Unit.DAY);
+        long milliSeconds = repeat.getIntervalMilliseconds();
+        assertEquals(86400000, milliSeconds);
+    }
+    @Test
+    public void testIntervalMillisecondsOneWeek(){
+        Repeat repeat = new Repeat();
+        repeat.setPeriod(1, Repeat.Unit.WEEK);
+        long milliSeconds = repeat.getIntervalMilliseconds();
+        assertEquals(86400000 * 7, milliSeconds);
+    }
+    @Test
     public void repeatOneDay(){
         log("...repeatOneDay()");
         Repeat repeat = new Repeat();

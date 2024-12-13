@@ -169,7 +169,8 @@ public class MessageBoardFragment extends Fragment implements TabLayout.OnTabSel
         messageBoardViewModel.getMessages().observe(requireActivity(), new Observer<List<Message>>() {
             @Override
             public void onChanged(List<Message> messages) {
-                log("...observe messages");
+                log("...observe messages ");
+                messages.forEach(System.out::println);
                 adapter.setList(messages);
             }
         });
@@ -209,7 +210,7 @@ public class MessageBoardFragment extends Fragment implements TabLayout.OnTabSel
         dialog.setCallback(new MessageDialog.Callback() {
             @Override
             public void onMessage(Message message, MessageDialog.Mode mode) {
-                log("...onMessage(Message, Mode)", message.getSubject());
+                log("MessageDialog.onMessage(Message, Mode)", message.getSubject());
                 messageBoardViewModel.insert(message, getContext());
             }
         });

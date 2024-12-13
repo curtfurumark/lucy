@@ -32,17 +32,17 @@ import java.util.Locale;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.activities.economy.EconomyActivity;
+import se.curtrune.lucy.activities.kotlin.RepeatActivity;
+import se.curtrune.lucy.activities.kotlin.WeekCalendarActivityKt;
 import se.curtrune.lucy.adapters.DevActivityAdapter;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.app.User;
 import se.curtrune.lucy.classes.Item;
-import se.curtrune.lucy.classes.Media;
+import se.curtrune.lucy.classes.MediaContent;
 import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.classes.Repeat;
-import se.curtrune.lucy.dev.ItemsTest;
 import se.curtrune.lucy.dev.RepeatTest;
-import se.curtrune.lucy.dev.UpdaterTest;
 import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.dialogs.RepeatDialog;
 import se.curtrune.lucy.persist.DBAdmin;
@@ -84,9 +84,6 @@ public class DevActivity extends AppCompatActivity {
         initRecycler();
         //addMentalToItemTable();
         setUserInterface();
-        //listTables();
-        //listColumns();
-        //openDB();
     }
 
     private void clearShowInCalendar(){
@@ -233,6 +230,10 @@ public class DevActivity extends AppCompatActivity {
             Toast.makeText(this, "for future use", Toast.LENGTH_LONG).show();
         }else if( item.getItemId() == R.id.homeActivity_setNotifications){
             setNotifications();
+        }else if (item.getItemId() == R.id.devActivity_repeatActivity){
+            startActivity(new Intent(this, RepeatActivity.class));
+        }else if(item.getItemId() == R.id.devActivity_weekCalendarActivity){
+            startActivity(new Intent( this, WeekCalendarActivityKt.class));
         }
         return true;
     }
@@ -258,8 +259,8 @@ public class DevActivity extends AppCompatActivity {
     private void creteItemWithMedia(){
         log("...createItemWithMedia()");
         Item item = new Item("item with media");
-        Media media = new Media();
-        media.setFileType(Media.FileType.TEXT);
+        MediaContent media = new MediaContent();
+        media.setFileType(MediaContent.FileType.TEXT);
         media.setFilePath("dkjdkj");
         item.setContent(media);
         item = ItemsWorker.insertChild(ItemsWorker.getRootItem(Settings.Root.PROJECTS, this), item, this);

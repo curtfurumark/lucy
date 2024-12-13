@@ -178,6 +178,9 @@ public class RepeatDialog extends BottomSheetDialogFragment {
     private void onRepeat(Repeat.Unit unit){
         log("...onRepeat(Unit)", unit.toString());
         repeat.setPeriod(1, unit);
+        if(textViewLastDate.getText().toString().isEmpty()){
+            repeat.setInfinity(true);
+        }
         listener.onRepeat(repeat);
         dismiss();
     }
@@ -213,9 +216,4 @@ public class RepeatDialog extends BottomSheetDialogFragment {
             mode = Mode.SIMPLE;
         }
     }
-    private void toggleInfinityLastDate(){
-
-
-    }
-
 }

@@ -35,6 +35,9 @@ public class Message {
     public long getCreatedEpoch(){
         return created;
     }
+    public long getId(){
+        return id;
+    }
     public String getSubject(){
         return subject;
     }

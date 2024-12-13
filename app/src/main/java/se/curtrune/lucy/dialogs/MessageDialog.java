@@ -50,6 +50,8 @@ public class MessageDialog extends BottomSheetDialogFragment {
 
     public MessageDialog(){
         if( VERBOSE) log("MessageDialog constructor");
+        message = new Message();
+        mode = Mode.CREATE;
     }
     public MessageDialog(Message message){
         this.message = message;

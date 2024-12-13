@@ -35,4 +35,8 @@
         android:title="repeat dialog"/>
     <item android:id="@+id/devActivity_testNotification"
         android:title="test notification"/>
+    <item android:id="@+id/devActivity_repeatActivity"
+        android:title="repeat activity"/>
+    <item android:id="@+id/devActivity_weekCalendarActivity"
+        android:title="new week calendar"/>
 </menu>

@@ -233,4 +233,8 @@
     <string name="add_a_message_to_the_message_board">add a message to the message board</string>
     <string name="is_calender">calendar</string>
     <string name="type_here">type here</string>
+    <string name="title_activity_repeat">RepeatActivity</string>
+    <string name="title_activity_index_kt">IndexActivityKt</string>
+    <string name="title_activity_month_calendar_kt">MonthCalendarActivityKt</string>
+    <string name="title_activity_medicin">MedicinActivity</string>
 </resources>

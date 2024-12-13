@@ -2,15 +2,18 @@ package se.curtrune.lucy.activities;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import se.curtrune.lucy.R;
+import se.curtrune.lucy.activities.kotlin.IndexActivityKt;
 import se.curtrune.lucy.app.FirstPage;
-import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.util.Constants;
 
 public class IndexActivity extends AppCompatActivity {
@@ -44,6 +47,21 @@ public class IndexActivity extends AppCompatActivity {
         textViewWeek.setOnClickListener(view-> startActivity(FirstPage.CALENDER_WEEK));
         textViewMonth.setOnClickListener(view->startActivity(FirstPage.CALENDER_MONTH));
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.index_activity, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if( item.getItemId() == R.id.indexActivity_jetpackCompose){
+            startActivity(new Intent(this, IndexActivityKt.class));
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private void startActivity(FirstPage firstPage){
         log("...startActivity(FirstPage)", firstPage.toString());
         Intent intentTodo = new Intent(this, MainActivity.class);

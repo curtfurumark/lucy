@@ -44,6 +44,18 @@ public class Repeat implements Serializable {
         this.id = id;
     }
 
+    public long getIntervalMilliseconds() {
+        switch (unit){
+            case DAY:
+                return 24 * 3600 * 1000 * qualifier;
+            case WEEK:
+                return 7 * 24 * 3600 * 1000 * qualifier;
+            default:
+                log("WARNING, MONTH AND SUCH NOT IMPLEMENTED");
+                return 0;
+        }
+    }
+
     public enum Unit {
         DAY, WEEK, MONTH, YEAR, DAYS_OF_WEEK, PENDING, HOUR
     }

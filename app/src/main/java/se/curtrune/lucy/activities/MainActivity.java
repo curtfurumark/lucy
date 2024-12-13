@@ -31,6 +31,8 @@ import java.util.Objects;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.activities.flying_fish.GameActivity;
+import se.curtrune.lucy.activities.kotlin.IndexActivityKt;
+import se.curtrune.lucy.activities.kotlin.IndexActivityKtKt;
 import se.curtrune.lucy.app.FirstPage;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.app.User;
@@ -318,7 +320,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         log("...onOptionsItemSelected(MenuItem item)", Objects.requireNonNull(item.getTitle()).toString());
-        //TODO, remove
         if( item.getItemId() == R.id.navigationDrawer_graphFragment){
             navigate( new DailyGraphFragment());
         }else if( item.getItemId() == R.id.mainActivity_dev) {
@@ -327,6 +328,8 @@ public class MainActivity extends AppCompatActivity {
             viewModel.checkIfUpdateAvailable(this);
         }else if( item.getItemId() == R.id.mainActivity_calendar){
             navigate(new CalenderDateFragment());
+        }else if( item.getItemId() == R.id.mainActivity_lucinda20){
+            startActivity(new Intent(this, IndexActivityKt.class));
         }
         return super.onOptionsItemSelected(item);
     }
@@ -419,21 +422,7 @@ public class MainActivity extends AppCompatActivity {
         textViewEnergy.setText(strMentalState);
 
     }
-/*    private void setUserInterfaceCurrentEnergy(){
-        log("MainActivity.setUserInterfaceCurrentEnergy()");
-        MentalWorker.VERBOSE = true;
-        int energy = MentalWorker.getEnergy(LocalDate.now(), this);
-        MentalWorker.VERBOSE = false;
-        String textEnergy = String.format(Locale.getDefault(), "%s: %d",getString(R.string.energy) ,energy);
-        if( energy <= -3){
-            textViewEnergy.setTextColor(Color.parseColor("#ff0000"));
-        }else if(energy <= 2){
-            textViewEnergy.setTextColor(Color.parseColor("#ffff00"));
-        }else{
-            textViewEnergy.setTextColor(Color.parseColor("#00ff00"));
-        }
-        textViewEnergy.setText(textEnergy);
-    }*/
+
     private void showBoostDialog(Affirmation affirmation){
         log("...showBoostDialog(Affirmation)");
         BoostDialog boostDialog = new BoostDialog(affirmation.getAffirmation());

@@ -23,4 +23,9 @@
         android:title="calendar"
         app:showAsAction="always"
         android:icon="@drawable/baseline_today_24"/>
+    <item
+        android:id="@+id/mainActivity_lucinda20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:title="lucinda 2.0" />
 </menu>

@@ -54,7 +54,7 @@ import se.curtrune.lucy.R;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.User;
 import se.curtrune.lucy.classes.Item;
-import se.curtrune.lucy.classes.Media;
+import se.curtrune.lucy.classes.MediaContent;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.classes.Repeat;
@@ -743,10 +743,10 @@ public class ItemSessionFragment extends Fragment{
                 case CAMERA_REQUEST_CODE:
                     log("PICTURE TAKEN, DO SOMETHING");
                     // Handle the image taken from the camera
-                    Media media = new Media();
+                    MediaContent media = new MediaContent();
                     String imagePath =data.getStringExtra(Constants.IMAGE_FILE_PATH);
                     media.setFilePath(imagePath);
-                    media.setFileType(Media.FileType.IMAGE_JPEG);
+                    media.setFileType(MediaContent.FileType.IMAGE_JPEG);
                     Item item = new Item("my first image");
                     item.setContent(media);
                     item = ItemsWorker.insert(item, getContext());
@@ -755,7 +755,7 @@ public class ItemSessionFragment extends Fragment{
                     Bitmap imageBitmap = (Bitmap) extras.get("data");
                     ImageDialog dialog = new ImageDialog(imageBitmap);
                     dialog.show(getChildFragmentManager(), "show image");*/
-                    //item.setContent(new Media());
+                    //item.setContent(new MediaContent());
                     //Bundle extras = data.getExtras();
                     //Item
                     //Bitmap imageBitmap = (Bitmap) extras.get("data");

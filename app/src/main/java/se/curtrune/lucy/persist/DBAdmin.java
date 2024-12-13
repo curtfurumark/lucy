@@ -19,6 +19,7 @@ import se.curtrune.lucy.activities.economy.persist.EcQueeries;
 import se.curtrune.lucy.app.App;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.MedicineContent;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.classes.Repeat;
@@ -136,8 +137,14 @@ public class DBAdmin {
         Notification notification = gson.fromJson(cursor.getString(17), Notification.class);
         item.setNotification(notification);
         item.setIsTemplate(cursor.getInt(18) != 0);
-        //item.setMentalJson(cursor.getString(19));
-        item.setContent(cursor.getString(19));
+        String jsonContent = cursor.getString(19);
+        if( jsonContent != null && !jsonContent.isEmpty()){
+            int ordinal = cursor.getInt(9);
+            if( ordinal == Type.MEDICIN.ordinal()){
+                MedicineContent content = gson.fromJson(jsonContent, MedicineContent.class);
+                item.setContent(content);
+            }
+        }
         //item.setReward(cursor.getString(20));
         item.setColor(cursor.getInt(21));
         item.setPriority(cursor.getInt(22));
@@ -190,32 +197,16 @@ public class DBAdmin {
         cv.put("anxiety", item.getAnxiety());
         cv.put("stress", item.getStress());
         cv.put("mood", item.getMood());
-        if( item.getType().equals(Type.MEDIA)){
-            //cv.put("content",gson.toJson(item.getMedia()) );
+        if( item.getContent() != null){
+            cv.put("content", gson.toJson(item.getContent()));
         }
-        //cv.put("content", item.getContent());
+/*        if( item.getType().equals(Type.MEDIA)){
+            cv.put("content",gson.toJson(item.getContent()) );
+        }*/
         cv.put("repeat_id", item.getRepeatID());
         return cv;
     }
-    public static ContentValues getContentValues(Mental mental){
-        if(VERBOSE)log("DBAdmin.getContentValues(MentalType)");
-        ContentValues cv = new ContentValues();
-        cv.put("itemID", mental.getItemID());
-        cv.put("heading", mental.getHeading());
-        cv.put("comment", mental.getComment());
-        cv.put("energy", mental.getEnergy());
-        cv.put("mood", mental.getMood());
-        cv.put("stress", mental.getStress());
-        cv.put("anxiety", mental.getAnxiety());
-        cv.put("category", mental.getCategory());
-        cv.put("date", mental.getDateEpoch());
-        cv.put("updated", mental.getUpdatedEpoch());
-        cv.put("created", mental.getCreatedEpoch());
-        cv.put("time", mental.getTimeSecondOfDay());
-        cv.put("isTemplate", mental.isTemplate());
-        cv.put("isDone", mental.isDone() ? 1:0);
-        return cv;
-    }
+
 
     public static ContentValues getContentValues(Repeat repeat) {
         log("DBAdmin.getContentValues(Repeat)");
