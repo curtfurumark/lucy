@@ -102,7 +102,7 @@ class WeekCalendarActivityKt : ComponentActivity() {
                 .background(Color.Blue),
             contentAlignment = Alignment.TopStart
         ){
-            Column( modifier = Modifier.padding(16.dp)) {
+            Column( modifier = Modifier.padding(16.dp), horizontalAlignment =Alignment.CenterHorizontally ) {
                 Text(text = date.toString(), fontSize = 20.sp, color = Color.White)
                 for(event in events){
                     Text(text = "${event.targetTime.toString()} ${event.heading}", color = Color.Yellow)
