@@ -56,7 +56,15 @@ fun Index(){
             context.startActivity(Intent(context, MedicinActivity::class.java))
 
         })
-
+        Text(text = "user settings", fontSize = 24.sp, modifier = Modifier.clickable {
+            context.startActivity(Intent(context, UserSettingsActivity::class.java))
+        })
+        Text(text = "day calendar", fontSize = 24.sp, modifier = Modifier.clickable {
+            context.startActivity(Intent(context, DayCalendarActivity::class.java))
+        })
+        Text(text = "item editor", fontSize = 24.sp, modifier = Modifier.clickable {
+            context.startActivity(Intent(context, ItemEditorActivity::class.java))
+        })
     }
 }
 @Preview(showBackground = true)

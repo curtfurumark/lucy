@@ -1,6 +1,7 @@
 package se.curtrune.lucy.activities.kotlin
 
 import android.os.Bundle
+import android.widget.TimePicker
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -32,12 +33,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,10 +49,12 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import se.curtrune.lucy.activities.kotlin.composables.TimePickerDialog
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.activities.kotlin.viewmodels.MedicineViewModel
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.MedicineContent
+import java.time.LocalTime
 import java.util.Locale
 
 class MedicinActivity : ComponentActivity() {
@@ -120,6 +125,7 @@ fun AddButton(onAddClick: ()->Unit){
         Icon(Icons.Filled.Add, "add medicine item")
     }
 }
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MedicineDialog(onDismiss: () -> Unit, onConfirm: (MedicineContent)-> Unit){
     var name by remember{
@@ -137,15 +143,29 @@ fun MedicineDialog(onDismiss: () -> Unit, onConfirm: (MedicineContent)-> Unit){
     var beredningsform by remember {
         mutableStateOf("")
     }
+    var medicineTimes =  remember{
+        //mutableStateOf(emptyArray())
+        mutableStateListOf<LocalTime>()
+    }
     var bipacksedel by remember {
         mutableStateOf("")
+    }
+    var showTimePicker by remember {
+        mutableStateOf(false)
+    }
+    if(showTimePicker){
+        TimePickerDialog(onDismiss = { showTimePicker = false }, onConfirm = {
+            var targetTime = LocalTime.of(it.hour, it.minute)
+            medicineTimes.add(targetTime)
+            showTimePicker = false
+        })
     }
     Dialog(onDismissRequest = {onDismiss() }) {
         Card(modifier = Modifier
             .fillMaxWidth(),
             shape = RoundedCornerShape(16.dp)) {
             Column(modifier = Modifier
-                .padding(16.dp)
+                .padding(8.dp)
                 .fillMaxWidth(1f),
                 verticalArrangement =Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally) {
@@ -191,6 +211,18 @@ fun MedicineDialog(onDismiss: () -> Unit, onConfirm: (MedicineContent)-> Unit){
                         Text(text = "bipacksedel")
                     }
                 )
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween){
+                    Text("times whatever", fontSize = 24.sp)
+                    Icon(imageVector = Icons.Default.Add, contentDescription = "add time", modifier = Modifier.clickable {
+                        println("add a time")
+                        showTimePicker = true
+                    })
+                }
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    medicineTimes.forEach(){
+                        Text(text =  it.toString())
+                    }
+                }
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                     Button(onClick = { onDismiss() }) {
@@ -226,7 +258,7 @@ fun MedicineItem(item: Item){
         .fillMaxSize()
         .padding(8.dp)
         .clickable {
-                println("on medicine click $medicine")
+            println("on medicine click $medicine")
         }, shape = RoundedCornerShape(8.dp)) {
         Column(
             modifier = Modifier

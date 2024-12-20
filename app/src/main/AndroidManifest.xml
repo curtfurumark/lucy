@@ -29,6 +29,21 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".activities.kotlin.ItemEditorActivity"
+            android:exported="false"
+            android:label="@string/title_activity_item_editor"
+            android:theme="@style/Theme.Lucy" />
+        <activity
+            android:name=".activities.kotlin.DayCalendarActivity"
+            android:exported="false"
+            android:label="@string/title_activity_day_calendar"
+            android:theme="@style/Theme.Lucy" />
+        <activity
+            android:name=".activities.kotlin.UserSettingsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_user_settings"
+            android:theme="@style/Theme.Lucy" />
+        <activity
             android:name=".activities.kotlin.MedicinActivity"
             android:exported="false"
             android:label="@string/title_activity_medicin"

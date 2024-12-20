@@ -1,6 +1,7 @@
 package se.curtrune.lucy.classes.calender;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.temporal.TemporalField;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
@@ -54,19 +55,28 @@ public class Week {
         return firstDate;
     }
     public int getWeekNumber(){
-        return currentDate.get(WeekFields.of(Locale.getDefault()).weekOfYear());
+        return firstDate.get(WeekFields.of(Locale.getDefault()).weekOfYear());
     }
 
     public void setCurrentDate(LocalDate currentDate) {
         this.currentDate = currentDate;
     }
 
+    public Month getMonth(){
+        return currentDate.getMonth();
+    }
     public Week getNextWeek() {
         return  new Week(firstDate.plusWeeks(1));
     }
 
     public Week getPreviousWeek() {
         return new Week(firstDate.minusWeeks(1));
+    }
+    public Week minusWeeks(int weeks){
+        return new Week(firstDate.minusWeeks(weeks));
+    }
+    public Week plusWeek(int weeks) {
+        return new Week(firstDate.plusWeeks(weeks));
     }
 
     @Override
@@ -76,5 +86,15 @@ public class Week {
                 ", lastDate=" + lastDate +
                 ", weekNumber=" + weekNumber +
                 '}';
+    }
+
+
+    /**
+     * well, for most of the time, but every now and then it's indeterminate
+     * but it will return the year of the current date, which most ot the time amounts to the first date of the week
+     *
+     */
+    public int getYear() {
+        return firstDate.getYear();
     }
 }

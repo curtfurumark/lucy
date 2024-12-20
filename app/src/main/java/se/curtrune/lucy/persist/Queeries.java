@@ -116,7 +116,7 @@ public class Queeries {
     }
 
     public static String selectItems(LocalDate targetDate) {
-        return String.format(Locale.ENGLISH, "SELECT * FROM items WHERE targetDate = %d ORDER BY updated", targetDate.toEpochDay());
+        return String.format(Locale.ENGLISH, "SELECT * FROM items WHERE targetDate = %d ORDER BY targetTime ASC", targetDate.toEpochDay());
     }
 
     public static String selectItems(LocalDate targetDate, State state) {

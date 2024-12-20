@@ -83,7 +83,7 @@ public class CalenderWorker {
     }
 
     public static List<CalenderDate> getEvents(Week week, Context context) {
-        log("CalendarWorker.getEvents(Week, Context)");
+        log("CalendarWorker.getEvents(Week, Context)", week.toString());
         return getCalenderDates(week.getFirstDateOfWeek(),week.getLastDateOfWeek(), context);
     }
 

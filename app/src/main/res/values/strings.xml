@@ -237,4 +237,7 @@
     <string name="title_activity_index_kt">IndexActivityKt</string>
     <string name="title_activity_month_calendar_kt">MonthCalendarActivityKt</string>
     <string name="title_activity_medicin">MedicinActivity</string>
+    <string name="title_activity_user_settings">UserSettingsActivity</string>
+    <string name="title_activity_day_calendar">DayCalendarActivity</string>
+    <string name="title_activity_item_editor">ItemEditorActivity</string>
 </resources>

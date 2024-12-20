@@ -22,6 +22,7 @@ import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.classes.calender.DateHourCell;
+import se.curtrune.lucy.classes.calender.Week;
 import se.curtrune.lucy.persist.DB1Result;
 import se.curtrune.lucy.statistics.CategoryListable;
 import se.curtrune.lucy.statistics.StatisticsPeriod;
@@ -323,6 +324,13 @@ public class Logger {
         log("\t\tversionCode", versionInfo.getVersionCode());
         log("\t\tversionName", versionInfo.getVersionName());
         log("\t\tinfo", versionInfo.getVersionInfo());
-
+    }
+    public static void log(Week week){
+        log("Logger.log(Week)");
+        log("\tweek number", week.getWeekNumber());
+        log("\tfirstDate", week.getFirstDateOfWeek());
+        log("\tlastDate", week.getLastDateOfWeek());
+        log("\tmonth", week.getMonth().toString());
+        log("\tyear", week.getYear());
     }
 }

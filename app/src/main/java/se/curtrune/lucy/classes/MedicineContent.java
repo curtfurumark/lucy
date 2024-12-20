@@ -1,11 +1,16 @@
 package se.curtrune.lucy.classes;
 
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+
 public class MedicineContent implements Content{
     private String name;
     private String type;
     private String doctor;
     private String dosage;
     private String bipacksedel;
+    private List<LocalTime> takeYourMedicineTimes = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -45,5 +50,15 @@ public class MedicineContent implements Content{
 
     public void setDosage(String dosage) {
         this.dosage = dosage;
+    }
+
+    public void setTimes(LocalTime ... times) {
+        for(LocalTime time: times){
+            takeYourMedicineTimes.add(time);
+        }
+    }
+
+    public int getNumTimes() {
+        return takeYourMedicineTimes.size();
     }
 }
