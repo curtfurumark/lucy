@@ -1,5 +1,6 @@
 package se.curtrune.lucy.activities.kotlin
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -36,11 +37,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
+import se.curtrune.lucy.viewmodel.MonthViewModel
 import se.curtrune.lucy.viewmodel.UserSettingsViewModel
 
 class UserSettingsActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -50,7 +55,7 @@ class UserSettingsActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    UserSettings()
+                    UserSettings(applicationContext)
                 }
             }
         }
@@ -58,17 +63,33 @@ class UserSettingsActivity : ComponentActivity() {
 }
 
 @Composable
-fun UserSettings(){
-    val viewModel = viewModel<UserSettingsViewModel>()
+fun UserSettings(context: Context){
+    val userSettingViewModel = viewModel<UserSettingsViewModel>(
+        factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return UserSettingsViewModel(context) as T
+            }
+        }
+    )
+    var isDarkMode by remember {
+        mutableStateOf(userSettingViewModel.isDarkMode)
+    }
+    var language by remember {
+        mutableStateOf(userSettingViewModel.getLanguage())
+    }
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(8.dp)){
-        DarkModeSetting(heading = "dark mode", viewModel.isDarkMode(LocalContext.current))
+        DarkModeSetting(heading = "dark mode", isDarkMode.value) {
+            println("setting isDarkMode to $it")
+            userSettingViewModel.isDarkMode.value = it
+            //isDarkMode.value = it
+        }
         Spacer(modifier = Modifier.height(8.dp))
-        LanguageSetting(viewModel.getLanguage(LocalContext.current))
+        LanguageSetting(userSettingViewModel.getLanguage())
         Spacer(modifier = Modifier.height(8.dp))
 
-        ListSetting(heading = "panic urls", viewModel.getPanicUrls(LocalContext.current))
+        ListSetting(heading = "panic urls", userSettingViewModel.getPanicUrls())
         Spacer(modifier = Modifier.height(8.dp))
         PanicButton()
     }
@@ -159,7 +180,7 @@ fun ListSetting(heading: String, list: Array<String>){
     }
 }
 @Composable
-fun DarkModeSetting(heading: String, isDarkMode: Boolean){
+fun DarkModeSetting(heading: String, isDarkMode: Boolean, onClick: (Boolean)->Unit){
     Card(modifier = Modifier
         .fillMaxWidth(), shape = RoundedCornerShape(8.dp)){
         Text(text = heading, fontSize = 24.sp)
@@ -168,6 +189,8 @@ fun DarkModeSetting(heading: String, isDarkMode: Boolean){
             Spacer(Modifier.weight(1f))
             Switch(checked = isDarkMode, onCheckedChange = {
                 println("is dark mode $it")
+                //isDarkMode = it
+                onClick(it)
             })
         }
     }

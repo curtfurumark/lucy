@@ -12,7 +12,7 @@ import se.curtrune.lucy.classes.Item;
 
 public class CalenderDate {
     private LocalDate date;
-    private List<Item> items;
+    private List<Item> items = new ArrayList<>();
 
     public LocalDate getDate(){
         return date;
@@ -37,6 +37,15 @@ public class CalenderDate {
     }
     public CalenderDate(LocalDate date){
         this.date = date;
+    }
+    public CalenderDate(LocalDate date, Item item){
+        this.date = date;
+        this.items.add(item);
+    }
+    public CalenderDate(LocalDate date, List<Item> items){
+        this.date = date;
+        this.items = items;
+
     }
 
     @NonNull

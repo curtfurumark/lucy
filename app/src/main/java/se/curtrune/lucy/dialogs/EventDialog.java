@@ -25,7 +25,7 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.util.Converter;
 
-public class AppointmentDialog extends BottomSheetDialogFragment {
+public class EventDialog extends BottomSheetDialogFragment {
     private TextView textViewDate;
     private TextView textViewTime;
     private LocalTime targetTime;
@@ -39,11 +39,11 @@ public class AppointmentDialog extends BottomSheetDialogFragment {
         void onNewAppointment(Item item);
     }
     private OnNewAppointmentCallback callback;
-    public AppointmentDialog(){
+    public EventDialog(){
         this.targetTime = LocalTime.now();
         this.targetDate = LocalDate.now();
     }
-    public AppointmentDialog(LocalDate date){
+    public EventDialog(LocalDate date){
         this.targetDate = date;
         this.targetTime = LocalTime.now();
 
@@ -79,10 +79,6 @@ public class AppointmentDialog extends BottomSheetDialogFragment {
         editTextLocation = view.findViewById(R.id.addAppointmentDialog_location);
         buttonAdd = view.findViewById(R.id.addAppointmentDialog_button);
     }
-/*    private void initDefaults(){
-        targetDate = LocalDate.now();
-        targetTime = LocalTime.now();
-    }*/
     private void initListeners(){
         textViewDate.setOnClickListener(view->showDateDialog());
         textViewTime.setOnClickListener(view->showTimeDialog());

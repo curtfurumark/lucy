@@ -30,7 +30,7 @@ import se.curtrune.lucy.adapters.CalenderMonthAdapter;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.calender.CalenderDate;
 import se.curtrune.lucy.classes.calender.OnSwipeClickListener;
-import se.curtrune.lucy.dialogs.AppointmentDialog;
+import se.curtrune.lucy.dialogs.EventDialog;
 import se.curtrune.lucy.dialogs.ItemsDialog;
 import se.curtrune.lucy.viewmodel.CalendarMonthViewModel;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
@@ -231,8 +231,8 @@ public class CalenderMonthFragment extends Fragment {
     }
     private void showAppointmentsDialog(LocalDate date){
         log("...showAppointmentsDialog()");
-        AppointmentDialog dialog = new AppointmentDialog(date);
-        dialog.setCallback(new AppointmentDialog.OnNewAppointmentCallback() {
+        EventDialog dialog = new EventDialog(date);
+        dialog.setCallback(new EventDialog.OnNewAppointmentCallback() {
             @Override
             public void onNewAppointment(Item item) {
                 log("...onNewAppointment(Item item)", item.getHeading());

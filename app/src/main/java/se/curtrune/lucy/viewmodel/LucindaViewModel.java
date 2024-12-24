@@ -230,7 +230,9 @@ public class LucindaViewModel extends ViewModel {
         updateEnergy.setValue(update);
     }
     public void updateFragment(Fragment fragment){
-        currentFragment.setValue(fragment);
+        log("LucindaViewModel.updateFragment(Fragment)");
+        //currentFragment.setValue(fragment);
+        currentFragment.postValue(fragment);
     }
 
     public void updateEnergy(Context context){

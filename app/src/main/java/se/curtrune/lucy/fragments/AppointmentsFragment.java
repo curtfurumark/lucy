@@ -7,11 +7,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -20,17 +18,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.List;
-
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.AppointmentAdapter;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
-import se.curtrune.lucy.dialogs.AppointmentDialog;
+import se.curtrune.lucy.dialogs.EventDialog;
 import se.curtrune.lucy.dialogs.PostponeDialog;
 import se.curtrune.lucy.viewmodel.AppointmentsViewModel;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
-import se.curtrune.lucy.workers.ItemsWorker;
 
 public class AppointmentsFragment extends Fragment implements
         AppointmentAdapter.Callback{
@@ -62,7 +57,7 @@ public class AppointmentsFragment extends Fragment implements
     }
     private void addAppointment(){
         if( VERBOSE)log("...addAppointment()");
-        AppointmentDialog dialog = new AppointmentDialog();
+        EventDialog dialog = new EventDialog();
         dialog.setCallback(item -> {
             log("...onNewAppointment(Item item");
             appointmentsViewModel.add(item, getContext());

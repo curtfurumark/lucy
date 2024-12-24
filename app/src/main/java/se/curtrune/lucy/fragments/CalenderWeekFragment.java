@@ -11,7 +11,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,7 +19,6 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Locale;
 
 import se.curtrune.lucy.R;
@@ -29,7 +27,7 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.calender.CalenderDate;
 import se.curtrune.lucy.classes.calender.OnSwipeClickListener;
 import se.curtrune.lucy.classes.calender.Week;
-import se.curtrune.lucy.dialogs.AppointmentDialog;
+import se.curtrune.lucy.dialogs.EventDialog;
 import se.curtrune.lucy.viewmodel.CalendarWeekViewModel;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.CalenderWorker;
@@ -173,8 +171,8 @@ public class CalenderWeekFragment extends Fragment {
     }
     private void showAppointmentDialog(CalenderDate calenderDate){
         log("...showAppointmentDialog()");
-        AppointmentDialog dialog = new AppointmentDialog(calenderDate.getDate());
-        dialog.setCallback(new AppointmentDialog.OnNewAppointmentCallback() {
+        EventDialog dialog = new EventDialog(calenderDate.getDate());
+        dialog.setCallback(new EventDialog.OnNewAppointmentCallback() {
             @Override
             public void onNewAppointment(Item item) {
                 log("...onNewAppointment(Item item");

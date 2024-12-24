@@ -52,6 +52,7 @@ import se.curtrune.lucy.fragments.DailyGraphFragment;
 import se.curtrune.lucy.fragments.DurationFragment;
 import se.curtrune.lucy.fragments.EnchiladaFragment;
 import se.curtrune.lucy.fragments.EstimateFragment;
+import se.curtrune.lucy.fragments.MonthFragment;
 import se.curtrune.lucy.fragments.ProjectsFragment;
 import se.curtrune.lucy.fragments.MentalDateFragment;
 import se.curtrune.lucy.fragments.MentaHistoryFragment;
@@ -122,7 +123,8 @@ public class MainActivity extends AppCompatActivity {
             if (item.getItemId() == R.id.navigationDrawer_graphFragment) {
                 navigate(new DailyGraphFragment());
             } else if (item.getItemId() == R.id.navigationDrawer_monthCalender) {
-                navigate(new CalendarMonthHostFragment());
+                //navigate(new CalendarMonthHostFragment());
+                navigate(new MonthFragment());
             } else if (item.getItemId() == R.id.bottomNavigation_today) {
                 navigate(new CalenderDateFragment());
             } else if (item.getItemId() == R.id.navigationDrawer_topTen) {
@@ -178,7 +180,9 @@ public class MainActivity extends AppCompatActivity {
     private void initViewModel(){
         if( VERBOSE) log("...initViewModel()");
         viewModel = new ViewModelProvider(this ).get(LucindaViewModel.class);
-        viewModel.getFragment().observe(this, fragment -> navigate(fragment));
+        viewModel.getFragment().observe(this, fragment -> {
+            log(" new fragment observed");
+            navigate(fragment);});
         viewModel.init(LocalDate.now(), this);
         viewModel.getEnergy().observe(this, new Observer<Integer>() {
             @Override
@@ -239,9 +243,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * sorry this one does two things
-     * navigates to fragment
-     * and sets current energy level ui
      * @param fragment, the fragment to go to
      */
     private void navigate(Fragment fragment){
@@ -268,7 +269,7 @@ public class MainActivity extends AppCompatActivity {
                 navigate(new CalendarWeekHostFragment());
                 break;
             case CALENDER_MONTH:
-                navigate( new CalendarMonthHostFragment());
+                navigate( new MonthFragment());
                 break;
             case CALENDER_APPOINTMENTS:
                 navigate( new AppointmentsFragment());

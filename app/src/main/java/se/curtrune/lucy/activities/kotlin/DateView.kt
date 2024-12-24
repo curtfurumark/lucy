@@ -3,6 +3,7 @@ package se.curtrune.lucy.activities.kotlin
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -22,22 +23,26 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.calender.CalenderDate
 import java.time.LocalDate
 
 @Composable
-fun DateView(date: LocalDate, events: List<Item>){
-    println("DateView() $date")
+fun DateView(calendarDate:CalenderDate, onCalendarDateClick: (CalenderDate)->Unit){
+    println("DateView() ${calendarDate.date}")
     Box(
         modifier = Modifier
             .border(BorderStroke(Dp.Hairline, Color.Blue))
             .aspectRatio(0.5f)
-            .clip(RoundedCornerShape(5.dp)),
+            .clip(RoundedCornerShape(5.dp))
+            .clickable {
+                onCalendarDateClick(calendarDate)
+            },
         contentAlignment = Alignment.TopCenter
 
     ){
         Column( modifier = Modifier.padding(2.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(text = date.dayOfMonth.toString(), fontSize = 14.sp, color = Color.White)
-            for(event in events){
+            Text(text = calendarDate.date.dayOfMonth.toString(), fontSize = 14.sp, color = Color.White)
+            for(event in calendarDate.items){
                 CalendarEvent(event = event)
             }
         }
@@ -45,7 +50,7 @@ fun DateView(date: LocalDate, events: List<Item>){
 }
 @Composable
 fun CalendarEvent(event: Item){
-    Card(modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(), shape = RoundedCornerShape(2.dp)){
+    Card(modifier = Modifier.fillMaxWidth().border(1.dp, color = Color.Green), colors = CardDefaults.cardColors(containerColor = Color.Black), shape = RoundedCornerShape(2.dp)){
         Text(text = "${event.heading}", fontSize = 10.sp, color = Color.Yellow, maxLines = 1)
     }
 
