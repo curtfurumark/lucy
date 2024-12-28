@@ -10,6 +10,7 @@ class UserSettingsViewModel(private val context: Context): ViewModel(){
         set(value){
             println("...setting dark mode to $value")
             field = value
+            User.setUseDarkMode(field.value, context)
         }
     init {
         isDarkMode.value = User.getDarkMode(context)

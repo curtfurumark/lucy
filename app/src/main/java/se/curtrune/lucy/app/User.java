@@ -128,6 +128,11 @@ public class User {
     public static void setUseDarkMode(boolean darkMode, Context context) {
         log("User.setUseDarkMode(boolean, Context)");
         Settings.addBoolean(USE_DARK_MODE, darkMode, context);
+        if( darkMode){
+            SettingsWorker.setDarkMode();
+        }else{
+            SettingsWorker.setLightMode();
+        }
     }
 
     public static void setPanicUrls(String[] urlArray, Context context) {

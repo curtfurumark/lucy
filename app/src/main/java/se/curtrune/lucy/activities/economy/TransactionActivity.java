@@ -42,7 +42,7 @@ public class TransactionActivity extends AppCompatActivity{
         setContentView(R.layout.transactions_fragment);
         setTitle("expenditure");
         log("TransactionActivity.onCreate(Bundle)");
-        setContentView(R.layout.transactions_fragment);
+        //setContentView(R.layout.transactions_fragment);
         log("EconomyActivity.onCreate(Bundle)");
         initComponents();
         initListeners();
@@ -79,11 +79,11 @@ public class TransactionActivity extends AppCompatActivity{
         log("...initComponents()");
         editTextDescription = findViewById(R.id.transactionActivity_goods);
         editTextAmount = findViewById(R.id.economyActivity_amount);
-        textViewDate= findViewById(R.id.transactionActivity_date);
+        textViewDate= findViewById(R.id.transactionFragment_date);
         textViewDate.setText(LocalDate.now().toString());
 /*        spinnerAccounts = findViewById(R.id.economyActivity_accounts);
         spinnerTypes = findViewById(R.id.economyActivity_types);*/
-        recycler = findViewById(R.id.transactionActivity_recycler);
+        //recycler = findViewById(R.id.transactionActivity_recycler);
         //progressBar = findViewById(R.id.economyActivity_progressBar);
 
     }

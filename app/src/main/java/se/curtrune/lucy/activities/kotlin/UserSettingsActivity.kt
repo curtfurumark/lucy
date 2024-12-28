@@ -83,20 +83,24 @@ fun UserSettings(context: Context){
         DarkModeSetting(heading = "dark mode", isDarkMode.value) {
             println("setting isDarkMode to $it")
             userSettingViewModel.isDarkMode.value = it
-            //isDarkMode.value = it
         }
         Spacer(modifier = Modifier.height(8.dp))
         LanguageSetting(userSettingViewModel.getLanguage())
         Spacer(modifier = Modifier.height(8.dp))
-
         ListSetting(heading = "panic urls", userSettingViewModel.getPanicUrls())
         Spacer(modifier = Modifier.height(8.dp))
         PanicButton()
+        Spacer(modifier = Modifier.height(8.dp))
+        ColorsSetting()
+        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 @Composable
 fun PanicButton(){
     val radioButtons = listOf("url", "ice", "snake")
+    var selectedOption by remember {
+        mutableStateOf("url")
+    }
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(text = "panic button", fontSize = 24.sp)
@@ -104,7 +108,10 @@ fun PanicButton(){
                 Row(horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    RadioButton(selected = false, onClick = { /*TODO*/ })
+                    RadioButton(selected = (it == selectedOption), onClick = {
+                        println("...on radio button $it")
+                        selectedOption = it
+                    })
                     Text(text = it)
                 }
             }
@@ -194,6 +201,13 @@ fun DarkModeSetting(heading: String, isDarkMode: Boolean, onClick: (Boolean)->Un
             })
         }
     }
+}
+@Composable
+fun ColorsSetting(){
+    Card(modifier = Modifier.fillMaxWidth()){
+        Text("colorsetting")
+    }
+
 }
 
 @Preview(showBackground = true)
