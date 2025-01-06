@@ -1,4 +1,4 @@
-package se.curtrune.lucy.activities.kotlin
+package se.curtrune.lucy.activities.kotlin.monthcalendar
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,30 +10,23 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.activities.kotlin.composables.LucindaTopAppBar
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
-import se.curtrune.lucy.viewmodel.CalendarMonthViewModel
-import se.curtrune.lucy.viewmodel.MonthViewModel
-import se.curtrune.lucy.viewmodel.WeekViewModel
-import java.time.YearMonth
+import se.curtrune.lucy.classes.Mental
 
 class MonthCalendarActivityKt : ComponentActivity() {
     @OptIn(ExperimentalFoundationApi::class)
@@ -42,7 +35,9 @@ class MonthCalendarActivityKt : ComponentActivity() {
         setContent {
             LucyTheme {
                 // A surface container using the 'background' color from the theme
-                Scaffold(topBar = { LucindaTopAppBar()}) {
+                Scaffold(topBar = { LucindaTopAppBar(Mental(), onEvent = {
+                    println("mood event $it")
+                })}) {
                     Surface(
                         modifier = Modifier
                             .fillMaxSize()
@@ -56,26 +51,16 @@ class MonthCalendarActivityKt : ComponentActivity() {
                                 }
                             }
                         )
-                        var calendarDates by remember{
-                            mutableStateOf(monthViewModel.mutableCalendarDates)
-                        }
-                        var yearMonth by remember{
-                            mutableStateOf(monthViewModel.yearMonth)
-                        }
+                        val state = monthViewModel.state.collectAsState()
                         val pagerState = rememberPagerState(pageCount = {
                             10
                         }, initialPage = 5)
                         HorizontalPager(state =pagerState ) {
                             println(" pager state ${pagerState.currentPage}")
                             monthViewModel.onPager(pagerState.currentPage)
-                            calendarDates.value?.let { yearMonth.value?.let { it1 ->
-                                MonthCalendar(it,
-                                    it1,
-                                    onDateClick = {
-                                        println(" onCalendarDate click")
-                                    }
-                                )
-                            } }
+                            MonthCalendar(state = state.value, onEvent = { event->
+                                println("month calendar event $event ")
+                            })
                         }
                     }
                 }
@@ -83,14 +68,8 @@ class MonthCalendarActivityKt : ComponentActivity() {
         }
     }
 }
-@Composable
-fun AddItemFloatingActionButton(){
-    FloatingActionButton(onClick = { /*TODO*/ }) {
-/*        Icon(imageVector = Icons.Default.Add, modifier =  Modifier, color = Color.Green){
+@OptIn(ExperimentalMaterial3Api::class)
 
-        }*/
-    }
-}
 
 @Preview(showBackground = true)
 @Composable

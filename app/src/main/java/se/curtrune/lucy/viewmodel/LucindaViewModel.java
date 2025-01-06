@@ -13,14 +13,12 @@ import androidx.lifecycle.ViewModel;
 
 import java.time.LocalDate;
 
-import se.curtrune.lucy.adapters.MentalAdapter;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.app.User;
 import se.curtrune.lucy.classes.Affirmation;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
-import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.web.CheckForUpdateThread;
 import se.curtrune.lucy.web.VersionInfo;
 import se.curtrune.lucy.workers.AffirmationWorker;
@@ -39,7 +37,6 @@ public class LucindaViewModel extends ViewModel {
     private MutableLiveData<Integer> mutableMood = new MutableLiveData<>();
     private MutableLiveData<Affirmation> mutableAffirmation = new MutableLiveData<>();
     private MutableLiveData<String> mutableFilter = new MutableLiveData<>();
-    private MentalAdapter.MentalType mentalType = MentalAdapter.MentalType.ENERGY;
     private Mental currentMental;
     private boolean updatedAvailableChecked = false;
     private LocalDate date;
@@ -60,7 +57,7 @@ public class LucindaViewModel extends ViewModel {
         log("LucindaViewModel.init(LocalDate)", date.toString());
         this.date = date;
         currentMental = MentalWorker.getCurrentMental(date, context);
-        switch (mentalType){
+/*        switch (mentalType){
             case STRESS:
                 mutableStress.setValue(currentMental.getStress());
                 break;
@@ -73,7 +70,7 @@ public class LucindaViewModel extends ViewModel {
             case ANXIETY:
                 mutableAnxiety.setValue(currentMental.getAnxiety());
                 break;
-        }
+        }*/
         if(InternetWorker.isConnected( context) && !updatedAvailableChecked) {
             checkIfUpdateAvailable(context);
             updatedAvailableChecked = true;
@@ -178,31 +175,6 @@ public class LucindaViewModel extends ViewModel {
     public void setCurrentEnergy(int energy) {
         log("MainViewModel.setCurrentEnergy(int)", energy);
         mutableEnergy.setValue(energy);
-    }
-
-    public void resetMental(Context context, MentalAdapter.MentalType type) {
-        log("LucindaViewModel.resetMental()");
-        this.mentalType = type;
-        init(date, context);
-    }
-
-    public void setMentalType(MentalAdapter.MentalType mentalType) {
-        log("LucindaViewModel.setMentalType(MentalType)", mentalType.toString());
-        this.mentalType = mentalType;
-        switch (mentalType){
-            case STRESS:
-                mutableStress.setValue(currentMental.getStress());
-                break;
-            case ANXIETY:
-                mutableAnxiety.setValue(currentMental.getAnxiety());
-                break;
-            case ENERGY:
-                mutableEnergy.setValue(currentMental.getEnergy());
-                break;
-            case MOOD:
-                mutableMood.setValue(currentMental.getMood());
-                break;
-        }
     }
 
     public void estimateEnergy(int energy) {

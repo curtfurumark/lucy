@@ -1,0 +1,14 @@
+package se.curtrune.lucy.activities.kotlin.monthcalendar
+
+import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.calender.CalenderDate
+import java.time.YearMonth
+
+sealed interface MonthCalendarEvent {
+    data class InsertItem(val item: Item): MonthCalendarEvent
+    data class CalendarDateClick(val calendarDate: CalenderDate): MonthCalendarEvent
+    data class MonthYear( val  yearMonth: YearMonth): MonthCalendarEvent
+    data class Pager(val page: Int): MonthCalendarEvent
+    data class ShowAddItemDialog(val show: Boolean): MonthCalendarEvent
+    //data class AddEvent
+}

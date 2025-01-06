@@ -33,15 +33,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import se.curtrune.lucy.activities.kotlin.composables.user_settings.Categories
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
-import se.curtrune.lucy.viewmodel.MonthViewModel
 import se.curtrune.lucy.viewmodel.UserSettingsViewModel
 
 class UserSettingsActivity : ComponentActivity() {
@@ -77,6 +76,9 @@ fun UserSettings(context: Context){
     var language by remember {
         mutableStateOf(userSettingViewModel.getLanguage())
     }
+    var categories  by remember {
+        mutableStateOf(userSettingViewModel.categories)
+    }
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(8.dp)){
@@ -93,6 +95,9 @@ fun UserSettings(context: Context){
         Spacer(modifier = Modifier.height(8.dp))
         ColorsSetting()
         Spacer(modifier = Modifier.height(8.dp))
+        Categories(categories, onAddCategory = {
+            println("onAddCategory $it")
+        })
     }
 }
 @Composable

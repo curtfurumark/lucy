@@ -5,71 +5,15 @@
     android:padding="16dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <TextView
-        android:id="@+id/mentalDayFragment_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:minHeight="48dp"
-        android:text="date"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Switch
-        android:id="@+id/mentalDayFragment_modeSwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/actual"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mentalDayFragment_date" />
-
-    <RadioGroup
-        android:id="@+id/mentalDayFragment_radioGroup"
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/mentalDateFragment_composeView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mentalDayFragment_modeSwitch">
-
-        <RadioButton
-            android:id="@+id/mentalList_radioButtonEnergy"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/energy" />
-
-        <RadioButton
-            android:id="@+id/mentalList_radioButtonMood"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/mood" />
-
-        <RadioButton
-            android:id="@+id/mentalList_radioButtonAnxiety"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/anxiety" />
-
-        <RadioButton
-            android:id="@+id/mentalList_radioButtonStress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/stress" />
-    </RadioGroup>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/mentalDayFragment_recycler"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mentalDayFragment_radioGroup" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -156,6 +156,21 @@ public class CalendarDateViewModel extends ViewModel {
         items = ItemsWorker.selectChildren(parent, context);
         mutableItems.setValue(items);
     }
+    public Item getParent(Item child, Context context){
+        log("...getParent(Item, Context)");
+        return ItemsWorker.getParent(child, context);
+    }
+    public void goToParent(long id, Context context){
+        log("CalendarDateViewModel.goToParent(long, Context)", id);
+        Item parent = ItemsWorker.selectItem(id, context);
+        log(parent);
+    }
+    public void moveOnUp(long id, Context context){
+        log("CalendarDateViewModel.moveOnUp(long, Context)", id);
+        currentParent = ItemsWorker.selectItem(currentParent.getParentId(), context);
+        items = ItemsWorker.selectChildren(currentParent, context);
+        mutableItems.setValue(items);
+    }
     public void sort(){
         log("CalendarDateViewModel.sort()");
         items.sort(Comparator.comparingLong(Item::compareTargetTime));

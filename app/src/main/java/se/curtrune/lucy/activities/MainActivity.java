@@ -32,7 +32,6 @@ import java.util.Objects;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.activities.flying_fish.GameActivity;
 import se.curtrune.lucy.activities.kotlin.IndexActivityKt;
-import se.curtrune.lucy.activities.kotlin.IndexActivityKtKt;
 import se.curtrune.lucy.app.FirstPage;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.app.User;
@@ -42,7 +41,6 @@ import se.curtrune.lucy.dialogs.BoostDialog;
 import se.curtrune.lucy.dialogs.PanicActionDialog;
 import se.curtrune.lucy.dialogs.UpdateDialog;
 import se.curtrune.lucy.fragments.AppointmentsFragment;
-import se.curtrune.lucy.fragments.CalendarMonthHostFragment;
 import se.curtrune.lucy.fragments.CalendarWeekHostFragment;
 import se.curtrune.lucy.fragments.CalenderDateFragment;
 import se.curtrune.lucy.fragments.ContactFragment;
@@ -52,7 +50,7 @@ import se.curtrune.lucy.fragments.DailyGraphFragment;
 import se.curtrune.lucy.fragments.DurationFragment;
 import se.curtrune.lucy.fragments.EnchiladaFragment;
 import se.curtrune.lucy.fragments.EstimateFragment;
-import se.curtrune.lucy.fragments.MonthFragment;
+import se.curtrune.lucy.activities.kotlin.monthcalendar.MonthFragment;
 import se.curtrune.lucy.fragments.ProjectsFragment;
 import se.curtrune.lucy.fragments.MentalDateFragment;
 import se.curtrune.lucy.fragments.MentaHistoryFragment;
@@ -252,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
         }
         log("MainActivity.navigate(Fragment) ", fragment.getClass().getName());
         currentFragment = fragment;
-        setTextViewMental(getString(R.string.energy), viewModel.getEnergy().getValue());
+        //setTextViewMental(getString(R.string.energy), viewModel.getEnergy().getValue());
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.navigationDrawer_frameContainer, fragment)

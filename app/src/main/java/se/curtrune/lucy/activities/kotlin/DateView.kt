@@ -22,12 +22,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import se.curtrune.lucy.activities.kotlin.monthcalendar.MonthCalendarEvent
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.calender.CalenderDate
 import java.time.LocalDate
 
 @Composable
-fun DateView(calendarDate:CalenderDate, onCalendarDateClick: (CalenderDate)->Unit){
+fun DateView(calendarDate:CalenderDate, onEvent: (MonthCalendarEvent)->Unit){
     println("DateView() ${calendarDate.date}")
     Box(
         modifier = Modifier
@@ -35,7 +36,7 @@ fun DateView(calendarDate:CalenderDate, onCalendarDateClick: (CalenderDate)->Uni
             .aspectRatio(0.5f)
             .clip(RoundedCornerShape(5.dp))
             .clickable {
-                onCalendarDateClick(calendarDate)
+                onEvent(MonthCalendarEvent.CalendarDateClick(calendarDate))
             },
         contentAlignment = Alignment.TopCenter
 
@@ -51,7 +52,7 @@ fun DateView(calendarDate:CalenderDate, onCalendarDateClick: (CalenderDate)->Uni
 @Composable
 fun CalendarEvent(event: Item){
     Card(modifier = Modifier.fillMaxWidth().border(1.dp, color = Color.Green), colors = CardDefaults.cardColors(containerColor = Color.Black), shape = RoundedCornerShape(2.dp)){
-        Text(text = "${event.heading}", fontSize = 10.sp, color = Color.Yellow, maxLines = 1)
+        Text(text = event.heading, fontSize = 10.sp, color = Color.Yellow, maxLines = 1)
     }
 
 }

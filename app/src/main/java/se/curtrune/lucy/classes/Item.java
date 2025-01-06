@@ -396,6 +396,9 @@ public class Item implements Serializable , Listable {
     public void setIsCalenderItem(boolean calenderItem){
         this.isCalenderItem = calenderItem;
     }
+    public void setIsDone(boolean isDone){
+        this.state = isDone ? State.DONE.ordinal(): State.TODO.ordinal();
+    }
     public void setHasChild(boolean hasChild){
         this.has_child = hasChild? 1:0;
     }

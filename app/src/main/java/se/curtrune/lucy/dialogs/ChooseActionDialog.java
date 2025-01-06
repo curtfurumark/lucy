@@ -23,10 +23,11 @@ public class ChooseActionDialog extends BottomSheetDialogFragment {
     private Button buttonShowChildren;
     private Button buttonStatistics;
     private Button buttonAddList;
-    private Button startTimer;
+    private Button buttonStartTimer;
+    private Button buttonGoToParent;
     private Item currentItem;
     public enum Action{
-        EDIT, SHOW_CHILDREN, SHOW_STATS, START_TIMER, ADD_CONTACT, ADD_LIST, ADD_CHILD, ADD_IMAGE
+        EDIT, SHOW_CHILDREN, SHOW_STATS, START_TIMER, ADD_CONTACT, ADD_LIST, ADD_CHILD, ADD_IMAGE, GOTO_PARENT
     }
     public interface Callback{
         void onClick(Action action);
@@ -51,7 +52,8 @@ public class ChooseActionDialog extends BottomSheetDialogFragment {
         buttonShowChildren = view.findViewById(R.id.updateChildrenDialog_showChildren);
         buttonStatistics = view.findViewById(R.id.chooseActionDialog_buttonStatistics);
         buttonAddList = view.findViewById(R.id.chooseActionDialog_buttonAddList);
-
+        buttonGoToParent = view.findViewById(R.id.chooseActionDialog_buttonGotoParent);
+        buttonStartTimer = view.findViewById(R.id.chooseActionDialog_buttonStartTimer);
 
     }
     private void initListeners(){
@@ -60,6 +62,8 @@ public class ChooseActionDialog extends BottomSheetDialogFragment {
         buttonShowChildren.setOnClickListener(view->onClick(Action.SHOW_CHILDREN));
         buttonStatistics.setOnClickListener(view->onClick(Action.SHOW_STATS));
         buttonAddList.setOnClickListener(view->onClick(Action.ADD_LIST));
+        buttonGoToParent.setOnClickListener(view->onClick(Action.GOTO_PARENT));
+        buttonStartTimer.setOnClickListener(view->onClick(Action.START_TIMER));
     }
     private void setUserInterface(Item item){
         log("...setUserInterface(Item)", item.getHeading());

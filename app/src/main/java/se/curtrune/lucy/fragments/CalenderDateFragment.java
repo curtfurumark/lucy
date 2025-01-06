@@ -35,7 +35,6 @@ import java.util.Locale;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.CalenderAdapter;
 import se.curtrune.lucy.adapters.CalenderDateAdapter;
-import se.curtrune.lucy.adapters.MentalAdapter;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.ItemStatistics;
@@ -48,6 +47,7 @@ import se.curtrune.lucy.dialogs.ChooseChildTypeDialog;
 import se.curtrune.lucy.dialogs.ItemStatisticsDialog;
 import se.curtrune.lucy.dialogs.PostponeDialog;
 import se.curtrune.lucy.dialogs.ChooseActionDialog;
+import se.curtrune.lucy.services.TimerService;
 import se.curtrune.lucy.viewmodel.CalendarDateViewModel;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
 import se.curtrune.lucy.workers.CalenderWorker;
@@ -173,8 +173,6 @@ public class CalenderDateFragment extends Fragment {
             @Override
             public void onLongClick(Item item) {
                 log("...onLongClick(Item)", item.getHeading());
-                //showChooseActionDialog();
-                //showItemStatisticsDialog(item);
                 ChooseActionDialog dialog = new ChooseActionDialog(item, action -> {
                     log("...onClick(Action), add child", action.toString());
                     switch (action){
@@ -183,17 +181,24 @@ public class CalenderDateFragment extends Fragment {
                             break;
                         case START_TIMER:
                             Toast.makeText(getContext(), "not implemented", Toast.LENGTH_LONG).show();
+                            TimerService.Companion.getCurrentDuration();
                             break;
                         case SHOW_CHILDREN:
                             calendarDateViewModel.setParent(item, getContext());
                             break;
                         case ADD_LIST:
-                            //Toast.makeText(getContext(), "not implemented", Toast.LENGTH_LONG).show();
                             lucindaViewModel.updateFragment(new EditableListFragment(item));
                             break;
                         case SHOW_STATS:
                             showItemStatisticsDialog(item);
                             break;
+                        case GOTO_PARENT:
+                            //calendarDateViewModel.moveOnUp(0, getContext());
+                            Item parent = calendarDateViewModel.getParent(item, getContext());
+                            log(parent);
+                            Toast.makeText(getContext(), parent.toString(), Toast.LENGTH_LONG).show();
+                            break;
+
                     }
                 });
                 dialog.show(getChildFragmentManager(), "update children");
@@ -209,9 +214,9 @@ public class CalenderDateFragment extends Fragment {
                     Toast.makeText(getContext(), "ERROR updating item", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if(checked){
+/*                if(checked){
                     lucindaViewModel.resetMental(getContext(), MentalAdapter.MentalType.ENERGY);
-                }
+                }*/
                 if(item.hasReward()){
                     switch (item.getReward().getType()){
                         case AFFIRMATION:
@@ -406,7 +411,7 @@ public class CalenderDateFragment extends Fragment {
             calendarDateViewModel.delete(item, getContext());
             if(item.isDone()){
                 log("...item is done, update mental");
-                lucindaViewModel.resetMental(getContext(), MentalAdapter.MentalType.ENERGY);
+                //lucindaViewModel.resetMental(getContext(), MentalAdapter.MentalType.ENERGY);
             }
         });
         builder.setNegativeButton(getString(R.string.dismiss), (dialog, which) -> {
