@@ -29,7 +29,7 @@ import java.time.LocalDate
 
 @Composable
 fun DateView(calendarDate:CalenderDate, onEvent: (MonthCalendarEvent)->Unit){
-    println("DateView() ${calendarDate.date}")
+    //println("DateView() ${calendarDate.date}")
     Box(
         modifier = Modifier
             .border(BorderStroke(Dp.Hairline, Color.Blue))

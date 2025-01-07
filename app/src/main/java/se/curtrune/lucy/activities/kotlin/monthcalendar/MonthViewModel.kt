@@ -16,7 +16,7 @@ import se.curtrune.lucy.workers.ItemsWorker
 import java.time.YearMonth
 
 class MonthViewModel(private val context: Context): ViewModel() {
-    private var _yearMonth = YearMonth.now()
+    private var yearMonth = YearMonth.now()
     var initialPage = 5
     var numPages = 10
     private val _state = MutableStateFlow(MonthCalendarState())
@@ -24,9 +24,9 @@ class MonthViewModel(private val context: Context): ViewModel() {
 
     private var currentPage = initialPage
     private var _calendarDates = MutableLiveData<List<CalenderDate>>()
-    var yearMonth : MutableLiveData<YearMonth> = MutableLiveData(YearMonth.now())
+    //var yearMonth : MutableLiveData<YearMonth> = MutableLiveData(YearMonth.now())
     init {
-        _state.value.calendarDates = CalenderWorker.getCalenderDates(yearMonth.value, context)
+        _state.value.calendarDates = CalenderWorker.getCalenderDates(state.value.yearMonth, context)
     }
     fun onPager(newPageIndex: Int){
         println("...onPager $newPageIndex")
@@ -34,9 +34,11 @@ class MonthViewModel(private val context: Context): ViewModel() {
             val numMonths: Int =  newPageIndex - currentPage
             println(" number of months to add $numMonths")
             currentPage = newPageIndex
-            _yearMonth = _yearMonth.plusMonths(numMonths.toLong())
-            yearMonth.value = _yearMonth
-            _calendarDates.value = CalenderWorker.getCalenderDates(_yearMonth, context)
+            yearMonth = yearMonth.plusMonths(numMonths.toLong())
+            _state.update { it.copy(yearMonth = yearMonth.plusMonths(numMonths.toLong()) ) }
+            _state.update { it.copy(
+                calendarDates = CalenderWorker.getCalenderDates(yearMonth, context)
+            ) }
         }
     }
     fun onEvent(event : MonthCalendarEvent){
@@ -46,16 +48,18 @@ class MonthViewModel(private val context: Context): ViewModel() {
             is MonthCalendarEvent.Pager -> {onPager(event.page)}
             is MonthCalendarEvent.ShowAddItemDialog -> {
                 println("please, show add item dialog: ${event.show}")
-                //_state.update { it.showAddItemDialog }
-                //_state.update { _state.value.showAddItemDialog = true }
-                //_state.value.showAddItemDialog = event.show
+                _state.update {  it.copy(
+                    showAddItemDialog = event.show
+                )}
             }
             is MonthCalendarEvent.CalendarDateClick -> {
                 println("on calendar date click ")
                 if( event.calendarDate.hasEvents()){
                     println("go to day calendar")
                 }else{
-                    _state.value.showAddItemDialog = true
+                    _state.update { it.copy(
+                        showAddItemDialog = true
+                    ) }
                 }
             }
             is MonthCalendarEvent.InsertItem ->  {

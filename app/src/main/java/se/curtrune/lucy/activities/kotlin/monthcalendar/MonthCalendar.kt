@@ -1,6 +1,7 @@
 package se.curtrune.lucy.activities.kotlin.monthcalendar
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,11 +23,9 @@ import java.util.Locale
 
 @Composable
 fun MonthCalendar(state: MonthCalendarState, onEvent: (MonthCalendarEvent)->Unit){
-/*    val pagerState = rememberPagerState(pageCount = {
-        10
-    }, initialPage = 5)*/
-
-    Column() {
+    val ym = state.yearMonth
+    println("MonthCalendar()year: ${ym.year} month: ${ym.month} ")
+    Column(modifier = Modifier.background(Color.Black)) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             Text(text = state.yearMonth.toString(), color = Color.White)
         }
