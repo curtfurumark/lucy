@@ -33,7 +33,7 @@ import java.util.Locale;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.activities.economy.EconomyActivity;
 import se.curtrune.lucy.activities.kotlin.RepeatActivity;
-import se.curtrune.lucy.activities.kotlin.WeekCalendarActivityKt;
+import se.curtrune.lucy.activities.kotlin.weekcalendar.WeekCalendarActivityKt;
 import se.curtrune.lucy.adapters.DevActivityAdapter;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.Settings;

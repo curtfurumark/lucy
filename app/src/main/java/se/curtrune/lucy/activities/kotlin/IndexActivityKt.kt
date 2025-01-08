@@ -17,7 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import se.curtrune.lucy.activities.kotlin.monthcalendar.MonthCalendarActivityKt
+import se.curtrune.lucy.activities.kotlin.daycalendar.DayCalendarActivity
+import se.curtrune.lucy.activities.kotlin.medicine.MedicinActivity
+import se.curtrune.lucy.activities.kotlin.weekcalendar.WeekCalendarActivityKt
 import se.curtrune.lucy.activities.ui.theme.LucyTheme
 
 class IndexActivityKt : ComponentActivity() {
@@ -45,9 +47,6 @@ fun Index(){
         horizontalAlignment = Alignment.CenterHorizontally){
         Text(text = "week calendar", fontSize = 24.sp, modifier = Modifier.clickable {
             context.startActivity(Intent(context, WeekCalendarActivityKt::class.java))
-        })
-        Text(text = "month calendar", fontSize = 24.sp, modifier = Modifier.clickable {
-            context.startActivity(Intent(context, MonthCalendarActivityKt::class.java))
         })
         Text(text = "repeats", fontSize = 24.sp, modifier = Modifier.clickable {
             context.startActivity(Intent(context, RepeatActivity::class.java))

@@ -1,5 +1,6 @@
-package se.curtrune.lucy.activities.kotlin
+package se.curtrune.lucy.activities.kotlin.daycalendar
 
+import android.app.Application
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -10,20 +11,21 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.activities.kotlin.composables.AddItemDialog
 import se.curtrune.lucy.activities.kotlin.composables.AddItemFab
-import se.curtrune.lucy.activities.kotlin.daycalendar.DateEvent
-import se.curtrune.lucy.activities.kotlin.daycalendar.DayCalendar
 import se.curtrune.lucy.activities.kotlin.composables.LucindaTopAppBar
+import se.curtrune.lucy.activities.kotlin.monthcalendar.MonthViewModel
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
-import se.curtrune.lucy.activities.kotlin.viewmodels.DateViewModel
 import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.workers.ItemsWorker
 import java.time.LocalDate
@@ -39,6 +41,14 @@ class DayCalendarActivity : ComponentActivity() {
                 var showAddItemDialog by remember{
                     mutableStateOf(false)
                 }
+                val viewModel = viewModel<DateViewModel>(
+                    factory = object : ViewModelProvider.Factory {
+                        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                            return DateViewModel(applicationContext) as T
+                        }
+                    }
+                )
+                val state = viewModel.state.collectAsState()
                 Scaffold(
                     topBar = {LucindaTopAppBar(Mental(), onEvent = {
                         Toast.makeText(applicationContext, it, Toast.LENGTH_LONG).show()
@@ -53,17 +63,18 @@ class DayCalendarActivity : ComponentActivity() {
                             .padding(it),
                         color = MaterialTheme.colorScheme.background
                     ) {
-                        var dateViewModel = viewModel<DateViewModel>()
+                        //val dateViewModel = viewModel<DateViewModel>()
+                        //val state = dateViewModel.state.collectAsState()
 
-                        DayCalendar(items = items, onEvent = { event->
+                        DayCalendar(state = state.value, onEvent = { event->
                             Toast.makeText(baseContext, event.toString(), Toast.LENGTH_LONG).show()
-                            dateViewModel.onEvent(event)
+                            viewModel.onEvent(event)
                         })
                         if(showAddItemDialog){
                             AddItemDialog(onDismiss = {showAddItemDialog = false},
                                 onConfirm = {item ->
                                     showAddItemDialog = false
-                                    dateViewModel.onEvent(DateEvent.AddItem(item))
+                                    viewModel.onEvent(DateEvent.AddItem(item))
                                 }
                             )
                         }

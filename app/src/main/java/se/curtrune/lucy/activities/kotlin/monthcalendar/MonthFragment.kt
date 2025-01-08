@@ -53,7 +53,9 @@ class MonthFragment : Fragment() {
                             }, initialPage = 5)
                             HorizontalPager(state = pagerState) {
                                 println(" pager state ${pagerState.currentPage}")
-                                monthViewModel.onPager(pagerState.currentPage)
+                                if ( !pagerState.isScrollInProgress){
+                                    monthViewModel.onPager(pagerState.currentPage)
+                                }
                                 MonthCalendar(state = state.value, onEvent = { event ->
                                     monthViewModel.onEvent(event)
                                 })

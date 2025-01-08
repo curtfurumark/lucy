@@ -1,22 +1,17 @@
 package se.curtrune.lucy.activities.kotlin.monthcalendar
 
 import android.content.Context
-import android.content.Intent
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.room.util.copy
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.workers.CalenderWorker
-import se.curtrune.lucy.workers.ItemsWorker
 import java.time.YearMonth
 
 class MonthViewModel(private val context: Context): ViewModel() {
-    private var yearMonth = YearMonth.now()
+    private var currentYearMonth = YearMonth.now()
     var initialPage = 5
     var numPages = 10
     private val _state = MutableStateFlow(MonthCalendarState())
@@ -34,11 +29,15 @@ class MonthViewModel(private val context: Context): ViewModel() {
             val numMonths: Int =  newPageIndex - currentPage
             println(" number of months to add $numMonths")
             currentPage = newPageIndex
-            yearMonth = yearMonth.plusMonths(numMonths.toLong())
-            _state.update { it.copy(yearMonth = yearMonth.plusMonths(numMonths.toLong()) ) }
+            currentYearMonth = currentYearMonth.plusMonths(numMonths.toLong())
             _state.update { it.copy(
-                calendarDates = CalenderWorker.getCalenderDates(yearMonth, context)
-            ) }
+                    yearMonth = currentYearMonth,
+                    calendarDates = CalenderWorker.getCalenderDates(currentYearMonth, context)
+                )
+            }
+/*            _state.update { it.copy(
+
+            ) }*/
         }
     }
     fun onEvent(event : MonthCalendarEvent){

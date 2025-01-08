@@ -1,5 +1,6 @@
 package se.curtrune.lucy.activities.kotlin.daycalendar
 
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -23,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.classes.Item
@@ -34,7 +36,7 @@ import java.util.Locale
 
 
 @Composable
-fun DayCalendar(items: List<Item>, onEvent: (DateEvent)->Unit){
+fun DayCalendar(state: DayCalendarState, onEvent: (DateEvent)->Unit){
     Column() {
         Header()
         DaysOfWeek(Week(), onEvent ={
@@ -42,8 +44,8 @@ fun DayCalendar(items: List<Item>, onEvent: (DateEvent)->Unit){
             onEvent(it)
         } )
         LazyColumn {
-            items(items.size) { index ->
-                Event(items[index], onEvent = {
+            items(state.items.size) { index ->
+                Event(state.items[index], onEvent = {
                     onEvent(it)
                 })
                 Spacer(modifier = Modifier.height(4.dp))
@@ -82,11 +84,18 @@ fun Event(item: Item, onEvent: (DateEvent)->Unit){
     var isDone by remember {
         mutableStateOf(item.isDone)
     }
+    var showTimePicker by remember {
+        mutableStateOf(false)
+    }
     var targetTime by remember {
         mutableStateOf(item.targetTime)
     }
     var showContextMenu by remember {
         mutableStateOf(false)
+    }
+    if( showTimePicker){
+        println("show time picker")
+        Toast.makeText(LocalContext.current, "i am not a time picker", Toast.LENGTH_LONG).show()
     }
     //val haptics = LocalHapticFeedback.current
     Card(modifier = Modifier.fillMaxWidth()){
@@ -110,7 +119,8 @@ fun Event(item: Item, onEvent: (DateEvent)->Unit){
             })
             Text(text = item.targetTime.toString(), fontSize = 18.sp, modifier = Modifier.padding(end = 8.dp).clickable {
                 println(" on targetTimeClick")
-                onEvent(DateEvent.EditTime(item))
+                showTimePicker = true
+                //onEvent(DateEvent.EditTime(item))
             })
             Text(text = item.heading, fontSize = 18.sp, modifier = Modifier.fillMaxWidth())
         }

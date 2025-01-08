@@ -1,4 +1,4 @@
-package se.curtrune.lucy.activities.kotlin.composables
+package se.curtrune.lucy.activities.kotlin.medicine
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import se.curtrune.lucy.activities.kotlin.composables.TimePickerDialog
 import se.curtrune.lucy.classes.MedicineContent
 import java.time.LocalTime
 

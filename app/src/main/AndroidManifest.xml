@@ -34,7 +34,7 @@
             android:label="@string/title_activity_item_editor"
             android:theme="@style/Theme.Lucy" />
         <activity
-            android:name=".activities.kotlin.DayCalendarActivity"
+            android:name=".activities.kotlin.daycalendar.DayCalendarActivity"
             android:exported="false"
             android:label="@string/title_activity_day_calendar"
             android:theme="@style/Theme.Lucy" />
@@ -44,7 +44,7 @@
             android:label="@string/title_activity_user_settings"
             android:theme="@style/Theme.Lucy" />
         <activity
-            android:name=".activities.kotlin.MedicinActivity"
+            android:name=".activities.kotlin.medicine.MedicinActivity"
             android:exported="false"
             android:label="@string/title_activity_medicin"
             android:theme="@style/Theme.Lucy" />
@@ -101,7 +101,7 @@
             android:exported="true"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.kotlin.WeekCalendarActivityKt"
+            android:name=".activities.kotlin.weekcalendar.WeekCalendarActivityKt"
             android:exported="false" />
 
         <receiver android:name=".notifications.AlarmReceiver" />

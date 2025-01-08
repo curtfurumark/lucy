@@ -121,7 +121,6 @@ public class MainActivity extends AppCompatActivity {
             if (item.getItemId() == R.id.navigationDrawer_graphFragment) {
                 navigate(new DailyGraphFragment());
             } else if (item.getItemId() == R.id.navigationDrawer_monthCalender) {
-                //navigate(new CalendarMonthHostFragment());
                 navigate(new MonthFragment());
             } else if (item.getItemId() == R.id.bottomNavigation_today) {
                 navigate(new CalenderDateFragment());

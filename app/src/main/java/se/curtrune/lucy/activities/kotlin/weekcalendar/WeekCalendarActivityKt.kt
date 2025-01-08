@@ -1,4 +1,4 @@
-package se.curtrune.lucy.activities.kotlin
+package se.curtrune.lucy.activities.kotlin.weekcalendar
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -32,25 +32,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import se.curtrune.lucy.activities.kotlin.viewmodels.MedicineViewModel
-import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.classes.calender.Week
-import se.curtrune.lucy.viewmodel.CalendarWeekViewModel
 import se.curtrune.lucy.viewmodel.WeekViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 class WeekCalendarActivityKt : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

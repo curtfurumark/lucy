@@ -1,4 +1,4 @@
-package se.curtrune.lucy.activities.kotlin
+package se.curtrune.lucy.activities.kotlin.medicine
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -36,7 +36,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import se.curtrune.lucy.activities.kotlin.composables.MedicineDialog
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.activities.kotlin.viewmodels.MedicineViewModel
 import se.curtrune.lucy.classes.Item
@@ -60,7 +59,8 @@ class MedicinActivity : ComponentActivity() {
                 Scaffold(floatingActionButton = { AddButton(onAddClick = {
                     println("setting showDialog to true")
                     showDialog = true
-                })}, topBar = { MyTopBar()}) {
+                })
+                }, topBar = { MyTopBar() }) {
                     Surface(
                         modifier = Modifier
                             .fillMaxSize()
