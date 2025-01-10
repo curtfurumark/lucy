@@ -18,7 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.activities.kotlin.daycalendar.DayCalendarActivity
-import se.curtrune.lucy.activities.kotlin.medicine.MedicinActivity
+import se.curtrune.lucy.activities.kotlin.medicine.MedicineActivity
 import se.curtrune.lucy.activities.kotlin.weekcalendar.WeekCalendarActivityKt
 import se.curtrune.lucy.activities.ui.theme.LucyTheme
 
@@ -41,7 +41,7 @@ class IndexActivityKt : ComponentActivity() {
 
 @Composable
 fun Index(){
-    var context = LocalContext.current
+    val context = LocalContext.current
     Column(modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally){
@@ -53,7 +53,7 @@ fun Index(){
 
         })
         Text(text = "medicin", fontSize = 24.sp, modifier = Modifier.clickable {
-            context.startActivity(Intent(context, MedicinActivity::class.java))
+            context.startActivity(Intent(context, MedicineActivity::class.java))
 
         })
         Text(text = "user settings", fontSize = 24.sp, modifier = Modifier.clickable {

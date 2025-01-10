@@ -46,5 +46,7 @@ class DateViewModel(private val context: Context): ViewModel(){
         if( rowsAffected != 1){
             println("error updating item")
         }
+        _state.value.items.sortBy { it.targetTime.toSecondOfDay() }
+        //_state.update { it.items.sortBy(Item::compare) }
     }
 }

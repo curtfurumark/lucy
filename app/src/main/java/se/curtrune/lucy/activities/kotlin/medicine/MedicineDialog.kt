@@ -29,12 +29,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import se.curtrune.lucy.activities.kotlin.composables.TimePickerDialog
+import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.MedicineContent
 import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MedicineDialog(onDismiss: () -> Unit, onConfirm: (MedicineContent)-> Unit){
+fun MedicineDialog(onDismiss: () -> Unit, onConfirm: (Item)-> Unit){
     var name by remember{
         mutableStateOf("")
     }
@@ -135,12 +136,15 @@ fun MedicineDialog(onDismiss: () -> Unit, onConfirm: (MedicineContent)-> Unit){
                         Text(text = "cancel")
                     }
                     Button(onClick = {
+                        var item = Item()
                         var medicineContent = MedicineContent()
                         medicineContent.name = name
                         medicineContent.dosage = dosage
                         medicineContent.doctor = doctor
                         medicineContent.bipacksedel = bipacksedel
-                        onConfirm(medicineContent)
+                        item.heading = name
+                        item.content = medicineContent
+                        onConfirm(item)
                     }) {
                         Text(text = "add")
                     }

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,9 +28,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import se.curtrune.lucy.activities.kotlin.composables.TimePickerDialog
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.calender.Week
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -74,11 +77,9 @@ fun DayOfWeek(date: LocalDate, onEvent: (DateEvent) -> Unit){
         Text(text = date.dayOfWeek.getDisplayName(TextStyle.NARROW, Locale.getDefault()).uppercase())
         Text(text = date.dayOfMonth.toString())
     }
-
 }
 
-
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun Event(item: Item, onEvent: (DateEvent)->Unit){
     var isDone by remember {
@@ -95,16 +96,26 @@ fun Event(item: Item, onEvent: (DateEvent)->Unit){
     }
     if( showTimePicker){
         println("show time picker")
-        Toast.makeText(LocalContext.current, "i am not a time picker", Toast.LENGTH_LONG).show()
+        TimePickerDialog(onDismiss = {
+            showTimePicker = false
+        },
+            onConfirm ={ timePickerState ->
+                targetTime = LocalTime.of(timePickerState.hour , timePickerState.minute)
+                item.targetTime = targetTime
+                onEvent(DateEvent.UpdateItem(item))
+                showTimePicker = false
+            } )
     }
-    //val haptics = LocalHapticFeedback.current
+    if( showContextMenu){
+        Toast.makeText(LocalContext.current, "i am NOT a context menu", Toast.LENGTH_LONG).show()
+    }
     Card(modifier = Modifier.fillMaxWidth()){
         Row(
             verticalAlignment = Alignment.CenterVertically,
            modifier = Modifier.combinedClickable(
                 onLongClick = {
-                    //haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                     println(" on item card long click ${item.heading}")
+                    showContextMenu = true
                 },
                 onClick = {
                     println(" on item item  click ${item.heading}")
