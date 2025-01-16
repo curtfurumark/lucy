@@ -21,7 +21,7 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.web.CheckForUpdateThread;
 import se.curtrune.lucy.web.VersionInfo;
-import se.curtrune.lucy.workers.AffirmationWorker;
+import se.curtrune.lucy.screens.affirmations.AffirmationWorker;
 import se.curtrune.lucy.workers.InternetWorker;
 import se.curtrune.lucy.workers.MentalWorker;
 
@@ -203,8 +203,8 @@ public class LucindaViewModel extends ViewModel {
     }
     public void updateFragment(Fragment fragment){
         log("LucindaViewModel.updateFragment(Fragment)");
-        //currentFragment.setValue(fragment);
-        currentFragment.postValue(fragment);
+        currentFragment.setValue(fragment);
+        //currentFragment.postValue(fragment);
     }
 
     public void updateEnergy(Context context){

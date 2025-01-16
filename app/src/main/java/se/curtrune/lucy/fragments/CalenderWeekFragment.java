@@ -30,7 +30,7 @@ import se.curtrune.lucy.classes.calender.Week;
 import se.curtrune.lucy.dialogs.EventDialog;
 import se.curtrune.lucy.viewmodel.CalendarWeekViewModel;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;
-import se.curtrune.lucy.workers.CalenderWorker;
+import se.curtrune.lucy.persist.CalenderWorker;
 import se.curtrune.lucy.workers.ItemsWorker;
 
 public class CalenderWeekFragment extends Fragment {

@@ -13,10 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-import kotlin.io.LineReader;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Message;
-import se.curtrune.lucy.util.Converter;
+import se.curtrune.lucy.screens.util.Converter;
 
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder>{

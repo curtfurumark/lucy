@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.classes.calender.Week
 import se.curtrune.lucy.util.Logger
-import se.curtrune.lucy.workers.CalenderWorker
+import se.curtrune.lucy.persist.CalenderWorker
 
 class WeekViewModel(val context: Context): ViewModel() {
     private var week = Week()

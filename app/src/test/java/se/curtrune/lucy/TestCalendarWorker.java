@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import java.time.LocalDate;
 
-import se.curtrune.lucy.workers.CalenderWorker;
+import se.curtrune.lucy.persist.CalenderWorker;
 
 public class TestCalendarWorker {
     @Test

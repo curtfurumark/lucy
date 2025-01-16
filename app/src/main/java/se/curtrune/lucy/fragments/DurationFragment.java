@@ -30,7 +30,7 @@ import se.curtrune.lucy.classes.Listable;
 import se.curtrune.lucy.statistics.CategoryListable;
 import se.curtrune.lucy.statistics.DateListable;
 import se.curtrune.lucy.statistics.DurationStatistics;
-import se.curtrune.lucy.util.Converter;
+import se.curtrune.lucy.screens.util.Converter;
 import se.curtrune.lucy.viewmodel.DurationViewModel;
 
 

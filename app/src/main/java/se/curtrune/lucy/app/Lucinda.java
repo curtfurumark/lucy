@@ -3,17 +3,13 @@ package se.curtrune.lucy.app;
 import static se.curtrune.lucy.util.Logger.log;
 
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
 import java.sql.SQLException;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.classes.Item;
-import se.curtrune.lucy.notifications.EasyAlarm;
 import se.curtrune.lucy.persist.DBAdmin;
-import se.curtrune.lucy.util.Converter;
 
 public class Lucinda {
 

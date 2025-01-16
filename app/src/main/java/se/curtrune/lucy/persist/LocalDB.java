@@ -29,8 +29,7 @@ import se.curtrune.lucy.classes.Repeat;
 public class LocalDB extends SQLiteOpenHelper {
     private static final String DB_NAME = "lucy.db";
     private static final String ITEMS_TABLE = "items";
-    private static final String TABLE_MENTAL = "mental";
-    //private static final String TABLE_CATEGORIES = "categories";
+
     private static final String TABLE_TRANSACTIONS = "transactions";
     private static final String TABLE_ASSETS = "assets";
     private static final String TABLE_REPEAT = "repeat";
@@ -105,6 +104,9 @@ public class LocalDB extends SQLiteOpenHelper {
     public Item getParent(Item item) {
         if( VERBOSE) log("LocalDB.getParent(Item)");
         return selectItem(item.getParentId());
+    }
+    public static String getDbName(){
+        return DB_NAME;
     }
     public List<String> getTableNames() {
         if( VERBOSE) log("LocalDB.getTableNames()");

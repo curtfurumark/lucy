@@ -69,7 +69,7 @@ import se.curtrune.lucy.dialogs.TagsDialog;
 import se.curtrune.lucy.item_settings.ItemSetting;
 import se.curtrune.lucy.item_settings.ItemSettingAdapter;
 import se.curtrune.lucy.util.Constants;
-import se.curtrune.lucy.util.Converter;
+import se.curtrune.lucy.screens.util.Converter;
 import se.curtrune.lucy.util.Kronos;
 import se.curtrune.lucy.viewmodel.ItemSessionViewModel;
 import se.curtrune.lucy.viewmodel.LucindaViewModel;

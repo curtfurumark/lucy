@@ -6,57 +6,16 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="8dp"
-    tools:context=".activities.DevActivity">
+    tools:context=".screens.dev.DevActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/devActivity_recycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/devActivity_mainActivity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="main"
-        android:minHeight="48dp"
-        android:layout_marginTop="24sp"
-        android:textSize="34sp" />
-    <CheckBox
-        android:id="@+id/devActivity_checkBoxDev"
-        android:text="dev mode"
-        android:layout_width="wrap_content"
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/devActivity_composeView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-
-    <TextView
-        android:id="@+id/devActivity_economy"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/economy"
-        android:minHeight="48dp"
-        android:layout_marginTop="24sp"
-        android:textSize="34sp" />
-
-    <EditText
-        android:id="@+id/devActivity_sql"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="text"
-        android:text="Name"
-        android:visibility="gone" />
-
-    <Button
-        android:id="@+id/devActivity_buttonRunSQL"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="run sql"
-        android:visibility="gone" />
-
-    <Button
-        android:id="@+id/devActivity_buttonRunCode"
-        android:layout_marginTop="24dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="run test" />
 
 </LinearLayout>

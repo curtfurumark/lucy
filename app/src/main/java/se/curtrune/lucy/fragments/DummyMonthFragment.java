@@ -16,7 +16,7 @@ import java.util.List;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.calender.CalenderDate;
-import se.curtrune.lucy.workers.CalenderWorker;
+import se.curtrune.lucy.persist.CalenderWorker;
 
 /**
  * A simple {@link Fragment} subclass.

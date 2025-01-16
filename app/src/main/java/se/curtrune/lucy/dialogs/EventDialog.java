@@ -23,7 +23,7 @@ import java.time.LocalTime;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Type;
-import se.curtrune.lucy.util.Converter;
+import se.curtrune.lucy.screens.util.Converter;
 
 public class EventDialog extends BottomSheetDialogFragment {
     private TextView textViewDate;

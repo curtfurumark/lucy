@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import se.curtrune.lucy.R
-import se.curtrune.lucy.activities.DevActivity
+import se.curtrune.lucy.screens.dev.DevActivity
 import se.curtrune.lucy.activities.economy.persist.ECDBAdmin
 import se.curtrune.lucy.util.Logger
 

@@ -18,13 +18,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.List;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.adapters.CalenderAdapter;
+import se.curtrune.lucy.screens.daycalendar.CalenderAdapter;
 import se.curtrune.lucy.classes.Item;
-import se.curtrune.lucy.workers.ItemsWorker;
 
 /**
  * dialog that shows a list of items supplied to its constructor

@@ -7,8 +7,7 @@ import java.util.List;
 
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Listable;
-import se.curtrune.lucy.classes.Mental;
-import se.curtrune.lucy.util.Converter;
+import se.curtrune.lucy.screens.util.Converter;
 
 public class CategoryListable implements Listable {
     private String category;

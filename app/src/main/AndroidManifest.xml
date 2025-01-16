@@ -29,12 +29,17 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".screens.db_admin.DbAdminActivity"
+            android:exported="false"
+            android:label="@string/title_activity_db_admin"
+            android:theme="@style/Theme.Lucy" />
+        <activity
             android:name=".activities.kotlin.ItemEditorActivity"
             android:exported="false"
             android:label="@string/title_activity_item_editor"
             android:theme="@style/Theme.Lucy" />
         <activity
-            android:name=".activities.kotlin.daycalendar.DayCalendarActivity"
+            android:name=".screens.daycalendar.DayCalendarActivity"
             android:exported="false"
             android:label="@string/title_activity_day_calendar"
             android:theme="@style/Theme.Lucy" />
@@ -44,12 +49,12 @@
             android:label="@string/title_activity_user_settings"
             android:theme="@style/Theme.Lucy" />
         <activity
-            android:name=".activities.kotlin.medicine.MedicineActivity"
+            android:name=".screens.medicine.MedicineActivity"
             android:exported="false"
             android:label="@string/title_activity_medicin"
             android:theme="@style/Theme.Lucy" />
         <activity
-            android:name=".activities.kotlin.IndexActivityKt"
+            android:name=".screens.index20.IndexActivityKt"
             android:exported="false"
             android:label="@string/title_activity_index_kt"
             android:theme="@style/Theme.Lucy" />
@@ -59,10 +64,10 @@
             android:label="@string/title_activity_repeat"
             android:theme="@style/Theme.Lucy" />
         <activity
-            android:name=".activities.IndexActivity"
+            android:name=".screens.index.IndexActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.LogInActivity"
+            android:name=".screens.log_in.LogInActivity"
             android:exported="true"
             android:noHistory="true">
             <intent-filter>
@@ -92,7 +97,7 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.DevActivity"
+            android:name=".screens.dev.DevActivity"
             android:exported="true"
             android:screenOrientation="portrait" />
         <activity

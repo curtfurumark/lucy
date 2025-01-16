@@ -14,8 +14,7 @@ import java.util.List;
 
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.calender.CalenderDate;
-import se.curtrune.lucy.classes.calender.CalenderMonth;
-import se.curtrune.lucy.workers.CalenderWorker;
+import se.curtrune.lucy.persist.CalenderWorker;
 
 public class CalendarMonthViewModel extends ViewModel {
     private MutableLiveData< List<CalenderDate>> mutableCalendarDates = new MutableLiveData<>();

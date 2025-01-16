@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Locale;
 
-import se.curtrune.lucy.util.Converter;
+import se.curtrune.lucy.screens.util.Converter;
 
 public class Notification implements Serializable {
     public enum Type{

@@ -5,20 +5,17 @@ package se.curtrune.lucy.adapters;
 import static se.curtrune.lucy.util.Logger.log;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.activities.economy.classes.Asset;
 import se.curtrune.lucy.classes.LogItem;
-import se.curtrune.lucy.util.Converter;
+import se.curtrune.lucy.screens.util.Converter;
 
 
 public class LoggerAdapter extends RecyclerView.Adapter<LoggerAdapter.MyViewHolder>{

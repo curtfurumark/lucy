@@ -10,8 +10,6 @@ import java.util.Locale;
 
 import static se.curtrune.lucy.util.Logger.log;
 
-import se.curtrune.lucy.workers.CalenderWorker;
-
 public class Week {
     private final LocalDate firstDate;
     private final  LocalDate lastDate;

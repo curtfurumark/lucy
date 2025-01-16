@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import se.curtrune.lucy.util.Converter;
+import se.curtrune.lucy.screens.util.Converter;
 
 public class Item implements Serializable , Listable {
 
@@ -97,6 +97,9 @@ public class Item implements Serializable , Listable {
     public long compare(){
         if( type == Type.APPOINTMENT.ordinal()){return target_date;}
         return (state == State.DONE.ordinal() ? Long.MIN_VALUE + updated: updated ) * -1;
+    }
+    public long compareTargetDate(){
+        return target_date * -1;
     }
 
     public long compareTargetTime(){

@@ -8,12 +8,11 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import se.curtrune.lucy.classes.calender.CalenderDate;
 import se.curtrune.lucy.classes.calender.Week;
-import se.curtrune.lucy.workers.CalenderWorker;
+import se.curtrune.lucy.persist.CalenderWorker;
 
 public class CalendarWeekViewModel extends ViewModel {
     private Week currentWeek = new Week();

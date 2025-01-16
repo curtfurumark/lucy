@@ -20,7 +20,7 @@ import java.util.List;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
-import se.curtrune.lucy.util.Converter;
+import se.curtrune.lucy.screens.util.Converter;
 
 
 public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.ViewHolder>{
