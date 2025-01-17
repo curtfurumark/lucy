@@ -1,4 +1,4 @@
-package se.curtrune.lucy.fragments;
+package se.curtrune.lucy.screens.daycalendar;
 
 import static se.curtrune.lucy.util.Logger.log;
 
@@ -33,8 +33,8 @@ import java.util.List;
 import java.util.Locale;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.screens.daycalendar.CalenderAdapter;
-import se.curtrune.lucy.screens.daycalendar.CalenderDateAdapter;
+import se.curtrune.lucy.fragments.EditableListFragment;
+import se.curtrune.lucy.fragments.ItemSessionFragment;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.ItemStatistics;
@@ -48,10 +48,9 @@ import se.curtrune.lucy.dialogs.ItemStatisticsDialog;
 import se.curtrune.lucy.dialogs.PostponeDialog;
 import se.curtrune.lucy.dialogs.ChooseActionDialog;
 import se.curtrune.lucy.services.TimerService;
-import se.curtrune.lucy.screens.daycalendar.CalendarDateViewModel;
-import se.curtrune.lucy.viewmodel.LucindaViewModel;
+import se.curtrune.lucy.screens.main.LucindaViewModel;
 import se.curtrune.lucy.persist.CalenderWorker;
-import se.curtrune.lucy.workers.ItemsWorker;
+import se.curtrune.lucy.persist.ItemsWorker;
 
 
 public class CalenderDateFragment extends Fragment {

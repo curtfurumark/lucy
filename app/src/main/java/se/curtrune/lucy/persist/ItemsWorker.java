@@ -1,4 +1,4 @@
-package se.curtrune.lucy.workers;
+package se.curtrune.lucy.persist;
 
 import static se.curtrune.lucy.app.Settings.Root.APPOINTMENTS;
 import static se.curtrune.lucy.app.Settings.Root.DAILY;
@@ -21,8 +21,8 @@ import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.classes.calender.Week;
-import se.curtrune.lucy.persist.LocalDB;
-import se.curtrune.lucy.persist.Queeries;
+import se.curtrune.lucy.workers.NotificationsWorker;
+import se.curtrune.lucy.workers.RepeatWorker;
 
 public class ItemsWorker {
     public static boolean VERBOSE = false;
@@ -37,6 +37,7 @@ public class ItemsWorker {
         Item item = new Item();
         item.setType(item.getType().ordinal());
         item.setHeading(template.getHeading());
+        item.setComment(template.getComment());
         item.setDuration(template.getDuration());
         item.setCategory(template.getCategory());
         item.setTags(template.getTags());

@@ -1,11 +1,10 @@
-package se.curtrune.lucy.fragments;
+package se.curtrune.lucy.screens.projects;
 
 import static se.curtrune.lucy.util.Logger.log;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -34,9 +33,10 @@ import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.AddItemDialog;
-import se.curtrune.lucy.viewmodel.LucindaViewModel;
-import se.curtrune.lucy.viewmodel.ProjectsViewModel;
-import se.curtrune.lucy.workers.ItemsWorker;
+import se.curtrune.lucy.fragments.ItemSessionFragment;
+import se.curtrune.lucy.fragments.SequenceFragment;
+import se.curtrune.lucy.screens.main.LucindaViewModel;
+import se.curtrune.lucy.persist.ItemsWorker;
 
 public class ProjectsFragment extends Fragment implements
         ItemAdapter.Callback,

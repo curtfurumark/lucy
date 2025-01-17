@@ -32,9 +32,9 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.DurationDialog;
 import se.curtrune.lucy.screens.util.Converter;
-import se.curtrune.lucy.viewmodel.LucindaViewModel;
+import se.curtrune.lucy.screens.main.LucindaViewModel;
 import se.curtrune.lucy.workers.DurationWorker;
-import se.curtrune.lucy.workers.ItemsWorker;
+import se.curtrune.lucy.persist.ItemsWorker;
 
 public class SequenceFragment extends Fragment implements SequenceAdapter.Callback{
 

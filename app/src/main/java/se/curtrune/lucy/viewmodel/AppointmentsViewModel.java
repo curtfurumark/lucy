@@ -10,14 +10,13 @@ import androidx.lifecycle.ViewModel;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.dialogs.PostponeDialog;
-import se.curtrune.lucy.workers.ItemsWorker;
+import se.curtrune.lucy.persist.ItemsWorker;
 
 public class AppointmentsViewModel extends ViewModel {
     private final MutableLiveData<List<Item>> mutableEvents = new MutableLiveData<>();

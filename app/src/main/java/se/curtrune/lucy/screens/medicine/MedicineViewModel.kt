@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.update
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.MedicineContent
 import se.curtrune.lucy.classes.Type
-import se.curtrune.lucy.workers.ItemsWorker
+import se.curtrune.lucy.persist.ItemsWorker
 
 class MedicineViewModel(
     val context: Context

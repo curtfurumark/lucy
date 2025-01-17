@@ -78,16 +78,13 @@ public class AddItemDialog extends BottomSheetDialogFragment {
         assert  parent != null;
         this.parent = parent;
         this.newItem = createNewItem(parent);
-        this.newItem.setTargetDate(LocalDate.now());
-        //newItem.setMental(new Mental());
+        this.newItem.setTargetDate(LocalDate.ofEpochDay(0));
     }
     public AddItemDialog(Item parent, LocalDate targetDate){
         assert parent != null;
         this.parent = parent;
         this.newItem = createNewItem(parent);
         this.newItem.setTargetDate(targetDate);
-        //newItem.setMental(new Mental());
-
     }
 
     @Nullable

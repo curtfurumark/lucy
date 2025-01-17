@@ -1,4 +1,4 @@
-package se.curtrune.lucy.activities;
+package se.curtrune.lucy.screens.main;
 
 import static se.curtrune.lucy.util.Logger.log;
 
@@ -19,7 +19,6 @@ import androidx.appcompat.widget.SearchView;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.appbar.MaterialToolbar;
@@ -42,7 +41,7 @@ import se.curtrune.lucy.dialogs.PanicActionDialog;
 import se.curtrune.lucy.dialogs.UpdateDialog;
 import se.curtrune.lucy.fragments.AppointmentsFragment;
 import se.curtrune.lucy.fragments.CalendarWeekHostFragment;
-import se.curtrune.lucy.fragments.CalenderDateFragment;
+import se.curtrune.lucy.screens.daycalendar.CalenderDateFragment;
 import se.curtrune.lucy.fragments.ContactFragment;
 import se.curtrune.lucy.fragments.ContactsFragment;
 import se.curtrune.lucy.fragments.CustomizeFragment;
@@ -51,7 +50,7 @@ import se.curtrune.lucy.fragments.DurationFragment;
 import se.curtrune.lucy.fragments.EnchiladaFragment;
 import se.curtrune.lucy.fragments.EstimateFragment;
 import se.curtrune.lucy.screens.monthcalendar.MonthFragment;
-import se.curtrune.lucy.fragments.ProjectsFragment;
+import se.curtrune.lucy.screens.projects.ProjectsFragment;
 import se.curtrune.lucy.fragments.MentalDateFragment;
 import se.curtrune.lucy.fragments.MentaHistoryFragment;
 import se.curtrune.lucy.fragments.MessageBoardFragment;
@@ -62,16 +61,14 @@ import se.curtrune.lucy.fragments.TopTenFragment;
 import se.curtrune.lucy.screens.dev.DevActivity;
 import se.curtrune.lucy.screens.log_in.LogInActivity;
 import se.curtrune.lucy.util.Constants;
-import se.curtrune.lucy.viewmodel.LucindaViewModel;
-import se.curtrune.lucy.web.VersionInfo;
 import se.curtrune.lucy.workers.InternetWorker;
-import se.curtrune.lucy.workers.ItemsWorker;
+import se.curtrune.lucy.persist.ItemsWorker;
 
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
     private LucindaViewModel viewModel;
-    private Fragment currentFragment;
+    //private Fragment currentFragment;
     private TextView textViewPanic;
     private TextView textViewBoost;
     private TextView textViewEnergy;
@@ -183,62 +180,34 @@ public class MainActivity extends AppCompatActivity {
             log(" new fragment observed");
             navigate(fragment);});
         viewModel.init(LocalDate.now(), this);
-        viewModel.getEnergy().observe(this, new Observer<Integer>() {
-            @Override
-            public void onChanged(Integer energy) {
-                log("...onChanged(Integer) energy", energy);
-                setTextViewMental(getString(R.string.energy), energy);
-            }
+        viewModel.getEnergy().observe(this, energy -> {
+            log("...onChanged(Integer) energy", energy);
+            setTextViewMental(getString(R.string.energy), energy);
         });
-        viewModel.getAnxiety().observe(this, new Observer<Integer>() {
-            @Override
-            public void onChanged(Integer anxiety) {
-                log("...anxiety.onChanged(Integer)", anxiety);
-                setTextViewMental(getString(R.string.anxiety), anxiety);
-            }
+        viewModel.getAnxiety().observe(this, anxiety -> {
+            log("...anxiety.onChanged(Integer)", anxiety);
+            setTextViewMental(getString(R.string.anxiety), anxiety);
         });
-        viewModel.getStress().observe(this, new Observer<Integer>() {
-            @Override
-            public void onChanged(Integer stress) {
-                log("...stress.onChanged(Integer)", stress);
-                setTextViewMental(getString(R.string.stress), stress);
-            }
+        viewModel.getStress().observe(this, stress -> {
+            log("...stress.onChanged(Integer)", stress);
+            setTextViewMental(getString(R.string.stress), stress);
         });
-        viewModel.getMood().observe(this, new Observer<Integer>() {
-            @Override
-            public void onChanged(Integer mood) {
-                log("...mood.onChanged(Integer)", mood);
-                setTextViewMental(getString(R.string.mood), mood);
-            }
+        viewModel.getMood().observe(this, mood -> {
+            log("...mood.onChanged(Integer)", mood);
+            setTextViewMental(getString(R.string.mood), mood);
         });
-        viewModel.getAffirmation().observe(this, new Observer<Affirmation>() {
-            @Override
-            public void onChanged(Affirmation affirmation) {
-                showBoostDialog(affirmation);
-            }
+        viewModel.getAffirmation().observe(this, this::showBoostDialog);
+        viewModel.updateAvailable().observe(this, versionInfo -> {
+            log("...updateAvailable(VersionInfo)");
+            UpdateDialog dialog = new UpdateDialog(versionInfo, () -> {
+                log("here we go");
+                Toast.makeText(getApplicationContext(), "here we go,", Toast.LENGTH_LONG).show();
+                log("updated url" ,versionInfo.getUrl());
+                openWebPage(versionInfo.getUrl());
+            });
+            dialog.show(getSupportFragmentManager(), "update lucinda");
         });
-        viewModel.updateAvailable().observe(this, new Observer<VersionInfo>() {
-            @Override
-            public void onChanged(VersionInfo versionInfo) {
-                log("...updateAvailable(VersionInfo)");
-                UpdateDialog dialog = new UpdateDialog(versionInfo, new UpdateDialog.Callback() {
-                    @Override
-                    public void onClick() {
-                        log("here we go");
-                        Toast.makeText(getApplicationContext(), "here we go,", Toast.LENGTH_LONG).show();
-                        log("updated url" ,versionInfo.getUrl());
-                        openWebPage(versionInfo.getUrl());
-                    }
-                });
-                dialog.show(getSupportFragmentManager(), "update lucinda");
-            }
-        });
-        viewModel.getMessage().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(String message) {
-                Toast.makeText(getApplicationContext(),message, Toast.LENGTH_LONG).show();
-            }
-        });
+        viewModel.getMessage().observe(this, message -> Toast.makeText(getApplicationContext(),message, Toast.LENGTH_LONG).show());
     }
 
     /**
@@ -250,8 +219,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         log("MainActivity.navigate(Fragment) ", fragment.getClass().getName());
-        currentFragment = fragment;
-        //setTextViewMental(getString(R.string.energy), viewModel.getEnergy().getValue());
+        //currentFragment = fragment;
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.navigationDrawer_frameContainer, fragment)
@@ -298,6 +266,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_activity_menu, menu);
         SearchView searchView = (SearchView) menu.findItem(R.id.mainActivity_search).getActionView();
+        if( searchView == null){
+            log("searchView == null, onCreteOptionsMenu(Menu), MainActivity");
+            return false;
+        }
         searchView.setQueryHint("search");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -368,13 +340,10 @@ public class MainActivity extends AppCompatActivity {
     private void panicActionPending(){
         log("...panicActionPending()");
         PanicActionDialog dialog = new PanicActionDialog();
-        dialog.setListener(new PanicActionDialog.Listener() {
-            @Override
-            public void onPanicAction(Settings.PanicAction panicAction) {
-                log("onPanicAction(PanicAction)");
-                panic(panicAction);
+        dialog.setListener(panicAction -> {
+            log("onPanicAction(PanicAction)");
+            panic(panicAction);
 
-            }
         });
         dialog.show(getSupportFragmentManager(),"panic action");
     }

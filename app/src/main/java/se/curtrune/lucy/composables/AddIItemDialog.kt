@@ -1,12 +1,22 @@
-package se.curtrune.lucy.activities.kotlin.composables
+package se.curtrune.lucy.composables
 
+import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
@@ -19,10 +29,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import se.curtrune.lucy.activities.kotlin.composables.DatePickerModal
+import se.curtrune.lucy.activities.kotlin.composables.ItemSettings
+import se.curtrune.lucy.activities.kotlin.composables.TimePickerDialog
 import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.screens.util.Converter
 import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,6 +73,7 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSe
         return item
     }
     Dialog(onDismissRequest = onDismiss){
+        val context = LocalContext.current
         Surface(modifier = Modifier.fillMaxWidth().background(Color.LightGray)) {
             Column(modifier = Modifier.fillMaxWidth()
                 .padding(8.dp)) {
@@ -67,20 +84,44 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSe
                         .fillMaxWidth(),
                     label = { Text("heading") }
                 )
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = targetTime.toString(),
+                    text = Converter.format(item.targetTime),
                     fontSize = 24.sp,
                     modifier = Modifier.clickable {
                         showTimeDialog = true
                     }
                 )
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = targetDate.toString(),
+                    text = Converter.format(item.targetDate),
                     fontSize = 24.sp,
                     modifier = Modifier.clickable {
                         showDateDialog = true
                     })
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(text = "is calendar item $isCalendarItem")
+                Spacer(modifier = Modifier.height(8.dp))
+                val scrollState = rememberScrollState()
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                        .horizontalScroll(scrollState)){
+                    val tmpList = listOf("repeat", "template", "color","category", "is calendar", "notification", "prioritized" )
+                    tmpList.forEach {
+                        Box(
+                            modifier = Modifier.border(Dp.Hairline, color = Color.LightGray)
+                                .padding(4.dp)
+                                .clickable {
+                                    println("on click")
+                                    Toast.makeText(context, it, Toast.LENGTH_LONG).show()
+                                }
+                        )
+                        {
+                            Text(text = it)
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(8.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly

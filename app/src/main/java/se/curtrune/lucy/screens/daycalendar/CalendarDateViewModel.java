@@ -14,7 +14,6 @@ import androidx.lifecycle.ViewModel;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -28,7 +27,7 @@ import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.web.CheckForUpdateThread;
 import se.curtrune.lucy.web.VersionInfo;
 import se.curtrune.lucy.persist.CalenderWorker;
-import se.curtrune.lucy.workers.ItemsWorker;
+import se.curtrune.lucy.persist.ItemsWorker;
 
 public class CalendarDateViewModel extends ViewModel {
     private MutableLiveData<List<Item>> mutableItems =  new MutableLiveData<>();
@@ -142,11 +141,12 @@ public class CalendarDateViewModel extends ViewModel {
     public void set(LocalDate date, Context context) {
         log("CalendarDateViewModel.set(LocalDate, Context)");
         this.date = date;
-        if( date.equals(LocalDate.now())) {
+        items = ItemsWorker.selectItems(date, context);
+/*        if( date.equals(LocalDate.now())) {
             items = ItemsWorker.selectTodayList(date, context);
         }else{
             items = ItemsWorker.selectItems(date, context);
-        }
+        }*/
         sort();
         mutableItems.setValue(items);
     }

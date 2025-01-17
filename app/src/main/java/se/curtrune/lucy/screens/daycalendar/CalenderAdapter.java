@@ -81,14 +81,14 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
         holder.textView_heading.setText(item.getHeading());
         holder.textView_info.setVisibility(View.GONE);
         holder.checkBox_state.setChecked(item.getState().equals(State.DONE));
-        String timeDateText;
+/*        String timeDateText;
         if(item.getTargetDate().equals(LocalDate.now())){
             timeDateText = Converter.format(item.getTargetTime());
         }else{
             timeDateText = Converter.formatShort(item.getTargetDate());
-        }
-        //holder.textViewTime.setText(Converter.format(item.getTargetTime()));
-        holder.textViewTime.setText(timeDateText);
+        }*/
+        holder.textViewTime.setText(Converter.format(item.getTargetTime()));
+        //holder.textViewTime.setText(timeDateText);
         holder.setIsRecyclable(false);
         //if( item.getColor() != -1 && item.getColor() != 0 ) {
         if(item.hasColor()){

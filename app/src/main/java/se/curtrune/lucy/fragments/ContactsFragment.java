@@ -33,7 +33,7 @@ import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.dialogs.ContactDialog;
 import se.curtrune.lucy.util.Logger;
 import se.curtrune.lucy.viewmodel.ContactsViewModel;
-import se.curtrune.lucy.viewmodel.LucindaViewModel;
+import se.curtrune.lucy.screens.main.LucindaViewModel;
 
 
 public class ContactsFragment extends Fragment {

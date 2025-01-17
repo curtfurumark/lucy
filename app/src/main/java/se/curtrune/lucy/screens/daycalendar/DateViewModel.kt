@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import se.curtrune.lucy.classes.Item
-import se.curtrune.lucy.workers.ItemsWorker
+import se.curtrune.lucy.persist.ItemsWorker
 
 class DateViewModel(private val context: Context): ViewModel(){
     private val _state = MutableStateFlow(DayCalendarState())

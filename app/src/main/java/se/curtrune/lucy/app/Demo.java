@@ -3,7 +3,6 @@ package se.curtrune.lucy.app;
 import static se.curtrune.lucy.util.Logger.log;
 
 import android.content.Context;
-import android.media.Image;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -14,7 +13,7 @@ import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.persist.LocalDB;
-import se.curtrune.lucy.workers.ItemsWorker;
+import se.curtrune.lucy.persist.ItemsWorker;
 
 public class Demo {
     private static Settings settings;

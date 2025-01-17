@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.PostponeDialog;
-import se.curtrune.lucy.workers.ItemsWorker;
+import se.curtrune.lucy.persist.ItemsWorker;
 
 public class TodoFragmentViewModel extends ViewModel {
     private List<Item> items;

@@ -1,4 +1,4 @@
-package se.curtrune.lucy.viewmodel;
+package se.curtrune.lucy.screens.main;
 
 import static se.curtrune.lucy.util.Logger.log;
 
@@ -219,6 +219,11 @@ public class LucindaViewModel extends ViewModel {
         log("LucindaViewModel.setAnxiety(int)", progress);
         mutableAnxiety.setValue(progress);
     }
+
+    /**
+     * whether to show mental colours or not
+     * @param recyclerMode, RecyclerMode, default or colours or something
+     */
     public void setRecyclerMode(RecyclerMode recyclerMode) {
         log("ViewModel.setRecyclerMode()");
         this.recyclerMode.setValue(recyclerMode);

@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.notifications.EasyAlarm;
-import se.curtrune.lucy.workers.ItemsWorker;
+import se.curtrune.lucy.persist.ItemsWorker;
 import se.curtrune.lucy.workers.NotificationsWorker;
 
 public class NotificationTest {

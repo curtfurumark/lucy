@@ -19,6 +19,7 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.notifications.AlarmReceiver;
+import se.curtrune.lucy.persist.ItemsWorker;
 
 public class NotificationsWorker {
     public static final String CHANNEL_ONE = "CHANNEL_ONE";

@@ -15,6 +15,7 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.fragments.TopTenFragment;
+import se.curtrune.lucy.persist.ItemsWorker;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
 
@@ -126,7 +127,6 @@ public class MentalWorker {
         int stress = 0;
         try(LocalDB db = new LocalDB(context)){
             items = db.selectItems(queery);
-            //items.forEach(Logger::log);
             anxiety = items.stream().mapToInt(Item::getAnxiety).sum();
             energy = items.stream().mapToInt(Item::getEnergy).sum();
             mood = items.stream().mapToInt(Item::getMood).sum();

@@ -15,7 +15,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.activities.MainActivity;
+import se.curtrune.lucy.screens.main.MainActivity;
 import se.curtrune.lucy.workers.NotificationsWorker;
 
 

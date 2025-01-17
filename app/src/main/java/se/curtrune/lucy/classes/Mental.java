@@ -60,28 +60,6 @@ public class Mental implements Listable, Serializable {
         this.isDone = item.getState().equals(State.DONE);
     }
 
-    /**
-     * DOES NOT COPY ALL FIELDS, just "content"
-     * @param other, the mental to partially copy
-     * TODO, take a deeper look at this
-     */
-/*    public Mental(Mental other) {
-        this();
-        this.energy = other.energy;
-        this.mood = other.mood;
-        this.anxiety = other.anxiety;
-        this.stress = other.stress;
-        this.comment = other.comment;
-        //this.created = other.created;
-        //this.updated = other.updated;
-        //this.date = other.date;
-        //this.time = other.time;
-        this.category = other.category;
-        //this.itemID = other.itemID;
-        this.heading = other.heading;
-        //this.isTemplate = other.isTemplate;
-    }*/
-
     public boolean contains(String text) {
         return (heading + comment + category).toLowerCase().contains(text.toLowerCase());
     }

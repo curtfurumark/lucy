@@ -29,9 +29,9 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.dialogs.PostponeDialog;
-import se.curtrune.lucy.viewmodel.LucindaViewModel;
+import se.curtrune.lucy.screens.main.LucindaViewModel;
 import se.curtrune.lucy.viewmodel.TodoFragmentViewModel;
-import se.curtrune.lucy.workers.ItemsWorker;
+import se.curtrune.lucy.persist.ItemsWorker;
 import se.curtrune.lucy.workers.NotificationsWorker;
 
 

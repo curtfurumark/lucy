@@ -7,6 +7,7 @@ import android.content.Context;
 import java.util.List;
 
 import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.persist.ItemsWorker;
 
 public class DurationWorker {
     public static boolean VERBOSE = false;

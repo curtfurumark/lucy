@@ -11,7 +11,7 @@ import se.curtrune.lucy.classes.State
 import se.curtrune.lucy.classes.mental_fragment.MentalEvent
 import se.curtrune.lucy.classes.mental_fragment.MentalState
 import se.curtrune.lucy.util.Logger
-import se.curtrune.lucy.workers.ItemsWorker
+import se.curtrune.lucy.persist.ItemsWorker
 import java.time.LocalDate
 
 class MentalDateViewModel(val context: Context) : ViewModel() {

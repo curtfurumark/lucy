@@ -1,15 +1,13 @@
 package se.curtrune.lucy.screens.monthcalendar
 
 import android.content.Context
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import se.curtrune.lucy.classes.Item
-import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.persist.CalenderWorker
-import se.curtrune.lucy.workers.ItemsWorker
+import se.curtrune.lucy.persist.ItemsWorker
 import java.time.YearMonth
 
 class MonthViewModel(private val context: Context): ViewModel() {

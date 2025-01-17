@@ -16,23 +16,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import se.curtrune.lucy.activities.kotlin.GreetingPreview5
-import se.curtrune.lucy.activities.kotlin.composables.AddItemDialog
-import se.curtrune.lucy.activities.kotlin.composables.AddItemFloatingActionButton
+import se.curtrune.lucy.composables.AddItemDialog
 import se.curtrune.lucy.activities.kotlin.composables.ItemSettings
 import se.curtrune.lucy.classes.calender.CalenderDate
-import se.curtrune.lucy.fragments.CalenderDateFragment
-import se.curtrune.lucy.viewmodel.LucindaViewModel
+import se.curtrune.lucy.screens.daycalendar.CalenderDateFragment
+import se.curtrune.lucy.screens.main.LucindaViewModel
 
 class MonthFragment : Fragment() {
     private fun navigate(calendarDate: CalenderDate){
         println("navigate")
         val mainViewModel = ViewModelProvider(requireActivity())[LucindaViewModel::class.java]
-        mainViewModel.updateFragment(CalenderDateFragment(calendarDate))
+        mainViewModel.updateFragment(
+            CalenderDateFragment(
+                calendarDate
+            )
+        )
     }
     override fun onCreateView(
         inflater: LayoutInflater,

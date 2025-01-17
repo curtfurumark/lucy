@@ -12,7 +12,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.activities.MainActivity;
+import se.curtrune.lucy.screens.main.MainActivity;
 import se.curtrune.lucy.screens.index20.IndexActivityKt;
 import se.curtrune.lucy.app.FirstPage;
 import se.curtrune.lucy.util.Constants;

@@ -5,7 +5,7 @@ import android.content.Context;
 import java.util.List;
 
 import se.curtrune.lucy.classes.Item;
-import se.curtrune.lucy.workers.ItemsWorker;
+import se.curtrune.lucy.persist.ItemsWorker;
 
 public class ItemStatistics {
     private List<Item> items;

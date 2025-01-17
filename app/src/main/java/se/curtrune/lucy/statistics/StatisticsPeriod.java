@@ -10,8 +10,7 @@ import java.util.List;
 
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
-import se.curtrune.lucy.workers.ItemsWorker;
-import se.curtrune.lucy.workers.MentalWorker;
+import se.curtrune.lucy.persist.ItemsWorker;
 
 public class StatisticsPeriod {
     private LocalDate firstDate;

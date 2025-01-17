@@ -20,13 +20,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import se.curtrune.lucy.activities.kotlin.composables.AddItemDialog
+import se.curtrune.lucy.composables.AddItemDialog
 import se.curtrune.lucy.activities.kotlin.composables.AddItemFab
 import se.curtrune.lucy.activities.kotlin.composables.ItemSettings
 import se.curtrune.lucy.activities.kotlin.composables.LucindaTopAppBar
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.Mental
-import se.curtrune.lucy.workers.ItemsWorker
+import se.curtrune.lucy.persist.ItemsWorker
 import java.time.LocalDate
 import java.time.LocalTime
 

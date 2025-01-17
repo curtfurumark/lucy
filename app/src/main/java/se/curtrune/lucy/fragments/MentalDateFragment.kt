@@ -7,8 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.DatePicker
-import android.widget.Switch
-import android.widget.TextView
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,12 +24,10 @@ import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.composables.EditItemCard
 import se.curtrune.lucy.activities.kotlin.composables.Field
 import se.curtrune.lucy.activities.kotlin.composables.ItemFieldChooser
-import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.composables.AllDaySwitch
-import se.curtrune.lucy.composables.EditItemsList
 import se.curtrune.lucy.composables.MyDatePicker
 import se.curtrune.lucy.util.Logger
-import se.curtrune.lucy.viewmodel.LucindaViewModel
+import se.curtrune.lucy.screens.main.LucindaViewModel
 import se.curtrune.lucy.viewmodel.MentalDateViewModel
 import java.time.LocalDate
 

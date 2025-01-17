@@ -19,6 +19,7 @@
 
     <application
         android:allowBackup="true"
+        android:name=".LucindaApplication"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -80,7 +81,7 @@
             android:name=".activities.LoggerActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".screens.main.MainActivity"
             android:exported="false"
             android:theme="@style/Theme.Lucy.NoActionBar" />
         <activity

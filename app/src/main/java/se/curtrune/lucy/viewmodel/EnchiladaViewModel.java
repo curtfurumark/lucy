@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import se.curtrune.lucy.classes.Item;
-import se.curtrune.lucy.workers.ItemsWorker;
+import se.curtrune.lucy.persist.ItemsWorker;
 
 public class EnchiladaViewModel extends ViewModel {
     private List<Item> items;

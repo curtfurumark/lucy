@@ -75,12 +75,28 @@ public class LocalDB extends SQLiteOpenHelper {
             db = null;
         }
     }
+    public int getNumberChildren(long id){
+        log("LocalDB.getNumberChildren(long)", id);
+        db = this.getWritableDatabase();
+        String query = String.format(Locale.getDefault(), "SELECT count(*) FROM items WHERE parentId = %d", id);
+        //String queery = "SELECT count(*) FROM items WHERE parentId = %d"
+        Cursor cursor = db.rawQuery(query, null);
+        cursor.moveToFirst();
+        int numberOfChildren = cursor.getInt(0);
+        log("number of children be: ", numberOfChildren);
+        cursor.close();
+        db.close();
+        return numberOfChildren;
+    }
 
     public int delete(Item item) {
         if( VERBOSE) log("LocalDB.delete(Item)");
         db = this.getWritableDatabase();
         String whereClause = String.format(Locale.getDefault(), "id = %d", item.getID());
         int rowsAffected = db.delete(ITEMS_TABLE, whereClause, null);
+        //int numChildren = db.getNumberChildren(item.getParentId()){
+
+        //}
         if (rowsAffected != 1) {
             log("some kind of error deleting item");
         }

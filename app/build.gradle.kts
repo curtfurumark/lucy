@@ -87,6 +87,9 @@ dependencies {
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation ("com.github.skydoves:colorpickerview:2.3.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose-android:2.8.7")
+    //retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
 
     implementation("androidx.annotation:annotation:1.9.1")
     testImplementation("junit:junit:4.13.2")

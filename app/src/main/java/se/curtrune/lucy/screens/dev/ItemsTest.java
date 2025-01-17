@@ -5,7 +5,7 @@ import static se.curtrune.lucy.util.Logger.log;
 import android.content.Context;
 
 import se.curtrune.lucy.classes.Item;
-import se.curtrune.lucy.workers.ItemsWorker;
+import se.curtrune.lucy.persist.ItemsWorker;
 
 public class ItemsTest {
 

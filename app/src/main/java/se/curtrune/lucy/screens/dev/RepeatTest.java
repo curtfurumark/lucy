@@ -10,7 +10,7 @@ import java.util.Locale;
 
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Repeat;
-import se.curtrune.lucy.workers.ItemsWorker;
+import se.curtrune.lucy.persist.ItemsWorker;
 import se.curtrune.lucy.workers.RepeatWorker;
 
 public class RepeatTest {

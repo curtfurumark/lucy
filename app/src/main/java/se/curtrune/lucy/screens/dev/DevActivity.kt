@@ -12,20 +12,28 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.launch
 import se.curtrune.lucy.R
-import se.curtrune.lucy.activities.MainActivity
+import se.curtrune.lucy.screens.main.MainActivity
 import se.curtrune.lucy.activities.kotlin.RepeatActivity
 import se.curtrune.lucy.activities.kotlin.dev.ui.theme.LucyTheme
 import se.curtrune.lucy.activities.kotlin.weekcalendar.WeekCalendarActivityKt
@@ -35,16 +43,20 @@ import se.curtrune.lucy.app.Settings
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.MediaContent
 import se.curtrune.lucy.classes.Notification
+import se.curtrune.lucy.composables.CountDownTimerService
 import se.curtrune.lucy.dialogs.AddItemDialog
 import se.curtrune.lucy.dialogs.RepeatDialog
 import se.curtrune.lucy.persist.DBAdmin
 import se.curtrune.lucy.persist.LocalDB
+import se.curtrune.lucy.screens.affirmations.RetrofitInstance
+import se.curtrune.lucy.screens.common.MentalMeter
 import se.curtrune.lucy.screens.log_in.LogInActivity
 import se.curtrune.lucy.screens.util.Converter
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.viewmodel.UpdateLucindaViewModel
 import se.curtrune.lucy.web.VersionInfo
-import se.curtrune.lucy.workers.ItemsWorker
+import se.curtrune.lucy.persist.ItemsWorker
+import se.curtrune.lucy.services.TimerService
 import se.curtrune.lucy.workers.NotificationsWorker
 import se.curtrune.lucy.workers.RepeatWorker
 import java.sql.SQLException
@@ -114,25 +126,63 @@ class DevActivity : AppCompatActivity() {
         println("...initContent()")
         composeView?.setContent {
             LucyTheme {
+                val scope = rememberCoroutineScope()
+                val scrollState = rememberScrollState()
                 Surface(
                     modifier = Modifier.fillMaxSize()
                         .background(MaterialTheme.colorScheme.background)
                 ) {
                     Column(
-                        modifier = Modifier.background(MaterialTheme.colorScheme.background),
-                        verticalArrangement = Arrangement.SpaceEvenly) {
+                        modifier = Modifier.background(MaterialTheme.colorScheme.background)
+                            .verticalScroll(scrollState),
+                        verticalArrangement = Arrangement.SpaceEvenly,
+                    ) {
                         Text(text = "main", fontSize = 24.sp, modifier = Modifier.clickable {
                             startActivity(Intent(applicationContext, MainActivity::class.java))
                         })
+                        Spacer(modifier = Modifier.height(16.dp))
                         Text(text = "dev mode", fontSize = 24.sp)
+                        Spacer(modifier = Modifier.height(16.dp))
                         Text(text = "run test", fontSize = 24.sp,
                             modifier = Modifier.clickable {
                                 runCode()
                             })
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(text = "get quote", fontSize =   24.sp,
+                            modifier = Modifier.clickable {
+                                scope.launch {
+                                    val quotes = RetrofitInstance.quoteApi.getRandomQuotes()
+                                    val quote = quotes[0]
+                                    println(quote.q)
+                                }
+                            })
+                        Spacer(modifier = Modifier.height(16.dp))
+                        MentalMeter()
+                        Spacer(modifier = Modifier.height(16.dp))
+                        CountDownTimerService(duration = 30, onCommand = {
+                            println("command: $it")
+                            sendCommandToTimeService(it)
+                        })
+                        Spacer(modifier = Modifier.height(16.dp))
+                        GetNumberOfChildren()
+                        /*Text(
+                            text = "mental state",
+                            fontSize = 24.sp,
+                            modifier = Modifier.clickable {
+                                LucindaApplication.mentalModule.getMentalState()
+                            })*/
                     }
                 }
             }
         }
+    }
+    private fun sendCommandToTimeService(command: String){
+        println("sendCommandToService $command")
+        Intent( this, TimerService::class.java).also {
+            it.action = command
+            this.startService(it)
+        }
+
     }
 
     private fun initListeners() {

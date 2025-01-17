@@ -1,4 +1,4 @@
-package se.curtrune.lucy.viewmodel;
+package se.curtrune.lucy.screens.projects;
 
 import androidx.lifecycle.ViewModel;
 

@@ -1,4 +1,4 @@
-package se.curtrune.lucy.activities.kotlin.composables
+package se.curtrune.lucy.composables
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add

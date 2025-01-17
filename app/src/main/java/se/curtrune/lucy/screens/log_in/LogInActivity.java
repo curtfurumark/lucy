@@ -21,7 +21,7 @@ import androidx.core.content.ContextCompat;
 import java.sql.SQLException;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.activities.MainActivity;
+import se.curtrune.lucy.screens.main.MainActivity;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.app.User;

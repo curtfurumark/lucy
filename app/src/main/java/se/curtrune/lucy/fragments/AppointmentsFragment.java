@@ -25,7 +25,7 @@ import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.EventDialog;
 import se.curtrune.lucy.dialogs.PostponeDialog;
 import se.curtrune.lucy.viewmodel.AppointmentsViewModel;
-import se.curtrune.lucy.viewmodel.LucindaViewModel;
+import se.curtrune.lucy.screens.main.LucindaViewModel;
 
 public class AppointmentsFragment extends Fragment implements
         AppointmentAdapter.Callback{

@@ -19,7 +19,6 @@ import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.classes.calender.CalenderDate;
 import se.curtrune.lucy.classes.calender.CalenderMonth;
 import se.curtrune.lucy.classes.calender.Week;
-import se.curtrune.lucy.workers.ItemsWorker;
 
 public class CalenderWorker {
     public static final int COLOR_MINUS_5 = Color.RED;

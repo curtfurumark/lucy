@@ -15,8 +15,7 @@ import java.util.stream.Collectors;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.ItemStatistics;
 import se.curtrune.lucy.classes.Mental;
-import se.curtrune.lucy.workers.ItemsWorker;
-import se.curtrune.lucy.workers.MentalWorker;
+import se.curtrune.lucy.persist.ItemsWorker;
 
 public class EstiimateViewModel extends ViewModel {
     private List<Item> items;
