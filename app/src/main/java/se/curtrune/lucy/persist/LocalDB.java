@@ -83,9 +83,19 @@ public class LocalDB extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(query, null);
         cursor.moveToFirst();
         int numberOfChildren = cursor.getInt(0);
-        log("number of children be: ", numberOfChildren);
+        log("...number of children be: ", numberOfChildren);
         cursor.close();
         db.close();
+        return numberOfChildren;
+    }
+    public int getNumberChildren(long id, SQLiteDatabase db){
+        log("LocalDB.getNumberChildren(long, SQLiteDataBase)", id);
+        String query = String.format(Locale.getDefault(), "SELECT count(*) FROM items WHERE parentId = %d", id);
+        Cursor cursor = db.rawQuery(query, null);
+        cursor.moveToFirst();
+        int numberOfChildren = cursor.getInt(0);
+        log("number of children be: ", numberOfChildren);
+        cursor.close();
         return numberOfChildren;
     }
 
@@ -94,11 +104,13 @@ public class LocalDB extends SQLiteOpenHelper {
         db = this.getWritableDatabase();
         String whereClause = String.format(Locale.getDefault(), "id = %d", item.getID());
         int rowsAffected = db.delete(ITEMS_TABLE, whereClause, null);
-        //int numChildren = db.getNumberChildren(item.getParentId()){
-
-        //}
         if (rowsAffected != 1) {
             log("some kind of error deleting item");
+        }else {
+            if( getNumberChildren(item.getParentId()) == 0){ // we have just deleted the last child'
+                log("...lastChild just deleted, setting parent has child to false");
+                setItemHasChild(item.getParentId(), false) ;
+            }
         }
         db.close();
         return rowsAffected;

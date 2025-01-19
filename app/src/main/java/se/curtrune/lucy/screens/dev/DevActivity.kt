@@ -20,8 +20,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
@@ -56,6 +56,10 @@ import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.viewmodel.UpdateLucindaViewModel
 import se.curtrune.lucy.web.VersionInfo
 import se.curtrune.lucy.persist.ItemsWorker
+import se.curtrune.lucy.screens.dev.composables.CreateItemTree
+import se.curtrune.lucy.screens.dev.composables.GetNumberOfChildren
+import se.curtrune.lucy.screens.dev.composables.SystemInfo
+import se.curtrune.lucy.screens.dev.composables.SystemInfoList
 import se.curtrune.lucy.services.TimerService
 import se.curtrune.lucy.workers.NotificationsWorker
 import se.curtrune.lucy.workers.RepeatWorker
@@ -125,6 +129,7 @@ class DevActivity : AppCompatActivity() {
     private fun initContent(){
         println("...initContent()")
         composeView?.setContent {
+            val state = devActivityViewModel?.state?.collectAsState()
             LucyTheme {
                 val scope = rememberCoroutineScope()
                 val scrollState = rememberScrollState()
@@ -165,6 +170,14 @@ class DevActivity : AppCompatActivity() {
                         })
                         Spacer(modifier = Modifier.height(16.dp))
                         GetNumberOfChildren()
+                        Spacer(modifier = Modifier.height(16.dp))
+                        CreateItemTree(onEvent = { event->
+                            devActivityViewModel?.onEvent(event)
+                        })
+                        Spacer(modifier = Modifier.height(16.dp))
+                        if (state != null) {
+                            SystemInfoList(state = state.value)
+                        }
                         /*Text(
                             text = "mental state",
                             fontSize = 24.sp,

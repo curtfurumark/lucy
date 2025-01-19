@@ -1,13 +1,13 @@
-package se.curtrune.lucy.classes;
+package se.curtrune.lucy.screens.dev;
 
-public class LucindaInfo {
+public class SystemInfo {
     String key;
     String value;
-    public LucindaInfo(){
+    public SystemInfo(){
 
     }
 
-    public LucindaInfo(String key, String value) {
+    public SystemInfo(String key, String value) {
         this.key = key;
         this.value = value;
     }

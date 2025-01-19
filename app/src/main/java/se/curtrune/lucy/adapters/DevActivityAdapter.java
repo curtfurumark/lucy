@@ -13,12 +13,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.classes.LucindaInfo;
+import se.curtrune.lucy.screens.dev.SystemInfo;
 
 public class DevActivityAdapter extends RecyclerView.Adapter<DevActivityAdapter.ViewHolder>{
-    private List<LucindaInfo> lucindaInfoList;
-    public DevActivityAdapter(List<LucindaInfo> lucindaInfoList ){
-        log("DevActivityAdapter(List<LucindaInfo>))");
+    private List<SystemInfo> lucindaInfoList;
+    public DevActivityAdapter(List<SystemInfo> lucindaInfoList ){
+        log("DevActivityAdapter(List<SystemInfo>))");
         this.lucindaInfoList = lucindaInfoList;
     }
     @NonNull
@@ -30,7 +30,7 @@ public class DevActivityAdapter extends RecyclerView.Adapter<DevActivityAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull DevActivityAdapter.ViewHolder holder, int position) {
-        LucindaInfo lucindaInfo = lucindaInfoList.get(position);
+        SystemInfo lucindaInfo = lucindaInfoList.get(position);
         holder.textViewKey.setText(lucindaInfo.getKey());
         holder.textViewValue.setText(lucindaInfo.getValue());
 
