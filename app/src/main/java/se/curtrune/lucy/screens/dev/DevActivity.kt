@@ -28,41 +28,35 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import se.curtrune.lucy.R
-import se.curtrune.lucy.screens.main.MainActivity
 import se.curtrune.lucy.activities.kotlin.RepeatActivity
 import se.curtrune.lucy.activities.kotlin.dev.ui.theme.LucyTheme
 import se.curtrune.lucy.activities.kotlin.weekcalendar.WeekCalendarActivityKt
-import se.curtrune.lucy.adapters.DevActivityAdapter
 import se.curtrune.lucy.app.Lucinda
 import se.curtrune.lucy.app.Settings
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.MediaContent
 import se.curtrune.lucy.classes.Notification
 import se.curtrune.lucy.composables.CountDownTimerService
-import se.curtrune.lucy.dialogs.AddItemDialog
 import se.curtrune.lucy.dialogs.RepeatDialog
 import se.curtrune.lucy.persist.DBAdmin
+import se.curtrune.lucy.persist.ItemsWorker
 import se.curtrune.lucy.persist.LocalDB
 import se.curtrune.lucy.screens.affirmations.RetrofitInstance
 import se.curtrune.lucy.screens.common.MentalMeter
+import se.curtrune.lucy.screens.dev.composables.CreateItemTree
+import se.curtrune.lucy.screens.dev.composables.GetNumberOfChildren
+import se.curtrune.lucy.screens.dev.composables.SystemInfoList
 import se.curtrune.lucy.screens.log_in.LogInActivity
+import se.curtrune.lucy.screens.main.MainActivity
 import se.curtrune.lucy.screens.util.Converter
+import se.curtrune.lucy.services.TimerService
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.viewmodel.UpdateLucindaViewModel
 import se.curtrune.lucy.web.VersionInfo
-import se.curtrune.lucy.persist.ItemsWorker
-import se.curtrune.lucy.screens.dev.composables.CreateItemTree
-import se.curtrune.lucy.screens.dev.composables.GetNumberOfChildren
-import se.curtrune.lucy.screens.dev.composables.SystemInfo
-import se.curtrune.lucy.screens.dev.composables.SystemInfoList
-import se.curtrune.lucy.services.TimerService
 import se.curtrune.lucy.workers.NotificationsWorker
-import se.curtrune.lucy.workers.RepeatWorker
 import java.sql.SQLException
 import java.time.LocalDate
 import java.time.LocalTime
@@ -71,27 +65,17 @@ import java.util.Locale
 import java.util.function.Consumer
 
 class DevActivity : AppCompatActivity() {
-    private var adapter: DevActivityAdapter? = null
-    private var devActivityViewModel: DevActivityViewModel? = null
-    private var recyclerView: RecyclerView? = null
     private val alarmRinging = false
-    private var composeView: ComposeView? = null
-
     private var lucinda: Lucinda? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.dev_activity)
-        title = "lucinda"
-        Logger.log("DevActivity.onCreate(Bundle)")
+        title = "lucinda dev"
+        println("DevActivity.onCreate(Bundle)")
         printSystemInfo()
-        initViewModel()
         lucinda = Lucinda.getInstance(this)
-        initComponents()
-        initListeners()
-        initRecycler()
-        //addMentalToItemTable();
         initContent()
-        setUserInterface()
     }
 
     private fun clearShowInCalendar() {
@@ -110,9 +94,7 @@ class DevActivity : AppCompatActivity() {
 
     private fun checkForLucindaUpdate() {
         Logger.log("...checkForLucindaUpdate()")
-        val updateLucindaViewModel = ViewModelProvider(this).get(
-            UpdateLucindaViewModel::class.java
-        )
+        val updateLucindaViewModel = ViewModelProvider(this)[UpdateLucindaViewModel::class.java]
         updateLucindaViewModel.checkForNewVersion()
         updateLucindaViewModel.versionInfo.observe(this, object : Observer<VersionInfo?> {
             override fun onChanged(value: VersionInfo?) {
@@ -121,15 +103,12 @@ class DevActivity : AppCompatActivity() {
         })
     }
 
-    private fun initComponents() {
-        if (VERBOSE) Logger.log("...initComponents()")
-        recyclerView = findViewById(R.id.devActivity_recycler)
-        composeView = findViewById(R.id.devActivity_composeView)
-    }
     private fun initContent(){
         println("...initContent()")
+        val composeView = findViewById<ComposeView>(R.id.devActivity_composeView)
         composeView?.setContent {
-            val state = devActivityViewModel?.state?.collectAsState()
+            val devViewModel = viewModel<DevActivityViewModel>()
+            val state = devViewModel.state.collectAsState()
             LucyTheme {
                 val scope = rememberCoroutineScope()
                 val scrollState = rememberScrollState()
@@ -137,6 +116,7 @@ class DevActivity : AppCompatActivity() {
                     modifier = Modifier.fillMaxSize()
                         .background(MaterialTheme.colorScheme.background)
                 ) {
+                    //SystemInfoList(state = state.value)
                     Column(
                         modifier = Modifier.background(MaterialTheme.colorScheme.background)
                             .verticalScroll(scrollState),
@@ -172,18 +152,10 @@ class DevActivity : AppCompatActivity() {
                         GetNumberOfChildren()
                         Spacer(modifier = Modifier.height(16.dp))
                         CreateItemTree(onEvent = { event->
-                            devActivityViewModel?.onEvent(event)
+                            devViewModel.onEvent(event)
                         })
-                        Spacer(modifier = Modifier.height(16.dp))
-                        if (state != null) {
-                            SystemInfoList(state = state.value)
-                        }
-                        /*Text(
-                            text = "mental state",
-                            fontSize = 24.sp,
-                            modifier = Modifier.clickable {
-                                LucindaApplication.mentalModule.getMentalState()
-                            })*/
+                        //Spacer(modifier = Modifier.height(16.dp))
+                        //SystemInfoList(state = state.value)
                     }
                 }
             }
@@ -196,26 +168,6 @@ class DevActivity : AppCompatActivity() {
             this.startService(it)
         }
 
-    }
-
-    private fun initListeners() {
-        if (VERBOSE) Logger.log("...initListeners()")
-    }
-
-    private fun initRecycler() {
-        Logger.log("...initRecycler()")
-        adapter = DevActivityAdapter(devActivityViewModel!!.lucindaInfo)
-        recyclerView!!.layoutManager = LinearLayoutManager(this)
-        recyclerView!!.itemAnimator = DefaultItemAnimator()
-        recyclerView!!.adapter = adapter
-    }
-
-    private fun initViewModel() {
-        Logger.log("...initViewModel()")
-        devActivityViewModel = ViewModelProvider(this).get(
-            DevActivityViewModel::class.java
-        )
-        devActivityViewModel!!.init(this)
     }
 
     private fun printSystemInfo() {
@@ -244,11 +196,6 @@ class DevActivity : AppCompatActivity() {
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
         }
-    }
-
-    private fun listColumns() {
-        Logger.log("...listColumns")
-        devActivityViewModel!!.listColumns(this)
     }
 
     private fun listTables() {
@@ -303,7 +250,6 @@ class DevActivity : AppCompatActivity() {
         val db = LocalDB(this)
         db.open()
     }
-
 
     private fun resetApp() {
         Logger.log("...resetApp()")
@@ -404,27 +350,6 @@ class DevActivity : AppCompatActivity() {
     private fun setNotifications() {
         Logger.log("...setNotifications()")
         NotificationsWorker.setNotifications(LocalDate.now(), this)
-    }
-
-    private fun setUserInterface() {
-        Logger.log("...setUserInterface()")
-    }
-
-    private fun showAddItemDialog() {
-        Logger.log("...showAddItemDialog()")
-        val parent = ItemsWorker.getRootItem(Settings.Root.TODO, this)
-        val dialog = AddItemDialog(parent, null)
-        dialog.setCallback { item ->
-            Logger.log("...onAddItem(Item)", item.heading)
-            //log(item);
-            if (item.hasPeriod()) {
-                Logger.log(item)
-                RepeatWorker.insertItemWithRepeat(item, applicationContext)
-            } else {
-                Logger.log("Item without repeat, do nothing")
-            }
-        }
-        dialog.show(supportFragmentManager, "addItem")
     }
 
     private fun showRepeatDialog() {

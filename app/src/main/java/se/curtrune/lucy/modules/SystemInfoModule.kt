@@ -1,32 +1,54 @@
 package se.curtrune.lucy.modules
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
 import se.curtrune.lucy.persist.LocalDB
 import se.curtrune.lucy.screens.dev.SystemInfo
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 class SystemInfoModule(val context: Context) {
-    companion object{
-        var sysInfo: MutableList<SystemInfo> = mutableListOf()
-    }
+    var systemInfo =  mutableListOf<SystemInfo>()
     init {
+        println("init block of SystemInfoModule")
         initSysInfo()
     }
     private fun initSysInfo() {
-        sysInfo.add(SystemInfo("SDK_INT", Build.VERSION.SDK_INT.toString()))
-        sysInfo.add(SystemInfo("DEVICE", Build.DEVICE))
-        sysInfo.add(SystemInfo("USER", Build.USER))
-        sysInfo.add(SystemInfo("HARDWARE", Build.HARDWARE))
-        sysInfo.add(SystemInfo("MODEL", Build.MODEL))
-        sysInfo.add(SystemInfo("MANUFACTURER", Build.MANUFACTURER))
-        sysInfo.add(SystemInfo("LOCAL_DB_VERSION", LocalDB.getDbVersion().toString()))
-        sysInfo.add(SystemInfo("DISPLAY", Build.DISPLAY))
-        sysInfo.add(SystemInfo("BRAND", Build.BRAND))
-        sysInfo.add(SystemInfo("PRODUCT", Build.PRODUCT))
-        sysInfo.add(SystemInfo("BOARD", Build.BOARD))
-
+        println("...initSysInfo")
+        systemInfo.add(SystemInfo("SDK_INT", Build.VERSION.SDK_INT.toString()))
+        systemInfo.add(SystemInfo("DEVICE", Build.DEVICE))
+        systemInfo.add(SystemInfo("USER", Build.USER))
+        systemInfo.add(SystemInfo("HARDWARE", Build.HARDWARE))
+        systemInfo.add(SystemInfo("MODEL", Build.MODEL))
+        systemInfo.add(SystemInfo("MANUFACTURER", Build.MANUFACTURER))
+        systemInfo.add(SystemInfo("LOCAL_DB_VERSION", LocalDB.getDbVersion().toString()))
+        systemInfo.add(SystemInfo("DISPLAY", Build.DISPLAY))
+        systemInfo.add(SystemInfo("BRAND", Build.BRAND))
+        systemInfo.add(SystemInfo("PRODUCT", Build.PRODUCT))
+        systemInfo.add(SystemInfo("BOARD", Build.BOARD))
         //lucindaInfoList.add(createLucindaInfo("BASE_OS",Build.VERSION.BASE_OS));
+        try {
+            val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+            systemInfo.add(SystemInfo("versionName", pInfo.versionName))
+            val installDateTime = LocalDateTime.ofEpochSecond(pInfo.firstInstallTime / 1000, 0, ZoneOffset.UTC)
+            systemInfo.add(SystemInfo("installed", installDateTime.toString()))
+            val updateDateTime = LocalDateTime.ofEpochSecond(pInfo.lastUpdateTime / 1000, 0, ZoneOffset.UTC)
+            systemInfo.add(SystemInfo("last update", updateDateTime.toString()))
+            systemInfo.add(SystemInfo("data directory", pInfo.applicationInfo.dataDir))
+            systemInfo.add(SystemInfo("versionName", pInfo.versionName))
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                systemInfo.add(SystemInfo("versionCode", pInfo.longVersionCode.toString()))
+            }else{
+                systemInfo.add(SystemInfo("versionCode", pInfo.versionCode.toString()))
+            }
 
-
+        } catch (e: PackageManager.NameNotFoundException) {
+            println("NameNotFoundException:  ${e.message}")
+            e.printStackTrace()
+        } catch (e: Exception) {
+            println("exception: ${e.message}")
+            e.printStackTrace()
+        }
     }
 }

@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import se.curtrune.lucy.screens.dev.DevState
 import se.curtrune.lucy.screens.dev.SystemInfo
 
@@ -27,7 +28,7 @@ fun SystemInfo(info: SystemInfo){
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(text = info.key)
-        Text(text = info.value)
+        Text(text = info.key, color= Color.White)
+        Text(text = info.value, color = Color.White)
     }
 }

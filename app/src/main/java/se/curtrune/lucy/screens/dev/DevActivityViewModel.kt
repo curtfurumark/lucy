@@ -6,6 +6,7 @@ import android.os.Build
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.modules.SystemInfoModule
 import se.curtrune.lucy.persist.LocalDB
 import se.curtrune.lucy.screens.dev.test_cases.LocalDBTest
@@ -38,7 +39,8 @@ class DevActivityViewModel : ViewModel() {
 
     init{
         println("....initBlock")
-        _state.value.systemInfoList = SystemInfoModule.sysInfo
+        _state.value.systemInfoList = LucindaApplication.systemInfoModule.systemInfo
+        println("...number of sys infos: ${_state.value.systemInfoList.size}")
     }
 /*    fun init(context: Context) {
         _state.value.systemInfoList = SystemInfoModule.sysInfo
