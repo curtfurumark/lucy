@@ -46,8 +46,11 @@ import se.curtrune.lucy.persist.ItemsWorker
 import se.curtrune.lucy.persist.LocalDB
 import se.curtrune.lucy.screens.affirmations.RetrofitInstance
 import se.curtrune.lucy.screens.common.MentalMeter
+import se.curtrune.lucy.screens.dev.composables.BackupDataBase
 import se.curtrune.lucy.screens.dev.composables.CreateItemTree
+import se.curtrune.lucy.screens.dev.composables.DurationByCategory
 import se.curtrune.lucy.screens.dev.composables.GetNumberOfChildren
+import se.curtrune.lucy.screens.dev.composables.SetGeneratedToTemplateChildren
 import se.curtrune.lucy.screens.dev.composables.SystemInfoList
 import se.curtrune.lucy.screens.log_in.LogInActivity
 import se.curtrune.lucy.screens.main.MainActivity
@@ -102,6 +105,12 @@ class DevActivity : AppCompatActivity() {
             }
         })
     }
+    private fun copyDatabase(){
+        println("DevActivity.copyDatabase()")
+        val dbFile = getDatabasePath(LocalDB.getDbName())
+        println("...absolute path ${dbFile.absolutePath}")
+
+    }
 
     private fun initContent(){
         println("...initContent()")
@@ -122,6 +131,14 @@ class DevActivity : AppCompatActivity() {
                             .verticalScroll(scrollState),
                         verticalArrangement = Arrangement.SpaceEvenly,
                     ) {
+                        BackupDataBase(onEventCopy = {
+                            println("copy database ")
+                            copyDatabase()
+                        })
+                        SetGeneratedToTemplateChildren()
+                        Spacer(modifier = Modifier.height(16.dp))
+                        DurationByCategory()
+                        Spacer(modifier = Modifier.height(16.dp))
                         Text(text = "main", fontSize = 24.sp, modifier = Modifier.clickable {
                             startActivity(Intent(applicationContext, MainActivity::class.java))
                         })

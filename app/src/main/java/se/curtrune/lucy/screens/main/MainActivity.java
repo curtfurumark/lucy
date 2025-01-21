@@ -46,7 +46,7 @@ import se.curtrune.lucy.fragments.ContactFragment;
 import se.curtrune.lucy.fragments.ContactsFragment;
 import se.curtrune.lucy.fragments.CustomizeFragment;
 import se.curtrune.lucy.fragments.DailyGraphFragment;
-import se.curtrune.lucy.fragments.DurationFragment;
+import se.curtrune.lucy.screens.duration.DurationFragment;
 import se.curtrune.lucy.fragments.EnchiladaFragment;
 import se.curtrune.lucy.fragments.EstimateFragment;
 import se.curtrune.lucy.screens.monthcalendar.MonthFragment;

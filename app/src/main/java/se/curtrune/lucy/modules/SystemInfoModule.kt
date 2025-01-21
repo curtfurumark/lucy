@@ -1,14 +1,16 @@
 package se.curtrune.lucy.modules
 
+import android.app.Application
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
+import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.persist.LocalDB
 import se.curtrune.lucy.screens.dev.SystemInfo
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
-class SystemInfoModule(val context: Context) {
+class SystemInfoModule(val context: Application) {
     var systemInfo =  mutableListOf<SystemInfo>()
     init {
         println("init block of SystemInfoModule")

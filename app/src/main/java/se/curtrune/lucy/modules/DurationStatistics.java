@@ -1,4 +1,4 @@
-package se.curtrune.lucy.statistics;
+package se.curtrune.lucy.modules;
 
 import static se.curtrune.lucy.util.Logger.log;
 
@@ -12,10 +12,11 @@ import java.util.stream.Collectors;
 import se.curtrune.lucy.app.User;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Listable;
-import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;
+import se.curtrune.lucy.statistics.CategoryListable;
+import se.curtrune.lucy.statistics.DateListable;
 import se.curtrune.lucy.util.Logger;
 
 public class DurationStatistics {
@@ -51,8 +52,6 @@ public class DurationStatistics {
             dateListables.add(new DateListable(currentDate, dateItems));
             currentDate = currentDate.plusDays(1);
         }while( !currentDate.isAfter(lastDate));
-
-
     }
     public List<Listable> getCategoryListables(){
         return categoryListables;
