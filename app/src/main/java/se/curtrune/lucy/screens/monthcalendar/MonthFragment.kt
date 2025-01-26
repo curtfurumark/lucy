@@ -22,15 +22,16 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.composables.AddItemDialog
 import se.curtrune.lucy.activities.kotlin.composables.ItemSettings
 import se.curtrune.lucy.classes.calender.CalenderDate
-import se.curtrune.lucy.screens.daycalendar.CalenderDateFragment
+import se.curtrune.lucy.screens.daycalendar.CalenderDateFragmentOld
 import se.curtrune.lucy.screens.main.LucindaViewModel
 
 class MonthFragment : Fragment() {
+
     private fun navigate(calendarDate: CalenderDate){
         println("navigate")
         val mainViewModel = ViewModelProvider(requireActivity())[LucindaViewModel::class.java]
         mainViewModel.updateFragment(
-            CalenderDateFragment(
+            CalenderDateFragmentOld(
                 calendarDate
             )
         )

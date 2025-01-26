@@ -4,7 +4,6 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,10 +12,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
@@ -34,9 +31,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import se.curtrune.lucy.activities.kotlin.composables.DatePickerModal
 import se.curtrune.lucy.activities.kotlin.composables.ItemSettings
-import se.curtrune.lucy.activities.kotlin.composables.TimePickerDialog
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.screens.util.Converter
 import java.time.LocalTime
@@ -44,6 +39,8 @@ import java.time.LocalTime
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSettings){
+    println("AddItemDialog() settings date ${settings.targetDate.toString()}")
+    println(" target time converted ${Converter.format(settings.targetTime)}")
     var heading by remember{
         mutableStateOf("")
     }
@@ -52,6 +49,9 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSe
     }
     var targetDate by remember {
         mutableStateOf(settings.targetDate)
+    }
+    var parent by remember {
+        mutableStateOf(settings.parent)
     }
     var isCalendarItem by remember {
         mutableStateOf(settings.isCalendarItem)
@@ -77,6 +77,9 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSe
         Surface(modifier = Modifier.fillMaxWidth().background(Color.LightGray)) {
             Column(modifier = Modifier.fillMaxWidth()
                 .padding(8.dp)) {
+                if(parent != null){
+                    Text(text = "add to list ${parent!!.heading}", fontSize = 20.sp)
+                }
                 OutlinedTextField(
                     value = heading,
                     onValueChange = { heading = it },
@@ -86,7 +89,7 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSe
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = Converter.format(item.targetTime),
+                    text = targetTime.toString(),
                     fontSize = 24.sp,
                     modifier = Modifier.clickable {
                         showTimeDialog = true

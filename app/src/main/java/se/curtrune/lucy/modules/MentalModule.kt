@@ -4,6 +4,8 @@ import android.app.Application
 import android.content.Context
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.getAndUpdate
+import kotlinx.coroutines.flow.update
 import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.workers.MentalWorker
 import java.time.LocalDate
@@ -16,9 +18,11 @@ class MentalModule(private val application: Application) {
     var estimated = _estimated.asStateFlow()
     init{
         println("MentalModule.init")
+        _current.value = MentalWorker.getMental(date, application)
     }
     fun update(){
-        println("updated mental state")
+        println("MentalModule.update")
+        _current.value = MentalWorker.getMental(date, application)
     }
     fun getMentalState(): Mental {
         println("MentalModule.getMentalState")

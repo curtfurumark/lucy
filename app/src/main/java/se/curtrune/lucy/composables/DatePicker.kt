@@ -18,10 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import se.curtrune.lucy.screens.mental.MentalState
 import java.time.LocalDate
 
 @Composable
-fun MyDatePicker(onDate: (LocalDate)->Unit) {
+fun MyDatePicker(state: MentalState, onDate: (LocalDate)->Unit) {
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         Text(text = LocalDate.now().toString(), color = Color.White, fontSize = 24.sp)
     }

@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.R
@@ -32,15 +34,23 @@ class DurationFragment : Fragment() {
     private fun initContent(view: View){
         println("...initContent()")
         val composeView = view.findViewById<ComposeView>(R.id.durationFragment_composeView)
-            composeView!!.setContent {
+        composeView!!.setContent {
+            MaterialTheme {
                 val durationViewModel = viewModel<DurationViewModel>()
-                val state = durationViewModel.state.collectAsState()
-                MaterialTheme {
-                    DurationScreen(state = state.value, onEvent = {event->
-                        durationViewModel.onEvent(event)
-                    })
+                val state = durationViewModel.state//.collectAsState()
+                val context = LocalContext.current
+                DurationScreen(state = state.value, onEvent = { event ->
+                    durationViewModel.onEvent(event)
+                })
+                if (state.value.showProgressBar){
+                    println("show progress bar, please")
+                    Toast.makeText(context, "PROGRESSBAR", Toast.LENGTH_SHORT).show()
+                }
+                if( state.value.message.isNotBlank()){
+                    Toast.makeText(context, state.value.message, Toast.LENGTH_LONG).show()
                 }
             }
+        }
     }
 
 /*    override fun onItemClick(item: Listable) {

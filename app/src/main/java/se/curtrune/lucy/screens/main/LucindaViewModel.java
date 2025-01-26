@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModel;
 
 import java.time.LocalDate;
 
+import kotlinx.coroutines.flow.MutableStateFlow;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.app.User;
@@ -26,6 +27,7 @@ import se.curtrune.lucy.workers.InternetWorker;
 import se.curtrune.lucy.workers.MentalWorker;
 
 public class LucindaViewModel extends ViewModel {
+    //private  _state: MutableStateFlow = MutableStateFlow(MainState())
     private MutableLiveData<VersionInfo> mutableVersionInfo = new MutableLiveData<>();
     private MutableLiveData<String> mutableMessage = new MutableLiveData<>();
     public MutableLiveData<RecyclerMode> getRecyclerMode() {
@@ -37,6 +39,8 @@ public class LucindaViewModel extends ViewModel {
     private MutableLiveData<Integer> mutableMood = new MutableLiveData<>();
     private MutableLiveData<Affirmation> mutableAffirmation = new MutableLiveData<>();
     private MutableLiveData<String> mutableFilter = new MutableLiveData<>();
+    private MutableLiveData<Mental> _mental = new MutableLiveData<>();
+    public LiveData<Mental> mental = _mental;
     private Mental currentMental;
     private boolean updatedAvailableChecked = false;
     private LocalDate date;
@@ -90,9 +94,9 @@ public class LucindaViewModel extends ViewModel {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                         if( packageInfo.getLongVersionCode() < versionInfo.getVersionCode()){
                             mutableVersionInfo.setValue(versionInfo);
-                        }else{
+                        }/*else{
                             mutableMessage.setValue("lucinda is up to date");
-                        }
+                        }*/
                     }else{
                         if( packageInfo.versionCode < versionInfo.getVersionCode()){
                             mutableVersionInfo.setValue(versionInfo);

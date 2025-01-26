@@ -61,7 +61,8 @@ class DurationStatisticsModule(private val context: Application) {
     private fun createCategoryListables(context: Context) {
         println("DurationStatisticsModule.createCategoryListables(Context))")
         val categories = User.getCategories(context)
-        itemsByCategory.clear()
+        itemsByCategory = mutableListOf()
+        //itemsByCategory.clear()
         for (category in categories) {
             val categoryItems =
                 items.stream().filter { item: Item -> item.isCategory(category) }.collect(
@@ -83,6 +84,11 @@ class DurationStatisticsModule(private val context: Application) {
             itemsByDate.add(DateListable(currentDate, dateItems))
             currentDate = currentDate?.plusDays(1)
         } while (!currentDate?.isAfter(lastDate)!!)
+    }
+    fun getDurationByCategory(period: DurationPeriod): DurationByCategory{
+        val items = getItems(period)
+        //createCategoryListables()
+        return DurationByCategory(period)
     }
     private fun getItems(period: DurationPeriod){
         when(period){

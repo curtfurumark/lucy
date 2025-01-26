@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import se.curtrune.lucy.fragments.CalenderWeekFragment;
+import se.curtrune.lucy.screens.week_calendar.CalenderWeekFragment;
 
 
 public class WeekViewPagerAdapter extends FragmentStateAdapter {

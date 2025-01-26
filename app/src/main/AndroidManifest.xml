@@ -35,7 +35,7 @@
             android:label="@string/title_activity_db_admin"
             android:theme="@style/Theme.Lucy" />
         <activity
-            android:name=".activities.kotlin.ItemEditorActivity"
+            android:name=".screens.item_editor.ItemEditorActivity"
             android:exported="false"
             android:label="@string/title_activity_item_editor"
             android:theme="@style/Theme.Lucy" />
@@ -45,7 +45,7 @@
             android:label="@string/title_activity_day_calendar"
             android:theme="@style/Theme.Lucy" />
         <activity
-            android:name=".activities.kotlin.UserSettingsActivity"
+            android:name=".screens.user_settings.UserSettingsActivity"
             android:exported="false"
             android:label="@string/title_activity_user_settings"
             android:theme="@style/Theme.Lucy" />
@@ -60,7 +60,7 @@
             android:label="@string/title_activity_index_kt"
             android:theme="@style/Theme.Lucy" />
         <activity
-            android:name=".activities.kotlin.RepeatActivity"
+            android:name=".screens.RepeatActivity"
             android:exported="false"
             android:label="@string/title_activity_repeat"
             android:theme="@style/Theme.Lucy" />
@@ -85,13 +85,13 @@
             android:exported="false"
             android:theme="@style/Theme.Lucy.NoActionBar" />
         <activity
-            android:name=".activities.GraphActivity"
+            android:name=".screens.graphs.GraphActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.economy.EconomyActivity"
+            android:name=".screens.economy.EconomyActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.economy.TransactionActivity"
+            android:name=".screens.economy.TransactionActivity"
             android:exported="false" />
         <activity
             android:name=".activities.flying_fish.GameActivity"
@@ -102,7 +102,7 @@
             android:exported="true"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.kotlin.weekcalendar.WeekCalendarActivityKt"
+            android:name=".screens.week_calendar.WeekCalendarActivityKt"
             android:exported="false" />
 
         <receiver android:name=".notifications.AlarmReceiver" />

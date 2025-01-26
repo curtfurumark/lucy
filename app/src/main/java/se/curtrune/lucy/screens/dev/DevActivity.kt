@@ -21,19 +21,24 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
+import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.R
-import se.curtrune.lucy.activities.kotlin.RepeatActivity
+import se.curtrune.lucy.screens.RepeatActivity
 import se.curtrune.lucy.activities.kotlin.dev.ui.theme.LucyTheme
-import se.curtrune.lucy.activities.kotlin.weekcalendar.WeekCalendarActivityKt
+import se.curtrune.lucy.screens.week_calendar.WeekCalendarActivityKt
 import se.curtrune.lucy.app.Lucinda
 import se.curtrune.lucy.app.Settings
 import se.curtrune.lucy.classes.Item
@@ -50,10 +55,11 @@ import se.curtrune.lucy.screens.dev.composables.BackupDataBase
 import se.curtrune.lucy.screens.dev.composables.CreateItemTree
 import se.curtrune.lucy.screens.dev.composables.DurationByCategory
 import se.curtrune.lucy.screens.dev.composables.GetNumberOfChildren
+import se.curtrune.lucy.screens.dev.composables.MentalMeterTest
 import se.curtrune.lucy.screens.dev.composables.SetGeneratedToTemplateChildren
-import se.curtrune.lucy.screens.dev.composables.SystemInfoList
 import se.curtrune.lucy.screens.log_in.LogInActivity
 import se.curtrune.lucy.screens.main.MainActivity
+import se.curtrune.lucy.screens.main.composables.LucindaControls
 import se.curtrune.lucy.screens.util.Converter
 import se.curtrune.lucy.services.TimerService
 import se.curtrune.lucy.util.Logger
@@ -118,6 +124,8 @@ class DevActivity : AppCompatActivity() {
         composeView?.setContent {
             val devViewModel = viewModel<DevActivityViewModel>()
             val state = devViewModel.state.collectAsState()
+            val context = LocalContext.current
+            val mental = devViewModel.mental
             LucyTheme {
                 val scope = rememberCoroutineScope()
                 val scrollState = rememberScrollState()
@@ -131,10 +139,21 @@ class DevActivity : AppCompatActivity() {
                             .verticalScroll(scrollState),
                         verticalArrangement = Arrangement.SpaceEvenly,
                     ) {
+                        val mentalModule = LucindaApplication.mentalModule
+/*                        val mental by remember{
+                            mutableStateOf(mentalModule.current)
+                        }*/
+                        MentalMeterTest(state = state.value)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        LucindaControls(mental = mental.value, onEvent = {
+                            Toast.makeText(context,it, Toast.LENGTH_LONG ).show()
+                        })
+                        Spacer(modifier = Modifier.height(16.dp))
                         BackupDataBase(onEventCopy = {
                             println("copy database ")
                             copyDatabase()
                         })
+                        Spacer(modifier = Modifier.height(16.dp))
                         SetGeneratedToTemplateChildren()
                         Spacer(modifier = Modifier.height(16.dp))
                         DurationByCategory()

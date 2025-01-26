@@ -241,4 +241,5 @@
     <string name="title_activity_day_calendar">DayCalendarActivity</string>
     <string name="title_activity_item_editor">ItemEditorActivity</string>
     <string name="title_activity_db_admin">DbAdmin</string>
+    <string name="panic_button">panic button</string>
 </resources>

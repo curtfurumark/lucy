@@ -11,14 +11,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.sp
-import se.curtrune.lucy.activities.economy.EconomyActivity
-import se.curtrune.lucy.activities.kotlin.ItemEditorActivity
-import se.curtrune.lucy.activities.kotlin.RepeatActivity
-import se.curtrune.lucy.activities.kotlin.UserSettingsActivity
+import se.curtrune.lucy.screens.economy.EconomyActivity
+import se.curtrune.lucy.screens.item_editor.ItemEditorActivity
+import se.curtrune.lucy.screens.RepeatActivity
+import se.curtrune.lucy.screens.user_settings.UserSettingsActivity
 import se.curtrune.lucy.screens.daycalendar.DayCalendarActivity
 import se.curtrune.lucy.screens.db_admin.DbAdminActivity
 import se.curtrune.lucy.screens.medicine.MedicineActivity
-import se.curtrune.lucy.activities.kotlin.weekcalendar.WeekCalendarActivityKt
+import se.curtrune.lucy.screens.week_calendar.WeekCalendarActivityKt
 import se.curtrune.lucy.screens.dev.DevActivity
 
 @Composable

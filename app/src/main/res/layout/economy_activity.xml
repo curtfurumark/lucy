@@ -35,7 +35,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/economyActivity_fragmentContainer"
-        android:name="se.curtrune.lucy.activities.economy.TransactionFragment"
+        android:name="se.curtrune.lucy.screens.economy.TransactionFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"

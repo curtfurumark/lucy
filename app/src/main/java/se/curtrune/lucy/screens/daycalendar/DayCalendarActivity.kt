@@ -17,55 +17,45 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.composables.AddItemDialog
-import se.curtrune.lucy.activities.kotlin.composables.AddItemFab
+import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.activities.kotlin.composables.ItemSettings
-import se.curtrune.lucy.activities.kotlin.composables.LucindaTopAppBar
+import se.curtrune.lucy.composables.LucindaTopAppBar
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.Mental
-import se.curtrune.lucy.persist.ItemsWorker
-import java.time.LocalDate
+import se.curtrune.lucy.screens.daycalendar.composables.DayCalendar
 import java.time.LocalTime
 
 class DayCalendarActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val items = ItemsWorker.selectItems(LocalDate.now(), applicationContext)
-
         setContent {
             LucyTheme {
                 // A surface container using the 'background' color from the theme
                 var showAddItemDialog by remember{
                     mutableStateOf(false)
                 }
-                val viewModel = viewModel<DateViewModel>(
-                    factory = object : ViewModelProvider.Factory {
-                        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                            return DateViewModel(applicationContext) as T
-                        }
-                    }
-                )
+                val viewModel = viewModel<DateViewModel>()
                 val state = viewModel.state.collectAsState()
                 Scaffold(
-                    topBar = {LucindaTopAppBar(Mental(), onEvent = {
+                    topBar = {
+                        LucindaTopAppBar(Mental(), onEvent = {
                         Toast.makeText(applicationContext, it, Toast.LENGTH_LONG).show()
-                    })},
+                    })
+                    },
                     floatingActionButton = { AddItemFab {
                         println("add item fab clicked")
                         showAddItemDialog = true
-                    }}
+                    }
+                    }
                 ) { it ->
                     Surface(
                         modifier = Modifier.fillMaxSize()
                             .padding(it),
                         color = MaterialTheme.colorScheme.background
                     ) {
-                        //val dateViewModel = viewModel<DateViewModel>()
-                        //val state = dateViewModel.state.collectAsState()
-
                         DayCalendar(state = state.value, onEvent = { event->
                             Toast.makeText(baseContext, event.toString(), Toast.LENGTH_LONG).show()
                             viewModel.onEvent(event)
@@ -81,7 +71,6 @@ class DayCalendarActivity : ComponentActivity() {
                             )
                         }
                         if( state.value.editItem){
-                            //val mainViewModel =
                             println("edit item please")
                             state.value.editItem = false
                         }
