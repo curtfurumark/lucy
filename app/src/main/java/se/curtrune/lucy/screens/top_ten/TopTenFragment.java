@@ -1,4 +1,4 @@
-package se.curtrune.lucy.fragments;
+package se.curtrune.lucy.screens.top_ten;
 
 import static se.curtrune.lucy.util.Logger.log;
 
@@ -22,8 +22,6 @@ import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.TopTenAdapter;
 import se.curtrune.lucy.classes.Listable;
 import se.curtrune.lucy.classes.Mental;
-import se.curtrune.lucy.statistics.TopTenStatistics;
-import se.curtrune.lucy.util.Logger;
 import se.curtrune.lucy.workers.MentalWorker;
 
 public class TopTenFragment extends Fragment implements TopTenAdapter.Callback {

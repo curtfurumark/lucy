@@ -28,7 +28,7 @@ import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.composables.AddItemDialog
 import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.composables.LucindaTopAppBar
-import se.curtrune.lucy.fragments.ItemSessionFragment
+import se.curtrune.lucy.screens.item_editor.ItemEditorFragment
 import se.curtrune.lucy.screens.daycalendar.composables.DayCalendar
 import se.curtrune.lucy.screens.main.LucindaViewModel
 import java.time.LocalTime
@@ -106,7 +106,7 @@ class CalendarDateFragment : Fragment() {
         println("navigate")
         val mainViewModel = ViewModelProvider(requireActivity())[LucindaViewModel::class.java]
         mainViewModel.updateFragment(
-            ItemSessionFragment(
+            ItemEditorFragment(
                 item
             )
         )

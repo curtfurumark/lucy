@@ -34,7 +34,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.item_settings.ItemSetting
-import se.curtrune.lucy.viewmodel.ItemSessionViewModel
 import se.curtrune.lucy.persist.ItemsWorker
 
 class ItemEditorActivity : ComponentActivity() {

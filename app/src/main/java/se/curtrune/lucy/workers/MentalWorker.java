@@ -14,7 +14,7 @@ import java.util.Locale;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.State;
-import se.curtrune.lucy.fragments.TopTenFragment;
+import se.curtrune.lucy.screens.top_ten.TopTenFragment;
 import se.curtrune.lucy.persist.ItemsWorker;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.Queeries;

@@ -86,6 +86,7 @@ public class ItemsWorker {
      * @param item, the item for which you wish to get its parent
      * @param context context context context
      * @return the parent, TODO, null if not parent?
+     * MIGRATED TO REPOSITORY
      */
     public static Item getParent(Item item, Context context) {
         if( VERBOSE) log("ItemsWorker.getParent(Item, Context)");
@@ -151,6 +152,7 @@ public class ItemsWorker {
         return item;
     }
 
+    //MIGRATED
     public  static Item insertChild(Item parent, Item child, Context context)  {
         if(VERBOSE)log("ItemsWorker.insertChild(Item, Item, Context)");
         if( !parent.hasChild()){
@@ -236,6 +238,7 @@ public class ItemsWorker {
         }
     }
 
+    //MIGRATED TO REPOSITORY
     public static Item selectItem(long id, Context context) {
         log("ItemsWorker.selectItem(long, Context)");
         Item item = null;

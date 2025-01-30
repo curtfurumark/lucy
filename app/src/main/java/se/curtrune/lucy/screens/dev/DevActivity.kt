@@ -145,7 +145,7 @@ class DevActivity : AppCompatActivity() {
                         }*/
                         MentalMeterTest(state = state.value)
                         Spacer(modifier = Modifier.height(8.dp))
-                        LucindaControls(mental = mental.value, onEvent = {
+                        LucindaControls(state = state.value, onEvent = {
                             Toast.makeText(context,it, Toast.LENGTH_LONG ).show()
                         })
                         Spacer(modifier = Modifier.height(16.dp))

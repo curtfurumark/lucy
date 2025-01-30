@@ -1,7 +1,6 @@
 package se.curtrune.lucy.screens.main
 
 import android.content.Intent
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
@@ -12,6 +11,10 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -21,6 +24,7 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.navigation.NavigationView
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.flying_fish.GameActivity
+import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.app.FirstPage
 import se.curtrune.lucy.app.Settings.PanicAction
 import se.curtrune.lucy.app.User
@@ -30,36 +34,35 @@ import se.curtrune.lucy.composables.MentalMeter
 import se.curtrune.lucy.dialogs.BoostDialog
 import se.curtrune.lucy.dialogs.PanicActionDialog
 import se.curtrune.lucy.dialogs.UpdateDialog
-import se.curtrune.lucy.screens.appointments.AppointmentsFragment
-import se.curtrune.lucy.screens.week_calendar.CalendarWeekHostFragment
 import se.curtrune.lucy.fragments.ContactFragment
-import se.curtrune.lucy.screens.contacts.ContactsFragment
 import se.curtrune.lucy.fragments.CustomizeFragment
 import se.curtrune.lucy.fragments.DailyGraphFragment
 import se.curtrune.lucy.fragments.EnchiladaFragment
 import se.curtrune.lucy.fragments.EstimateFragment
 import se.curtrune.lucy.fragments.MentaHistoryFragment
-import se.curtrune.lucy.screens.mental.MentalDateFragment
-import se.curtrune.lucy.screens.message_board.MessageBoardFragment
 import se.curtrune.lucy.fragments.SequenceFragment
-import se.curtrune.lucy.screens.timers.TimerFragment
-import se.curtrune.lucy.fragments.TodoFragment
-import se.curtrune.lucy.fragments.TopTenFragment
+import se.curtrune.lucy.screens.todo.TodoFragment
+import se.curtrune.lucy.screens.top_ten.TopTenFragment
+import se.curtrune.lucy.modules.MentalModule
 import se.curtrune.lucy.persist.ItemsWorker
+import se.curtrune.lucy.screens.appointments.AppointmentsFragment
+import se.curtrune.lucy.screens.contacts.ContactsFragment
 import se.curtrune.lucy.screens.daycalendar.CalendarDateFragment
 import se.curtrune.lucy.screens.daycalendar.CalenderDateFragmentOld
 import se.curtrune.lucy.screens.dev.DevActivity
 import se.curtrune.lucy.screens.duration.DurationFragment
 import se.curtrune.lucy.screens.index20.IndexActivityKt
 import se.curtrune.lucy.screens.log_in.LogInActivity
+import se.curtrune.lucy.screens.mental.MentalDateFragment
+import se.curtrune.lucy.screens.message_board.MessageBoardFragment
 import se.curtrune.lucy.screens.monthcalendar.MonthFragment
 import se.curtrune.lucy.screens.projects.ProjectsFragment
+import se.curtrune.lucy.screens.timers.TimerFragment
+import se.curtrune.lucy.screens.week_calendar.CalendarWeekHostFragment
 import se.curtrune.lucy.util.Constants
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.web.VersionInfo
 import se.curtrune.lucy.workers.InternetWorker
-import java.time.LocalDate
-import java.util.Locale
 import java.util.Objects
 
 class MainActivity : AppCompatActivity() {
@@ -69,7 +72,7 @@ class MainActivity : AppCompatActivity() {
     //private Fragment currentFragment;
     private var textViewPanic: TextView? = null
     private var textViewBoost: TextView? = null
-    private var textViewEnergy: TextView? = null
+    //private var textViewEnergy: TextView? = null
     private var textViewLucindaHome: TextView? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,8 +93,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun boostMe() {
-        if (VERBOSE) Logger.log("...boostMe()")
-        viewModel!!.requestAffirmation()
+        //viewModel!!.requestAffirmation()
+        viewModel!!.onEvent(MainEvent.ShowBoost(true))
     }
 
     private fun initComponents() {
@@ -100,7 +103,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         textViewPanic = findViewById(R.id.mainActivity_panic)
         textViewBoost = findViewById(R.id.mainActivity_buttonBoost)
-        textViewEnergy = findViewById(R.id.mainActivity_energy)
+        //textViewEnergy = findViewById(R.id.mainActivity_energy)
         drawerLayout = findViewById(R.id.navigationDrawer_drawerLayout)
         val navigationView =
             findViewById<NavigationView>(R.id.navigationDrawerActivity_navigationView)
@@ -195,43 +198,50 @@ class MainActivity : AppCompatActivity() {
     private fun initContent(){
         println("initContent()")
         val composeView = findViewById<ComposeView>(R.id.mainActivity_composeView)
-        composeView.setContent {
-            MentalMeter(mental = Mental())
+        val composeViewMental = findViewById<ComposeView>(R.id.mainActivity_composeViewMental)
+        composeViewMental.setContent {
+            LucyTheme {
+                val currentMental = MentalModule.currentMental
+                var mental by remember{
+                    mutableStateOf(Mental())
+                }
+                currentMental.observe(this) {
+                    println("MENTAL CHANGE ${it.energy}")
+                    mental = it
+                }
+                MentalMeter(mental = mental)
+            }
         }
+        /*composeView.setContent {
+            val state = viewModel!!.state.collectAsState()
+            val mentalModule = LucindaApplication.mentalModule
+            val currentMental = MentalModule.currentMental
+            var mental by remember{
+                mutableStateOf(Mental())
+            }
+            currentMental.observe(this) {
+                println("MENTAL CHANGE ${it.energy}")
+                mental = it
+            }
+            MentalMeter(mental = mental)
+        }*/
     }
 
     private fun initListeners() {
-        if (VERBOSE) Logger.log("...initListeners()")
-        textViewEnergy!!.setOnClickListener { view: View? -> showMentalDay() }
+        println("...initListeners()")
         textViewBoost!!.setOnClickListener { view: View? -> boostMe() }
         textViewPanic!!.setOnClickListener { view: View? -> showPanicAction() }
         textViewLucindaHome!!.setOnClickListener { view: View? -> openWebPage("https://curtfurumark.se/lucinda") }
     }
 
     private fun initViewModel() {
-        if (VERBOSE) Logger.log("...initViewModel()")
+        println("...initViewModel()")
         viewModel = ViewModelProvider(this)[LucindaViewModel::class.java]
         viewModel!!.fragment.observe(this) { fragment: Fragment? ->
             Logger.log(" new fragment observed")
             navigate(fragment)
         }
-        viewModel!!.init(LocalDate.now(), this)
-        viewModel!!.energy.observe(this) { energy: Int ->
-            Logger.log("...onChanged(Integer) energy", energy)
-            setTextViewMental(getString(R.string.energy), energy)
-        }
-        viewModel!!.anxiety.observe(this) { anxiety: Int ->
-            Logger.log("...anxiety.onChanged(Integer)", anxiety)
-            setTextViewMental(getString(R.string.anxiety), anxiety)
-        }
-        viewModel!!.stress.observe(this) { stress: Int ->
-            Logger.log("...stress.onChanged(Integer)", stress)
-            setTextViewMental(getString(R.string.stress), stress)
-        }
-        viewModel!!.mood.observe(this) { mood: Int ->
-            Logger.log("...mood.onChanged(Integer)", mood)
-            setTextViewMental(getString(R.string.mood), mood)
-        }
+
         viewModel!!.affirmation.observe(
             this
         ) { affirmation: Affirmation -> this.showBoostDialog(affirmation) }
@@ -263,7 +273,6 @@ class MainActivity : AppCompatActivity() {
             return
         }
         Logger.log("MainActivity.navigate(Fragment) ", fragment.javaClass.name)
-        //currentFragment = fragment;
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.navigationDrawer_frameContainer, fragment)
@@ -416,32 +425,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setTextViewMental(label: String, value: Int) {
-        Logger.log("MainActivity.setTextViewMental(String, int)", value)
-        val strMentalState = String.format(Locale.getDefault(), "%s: %d", label, value)
-        if (value <= -3) {
-            textViewEnergy!!.setTextColor(Color.parseColor("#ff0000"))
-        } else if (value <= 2) {
-            textViewEnergy!!.setTextColor(Color.parseColor("#ffff00"))
-        } else {
-            textViewEnergy!!.setTextColor(Color.parseColor("#00ff00"))
-        }
-        textViewEnergy!!.text = strMentalState
-    }
-
     private fun showBoostDialog(affirmation: Affirmation) {
         Logger.log("...showBoostDialog(Affirmation)")
         val boostDialog = BoostDialog(affirmation.affirmation)
         boostDialog.show(supportFragmentManager, "boost me")
-    }
-
-    /**
-     * loads fragment, stats about current day,
-     * expected/estimated duration and mental and actual duration and mental
-     */
-    private fun showMentalDay() {
-        Logger.log("...showMentalDay")
-        viewModel!!.toggleRecyclerMode()
     }
 
     private fun showPanicAction() {

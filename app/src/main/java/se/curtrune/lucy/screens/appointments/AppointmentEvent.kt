@@ -6,5 +6,6 @@ sealed interface AppointmentEvent {
     data class AddAppointment(val item: Item): AppointmentEvent
     data class DeleteAppointment(val item: Item): AppointmentEvent
     data class Edit(val item: Item): AppointmentEvent
+    data class ShowAddAppointmentDialog(val show: Boolean): AppointmentEvent
     data class Update(val item: Item): AppointmentEvent
 }

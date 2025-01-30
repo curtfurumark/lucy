@@ -31,6 +31,7 @@ import se.curtrune.lucy.adapters.SequenceAdapter;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.DurationDialog;
+import se.curtrune.lucy.screens.item_editor.ItemEditorFragment;
 import se.curtrune.lucy.screens.util.Converter;
 import se.curtrune.lucy.screens.main.LucindaViewModel;
 import se.curtrune.lucy.workers.DurationWorker;
@@ -208,7 +209,7 @@ public class SequenceFragment extends Fragment implements SequenceAdapter.Callba
     @Override
     public void onItemClick(Item item) {
         log("...onItemClick(Item)", item.getHeading());
-        viewModel.updateFragment(new ItemSessionFragment(item));
+        viewModel.updateFragment(new ItemEditorFragment(item));
     }
 
     @Override

@@ -24,6 +24,7 @@ import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.ItemAdapter;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
+import se.curtrune.lucy.screens.item_editor.ItemEditorFragment;
 import se.curtrune.lucy.viewmodel.EnchiladaViewModel;
 import se.curtrune.lucy.screens.main.LucindaViewModel;
 import se.curtrune.lucy.persist.ItemsWorker;
@@ -167,7 +168,7 @@ public class EnchiladaFragment extends Fragment implements
     @Override
     public void onItemClick(Item item) {
         log("...onItemClick(Item)", item.getHeading());
-        viewModel.updateFragment( new ItemSessionFragment(item));
+        viewModel.updateFragment( new ItemEditorFragment(item));
     }
 
     /**

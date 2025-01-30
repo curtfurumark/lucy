@@ -2,6 +2,7 @@ package se.curtrune.lucy.modules
 
 import android.app.Application
 import android.content.Context
+import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.State
 import se.curtrune.lucy.classes.Type
@@ -14,6 +15,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 class Repository (val context: Application){
+    val mentalModule = LucindaApplication.mentalModule
     init {
         println("init")
     }
@@ -62,9 +64,26 @@ class Repository (val context: Application){
         if (rowsAffected != 1) {
             println("ERROR deleting item ${item.heading}")
         } else {
+            mentalModule.update()
             res = true
         }
         return res
+    }
+
+    /**
+     * @param item, the item for which you wish to get its parent
+     * @param context context context context
+     * @return the parent, TODO, null if not parent?
+     */
+    fun getParent(item: Item?): Item? {
+        if( item == null){
+            println("...getParent(Item) called with null item")
+            return null
+        }
+        if (VERBOSE) println("Repository.getParent(${item.heading})")
+        LocalDB(context).use { db ->
+            return db.selectItem(item.parentId)
+        }
     }
 
     /**
@@ -88,7 +107,22 @@ class Repository (val context: Application){
         LocalDB(context).use { db ->
             itemWithID = db.insert(item)
         }
+        mentalModule.update()
         return itemWithID
+    }
+    fun insertChild(parent: Item, child: Item): Item {
+        if (VERBOSE) println("Repository.insertChild(Item, Item)")
+        if (!parent.hasChild()) {
+            Logger.log("....no children for this parent, yet, parent: ", parent.heading)
+            ItemsWorker.setHasChild(parent, true, context)
+        }
+        child.parentId = parent.id
+        if (child.hasPeriod()) {
+            return ItemsWorker.insertRepeat(child, context)
+        }
+        LocalDB(context).use { db ->
+            return db.insert(child)
+        }
     }
     fun selectChildren(parent: Item?): List<Item> {
         println("Repository.selectChildren(Item)")
@@ -96,15 +130,32 @@ class Repository (val context: Application){
             return db.selectItems(Queeries.selectChildren(parent))
         }
     }
+    fun selectItem(id: Long): Item? {
+        println("Repository.selectItem(long, Context)")
+        try {
+            LocalDB(context).use { db ->
+                return  db.selectItem(id)
+            }
+        } catch (e: Exception) {
+            Logger.log("EXCEPTION", e.message)
+        }
+        return null
+    }
 
     fun selectItems(date: LocalDate ): List<Item> {
-        println("Peristory.selectItems(${date.toString()})")
+        println("Repository.selectItems(${date.toString()})")
         val queery = Queeries.selectItems(date)
         var items: List<Item>
         LocalDB(context).use { db ->
             items = db.selectItems(queery)
         }
         return items
+    }
+    fun selectItems(state: State): List<Item> {
+        println("Repository.selectItems(state: ${state.toString()})")
+        LocalDB(context).use { db ->
+            return db.selectItems(Queeries.selectItems(state))
+        }
     }
 
     /**
@@ -121,8 +172,9 @@ class Repository (val context: Application){
     }
 
     fun update(item: Item): Int {
-        Logger.log("ItemsWorker.update(Item, Context)", item.heading)
+        println("Repository.update(${item.heading})")
         if (item.isTemplate && item.isDone) {
+            mentalModule.update()
             return updateTemplate(item)
         }
         LocalDB(context).use { db ->
@@ -135,7 +187,7 @@ class Repository (val context: Application){
     }
 
     private fun updateTemplate(template: Item): Int {
-        println("ItemsWorker.updateTemplate(Item: ${template.heading})")
+        println("Repository.updateTemplate(Item: ${template.heading})")
         LocalDB(context).use { db ->
             if (template.isDone) {
                 //if (ItemsWorker.VERBOSE) Logger.log("...template is done, will spawn a child")
@@ -154,6 +206,12 @@ class Repository (val context: Application){
                 template.duration = 0
             }
             return db.update(template)
+        }
+    }
+    fun touchParents(item: Item) {
+        println("Repository.touchParents()")
+        LocalDB(context).use { db ->
+            db.touchParents(item)
         }
     }
 }

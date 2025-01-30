@@ -17,7 +17,7 @@ import java.util.Locale;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Listable;
 import se.curtrune.lucy.classes.Mental;
-import se.curtrune.lucy.fragments.TopTenFragment;
+import se.curtrune.lucy.screens.top_ten.TopTenFragment;
 
 
 public class TopTenAdapter extends RecyclerView.Adapter<TopTenAdapter.MyViewHolder>{

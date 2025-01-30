@@ -33,7 +33,7 @@ import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.AddItemDialog;
-import se.curtrune.lucy.fragments.ItemSessionFragment;
+import se.curtrune.lucy.screens.item_editor.ItemEditorFragment;
 import se.curtrune.lucy.fragments.SequenceFragment;
 import se.curtrune.lucy.screens.main.LucindaViewModel;
 import se.curtrune.lucy.persist.ItemsWorker;
@@ -202,10 +202,10 @@ public class ProjectsFragment extends Fragment implements
         if(item.hasChild() ){
             descend(item);
         }else {
-            log("\t\titem does not have  child -> ItemSessionFragment");
+            log("\t\titem does not have  child -> ItemEditorFragment");
             log("\t\tcurrent parent is", currentParent.getHeading());
             projectsViewModel.setCurrentParent(currentParent);
-            mainViewModel.updateFragment(new ItemSessionFragment(item));
+            mainViewModel.updateFragment(new ItemEditorFragment(item));
         }
     }
 
@@ -213,7 +213,7 @@ public class ProjectsFragment extends Fragment implements
     public void onLongClick(Item item) {
         log("...onLongClick(Item item)", item.getHeading());
         projectsViewModel.setCurrentParent(currentParent);
-        mainViewModel.updateFragment( new ItemSessionFragment(item));
+        mainViewModel.updateFragment( new ItemEditorFragment(item));
     }
 
     @Override

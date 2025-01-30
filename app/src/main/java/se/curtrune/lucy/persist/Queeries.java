@@ -13,7 +13,7 @@ import se.curtrune.lucy.classes.Message;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.classes.calender.Week;
-import se.curtrune.lucy.fragments.TopTenFragment;
+import se.curtrune.lucy.screens.top_ten.TopTenFragment;
 
 public class Queeries {
 

@@ -13,14 +13,7 @@ import se.curtrune.lucy.persist.Queeries;
 public class StatisticsCalculator {
 
     public static int getAnxiety(List<Item> items, Context context){
-        //return items.stream().mapToInt(Item::getAnxiety);
-        LocalDB db = new LocalDB(context);
-        List<Mental> mentals = new ArrayList<>();
-        for( Item item: items){
-            String queery = Queeries.selectMental(item);
-            //mentals.add( db.selectMental(queery));
-        }
-        return mentals.stream().mapToInt(Mental::getAnxiety).sum();
+        return items.stream().mapToInt(Item::getAnxiety).sum();
     }
     public static long getDuration(List<Item> items){
         return items.stream().mapToLong(Item::getDuration).sum();

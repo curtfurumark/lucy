@@ -30,7 +30,7 @@ fun MentalScreen(state: MentalState, onEvent: (MentalEvent)->Unit){
     }
     Column(modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally){
-        MentalMeter(mental = Mental())
+        //MentalMeter(mental = Mental())
         MyDatePicker(state = state, onDate = { date ->
             println(" on date chosen")
             //mentalDateViewModel.setDate(date)

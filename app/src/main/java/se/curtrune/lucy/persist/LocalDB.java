@@ -382,7 +382,7 @@ public class LocalDB extends SQLiteOpenHelper {
      */
 
     public void touchParents(Item item) {
-        log("LocalDB.touchParents(Item)");
+        log("LocalDB.touchParents(Item)", item.getHeading());
         Item parent;
         Item child = item;
         while ((parent = getParent(child)) != null) {

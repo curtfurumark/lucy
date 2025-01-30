@@ -34,7 +34,7 @@ import java.util.Locale;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.fragments.EditableListFragment;
-import se.curtrune.lucy.fragments.ItemSessionFragment;
+import se.curtrune.lucy.screens.item_editor.ItemEditorFragment;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.ItemStatistics;
@@ -165,7 +165,7 @@ public class CalenderDateFragmentOld extends Fragment {
                 if( item.hasChild()){
                     calendarDateViewModel.setParent(item, getContext());
                 }else{
-                    lucindaViewModel.updateFragment(new ItemSessionFragment(item));
+                    lucindaViewModel.updateFragment(new ItemEditorFragment(item));
                 }
             }
 
@@ -176,7 +176,7 @@ public class CalenderDateFragmentOld extends Fragment {
                     log("...onClick(Action), add child", action.toString());
                     switch (action){
                         case EDIT:
-                            loadFragment(new ItemSessionFragment(item));
+                            loadFragment(new ItemEditorFragment(item));
                             break;
                         case START_TIMER:
                             Toast.makeText(getContext(), "not implemented", Toast.LENGTH_LONG).show();
@@ -301,7 +301,7 @@ public class CalenderDateFragmentOld extends Fragment {
         if( VERBOSE)  log("...initViewModels()");
         lucindaViewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
         lucindaViewModel.setRecyclerMode(LucindaViewModel.RecyclerMode.DEFAULT);
-        lucindaViewModel.getRecyclerMode().observe(getViewLifecycleOwner(), recyclerMode ->{
+        lucindaViewModel.recyclerMode.observe(getViewLifecycleOwner(), recyclerMode ->{
             log("CalenderDateFragmentOld....recyclerMode", recyclerMode.toString());
             if( recyclerMode.equals(LucindaViewModel.RecyclerMode.MENTAL_COLOURS)){
                 calendarDateViewModel.setEnergyItems();
@@ -312,7 +312,7 @@ public class CalenderDateFragmentOld extends Fragment {
                 // calendarDateViewModel.set(currentDate, getContext());
             }
         } );
-        lucindaViewModel.updateEnergy(getContext());
+        //lucindaViewModel.updateEnergy(getContext());
         calendarDateViewModel = new ViewModelProvider(requireActivity()).get(CalendarDateViewModel.class);
         if( calenderDate != null){
             log("...calendarDate != null");
@@ -366,7 +366,7 @@ public class CalenderDateFragmentOld extends Fragment {
         currentWeek = new Week(date);
         labelMonthYear.setText(getMonthYear(currentDate));
         calenderDateAdapter.setList(currentWeek);
-        lucindaViewModel.updateEnergy(true);
+        //lucindaViewModel.updateEnergy(true);
     }
     private void showAddChildToItemDialog(Item item){
         ChooseChildTypeDialog dialog = new ChooseChildTypeDialog(item, new ChooseChildTypeDialog.Listener() {

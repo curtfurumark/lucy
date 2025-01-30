@@ -19,7 +19,7 @@ fun MentalMeterTest(state: DevState){
             modifier = Modifier.fillMaxWidth()
         , horizontalAlignment = Alignment.CenterHorizontally) {
             Text(text = "MENTAL METER, PLEASE SWIPE")
-            state.mental?.let { MentalMeter(mental = it) }
+            //state.mental?.let { MentalMeter(mental = it) }
         }
     }
 

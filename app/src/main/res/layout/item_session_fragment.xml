@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".fragments.ItemSessionFragment">
+    tools:context=".screens.item_editor.ItemEditorFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp"
-        tools:context=".fragments.ItemSessionFragment">
+        tools:context=".screens.item_editor.ItemEditorFragment">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -180,12 +180,13 @@
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/itemSessionFragment_buttonAdd"
             android:layout_width="122dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:baselineAlignBottom="true"
             android:contentDescription="add new item to parentList"
             android:clickable="true"
             android:layout_weight="1"
             android:layout_gravity="bottom|right"
+            android:focusable="true"
             app:srcCompat="@drawable/baseline_add_24" />
 
         <LinearLayout
@@ -194,89 +195,10 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:visibility="visible">
-
-            <TextView
-                android:id="@+id/itemSessionFragment_ID"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/id"
-                app:layout_constraintStart_toStartOf="@+id/itemSession_infoCategory"
-                app:layout_constraintTop_toBottomOf="@+id/itemSession_infoCategory" />
-
-            <TextView
-                android:id="@+id/itemSessionFragment_parentID"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/parent_id"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/itemSession_infoID" />
-
-            <TextView
-                android:id="@+id/itemSessionFragment_created"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/created"
-                app:layout_constraintStart_toStartOf="@+id/itemSession_infoUpdatedEpoch"
-                app:layout_constraintTop_toBottomOf="@+id/itemSession_infoUpdatedEpoch" />
-
-            <TextView
-                android:id="@+id/itemSessionFragment_updated"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/updated"
-                app:layout_constraintStart_toStartOf="@+id/itemSession_checkBoxTemplate"
-                app:layout_constraintTop_toBottomOf="@+id/itemSession_checkBoxTemplate" />
-
-            <TextView
-                android:id="@+id/itemSessionFragment_type"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="type"
-                app:layout_constraintStart_toStartOf="@+id/itemSession_infoUpdated"
-                app:layout_constraintTop_toBottomOf="@+id/itemSession_infoUpdated" />
-
-
-            <TextView
-                android:id="@+id/itemSessionFragment_tags"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/tags"
-                app:layout_constraintStart_toStartOf="@+id/itemSession_infoCreated"
-                app:layout_constraintTop_toBottomOf="@+id/itemSession_infoCreated" />
-            <TextView
-                android:id="@+id/itemSessionFragment_color"
-                android:layout_width="wrap_content"
+            <androidx.compose.ui.platform.ComposeView
+                android:id= "@+id/itemEditor_composeView"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-
-            <TextView
-                android:id="@+id/itemSessionFragment_hasChild"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/has_child"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/itemSession_infoParentID" />
-
-            <TextView
-                android:id="@+id/itemSession_infoState"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/state"
-                app:layout_constraintStart_toStartOf="@+id/itemSession_infoHasChild"
-                app:layout_constraintTop_toBottomOf="@+id/itemSession_infoHasChild" />
-
-            <TextView
-                android:id="@+id/itemSessionFragment_repeat"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/repeat" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

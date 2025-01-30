@@ -68,6 +68,7 @@ dependencies {
     implementation(platform("androidx.compose:compose-bom:2024.12.01"))
     implementation("androidx.lifecycle:lifecycle-service:2.8.7")
     implementation("androidx.room:room-ktx:2.6.1")
+    implementation("androidx.compose.ui:ui-android:1.7.6")
     androidTestImplementation(platform("androidx.compose:compose-bom:2024.12.01"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     androidTestImplementation(platform("androidx.compose:compose-bom:2024.12.01"))

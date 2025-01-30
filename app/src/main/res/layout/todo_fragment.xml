@@ -5,28 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="8dp"
-    tools:context=".fragments.TodoFragment">
+    tools:context=".screens.todo.TodoFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/todoFragment_recycler"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/todoFragment_composeView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.64"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-    </androidx.recyclerview.widget.RecyclerView>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/todoFragment_buttonAdd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:src="@drawable/baseline_add_24"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
+    </androidx.compose.ui.platform.ComposeView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
