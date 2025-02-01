@@ -1,24 +1,30 @@
 package se.curtrune.lucy.screens.medicine
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.MedicineContent
 import se.curtrune.lucy.classes.Type
-import se.curtrune.lucy.persist.ItemsWorker
+import se.curtrune.lucy.screens.todo.ChannelEvent
 
 class MedicineViewModel(
-    val context: Context
 ) : ViewModel(){
+    private val repository = LucindaApplication.repository
     private val  _state = MutableStateFlow(MedicineState())
     val state = _state.asStateFlow()
+    private val eventChannel = Channel<MedicineChannelEvent>()
+    val eventFlow = eventChannel.receiveAsFlow()
     init {
         println("MedicineViewModel.init block")
         _state.update { it.copy(
-            items = ItemsWorker.selectItems(Type.MEDICIN, context)
+            items = repository.selectItems(Type.MEDICIN)
         ) }
     }
     fun addMedicine(medicine: MedicineContent){
@@ -27,11 +33,11 @@ class MedicineViewModel(
         item.heading = medicine.name
         item.setType(Type.MEDICIN)
         item.content = medicine
-        item = ItemsWorker.insert(item, context)
+        item = repository.insert(item)!!
         println("item inserted with id ${item.id}");
     }
-    fun deleteItem(item: Item){
-        val deleted = ItemsWorker.delete(item, context)
+    private fun deleteItem(item: Item){
+        val deleted = repository.delete(item)
         if( !deleted){
             _state.update { it.copy(
                 errorMessage = "error deleting medicine"
@@ -39,15 +45,17 @@ class MedicineViewModel(
         }else{
             _state.update {
                 it.copy(
-                    items = ItemsWorker.selectItems(Type.MEDICIN, context)
+                    items = repository.selectItems(Type.MEDICIN)
                 )
             }
         }
     }
-    fun getMedicineList(): List<Item>{
-        println("MedicineViewModel.getMedicineList()")
-        return ItemsWorker.selectItems(Type.MEDICIN, context)
+    private fun editItem(medicine: Item){
+        viewModelScope.launch {
+            eventChannel.send(MedicineChannelEvent.Edit(medicine))
+        }
     }
+
     fun onEvent(event: MedicineEvent){
         println("...onEvent($event)")
         when(event){
@@ -55,7 +63,7 @@ class MedicineViewModel(
                 deleteItem(event.item)
             }
             is MedicineEvent.Edit -> {
-                println("edit item")
+                editItem(event.item)
             }
             is MedicineEvent.Sort -> {
                 println(" sort items")
@@ -65,9 +73,21 @@ class MedicineViewModel(
                     showAddMedicineDialog =  event.show
                 ) }
             }
-
             is MedicineEvent.Insert -> {
                 println("....insert item ")
+            }
+            is MedicineEvent.ContextMenu -> {
+                println("context menu: ${event.action}")
+                viewModelScope.launch {
+                    eventChannel.send(MedicineChannelEvent.ShowAdverseEffectsDialog)
+                }
+            }
+        }
+    }
+    private fun showAddMedicineDialog(action: String){
+        when(action){
+            "biverkning" -> {
+                //showAdverseEffectDialog()
             }
         }
     }

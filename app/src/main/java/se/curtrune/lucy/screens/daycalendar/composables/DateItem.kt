@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.composables.TimePickerDialog
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.screens.daycalendar.DateEvent
-import se.curtrune.lucy.screens.medicine.DropdownItem
+import se.curtrune.lucy.screens.medicine.composable.DropdownItem
 import java.time.LocalTime
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)

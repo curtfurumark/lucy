@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Locale;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.fragments.EditableListFragment;
+import se.curtrune.lucy.screens.EditableListFragment;
 import se.curtrune.lucy.screens.item_editor.ItemEditorFragment;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Item;

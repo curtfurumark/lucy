@@ -27,7 +27,6 @@
     <string name="parent_item_heading">parent item heading</string>
     <string name="parent_item">Förälder lista</string>
     <string name="comment">Kommentar</string>
-    <string name="location">Plats</string>
     <string name="show_affirmation">Affirmera mig!</string>
     <string name="start">Start</string>
     <string name="done">Färdig</string>
@@ -108,7 +107,7 @@
     <string name="estimate_today">Beräkning idag</string>
     <string name="enchilada">Allt</string>
     <string name="invalid_password">lösen ord måste vara minst 8 tecken</string>
-    <string name="stress_level">Stress nivå</string>
+    <string name="stress_level">Stress:  %1$d</string>
     <string name="add_mental">Lägg till mental</string>
     <string name="mental_sum">mental sum</string>
     <string name="economy">Ekonomi</string>
@@ -123,8 +122,8 @@
     <string name="add_notification">add notification</string>
     <string name="tags">Sökord</string>
     <string name="add_or_delete_notification">add or delete notification</string>
-    <string name="mood_level">Humör</string>
-    <string name="anxiety_level">Ångest</string>
+    <string name="mood_level">Humör: %1$d</string>
+    <string name="anxiety_level">Ångest: %1$d</string>
     <string name="add_or_delete_repeat">add or delete repeat</string>
     <string name="energy_level">Energy</string>
     <string name="estimated_energy_level">estimated energy level</string>
@@ -171,6 +170,18 @@
     <string name="add">Lägg tilll</string>
     <string name="no_internet_connection">Ingen anslutning till internet.</string>
     <string name="mental_history">Mental historia</string>
+    <string name="contacts">Kontakter</string>
+    <string name="my_day">Min dag</string>
+    <string name="medicines">Mediciner</string>
+    <string name="title_activity_db_admin">DBAdmin</string>
+    <string name="target_time">Tid</string>
+    <string name="target_date">Datum</string>
+    <string name="energy_value">Energi: %1$d</string>
+    <string name="add_medicine">Lägg till medicin</string>
+    <string name="dosage">Dos</string>
+    <string name="doctor">Läkare</string>
+    <string name="medicine_name">Läkemedlets namn</string>
+    <string name="quantity">Antal</string>
 
 
 </resources>

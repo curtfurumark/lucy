@@ -37,7 +37,7 @@ import se.curtrune.lucy.dialogs.UpdateDialog
 import se.curtrune.lucy.fragments.ContactFragment
 import se.curtrune.lucy.fragments.CustomizeFragment
 import se.curtrune.lucy.fragments.DailyGraphFragment
-import se.curtrune.lucy.fragments.EnchiladaFragment
+import se.curtrune.lucy.screens.EnchiladaFragment
 import se.curtrune.lucy.fragments.EstimateFragment
 import se.curtrune.lucy.fragments.MentaHistoryFragment
 import se.curtrune.lucy.fragments.SequenceFragment
@@ -53,6 +53,7 @@ import se.curtrune.lucy.screens.dev.DevActivity
 import se.curtrune.lucy.screens.duration.DurationFragment
 import se.curtrune.lucy.screens.index20.IndexActivityKt
 import se.curtrune.lucy.screens.log_in.LogInActivity
+import se.curtrune.lucy.screens.medicine.MedicineFragment
 import se.curtrune.lucy.screens.mental.MentalDateFragment
 import se.curtrune.lucy.screens.message_board.MessageBoardFragment
 import se.curtrune.lucy.screens.monthcalendar.MonthFragment
@@ -68,16 +69,13 @@ import java.util.Objects
 class MainActivity : AppCompatActivity() {
     private var drawerLayout: DrawerLayout? = null
     private var viewModel: LucindaViewModel? = null
-
-    //private Fragment currentFragment;
     private var textViewPanic: TextView? = null
     private var textViewBoost: TextView? = null
-    //private var textViewEnergy: TextView? = null
     private var textViewLucindaHome: TextView? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
-        Logger.log("MainActivity.onCreate(Bundle of joy)")
+        println("MainActivity.onCreate(Bundle of joy)")
         initComponents()
         initListeners()
         initViewModel()
@@ -93,7 +91,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun boostMe() {
-        //viewModel!!.requestAffirmation()
         viewModel!!.onEvent(MainEvent.ShowBoost(true))
     }
 
@@ -134,9 +131,9 @@ class MainActivity : AppCompatActivity() {
                     R.id.bottomNavigation_today -> {
                         navigate(CalenderDateFragmentOld())
                     }
-                    R.id.navigationDrawer_topTen -> {
+                    /*R.id.navigationDrawer_topTen -> {
                         navigate(TopTenFragment())
-                    }
+                    }*/
                     R.id.bottomNavigation_todo -> {
                         navigate(TodoFragment())
                     }
@@ -152,21 +149,24 @@ class MainActivity : AppCompatActivity() {
                     R.id.navigationDrawer_durationFragment -> {
                         navigate(DurationFragment())
                     }
-                    R.id.navigationDrawer_estimateFragment -> {
+                   /* R.id.navigationDrawer_estimateFragment -> {
                         navigate(EstimateFragment())
-                    }
+                    }*/
                     R.id.navigationDrawer_weekly -> {
                         navigate(CalendarWeekHostFragment())
                     }
-                    R.id.navigationDrawer_contactFragment -> {
+                    /*R.id.navigationDrawer_contactFragment -> {
                         navigate(ContactFragment())
-                    }
+                    }*/
                     R.id.navigationDrawer_messageBoardFragment -> {
                         navigate(MessageBoardFragment())
                     }
-                    R.id.navigationDrawer_countDownTimer -> {
-                        navigate(TimerFragment())
+                    R.id.navigationDrawer_medicines  ->{
+                        navigate(MedicineFragment())
                     }
+                    /*R.id.navigationDrawer_countDownTimer -> {
+                        navigate(TimerFragment())
+                    }*/
                     R.id.navigationDrawer_customizeFragment -> {
                         navigate(CustomizeFragment())
                     }

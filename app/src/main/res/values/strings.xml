@@ -134,9 +134,9 @@
     <string name="use_password">use password</string>
     <string name="user">user</string>
     <string name="mental">Mental</string>
-    <string name="is_appointment">is appointment</string>
+    <string name="is_appointment" translatable="false">is appointment</string>
     <string name="is_template">is template</string>
-    <string name="_00_00_00">00:00:00</string>
+    <string name="_00_00_00" translatable="false">00:00:00</string>
     <string name="updated">updated</string>
     <string name="state">state</string>
     <string name="is_prioritized">is prioritized</string>
@@ -155,8 +155,8 @@
     <string name="add_notification">add notification</string>
     <string name="tags">tags</string>
     <string name="add_or_delete_notification">add or delete notification</string>
-    <string name="mood_level">mood level</string>
-    <string name="anxiety_level">anxiety level</string>
+    <string name="mood_level">mood: %1$d</string>
+    <string name="anxiety_level">anxiety: %1$d</string>
     <string name="add_or_delete_repeat">add or delete repeat</string>
     <string name="energy_level">energy level</string>
     <string name="estimated_energy_level">estimated energy level</string>
@@ -166,7 +166,7 @@
     <string name="subject">subject</string>
     <string name="firstdate">firstDate</string>
     <string name="total_duration">total duration:</string>
-    <string name="stress_level">stress level</string>
+    <string name="stress_level">stress: %1$d</string>
     <string name="add_mental">add mental</string>
     <string name="mental_sum">mental sum</string>
     <string name="economy">economy</string>
@@ -236,10 +236,19 @@
     <string name="title_activity_repeat">RepeatActivity</string>
     <string name="title_activity_index_kt">IndexActivityKt</string>
     <string name="title_activity_month_calendar_kt">MonthCalendarActivityKt</string>
-    <string name="title_activity_medicin">MedicinActivity</string>
+    <string name="title_activity_medicin" translatable="false">MedicinActivity</string>
     <string name="title_activity_user_settings">UserSettingsActivity</string>
     <string name="title_activity_day_calendar">DayCalendarActivity</string>
     <string name="title_activity_item_editor">ItemEditorActivity</string>
     <string name="title_activity_db_admin">DbAdmin</string>
     <string name="panic_button">panic button</string>
+    <string name="contacts">contacts</string>
+    <string name="my_day">my day</string>
+    <string name="medicines">medicines</string>
+    <string name="energy_value">energy: %1$d</string>
+    <string name="add_medicine">add medicine</string>
+    <string name="dosage">dosage</string>
+    <string name="doctor">doctor</string>
+    <string name="medicine_name">medicine name</string>
+    <string name="quantity">quantity</string>
 </resources>

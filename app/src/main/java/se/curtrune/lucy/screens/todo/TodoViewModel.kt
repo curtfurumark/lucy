@@ -1,40 +1,40 @@
 package se.curtrune.lucy.screens.todo
 
-import android.content.Context
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.State
-import se.curtrune.lucy.dialogs.PostponeDialog.Postpone
-import se.curtrune.lucy.persist.ItemsWorker
+import se.curtrune.lucy.screens.appointments.UIEvent
 import se.curtrune.lucy.util.Logger
-import java.time.LocalDate
-import java.util.stream.Collectors
 
-class TodoFragmentViewModel : ViewModel() {
+class TodoViewModel : ViewModel() {
     private val _state = MutableStateFlow(TodoState())
     val state = _state.asStateFlow()
     private val repository = LucindaApplication.repository
-    private var items: List<Item> = emptyList()
-    //private val mutableItems = MutableLiveData<MutableList<Item>?>()
-
+    private var items: MutableList<Item> = mutableListOf()
+    private val eventChannel = Channel<ChannelEvent>()
+    val eventFlow = eventChannel.receiveAsFlow()
 
     fun delete(item: Item) {
-        println("TodoFragmentViewModel(${item.heading})")
-/*        var stat = repository.delete(item)
+        println("TodoViewModel(${item.heading})")
+        val stat = repository.delete(item)
         if (!stat) {
             println("ERROR deleting item")
+            showMessage("error deleting item: ${item.heading}")
         } else {
-            stat = mutableItems.value!!.remove(item)
-            if (!stat) {
-                println("ERROR removing item form mutableItems")
-            }
-        }*/
+            showProgressBar(true)
+            _state.update { it.copy(
+                items =  repository.selectItems(State.TODO)
+            ) }
+            showProgressBar(false)
+        }
     }
 
  /*   fun filter(filter: String?) {
@@ -49,14 +49,18 @@ class TodoFragmentViewModel : ViewModel() {
         return mutableItems.value!![index]
     }*/
     init {
-        items = repository.selectItems(State.TODO)
-        items.sortedWith(compareByDescending { it.targetDate })
+        items = repository.selectItems(State.TODO).toMutableList()
+        items.sortWith(compareByDescending { it.compare() })
+        //items.sortedWith(compareByDescending { it.targetDate })
         _state.update { it.copy(
             items = items
         ) }
     }
-
-
+    fun editItem(item: Item){
+        viewModelScope.launch {
+            eventChannel.send(ChannelEvent.Edit(item))
+        }
+    }
 
     fun insert(item: Item) {
         //var item = item
@@ -72,9 +76,23 @@ class TodoFragmentViewModel : ViewModel() {
     fun onEvent(event: TodoEvent){
         when(event){
             is TodoEvent.Delete -> {delete(event.item)}
-            is TodoEvent.Edit -> {}
+            is TodoEvent.Edit -> { editItem(event.item)}
             is TodoEvent.Insert -> {insert(event.item)}
             is TodoEvent.Update -> {update(event.item)}
+            is TodoEvent.Postpone -> {postpone(event.item)}
+        }
+    }
+    fun postpone(item: Item){
+
+    }
+    private fun showMessage(message: String){
+        viewModelScope.launch{
+            eventChannel.send(ChannelEvent.ShowMessage(message))
+        }
+    }
+    private fun showProgressBar(show: Boolean){
+        viewModelScope.launch{
+            eventChannel.send(ChannelEvent.ShowProgressBar(show))
         }
     }
 

@@ -1,4 +1,4 @@
-package se.curtrune.lucy.fragments;
+package se.curtrune.lucy.screens;
 
 import static se.curtrune.lucy.util.Logger.log;
 

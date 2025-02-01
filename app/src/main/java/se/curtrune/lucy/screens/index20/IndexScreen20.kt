@@ -17,7 +17,7 @@ import se.curtrune.lucy.screens.RepeatActivity
 import se.curtrune.lucy.screens.user_settings.UserSettingsActivity
 import se.curtrune.lucy.screens.daycalendar.DayCalendarActivity
 import se.curtrune.lucy.screens.db_admin.DbAdminActivity
-import se.curtrune.lucy.screens.medicine.MedicineActivity
+import se.curtrune.lucy.screens.medicine.MedicineFragment
 import se.curtrune.lucy.screens.week_calendar.WeekCalendarActivityKt
 import se.curtrune.lucy.screens.dev.DevActivity
 
@@ -35,7 +35,7 @@ fun IndexScreen20(){
 
         })
         Text(text = "medicin", fontSize = 24.sp, modifier = Modifier.clickable {
-            context.startActivity(Intent(context, MedicineActivity::class.java))
+            context.startActivity(Intent(context, MedicineFragment::class.java))
 
         })
         Text(text = "user settings", fontSize = 24.sp, modifier = Modifier.clickable {

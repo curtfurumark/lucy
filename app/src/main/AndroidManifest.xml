@@ -50,7 +50,7 @@
             android:label="@string/title_activity_user_settings"
             android:theme="@style/Theme.Lucy" />
         <activity
-            android:name=".screens.medicine.MedicineActivity"
+            android:name=".screens.medicine.MedicineFragment"
             android:exported="false"
             android:label="@string/title_activity_medicin"
             android:theme="@style/Theme.Lucy" />

@@ -5,30 +5,25 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
-import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.classes.Item
-import se.curtrune.lucy.screens.daycalendar.composables.SwipeBackground
-import se.curtrune.lucy.screens.todo.TodoFragmentViewModel
+import se.curtrune.lucy.screens.todo.TodoEvent
+import se.curtrune.lucy.screens.todo.TodoState
+import se.curtrune.lucy.screens.todo.TodoViewModel
 
 @Composable
-fun TodoScreen(){
-    val todoViewModel = viewModel<TodoFragmentViewModel>()
-    val state = todoViewModel.state.collectAsState()
-    state.value.items?.let { ItemList(items = it) }
+fun TodoScreen(state: TodoState, onEvent: (TodoEvent)->Unit) {
+    ItemList(state = state, onEvent = onEvent)
 }
 @Composable
-fun ItemList(items: List<Item>){
+fun ItemList(state: TodoState, onEvent: (TodoEvent) -> Unit){
     LazyColumn(modifier = Modifier.fillMaxWidth()){
-        items(items){item->
-            BasicItem(item)
+        items(state.items){item->
+            BasicItem(item, onEvent = onEvent)
             Spacer(modifier = Modifier.height(2.dp))
         }
     }

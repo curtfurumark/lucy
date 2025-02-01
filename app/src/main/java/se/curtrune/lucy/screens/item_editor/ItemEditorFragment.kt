@@ -45,7 +45,6 @@ import com.skydoves.colorpickerview.ColorPickerDialog
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
-import se.curtrune.lucy.app.Lucinda
 import se.curtrune.lucy.app.User
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.Mental
@@ -59,11 +58,10 @@ import se.curtrune.lucy.dialogs.DurationDialog
 import se.curtrune.lucy.dialogs.NotificationDialog
 import se.curtrune.lucy.dialogs.RepeatDialog
 import se.curtrune.lucy.dialogs.TagsDialog
-import se.curtrune.lucy.fragments.EditableListFragment
+import se.curtrune.lucy.screens.EditableListFragment
 import se.curtrune.lucy.item_settings.ItemSetting
 import se.curtrune.lucy.item_settings.ItemSettingAdapter
 import se.curtrune.lucy.persist.ItemsWorker
-import se.curtrune.lucy.screens.item_editor.ItemSessionViewModel
 import se.curtrune.lucy.screens.item_editor.composables.ItemEditorDev
 import se.curtrune.lucy.screens.main.LucindaViewModel
 import se.curtrune.lucy.screens.util.Converter
@@ -164,7 +162,7 @@ class ItemEditorFragment : Fragment {
                 ItemSetting.Key.IS_CALENDAR_ITEM -> {
                     currentItem!!.setIsCalenderItem(setting.isChecked)
                     itemSessionViewModel!!.onEvent(
-                        ItemEditorEvent.Update(
+                        ItemEvent.Update(
                             currentItem!!
                         )
                     )
@@ -181,7 +179,7 @@ class ItemEditorFragment : Fragment {
                     //itemSessionViewModel.setIsTemplate(setting.isChecked(), getContext());
                     currentItem!!.setIsTemplate(setting.isChecked)
                     itemSessionViewModel!!.onEvent(
-                        ItemEditorEvent.Update(
+                        ItemEvent.Update(
                             currentItem!!
                         )
                     )
@@ -190,7 +188,7 @@ class ItemEditorFragment : Fragment {
                 ItemSetting.Key.PRIORITIZED -> {
                     currentItem!!.priority = if (currentItemSetting!!.isChecked) 1 else 0
                     itemSessionViewModel!!.onEvent(
-                        ItemEditorEvent.Update(
+                        ItemEvent.Update(
                             currentItem!!
                         )
                     )
@@ -261,7 +259,7 @@ class ItemEditorFragment : Fragment {
         buttonTimer!!.setOnClickListener { view: View? -> toggleTimer() }
         buttonTimer!!.setOnLongClickListener { v: View? ->
             Logger.log("...onLongClick(View) cancel timer please")
-            itemSessionViewModel!!onEvent(ItemEditorEvent.CancelTimer)
+            itemSessionViewModel!!onEvent(ItemEvent.CancelTimer)
             buttonTimer!!.text = getString(R.string.ui_start)
             true
         }
@@ -283,7 +281,7 @@ class ItemEditorFragment : Fragment {
                     //int energyChange = progress - startEnergy;
                     if (currentItem!!.isDone) {
                         itemSessionViewModel!!.onEvent(
-                            ItemEditorEvent.Update(
+                            ItemEvent.Update(
                                 currentItem!!
                             )
                         )
@@ -301,7 +299,7 @@ class ItemEditorFragment : Fragment {
                 Logger.log("...onStopTrackingTouch(SeekBar)", seekBar.progress)
                 currentItem!!.energy = seekBarEnergy!!.progress - 5
                 itemSessionViewModel!!.onEvent(
-                    ItemEditorEvent.Update(
+                    ItemEvent.Update(
                         currentItem!!
                     )
                 )
@@ -323,7 +321,7 @@ class ItemEditorFragment : Fragment {
                 Logger.log("seekBarAnxiety.onStopTrackingTouch(SeekBar)", seekBar.progress)
                 currentItem!!.anxiety = seekBar.progress - 5
                 itemSessionViewModel!!.onEvent(
-                    ItemEditorEvent.Update(
+                    ItemEvent.Update(
                         currentItem!!
                     )
                 )
@@ -343,7 +341,7 @@ class ItemEditorFragment : Fragment {
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 currentItem!!.mood = seekBar.progress - 5
                 itemSessionViewModel!!.onEvent(
-                    ItemEditorEvent.Update(
+                    ItemEvent.Update(
                         currentItem!!
                     )
                 )
@@ -363,7 +361,7 @@ class ItemEditorFragment : Fragment {
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 currentItem!!.stress = seekBar.progress - 5
                 itemSessionViewModel!!.onEvent(
-                    ItemEditorEvent.Update(
+                    ItemEvent.Update(
                         currentItem!!
                     )
                 )
@@ -431,7 +429,11 @@ class ItemEditorFragment : Fragment {
             )
             when (childType) {
                 ChildType.CHILD -> showAddChildItemDialog()
-                ChildType.LIST -> lucindaViewModel!!.updateFragment(EditableListFragment(currentItem))
+                ChildType.LIST -> lucindaViewModel!!.updateFragment(
+                    EditableListFragment(
+                        currentItem
+                    )
+                )
                 ChildType.PHOTOGRAPH ->                     //Toast.makeText(getContext(), "NOT IMPLEMENTED", Toast.LENGTH_LONG).show();
                     //takePhoto();
                     openCameraAndSaveImage()
@@ -459,7 +461,7 @@ class ItemEditorFragment : Fragment {
             currentItemSetting!!.value = category
             currentItem!!.category = category
             itemSessionViewModel!!.onEvent(
-                ItemEditorEvent.Update(
+                ItemEvent.Update(
                     currentItem!!
                 )
             )
@@ -500,7 +502,7 @@ class ItemEditorFragment : Fragment {
             currentItemSetting!!.value = targetDate.toString()
             currentItem!!.targetDate = targetDate
             itemSessionViewModel!!.onEvent(
-                ItemEditorEvent.Update(
+                ItemEvent.Update(
                     currentItem!!
                 )
             )
@@ -521,7 +523,7 @@ class ItemEditorFragment : Fragment {
             currentItemSetting!!.value =
                 Converter.formatSecondsWithHours(duration.seconds)
             itemSessionViewModel!!.onEvent(
-                ItemEditorEvent.Update(
+                ItemEvent.Update(
                     currentItem!!
                 )
             )
@@ -544,7 +546,7 @@ class ItemEditorFragment : Fragment {
             currentItem!!.duration = duration.seconds
             itemSessionViewModel!!.setElapsedDuration(duration.seconds)
             itemSessionViewModel!!.onEvent(
-                ItemEditorEvent.Update(
+                ItemEvent.Update(
                     currentItem!!
                 )
             )
@@ -605,7 +607,7 @@ class ItemEditorFragment : Fragment {
             currentItem!!.setIsTemplate(true)
             //itemSessionViewModel.update(currentItem, getContext());
             itemSessionViewModel!!.onEvent(
-                ItemEditorEvent.Update(
+                ItemEvent.Update(
                     currentItem!!
                 )
             )
@@ -637,7 +639,7 @@ class ItemEditorFragment : Fragment {
                 currentItemSetting!!.value = targetTime.toString()
                 currentItem!!.targetTime = targetTime
                 itemSessionViewModel!!.onEvent(
-                    ItemEditorEvent.Update(
+                    ItemEvent.Update(
                         currentItem!!
                     )
                 )
@@ -652,15 +654,15 @@ class ItemEditorFragment : Fragment {
         Logger.log("...current timer state", state.toString())
         when (state) {
             ItemSessionViewModel.TimerState.PENDING -> {
-                itemSessionViewModel!!.onEvent(ItemEditorEvent.StartTimer)
+                itemSessionViewModel!!.onEvent(ItemEvent.StartTimer)
                 buttonTimer!!.setText(R.string.ui_pause)
             }
             ItemSessionViewModel.TimerState.RUNNING -> {
-                itemSessionViewModel!!.onEvent(ItemEditorEvent.PauseTimer)
+                itemSessionViewModel!!.onEvent(ItemEvent.PauseTimer)
                 buttonTimer!!.setText(R.string.ui_resume)
             }
             ItemSessionViewModel.TimerState.PAUSED -> {
-                itemSessionViewModel!!.onEvent(ItemEditorEvent.ResumeTimer)
+                itemSessionViewModel!!.onEvent(ItemEvent.ResumeTimer)
                 buttonTimer!!.setText(R.string.ui_pause)
             }
 
@@ -824,11 +826,11 @@ class ItemEditorFragment : Fragment {
         }
         currentItem = item
         itemSessionViewModel!!.onEvent(
-            ItemEditorEvent.Update(
+            ItemEvent.Update(
                 currentItem!!
             )
         )
-        itemSessionViewModel!!.onEvent(ItemEditorEvent.CancelTimer)
+        itemSessionViewModel!!.onEvent(ItemEvent.CancelTimer)
         requireActivity().supportFragmentManager.popBackStackImmediate()
     }
 

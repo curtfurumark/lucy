@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:title="@string/today"
+    <item
         android:id="@+id/bottomNavigation_today"
-        android:icon="@drawable/baseline_today_24"/>
-    <item android:title="@string/week"
+        android:icon="@drawable/baseline_today_24"
+        android:title="@string/today" />
+    <item
         android:id="@+id/navigationDrawer_weekly"
-        android:icon="@drawable/baseline_calendar_view_week_24"/>
+        android:icon="@drawable/baseline_calendar_view_week_24"
+        android:title="@string/week" />
     <item
         android:id="@+id/navigationDrawer_monthCalender"
         android:icon="@drawable/baseline_calendar_view_month_24"
@@ -15,51 +17,58 @@
     <item
         android:id="@+id/bottomNavigation_todo"
         android:icon="@drawable/baseline_checklist_24"
-        android:title="@string/todo"/>
-    <item android:title="@string/projects"
+        android:title="@string/todo" />
+    <item
         android:id="@+id/bottomNavigation_projects"
-        android:icon="@drawable/baseline_checklist_24"/>
-    <item android:title="@string/appointments"
+        android:icon="@drawable/baseline_checklist_24"
+        android:title="@string/projects" />
+    <item
         android:id="@+id/bottomNavigation_appointments"
         android:icon="@drawable/baseline_event_24"
+        android:title="@string/appointments" />
+    <item
+        android:id="@+id/navigationDrawer_medicines"
+        android:title="@string/medicines"
         />
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/navigationDrawer_estimateFragment"
-            android:title="@string/estimate_today" />
-        <item
-            android:id="@+id/navigationDrawer_durationFragment"
-            android:icon="@drawable/baseline_access_time_24"
-            android:title="@string/duration" />
-        <item
-            android:id="@+id/navigationDrawer_mentalFragment"
-            android:title="@string/mental" />
-        <item
-            android:id="@+id/navigationDrawer_topTen"
-            android:title="@string/top_ten" />
-        <item
-            android:id="@+id/bottomNavigation_enchilada"
-            android:icon="@drawable/baseline_checklist_24"
-            android:title="@string/enchilada" />
-        <item
-            android:id="@+id/navigationDrawer_graphFragment"
-            android:title="@string/graph_today" />
-        <item android:id="@+id/navigationDrawer_mentalHistoryFragment"
-            android:title="@string/mental_history"/>
-    </group>
-    <item android:title="@string/customize"
-        android:id="@+id/navigationDrawer_customizeFragment"/>
-    <item android:id="@+id/navigationDrawer_contactFragment"
+    <!--group android:checkableBehavior="single"-->
+    <!--item
+        android:id="@+id/navigationDrawer_estimateFragment"
+        android:title="@string/estimate_today" /-->
+    <item
+        android:id="@+id/navigationDrawer_durationFragment"
+        android:icon="@drawable/baseline_access_time_24"
+        android:title="@string/duration" />
+    <item
+        android:id="@+id/navigationDrawer_mentalFragment"
+        android:title="@string/my_day" />
+    <!--item
+        android:id="@+id/navigationDrawer_topTen"
+        android:title="@string/top_ten" /-->
+    <item
+        android:id="@+id/bottomNavigation_enchilada"
+        android:icon="@drawable/baseline_checklist_24"
+        android:title="@string/enchilada" />
+    <item
+        android:id="@+id/navigationDrawer_graphFragment"
+        android:title="@string/graph_today" />
+    <item
+        android:id="@+id/navigationDrawer_mentalHistoryFragment"
+        android:title="@string/mental_history" />
+    <!--/group-->
+    <item
+        android:id="@+id/navigationDrawer_customizeFragment"
+        android:title="@string/customize" />
+    <!--item android:id="@+id/navigationDrawer_contactFragment"
         android:icon="@drawable/baseline_email_24"
-        android:title="@string/contact_curt_rune"/>
-    <item android:id="@+id/navigationDrawer_messageBoardFragment"
-        android:title="@string/message_board"/>
-    <item android:id="@+id/navigationDrawer_contactsFragment"
-        android:title="contacts"/>
-    <item android:id="@+id/navigationDrawer_countDownTimer"
-        android:visible="false"
-        android:title="@string/timer"/>
-    <item android:id="@+id/navigationDrawer_logOut"
-        android:title="@string/log_out"/>
+        android:title="@string/contact_curt_rune"/-->
+    <item
+        android:id="@+id/navigationDrawer_messageBoardFragment"
+        android:title="@string/message_board" />
+    <item
+        android:id="@+id/navigationDrawer_contactsFragment"
+        android:title="@string/contacts" />
+    <item
+        android:id="@+id/navigationDrawer_logOut"
+        android:title="@string/log_out" />
 
 </menu>

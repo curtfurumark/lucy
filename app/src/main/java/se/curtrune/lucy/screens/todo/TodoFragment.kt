@@ -6,8 +6,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -18,6 +29,8 @@ import se.curtrune.lucy.app.Settings
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.dialogs.AddItemDialog
 import se.curtrune.lucy.persist.ItemsWorker
+import se.curtrune.lucy.screens.appointments.UIEvent
+import se.curtrune.lucy.screens.item_editor.ItemEditorFragment
 import se.curtrune.lucy.screens.main.LucindaViewModel
 import se.curtrune.lucy.screens.todo.composables.TodoScreen
 import se.curtrune.lucy.util.Logger
@@ -29,7 +42,7 @@ class TodoFragment : Fragment() {
     private var adapter: ItemAdapter? = null
     //private val currentParent: Item? = null
     private var mainViewModel: LucindaViewModel? = null
-    private var todoFragmentViewModel: TodoFragmentViewModel? = null
+    private var todoFragmentViewModel: TodoViewModel? = null
     private var itemTouchHelper: ItemTouchHelper? = null
 
     init {
@@ -45,11 +58,6 @@ class TodoFragment : Fragment() {
         Logger.log("ToDoFragment.onCreateView(LayoutInflater, ViewGroup, Bundle)")
         val view = inflater.inflate(R.layout.todo_fragment, container, false)
         requireActivity().title = "todo"
-        //initViewModels()
-        //initComponents(view)
-        //initSwipe()
-        //initRecycler()
-        //initListeners()
         initContent(view )
         return view
     }
@@ -78,8 +86,36 @@ class TodoFragment : Fragment() {
     private fun initContent(view: View){
         val composeView = view.findViewById<ComposeView>(R.id.todoFragment_composeView)
         composeView.setContent {
+            val todoViewModel = viewModel<TodoViewModel>()
+            val state = todoViewModel.state.collectAsState()
+            var showProgressBar by remember{
+                 mutableStateOf(false)
+            }
+            LaunchedEffect(todoViewModel) {
+                todoViewModel.eventFlow.collect{ event->
+                    when(event){
+                        is ChannelEvent.Edit -> {
+                            navigateToEditor(event.item)
+                        }
+                        is ChannelEvent.ShowMessage ->{
+                            println(event.message)
+                            Toast.makeText(requireContext(), event.message, Toast.LENGTH_LONG).show()
+                        }
+
+                        is ChannelEvent.ShowProgressBar -> {
+                            showProgressBar = event.show
+                            println("...showProgress bar: ${event.show}")
+                        }
+                    }
+                }
+            }
             LucyTheme {
-                TodoScreen()
+                TodoScreen(state = state.value, onEvent = { event->
+                    todoViewModel.onEvent(event)
+                })
+                if(showProgressBar){
+                    CircularProgressIndicator()
+                }
             }
         }
     }
@@ -89,6 +125,15 @@ class TodoFragment : Fragment() {
 
     }
 
+    private fun navigateToEditor(item: Item) {
+        println("...navigateToEditor(${item.heading})")
+        val mainViewModel = ViewModelProvider(requireActivity())[LucindaViewModel::class.java]
+        mainViewModel.updateFragment(
+            ItemEditorFragment(
+                item
+            )
+        )
+    }
 
     private fun showDeleteDialog(item: Item) {
         Logger.log("...showDeleteDialog(Item)", item.heading)

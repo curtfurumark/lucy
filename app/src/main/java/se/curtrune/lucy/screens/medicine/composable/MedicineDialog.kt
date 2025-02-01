@@ -1,4 +1,4 @@
-package se.curtrune.lucy.screens.medicine
+package se.curtrune.lucy.screens.medicine.composable
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,9 +25,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import se.curtrune.lucy.R
 import se.curtrune.lucy.composables.TimePickerDialog
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.MedicineContent
@@ -61,6 +63,9 @@ fun MedicineDialog(onDismiss: () -> Unit, onConfirm: (Item)-> Unit){
     var showTimePicker by remember {
         mutableStateOf(false)
     }
+    var quantity by remember {
+        mutableStateOf("")
+    }
     if(showTimePicker){
         TimePickerDialog(onDismiss = { showTimePicker = false }, onConfirm = {
             var targetTime = LocalTime.of(it.hour, it.minute)
@@ -78,7 +83,7 @@ fun MedicineDialog(onDismiss: () -> Unit, onConfirm: (Item)-> Unit){
                 .fillMaxWidth(1f),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(text = "add medicine", fontSize = 24.sp)
+                Text(text = stringResource(R.string.add_medicine), fontSize = 24.sp)
                 Spacer(modifier = Modifier.height(16.dp))
                 OutlinedTextField(
                     value = name,
@@ -86,7 +91,7 @@ fun MedicineDialog(onDismiss: () -> Unit, onConfirm: (Item)-> Unit){
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp),
-                    label = { Text("hello") }
+                    label = { Text(stringResource(R.string.medicine_name)) }
                 )
                 OutlinedTextField(
                     value = dosage,
@@ -95,9 +100,20 @@ fun MedicineDialog(onDismiss: () -> Unit, onConfirm: (Item)-> Unit){
                         .fillMaxWidth()
                         .padding(8.dp),
                     placeholder ={
-                        Text(text = "dosage")
+                        Text(text = stringResource(R.string.dosage))
                     }
                 )
+                OutlinedTextField(
+                    value = quantity,
+                    onValueChange = { quantity = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    placeholder ={
+                        Text(text = stringResource(R.string.quantity))
+                    }
+                )
+
                 OutlinedTextField(
                     value = doctor  ,
                     onValueChange = { doctor = it },
@@ -105,10 +121,10 @@ fun MedicineDialog(onDismiss: () -> Unit, onConfirm: (Item)-> Unit){
                         .fillMaxWidth()
                         .padding(8.dp),
                     placeholder ={
-                        Text(text = "doctor")
+                        Text(text = stringResource(R.string.doctor))
                     }
                 )
-                OutlinedTextField(
+/*                OutlinedTextField(
                     value = bipacksedel  ,
                     onValueChange = { bipacksedel = it },
                     modifier = Modifier
@@ -117,7 +133,7 @@ fun MedicineDialog(onDismiss: () -> Unit, onConfirm: (Item)-> Unit){
                     placeholder ={
                         Text(text = "bipacksedel")
                     }
-                )
+                )*/
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween){
                     Text("times whatever", fontSize = 24.sp)
                     Icon(imageVector = Icons.Default.Add, contentDescription = "add time", modifier = Modifier.clickable {
@@ -133,7 +149,7 @@ fun MedicineDialog(onDismiss: () -> Unit, onConfirm: (Item)-> Unit){
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                     Button(onClick = { onDismiss() }) {
-                        Text(text = "cancel")
+                        Text(text = stringResource(R.string.dismiss))
                     }
                     Button(onClick = {
                         var item = Item()
@@ -146,7 +162,7 @@ fun MedicineDialog(onDismiss: () -> Unit, onConfirm: (Item)-> Unit){
                         item.content = medicineContent
                         onConfirm(item)
                     }) {
-                        Text(text = "add")
+                        Text(text = stringResource(R.string.ok))
                     }
                 }
             }

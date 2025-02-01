@@ -7,4 +7,5 @@ sealed interface TodoEvent {
     data class Edit(val item: Item): TodoEvent
     data class Delete(val item: Item): TodoEvent
     data class Update(val item: Item): TodoEvent
+    data class Postpone(val item: Item): TodoEvent
 }

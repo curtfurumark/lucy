@@ -2,35 +2,42 @@ package se.curtrune.lucy.screens.todo.composables
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.screens.daycalendar.DateEvent
 import se.curtrune.lucy.screens.daycalendar.composables.SwipeBackground
+import se.curtrune.lucy.screens.todo.TodoEvent
 
 
 @Composable
-fun BasicItem(item: Item){
+fun BasicItem(item: Item, onEvent: (TodoEvent)->Unit){
+    val context = LocalContext.current
     val swipeState = rememberSwipeToDismissBoxState(
         confirmValueChange = {
             if( it == SwipeToDismissBoxValue.EndToStart){
-                //onEvent(DateEvent.DeleteItem(state.items[index]))
-                //Toast.makeText(context, "delete: ${state.items[index]}", Toast.LENGTH_LONG).show()
+                onEvent(TodoEvent.Delete(item))
+                Toast.makeText(context, "delete: ${item.heading}", Toast.LENGTH_LONG).show()
                 true
             }else if (it == SwipeToDismissBoxValue.StartToEnd){
-                //onEvent(DateEvent.PostponeItem(state.items[index]))
+                onEvent(TodoEvent.Postpone(item))
                 //onEvent(DateEvent.ShowPostponeDialog(true))
-                //Toast.makeText(context, "postpone: ${state.items[index]}", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "postpone: ${item.heading}", Toast.LENGTH_LONG).show()
                 true
             }
             false
@@ -41,12 +48,26 @@ fun BasicItem(item: Item){
         backgroundContent = {SwipeBackground(state = swipeState)}
     ) {
         Card(modifier = Modifier.fillMaxWidth()
-            .background(color = Color.DarkGray)) {
-            Text(
-                modifier = Modifier.padding(2.dp),
-                text = item.heading,
-                fontSize = 18.sp,
-                color = Color.White)
+            .background(color = Color.DarkGray)
+            .clickable {
+                onEvent(TodoEvent.Edit(item))
+            }) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(checked = item.isDone, onCheckedChange = {
+                    println("on checkbox checked $it")
+                    item.setIsDone(it)
+                    onEvent(TodoEvent.Update(item))
+                })
+                Text(
+                    modifier = Modifier.padding(2.dp),
+                    text = item.heading,
+                    fontSize = 18.sp,
+                    color = Color.White
+                )
+            }
         }
     }
 }

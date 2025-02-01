@@ -1,9 +1,7 @@
-package se.curtrune.lucy.screens.medicine
+package se.curtrune.lucy.screens.medicine.composable
 
-import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -18,16 +17,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.MedicineContent
+import se.curtrune.lucy.screens.medicine.MedicineEvent
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -45,7 +43,7 @@ fun MedicineItem(item: Item, onEvent: (MedicineEvent) -> Unit){
     }
     Card(modifier = Modifier
         .fillMaxSize()
-        .padding(8.dp)
+        .background(color = MaterialTheme.colorScheme.background)
         .pointerInput(true) {
             detectTapGestures(
                 onLongPress = {
@@ -65,13 +63,14 @@ fun MedicineItem(item: Item, onEvent: (MedicineEvent) -> Unit){
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Blue)
                 .padding(8.dp)
         ) {
             Text(text = medicine.name.uppercase(), fontSize = 20.sp)
             Text(text = medicine.dosage)
             Text(text = medicine.doctor)
             Text(text = medicine.bipacksedel)
+            Text(text = "totalt antal:")
+            Text(text = "antal per dag:")
             Text(text = "uttag kvar")
             Text(text = "giltigt till och med")
         }
@@ -84,8 +83,9 @@ fun MedicineItem(item: Item, onEvent: (MedicineEvent) -> Unit){
                 showContextMenu = false
             } ) {
             listOf("biverkning", "förpackning").forEach {
-                DropdownItem(it, onClick = {
-                    println("action: $it")
+                DropdownItem(it, onClick = { action ->
+                    println("action: $action")
+                    onEvent(MedicineEvent.ContextMenu(action))
                     showContextMenu = false
                 })
             }

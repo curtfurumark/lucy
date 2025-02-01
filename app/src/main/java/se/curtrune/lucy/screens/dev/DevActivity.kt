@@ -56,6 +56,7 @@ import se.curtrune.lucy.screens.dev.composables.CreateItemTree
 import se.curtrune.lucy.screens.dev.composables.DurationByCategory
 import se.curtrune.lucy.screens.dev.composables.GetNumberOfChildren
 import se.curtrune.lucy.screens.dev.composables.MentalMeterTest
+import se.curtrune.lucy.screens.dev.composables.RepositoryTest
 import se.curtrune.lucy.screens.dev.composables.SetGeneratedToTemplateChildren
 import se.curtrune.lucy.screens.log_in.LogInActivity
 import se.curtrune.lucy.screens.main.MainActivity
@@ -139,12 +140,10 @@ class DevActivity : AppCompatActivity() {
                             .verticalScroll(scrollState),
                         verticalArrangement = Arrangement.SpaceEvenly,
                     ) {
+                        RepositoryTest()
                         val mentalModule = LucindaApplication.mentalModule
-/*                        val mental by remember{
-                            mutableStateOf(mentalModule.current)
-                        }*/
-                        MentalMeterTest(state = state.value)
-                        Spacer(modifier = Modifier.height(8.dp))
+                        //MentalMeterTest(state = state.value)
+                        //Spacer(modifier = Modifier.height(8.dp))
                         LucindaControls(state = state.value, onEvent = {
                             Toast.makeText(context,it, Toast.LENGTH_LONG ).show()
                         })
@@ -154,16 +153,16 @@ class DevActivity : AppCompatActivity() {
                             copyDatabase()
                         })
                         Spacer(modifier = Modifier.height(16.dp))
-                        SetGeneratedToTemplateChildren()
-                        Spacer(modifier = Modifier.height(16.dp))
-                        DurationByCategory()
-                        Spacer(modifier = Modifier.height(16.dp))
+                        //SetGeneratedToTemplateChildren()
+                        //Spacer(modifier = Modifier.height(16.dp))
+                        //DurationByCategory()
+                        //Spacer(modifier = Modifier.height(16.dp))
                         Text(text = "main", fontSize = 24.sp, modifier = Modifier.clickable {
                             startActivity(Intent(applicationContext, MainActivity::class.java))
                         })
                         Spacer(modifier = Modifier.height(16.dp))
-                        Text(text = "dev mode", fontSize = 24.sp)
-                        Spacer(modifier = Modifier.height(16.dp))
+                        //Text(text = "dev mode", fontSize = 24.sp)
+                        //Spacer(modifier = Modifier.height(16.dp))
                         Text(text = "run test", fontSize = 24.sp,
                             modifier = Modifier.clickable {
                                 runCode()

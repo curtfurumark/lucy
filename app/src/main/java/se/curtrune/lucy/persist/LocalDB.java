@@ -100,18 +100,35 @@ public class LocalDB extends SQLiteOpenHelper {
     }
 
     public int delete(Item item) {
-        if( VERBOSE) log("LocalDB.delete(Item)");
+        log("LocalDB.delete(Item)", item.getHeading());
         db = this.getWritableDatabase();
         String whereClause = String.format(Locale.getDefault(), "id = %d", item.getID());
         int rowsAffected = db.delete(ITEMS_TABLE, whereClause, null);
         if (rowsAffected != 1) {
             log("some kind of error deleting item");
         }else {
+            log("...item deleted");
             if( getNumberChildren(item.getParentId()) == 0){ // we have just deleted the last child'
                 log("...lastChild just deleted, setting parent has child to false");
                 setItemHasChild(item.getParentId(), false) ;
             }
         }
+        db.close();
+        return rowsAffected;
+    }
+    public int delete(Long id) {
+        if( VERBOSE) log("LocalDB.delete(Item)");
+        db = this.getWritableDatabase();
+        String whereClause = String.format(Locale.getDefault(), "id = %d", id);
+        int rowsAffected = db.delete(ITEMS_TABLE, whereClause, null);
+        if (rowsAffected != 1) {
+            log("some kind of error deleting item");
+        }/*else {
+            if( getNumberChildren(item.getParentId()) == 0){ // we have just deleted the last child'
+                log("...lastChild just deleted, setting parent has child to false");
+                setItemHasChild(item.getParentId(), false) ;
+            }
+        }*/
         db.close();
         return rowsAffected;
     }

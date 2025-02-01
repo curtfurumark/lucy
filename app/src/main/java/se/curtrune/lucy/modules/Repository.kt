@@ -55,7 +55,7 @@ class Repository (val context: Application){
      * @return true if item was deleted false otherwise
      */
     fun delete(item: Item): Boolean {
-        println("ItemsWorker.delete(Item) ${item.heading}")
+        println("Repository.delete(${item.heading})")
         var res = false
         var rowsAffected: Int
         LocalDB(context).use { db ->
@@ -63,6 +63,21 @@ class Repository (val context: Application){
         }
         if (rowsAffected != 1) {
             println("ERROR deleting item ${item.heading}")
+        } else {
+            mentalModule.update()
+            res = true
+        }
+        return res
+    }
+    fun delete(id: Long): Boolean {
+        println("Repository.delete(id: $id)")
+        var res = false
+        var rowsAffected: Int
+        LocalDB(context).use { db ->
+            rowsAffected = db.delete(id)
+        }
+        if (rowsAffected != 1) {
+            println("ERROR deleting item id: $id")
         } else {
             mentalModule.update()
             res = true

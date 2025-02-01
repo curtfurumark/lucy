@@ -16,7 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.screens.duration.DurationEvent
 import se.curtrune.lucy.screens.duration.DurationPeriod
-import se.curtrune.lucy.screens.medicine.DropdownItem
+import se.curtrune.lucy.screens.medicine.composable.DropdownItem
 
 @Composable
 fun PeriodDropDown(onEvent: (DurationEvent)->Unit){

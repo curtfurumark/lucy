@@ -16,9 +16,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.R
 import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.screens.main.MainState
 
@@ -67,11 +69,12 @@ fun MentalMeter(mental: Mental){
             modifier = Modifier.width(150.dp)
         ) { page ->
             println("...page: $page")
+            //stringResource()
             mentalText = when (page) {
-                0 -> "energy: ${mental.energy}"
-                1 -> "anxiety: ${mental.anxiety}"
-                2 -> "mood: ${mental.mood}"
-                3 -> "stress: ${mental.stress}"
+                0 -> stringResource(R.string.energy_value, mental.energy)
+                1 -> stringResource(R.string.anxiety_level, mental.anxiety)
+                2 -> stringResource(R.string.mood_level, mental.mood)
+                3 -> stringResource(R.string.stress_level, mental.stress)
                 else -> {
                     "unknown"
                 }

@@ -16,7 +16,6 @@ import se.curtrune.lucy.item_settings.ItemSetting
 import se.curtrune.lucy.item_settings.KeyValueSetting
 import se.curtrune.lucy.persist.ItemsWorker
 import se.curtrune.lucy.screens.util.Converter
-import se.curtrune.lucy.util.Kronos
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.workers.NotificationsWorker
 
@@ -181,15 +180,16 @@ class ItemSessionViewModel : ViewModel() {
             Logger.log("ItemSessionViewModel.getMental()")
             return currentItem!!.mental
         }
-    infix fun onEvent(event: ItemEditorEvent){
+    infix fun onEvent(event: ItemEvent){
         when(event){
-            is ItemEditorEvent.Update -> {
+            is ItemEvent.Update -> {
                 update(event.item)
             }
-            ItemEditorEvent.CancelTimer -> {cancelTimer()}
-            ItemEditorEvent.PauseTimer -> {pauseTimer()}
-            ItemEditorEvent.StartTimer -> {startTimer()}
-            ItemEditorEvent.ResumeTimer -> {resumeTimer()}
+            ItemEvent.CancelTimer -> {cancelTimer()}
+            ItemEvent.PauseTimer -> {pauseTimer()}
+            ItemEvent.StartTimer -> {startTimer()}
+            ItemEvent.ResumeTimer -> {resumeTimer()}
+            is ItemEvent.Delete -> { println("delete not implemented at this stage")}
         }
     }
 
