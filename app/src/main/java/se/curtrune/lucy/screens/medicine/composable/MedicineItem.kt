@@ -1,14 +1,22 @@
 package se.curtrune.lucy.screens.medicine.composable
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,6 +49,9 @@ fun MedicineItem(item: Item, onEvent: (MedicineEvent) -> Unit){
     var itemHeight by remember {
         mutableStateOf(0.dp)
     }
+    var showAll by remember {
+        mutableStateOf(false)
+    }
     Card(modifier = Modifier
         .fillMaxSize()
         .background(color = MaterialTheme.colorScheme.background)
@@ -65,14 +76,29 @@ fun MedicineItem(item: Item, onEvent: (MedicineEvent) -> Unit){
                 .fillMaxSize()
                 .padding(8.dp)
         ) {
-            Text(text = medicine.name.uppercase(), fontSize = 20.sp)
-            Text(text = medicine.dosage)
-            Text(text = medicine.doctor)
-            Text(text = medicine.bipacksedel)
-            Text(text = "totalt antal:")
-            Text(text = "antal per dag:")
-            Text(text = "uttag kvar")
-            Text(text = "giltigt till och med")
+            Row(modifier =  Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween) {
+                Text(
+                    text = medicine.name.uppercase(), fontSize = 20.sp,
+                )
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowDown,
+                    contentDescription = "show more"
+                , modifier =  Modifier.clickable {
+                    showAll = !showAll
+                    })
+            }
+            AnimatedVisibility(showAll) {
+                Column(modifier =  Modifier.fillMaxWidth()) {
+                    Text(text = medicine.dosage)
+                    Text(text = medicine.doctor)
+                    Text(text = medicine.bipacksedel)
+                    Text(text = "totalt antal:")
+                    Text(text = "antal per dag:")
+                    Text(text = "uttag kvar")
+                    Text(text = "giltigt till och med")
+                }
+            }
         }
         DropdownMenu(
             expanded = showContextMenu,

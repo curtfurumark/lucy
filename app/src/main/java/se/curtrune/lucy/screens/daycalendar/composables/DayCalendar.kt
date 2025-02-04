@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.PlayArrow
@@ -36,11 +38,13 @@ import java.time.LocalDate
 fun DayCalendar(state: DayCalendarState, onEvent: (DateEvent)->Unit){
     val context = LocalContext.current
     Column() {
-        //Header()
-        DaysOfWeek(Week(), onEvent ={
-            println("on date click")
-            onEvent(it)
-        } )
+        val pagerState = rememberPagerState(pageCount = { 10 }, initialPage = 5)
+        HorizontalPager(state = pagerState) {
+            pagerState.settledPage
+            DaysOfWeek(state = state, onEvent = { event ->
+                onEvent(event)
+            })
+        }
         if(state.showTabs){
             ListsTabs(state = state, onEvent = onEvent)
         }

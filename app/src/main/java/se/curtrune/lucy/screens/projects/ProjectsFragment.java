@@ -35,7 +35,7 @@ import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.AddItemDialog;
 import se.curtrune.lucy.screens.item_editor.ItemEditorFragment;
 import se.curtrune.lucy.fragments.SequenceFragment;
-import se.curtrune.lucy.screens.main.LucindaViewModel;
+import se.curtrune.lucy.screens.main.MainViewModel;
 import se.curtrune.lucy.persist.ItemsWorker;
 
 public class ProjectsFragment extends Fragment implements
@@ -49,7 +49,7 @@ public class ProjectsFragment extends Fragment implements
     private ProjectsViewModel projectsViewModel;
     private Item currentParent;
     private List<Item> items = new ArrayList<>();
-    private LucindaViewModel mainViewModel;
+    private MainViewModel mainViewModel;
     public static boolean VERBOSE = false;
 
     public ProjectsFragment() {
@@ -170,7 +170,7 @@ public class ProjectsFragment extends Fragment implements
     }
     private void initViewModel(){
         log("...initViewModel()");
-        mainViewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
+        mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
         projectsViewModel = new ViewModelProvider(requireActivity()).get(ProjectsViewModel.class);
 
     }

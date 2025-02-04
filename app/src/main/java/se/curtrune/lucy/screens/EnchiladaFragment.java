@@ -26,7 +26,7 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.screens.item_editor.ItemEditorFragment;
 import se.curtrune.lucy.viewmodel.EnchiladaViewModel;
-import se.curtrune.lucy.screens.main.LucindaViewModel;
+import se.curtrune.lucy.screens.main.MainViewModel;
 import se.curtrune.lucy.persist.ItemsWorker;
 
 /**
@@ -41,7 +41,7 @@ public class EnchiladaFragment extends Fragment implements
     //private EditText editTextSearch;
     private ItemAdapter adapter;
     public static boolean VERBOSE = false;
-    private LucindaViewModel viewModel;
+    private MainViewModel viewModel;
     private EnchiladaViewModel enchiladaViewModel;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -145,7 +145,7 @@ public class EnchiladaFragment extends Fragment implements
         log("...initViewModel()");
         enchiladaViewModel = new ViewModelProvider(requireActivity()).get(EnchiladaViewModel.class);
         enchiladaViewModel.init(getContext());
-        viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
+        viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
         viewModel.getFilter().observe(requireActivity(), new Observer<String>() {
             @Override
             public void onChanged(String filter) {

@@ -37,7 +37,7 @@ class SystemInfoModule(val context: Application) {
             systemInfo.add(SystemInfo("installed", installDateTime.toString()))
             val updateDateTime = LocalDateTime.ofEpochSecond(pInfo.lastUpdateTime / 1000, 0, ZoneOffset.UTC)
             systemInfo.add(SystemInfo("last update", updateDateTime.toString()))
-            systemInfo.add(SystemInfo("data directory", pInfo.applicationInfo.dataDir))
+            systemInfo.add(SystemInfo("data directory", pInfo.applicationInfo?.dataDir ?: "no data dir, wtf"))
             systemInfo.add(SystemInfo("versionName", pInfo.versionName))
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 systemInfo.add(SystemInfo("versionCode", pInfo.longVersionCode.toString()))

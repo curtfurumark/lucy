@@ -40,11 +40,6 @@ class DayCalendarActivity : ComponentActivity() {
                 val viewModel = viewModel<DateViewModel>()
                 val state = viewModel.state.collectAsState()
                 Scaffold(
-                    topBar = {
-                        LucindaTopAppBar(Mental(), onEvent = {
-                        Toast.makeText(applicationContext, it, Toast.LENGTH_LONG).show()
-                    })
-                    },
                     floatingActionButton = { AddItemFab {
                         println("add item fab clicked")
                         showAddItemDialog = true

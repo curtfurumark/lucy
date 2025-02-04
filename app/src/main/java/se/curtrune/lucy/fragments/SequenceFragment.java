@@ -33,7 +33,7 @@ import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.DurationDialog;
 import se.curtrune.lucy.screens.item_editor.ItemEditorFragment;
 import se.curtrune.lucy.screens.util.Converter;
-import se.curtrune.lucy.screens.main.LucindaViewModel;
+import se.curtrune.lucy.screens.main.MainViewModel;
 import se.curtrune.lucy.workers.DurationWorker;
 import se.curtrune.lucy.persist.ItemsWorker;
 
@@ -53,7 +53,7 @@ public class SequenceFragment extends Fragment implements SequenceAdapter.Callba
     private RecyclerView recycler;
     private RecyclerView.LayoutManager layoutManager;
     private SequenceAdapter adapter;
-    private LucindaViewModel viewModel;
+    private MainViewModel viewModel;
     public static boolean VERBOSE = false;
     public SequenceFragment(){
         log("...SequenceFragment() constructor");
@@ -161,7 +161,7 @@ public class SequenceFragment extends Fragment implements SequenceAdapter.Callba
     }
     private void initViewModel(){
         if( VERBOSE)  log("...initViewModel()");
-        viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
+        viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
     }
 
 /*    @Override

@@ -251,4 +251,5 @@
     <string name="doctor">doctor</string>
     <string name="medicine_name">medicine name</string>
     <string name="quantity">quantity</string>
+    <string name="confirm">confirm</string>
 </resources>

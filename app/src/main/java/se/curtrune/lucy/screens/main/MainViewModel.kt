@@ -6,9 +6,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.app.Lucinda
 import se.curtrune.lucy.app.Settings.PanicAction
@@ -18,6 +22,8 @@ import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.screens.affirmations.AffirmationWorker
 import se.curtrune.lucy.screens.affirmations.AffirmationWorker.RequestAffirmationCallback
+import se.curtrune.lucy.screens.affirmations.RetrofitInstance
+import se.curtrune.lucy.screens.todo.ChannelEvent
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.web.CheckForUpdateThread
 import se.curtrune.lucy.web.VersionInfo
@@ -25,32 +31,18 @@ import se.curtrune.lucy.workers.InternetWorker
 import se.curtrune.lucy.workers.MentalWorker
 import java.time.LocalDate
 
-class LucindaViewModel : ViewModel() {
+class MainViewModel : ViewModel() {
     private val mentalModule = LucindaApplication.mentalModule
     private val  _state =  MutableStateFlow(MainState())
     val state = _state.asStateFlow()
+    private val _eventChannel = Channel<MainChannelEvent>()
+    val eventChannel = _eventChannel.receiveAsFlow()
     private val mutableVersionInfo = MutableLiveData<VersionInfo>()
     private val mutableMessage = MutableLiveData<String>()
-    //private val mutableEnergy = MutableLiveData<Int>()
-    //private val mutableAnxiety = MutableLiveData<Int>()
-    //private val mutableStress = MutableLiveData<Int>()
-    //private val mutableMood = MutableLiveData<Int>()
     private val mutableAffirmation = MutableLiveData<Affirmation>()
     private val mutableFilter = MutableLiveData<String>()
     private val _mental = MutableLiveData<Mental>()
     var mental: LiveData<Mental> = _mental
-    private var currentMental: Mental? = null
-    private var updatedAvailableChecked = false
-    private var date: LocalDate? = null
-/*    val energy: LiveData<Int>
-        get() = mutableEnergy
-    val anxiety: LiveData<Int>
-        get() = mutableAnxiety
-    val stress: LiveData<Int>
-        get() = mutableStress
-    val mood: LiveData<Int>
-        get() = mutableMood*/
-
     init {
         println("MainViewModel.init{}")
         _state.update { it.copy(
@@ -93,10 +85,12 @@ class LucindaViewModel : ViewModel() {
         when(event){
             is MainEvent.ShowBoost -> {
                 println("show boost")
-                requestAffirmation()
+                //requestAffirmation()
+                requestQuote()
             }
             is MainEvent.ShowPanic -> {
                 println("show panic")
+                showPanicDialog()
             }
         }
     }
@@ -134,6 +128,14 @@ class LucindaViewModel : ViewModel() {
             }
         })
     }
+    private fun requestQuote(){
+        println("requestQuote()")
+        viewModelScope.launch {
+            val quotes = RetrofitInstance.quoteApi.getRandomQuotes()
+            val quote = quotes[0]
+            _eventChannel.send(MainChannelEvent.ShowQuoteDialog(quote))
+        }
+    }
     val affirmation: LiveData<Affirmation>
         get() = mutableAffirmation
     val filter: LiveData<String>
@@ -142,6 +144,11 @@ class LucindaViewModel : ViewModel() {
     //private final MutableLiveData<Integer> energy = new MutableLiveData<>();
     enum class RecyclerMode {
         DEFAULT, MENTAL_COLOURS
+    }
+    private fun showPanicDialog(){
+        viewModelScope.launch{
+            _eventChannel.send(MainChannelEvent.ShowPanicDialog)
+        }
     }
 
     @JvmField

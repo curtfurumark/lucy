@@ -3,26 +3,42 @@ package se.curtrune.lucy.services
 import android.content.Intent
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.MutableLiveData
+import se.curtrune.lucy.services.ServiceConstants.ACTION_START_STOPWATCH
 import se.curtrune.lucy.services.TimeServiceConstants.ACTION_CANCEL_COUNTDOWN_TIMER
+import se.curtrune.lucy.services.TimeServiceConstants.ACTION_CANCEL_STOPWATCH
 import se.curtrune.lucy.services.TimeServiceConstants.ACTION_PAUSE_COUNTDOWN_TIMER
+import se.curtrune.lucy.services.TimeServiceConstants.ACTION_PAUSE_STOPWATCH
 import se.curtrune.lucy.services.TimeServiceConstants.ACTION_RESUME_COUNTDOWN_TIMER
 import se.curtrune.lucy.services.TimeServiceConstants.ACTION_START_COUNTDOWN_TIMER
+import se.curtrune.lucy.services.TimeServiceConstants.ACTION_START_OR_RESUME_STOPWATCH
 
 class TimerService: LifecycleService() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent.let {
             when(it!!.action){
                 ACTION_START_COUNTDOWN_TIMER->{
-                    println("start timer")
+                    println("TimerService.start timer")
                 }
                 ACTION_PAUSE_COUNTDOWN_TIMER->{
-                    println("pause timer")
+                    println("TimerService pause timer")
                 }
                 ACTION_RESUME_COUNTDOWN_TIMER->{
-                    println("resume service")
+                    println("TimerService resume service")
                 }
                 ACTION_CANCEL_COUNTDOWN_TIMER->{
-                    println("cancel service")
+                    println("TimerService cancel service")
+                }
+                ACTION_START_STOPWATCH->{
+                    println("TimerService start stopwatch")
+                }
+                ACTION_START_OR_RESUME_STOPWATCH ->{
+                    println("TimerService start or resume stopwatch")
+                }
+                ACTION_PAUSE_STOPWATCH ->{
+                    println("TimerService pause stopwatch")
+                }
+                ACTION_CANCEL_STOPWATCH->{
+                    println("TimerService cancel stopwatch")
                 }
             }
         }

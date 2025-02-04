@@ -41,30 +41,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/mainActivity_panic"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/panic_button"
-                android:text="@string/lightning"
-                android:textColor="@color/red"
-                android:textSize="40sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/baseline_electric_bolt_24" />
-
-            <TextView
-                android:id="@+id/mainActivity_buttonBoost"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/boost_me"
-                android:textColor="@color/teal_700"
-                android:textSize="56sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:srcCompat="@drawable/baseline_emoji_emotions_24" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
         <androidx.compose.ui.platform.ComposeView
             android:id="@+id/mainActivity_composeView"

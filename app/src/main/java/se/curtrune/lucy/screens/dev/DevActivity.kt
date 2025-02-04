@@ -45,6 +45,7 @@ import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.MediaContent
 import se.curtrune.lucy.classes.Notification
 import se.curtrune.lucy.composables.CountDownTimerService
+import se.curtrune.lucy.composables.StopWatchUsingService
 import se.curtrune.lucy.dialogs.RepeatDialog
 import se.curtrune.lucy.persist.DBAdmin
 import se.curtrune.lucy.persist.ItemsWorker
@@ -60,6 +61,7 @@ import se.curtrune.lucy.screens.dev.composables.RepositoryTest
 import se.curtrune.lucy.screens.dev.composables.SetGeneratedToTemplateChildren
 import se.curtrune.lucy.screens.log_in.LogInActivity
 import se.curtrune.lucy.screens.main.MainActivity
+import se.curtrune.lucy.screens.main.MainState
 import se.curtrune.lucy.screens.main.composables.LucindaControls
 import se.curtrune.lucy.screens.util.Converter
 import se.curtrune.lucy.services.TimerService
@@ -72,6 +74,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.YearMonth
 import java.util.Locale
+import java.util.Timer
 import java.util.function.Consumer
 
 class DevActivity : AppCompatActivity() {
@@ -140,12 +143,16 @@ class DevActivity : AppCompatActivity() {
                             .verticalScroll(scrollState),
                         verticalArrangement = Arrangement.SpaceEvenly,
                     ) {
-                        RepositoryTest()
+                        //RepositoryTest()
+                        StopWatchUsingService(onCommand = { action->
+                            println("command: $action")
+                            sendCommandToTimeService(action)
+                        })
                         val mentalModule = LucindaApplication.mentalModule
                         //MentalMeterTest(state = state.value)
                         //Spacer(modifier = Modifier.height(8.dp))
-                        LucindaControls(state = state.value, onEvent = {
-                            Toast.makeText(context,it, Toast.LENGTH_LONG ).show()
+                        LucindaControls(state = MainState(), onEvent = { event ->
+                            Toast.makeText(applicationContext,event.toString(), Toast.LENGTH_LONG ).show()
                         })
                         Spacer(modifier = Modifier.height(16.dp))
                         BackupDataBase(onEventCopy = {
@@ -197,12 +204,11 @@ class DevActivity : AppCompatActivity() {
         }
     }
     private fun sendCommandToTimeService(command: String){
-        println("sendCommandToService $command")
+        println("DevActivity.sendCommandToService $command")
         Intent( this, TimerService::class.java).also {
             it.action = command
             this.startService(it)
         }
-
     }
 
     private fun printSystemInfo() {
@@ -227,7 +233,9 @@ class DevActivity : AppCompatActivity() {
             Logger.log("firstInstallTime", firstInstallTime)
             Logger.log("converted install time", Converter.epochToDate(firstInstallTime / 1000))
             val applicationInfo = pInfo.applicationInfo
-            Logger.log("...dataDir", applicationInfo.dataDir)
+            if (applicationInfo != null) {
+                Logger.log("...dataDir", applicationInfo.dataDir)
+            }
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
         }
@@ -374,6 +382,13 @@ class DevActivity : AppCompatActivity() {
         LocalDB(this).use { db ->
             val names = db.tableNames
             names.forEach(Consumer { x: String? -> println(x) })
+        }
+    }
+    private fun sendCommand(command: String){
+        println("...sendCommand($command)")
+        Intent( this, TimerService::class.java).also {
+            it.action = command
+            startService(it)
         }
     }
 

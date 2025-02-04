@@ -30,7 +30,7 @@ import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.composables.LucindaTopAppBar
 import se.curtrune.lucy.screens.item_editor.ItemEditorFragment
 import se.curtrune.lucy.screens.daycalendar.composables.DayCalendar
-import se.curtrune.lucy.screens.main.LucindaViewModel
+import se.curtrune.lucy.screens.main.MainViewModel
 import java.time.LocalTime
 
 
@@ -52,11 +52,6 @@ class CalendarDateFragment : Fragment() {
                     val state = viewModel.state.collectAsState()
                     val context = LocalContext.current
                     Scaffold(
-                        topBar = {
-                            LucindaTopAppBar(Mental(), onEvent = {
-                                Toast.makeText(context, it, Toast.LENGTH_LONG).show()
-                            })
-                        },
                         floatingActionButton = { AddItemFab {
                             println("add item fab clicked")
                             showAddItemDialog = true
@@ -69,7 +64,6 @@ class CalendarDateFragment : Fragment() {
                             color = MaterialTheme.colorScheme.background
                         ) {
                             DayCalendar(state = state.value, onEvent = { event->
-                                //Toast.makeText(context, event.toString(), Toast.LENGTH_LONG).show()
                                 println("DayCalendar.onEvent(${event.toString()})")
                                 viewModel.onEvent(event)
                             })
@@ -104,7 +98,7 @@ class CalendarDateFragment : Fragment() {
     }
     private fun navigate(item: Item){
         println("navigate")
-        val mainViewModel = ViewModelProvider(requireActivity())[LucindaViewModel::class.java]
+        val mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
         mainViewModel.updateFragment(
             ItemEditorFragment(
                 item

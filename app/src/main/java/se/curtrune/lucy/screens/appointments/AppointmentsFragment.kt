@@ -28,12 +28,12 @@ import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.dialogs.EventDialog
 import se.curtrune.lucy.screens.item_editor.ItemEditorFragment
 import se.curtrune.lucy.screens.appointments.composables.AppointmentsScreen
-import se.curtrune.lucy.screens.main.LucindaViewModel
+import se.curtrune.lucy.screens.main.MainViewModel
 import se.curtrune.lucy.util.Logger
 
 class AppointmentsFragment : Fragment() {
     private var buttonAdd: FloatingActionButton? = null
-    private var mainViewModel: LucindaViewModel? = null
+    private var mainViewModel: MainViewModel? = null
     private var appointmentsViewModel: AppointmentsViewModel? = null
     private var itemTouchHelper: ItemTouchHelper? = null
 
@@ -94,7 +94,7 @@ class AppointmentsFragment : Fragment() {
     }
     private fun navigateToEditor(item: Item) {
         println("...editAppointment(${item.heading})")
-        val mainViewModel = ViewModelProvider(requireActivity())[LucindaViewModel::class.java]
+        val mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
         mainViewModel.updateFragment(
             ItemEditorFragment(
                 item

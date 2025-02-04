@@ -31,7 +31,7 @@ import se.curtrune.lucy.classes.Listable;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.screens.util.Converter;
 import se.curtrune.lucy.viewmodel.EstiimateViewModel;
-import se.curtrune.lucy.screens.main.LucindaViewModel;
+import se.curtrune.lucy.screens.main.MainViewModel;
 import se.curtrune.lucy.workers.DurationWorker;
 
 public class EstimateFragment extends Fragment {
@@ -52,7 +52,7 @@ public class EstimateFragment extends Fragment {
     private ListableAdapter adapterDuration;
     private RecyclerView recyclerDuration;
     private EstiimateViewModel estiimateViewModel;
-    private LucindaViewModel viewModel;
+    private MainViewModel viewModel;
     private LocalDate currentDate;
 
     private List<Item> items;
@@ -100,7 +100,7 @@ public class EstimateFragment extends Fragment {
     }
     private void initViewModel(){
         if( VERBOSE)log("...initViewModel()");
-        viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
+        viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
         estiimateViewModel = new ViewModelProvider(requireActivity()).get(EstiimateViewModel.class);
         estiimateViewModel.init(currentDate, getContext());
     }

@@ -32,7 +32,7 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.dialogs.ContactDialog;
 import se.curtrune.lucy.util.Logger;
-import se.curtrune.lucy.screens.main.LucindaViewModel;
+import se.curtrune.lucy.screens.main.MainViewModel;
 
 
 public class ContactsFragment extends Fragment {
@@ -42,7 +42,7 @@ public class ContactsFragment extends Fragment {
     private FloatingActionButton buttonAddContact;
 
     private ContactsViewModel contactsViewModel;
-    private LucindaViewModel mainViewModel;
+    private MainViewModel mainViewModel;
     private ContactsAdapter contactsAdapter;
     public ContactsFragment() {
         // Required empty public constructor
@@ -132,7 +132,7 @@ public class ContactsFragment extends Fragment {
     private void initViewModel(){
         log("...initViewModel()");
         contactsViewModel = new ViewModelProvider(requireActivity()).get(ContactsViewModel.class);
-        mainViewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
+        mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
     }
     private void initViews(View view){
         log("...initViews(View)");

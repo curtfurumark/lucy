@@ -18,39 +18,35 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.classes.Mental
+import se.curtrune.lucy.composables.ColorCircle
+import se.curtrune.lucy.composables.MentalMeter
 import se.curtrune.lucy.screens.dev.DevState
+import se.curtrune.lucy.screens.main.MainEvent
+import se.curtrune.lucy.screens.main.MainState
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LucindaControls(state: DevState, onEvent: (String)->Unit) {
-    Box() {
-        val mentalText by remember {
-            mutableStateOf("energy ${state.mental!!.energy}")
-        }
+fun LucindaControls(state: MainState, onEvent: (MainEvent)->Unit) {
+    Box(modifier = Modifier.fillMaxWidth()) {
         Row(modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically){
-            IconButton(onClick = {
-                onEvent("boost me")
-            }) {
-                Icon(Icons.Filled.Star, contentDescription = "boost me")
-            }
-            Text(text = mentalText, fontSize = 24.sp)
-
-            IconButton(onClick = {
-                onEvent("panic")
-            }) {
-                Icon(Icons.Filled.Warning, contentDescription = "panic button")
-            }
+            ColorCircle(color = Color.Green, onClick ={
+                onEvent(MainEvent.ShowBoost(true))
+            } )
+            MentalMeter(mental =  state.mental)
+            ColorCircle(color = Color.Red, onClick = {
+                onEvent(MainEvent.ShowPanic(true))
+            })
         }
     }
 }
 @Preview(showBackground = true)
 @Composable
 fun Preview(){
-    LucindaControls(state = DevState(), onEvent = {})
+    LucindaControls(state = MainState(), onEvent = {})
 }

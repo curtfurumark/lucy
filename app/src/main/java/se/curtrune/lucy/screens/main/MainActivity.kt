@@ -11,6 +11,8 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,21 +32,17 @@ import se.curtrune.lucy.app.Settings.PanicAction
 import se.curtrune.lucy.app.User
 import se.curtrune.lucy.classes.Affirmation
 import se.curtrune.lucy.classes.Mental
-import se.curtrune.lucy.composables.MentalMeter
 import se.curtrune.lucy.dialogs.BoostDialog
 import se.curtrune.lucy.dialogs.PanicActionDialog
 import se.curtrune.lucy.dialogs.UpdateDialog
-import se.curtrune.lucy.fragments.ContactFragment
 import se.curtrune.lucy.fragments.CustomizeFragment
 import se.curtrune.lucy.fragments.DailyGraphFragment
-import se.curtrune.lucy.screens.EnchiladaFragment
-import se.curtrune.lucy.fragments.EstimateFragment
 import se.curtrune.lucy.fragments.MentaHistoryFragment
 import se.curtrune.lucy.fragments.SequenceFragment
-import se.curtrune.lucy.screens.todo.TodoFragment
-import se.curtrune.lucy.screens.top_ten.TopTenFragment
 import se.curtrune.lucy.modules.MentalModule
 import se.curtrune.lucy.persist.ItemsWorker
+import se.curtrune.lucy.screens.EnchiladaFragment
+import se.curtrune.lucy.screens.affirmations.Quote
 import se.curtrune.lucy.screens.appointments.AppointmentsFragment
 import se.curtrune.lucy.screens.contacts.ContactsFragment
 import se.curtrune.lucy.screens.daycalendar.CalendarDateFragment
@@ -53,12 +51,15 @@ import se.curtrune.lucy.screens.dev.DevActivity
 import se.curtrune.lucy.screens.duration.DurationFragment
 import se.curtrune.lucy.screens.index20.IndexActivityKt
 import se.curtrune.lucy.screens.log_in.LogInActivity
+import se.curtrune.lucy.screens.main.composables.ChoosePanicActionDialog
+import se.curtrune.lucy.screens.main.composables.LucindaControls
+import se.curtrune.lucy.screens.main.composables.QuoteDialog
 import se.curtrune.lucy.screens.medicine.MedicineFragment
 import se.curtrune.lucy.screens.mental.MentalDateFragment
 import se.curtrune.lucy.screens.message_board.MessageBoardFragment
 import se.curtrune.lucy.screens.monthcalendar.MonthFragment
 import se.curtrune.lucy.screens.projects.ProjectsFragment
-import se.curtrune.lucy.screens.timers.TimerFragment
+import se.curtrune.lucy.screens.todo.TodoFragment
 import se.curtrune.lucy.screens.week_calendar.CalendarWeekHostFragment
 import se.curtrune.lucy.util.Constants
 import se.curtrune.lucy.util.Logger
@@ -68,9 +69,9 @@ import java.util.Objects
 
 class MainActivity : AppCompatActivity() {
     private var drawerLayout: DrawerLayout? = null
-    private var viewModel: LucindaViewModel? = null
-    private var textViewPanic: TextView? = null
-    private var textViewBoost: TextView? = null
+    private var mainViewModel: MainViewModel? = null
+    //private var textViewPanic: TextView? = null
+    //private var textViewBoost: TextView? = null
     private var textViewLucindaHome: TextView? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,17 +91,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun boostMe() {
-        viewModel!!.onEvent(MainEvent.ShowBoost(true))
-    }
-
     private fun initComponents() {
         if (VERBOSE) Logger.log("...initComponents()")
         val toolbar = findViewById<MaterialToolbar>(R.id.navigationDrawer_toolbar)
         setSupportActionBar(toolbar)
-        textViewPanic = findViewById(R.id.mainActivity_panic)
-        textViewBoost = findViewById(R.id.mainActivity_buttonBoost)
-        //textViewEnergy = findViewById(R.id.mainActivity_energy)
+
         drawerLayout = findViewById(R.id.navigationDrawer_drawerLayout)
         val navigationView =
             findViewById<NavigationView>(R.id.navigationDrawerActivity_navigationView)
@@ -200,6 +195,39 @@ class MainActivity : AppCompatActivity() {
         val composeView = findViewById<ComposeView>(R.id.mainActivity_composeView)
         val composeViewMental = findViewById<ComposeView>(R.id.mainActivity_composeViewMental)
         composeViewMental.setContent {
+            val state = mainViewModel?.state?.collectAsState()
+            var showPanicDialog by remember{
+                mutableStateOf(false)
+            }
+            var showQuoteDialog by remember {
+                mutableStateOf(false)
+            }
+            var quote by remember {
+                mutableStateOf(Quote())
+            }
+            LaunchedEffect(mainViewModel) {
+                mainViewModel?.eventChannel?.collect { event ->
+                    when (event) {
+                        MainChannelEvent.ShowPanicDialog -> {
+                            showPanicDialog = true
+                            //Toast.makeText(applicationContext, "panic", Toast.LENGTH_LONG).show()
+                        }
+                        is MainChannelEvent.ShowAffirmation -> {
+                            Toast.makeText(applicationContext, "affirmation", Toast.LENGTH_LONG).show()
+                        }
+                        is MainChannelEvent.ShowBoostDialog -> {
+                            Toast.makeText(applicationContext, "boost me", Toast.LENGTH_LONG).show()
+                        }
+
+                        is MainChannelEvent.ShowQuoteDialog -> {
+                            quote = event.quote!!
+                            showQuoteDialog = true
+                            //QuoteDialog(onDismiss = {}, event.quote)
+                        }
+                    }
+                }
+            }
+
             LucyTheme {
                 val currentMental = MentalModule.currentMental
                 var mental by remember{
@@ -209,43 +237,43 @@ class MainActivity : AppCompatActivity() {
                     println("MENTAL CHANGE ${it.energy}")
                     mental = it
                 }
-                MentalMeter(mental = mental)
+                if (state != null) {
+                    LucindaControls(state = state.value, onEvent = { event->
+                        mainViewModel?.onEvent(event)
+                    })
+                }
             }
+            if( showPanicDialog){
+                ChoosePanicActionDialog(onDismiss = {
+                    showPanicDialog = false
+                })
+            }
+            if(showQuoteDialog){
+                QuoteDialog(onDismiss = {
+                    showQuoteDialog = false
+                }, quote = quote)
+            }
+
         }
-        /*composeView.setContent {
-            val state = viewModel!!.state.collectAsState()
-            val mentalModule = LucindaApplication.mentalModule
-            val currentMental = MentalModule.currentMental
-            var mental by remember{
-                mutableStateOf(Mental())
-            }
-            currentMental.observe(this) {
-                println("MENTAL CHANGE ${it.energy}")
-                mental = it
-            }
-            MentalMeter(mental = mental)
-        }*/
     }
 
     private fun initListeners() {
         println("...initListeners()")
-        textViewBoost!!.setOnClickListener { view: View? -> boostMe() }
-        textViewPanic!!.setOnClickListener { view: View? -> showPanicAction() }
         textViewLucindaHome!!.setOnClickListener { view: View? -> openWebPage("https://curtfurumark.se/lucinda") }
     }
 
     private fun initViewModel() {
         println("...initViewModel()")
-        viewModel = ViewModelProvider(this)[LucindaViewModel::class.java]
-        viewModel!!.fragment.observe(this) { fragment: Fragment? ->
+        mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        mainViewModel!!.fragment.observe(this) { fragment: Fragment? ->
             Logger.log(" new fragment observed")
             navigate(fragment)
         }
 
-        viewModel!!.affirmation.observe(
+        mainViewModel!!.affirmation.observe(
             this
         ) { affirmation: Affirmation -> this.showBoostDialog(affirmation) }
-        viewModel!!.updateAvailable().observe(this) { versionInfo: VersionInfo ->
+        mainViewModel!!.updateAvailable().observe(this) { versionInfo: VersionInfo ->
             Logger.log("...updateAvailable(VersionInfo)")
             val dialog = UpdateDialog(versionInfo) {
                 Logger.log("here we go")
@@ -255,7 +283,7 @@ class MainActivity : AppCompatActivity() {
             }
             dialog.show(supportFragmentManager, "update lucinda")
         }
-        viewModel!!.message.observe(
+        mainViewModel!!.message.observe(
             this
         ) { message: String? ->
             Toast.makeText(
@@ -320,7 +348,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun onQueryTextChange(filter: String): Boolean {
                 Logger.log("...onQueryTextChange(String)", filter)
-                viewModel!!.filter(filter)
+                mainViewModel!!.filter(filter)
                 return false
             }
         })
@@ -340,7 +368,7 @@ class MainActivity : AppCompatActivity() {
                 startActivity(Intent(this, DevActivity::class.java))
             }
             R.id.mainActivityCheckForUpdate -> {
-                viewModel!!.checkIfUpdateAvailable(this)
+                mainViewModel!!.checkIfUpdateAvailable(this)
             }
             R.id.mainActivity_calendar -> {
                 //navigate(CalenderDateFragmentOld())
@@ -432,7 +460,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showPanicAction() {
-        val panicAction = viewModel!!.getPanicAction(this)
+        val panicAction = mainViewModel!!.getPanicAction(this)
         Logger.log("...showPanicAction()", panicAction.toString())
         when (panicAction) {
             PanicAction.GAME -> startActivity(

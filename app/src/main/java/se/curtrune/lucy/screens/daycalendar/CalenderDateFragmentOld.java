@@ -48,7 +48,7 @@ import se.curtrune.lucy.dialogs.ItemStatisticsDialog;
 import se.curtrune.lucy.dialogs.PostponeDialog;
 import se.curtrune.lucy.dialogs.ChooseActionDialog;
 import se.curtrune.lucy.services.TimerService;
-import se.curtrune.lucy.screens.main.LucindaViewModel;
+import se.curtrune.lucy.screens.main.MainViewModel;
 import se.curtrune.lucy.persist.CalenderWorker;
 import se.curtrune.lucy.persist.ItemsWorker;
 
@@ -68,7 +68,7 @@ public class CalenderDateFragmentOld extends Fragment {
     private CalenderDate calenderDate;
     //private List<Item> items;
     public static boolean VERBOSE = false;
-    private LucindaViewModel lucindaViewModel;
+    private MainViewModel lucindaViewModel;
     private CalendarDateViewModel calendarDateViewModel;
     public CalenderDateFragmentOld() {
         currentDate = LocalDate.now();
@@ -299,11 +299,11 @@ public class CalenderDateFragmentOld extends Fragment {
     }
     private void initViewModels(){
         if( VERBOSE)  log("...initViewModels()");
-        lucindaViewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
-        lucindaViewModel.setRecyclerMode(LucindaViewModel.RecyclerMode.DEFAULT);
+        lucindaViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
+        lucindaViewModel.setRecyclerMode(MainViewModel.RecyclerMode.DEFAULT);
         lucindaViewModel.recyclerMode.observe(getViewLifecycleOwner(), recyclerMode ->{
             log("CalenderDateFragmentOld....recyclerMode", recyclerMode.toString());
-            if( recyclerMode.equals(LucindaViewModel.RecyclerMode.MENTAL_COLOURS)){
+            if( recyclerMode.equals(MainViewModel.RecyclerMode.MENTAL_COLOURS)){
                 calendarDateViewModel.setEnergyItems();
             }else{
                 log(" setting list to DEFAULT");

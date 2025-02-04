@@ -106,6 +106,9 @@
             android:exported="false" />
 
         <receiver android:name=".notifications.AlarmReceiver" />
+        <service
+            android:name=".services.TimerService"
+            android:foregroundServiceType="specialUse" />
     </application>
 
 </manifest>

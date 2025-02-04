@@ -29,7 +29,7 @@ import se.curtrune.lucy.classes.calender.OnSwipeClickListener;
 import se.curtrune.lucy.classes.calender.Week;
 import se.curtrune.lucy.dialogs.EventDialog;
 import se.curtrune.lucy.screens.daycalendar.CalenderDateFragmentOld;
-import se.curtrune.lucy.screens.main.LucindaViewModel;
+import se.curtrune.lucy.screens.main.MainViewModel;
 import se.curtrune.lucy.persist.CalenderWorker;
 import se.curtrune.lucy.persist.ItemsWorker;
 
@@ -41,7 +41,7 @@ public class CalenderWeekFragment extends Fragment {
     private RecyclerView recycler;
     private TextView textViewWeekNumber;
     private Week currentWeek;
-    private LucindaViewModel viewModel;
+    private MainViewModel viewModel;
     private CalendarWeekViewModel calendarWeekViewModel;
 
     public CalenderWeekFragment(){
@@ -130,7 +130,7 @@ public class CalenderWeekFragment extends Fragment {
     }
     private void initViewModel(){
         log("...initViewModel()");
-        viewModel = new ViewModelProvider(requireActivity()).get(LucindaViewModel.class);
+        viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
         calendarWeekViewModel = new ViewModelProvider(requireActivity()).get(CalendarWeekViewModel.class);
 
         calendarWeekViewModel.set(currentWeek, getContext());

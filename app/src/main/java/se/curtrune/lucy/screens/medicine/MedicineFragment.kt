@@ -26,7 +26,7 @@ import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.screens.item_editor.ItemEditorFragment
-import se.curtrune.lucy.screens.main.LucindaViewModel
+import se.curtrune.lucy.screens.main.MainViewModel
 import se.curtrune.lucy.screens.medicine.composable.AddMedicineFab
 import se.curtrune.lucy.screens.medicine.composable.AdverseEffectDialog
 import se.curtrune.lucy.screens.medicine.composable.MedicineDialog
@@ -112,7 +112,7 @@ class MedicineFragment : Fragment() {
 
     private fun navigateToEditor(item: Item) {
         println("...navigateToEditor(${item.heading})")
-        val mainViewModel = ViewModelProvider(requireActivity())[LucindaViewModel::class.java]
+        val mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
         mainViewModel.updateFragment(
             ItemEditorFragment(
                 item

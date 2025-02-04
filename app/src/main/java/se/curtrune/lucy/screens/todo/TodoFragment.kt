@@ -31,7 +31,7 @@ import se.curtrune.lucy.dialogs.AddItemDialog
 import se.curtrune.lucy.persist.ItemsWorker
 import se.curtrune.lucy.screens.appointments.UIEvent
 import se.curtrune.lucy.screens.item_editor.ItemEditorFragment
-import se.curtrune.lucy.screens.main.LucindaViewModel
+import se.curtrune.lucy.screens.main.MainViewModel
 import se.curtrune.lucy.screens.todo.composables.TodoScreen
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.workers.NotificationsWorker
@@ -41,7 +41,7 @@ class TodoFragment : Fragment() {
     private var recycler: RecyclerView? = null
     private var adapter: ItemAdapter? = null
     //private val currentParent: Item? = null
-    private var mainViewModel: LucindaViewModel? = null
+    private var mainViewModel: MainViewModel? = null
     private var todoFragmentViewModel: TodoViewModel? = null
     private var itemTouchHelper: ItemTouchHelper? = null
 
@@ -127,7 +127,7 @@ class TodoFragment : Fragment() {
 
     private fun navigateToEditor(item: Item) {
         println("...navigateToEditor(${item.heading})")
-        val mainViewModel = ViewModelProvider(requireActivity())[LucindaViewModel::class.java]
+        val mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
         mainViewModel.updateFragment(
             ItemEditorFragment(
                 item

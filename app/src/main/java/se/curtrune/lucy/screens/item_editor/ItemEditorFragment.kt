@@ -63,7 +63,7 @@ import se.curtrune.lucy.item_settings.ItemSetting
 import se.curtrune.lucy.item_settings.ItemSettingAdapter
 import se.curtrune.lucy.persist.ItemsWorker
 import se.curtrune.lucy.screens.item_editor.composables.ItemEditorDev
-import se.curtrune.lucy.screens.main.LucindaViewModel
+import se.curtrune.lucy.screens.main.MainViewModel
 import se.curtrune.lucy.screens.util.Converter
 import se.curtrune.lucy.util.Constants
 import se.curtrune.lucy.util.Logger
@@ -101,7 +101,7 @@ class ItemEditorFragment : Fragment {
     private var buttonAddItem: FloatingActionButton? = null
     private var currentItem: Item? = null
     private var targetTime: LocalTime? = null
-    private var lucindaViewModel: LucindaViewModel? = null
+    private var lucindaViewModel: MainViewModel? = null
     private var itemSessionViewModel: ItemSessionViewModel? = null
     private var itemSettingAdapter: ItemSettingAdapter? = null
 
@@ -225,7 +225,7 @@ class ItemEditorFragment : Fragment {
 
     private fun initViewModel() {
         if (VERBOSE) Logger.log("...initViewModel()")
-        lucindaViewModel = ViewModelProvider(requireActivity())[LucindaViewModel::class.java]
+        lucindaViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
         itemSessionViewModel = ViewModelProvider(requireActivity())[ItemSessionViewModel::class.java]
         itemSessionViewModel!!.init(currentItem!!, context)
         //mentalViewModel = new ViewModelProvider(requireActivity()).get(MentalViewModel.class);
