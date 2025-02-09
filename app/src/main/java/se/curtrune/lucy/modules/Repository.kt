@@ -15,7 +15,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 class Repository (val context: Application){
-    val mentalModule = LucindaApplication.mentalModule
+    private val mentalModule = LucindaApplication.mentalModule
     init {
         println("init")
     }
@@ -139,6 +139,21 @@ class Repository (val context: Application){
             return db.insert(child)
         }
     }
+    fun restoreDeleted(item: Item): Item? {
+        println("Repository.restoreDeleted(${item.heading})")
+        var deletedItem: Item? = null
+        LocalDB(context).use { db ->
+            deletedItem = db.insert(item)
+        }
+        return deletedItem
+    }
+    fun search(filter: String): List<Item>{
+        println("Repository.search($filter)")
+        LocalDB(context).use { db ->
+            return db.selectItems(Queeries.searchItems(filter))
+        }
+
+    }
     fun selectChildren(parent: Item?): List<Item> {
         println("Repository.selectChildren(Item)")
         LocalDB(context).use { db ->
@@ -165,6 +180,12 @@ class Repository (val context: Application){
             items = db.selectItems(queery)
         }
         return items
+    }
+    fun selectItems(date: LocalDate, state: State): List<Item> {
+        if(VERBOSE) println("Repository.selectItems(Date ${date.toString()}, State: ${state.toString()})")
+        LocalDB(context).use { db ->
+            return db.selectItems(Queeries.selectItems(date, state))
+        }
     }
     fun selectItems(state: State): List<Item> {
         println("Repository.selectItems(state: ${state.toString()})")

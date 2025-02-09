@@ -203,6 +203,9 @@ public class DBAdmin {
 /*        if( item.getType().equals(Type.MEDIA)){
             cv.put("content",gson.toJson(item.getContent()) );
         }*/
+        if( item.getID() > 0){ // for restoring deleted item,to ensure they don't get a new id
+            cv.put("id", item.getID());
+        }
         cv.put("repeat_id", item.getRepeatID());
         return cv;
     }

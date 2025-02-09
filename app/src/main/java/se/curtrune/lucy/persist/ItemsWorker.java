@@ -256,6 +256,7 @@ public class ItemsWorker {
      * @param context, context context
      * @return a list of items
      */
+    @Deprecated
     public static List<Item> selectItems(LocalDate date, State state, Context context){
         if(VERBOSE) log("ItemsWorker.selectItems(Date, State, Context)");
         try (LocalDB db = new LocalDB(context)) {

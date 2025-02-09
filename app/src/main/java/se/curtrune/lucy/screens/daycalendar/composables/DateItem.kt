@@ -34,7 +34,10 @@ import java.time.LocalTime
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun DateItem(item: Item, onEvent: (DateEvent)->Unit){
+fun DateItem(
+    modifier: Modifier,
+    item: Item,
+    onEvent: (DateEvent)->Unit){
     var isDone by remember {
         mutableStateOf(item.isDone)
     }

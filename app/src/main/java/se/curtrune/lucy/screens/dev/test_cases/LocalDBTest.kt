@@ -17,6 +17,5 @@ class LocalDBTest {
         val child2 = Item("child 2")
         db.insertChild(root, child1)
         db.insertChild(root, child2)
-
     }
 }

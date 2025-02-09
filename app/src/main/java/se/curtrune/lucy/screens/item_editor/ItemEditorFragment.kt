@@ -145,7 +145,10 @@ class ItemEditorFragment : Fragment {
                     color = Color.White,
                     fontSize = 24.sp)
                 AnimatedVisibility(visible = visible) {
-                    currentItem?.let { ItemEditorDev(item = it) }
+                    currentItem?.let { ItemEditorDev(item = it, onEvent = { event->
+                        println("on event: ${event.toString()}")
+                        itemSessionViewModel!!.onEvent(event)
+                    }) }
                 }
             }
         }

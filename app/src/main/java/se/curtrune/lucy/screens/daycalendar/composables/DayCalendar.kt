@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
@@ -29,6 +30,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.classes.calender.Week
 import se.curtrune.lucy.composables.PostponeDialog
+import se.curtrune.lucy.composables.Search
 import se.curtrune.lucy.screens.daycalendar.DateEvent
 import se.curtrune.lucy.screens.daycalendar.DayCalendarState
 import java.time.LocalDate
@@ -38,6 +40,9 @@ import java.time.LocalDate
 fun DayCalendar(state: DayCalendarState, onEvent: (DateEvent)->Unit){
     val context = LocalContext.current
     Column() {
+        Search(onSearch = { filter, everywhere ->
+            onEvent(DateEvent.Search(filter, everywhere))
+        })
         val pagerState = rememberPagerState(pageCount = { 10 }, initialPage = 5)
         HorizontalPager(state = pagerState) {
             pagerState.settledPage
@@ -49,17 +54,15 @@ fun DayCalendar(state: DayCalendarState, onEvent: (DateEvent)->Unit){
             ListsTabs(state = state, onEvent = onEvent)
         }
         LazyColumn {
-            items(state.items.size) { index ->
+            items(state.items, key = {it.id}){ item->
                 val swipeState = rememberSwipeToDismissBoxState(
                     confirmValueChange = {
                         if( it == SwipeToDismissBoxValue.EndToStart){
-                            //onEvent(DateEvent.DeleteItem(state.items[index]))
-                            Toast.makeText(context, "delete: ${state.items[index]}", Toast.LENGTH_LONG).show()
+                            onEvent(DateEvent.DeleteItem(item))
                             true
                         }else if (it == SwipeToDismissBoxValue.StartToEnd){
                             //onEvent(DateEvent.PostponeItem(state.items[index]))
-                            onEvent(DateEvent.ShowPostponeDialog(true))
-                            //Toast.makeText(context, "postpone: ${state.items[index]}", Toast.LENGTH_LONG).show()
+                            onEvent(DateEvent.ShowPostponeDialog(item))
                             true
                         }
                         false
@@ -71,7 +74,10 @@ fun DayCalendar(state: DayCalendarState, onEvent: (DateEvent)->Unit){
                         SwipeBackground(state = swipeState)
                     }
                 ) {
-                    DateItem(state.items[index], onEvent = {
+                    DateItem(
+                        modifier = Modifier.fillMaxWidth()
+                            .animateItem(),
+                        item, onEvent = {
                         onEvent(it)
                     })
                 }
@@ -80,13 +86,17 @@ fun DayCalendar(state: DayCalendarState, onEvent: (DateEvent)->Unit){
         }
     }
     if(state.showPostponeDialog){
-        PostponeDialog(onDismiss = {
-            println("onDismiss")
-            onEvent(DateEvent.ShowPostponeDialog(false))
-        }, onConfirm = {
-            println("onConfirm")
-            onEvent(DateEvent.ShowPostponeDialog(false))
-        })
+        state.currentItem?.let {
+            PostponeDialog(onDismiss = {
+                onEvent(DateEvent.HidePostponeDialog)
+            }, onConfirm = { postponeInfo->
+                println("onConfirm postpone item ")
+                onEvent(DateEvent.HidePostponeDialog)
+                onEvent(DateEvent.Postpone(postponeInfo))
+            },
+                item = it
+            )
+        }
     }
 }
 @Composable

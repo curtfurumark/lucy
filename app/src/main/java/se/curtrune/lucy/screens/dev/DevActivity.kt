@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.room.util.query
 import kotlinx.coroutines.launch
 import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.R
@@ -44,7 +45,9 @@ import se.curtrune.lucy.app.Settings
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.MediaContent
 import se.curtrune.lucy.classes.Notification
+import se.curtrune.lucy.composables.CategoryStatistics
 import se.curtrune.lucy.composables.CountDownTimerService
+import se.curtrune.lucy.composables.Search
 import se.curtrune.lucy.composables.StopWatchUsingService
 import se.curtrune.lucy.dialogs.RepeatDialog
 import se.curtrune.lucy.persist.DBAdmin
@@ -56,15 +59,18 @@ import se.curtrune.lucy.screens.dev.composables.BackupDataBase
 import se.curtrune.lucy.screens.dev.composables.CreateItemTree
 import se.curtrune.lucy.screens.dev.composables.DurationByCategory
 import se.curtrune.lucy.screens.dev.composables.GetNumberOfChildren
+import se.curtrune.lucy.screens.dev.composables.GetQuote
 import se.curtrune.lucy.screens.dev.composables.MentalMeterTest
 import se.curtrune.lucy.screens.dev.composables.RepositoryTest
 import se.curtrune.lucy.screens.dev.composables.SetGeneratedToTemplateChildren
+import se.curtrune.lucy.screens.item_editor.composables.ItemEditorDev
 import se.curtrune.lucy.screens.log_in.LogInActivity
 import se.curtrune.lucy.screens.main.MainActivity
 import se.curtrune.lucy.screens.main.MainState
 import se.curtrune.lucy.screens.main.composables.LucindaControls
 import se.curtrune.lucy.screens.util.Converter
 import se.curtrune.lucy.services.TimerService
+import se.curtrune.lucy.statistics.Statistics
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.viewmodel.UpdateLucindaViewModel
 import se.curtrune.lucy.web.VersionInfo
@@ -143,7 +149,17 @@ class DevActivity : AppCompatActivity() {
                             .verticalScroll(scrollState),
                         verticalArrangement = Arrangement.SpaceEvenly,
                     ) {
+                        Search(onSearch = { filter, everywhere->
+                            println("search query: $filter")
+                            devViewModel.onEvent(DevEvent.Search(filter, everywhere))
+                        })
+                        Spacer(modifier = Modifier.height(16.dp))
+                        val stats = Statistics(LucindaApplication.repository.selectItems(LocalDate.now()))
+                        CategoryStatistics(stats)
+                        Spacer(modifier = Modifier.height(16.dp))
+                        //GetQuote()
                         //RepositoryTest()
+                        //Spacer(modifier = Modifier.height(16.dp))
                         StopWatchUsingService(onCommand = { action->
                             println("command: $action")
                             sendCommandToTimeService(action)
@@ -154,38 +170,36 @@ class DevActivity : AppCompatActivity() {
                         LucindaControls(state = MainState(), onEvent = { event ->
                             Toast.makeText(applicationContext,event.toString(), Toast.LENGTH_LONG ).show()
                         })
-                        Spacer(modifier = Modifier.height(16.dp))
+
                         BackupDataBase(onEventCopy = {
                             println("copy database ")
                             copyDatabase()
                         })
                         Spacer(modifier = Modifier.height(16.dp))
-                        //SetGeneratedToTemplateChildren()
-                        //Spacer(modifier = Modifier.height(16.dp))
+                        SetGeneratedToTemplateChildren(state = state.value, onEvent = { event ->
+                            devViewModel.onEvent(event)
+                        })
+                        Spacer(modifier = Modifier.height(16.dp))
+                        ItemEditorDev(item = Item("i am item"), onEvent = { event->
+                            devViewModel.onEvent(event)
+                        })
+                        Spacer(modifier = Modifier.height(16.dp))
                         //DurationByCategory()
                         //Spacer(modifier = Modifier.height(16.dp))
                         Text(text = "main", fontSize = 24.sp, modifier = Modifier.clickable {
                             startActivity(Intent(applicationContext, MainActivity::class.java))
                         })
                         Spacer(modifier = Modifier.height(16.dp))
-                        //Text(text = "dev mode", fontSize = 24.sp)
                         //Spacer(modifier = Modifier.height(16.dp))
                         Text(text = "run test", fontSize = 24.sp,
                             modifier = Modifier.clickable {
                                 runCode()
                             })
                         Spacer(modifier = Modifier.height(16.dp))
-                        Text(text = "get quote", fontSize =   24.sp,
-                            modifier = Modifier.clickable {
-                                scope.launch {
-                                    val quotes = RetrofitInstance.quoteApi.getRandomQuotes()
-                                    val quote = quotes[0]
-                                    println(quote.q)
-                                }
-                            })
+
                         Spacer(modifier = Modifier.height(16.dp))
-                        MentalMeter()
-                        Spacer(modifier = Modifier.height(16.dp))
+                        //MentalMeter()
+                        //Spacer(modifier = Modifier.height(16.dp))
                         CountDownTimerService(duration = 30, onCommand = {
                             println("command: $it")
                             sendCommandToTimeService(it)

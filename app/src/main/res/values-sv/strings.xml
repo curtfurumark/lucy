@@ -182,6 +182,11 @@
     <string name="doctor">Läkare</string>
     <string name="medicine_name">Läkemedlets namn</string>
     <string name="quantity">Antal</string>
+    <string name="one_hour">En timme</string>
+    <string name="one_day">En dag</string>
+    <string name="one_week">En vecka</string>
+    <string name="one_month">En månad</string>
+    <string name="postpone_dialog_heading">Skjut upp: %1$s</string>
 
 
 </resources>

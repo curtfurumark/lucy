@@ -258,8 +258,10 @@ public class LocalDB extends SQLiteOpenHelper {
         if( VERBOSE) log("LocalDB.open()");
         db = this.getReadableDatabase();
     }
-
-
+    public void restore(Item item){
+        db = this.getWritableDatabase();
+        db.insert(ITEMS_TABLE, null, DBAdmin.getContentValues(item));
+    }
     public List<Asset> selectAssets(String queery) {
         if( VERBOSE) log("LocalDB.selectAssets()");
         db = this.getReadableDatabase();

@@ -100,6 +100,9 @@ public class Queeries {
     public static String insertCategory(String category) {
         return String.format("INSERT INTO categories (name) values ('%s')", category);
     }
+    public static String searchItems(String filter){
+        return String.format(Locale.getDefault(), "SELECT * FROM items WHERE heading LIKE('%%%s%%')", filter);
+    }
 
     public static String selectAppointments() {
         return String.format(Locale.getDefault(), "SELECT * FROM items WHERE type = %d ORDER BY targetDate DESC",

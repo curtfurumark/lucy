@@ -182,14 +182,14 @@ class ItemSessionViewModel : ViewModel() {
         }
     infix fun onEvent(event: ItemEvent){
         when(event){
-            is ItemEvent.Update -> {
-                update(event.item)
-            }
+            is ItemEvent.Update -> { update(event.item) }
             ItemEvent.CancelTimer -> {cancelTimer()}
             ItemEvent.PauseTimer -> {pauseTimer()}
             ItemEvent.StartTimer -> {startTimer()}
             ItemEvent.ResumeTimer -> {resumeTimer()}
             is ItemEvent.Delete -> { println("delete not implemented at this stage")}
+            is ItemEvent.GetChildren -> {}
+            is ItemEvent.GetItem -> {}
         }
     }
 

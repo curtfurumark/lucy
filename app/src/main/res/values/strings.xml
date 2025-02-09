@@ -252,4 +252,9 @@
     <string name="medicine_name">medicine name</string>
     <string name="quantity">quantity</string>
     <string name="confirm">confirm</string>
+    <string name="one_hour">one hour</string>
+    <string name="one_day">one day</string>
+    <string name="one_week">one week</string>
+    <string name="one_month" >one month</string>
+    <string name="postpone_dialog_heading">postpone: %1$s</string>
 </resources>
