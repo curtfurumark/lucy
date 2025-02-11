@@ -35,6 +35,13 @@ fun Search(onSearch: (String, Boolean)->Unit){
     Row( modifier = Modifier.fillMaxWidth()
     , horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically){
+        Icon(
+            modifier = Modifier.clickable {
+                textFieldVisible = !textFieldVisible
+            },
+            imageVector = Icons.Default.Search,
+            contentDescription = "search for item"
+        )
         AnimatedVisibility(visible = textFieldVisible) {
             Checkbox(checked = false, onCheckedChange = {
                 searchEverywhere = !searchEverywhere
@@ -50,12 +57,7 @@ fun Search(onSearch: (String, Boolean)->Unit){
                 label = { Text("search") }
             )
         }
-        Icon(
-            modifier = Modifier.clickable {
-                textFieldVisible = !textFieldVisible
-            },
-            imageVector = Icons.Default.Search,
-            contentDescription = "search for item")
+
 
     }
 }

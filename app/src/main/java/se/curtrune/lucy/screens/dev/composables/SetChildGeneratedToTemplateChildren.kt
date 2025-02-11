@@ -80,7 +80,27 @@ fun SetGeneratedToTemplateChildren(state: DevState, onEvent: (ItemEvent)->Unit){
                         onEvent(ItemEvent.GetChildren(state.currentItem!!))
                     }
                 }) {
-                    Text(text = "children to template child")
+                    Text(text = "show children")
+                }
+
+            }
+            Row(modifier = Modifier.fillMaxWidth()){
+                Button(onClick = {
+                    println("set all children to template children")
+                    state.items.forEach{ item->
+                        item.type = Type.TEMPLATE_CHILD
+                        onEvent(ItemEvent.Update(item))
+                    }
+                }){
+                    Text(text = "set all")
+                }
+                Button(onClick = {
+                    println("show template children")
+                    if( state.currentItem != null){
+                        onEvent(ItemEvent.GetChildrenType(state.currentItem!!, Type.TEMPLATE_CHILD))
+                    }
+                }){
+                    Text(text = "show template children")
                 }
             }
             Text(text = "number of items: ${state.items.size.toString()}", fontSize = 20.sp)

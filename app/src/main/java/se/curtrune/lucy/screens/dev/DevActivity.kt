@@ -15,16 +15,21 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
@@ -63,6 +68,7 @@ import se.curtrune.lucy.screens.dev.composables.GetQuote
 import se.curtrune.lucy.screens.dev.composables.MentalMeterTest
 import se.curtrune.lucy.screens.dev.composables.RepositoryTest
 import se.curtrune.lucy.screens.dev.composables.SetGeneratedToTemplateChildren
+import se.curtrune.lucy.screens.dev.composables.StatisticsComposable
 import se.curtrune.lucy.screens.item_editor.composables.ItemEditorDev
 import se.curtrune.lucy.screens.log_in.LogInActivity
 import se.curtrune.lucy.screens.main.MainActivity
@@ -92,24 +98,12 @@ class DevActivity : AppCompatActivity() {
         setContentView(R.layout.dev_activity)
         title = "lucinda dev"
         println("DevActivity.onCreate(Bundle)")
-        printSystemInfo()
+        //printSystemInfo()
         lucinda = Lucinda.getInstance(this)
         initContent()
     }
 
-    private fun clearShowInCalendar() {
-        Logger.log("...clearShowInCalendar()")
-        val queery = "UPDATE items set isCalenderItem = 0"
-        try {
-            LocalDB(this).use { db ->
-                db.executeSQL(queery)
-                Toast.makeText(this, "items updated", Toast.LENGTH_LONG).show()
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
-        }
-    }
+
 
     private fun checkForLucindaUpdate() {
         Logger.log("...checkForLucindaUpdate()")
@@ -128,6 +122,7 @@ class DevActivity : AppCompatActivity() {
 
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     private fun initContent(){
         println("...initContent()")
         val composeView = findViewById<ComposeView>(R.id.devActivity_composeView)
@@ -139,79 +134,91 @@ class DevActivity : AppCompatActivity() {
             LucyTheme {
                 val scope = rememberCoroutineScope()
                 val scrollState = rememberScrollState()
-                Surface(
-                    modifier = Modifier.fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background)
-                ) {
-                    //SystemInfoList(state = state.value)
-                    Column(
-                        modifier = Modifier.background(MaterialTheme.colorScheme.background)
-                            .verticalScroll(scrollState),
-                        verticalArrangement = Arrangement.SpaceEvenly,
+                var showSearch by remember {
+                    mutableStateOf(false)
+                }
+                Scaffold(
+                    //topBar = { TopAppBar(mental = Mental(), o) }
+
+                ) { padding->
+                    Surface(
+                        modifier = Modifier.fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background)
+                            .padding(padding)
                     ) {
-                        Search(onSearch = { filter, everywhere->
-                            println("search query: $filter")
-                            devViewModel.onEvent(DevEvent.Search(filter, everywhere))
-                        })
-                        Spacer(modifier = Modifier.height(16.dp))
-                        val stats = Statistics(LucindaApplication.repository.selectItems(LocalDate.now()))
-                        CategoryStatistics(stats)
-                        Spacer(modifier = Modifier.height(16.dp))
-                        //GetQuote()
-                        //RepositoryTest()
-                        //Spacer(modifier = Modifier.height(16.dp))
-                        StopWatchUsingService(onCommand = { action->
+                        //SystemInfoList(state = state.value)
+                        Column(
+                            modifier = Modifier.background(MaterialTheme.colorScheme.background)
+                                .verticalScroll(scrollState),
+                            verticalArrangement = Arrangement.SpaceEvenly,
+                        ) {
+                            StatisticsComposable()
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Search(onSearch = { filter, everywhere ->
+                                println("search query: $filter")
+                                devViewModel.onEvent(DevEvent.Search(filter, everywhere))
+                            })
+                            Spacer(modifier = Modifier.height(16.dp))
+                            val stats =
+                                Statistics(LucindaApplication.repository.selectItems(LocalDate.now()))
+                            CategoryStatistics(stats)
+                            Spacer(modifier = Modifier.height(16.dp))
+                            //GetQuote()
+                            //RepositoryTest()
+                            //Spacer(modifier = Modifier.height(16.dp))
+                            /*                        StopWatchUsingService(onCommand = { action->
                             println("command: $action")
                             sendCommandToTimeService(action)
-                        })
-                        val mentalModule = LucindaApplication.mentalModule
-                        //MentalMeterTest(state = state.value)
-                        //Spacer(modifier = Modifier.height(8.dp))
-                        LucindaControls(state = MainState(), onEvent = { event ->
+                        })*/
+                            val mentalModule = LucindaApplication.mentalModule
+                            //MentalMeterTest(state = state.value)
+                            //Spacer(modifier = Modifier.height(8.dp))
+                            /*                        LucindaControls(state = MainState(), onEvent = { event ->
                             Toast.makeText(applicationContext,event.toString(), Toast.LENGTH_LONG ).show()
-                        })
+                        })*/
 
-                        BackupDataBase(onEventCopy = {
+                            /*                        BackupDataBase(onEventCopy = {
                             println("copy database ")
                             copyDatabase()
-                        })
-                        Spacer(modifier = Modifier.height(16.dp))
-                        SetGeneratedToTemplateChildren(state = state.value, onEvent = { event ->
-                            devViewModel.onEvent(event)
-                        })
-                        Spacer(modifier = Modifier.height(16.dp))
-                        ItemEditorDev(item = Item("i am item"), onEvent = { event->
-                            devViewModel.onEvent(event)
-                        })
-                        Spacer(modifier = Modifier.height(16.dp))
-                        //DurationByCategory()
-                        //Spacer(modifier = Modifier.height(16.dp))
-                        Text(text = "main", fontSize = 24.sp, modifier = Modifier.clickable {
-                            startActivity(Intent(applicationContext, MainActivity::class.java))
-                        })
-                        Spacer(modifier = Modifier.height(16.dp))
-                        //Spacer(modifier = Modifier.height(16.dp))
-                        Text(text = "run test", fontSize = 24.sp,
-                            modifier = Modifier.clickable {
-                                runCode()
+                        })*/
+                            //Spacer(modifier = Modifier.height(16.dp))
+                            SetGeneratedToTemplateChildren(state = state.value, onEvent = { event ->
+                                devViewModel.onEvent(event)
                             })
-                        Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(16.dp))
+                            /*                        ItemEditorDev(item = Item("i am item"), onEvent = { event->
+                            devViewModel.onEvent(event)
+                        })*/
+                            //Spacer(modifier = Modifier.height(16.dp))
+                            //DurationByCategory()
+                            //Spacer(modifier = Modifier.height(16.dp))
+                            Text(text = "main", fontSize = 24.sp, modifier = Modifier.clickable {
+                                startActivity(Intent(applicationContext, MainActivity::class.java))
+                            })
+                            Spacer(modifier = Modifier.height(16.dp))
+                            //Spacer(modifier = Modifier.height(16.dp))
+                            Text(text = "run test", fontSize = 24.sp,
+                                modifier = Modifier.clickable {
+                                    runCode()
+                                })
+                            Spacer(modifier = Modifier.height(16.dp))
 
-                        Spacer(modifier = Modifier.height(16.dp))
-                        //MentalMeter()
-                        //Spacer(modifier = Modifier.height(16.dp))
-                        CountDownTimerService(duration = 30, onCommand = {
+                            //Spacer(modifier = Modifier.height(16.dp))
+                            //MentalMeter()
+                            //Spacer(modifier = Modifier.height(16.dp))
+                            /*                        CountDownTimerService(duration = 30, onCommand = {
                             println("command: $it")
                             sendCommandToTimeService(it)
-                        })
-                        Spacer(modifier = Modifier.height(16.dp))
-                        GetNumberOfChildren()
-                        Spacer(modifier = Modifier.height(16.dp))
+                        })*/
+                            /*                        Spacer(modifier = Modifier.height(16.dp))
+                        GetNumberOfChildren()*/
+                            /*                        Spacer(modifier = Modifier.height(16.dp))
                         CreateItemTree(onEvent = { event->
                             devViewModel.onEvent(event)
-                        })
-                        //Spacer(modifier = Modifier.height(16.dp))
-                        //SystemInfoList(state = state.value)
+                        })*/
+                            //Spacer(modifier = Modifier.height(16.dp))
+                            //SystemInfoList(state = state.value)
+                        }
                     }
                 }
             }
@@ -222,36 +229,6 @@ class DevActivity : AppCompatActivity() {
         Intent( this, TimerService::class.java).also {
             it.action = command
             this.startService(it)
-        }
-    }
-
-    private fun printSystemInfo() {
-        Logger.log("...printSystemInfo()")
-        Logger.log("\tSDK_INT", Build.VERSION.SDK_INT)
-        Logger.log("\tDEVICE", Build.DEVICE)
-        Logger.log("\tUSER", Build.USER)
-        Logger.log("\tHARDWARE", Build.HARDWARE)
-        Logger.log("\tBRAND", Build.BRAND)
-        Logger.log("\tMANUFACTURER", Build.MANUFACTURER)
-        Logger.log("\tMODEL", Build.MODEL)
-        try {
-            val pInfo = packageManager.getPackageInfo(packageName, 0)
-            //String version = pInfo.versionName;
-            Logger.log("...versionName", pInfo.versionName)
-            Logger.log("...versionCode", pInfo.versionCode)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                Logger.log("...long versionCode", pInfo.longVersionCode)
-            }
-            Logger.log("...packageName", pInfo.packageName)
-            val firstInstallTime = pInfo.firstInstallTime
-            Logger.log("firstInstallTime", firstInstallTime)
-            Logger.log("converted install time", Converter.epochToDate(firstInstallTime / 1000))
-            val applicationInfo = pInfo.applicationInfo
-            if (applicationInfo != null) {
-                Logger.log("...dataDir", applicationInfo.dataDir)
-            }
-        } catch (e: PackageManager.NameNotFoundException) {
-            e.printStackTrace()
         }
     }
 
@@ -266,38 +243,51 @@ class DevActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.homeActivity_openDB) {
-            openDB()
-        } else if (item.itemId == R.id.homeActivity_createTableItems) {
-            DBAdmin.createItemsTable(this)
-        } else if (item.itemId == R.id.homeActivity_dropTableItems) {
-            DBAdmin.dropTableItems(this)
-        } else if (item.itemId == R.id.homeActivity_listTables) {
-            listTables()
-        } else if (item.itemId == R.id.homeActivity_dropTableMental) {
-            DBAdmin.dropTableMental(this)
-        } else if (item.itemId == R.id.homeActivity_resetApp) {
-            resetApp()
-        } else if (item.itemId == R.id.homeActivity_createEconomyTables) {
-            DBAdmin.createEconomyTables(this)
-        } else if (item.itemId == R.id.devActivity_testNotification) {
-            testNotification()
-        } else if (item.itemId == R.id.homeActivity_logInActivity) {
-            startActivity(Intent(this, LogInActivity::class.java))
-        } else if (item.itemId == R.id.devActivity_userSettings) {
-            setDefaultUserSettings()
-        } else if (item.itemId == R.id.devActivity_clearSettings) {
-            //Settings.removeAll(this);
-            Toast.makeText(this, "don't do this", Toast.LENGTH_LONG).show()
-        } else if (item.itemId == R.id.devActivity_repeatDialog) {
-            showRepeatDialog()
-            Toast.makeText(this, "for future use", Toast.LENGTH_LONG).show()
-        } else if (item.itemId == R.id.homeActivity_setNotifications) {
-            setNotifications()
-        } else if (item.itemId == R.id.devActivity_repeatActivity) {
-            startActivity(Intent(this, RepeatActivity::class.java))
-        } else if (item.itemId == R.id.devActivity_weekCalendarActivity) {
-            startActivity(Intent(this, WeekCalendarActivityKt::class.java))
+        when (item.itemId) {
+            R.id.homeActivity_openDB -> {
+                openDB()
+            }
+            R.id.homeActivity_createTableItems -> {
+                DBAdmin.createItemsTable(this)
+            }
+            R.id.homeActivity_dropTableItems -> {
+                DBAdmin.dropTableItems(this)
+            }
+            R.id.homeActivity_listTables -> {
+                listTables()
+            }
+            R.id.homeActivity_resetApp -> {
+                resetApp()
+            }
+            R.id.homeActivity_createEconomyTables -> {
+                DBAdmin.createEconomyTables(this)
+            }
+            R.id.devActivity_testNotification -> {
+                testNotification()
+            }
+            R.id.homeActivity_logInActivity -> {
+                startActivity(Intent(this, LogInActivity::class.java))
+            }
+            R.id.devActivity_userSettings -> {
+                setDefaultUserSettings()
+            }
+            R.id.devActivity_clearSettings -> {
+                //Settings.removeAll(this);
+                Toast.makeText(this, "don't do this", Toast.LENGTH_LONG).show()
+            }
+            R.id.devActivity_repeatDialog -> {
+                showRepeatDialog()
+                Toast.makeText(this, "for future use", Toast.LENGTH_LONG).show()
+            }
+            R.id.homeActivity_setNotifications -> {
+                setNotifications()
+            }
+            R.id.devActivity_repeatActivity -> {
+                startActivity(Intent(this, RepeatActivity::class.java))
+            }
+            R.id.devActivity_home -> {
+                startActivity(Intent(this, MainActivity::class.java))
+            }
         }
         return true
     }
@@ -309,13 +299,14 @@ class DevActivity : AppCompatActivity() {
     }
 
     private fun resetApp() {
-        Logger.log("...resetApp()")
-        try {
+        println("...resetApp()")
+
+/*        try {
             lucinda!!.reset(this)
             Toast.makeText(this, "lucinda reset", Toast.LENGTH_LONG).show()
         } catch (e: SQLException) {
             Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
-        }
+        }*/
     }
 
 

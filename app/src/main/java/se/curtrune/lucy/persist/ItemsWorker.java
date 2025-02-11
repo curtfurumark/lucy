@@ -197,6 +197,7 @@ public class ItemsWorker {
      * @param context just the frigging context
      * @return a list as specified
      */
+    @Deprecated
     public static List<Item> selectItems(LocalDate firstDate, LocalDate lastDate, Context context) {
         if(VERBOSE)log("ItemsWorker.selectItems(LocalDate, LocalDate, Context");
         try (LocalDB db = new LocalDB(context)) {
@@ -232,6 +233,7 @@ public class ItemsWorker {
             return db.selectItems(Queeries.selectChildren(parent));
         }
     }
+    @Deprecated
     public static List<Item> selectTemplateChildren(Item parent, Context context){
         try(LocalDB db = new LocalDB(context)){
             return db.selectItems(Queeries.selectTemplateChildren(parent));

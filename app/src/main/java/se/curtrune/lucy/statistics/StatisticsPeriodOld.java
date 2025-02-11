@@ -12,13 +12,13 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.persist.ItemsWorker;
 
-public class StatisticsPeriod {
+public class StatisticsPeriodOld {
     private LocalDate firstDate;
     private LocalDate lastDate;
     private List<Item> items;
     private List<Mental> mentalList;
 
-    public StatisticsPeriod(LocalDate firstDate, LocalDate lastDate, Context context) {
+    public StatisticsPeriodOld(LocalDate firstDate, LocalDate lastDate, Context context) {
         this.firstDate = firstDate;
         this.lastDate = lastDate;
         initStats(context);
@@ -69,7 +69,7 @@ public class StatisticsPeriod {
 
     }
     public Duration getDuration() {
-        log("StatisticsPeriod.getDuration()");
+        log("StatisticsPeriodOld.getDuration()");
         long seconds = items.stream().mapToLong(Item::getDuration).sum();
         return Duration.ofSeconds(seconds);
     }

@@ -26,7 +26,7 @@ import se.curtrune.lucy.classes.calender.Week;
 import se.curtrune.lucy.persist.DB1Result;
 import se.curtrune.lucy.screens.util.Converter;
 import se.curtrune.lucy.statistics.CategoryListable;
-import se.curtrune.lucy.statistics.StatisticsPeriod;
+import se.curtrune.lucy.statistics.StatisticsPeriodOld;
 import se.curtrune.lucy.web.HTTPRequest;
 import se.curtrune.lucy.web.VersionInfo;
 
@@ -189,8 +189,8 @@ public class Logger {
         log("\tupdated", repeat.getUpdated());
         log("\tinfinity", repeat.isInfinite());
     }
-    public static void log(StatisticsPeriod statisticsPeriod){
-        log("log StatisticsPeriod...");
+    public static void log(StatisticsPeriodOld statisticsPeriod){
+        log("log StatisticsPeriodOld...");
         log("\tfirstDate", statisticsPeriod.getFirstDate());
         log("\tlastDate", statisticsPeriod.getLastDate());
         log("\tduration", Converter.formatSecondsWithHours(statisticsPeriod.getDuration().getSeconds()));

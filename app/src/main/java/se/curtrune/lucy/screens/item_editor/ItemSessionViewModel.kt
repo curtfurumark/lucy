@@ -190,6 +190,7 @@ class ItemSessionViewModel : ViewModel() {
             is ItemEvent.Delete -> { println("delete not implemented at this stage")}
             is ItemEvent.GetChildren -> {}
             is ItemEvent.GetItem -> {}
+            is ItemEvent.GetChildrenType -> {}
         }
     }
 

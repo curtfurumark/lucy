@@ -31,25 +31,23 @@ import java.time.LocalDate
 
 @Composable
 fun CategoryStatistics(statistics: Statistics){
-    //Card(modifier = Modifier.fillMaxWidth()){
     val repository = LucindaApplication.repository
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Button(onClick = {
-                //statistics = Statistics(repository.selectItems(LocalDate.now().plusDays(1)))
-                println("do nothing please")
-            }){
-                Text(text = "refresh stats")
-            }
-            Text(text = "today by category")
-            Text(text = "estimated duration today: ${Converter.formatSecondsWithHours(statistics.duration)}")
-            val categoryMap = statistics.groupedByCategory
-            categoryMap.keys.forEach { key->
-                val items = categoryMap[key]
-                CategoryItem(heading = if(key.isEmpty()) "no category" else key, items = items!!.toList())
-                Spacer(modifier = Modifier.height(8.dp))
-            }
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Button(onClick = {
+            //statistics = Statistics(repository.selectItems(LocalDate.now().plusDays(1)))
+            println("do nothing please")
+        }){
+            Text(text = "refresh stats")
         }
-    //}
+        Text(text = "today by category")
+        Text(text = "estimated duration today: ${Converter.formatSecondsWithHours(statistics.duration)}")
+        val categoryMap = statistics.groupedByCategory
+        categoryMap.keys.forEach { key->
+            val items = categoryMap[key]
+            CategoryItem(heading = if(key.isEmpty()) "no category" else key, items = items!!.toList())
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+    }
 }
 
 @Composable

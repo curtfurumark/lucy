@@ -1,6 +1,7 @@
 package se.curtrune.lucy.statistics
 
 import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.State
 
 class Statistics(var items: List<Item>) {
     val averageDuration: Long
@@ -26,6 +27,10 @@ class Statistics(var items: List<Item>) {
     val duration: Long
         get(){
             return  items.map { item->item.duration }.sum()
+        }
+    val durationActual: Long
+        get(){
+            return items.filter { item->item.state.equals(State.DONE) }.map { item->item.duration }.sum()
         }
     val anxiety: Int
         get(){

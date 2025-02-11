@@ -187,6 +187,21 @@ class Repository (val context: Application){
             return db.selectItems(Queeries.selectItems(date, state))
         }
     }
+
+    /**
+     * select done items as specified by argument
+     * @param firstDate first date inclusive
+     * @param lastDate last date inclusive
+     * @param context just the frigging context
+     * @return a list as specified
+     */
+    fun selectItems(firstDate: LocalDate?, lastDate: LocalDate?): List<Item> {
+        println("Repository.selectItems($firstDate, $lastDate)")
+        LocalDB(context).use { db ->
+            val query = Queeries.selectItems(firstDate, lastDate, State.DONE)
+            return db.selectItems(query)
+        }
+    }
     fun selectItems(state: State): List<Item> {
         println("Repository.selectItems(state: ${state.toString()})")
         LocalDB(context).use { db ->
@@ -204,6 +219,11 @@ class Repository (val context: Application){
         val query = Queeries.selectItems(type)
         LocalDB(context).use { db ->
             return db.selectItems(query)
+        }
+    }
+    fun selectTemplateChildren(parent: Item?): List<Item> {
+        LocalDB(context).use { db ->
+            return db.selectItems(Queeries.selectTemplateChildren(parent))
         }
     }
 

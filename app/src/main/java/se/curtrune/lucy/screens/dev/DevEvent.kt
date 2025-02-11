@@ -6,5 +6,6 @@ import java.util.Date
 
 sealed interface DevEvent{
     data object CreateItemTree: DevEvent
+    data object ResetApp: DevEvent
     data class Search(val query: String, val everywhere: Boolean): DevEvent
 }

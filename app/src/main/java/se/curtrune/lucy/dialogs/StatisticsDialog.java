@@ -27,7 +27,7 @@ import java.util.List;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
-import se.curtrune.lucy.statistics.StatisticsPeriod;
+import se.curtrune.lucy.statistics.StatisticsPeriodOld;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.screens.util.Converter;
 
@@ -62,13 +62,13 @@ public class StatisticsDialog extends BottomSheetDialogFragment {
     private String[] categories;
     public static boolean VERBOSE = true;
     private List<Mental> mentalList;
-    private StatisticsPeriod statisticsPeriod;
+    private StatisticsPeriodOld statisticsPeriod;
 
     public StatisticsDialog(Context context){
         log("StatisticsDialog() constructor");
         this.date = LocalDate.now();
         this.time = LocalTime.now();
-        this.statisticsPeriod = new StatisticsPeriod(LocalDate.now(), LocalDate.now(),context);
+        this.statisticsPeriod = new StatisticsPeriodOld(LocalDate.now(), LocalDate.now(),context);
     }
     @Nullable
     @Override

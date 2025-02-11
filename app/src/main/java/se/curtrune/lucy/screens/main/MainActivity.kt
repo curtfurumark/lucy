@@ -32,7 +32,6 @@ import se.curtrune.lucy.app.Settings.PanicAction
 import se.curtrune.lucy.app.User
 import se.curtrune.lucy.classes.Affirmation
 import se.curtrune.lucy.classes.Mental
-import se.curtrune.lucy.dialogs.BoostDialog
 import se.curtrune.lucy.dialogs.PanicActionDialog
 import se.curtrune.lucy.dialogs.UpdateDialog
 import se.curtrune.lucy.fragments.CustomizeFragment
@@ -222,7 +221,6 @@ class MainActivity : AppCompatActivity() {
                         is MainChannelEvent.ShowQuoteDialog -> {
                             quote = event.quote!!
                             showQuoteDialog = true
-                            //QuoteDialog(onDismiss = {}, event.quote)
                         }
                     }
                 }
@@ -270,9 +268,9 @@ class MainActivity : AppCompatActivity() {
             navigate(fragment)
         }
 
-        mainViewModel!!.affirmation.observe(
+/*        mainViewModel!!.affirmation.observe(
             this
-        ) { affirmation: Affirmation -> this.showBoostDialog(affirmation) }
+        ) { affirmation: Affirmation -> this.showBoostDialog(affirmation) }*/
         mainViewModel!!.updateAvailable().observe(this) { versionInfo: VersionInfo ->
             Logger.log("...updateAvailable(VersionInfo)")
             val dialog = UpdateDialog(versionInfo) {
@@ -453,11 +451,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun showBoostDialog(affirmation: Affirmation) {
+/*    private fun showBoostDialog(affirmation: Affirmation) {
         Logger.log("...showBoostDialog(Affirmation)")
         val boostDialog = BoostDialog(affirmation.affirmation)
         boostDialog.show(supportFragmentManager, "boost me")
-    }
+    }*/
 
     private fun showPanicAction() {
         val panicAction = mainViewModel!!.getPanicAction(this)

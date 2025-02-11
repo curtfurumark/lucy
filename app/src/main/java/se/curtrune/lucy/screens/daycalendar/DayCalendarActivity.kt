@@ -21,9 +21,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.composables.AddItemDialog
 import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.activities.kotlin.composables.ItemSettings
-import se.curtrune.lucy.composables.LucindaTopAppBar
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
-import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.screens.daycalendar.composables.DayCalendar
 import java.time.LocalTime
 

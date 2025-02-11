@@ -15,8 +15,6 @@
         android:title="list tables"/>
     <item android:id="@+id/homeActivity_resetApp"
         android:title="reset app"/>
-    <item android:title="drop table mental"
-        android:id="@+id/homeActivity_dropTableMental"/>
     <item
         android:id="@+id/homeActivity_createTodoList"
         android:title="create todo list" />
@@ -37,6 +35,4 @@
         android:title="test notification"/>
     <item android:id="@+id/devActivity_repeatActivity"
         android:title="repeat activity"/>
-    <item android:id="@+id/devActivity_weekCalendarActivity"
-        android:title="new week calendar"/>
 </menu>

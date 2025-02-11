@@ -35,6 +35,14 @@ class DevActivityViewModel : ViewModel() {
             items = children
         ) }
     }
+    private fun getChildrenType(parent: Item, type: Type){
+        println("...getChildrenType(parent: ${parent.heading}, type: ${type.name})")
+        val items = repository.selectTemplateChildren(parent)
+        _state.update { it.copy(
+            items = items
+        ) }
+
+    }
     private fun getItem(id: Long){
         println("...getItem(id: $id)")
         val item = repository.selectItem(id) ?: return
@@ -56,6 +64,7 @@ class DevActivityViewModel : ViewModel() {
         when(event){
             is DevEvent.CreateItemTree -> LocalDBTest().createTreeToDelete()
             is DevEvent.Search -> { search(event.query)}
+            is DevEvent.ResetApp -> {resetLucinda()}
         }
     }
     fun onEvent(event: ItemEvent){
@@ -68,9 +77,11 @@ class DevActivityViewModel : ViewModel() {
             is ItemEvent.Update ->  {update(event.item)}
             is ItemEvent.GetChildren -> {getChildren(event.item)}
             is ItemEvent.GetItem -> {getItem(event.id)}
+            is ItemEvent.GetChildrenType -> {getChildrenType(event.parent, event.type)}
         }
-
-
+    }
+    private fun resetLucinda(){
+        println("resetLucinda()")
     }
     private fun search(filter: String){
         println("DevViewModel.search($filter)")

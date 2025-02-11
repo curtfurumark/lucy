@@ -206,13 +206,9 @@ public class Queeries {
     }
 
     public static String selectItems(LocalDate firstDate, LocalDate lastDate, State state) {
-        //log();
-        LocalDateTime localDateTimeFirst = firstDate.atStartOfDay();
-        long startEpoch = localDateTimeFirst.toEpochSecond(ZoneOffset.UTC);
-        long endEpoch = lastDate.atStartOfDay().toEpochSecond(ZoneOffset.UTC) + (3600 * 24);
         return String.format(Locale.ENGLISH, "SELECT * FROM items WHERE " +
-                        "(state = %d AND  updated >= %d AND updated <= %d) ORDER BY updated DESC",
-                state.ordinal(), startEpoch, endEpoch);
+                        "(state = %d AND  targetDate >= %d AND targetDate <= %d) ORDER BY updated DESC",
+                state.ordinal(), firstDate.toEpochDay(), lastDate.toEpochDay());
     }
 
     public static String selectMental(Item item) {
