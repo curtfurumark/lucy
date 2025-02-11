@@ -11,6 +11,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,7 +47,7 @@ fun Search(onSearch: (String, Boolean)->Unit){
             Checkbox(checked = false, onCheckedChange = {
                 searchEverywhere = !searchEverywhere
             })
-            OutlinedTextField(
+            TextField(
                 value = query,
                 onValueChange = {
                     query = it

@@ -24,6 +24,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,19 +55,12 @@ import se.curtrune.lucy.composables.CategoryStatistics
 import se.curtrune.lucy.composables.CountDownTimerService
 import se.curtrune.lucy.composables.Search
 import se.curtrune.lucy.composables.StopWatchUsingService
+import se.curtrune.lucy.composables.top_app_bar.FlexibleTopBar
 import se.curtrune.lucy.dialogs.RepeatDialog
 import se.curtrune.lucy.persist.DBAdmin
 import se.curtrune.lucy.persist.ItemsWorker
 import se.curtrune.lucy.persist.LocalDB
-import se.curtrune.lucy.screens.affirmations.RetrofitInstance
-import se.curtrune.lucy.screens.common.MentalMeter
-import se.curtrune.lucy.screens.dev.composables.BackupDataBase
-import se.curtrune.lucy.screens.dev.composables.CreateItemTree
-import se.curtrune.lucy.screens.dev.composables.DurationByCategory
-import se.curtrune.lucy.screens.dev.composables.GetNumberOfChildren
-import se.curtrune.lucy.screens.dev.composables.GetQuote
-import se.curtrune.lucy.screens.dev.composables.MentalMeterTest
-import se.curtrune.lucy.screens.dev.composables.RepositoryTest
+
 import se.curtrune.lucy.screens.dev.composables.SetGeneratedToTemplateChildren
 import se.curtrune.lucy.screens.dev.composables.StatisticsComposable
 import se.curtrune.lucy.screens.item_editor.composables.ItemEditorDev
@@ -134,11 +128,22 @@ class DevActivity : AppCompatActivity() {
             LucyTheme {
                 val scope = rememberCoroutineScope()
                 val scrollState = rememberScrollState()
+                val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
                 var showSearch by remember {
                     mutableStateOf(false)
                 }
                 Scaffold(
-                    //topBar = { TopAppBar(mental = Mental(), o) }
+                    topBar = { FlexibleTopBar(
+                        scrollBehavior = scrollBehavior,
+                        content = {
+                            Search(onSearch = {filter, everywhere->
+                                println("on search $filter, $everywhere")
+                            })
+                        }
+                        , onEvent = { event ->
+                            devViewModel.onEvent(event)
+                        }
+                    ) }
 
                 ) { padding->
                     Surface(
@@ -152,8 +157,6 @@ class DevActivity : AppCompatActivity() {
                                 .verticalScroll(scrollState),
                             verticalArrangement = Arrangement.SpaceEvenly,
                         ) {
-                            StatisticsComposable()
-                            Spacer(modifier = Modifier.height(16.dp))
                             Search(onSearch = { filter, everywhere ->
                                 println("search query: $filter")
                                 devViewModel.onEvent(DevEvent.Search(filter, everywhere))

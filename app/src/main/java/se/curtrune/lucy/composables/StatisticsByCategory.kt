@@ -29,6 +29,7 @@ import se.curtrune.lucy.screens.util.Converter
 import se.curtrune.lucy.statistics.Statistics
 import java.time.LocalDate
 
+@Deprecated(message = "use Statistics")
 @Composable
 fun CategoryStatistics(statistics: Statistics){
     val repository = LucindaApplication.repository

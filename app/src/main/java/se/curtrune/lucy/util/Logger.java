@@ -25,8 +25,6 @@ import se.curtrune.lucy.classes.calender.DateHourCell;
 import se.curtrune.lucy.classes.calender.Week;
 import se.curtrune.lucy.persist.DB1Result;
 import se.curtrune.lucy.screens.util.Converter;
-import se.curtrune.lucy.statistics.CategoryListable;
-import se.curtrune.lucy.statistics.StatisticsPeriodOld;
 import se.curtrune.lucy.web.HTTPRequest;
 import se.curtrune.lucy.web.VersionInfo;
 
@@ -51,10 +49,7 @@ public class Logger {
 
 
     }
-    public static void log(CategoryListable listable){
-        log("log(CategoryListable)");
-        log("\tcategory", listable.getCategory());
-    }
+
     public static void log(DateHourCell dateHourCell){
         log("log(DateHourCell)");
         log("\thour", dateHourCell.getHour());
@@ -189,18 +184,7 @@ public class Logger {
         log("\tupdated", repeat.getUpdated());
         log("\tinfinity", repeat.isInfinite());
     }
-    public static void log(StatisticsPeriodOld statisticsPeriod){
-        log("log StatisticsPeriodOld...");
-        log("\tfirstDate", statisticsPeriod.getFirstDate());
-        log("\tlastDate", statisticsPeriod.getLastDate());
-        log("\tduration", Converter.formatSecondsWithHours(statisticsPeriod.getDuration().getSeconds()));
-        log("\taverage energy", statisticsPeriod.getAverageEnergy());
-        log("\taverage anxiety", statisticsPeriod.getAverageAnxiety());
-        log("\taverage mood", statisticsPeriod.getAverageMood());
-        log("\taverage stress", statisticsPeriod.getAverageStress());
 
-
-    }
     public static void log(String str){
         System.out.println(str);
     }

@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.R
+import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.screens.duration.composables.DurationScreen
 import se.curtrune.lucy.util.Logger
 
@@ -27,47 +28,23 @@ class DurationFragment : Fragment() {
     ): View? {
         Logger.log("DurationFragment.onCreateView(...)")
         val view = inflater.inflate(R.layout.duration_fragment, container, false)
-        initContent(view )
+        initContent(view)
         return view
     }
 
-    private fun initContent(view: View){
-        println("...initContent()")
+    private fun initContent(view: View) {
+        println("...initContent(View)")
         val composeView = view.findViewById<ComposeView>(R.id.durationFragment_composeView)
         composeView!!.setContent {
-            MaterialTheme {
+            LucyTheme {
                 val durationViewModel = viewModel<DurationViewModel>()
-                val state = durationViewModel.state//.collectAsState()
+                val state = durationViewModel.state.collectAsState()
                 val context = LocalContext.current
                 DurationScreen(state = state.value, onEvent = { event ->
                     durationViewModel.onEvent(event)
                 })
-                if (state.value.showProgressBar){
-                    println("show progress bar, please")
-                    Toast.makeText(context, "PROGRESSBAR", Toast.LENGTH_SHORT).show()
-                }
-                if( state.value.message.isNotBlank()){
-                    Toast.makeText(context, state.value.message, Toast.LENGTH_LONG).show()
-                }
             }
         }
     }
-
-/*    override fun onItemClick(item: Listable) {
-        Logger.log("...onItemClick(Listable)")
-        when (item) {
-            is DateListable -> {
-                adapter!!.setList(item.listableItems)
-            }
-
-            is CategoryListable -> {
-                adapter!!.setList(item.listableItems)
-            }
-
-            is Item -> {
-                Logger.log("....you clicked an item")
-                Toast.makeText(context, "you clicked an item", Toast.LENGTH_LONG).show()
-            }
-        }
-    */}
+}
 

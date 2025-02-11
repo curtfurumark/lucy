@@ -2,6 +2,7 @@ package se.curtrune.lucy.statistics
 
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.State
+import java.time.LocalDate
 
 class Statistics(var items: List<Item>) {
     val averageDuration: Long
@@ -56,5 +57,12 @@ class Statistics(var items: List<Item>) {
             }
             return map
         }
-
+    val groupedByDate: HashMap<LocalDate, MutableList<Item>>
+        get(){
+            val map = HashMap<LocalDate,MutableList<Item>>()
+            items.forEach{ item->
+                map.getOrPut(item.targetDate){ mutableListOf<Item>()}.add(item)
+            }
+            return map
+        }
 }

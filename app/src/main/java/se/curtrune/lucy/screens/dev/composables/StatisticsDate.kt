@@ -18,13 +18,14 @@ import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.screens.util.Converter
 import se.curtrune.lucy.statistics.Statistics
+import java.time.LocalDate
 
 @Composable
-fun StatisticsCategory(modifier: Modifier = Modifier, heading: String, items: List<Item>) {
-    var itemsVisible by remember {
+fun StatisticsDate(modifier: Modifier = Modifier, date: LocalDate, items: List<Item>) {
+    var itemsVisible by remember{
         mutableStateOf(false)
     }
-    Text(text = heading.ifEmpty { "no category" }, fontSize = 20.sp,
+    Text(text = date.toString(), fontSize = 20.sp,
         modifier = Modifier.clickable {
             itemsVisible = !itemsVisible
         })
