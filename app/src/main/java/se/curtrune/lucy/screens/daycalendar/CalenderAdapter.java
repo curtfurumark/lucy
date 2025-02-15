@@ -13,7 +13,6 @@ import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -21,7 +20,7 @@ import java.util.List;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
-import se.curtrune.lucy.screens.util.Converter;
+import se.curtrune.lucy.util.Converter;
 
 
 public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHolder>{

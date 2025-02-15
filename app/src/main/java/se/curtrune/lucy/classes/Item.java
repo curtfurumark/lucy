@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import se.curtrune.lucy.screens.util.Converter;
+import se.curtrune.lucy.util.Converter;
 
 public class Item implements Serializable , Listable {
 

@@ -1,11 +1,10 @@
 package se.curtrune.lucy
 
 import org.junit.Test
-import org.junit.Assert.assertEquals
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.composables.PostponeAmount
 import se.curtrune.lucy.modules.PostponeWorker
-import se.curtrune.lucy.screens.util.Converter
+import se.curtrune.lucy.util.Converter
 import java.time.LocalDate
 import java.time.LocalTime
 

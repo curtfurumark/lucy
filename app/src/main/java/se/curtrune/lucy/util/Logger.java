@@ -24,7 +24,6 @@ import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.classes.calender.DateHourCell;
 import se.curtrune.lucy.classes.calender.Week;
 import se.curtrune.lucy.persist.DB1Result;
-import se.curtrune.lucy.screens.util.Converter;
 import se.curtrune.lucy.web.HTTPRequest;
 import se.curtrune.lucy.web.VersionInfo;
 

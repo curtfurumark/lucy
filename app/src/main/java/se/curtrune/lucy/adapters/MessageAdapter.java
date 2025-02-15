@@ -15,7 +15,7 @@ import java.util.List;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Message;
-import se.curtrune.lucy.screens.util.Converter;
+import se.curtrune.lucy.util.Converter;
 
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder>{

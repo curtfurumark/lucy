@@ -1,8 +1,6 @@
 package se.curtrune.lucy.screens.dev
 
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -23,7 +21,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -39,19 +36,15 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.room.util.query
-import kotlinx.coroutines.launch
 import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.R
 import se.curtrune.lucy.screens.RepeatActivity
 import se.curtrune.lucy.activities.kotlin.dev.ui.theme.LucyTheme
-import se.curtrune.lucy.screens.week_calendar.WeekCalendarActivityKt
 import se.curtrune.lucy.app.Lucinda
 import se.curtrune.lucy.app.Settings
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.MediaContent
 import se.curtrune.lucy.classes.Notification
-import se.curtrune.lucy.composables.CategoryStatistics
 import se.curtrune.lucy.composables.CountDownTimerService
 import se.curtrune.lucy.composables.Search
 import se.curtrune.lucy.composables.StopWatchUsingService
@@ -62,25 +55,22 @@ import se.curtrune.lucy.persist.ItemsWorker
 import se.curtrune.lucy.persist.LocalDB
 
 import se.curtrune.lucy.screens.dev.composables.SetGeneratedToTemplateChildren
-import se.curtrune.lucy.screens.dev.composables.StatisticsComposable
-import se.curtrune.lucy.screens.item_editor.composables.ItemEditorDev
 import se.curtrune.lucy.screens.log_in.LogInActivity
 import se.curtrune.lucy.screens.main.MainActivity
 import se.curtrune.lucy.screens.main.MainState
-import se.curtrune.lucy.screens.main.composables.LucindaControls
-import se.curtrune.lucy.screens.util.Converter
+import se.curtrune.lucy.composables.top_app_bar.LucindaControls
+import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
+import se.curtrune.lucy.services.ServiceConstants
+import se.curtrune.lucy.services.TimeServiceConstants
 import se.curtrune.lucy.services.TimerService
-import se.curtrune.lucy.statistics.Statistics
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.viewmodel.UpdateLucindaViewModel
 import se.curtrune.lucy.web.VersionInfo
 import se.curtrune.lucy.workers.NotificationsWorker
-import java.sql.SQLException
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.YearMonth
 import java.util.Locale
-import java.util.Timer
 import java.util.function.Consumer
 
 class DevActivity : AppCompatActivity() {
@@ -136,8 +126,8 @@ class DevActivity : AppCompatActivity() {
                     topBar = { FlexibleTopBar(
                         scrollBehavior = scrollBehavior,
                         content = {
-                            Search(onSearch = {filter, everywhere->
-                                println("on search $filter, $everywhere")
+                            LucindaTopAppBar(onEvent = {appBarEvent->
+                                devViewModel.onEvent(appBarEvent)
                             })
                         }
                         , onEvent = { event ->
@@ -151,76 +141,21 @@ class DevActivity : AppCompatActivity() {
                             .background(MaterialTheme.colorScheme.background)
                             .padding(padding)
                     ) {
-                        //SystemInfoList(state = state.value)
                         Column(
                             modifier = Modifier.background(MaterialTheme.colorScheme.background)
                                 .verticalScroll(scrollState),
                             verticalArrangement = Arrangement.SpaceEvenly,
                         ) {
-                            Search(onSearch = { filter, everywhere ->
-                                println("search query: $filter")
-                                devViewModel.onEvent(DevEvent.Search(filter, everywhere))
-                            })
-                            Spacer(modifier = Modifier.height(16.dp))
-                            val stats =
-                                Statistics(LucindaApplication.repository.selectItems(LocalDate.now()))
-                            CategoryStatistics(stats)
-                            Spacer(modifier = Modifier.height(16.dp))
-                            //GetQuote()
-                            //RepositoryTest()
-                            //Spacer(modifier = Modifier.height(16.dp))
-                            /*                        StopWatchUsingService(onCommand = { action->
-                            println("command: $action")
-                            sendCommandToTimeService(action)
-                        })*/
-                            val mentalModule = LucindaApplication.mentalModule
-                            //MentalMeterTest(state = state.value)
-                            //Spacer(modifier = Modifier.height(8.dp))
-                            /*                        LucindaControls(state = MainState(), onEvent = { event ->
-                            Toast.makeText(applicationContext,event.toString(), Toast.LENGTH_LONG ).show()
-                        })*/
 
-                            /*                        BackupDataBase(onEventCopy = {
-                            println("copy database ")
-                            copyDatabase()
-                        })*/
-                            //Spacer(modifier = Modifier.height(16.dp))
-                            SetGeneratedToTemplateChildren(state = state.value, onEvent = { event ->
-                                devViewModel.onEvent(event)
+                            Spacer(modifier = Modifier.height(16.dp))
+                            StopWatchUsingService( onCommand = { action->
+                                println("command: $action")
+                                sendCommandToTimeService(action)
                             })
                             Spacer(modifier = Modifier.height(16.dp))
-                            /*                        ItemEditorDev(item = Item("i am item"), onEvent = { event->
-                            devViewModel.onEvent(event)
-                        })*/
-                            //Spacer(modifier = Modifier.height(16.dp))
-                            //DurationByCategory()
-                            //Spacer(modifier = Modifier.height(16.dp))
-                            Text(text = "main", fontSize = 24.sp, modifier = Modifier.clickable {
-                                startActivity(Intent(applicationContext, MainActivity::class.java))
-                            })
-                            Spacer(modifier = Modifier.height(16.dp))
-                            //Spacer(modifier = Modifier.height(16.dp))
-                            Text(text = "run test", fontSize = 24.sp,
-                                modifier = Modifier.clickable {
-                                    runCode()
-                                })
-                            Spacer(modifier = Modifier.height(16.dp))
-
-                            //Spacer(modifier = Modifier.height(16.dp))
-                            //MentalMeter()
-                            //Spacer(modifier = Modifier.height(16.dp))
-                            /*                        CountDownTimerService(duration = 30, onCommand = {
-                            println("command: $it")
-                            sendCommandToTimeService(it)
-                        })*/
-                            /*                        Spacer(modifier = Modifier.height(16.dp))
-                        GetNumberOfChildren()*/
-                            /*                        Spacer(modifier = Modifier.height(16.dp))
-                        CreateItemTree(onEvent = { event->
-                            devViewModel.onEvent(event)
-                        })*/
-                            //Spacer(modifier = Modifier.height(16.dp))
-                            //SystemInfoList(state = state.value)
+                            CountDownTimerService(15, onCommand ={ command, duration->
+                                sendCommandToTimeService(command, duration)
+                            } )
                         }
                     }
                 }
@@ -231,6 +166,16 @@ class DevActivity : AppCompatActivity() {
         println("DevActivity.sendCommandToService $command")
         Intent( this, TimerService::class.java).also {
             it.action = command
+            this.startService(it)
+        }
+    }
+    private fun sendCommandToTimeService(command: String, duration: Long){
+        println("DevActivity.sendCommandToService $command")
+        Intent( this, TimerService::class.java).also {
+            it.action = command
+            if(command == TimeServiceConstants.ACTION_START_COUNTDOWN_TIMER){
+                it.putExtra("COUNTDOWN_DURATION", duration)
+            }
             this.startService(it)
         }
     }

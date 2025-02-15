@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.screens.appointments.AppointmentEvent
-import se.curtrune.lucy.screens.util.Converter
+import se.curtrune.lucy.util.Converter
 
 
 @Composable

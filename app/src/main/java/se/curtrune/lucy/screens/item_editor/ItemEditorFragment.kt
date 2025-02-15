@@ -64,7 +64,7 @@ import se.curtrune.lucy.item_settings.ItemSettingAdapter
 import se.curtrune.lucy.persist.ItemsWorker
 import se.curtrune.lucy.screens.item_editor.composables.ItemEditorDev
 import se.curtrune.lucy.screens.main.MainViewModel
-import se.curtrune.lucy.screens.util.Converter
+import se.curtrune.lucy.util.Converter
 import se.curtrune.lucy.util.Constants
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.workers.NotificationsWorker

@@ -20,6 +20,7 @@ import se.curtrune.lucy.app.User
 import se.curtrune.lucy.classes.Affirmation
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.Mental
+import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
 import se.curtrune.lucy.screens.affirmations.AffirmationWorker
 import se.curtrune.lucy.screens.affirmations.AffirmationWorker.RequestAffirmationCallback
 import se.curtrune.lucy.screens.affirmations.RetrofitInstance
@@ -92,6 +93,15 @@ class MainViewModel : ViewModel() {
                 println("show panic")
                 showPanicDialog()
             }
+        }
+    }
+    fun onEvent(event: TopAppBarEvent){
+        when(event){
+            TopAppBarEvent.DayCalendar -> {}
+            TopAppBarEvent.Menu -> {}
+            TopAppBarEvent.OnBoost -> { requestQuote()}
+            TopAppBarEvent.OnPanic -> {showPanicDialog()}
+            is TopAppBarEvent.OnSearch -> {}
         }
     }
 

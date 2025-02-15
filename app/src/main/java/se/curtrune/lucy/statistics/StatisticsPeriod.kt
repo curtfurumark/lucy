@@ -10,4 +10,9 @@ class StatisticsPeriod(val from: LocalDate,val  to: LocalDate) {
         val items = repository.selectItems(from, to)
         statistics = Statistics(items)
     }
+    companion object{
+        enum class Period{
+            DAY, WEEK, MONTH, YEAR
+        }
+    }
 }

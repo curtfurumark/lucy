@@ -19,6 +19,7 @@ import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.composables.Field
 import se.curtrune.lucy.composables.ItemFieldChooser
 import se.curtrune.lucy.composables.MentalMeter
+import se.curtrune.lucy.composables.MentalMeter4
 import se.curtrune.lucy.composables.MyDatePicker
 import se.curtrune.lucy.screens.mental.MentalEvent
 import se.curtrune.lucy.screens.mental.MentalState
@@ -47,10 +48,14 @@ fun MentalScreen(state: MentalState, onEvent: (MentalEvent)->Unit){
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
             println("lazy column")
             items(state.items){ item->
-                EditItemCard(item, onItemEdit = {
+                MentalMeter4(item = item, field =  currentField, onLevelChange = { level->
+                    println("onLevelChange $level")
+                })
+                Spacer(modifier = Modifier.height(4.dp))
+/*                EditItemCard(item, onItemEdit = {
                     println("item edited, ${it.heading}")
                     onEvent(MentalEvent.UpdateItem(it))
-                }, itemField = currentField)
+                }, itemField = currentField)*/
             }
         }
     }

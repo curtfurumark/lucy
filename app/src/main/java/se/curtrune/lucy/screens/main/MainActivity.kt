@@ -30,7 +30,6 @@ import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.app.FirstPage
 import se.curtrune.lucy.app.Settings.PanicAction
 import se.curtrune.lucy.app.User
-import se.curtrune.lucy.classes.Affirmation
 import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.dialogs.PanicActionDialog
 import se.curtrune.lucy.dialogs.UpdateDialog
@@ -51,7 +50,7 @@ import se.curtrune.lucy.screens.duration.DurationFragment
 import se.curtrune.lucy.screens.index20.IndexActivityKt
 import se.curtrune.lucy.screens.log_in.LogInActivity
 import se.curtrune.lucy.screens.main.composables.ChoosePanicActionDialog
-import se.curtrune.lucy.screens.main.composables.LucindaControls
+import se.curtrune.lucy.composables.top_app_bar.LucindaControls
 import se.curtrune.lucy.screens.main.composables.QuoteDialog
 import se.curtrune.lucy.screens.medicine.MedicineFragment
 import se.curtrune.lucy.screens.mental.MentalDateFragment

@@ -18,7 +18,7 @@ import java.util.Locale;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.State;
-import se.curtrune.lucy.screens.util.Converter;
+import se.curtrune.lucy.util.Converter;
 
 
 public class SequenceAdapter extends RecyclerView.Adapter<SequenceAdapter.ViewHolder>{

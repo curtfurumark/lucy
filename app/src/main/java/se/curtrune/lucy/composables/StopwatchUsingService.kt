@@ -19,19 +19,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import se.curtrune.lucy.services.ServiceConstants.ACTION_CANCEL_STOPWATCH
 import se.curtrune.lucy.services.ServiceConstants.ACTION_PAUSE_STOPWATCH
 import se.curtrune.lucy.services.ServiceConstants.ACTION_START_STOPWATCH
+import se.curtrune.lucy.services.TimerService
 
 
 @Composable
-fun StopWatchUsingService(onCommand: (String)->Unit) {
+fun StopWatchUsingService( onCommand: (String)->Unit) {
     var currentSeconds by remember {
         mutableLongStateOf(0L)
     }
-    //StopWatchService.currentDuration.observe(androidx.lifecycle.compose.LocalLifecycleOwner.current) {
-     //   currentSeconds = it
-    //}
+
+    TimerService.currentDuration.observe(LocalLifecycleOwner.current) {
+        currentSeconds = it
+    }
     var buttonText by remember {
         mutableStateOf("start")
     }
@@ -43,7 +46,6 @@ fun StopWatchUsingService(onCommand: (String)->Unit) {
     var isPaused by remember {
         mutableStateOf(false)
     }
-    //var context = LocalContext.current
 
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.fillMaxWidth(),

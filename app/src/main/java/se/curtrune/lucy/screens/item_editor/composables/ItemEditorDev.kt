@@ -30,7 +30,7 @@ import se.curtrune.lucy.app.Settings
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.screens.item_editor.ItemEvent
-import se.curtrune.lucy.screens.util.Converter
+import se.curtrune.lucy.util.Converter
 
 
 @Composable

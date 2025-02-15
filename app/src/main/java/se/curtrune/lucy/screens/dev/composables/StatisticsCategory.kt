@@ -16,8 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.classes.Item
-import se.curtrune.lucy.screens.util.Converter
-import se.curtrune.lucy.statistics.Statistics
+import se.curtrune.lucy.util.Converter
+import se.curtrune.lucy.util.DateTImeFormatter
 
 @Composable
 fun StatisticsCategory(modifier: Modifier = Modifier, heading: String, items: List<Item>) {
@@ -28,11 +28,11 @@ fun StatisticsCategory(modifier: Modifier = Modifier, heading: String, items: Li
         modifier = Modifier.clickable {
             itemsVisible = !itemsVisible
         })
-    Text(text = "duration: ${Converter.formatSecondsWithHours(items.sumOf { item -> item.duration })}")
+    Text(text = DateTImeFormatter.formatSeconds(items.sumOf { item -> item.duration }))
     AnimatedVisibility(visible =  itemsVisible) {
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
             items.forEach { item->
-                Text(text = "${item.heading} ${Converter.formatSecondsWithHours(item.duration)}",
+                Text(text = "${item.heading} ${DateTImeFormatter.formatSeconds(item.duration)}",
                     modifier = Modifier.padding(start = 16.dp))
             }
         }

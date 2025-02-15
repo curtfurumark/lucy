@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.update
 import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.Type
+import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
 import se.curtrune.lucy.persist.LocalDB
 import se.curtrune.lucy.screens.dev.test_cases.LocalDBTest
 import se.curtrune.lucy.screens.item_editor.ItemEvent
@@ -26,6 +27,9 @@ class DevActivityViewModel : ViewModel() {
         _state.value.systemInfoList = LucindaApplication.systemInfoModule.systemInfo
         println("...number of sys infos: ${_state.value.systemInfoList.size}")
         _state.value.mental = LucindaApplication.mentalModule.current.value
+    }
+    private fun dayCalendar(){
+        println("day calendar")
     }
 
     private fun getChildren(parent: Item){
@@ -59,6 +63,10 @@ class DevActivityViewModel : ViewModel() {
             db.getColumns("items")
         }
     }
+    private fun onBoost(){
+        println("onBoost()")
+
+    }
     fun onEvent(event: DevEvent){
         println("...onEvent(${event.toString()})")
         when(event){
@@ -79,6 +87,20 @@ class DevActivityViewModel : ViewModel() {
             is ItemEvent.GetItem -> {getItem(event.id)}
             is ItemEvent.GetChildrenType -> {getChildrenType(event.parent, event.type)}
         }
+    }
+    fun onEvent(event: TopAppBarEvent){
+        when(event){
+            TopAppBarEvent.OnBoost -> { onBoost()}
+            TopAppBarEvent.OnPanic -> { onPanic()}
+            is TopAppBarEvent.OnSearch -> {search(event.filter)}
+            TopAppBarEvent.DayCalendar -> {dayCalendar()}
+            TopAppBarEvent.Menu -> {}
+        }
+
+    }
+    private fun onPanic(){
+        println("onPanic()")
+
     }
     private fun resetLucinda(){
         println("resetLucinda()")

@@ -32,7 +32,7 @@ import java.time.Duration
 
 @Composable
 fun TimeText(seconds: Long, fontSize: TextUnit){
-    var timerText = formatSeconds(seconds)
+    val timerText = formatSeconds(seconds)
     Text(
         text = timerText,
         fontSize = fontSize

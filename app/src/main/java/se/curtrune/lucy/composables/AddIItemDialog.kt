@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import se.curtrune.lucy.activities.kotlin.composables.ItemSettings
 import se.curtrune.lucy.classes.Item
-import se.curtrune.lucy.screens.util.Converter
+import se.curtrune.lucy.util.Converter
 import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)

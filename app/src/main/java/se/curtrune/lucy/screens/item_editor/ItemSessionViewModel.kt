@@ -15,7 +15,7 @@ import se.curtrune.lucy.item_settings.CheckBoxSetting
 import se.curtrune.lucy.item_settings.ItemSetting
 import se.curtrune.lucy.item_settings.KeyValueSetting
 import se.curtrune.lucy.persist.ItemsWorker
-import se.curtrune.lucy.screens.util.Converter
+import se.curtrune.lucy.util.Converter
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.workers.NotificationsWorker
 

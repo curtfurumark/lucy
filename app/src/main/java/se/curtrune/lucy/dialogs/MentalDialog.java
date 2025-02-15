@@ -34,7 +34,7 @@ import se.curtrune.lucy.app.User;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.util.Constants;
-import se.curtrune.lucy.screens.util.Converter;
+import se.curtrune.lucy.util.Converter;
 
 
 public class MentalDialog extends BottomSheetDialogFragment {

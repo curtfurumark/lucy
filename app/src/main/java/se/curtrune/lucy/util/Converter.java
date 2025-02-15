@@ -1,4 +1,4 @@
-package se.curtrune.lucy.screens.util;
+package se.curtrune.lucy.util;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -39,15 +39,18 @@ public class Converter {
         return LocalTime.ofSecondOfDay(secondOfDay).format(DateTimeFormatter.ofPattern(TIME_FORMAT_PATTERN));
     }
 
+    @Deprecated
     public static String format(LocalDate date){
         return date.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN));
     }
     public static String formatShort(LocalDate date){
         return date.format(DateTimeFormatter.ofPattern(DATE_FORMAT_SHORT_PATTERN));
     }
+    @Deprecated
     public static String format(LocalTime time){
         return time.format(DateTimeFormatter.ofPattern(TIME_FORMAT_PATTERN));
     }
+    @Deprecated
     public static String format(LocalDateTime dateTime) {
         if (dateTime == null) {
             return "";

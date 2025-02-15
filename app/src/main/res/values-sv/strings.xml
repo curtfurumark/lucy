@@ -187,6 +187,8 @@
     <string name="one_week">En vecka</string>
     <string name="one_month">En månad</string>
     <string name="postpone_dialog_heading">Skjut upp: %1$s</string>
+    <string name="from">Från: %1$s</string>
+    <string name="to">Till: %1$s</string>
 
 
 </resources>
