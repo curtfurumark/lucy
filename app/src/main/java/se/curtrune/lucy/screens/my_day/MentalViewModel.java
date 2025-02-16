@@ -1,4 +1,4 @@
-package se.curtrune.lucy.screens.mental;
+package se.curtrune.lucy.screens.my_day;
 
 import androidx.lifecycle.ViewModel;
 

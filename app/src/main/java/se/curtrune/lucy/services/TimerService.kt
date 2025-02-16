@@ -7,16 +7,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import se.curtrune.lucy.services.ServiceConstants.ACTION_START_STOPWATCH
-import se.curtrune.lucy.services.TimeServiceConstants.ACTION_CANCEL_COUNTDOWN_TIMER
-import se.curtrune.lucy.services.TimeServiceConstants.ACTION_CANCEL_STOPWATCH
-import se.curtrune.lucy.services.TimeServiceConstants.ACTION_PAUSE_COUNTDOWN_TIMER
-import se.curtrune.lucy.services.TimeServiceConstants.ACTION_PAUSE_STOPWATCH
-import se.curtrune.lucy.services.TimeServiceConstants.ACTION_RESUME_COUNTDOWN_TIMER
-import se.curtrune.lucy.services.TimeServiceConstants.ACTION_START_COUNTDOWN_TIMER
-import se.curtrune.lucy.services.TimeServiceConstants.ACTION_START_OR_RESUME_STOPWATCH
+
+//import se.curtrune.lucy.services.TimeServiceConstants.ACTION_START_OR_RESUME_STOPWATCH
 
 class TimerService: LifecycleService() {
+
     private var stopwatchRunning = false
     private var countdownRunning = false
     private var seconds: Long = 0
@@ -47,6 +42,10 @@ class TimerService: LifecycleService() {
 
                 }
                 ACTION_START_STOPWATCH->{
+                    if(stopwatchRunning){
+                        println("dont try to start two timers returning -1")
+                        return -1
+                    }
                     println("TimerService.ACTION_START_STOPWATCH")
                     stopwatchRunning = true
                     startStopWatch()
@@ -96,6 +95,15 @@ class TimerService: LifecycleService() {
 
     }
     companion object{
+        const val ACTION_START_COUNTDOWN_TIMER = "ACTION_START_COUNTDOWN_TIMER"
+        const val ACTION_PAUSE_COUNTDOWN_TIMER = "ACTION_PAUSE_COUNTDOWN_TIMER"
+        const val ACTION_RESUME_COUNTDOWN_TIMER = "ACTION_RESUME_COUNTDOWN_TIMER"
+        const val ACTION_CANCEL_COUNTDOWN_TIMER = "ACTION_CANCEL_COUNTDOWN_TIMER"
+        const val ACTION_START_STOPWATCH = "ACTION_START_STOPWATCH"
+        const val ACTION_RESUME_STOPWATCH = "ACTION_RESUME_STOPWATCH"
+        const val ACTION_START_OR_RESUME_STOPWATCH = "ACTION_START_OR_RESUME_STOPWATCH"
+        const val ACTION_PAUSE_STOPWATCH = "ACTION_PAUSE_STOPWATCH"
+        const val ACTION_CANCEL_STOPWATCH = "ACTION_CANCEL_STOPWATCH"
         val currentDuration = MutableLiveData<Long>(0)
         val timeRemaining = MutableLiveData<Long>(0)
         val countdownDone = MutableLiveData<Boolean>(false)

@@ -37,7 +37,7 @@ fun ItemFieldChooser(onFieldChosen: (Field)->Unit){
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically){
         Field.entries.forEach {
-            println("entry: ${it.name}")
+            //println("entry: ${it.name}")
             RadioButton(onClick = {
                 onFieldChosen(it)
                 selectedField = it

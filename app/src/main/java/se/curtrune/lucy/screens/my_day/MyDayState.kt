@@ -1,10 +1,10 @@
-package se.curtrune.lucy.screens.mental
+package se.curtrune.lucy.screens.my_day
 
 import se.curtrune.lucy.composables.Field
 import se.curtrune.lucy.classes.Item
 import java.time.LocalDate
 
-data class MentalState(
+data class MyDayState(
     val items: List<Item> = emptyList(),
     val currentField: Field = Field.ENERGY,
     val allDay: Boolean = false,

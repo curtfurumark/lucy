@@ -30,10 +30,6 @@
         android:id="@+id/navigationDrawer_medicines"
         android:title="@string/medicines"
         />
-    <!--group android:checkableBehavior="single"-->
-    <!--item
-        android:id="@+id/navigationDrawer_estimateFragment"
-        android:title="@string/estimate_today" /-->
     <item
         android:id="@+id/navigationDrawer_durationFragment"
         android:icon="@drawable/baseline_access_time_24"
@@ -41,9 +37,6 @@
     <item
         android:id="@+id/navigationDrawer_mentalFragment"
         android:title="@string/my_day" />
-    <!--item
-        android:id="@+id/navigationDrawer_topTen"
-        android:title="@string/top_ten" /-->
     <item
         android:id="@+id/bottomNavigation_enchilada"
         android:icon="@drawable/baseline_checklist_24"
@@ -52,7 +45,7 @@
         android:id="@+id/navigationDrawer_graphFragment"
         android:title="@string/graph_today" />
     <item
-        android:id="@+id/navigationDrawer_mentalHistoryFragment"
+        android:id="@+id/navigationDrawer_mentalStatsFragment"
         android:title="@string/mental_history" />
     <!--/group-->
     <item

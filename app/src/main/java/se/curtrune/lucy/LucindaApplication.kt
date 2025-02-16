@@ -6,6 +6,7 @@ import se.curtrune.lucy.modules.MentalModule
 import se.curtrune.lucy.modules.SystemInfoModule
 import se.curtrune.lucy.persist.LocalDB
 import se.curtrune.lucy.modules.Repository
+import se.curtrune.lucy.modules.TimeModule
 import se.curtrune.lucy.statistics.Statistics
 import java.time.LocalDate
 
@@ -17,10 +18,12 @@ class LucindaApplication: Application() {
         lateinit var repository: Repository
         lateinit var statistics: Statistics
         lateinit var settings: Settings
+        lateinit var timeModule: TimeModule
     }
 
     override fun onCreate() {
         super.onCreate()
+        timeModule = TimeModule(this)
         mentalModule = MentalModule(this)
         localDB = LocalDB(this)
         systemInfoModule = SystemInfoModule(this)

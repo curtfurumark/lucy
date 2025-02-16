@@ -60,7 +60,7 @@ import se.curtrune.lucy.screens.main.MainActivity
 import se.curtrune.lucy.screens.main.MainState
 import se.curtrune.lucy.composables.top_app_bar.LucindaControls
 import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
-import se.curtrune.lucy.services.ServiceConstants
+import se.curtrune.lucy.modules.TimeModule
 import se.curtrune.lucy.services.TimeServiceConstants
 import se.curtrune.lucy.services.TimerService
 import se.curtrune.lucy.util.Logger
@@ -163,17 +163,19 @@ class DevActivity : AppCompatActivity() {
         }
     }
     private fun sendCommandToTimeService(command: String){
+        val timeModule = LucindaApplication.timeModule
         println("DevActivity.sendCommandToService $command")
-        Intent( this, TimerService::class.java).also {
+        timeModule.sendCommand(command)
+/*        Intent( this, TimerService::class.java).also {
             it.action = command
             this.startService(it)
-        }
+        }*/
     }
     private fun sendCommandToTimeService(command: String, duration: Long){
         println("DevActivity.sendCommandToService $command")
         Intent( this, TimerService::class.java).also {
             it.action = command
-            if(command == TimeServiceConstants.ACTION_START_COUNTDOWN_TIMER){
+            if(command == TimerService.ACTION_START_COUNTDOWN_TIMER){
                 it.putExtra("COUNTDOWN_DURATION", duration)
             }
             this.startService(it)

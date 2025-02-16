@@ -3,7 +3,9 @@ package se.curtrune.lucy.screens.item_editor
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -15,6 +17,7 @@ import se.curtrune.lucy.item_settings.CheckBoxSetting
 import se.curtrune.lucy.item_settings.ItemSetting
 import se.curtrune.lucy.item_settings.KeyValueSetting
 import se.curtrune.lucy.persist.ItemsWorker
+import se.curtrune.lucy.services.TimerService
 import se.curtrune.lucy.util.Converter
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.workers.NotificationsWorker
@@ -25,6 +28,7 @@ class ItemSessionViewModel : ViewModel() {
     private var timerRunning = false
     private var elapsedTime = 0L
     private val repository = LucindaApplication.repository
+    private val timeModule = LucindaApplication.timeModule
     private val mutableTimerState = MutableLiveData<TimerState>()
     private val mutableDuration = MutableLiveData<Long>()
     private val mutableError = MutableLiveData<String>()
@@ -183,10 +187,10 @@ class ItemSessionViewModel : ViewModel() {
     infix fun onEvent(event: ItemEvent){
         when(event){
             is ItemEvent.Update -> { update(event.item) }
-            ItemEvent.CancelTimer -> {cancelTimer()}
-            ItemEvent.PauseTimer -> {pauseTimer()}
-            ItemEvent.StartTimer -> {startTimer()}
-            ItemEvent.ResumeTimer -> {resumeTimer()}
+            is ItemEvent.CancelTimer -> {cancelTimer()}
+            is ItemEvent.PauseTimer -> {pauseTimer()}
+            is ItemEvent.StartTimer -> {startTimer()}
+            is ItemEvent.ResumeTimer -> {resumeTimer()}
             is ItemEvent.Delete -> { println("delete not implemented at this stage")}
             is ItemEvent.GetChildren -> {}
             is ItemEvent.GetItem -> {}
@@ -196,7 +200,8 @@ class ItemSessionViewModel : ViewModel() {
 
     private fun pauseTimer() {
         println("ItemSessionViewModel.pauseTimer()")
-        timerRunning = false
+        //timerRunning = false
+        timeModule.pauseTimer()
         mutableTimerState.value = TimerState.PAUSED
     }
 
@@ -214,13 +219,20 @@ class ItemSessionViewModel : ViewModel() {
 
     private fun startTimer() {
         Logger.log("ItemSessionViewModel.startTimer()")
-        currentTimerItem = currentItem
+        timeModule.startTimer(0)
+        mutableTimerState.value = TimerState.RUNNING
+        TimerService.currentDuration.observeForever { seconds->
+            println("observing forever and ever $seconds")
+            mutableDuration.value = seconds
+        }
+
+/*        currentTimerItem = currentItem
         timerRunning = true
         if(mutableTimerState.value == TimerState.PENDING){
             elapsedTime = 0
         }
         mutableTimerState.value = TimerState.RUNNING
-        runTimer()
+        runTimer()*/
     }
 
     private fun update(item: Item): Boolean {

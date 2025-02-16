@@ -13,7 +13,6 @@ import se.curtrune.lucy.classes.Message;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.classes.calender.Week;
-import se.curtrune.lucy.screens.top_ten.TopTenFragment;
 
 public class Queeries {
 
@@ -182,14 +181,7 @@ public class Queeries {
         return String.format(Locale.ENGLISH, "SELECT * FROM items WHERE type = %d ORDER BY updated", type.ordinal());
     }
 
-    public static String selectMentals() {
-        return "SELECT * FROM mental ORDER  BY created DESC";
-    }
 
-
-    public static String selectLatestMentals(int limit) {
-        return String.format(Locale.getDefault(), "SELECT * FROM mental ORDER BY updated LIMIT %d", limit);
-    }
 
     public static String selectItem(long id) {
         return String.format(Locale.getDefault(), "SELECT  *  FROM items WHERE id = %d", id);
@@ -211,47 +203,14 @@ public class Queeries {
                 state.ordinal(), firstDate.toEpochDay(), lastDate.toEpochDay());
     }
 
-    public static String selectMental(Item item) {
-        return String.format(Locale.getDefault(), "SELECT * FROM mental WHERE itemID = %d", item.getID());
-    }
 
-    public static String selectMentals(LocalDate firstDate, LocalDate lastDate, boolean includeTemplates, boolean isDone) {
-        return String.format(Locale.getDefault(), "SELECT * FROM mental WHERE date >= %d AND date <= %d AND isDone = 1 ORDER BY date DESC",
-                firstDate.toEpochDay(),
-                lastDate.toEpochDay());
-        //includeTemplates ? 1: 0);
-    }
 
-    public static String selectTopTen() {
-        return "SELECT * FROM mental ORDER BY energy DESC LIMIT 10";
-    }
-
-    public static String selectMentalTopTen(TopTenFragment.Mode mode) {
-        return String.format("SELECT * FROM mental ORDER BY %s DESC LIMIT 10", mode.toString().toLowerCase());
-    }
 
     public static String selectChildren(long id) {
         return String.format(Locale.getDefault(), "SELECT * FROM items WHERE parentID = %d", id);
     }
 
-    /**
-     * returns a sql queery, which selects all mentals of said date, done or not
-     *
-     * @param date,       the date which is of interest
-     * @param isTemplate, not in use, remove ? TODO
-     * @param isDone,     set to true to get only those which are done the requested date
-     * @return
-     */
-    public static String selectMentals(LocalDate date, boolean isTemplate, boolean isDone) {
-        return String.format(Locale.getDefault(), "SELECT * FROM mental WHERE date = %d   AND  isDone = %d ORDER BY date DESC",
-                date.toEpochDay(), 1);
-    }
 
-
-    public static String selectMentalsFromItem(LocalDate firstDate, LocalDate lastDate) {
-        return String.format(Locale.getDefault(), "SELECT mental FROM items WHERE date >= %d AND date <= %d ORDER BY date DESC",
-                firstDate.toEpochDay(), lastDate.toEpochDay());
-    }
 
     public static String selectMentalsFromItems(LocalDate date, State state) {
         log("...selectMentalsFromItems(LocalDate");

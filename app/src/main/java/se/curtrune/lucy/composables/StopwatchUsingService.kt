@@ -20,10 +20,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import se.curtrune.lucy.services.ServiceConstants.ACTION_CANCEL_STOPWATCH
-import se.curtrune.lucy.services.ServiceConstants.ACTION_PAUSE_STOPWATCH
-import se.curtrune.lucy.services.ServiceConstants.ACTION_START_STOPWATCH
 import se.curtrune.lucy.services.TimerService
+import se.curtrune.lucy.services.TimerService.Companion.ACTION_CANCEL_STOPWATCH
+import se.curtrune.lucy.services.TimerService.Companion.ACTION_PAUSE_STOPWATCH
+import se.curtrune.lucy.services.TimerService.Companion.ACTION_START_STOPWATCH
 
 
 @Composable

@@ -16,10 +16,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import se.curtrune.lucy.services.TimeServiceConstants
 import se.curtrune.lucy.services.TimerService
+import se.curtrune.lucy.services.TimerService.Companion.ACTION_PAUSE_COUNTDOWN_TIMER
+import se.curtrune.lucy.services.TimerService.Companion.ACTION_START_COUNTDOWN_TIMER
 
 @Composable
 fun CountDownTimerService(duration: Long, onCommand: (String, Long)->Unit){
@@ -57,14 +57,14 @@ fun CountDownTimerService(duration: Long, onCommand: (String, Long)->Unit){
                 Button(onClick = {
                     if( !isRunning && !isCounting){
                         //onCommand(TimerService)
-                        onCommand(TimeServiceConstants.ACTION_START_COUNTDOWN_TIMER, duration)
+                        onCommand(ACTION_START_COUNTDOWN_TIMER, duration)
                         buttonText = "pause"
                         isRunning  = true
                         isCounting = true
                     }
                     else if( isRunning && isCounting){
                         buttonText = "resume"
-                        onCommand(TimeServiceConstants.ACTION_PAUSE_COUNTDOWN_TIMER, 0)
+                        onCommand(ACTION_PAUSE_COUNTDOWN_TIMER, 0)
                     }
                     //onCommand(if( isRunning) "pause" el "start")
                     //isRunning = !isRunning
@@ -73,7 +73,7 @@ fun CountDownTimerService(duration: Long, onCommand: (String, Long)->Unit){
                     Text(text = buttonText)
                 }
                 Button(onClick = {
-                    onCommand(TimeServiceConstants.ACTION_PAUSE_COUNTDOWN_TIMER, 0)
+                    onCommand(ACTION_PAUSE_COUNTDOWN_TIMER, 0)
                 }) {
                     Text(text = "cancel")
                 }

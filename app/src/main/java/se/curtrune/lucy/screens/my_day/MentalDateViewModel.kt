@@ -1,18 +1,13 @@
-package se.curtrune.lucy.screens.mental
+package se.curtrune.lucy.screens.my_day
 
-import android.content.Context
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.classes.Item
-import se.curtrune.lucy.classes.State
+import se.curtrune.lucy.composables.Field
 import se.curtrune.lucy.util.Logger
-import se.curtrune.lucy.persist.ItemsWorker
 import java.time.LocalDate
 
 class MentalDateViewModel() : ViewModel() {
@@ -24,7 +19,7 @@ class MentalDateViewModel() : ViewModel() {
     //var items: LiveData<List<Item>> = liveData {mutableItems  }
     private var filteredItems: List<Item> = emptyList()
     //var mutableAllDay = MutableLiveData<Boolean>(true)
-    private var _state = MutableStateFlow(MentalState())
+    private var _state = MutableStateFlow(MyDayState())
     var state = _state.asStateFlow()
     init{
         println("init MentalDateViewModel(Context)")
@@ -35,21 +30,23 @@ class MentalDateViewModel() : ViewModel() {
         //items.sort(Comparator.comparingLong { obj: Item -> obj.compareTargetTime() })
         setAllDay(_state.value.allDay)
     }
-    fun onEvent(event: MentalEvent){
+    fun onEvent(event: MyDateEvent){
         println("MentalDateViewModel.onEvent(MentalEvent)")
         when(event){
-            is MentalEvent.SetDate -> {
-
+            is MyDateEvent.Date -> {
+                setDate(event.date)
             }
-            is MentalEvent.SetEditField -> TODO()
-            is MentalEvent.UpdateItem -> {
+            is MyDateEvent.SetEditField -> TODO()
+            is MyDateEvent.UpdateItem -> {
                 updateItem(event.item)
             }
 
-            is MentalEvent.AllDay -> { setAllDay(event.allDay)}
-            is MentalEvent.ShowDatePicker ->  {
+            is MyDateEvent.AllDay -> { setAllDay(event.allDay)}
+            is MyDateEvent.ShowDatePicker ->  {
                 println("show date picker")
             }
+
+            is MyDateEvent.Field -> { setField(event.field)}
         }
 
     }
@@ -59,6 +56,13 @@ class MentalDateViewModel() : ViewModel() {
             items = repository.selectItems(date),
             date = date
         ) }
+    }
+    private fun setField(field: Field){
+        println("setField(${field.name})")
+        _state.update { it.copy(
+            currentField = field
+        ) }
+
     }
     private fun updateItem(item: Item){
         println("....updateItem(Item)")

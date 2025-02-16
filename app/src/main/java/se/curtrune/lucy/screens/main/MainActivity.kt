@@ -34,8 +34,6 @@ import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.dialogs.PanicActionDialog
 import se.curtrune.lucy.dialogs.UpdateDialog
 import se.curtrune.lucy.fragments.CustomizeFragment
-import se.curtrune.lucy.fragments.DailyGraphFragment
-import se.curtrune.lucy.fragments.MentaHistoryFragment
 import se.curtrune.lucy.fragments.SequenceFragment
 import se.curtrune.lucy.modules.MentalModule
 import se.curtrune.lucy.persist.ItemsWorker
@@ -53,7 +51,8 @@ import se.curtrune.lucy.screens.main.composables.ChoosePanicActionDialog
 import se.curtrune.lucy.composables.top_app_bar.LucindaControls
 import se.curtrune.lucy.screens.main.composables.QuoteDialog
 import se.curtrune.lucy.screens.medicine.MedicineFragment
-import se.curtrune.lucy.screens.mental.MentalDateFragment
+import se.curtrune.lucy.screens.mental_stats.MentalStatsFragment
+import se.curtrune.lucy.screens.my_day.MentalDateFragment
 import se.curtrune.lucy.screens.message_board.MessageBoardFragment
 import se.curtrune.lucy.screens.monthcalendar.MonthFragment
 import se.curtrune.lucy.screens.projects.ProjectsFragment
@@ -115,9 +114,9 @@ class MainActivity : AppCompatActivity() {
                     Objects.requireNonNull(item.title).toString()
                 )
                 when (item.itemId) {
-                    R.id.navigationDrawer_graphFragment -> {
+/*                    R.id.navigationDrawer_graphFragment -> {
                         navigate(DailyGraphFragment())
-                    }
+                    }*/
                     R.id.navigationDrawer_monthCalender -> {
                         navigate(MonthFragment())
                     }
@@ -166,8 +165,8 @@ class MainActivity : AppCompatActivity() {
                     R.id.navigationDrawer_mentalFragment -> {
                         navigate(MentalDateFragment())
                     }
-                    R.id.navigationDrawer_mentalHistoryFragment -> {
-                        navigate(MentaHistoryFragment())
+                    R.id.navigationDrawer_mentalStatsFragment -> {
+                        navigate(MentalStatsFragment())
                     }
                     R.id.navigationDrawer_contactsFragment -> {
                         navigate(ContactsFragment())
@@ -358,9 +357,6 @@ class MainActivity : AppCompatActivity() {
             Objects.requireNonNull(item.title).toString()
         )
         when (item.itemId) {
-            R.id.navigationDrawer_graphFragment -> {
-                navigate(DailyGraphFragment())
-            }
             R.id.mainActivity_dev -> {
                 startActivity(Intent(this, DevActivity::class.java))
             }

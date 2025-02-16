@@ -1,4 +1,4 @@
-package se.curtrune.lucy.screens.mental
+package se.curtrune.lucy.screens.my_day
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,7 +9,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.R
-import se.curtrune.lucy.screens.mental.composables.MentalScreen
+import se.curtrune.lucy.screens.my_day.composables.MentalScreen
 
 
 class MentalDateFragment : Fragment() {

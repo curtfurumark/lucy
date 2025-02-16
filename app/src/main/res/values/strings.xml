@@ -255,7 +255,7 @@
     <string name="one_hour">one hour</string>
     <string name="one_day">one day</string>
     <string name="one_week">one week</string>
-    <string name="one_month" >one month</string>
+    <string name="one_month">one month</string>
     <string name="postpone_dialog_heading">postpone: %1$s</string>
     <string name="from">from: %1$s</string>
     <string name="to">to: %1$s</string>
