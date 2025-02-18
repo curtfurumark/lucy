@@ -62,13 +62,13 @@ public class ItemStatisticsDialog extends BottomSheetDialogFragment {
     }
     private void initUserInterface(){
         log("...initUserInterface()");
-        String totalDuration = String.format(Locale.getDefault(), "total duration: %s", Converter.formatSecondsWithHours(itemStatistics.getDuration()));
-        String averageDuration = String.format(Locale.getDefault(), "average duration %s", Converter.formatSecondsWithHours(itemStatistics.getAverageDuration()));
-        String averageAnxiety = String.format(Locale.getDefault(), "average anxiety %.1f", itemStatistics.getAverageAnxiety());
-        String averageEnergy = String.format(Locale.getDefault(), "average energy %.1f", itemStatistics.getAverageEnergy());
-        String averageMood = String.format(Locale.getDefault(), "average mood %.1f", itemStatistics.getAverageMood());
-        String averageStress = String.format(Locale.getDefault(), "average stress %.1f", itemStatistics.getAverageStress());
-        String numberOfOccasions = String.format(Locale.getDefault(), "number of occasions %d", itemStatistics.getNumberOfItems());
+        String totalDuration = String.format(Locale.getDefault(), getString(R.string.total_duration_s), Converter.formatSecondsWithHours(itemStatistics.getDuration()));
+        String averageDuration = String.format(Locale.getDefault(), getString(R.string.average_duration_s), Converter.formatSecondsWithHours(itemStatistics.getAverageDuration()));
+        String averageAnxiety = String.format(Locale.getDefault(), getString(R.string.average_anxiety_1f), itemStatistics.getAverageAnxiety());
+        String averageEnergy = String.format(Locale.getDefault(), getString(R.string.average_energy_1f), itemStatistics.getAverageEnergy());
+        String averageMood = String.format(Locale.getDefault(), getString(R.string.average_mood_1f), itemStatistics.getAverageMood());
+        String averageStress = String.format(Locale.getDefault(), getString(R.string.average_stress_1f), itemStatistics.getAverageStress());
+        String numberOfOccasions = String.format(Locale.getDefault(), getString(R.string.number_of_occasions_d), itemStatistics.getNumberOfItems());
         textViewHeading.setText(itemStatistics.getHeading());
         textViewTotalDuration.setText(totalDuration);
         textViewAvgDuration.setText(averageDuration);

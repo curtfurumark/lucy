@@ -1,13 +1,11 @@
 package se.curtrune.lucy.util;
 
-import com.jjoe64.graphview.series.DataPoint;
 
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -38,16 +36,6 @@ public class Logger {
         log("\tminute", calendar.get(Calendar.MINUTE));
     }
 
-    /**
-     * precision 2 decimals
-     * @param dataPoint
-     */
-    public static void log(DataPoint dataPoint){
-        log("Logger.log(DataPoint)");
-        log(String.format(Locale.getDefault(), "x: %.2f, y: %.2f", dataPoint.getX(), dataPoint.getY()));
-
-
-    }
 
     public static void log(DateHourCell dateHourCell){
         log("log(DateHourCell)");
@@ -278,14 +266,6 @@ public class Logger {
         log("...getUserInfo", url.getUserInfo());
         log("...getAuthority", url.getAuthority());
         log("...toExternalForm", url.toExternalForm());
-    }
-    public static void logDateHourCells(List<DateHourCell> dateHourCells){
-        assert dateHourCells != null;
-        log("Logger.logDateHourCells(List<DateHourCell>)");
-        for(int i = 0; i < dateHourCells.size(); i++){
-            String str = String.format(Locale.getDefault(),"%d %s", i, dateHourCells.get(i).toString() );
-            log(str);
-        }
     }
 
     public static void log(Contact contact) {

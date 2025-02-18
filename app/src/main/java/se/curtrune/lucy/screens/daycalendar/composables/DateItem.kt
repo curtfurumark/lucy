@@ -28,8 +28,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.composables.TimePickerDialog
 import se.curtrune.lucy.classes.Item
-import se.curtrune.lucy.screens.daycalendar.DateEvent
+import se.curtrune.lucy.screens.daycalendar.DayEvent
 import se.curtrune.lucy.screens.medicine.composable.DropdownItem
+import se.curtrune.lucy.util.DateTImeFormatter
 import java.time.LocalTime
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -37,7 +38,7 @@ import java.time.LocalTime
 fun DateItem(
     modifier: Modifier,
     item: Item,
-    onEvent: (DateEvent)->Unit){
+    onEvent: (DayEvent)->Unit){
     var isDone by remember {
         mutableStateOf(item.isDone)
     }
@@ -65,7 +66,7 @@ fun DateItem(
             onConfirm ={ timePickerState ->
                 targetTime = LocalTime.of(timePickerState.hour , timePickerState.minute)
                 item.targetTime = targetTime
-                onEvent(DateEvent.UpdateItem(item))
+                onEvent(DayEvent.UpdateItem(item))
                 showTimePicker = false
             } )
     }
@@ -80,9 +81,9 @@ fun DateItem(
                     onTap = {
                         println("on tap, i am item ${item.heading}")
                         if( item.hasChild()) {
-                            onEvent(DateEvent.ShowChildren(item))
+                            onEvent(DayEvent.ShowChildren(item))
                         }else{
-                            onEvent(DateEvent.EditItem(item))
+                            onEvent(DayEvent.EditItem(item))
                         }
                     }
                 )
@@ -93,27 +94,17 @@ fun DateItem(
     ){
         Row(
             verticalAlignment = Alignment.CenterVertically,
-/*            modifier = Modifier.combinedClickable(
-                onLongClick = {
-                    println(" on item card long click ${item.heading}")
-                    showContextMenu = true
-                },
-                onClick = {
-                    println(" on item item  click ${item.heading}")
-                    onEvent(DateEvent.EditItem(item))
-                }
-            )*/
+
                 modifier = Modifier.fillMaxWidth()
         ) {
             Checkbox(checked = isDone, onCheckedChange = {
                 isDone = !isDone
                 item.setIsDone(isDone)
-                onEvent(DateEvent.UpdateItem(item))
+                onEvent(DayEvent.UpdateItem(item))
             })
-            Text(text = item.targetTime.toString(), fontSize = 18.sp, modifier = Modifier.padding(end = 8.dp).clickable {
+            Text(text = DateTImeFormatter.format(item.targetTime), fontSize = 18.sp, modifier = Modifier.padding(end = 8.dp).clickable {
                 println(" on targetTimeClick")
                 showTimePicker = true
-                //onEvent(DateEvent.EditTime(item))
             })
             Text(text = item.heading, fontSize = 18.sp)
             Spacer(modifier = Modifier.weight(1f))
@@ -129,15 +120,24 @@ fun DateItem(
             onDismissRequest ={
                 showContextMenu = false
             } ) {
-            listOf(item.heading,"postpone", "delete", "start timer", "view stats").forEach {
+            listOf(item.heading,"postpone", "delete", "start timer", "view stats", "edit").forEach {
                 DropdownItem(it, onClick = { action->
                     println("action: $action")
                     when(action){
-                        "postpone"->{}
-                        "start timer"->{}
-                        "delete" ->{}
+                        "postpone"->{
+                            onEvent(DayEvent.ShowPostponeDialog(item))
+                        }
+                        "start timer"->{
+                            onEvent(DayEvent.StartTimer(item))
+                        }
+                        "delete" ->{
+                            onEvent(DayEvent.DeleteItem(item))
+                        }
                         "view stats" ->{
-                            onEvent(DateEvent.ShowStats(item))
+                            onEvent(DayEvent.ShowStats(item))
+                        }
+                        "edit" ->{
+                            onEvent(DayEvent.EditItem(item))
                         }
                     }
                     showContextMenu = false

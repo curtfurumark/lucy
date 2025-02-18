@@ -1,6 +1,5 @@
 package se.curtrune.lucy.screens.daycalendar.composables
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,24 +27,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import se.curtrune.lucy.classes.calender.Week
 import se.curtrune.lucy.composables.PostponeDialog
-import se.curtrune.lucy.composables.Search
-import se.curtrune.lucy.screens.daycalendar.DateEvent
+import se.curtrune.lucy.screens.daycalendar.DayEvent
 import se.curtrune.lucy.screens.daycalendar.DayCalendarState
 import java.time.LocalDate
 
 
 @Composable
-fun DayCalendar(state: DayCalendarState, onEvent: (DateEvent)->Unit){
+fun DayCalendar(state: DayCalendarState, onEvent: (DayEvent)->Unit){
     val context = LocalContext.current
     Column() {
-        Search(onSearch = { filter, everywhere ->
+/*        Search(onSearch = { filter, everywhere ->
             onEvent(DateEvent.Search(filter, everywhere))
-        })
-        val pagerState = rememberPagerState(pageCount = { 10 }, initialPage = 5)
+        })*/
+        val pagerState = rememberPagerState(pageCount = { state.numberWeeks }, initialPage = 5)
         HorizontalPager(state = pagerState) {
             pagerState.settledPage
+            onEvent(DayEvent.Week(pagerState.settledPage))
             DaysOfWeek(state = state, onEvent = { event ->
                 onEvent(event)
             })
@@ -58,17 +56,18 @@ fun DayCalendar(state: DayCalendarState, onEvent: (DateEvent)->Unit){
                 val swipeState = rememberSwipeToDismissBoxState(
                     confirmValueChange = {
                         if( it == SwipeToDismissBoxValue.EndToStart){
-                            onEvent(DateEvent.DeleteItem(item))
+                            onEvent(DayEvent.RequestDelete(item))
                             true
                         }else if (it == SwipeToDismissBoxValue.StartToEnd){
                             //onEvent(DateEvent.PostponeItem(state.items[index]))
-                            onEvent(DateEvent.ShowPostponeDialog(item))
+                            onEvent(DayEvent.ShowPostponeDialog(item))
                             true
                         }
                         false
                     }, positionalThreshold = {it * 0.25f}
                 )
                 SwipeToDismissBox(
+                    modifier = Modifier.animateItem(),
                     state = swipeState,
                     backgroundContent = {
                         SwipeBackground(state = swipeState)
@@ -88,11 +87,11 @@ fun DayCalendar(state: DayCalendarState, onEvent: (DateEvent)->Unit){
     if(state.showPostponeDialog){
         state.currentItem?.let {
             PostponeDialog(onDismiss = {
-                onEvent(DateEvent.HidePostponeDialog)
+                onEvent(DayEvent.HidePostponeDialog)
             }, onConfirm = { postponeInfo->
                 println("onConfirm postpone item ")
-                onEvent(DateEvent.HidePostponeDialog)
-                onEvent(DateEvent.Postpone(postponeInfo))
+                onEvent(DayEvent.HidePostponeDialog)
+                onEvent(DayEvent.Postpone(postponeInfo))
             },
                 item = it
             )

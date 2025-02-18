@@ -654,7 +654,7 @@ class ItemEditorFragment : Fragment {
     private fun toggleTimer() {
         println("...toggleTimer()")
         val state = itemSessionViewModel!!.timerState.value
-        Logger.log("...current timer state", state.toString())
+        println("...current timer state ${state.toString()}")
         when (state) {
             ItemSessionViewModel.TimerState.PENDING -> {
                 itemSessionViewModel!!.onEvent(ItemEvent.StartTimer)
@@ -668,7 +668,6 @@ class ItemEditorFragment : Fragment {
                 itemSessionViewModel!!.onEvent(ItemEvent.ResumeTimer)
                 buttonTimer!!.setText(R.string.ui_pause)
             }
-
             null -> {
                 println("timer state null, WTF")
             }

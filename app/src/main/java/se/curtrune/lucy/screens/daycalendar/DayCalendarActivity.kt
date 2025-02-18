@@ -58,7 +58,7 @@ class DayCalendarActivity : ComponentActivity() {
                                 onDismiss = {showAddItemDialog = false},
                                 onConfirm = {item ->
                                     showAddItemDialog = false
-                                    viewModel.onEvent(DateEvent.AddItem(item))
+                                    viewModel.onEvent(DayEvent.AddItem(item))
                                 },
                                 settings = ItemSettings(targetDate = state.value.date, targetTime = LocalTime.now())
                             )

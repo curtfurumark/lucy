@@ -20,7 +20,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.classes.Item
-import se.curtrune.lucy.screens.daycalendar.DateEvent
 import se.curtrune.lucy.screens.daycalendar.composables.SwipeBackground
 import se.curtrune.lucy.screens.todo.TodoEvent
 

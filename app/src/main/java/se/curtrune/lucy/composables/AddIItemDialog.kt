@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -24,16 +25,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.composables.ItemSettings
 import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.composables.top_app_bar.ItemSettingsEditor
 import se.curtrune.lucy.util.Converter
+import se.curtrune.lucy.util.DateTImeFormatter
+import java.time.LocalDate
 import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -89,7 +97,7 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSe
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = targetTime.toString(),
+                    text = DateTImeFormatter.format(targetTime),
                     fontSize = 24.sp,
                     modifier = Modifier.clickable {
                         showTimeDialog = true
@@ -97,33 +105,23 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSe
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = Converter.format(item.targetDate),
+                    text = DateTImeFormatter.format(targetDate),
                     fontSize = 24.sp,
                     modifier = Modifier.clickable {
                         showDateDialog = true
                     })
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = "is calendar item $isCalendarItem")
-                Spacer(modifier = Modifier.height(8.dp))
-                val scrollState = rememberScrollState()
-                Row(
-                    modifier = Modifier.fillMaxWidth()
-                        .horizontalScroll(scrollState)){
-                    val tmpList = listOf("repeat", "template", "color","category", "is calendar", "notification", "prioritized" )
-                    tmpList.forEach {
-                        Box(
-                            modifier = Modifier.border(Dp.Hairline, color = Color.LightGray)
-                                .padding(4.dp)
-                                .clickable {
-                                    println("on click")
-                                    Toast.makeText(context, it, Toast.LENGTH_LONG).show()
-                                }
-                        )
-                        {
-                            Text(text = it)
-                        }
-                    }
+                Row(modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Checkbox(checked = isCalendarItem, onCheckedChange = {
+                        isCalendarItem = !isCalendarItem
+                    })
+                    Text(text = stringResource(R.string.show_in_calendar))
                 }
+                Spacer(modifier = Modifier.height(8.dp))
+                //val scrollState = rememberScrollState()
+                ItemSettingsEditor(item = item)
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -158,4 +156,13 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSe
                 targetDate = it
         })
     }
+}
+
+@Composable
+@Preview
+fun PreviewAddItemDialog(){
+    val settings = ItemSettings()
+    settings.targetDate = LocalDate.now()
+    settings.targetTime = LocalTime.now()
+    AddItemDialog(onConfirm = {} , onDismiss = {}, settings = settings)
 }

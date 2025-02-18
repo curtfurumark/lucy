@@ -19,4 +19,7 @@ class TabStack(val date: LocalDate) {
     fun select(index: Int){
 
     }
+    fun size(): Int{
+        return stack.size
+    }
 }

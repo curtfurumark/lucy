@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,18 +16,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import se.curtrune.lucy.classes.calender.Week
-import se.curtrune.lucy.screens.daycalendar.DateEvent
+import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
+import se.curtrune.lucy.screens.daycalendar.DayEvent
 import se.curtrune.lucy.screens.daycalendar.DayCalendarState
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
 
 @Composable
-fun DayOfWeek(date: LocalDate, state: DayCalendarState, onEvent: (DateEvent) -> Unit) {
+fun DayOfWeek(date: LocalDate, state: DayCalendarState, onEvent: (DayEvent) -> Unit) {
     Column(
         modifier = Modifier
-            .clickable { onEvent(DateEvent.CurrentDate(date)) },
+            .clickable { onEvent(DayEvent.CurrentDate(date)) },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val color = if (date == state.date) Color.White else Color.Gray
@@ -43,21 +42,39 @@ fun DayOfWeek(date: LocalDate, state: DayCalendarState, onEvent: (DateEvent) -> 
 }
 
 @Composable
-fun DaysOfWeek(state: DayCalendarState, onEvent: (DateEvent)->Unit){
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween) {
-        var date = Week(state.date).firstDateOfWeek
-        for(i in 1..7){
-            Column(modifier = Modifier
-                .weight(1f)
-                .border(BorderStroke(Dp.Hairline, color = Color.DarkGray)),
-                horizontalAlignment = Alignment.CenterHorizontally) {
-                DayOfWeek(date,state,  onEvent = onEvent)
-                date = date.plusDays(1)
+fun DaysOfWeek(state: DayCalendarState, onEvent: (DayEvent)->Unit){
+    Column(modifier = Modifier.fillMaxWidth()) {
+        val header = "${state.date.month.getDisplayName(TextStyle.FULL_STANDALONE, Locale.getDefault())} v ${state.currentWeek.weekNumber}"
+        Row(modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center){
+            Text(text = header)
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            var date = state.currentWeek.firstDateOfWeek
+            for (i in 1..7) {
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .border(BorderStroke(Dp.Hairline, color = Color.DarkGray)),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    DayOfWeek(date, state, onEvent = onEvent)
+                    date = date.plusDays(1)
+                }
             }
         }
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun PreviewWeek(){
+    LucyTheme {
+        DaysOfWeek(state = DayCalendarState(), onEvent = {})
     }
 }

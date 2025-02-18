@@ -376,13 +376,9 @@ public class Item implements Serializable , Listable {
         this.heading = heading;
     }
 
-/*    public void setMental(Mental mental){
-        if(mental == null){
-            log("WARNING Item.setMental(MentalType) is null");
-        }
-        this.mental = mental;
-    }*/
-
+    public void setID(long id){
+        this.id = id;
+    }
     public void setNotification(Notification notification){
         this.notification = notification;
     }

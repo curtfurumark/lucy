@@ -189,6 +189,13 @@
     <string name="postpone_dialog_heading">Skjut upp: %1$s</string>
     <string name="from">Från: %1$s</string>
     <string name="to">Till: %1$s</string>
+    <string name="total_duration_s">Sammanlagd tid %1$s</string>
+    <string name="average_duration_s">Medelvärde tid %1$s</string>
+    <string name="average_anxiety_1f">Medelvärde ångest %1$.2f</string>
+    <string name="average_energy_1f">Medelvärde energi %1$.2f</string>
+    <string name="average_mood_1f">Medelvärde humör %1$.2f</string>
+    <string name="average_stress_1f">Medelvärd stress %1$.2f</string>
+    <string name="number_of_occasions_d">Antal gånger: %1$d</string>
 
 
 </resources>

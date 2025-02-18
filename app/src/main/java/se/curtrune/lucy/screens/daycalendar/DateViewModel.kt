@@ -1,21 +1,26 @@
 package se.curtrune.lucy.screens.daycalendar
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.composables.PostponeDetails
 import se.curtrune.lucy.modules.PostponeWorker
-import se.curtrune.lucy.util.Logger
 import java.time.LocalDate
-import java.util.Comparator
 
 class DateViewModel: ViewModel(){
     private val repository = LucindaApplication.repository
-    //private var items: MutableList<Item> = mutableListOf()
+    private val timeModule = LucindaApplication.timeModule
+    private var currentWeekPage = 5
     private var items: List<Item> = emptyList()
+    private val eventChannel = Channel<DayChannel>()
+    val eventFlow = eventChannel.receiveAsFlow()
     private val _state = MutableStateFlow(DayCalendarState())
     private var latestDeletedItem: Item? = null
     val state = _state.asStateFlow()
@@ -35,6 +40,15 @@ class DateViewModel: ViewModel(){
         _state.update { it.copy(
             items = repository.selectItems(state.value.date)
         ) }
+    }
+    private fun confirmDelete(item: Item){
+        println("...confirmDelete(${item.heading})")
+        _state.update { it.copy(
+            currentItem =  item
+        ) }
+        viewModelScope.launch{
+            eventChannel.send(DayChannel.ConfirmDeleteDialog)
+        }
     }
     private fun deleteItem(item: Item){
         println("DateViewModel.deleteItem(${item.heading}")
@@ -64,43 +78,59 @@ class DateViewModel: ViewModel(){
         )
         }
     }
-    fun onEvent(event: DateEvent){
+    fun onEvent(event: DayEvent){
         println("DateViewModel.onEvent(${event.toString()})")
         when(event){
-            is DateEvent.AddItem -> {addItem(event.item)}
-            is DateEvent.CurrentDate ->{setCurrentDate(event.date)}
-            is DateEvent.DeleteItem -> {deleteItem(event.item)}
-            is DateEvent.ShowActionsMenu -> {println("show action menu")}
-            is DateEvent.UpdateItem -> updateItem(event.item)
-            is DateEvent.EditTime -> {updateItem(event.item)}
-            is DateEvent.EditItem -> {editItem(event.item)}
-            is DateEvent.ShowPostponeDialog -> { showPostponeDialog(event.item)}
-            is DateEvent.ShowStats -> {showStats(event.item)}
-            is DateEvent.StartTimer -> {startTimer(event.item)}
-            is DateEvent.ShowChildren -> {showChildren(event.item)}
-            is DateEvent.TabSelected -> {tabSelected(event.index)}
-            is DateEvent.Postpone -> { postpone(event.postponeInfo)}
-            is DateEvent.HidePostponeDialog -> { hidePostponeDialog()}
-            is DateEvent.RestoreDeletedItem -> {restoreDeletedItem()}
-            is DateEvent.Search -> { search(event.filter, event.everywhere)}
+            is DayEvent.AddItem -> {addItem(event.item)}
+            is DayEvent.CurrentDate ->{setCurrentDate(event.date)}
+            is DayEvent.DeleteItem -> {deleteItem(event.item)}
+            is DayEvent.ShowActionsMenu -> {println("show action menu")}
+            is DayEvent.UpdateItem -> updateItem(event.item)
+            is DayEvent.EditTime -> {updateItem(event.item)}
+            is DayEvent.EditItem -> {editItem(event.item)}
+            is DayEvent.ShowPostponeDialog -> { showPostponeDialog(event.item)}
+            is DayEvent.ShowStats -> {showStats(event.item)}
+            is DayEvent.StartTimer -> {startTimer(event.item)}
+            is DayEvent.ShowChildren -> {showChildren(event.item)}
+            is DayEvent.TabSelected -> {tabSelected(event.index)}
+            is DayEvent.Postpone -> { postpone(event.postponeInfo)}
+            is DayEvent.HidePostponeDialog -> { hidePostponeDialog()}
+            is DayEvent.RestoreDeletedItem -> {restoreDeletedItem()}
+            is DayEvent.Search -> { search(event.filter, event.everywhere)}
+            is DayEvent.Week -> {setCurrentWeek(event.page)}
+            is DayEvent.RequestDelete -> {confirmDelete(event.item)}
         }
     }
     private fun postpone(postponeDetails: PostponeDetails){
-        println("postpone(PostponeDetails)")
+        println("postpone(${postponeDetails.toString()})")
         if( postponeDetails.postPoneAll){
+            val postponeItem = postponeDetails.item ?: return
+            val postponeAmount = postponeDetails.amount
             println("postpone item and all items after")
-            //val filteredItems = state.value.items.filter {  }
+            val filteredItems = state.value.items.filter { item-> item.targetTime.isAfter(postponeItem.targetTime) }
+            filteredItems.forEach{ item->
+                println(item.toString())
+                repository.update(PostponeWorker.postponeItem(item, amount = postponeAmount ))
+                if( item.targetDate != state.value.date){
+                    _state.update { it.copy(
+                        items = it.items.minus(item)
+                    ) }
+                }
+            }
+            //sort list, needed or not, better safe than sorry
+            sortItems()
+            repository.update(postponeItem)
         }else{
             println(" postpone single item")
-            if( postponeDetails.item != null){
-                val item  = PostponeWorker.postponeItem(postponeDetails.item!!, postponeDetails.amount )
-                Logger.log(item)
-                repository.update(item)
+            val postponeItem = postponeDetails.item?:return
+            repository.update(PostponeWorker.postponeItem(postponeItem, postponeDetails.amount))
+            //if item has been postponed out of current date
+            if(postponeItem.targetDate != state.value.date){
                 _state.update { it.copy(
-                    items = repository.selectItems(state.value.date)
+                    items = it.items.minus(postponeItem)
                 ) }
             }else{
-                println("error")
+                sortItems()
             }
         }
     }
@@ -122,8 +152,25 @@ class DateViewModel: ViewModel(){
         _state.update {it.copy(
             date = newDate,
             items = repository.selectItems(newDate)
-        )
+            )
         }
+    }
+    private fun setCurrentWeek(page: Int){
+        println("setCurrentWeek(page : $page)")
+        if( currentWeekPage == page){
+            println("new week same as old week, returning")
+            return
+        }
+        val nWeeks = page - currentWeekPage
+       // val newWeek = state.value.currentWeek.plusWeek(nWeeks)
+        _state.update { it.copy(
+           currentWeek =  it.currentWeek.plusWeek(nWeeks),
+            date = it.date.plusWeeks(nWeeks.toLong())
+        ) }
+        currentWeekPage = page
+    }
+    private fun getWeek(){
+
     }
     private fun showChildren(item: Item){
         println("...showChildren(${item.heading})")
@@ -136,8 +183,8 @@ class DateViewModel: ViewModel(){
            items = repository.selectChildren(item),
             currentParent = item,
             showTabs = true,
-            tabStack = _tabStack
-        ) }
+            tabStack = _tabStack,
+            selectedTabIndex = _tabStack.size() - 1) }
     }
     private fun showPostponeDialog(item: Item){
         _state.update { it.copy(
@@ -151,15 +198,22 @@ class DateViewModel: ViewModel(){
             showStats =  true
         ) }
     }
+    private fun sortItems(){
+        _state.update { it.copy(
+            items = it.items.sortedBy { it.targetTime }
+        ) }
+    }
     private fun startTimer(item: Item){
-        println("startTime(${item.heading})")
+        println("startTimer(${item.heading})")
+        timeModule.startTimer(item.id)
     }
     private fun tabSelected(index: Int){
         println("tabSelected($index)")
         if( index == 0){
             _state.update {  it.copy(
                 items = repository.selectItems(state.value.date),
-                showTabs = false
+                showTabs = false,
+                currentParent = null
             )}
         }
     }

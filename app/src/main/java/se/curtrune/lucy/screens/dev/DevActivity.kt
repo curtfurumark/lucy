@@ -61,6 +61,7 @@ import se.curtrune.lucy.screens.main.MainState
 import se.curtrune.lucy.composables.top_app_bar.LucindaControls
 import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
 import se.curtrune.lucy.modules.TimeModule
+import se.curtrune.lucy.screens.dev.composables.UndoDeleteTest
 import se.curtrune.lucy.services.TimeServiceConstants
 import se.curtrune.lucy.services.TimerService
 import se.curtrune.lucy.util.Logger
@@ -146,6 +147,9 @@ class DevActivity : AppCompatActivity() {
                                 .verticalScroll(scrollState),
                             verticalArrangement = Arrangement.SpaceEvenly,
                         ) {
+                            UndoDeleteTest(onEvent = {event->
+                               devViewModel.onEvent(event)
+                            } )
 
                             Spacer(modifier = Modifier.height(16.dp))
                             StopWatchUsingService( onCommand = { action->

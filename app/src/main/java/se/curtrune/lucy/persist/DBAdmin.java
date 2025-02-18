@@ -204,6 +204,7 @@ public class DBAdmin {
             cv.put("content",gson.toJson(item.getContent()) );
         }*/
         if( item.getID() > 0){ // for restoring deleted item,to ensure they don't get a new id
+            log("inserting deleted item, trying to restore");
             cv.put("id", item.getID());
         }
         cv.put("repeat_id", item.getRepeatID());

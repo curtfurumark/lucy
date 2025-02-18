@@ -93,7 +93,6 @@ fun StatisticsComposable(){
                             dropdownExpanded = false
                         })
                 }
-
             }
             var selectedCategory by remember {
                 mutableIntStateOf(0)

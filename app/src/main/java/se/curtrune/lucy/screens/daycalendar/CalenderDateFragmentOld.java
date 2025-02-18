@@ -431,7 +431,6 @@ public class CalenderDateFragmentOld extends Fragment {
         ItemStatisticsDialog dialog = new ItemStatisticsDialog(statistics);
         dialog.show(getChildFragmentManager(), "show statistics");
         log(statistics);
-
     }
     private void showPostponeDialog(Item item){
         log("showPostponeDialog(Item)");

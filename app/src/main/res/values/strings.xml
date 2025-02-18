@@ -259,4 +259,11 @@
     <string name="postpone_dialog_heading">postpone: %1$s</string>
     <string name="from">from: %1$s</string>
     <string name="to">to: %1$s</string>
+    <string name="total_duration_s">total duration: %1$s</string>
+    <string name="average_duration_s">average duration %1$s</string>
+    <string name="average_anxiety_1f">average anxiety %1$.2f</string>
+    <string name="average_energy_1f">average energy %1$.2f</string>
+    <string name="average_mood_1f">average mood %1$.2f</string>
+    <string name="average_stress_1f">average stress %1$.2f</string>
+    <string name="number_of_occasions_d">number of occasions %1$d</string>
 </resources>

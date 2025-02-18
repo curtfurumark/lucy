@@ -54,8 +54,9 @@ class ItemSessionViewModel : ViewModel() {
 
     private fun cancelTimer() {
         Logger.log("ItemSessionViewModel.cancelTimer()")
-        timerRunning = false
+        //timerRunning = false
         //kronos!!.reset()
+        timeModule.cancelTimer()
         mutableDuration.value = 0L
         mutableTimerState.value = TimerState.PENDING
     }
@@ -200,16 +201,16 @@ class ItemSessionViewModel : ViewModel() {
 
     private fun pauseTimer() {
         println("ItemSessionViewModel.pauseTimer()")
-        //timerRunning = false
         timeModule.pauseTimer()
         mutableTimerState.value = TimerState.PAUSED
     }
 
     private fun resumeTimer() {
         println("ItemSessionViewModel.resumeTimer()")
+        timeModule.resumeTimer()
         mutableTimerState.value = TimerState.RUNNING
-        timerRunning = true
-        runTimer()
+        //timerRunning = true
+        //runTimer()
     }
 
     fun setElapsedDuration(secs: Long) {
@@ -293,22 +294,6 @@ class ItemSessionViewModel : ViewModel() {
             println("ELSE ERROR, itemSessionViewModel")
         }
     }
-    private fun runTimer(){
-        viewModelScope.launch {
-            while (timerRunning) {
-                delay(1000)
-                elapsedTime += 1
-                //println("timer running $elapsedTime")
-                mutableDuration.value = elapsedTime
-            }
-        }
-    }
-
-
-
-
-
-
 
     val timerState: LiveData<TimerState>
         get() {

@@ -54,7 +54,10 @@ class DevActivityViewModel : ViewModel() {
         _state.update { it.copy(
             currentItem = item
         ) }
-
+    }
+    private fun insertItemWithID(item: Item){
+        println("...insertItemWithID(item ${item.heading})")
+        repository.insert(item)
     }
 
     fun listColumns(context: Context?) {
@@ -73,6 +76,7 @@ class DevActivityViewModel : ViewModel() {
             is DevEvent.CreateItemTree -> LocalDBTest().createTreeToDelete()
             is DevEvent.Search -> { search(event.query)}
             is DevEvent.ResetApp -> {resetLucinda()}
+            is DevEvent.InsertItemWithID -> {insertItemWithID(event.item)}
         }
     }
     fun onEvent(event: ItemEvent){
