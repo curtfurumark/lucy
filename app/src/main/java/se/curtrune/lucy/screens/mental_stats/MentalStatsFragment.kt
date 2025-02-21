@@ -6,7 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
+import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.R
+import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
+import se.curtrune.lucy.screens.mental_stats.composables.MentalStatsScreen
 
 
 /**
@@ -29,6 +32,13 @@ class MentalStatsFragment : Fragment() {
         // Inflate the layout for this fragment
         return ComposeView(requireActivity()).apply {
             setContent {
+                val mentalViewModel = viewModel<MentalStatsViewModel>()
+                //val
+                LucyTheme {
+                    MentalStatsScreen(state = MentalStatsState(), onEvent = { event->
+                        mentalViewModel.onEvent(event)
+                    })
+                }
             }
         }
     }

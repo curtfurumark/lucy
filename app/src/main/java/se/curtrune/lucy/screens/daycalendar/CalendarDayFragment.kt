@@ -21,11 +21,13 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.activities.kotlin.composables.ItemSettings
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.ItemStatistics
+import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.composables.AddItemDialog
 import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.composables.ConfirmDeleteDialog
@@ -38,8 +40,16 @@ import se.curtrune.lucy.util.Logger
 import java.time.LocalTime
 
 
-class CalendarDateFragment : Fragment() {
+class CalendarDayFragment() : Fragment() {
+    private var calendarDate: CalenderDate? = null
+    init {
+        println("CalendarDayFragment init block")
+    }
 
+    constructor(calendarDate: CalenderDate) : this() {
+        println("CalendarDayFragment(CalendarDate, calendarDate constructor")
+        this.calendarDate = calendarDate
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,14 +62,22 @@ class CalendarDateFragment : Fragment() {
                     var showAddItemDialog by remember{
                         mutableStateOf(false)
                     }
-                    val viewModel = viewModel<DateViewModel>()
-                    val state = viewModel.state.collectAsState()
+                    val dayViewModel = viewModel<DateViewModel>()
+                    val mainViewModel = viewModel<MainViewModel>()
+                    mainViewModel.filter.observe(requireActivity()) { filter ->
+                        println("hello filter: $filter")
+                        //dayViewModel.onEvent(DayEvent.Search(filter, false))
+                    }
+                    if( calendarDate != null){
+                        dayViewModel.setCalendarDate(calendarDate!!)
+                    }
+                    val state = dayViewModel.state.collectAsState()
                     val context = LocalContext.current
                     var showConfirmDeleteDialog by remember {
                         mutableStateOf(false)
                     }
-                    LaunchedEffect(viewModel) {
-                        viewModel.eventFlow.collect{ event->
+                    LaunchedEffect(dayViewModel) {
+                        dayViewModel.eventFlow.collect{ event->
                             when(event){
                                 DayChannel.ConfirmDeleteDialog -> {
                                     showConfirmDeleteDialog = true
@@ -73,7 +91,7 @@ class CalendarDateFragment : Fragment() {
                             ConfirmDeleteDialog(item = item, onDismiss = {
                                 showConfirmDeleteDialog = false
                             }, onEvent = { event->
-                                viewModel.onEvent(event)
+                                dayViewModel.onEvent(event)
                                 showConfirmDeleteDialog = false
                             })
                         }
@@ -93,14 +111,14 @@ class CalendarDateFragment : Fragment() {
                         ) {
                             DayCalendar(state = state.value, onEvent = { event->
                                 println("DayCalendar.onEvent(${event.toString()})")
-                                viewModel.onEvent(event)
+                                dayViewModel.onEvent(event)
                             })
                             if(showAddItemDialog){
                                 AddItemDialog(
                                     onDismiss = {showAddItemDialog = false},
                                     onConfirm = {item ->
                                         showAddItemDialog = false
-                                        viewModel.onEvent(DayEvent.AddItem(item))
+                                        dayViewModel.onEvent(DayEvent.AddItem(item))
                                     },
                                     settings = ItemSettings(
                                         targetDate = state.value.date,

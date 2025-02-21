@@ -89,10 +89,10 @@ public class Lucinda {
     }
     public static void setDefaultUserSettings(Context context){
         log("Lucinda.setDefaultUserSettings()");
-        User.setPanicUrls(context.getResources().getStringArray(R.array.panicUrls), context);
-        User.setCategories(context.getResources().getStringArray(R.array.categories), context);
-        User.setUsesPassword(false, context);
-        User.setUseDarkMode(true, context);
+        UserPrefs.setPanicUrls(context.getResources().getStringArray(R.array.panicUrls), context);
+        UserPrefs.setCategories(context.getResources().getStringArray(R.array.categories), context);
+        UserPrefs.setUsesPassword(false, context);
+        UserPrefs.setUseDarkMode(true, context);
 
     }
 }

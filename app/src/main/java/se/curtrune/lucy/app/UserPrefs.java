@@ -13,7 +13,7 @@ import java.util.Set;
 
 import se.curtrune.lucy.workers.SettingsWorker;
 
-public class User {
+public class UserPrefs {
     public static boolean VERBOSE = false;
     public static final String KEY_ICE_PHONE_NUMBER = "KEY_ICE_PHONE_NUMBER";
     public static final String USE_DARK_MODE = "USE_DARK_MODE";
@@ -27,15 +27,16 @@ public class User {
     public static final String KEY_DEV_MODE = "KEY_DEV_MODE";
     public static final String KEY_LOGGED_IN = "KEY_LOGGED_IN";
     public static final String KEY_FIRST_PAGE = "KEY_FIRST_PAGE";
+    public static final String KEY_SCROLL_POSITION_DAY_CALENDAR = "KEY_SCROLL_POSITION_DAY_CALENDAR";
 
     public static void addCategory(String category, Context context){
-        log("User.addCategory(String, Context)", category);
+        log("UserPrefs.addCategory(String, Context)", category);
         Set<String> setCategories = Settings.getSet(KEY_CATEGORIES, context);
         setCategories.add(category);
         Settings.saveSet( KEY_CATEGORIES, setCategories, context);
     }
     public static void addPanicUrl(String url, Context context) {
-        log("User.addPanicUrl(String, Context)", url);
+        log("UserPrefs.addPanicUrl(String, Context)", url);
         Set<String> panicUrls = Settings.getSet(KEY_PANIC_URLS, context);
         panicUrls.add(url);
         Settings.saveSet(KEY_PANIC_URLS, panicUrls, context);
@@ -57,13 +58,17 @@ public class User {
      * @return an array of categories
      */
     public static String[] getCategories(Context context){
-        log("User.getCategories()");
+        log("UserPrefs.getCategories()");
         Set<String> setCategories = Settings.getSet(KEY_CATEGORIES, context);
         return Arrays.copyOf(setCategories.toArray(), setCategories.size(), String[].class);
     }
     public static boolean getDarkMode(Context context) {
-        log("User.getDarkMode(Context)");
+        log("UserPrefs.getDarkMode(Context)");
         return Settings.getBoolean(USE_DARK_MODE, false, context);
+    }
+    public static int getScrollPositionDayCalendar(Context context){
+        return Settings.getInt(KEY_SCROLL_POSITION_DAY_CALENDAR,0,  context);
+
     }
     public static Settings.StartActivity getStartActivity(Context context) {
         int ordinal = Settings.getInt(KEY_FIRST_PAGE, Settings.StartActivity.TODAY_ACTIVITY.ordinal(), context);
@@ -81,12 +86,12 @@ public class User {
         return Settings.getSet(KEY_PANIC_URLS, context);
     }
     public static String getPassword(Context context) {
-        log("User.getPassword()");
+        log("UserPrefs.getPassword()");
         return Settings.getString(KEY_PASSWORD, "", context);
     }
 
     public static String getRandomPanicUrl(Context context){
-        log("User.getRandomPanicUrl(Context) ");
+        log("UserPrefs.getRandomPanicUrl(Context) ");
         List<String> urls = new ArrayList<>(getPanicUrls(context));
         log("...number of urls", urls.size());
         urls.forEach(System.out::println);
@@ -102,11 +107,11 @@ public class User {
     }
 
     public static void setUsesPassword(boolean usesPassword, Context context){
-        log("User.setUsesPassword(boolean, Context)", usesPassword);
+        log("UserPrefs.setUsesPassword(boolean, Context)", usesPassword);
         Settings.addBoolean(USES_PASSWORD, usesPassword, context);
     }
     public static boolean usesPassword(Context context) {
-        if( VERBOSE) log("User.usesPassword(Context)");
+        if( VERBOSE) log("UserPrefs.usesPassword(Context)");
         return Settings.getBoolean( USES_PASSWORD, false, context);
     }
     public static boolean validatePassword(String user, String pwd, Context context){
@@ -115,18 +120,22 @@ public class User {
         return password.equals(pwd);
     }
     public static void savePassword(String pwd, Context context) {
-        log("User.savePassword(String, Context)");
+        log("UserPrefs.savePassword(String, Context)");
         Settings.addString(KEY_PASSWORD, pwd, context);
     }
+    public static void setScrollPositionDayCalender(int position, Context context){
+        Settings.addInt(KEY_SCROLL_POSITION_DAY_CALENDAR, position, context);
 
+    }
 
     public static void setFirstPage(Settings.StartActivity firstPage, Context context){
-        log("User.setFirstPage(StartActivity, Context);", firstPage.toString());
+        log("UserPrefs.setFirstPage(StartActivity, Context);", firstPage.toString());
         Settings.addInt(KEY_FIRST_PAGE, firstPage.ordinal(), context);
     }
 
+
     public static void setUseDarkMode(boolean darkMode, Context context) {
-        log("User.setUseDarkMode(boolean, Context)");
+        log("UserPrefs.setUseDarkMode(boolean, Context)");
         Settings.addBoolean(USE_DARK_MODE, darkMode, context);
         if( darkMode){
             SettingsWorker.setDarkMode();
@@ -136,7 +145,7 @@ public class User {
     }
 
     public static void setPanicUrls(String[] urlArray, Context context) {
-        log("User.setPanicUrls()");
+        log("UserPrefs.setPanicUrls()");
         Set<String> urlSet = new HashSet<>(Arrays.asList(urlArray));
         Settings.saveSet(KEY_PANIC_URLS,urlSet, context );
     }
@@ -150,13 +159,13 @@ public class User {
     }
 
     public static void setLanguage(String language, Context context) {
-        log("User.setLanguage(String, Context)");
+        log("UserPrefs.setLanguage(String, Context)");
         Settings.addString(KEY_LANGUAGE, language , context);
         SettingsWorker.setLanguage(language);
     }
 
     public static void setPassword(String password, Context context) {
-        log("User.setPassword(String, Context)");
+        log("UserPrefs.setPassword(String, Context)");
         Settings.addString(KEY_PASSWORD, password, context);
     }
 
@@ -166,11 +175,11 @@ public class User {
     }
 
     public static void deletePanicUrl(String url, Context context) {
-        log("User.deletePanicUrl(String)", url);
-        Set<String> urls = User.getPanicUrls(context);
+        log("UserPrefs.deletePanicUrl(String)", url);
+        Set<String> urls = UserPrefs.getPanicUrls(context);
         boolean stat = urls.remove(url);
         if( stat){
-            User.setPanicUrls(urls.toArray(new String[1]), context);
+            UserPrefs.setPanicUrls(urls.toArray(new String[1]), context);
         }else{
             log("ERROR removing url", url);
         }

@@ -28,7 +28,7 @@ import se.curtrune.lucy.classes.calender.CalenderDate;
 import se.curtrune.lucy.classes.calender.OnSwipeClickListener;
 import se.curtrune.lucy.classes.calender.Week;
 import se.curtrune.lucy.dialogs.EventDialog;
-import se.curtrune.lucy.screens.daycalendar.CalenderDateFragmentOld;
+import se.curtrune.lucy.screens.daycalendar.CalendarDayFragment;
 import se.curtrune.lucy.screens.main.MainViewModel;
 import se.curtrune.lucy.persist.CalenderWorker;
 import se.curtrune.lucy.persist.ItemsWorker;
@@ -95,10 +95,11 @@ public class CalenderWeekFragment extends Fragment {
             @Override
             public void onCalenderDateClick(CalenderDate calenderDate) {
                 log("CalenderWeekAdapter.onCalenderDateClick(CalenderDate)", calenderDate.getDate().toString());
-                if(calenderDate.getItems().size() == 0){
+                if(calenderDate.getItems().isEmpty()){
                     showAppointmentDialog(calenderDate);
                 }else{
-                    viewModel.updateFragment(new CalenderDateFragmentOld(calenderDate));
+                    viewModel.updateFragment(new CalendarDayFragment(calenderDate));
+                    //viewModel.updateFragment(new CalendarDateFragment());
                 }
             }
         });

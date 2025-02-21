@@ -21,8 +21,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import java.time.LocalDateTime;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.app.Settings;
-import se.curtrune.lucy.app.User;
 import se.curtrune.lucy.classes.Message;
 
 

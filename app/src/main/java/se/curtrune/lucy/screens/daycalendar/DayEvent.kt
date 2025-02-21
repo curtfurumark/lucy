@@ -21,7 +21,7 @@ sealed interface DayEvent{
     data class Search(val filter: String, val everywhere: Boolean): DayEvent
     data class ShowStats(val item: Item):DayEvent
     data class StartTimer(val item: Item):DayEvent
-    data class TabSelected(val index: Int): DayEvent
+    data class TabSelected(val index: Int, val item: Item?): DayEvent
     data class UpdateItem(val item: Item): DayEvent
     data class Week(val page: Int):DayEvent
 }

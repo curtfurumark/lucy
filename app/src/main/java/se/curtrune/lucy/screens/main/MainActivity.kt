@@ -29,7 +29,7 @@ import se.curtrune.lucy.activities.flying_fish.GameActivity
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.app.FirstPage
 import se.curtrune.lucy.app.Settings.PanicAction
-import se.curtrune.lucy.app.User
+import se.curtrune.lucy.app.UserPrefs
 import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.dialogs.PanicActionDialog
 import se.curtrune.lucy.dialogs.UpdateDialog
@@ -41,8 +41,7 @@ import se.curtrune.lucy.screens.EnchiladaFragment
 import se.curtrune.lucy.screens.affirmations.Quote
 import se.curtrune.lucy.screens.appointments.AppointmentsFragment
 import se.curtrune.lucy.screens.contacts.ContactsFragment
-import se.curtrune.lucy.screens.daycalendar.CalendarDateFragment
-import se.curtrune.lucy.screens.daycalendar.CalenderDateFragmentOld
+import se.curtrune.lucy.screens.daycalendar.CalendarDayFragment
 import se.curtrune.lucy.screens.dev.DevActivity
 import se.curtrune.lucy.screens.duration.DurationFragment
 import se.curtrune.lucy.screens.index20.IndexActivityKt
@@ -84,7 +83,7 @@ class MainActivity : AppCompatActivity() {
             Logger.log("...fragmentName", fragmentName)
             navigate(FirstPage.valueOf(fragmentName))
         } else {
-            navigate(CalenderDateFragmentOld())
+            navigate(CalendarDayFragment())
         }
     }
 
@@ -121,7 +120,7 @@ class MainActivity : AppCompatActivity() {
                         navigate(MonthFragment())
                     }
                     R.id.bottomNavigation_today -> {
-                        navigate(CalenderDateFragmentOld())
+                        navigate(CalendarDayFragment())
                     }
                     /*R.id.navigationDrawer_topTen -> {
                         navigate(TopTenFragment())
@@ -307,7 +306,7 @@ class MainActivity : AppCompatActivity() {
     private fun navigate(firstPage: FirstPage) {
         Logger.log("...navigate(FirstPage)", firstPage.toString())
         when (firstPage) {
-            FirstPage.CALENDER_DATE -> navigate(CalendarDateFragment())
+            FirstPage.CALENDER_DATE -> navigate(CalendarDayFragment())
             FirstPage.CALENDER_WEEK -> navigate(CalendarWeekHostFragment())
             FirstPage.CALENDER_MONTH -> navigate(MonthFragment())
             FirstPage.CALENDER_APPOINTMENTS -> navigate(AppointmentsFragment())
@@ -365,7 +364,7 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.mainActivity_calendar -> {
                 //navigate(CalenderDateFragmentOld())
-                navigate(CalendarDateFragment())
+                navigate(CalendarDayFragment())
             }
             R.id.mainActivity_lucinda20 -> {
                 startActivity(Intent(this, IndexActivityKt::class.java))
@@ -394,7 +393,7 @@ class MainActivity : AppCompatActivity() {
     private fun panicActionICE() {
         Logger.log("...panicActionICE")
         //FIX PERMISSION, IN CUSTOMIZEFRAGEMENT PERHAPS
-        /*        int phoneNumber = User.getICE(this);
+        /*        int phoneNumber = UserPrefs.getICE(this);
         if( phoneNumber == -1){
             Toast.makeText(this, "no phone number to call", Toast.LENGTH_LONG).setMentalType();
             return;
@@ -428,7 +427,7 @@ class MainActivity : AppCompatActivity() {
             )
 
             PanicAction.URL -> {
-                val url = User.getRandomPanicUrl(this)
+                val url = UserPrefs.getRandomPanicUrl(this)
                 openWebPage(url)
             }
 
@@ -464,7 +463,7 @@ class MainActivity : AppCompatActivity() {
             )
 
             PanicAction.URL -> {
-                val url = User.getRandomPanicUrl(this)
+                val url = UserPrefs.getRandomPanicUrl(this)
                 openWebPage(url)
             }
 

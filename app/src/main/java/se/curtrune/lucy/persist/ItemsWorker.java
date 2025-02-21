@@ -343,6 +343,7 @@ public class ItemsWorker {
         }
     }
 
+    @Deprecated
     public static Item getTodoRoot(Context context){
         Settings settings = Settings.getInstance(context);
         long id = settings.getRootID(TODO);

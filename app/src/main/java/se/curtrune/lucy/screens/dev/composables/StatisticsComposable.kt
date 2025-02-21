@@ -122,7 +122,6 @@ fun StatisticsComposable(){
                     }
 
                 }
-
             }
 /*            Row(modifier = Modifier.fillMaxWidth()){
                 Checkbox(checked = sortedByCategory, onCheckedChange = {

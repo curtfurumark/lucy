@@ -15,8 +15,8 @@ data class DayCalendarState(
     var showTabs: Boolean = false,
     var showStats: Boolean = false,
     var currentParent: Item? = null,
-    var tabItems: List<Item>? = null,
-    var tabStack: TabStack? = null,
+    var tabs: List<Item> = mutableListOf(),
+    //var tabStack: T,
     var currentWeek: Week = Week(),
     val numberWeeks: Int = 10,
     val currentWeekPage: Int = 5

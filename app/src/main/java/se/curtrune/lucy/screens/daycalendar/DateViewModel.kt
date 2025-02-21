@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.calender.CalenderDate
+import se.curtrune.lucy.classes.calender.Week
 import se.curtrune.lucy.composables.PostponeDetails
 import se.curtrune.lucy.modules.PostponeWorker
 import java.time.LocalDate
@@ -23,13 +25,15 @@ class DateViewModel: ViewModel(){
     val eventFlow = eventChannel.receiveAsFlow()
     private val _state = MutableStateFlow(DayCalendarState())
     private var latestDeletedItem: Item? = null
+    private val todoRoot: Item = repository.getTodoRoot()
     val state = _state.asStateFlow()
-    private lateinit var _tabStack: TabStack
+    //private lateinit var _tabStack: TabStack
 
     init{
         println("DateViewModel.init")
         items = repository.selectItems(_state.value.date)
         _state.value.items = items
+        _state.value.currentParent = todoRoot
     }
     private fun addItem(item: Item){
         println("...addItem(Item) ${item.heading}")
@@ -92,7 +96,7 @@ class DateViewModel: ViewModel(){
             is DayEvent.ShowStats -> {showStats(event.item)}
             is DayEvent.StartTimer -> {startTimer(event.item)}
             is DayEvent.ShowChildren -> {showChildren(event.item)}
-            is DayEvent.TabSelected -> {tabSelected(event.index)}
+            is DayEvent.TabSelected -> { tabSelected(event.index, event.item) }
             is DayEvent.Postpone -> { postpone(event.postponeInfo)}
             is DayEvent.HidePostponeDialog -> { hidePostponeDialog()}
             is DayEvent.RestoreDeletedItem -> {restoreDeletedItem()}
@@ -148,8 +152,14 @@ class DateViewModel: ViewModel(){
         ) }
 
     }
+    fun setCalendarDate(calendarDate: CalenderDate) {
+        println("DateViewModel.setCalendarDate(${calendarDate.date.toString()})")
+        setCurrentDate(calendarDate.date)
+
+    }
     private fun setCurrentDate(newDate: LocalDate){
         _state.update {it.copy(
+            currentWeek = Week(newDate),
             date = newDate,
             items = repository.selectItems(newDate)
             )
@@ -175,16 +185,16 @@ class DateViewModel: ViewModel(){
     private fun showChildren(item: Item){
         println("...showChildren(${item.heading})")
         if( !state.value.showTabs){
-            _tabStack = TabStack(state.value.date)
-            //tabStack.pushItem(item)
+            _state.update { it.copy(
+                tabs = it.tabs +  Item(LocalDate.now().toString())
+            ) }
         }
-        _tabStack.pushItem(item)
         _state.update { it.copy(
            items = repository.selectChildren(item),
             currentParent = item,
             showTabs = true,
-            tabStack = _tabStack,
-            selectedTabIndex = _tabStack.size() - 1) }
+            tabs = it.tabs + item,
+            ) }
     }
     private fun showPostponeDialog(item: Item){
         _state.update { it.copy(
@@ -207,14 +217,26 @@ class DateViewModel: ViewModel(){
         println("startTimer(${item.heading})")
         timeModule.startTimer(item.id)
     }
-    private fun tabSelected(index: Int){
+    private fun tabSelected(index : Int, item: Item?){
         println("tabSelected($index)")
         if( index == 0){
             _state.update {  it.copy(
                 items = repository.selectItems(state.value.date),
                 showTabs = false,
-                currentParent = null
+                tabs = mutableListOf<Item>(),
+                currentParent = todoRoot
             )}
+        }else{
+            println("item tab selected")
+            val parentItem = state.value.tabs[index]
+            if( index < state.value.tabs.size){
+                println("remove tabs to the right of selected item")
+            }
+            println("parentItem: ${parentItem.heading}")
+            _state.update { it.copy(
+                currentParent = parentItem,
+                items = repository.selectChildren(parentItem)
+            ) }
         }
     }
     private fun updateItem(item: Item){
@@ -231,4 +253,6 @@ class DateViewModel: ViewModel(){
     private fun sortItems(items: List<Item>): List<Item>{
         return items.sortedBy { it.targetTime }
     }
+
+
 }

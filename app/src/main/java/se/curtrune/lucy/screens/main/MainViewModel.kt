@@ -16,21 +16,16 @@ import kotlinx.coroutines.launch
 import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.app.Lucinda
 import se.curtrune.lucy.app.Settings.PanicAction
-import se.curtrune.lucy.app.User
+import se.curtrune.lucy.app.UserPrefs
 import se.curtrune.lucy.classes.Affirmation
-import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
 import se.curtrune.lucy.screens.affirmations.AffirmationWorker
 import se.curtrune.lucy.screens.affirmations.AffirmationWorker.RequestAffirmationCallback
 import se.curtrune.lucy.screens.affirmations.RetrofitInstance
-import se.curtrune.lucy.screens.todo.ChannelEvent
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.web.CheckForUpdateThread
 import se.curtrune.lucy.web.VersionInfo
-import se.curtrune.lucy.workers.InternetWorker
-import se.curtrune.lucy.workers.MentalWorker
-import java.time.LocalDate
 
 class MainViewModel : ViewModel() {
     private val mentalModule = LucindaApplication.mentalModule
@@ -119,7 +114,7 @@ class MainViewModel : ViewModel() {
 
     fun getPanicAction(context: Context?): PanicAction {
         Logger.log("LucindaViewModel.getPanicAction()")
-        return User.getPanicAction(context)
+        return UserPrefs.getPanicAction(context)
     }
 
     val message: LiveData<String>

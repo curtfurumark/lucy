@@ -3,36 +3,36 @@ package se.curtrune.lucy.screens.user_settings
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import se.curtrune.lucy.app.User
+import se.curtrune.lucy.app.UserPrefs
 
 class UserSettingsViewModel(private val context: Context): ViewModel(){
     var isDarkMode = mutableStateOf(false)
         set(value){
             println("...setting dark mode to $value")
             field = value
-            User.setUseDarkMode(field.value, context)
+            UserPrefs.setUseDarkMode(field.value, context)
         }
     var categories = emptyList<String>()
     init {
-        isDarkMode.value = User.getDarkMode(context)
-        categories = User.getCategories(context).toList()
+        isDarkMode.value = UserPrefs.getDarkMode(context)
+        categories = UserPrefs.getCategories(context).toList()
     }
     fun getLanguage(): String{
-        return User.getLanguage(context)
+        return UserPrefs.getLanguage(context)
     }
     fun setLanguage(language: String){
-        User.setLanguage(language, context)
+        UserPrefs.setLanguage(language, context)
     }
 
     fun getPanicUrls(): Array<String> {
-        return User.getPanicUrls(context).toTypedArray()
+        return UserPrefs.getPanicUrls(context).toTypedArray()
     }
 
     fun isDarkMode(context: Context): Boolean {
-        return User.getDarkMode(context)
+        return UserPrefs.getDarkMode(context)
     }
     fun setDarkMode(darkMode: Boolean){
-        User.setUseDarkMode(darkMode, context)
+        UserPrefs.setUseDarkMode(darkMode, context)
     }
 
 }

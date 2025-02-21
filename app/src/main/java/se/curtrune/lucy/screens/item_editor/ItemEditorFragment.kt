@@ -45,7 +45,7 @@ import com.skydoves.colorpickerview.ColorPickerDialog
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
-import se.curtrune.lucy.app.User
+import se.curtrune.lucy.app.UserPrefs
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.classes.Repeat
@@ -419,7 +419,7 @@ class ItemEditorFragment : Fragment {
         checkBoxIsDone!!.isChecked = item.isDone
         textViewDuration!!.text =
             Converter.formatSecondsWithHours(item.duration)
-        println("Lucinda.Dev ${User.isDevMode(requireContext())}")
+        println("Lucinda.Dev ${UserPrefs.isDevMode(requireContext())}")
         initMental()
     }
 

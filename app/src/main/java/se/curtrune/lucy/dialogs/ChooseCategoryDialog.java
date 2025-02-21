@@ -17,7 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.app.User;
+import se.curtrune.lucy.app.UserPrefs;
 
 
 public class ChooseCategoryDialog extends DialogFragment {
@@ -65,7 +65,7 @@ public class ChooseCategoryDialog extends DialogFragment {
     private void initSpinnerCategories() {
         log("...initSpinnerCategories()");
 
-        String[] categories = User.getCategories(getContext());
+        String[] categories = UserPrefs.getCategories(getContext());
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, categories);
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
         spinnerCategory.setAdapter(arrayAdapter);

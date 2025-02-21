@@ -10,6 +10,7 @@ import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
 import se.curtrune.lucy.persist.LocalDB
+import se.curtrune.lucy.screens.dev.composables.MyTab
 import se.curtrune.lucy.screens.dev.test_cases.LocalDBTest
 import se.curtrune.lucy.screens.item_editor.ItemEvent
 import se.curtrune.lucy.util.Logger
@@ -30,6 +31,12 @@ class DevActivityViewModel : ViewModel() {
     }
     private fun dayCalendar(){
         println("day calendar")
+    }
+    private fun addTab(heading: String){
+        val newTab = MyTab.ItemTab(Item(heading))
+        _state.update { it.copy(
+            tabs = it.tabs + newTab
+        ) }
     }
 
     private fun getChildren(parent: Item){
@@ -77,6 +84,7 @@ class DevActivityViewModel : ViewModel() {
             is DevEvent.Search -> { search(event.query)}
             is DevEvent.ResetApp -> {resetLucinda()}
             is DevEvent.InsertItemWithID -> {insertItemWithID(event.item)}
+            is DevEvent.AddTab -> {addTab(event.heading)}
         }
     }
     fun onEvent(event: ItemEvent){

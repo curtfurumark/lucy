@@ -38,6 +38,8 @@ import androidx.compose.ui.window.Dialog
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.composables.ItemSettings
 import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.composables.top_app_bar.ItemSettingDate
+import se.curtrune.lucy.composables.top_app_bar.ItemSettingTime
 import se.curtrune.lucy.composables.top_app_bar.ItemSettingsEditor
 import se.curtrune.lucy.util.Converter
 import se.curtrune.lucy.util.DateTImeFormatter
@@ -48,7 +50,10 @@ import java.time.LocalTime
 @Composable
 fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSettings){
     println("AddItemDialog() settings date ${settings.targetDate.toString()}")
-    println(" target time converted ${Converter.format(settings.targetTime)}")
+    //println(" target time converted ${Converter.format(settings.targetTime)}")
+    if( settings.parent == null){
+        println("AddItemDialog, ItemSettings.parent is null")
+    }
     var heading by remember{
         mutableStateOf("")
     }
@@ -58,7 +63,7 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSe
     var targetDate by remember {
         mutableStateOf(settings.targetDate)
     }
-    var parent by remember {
+    val parent by remember {
         mutableStateOf(settings.parent)
     }
     var isCalendarItem by remember {
@@ -74,6 +79,7 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSe
         mutableStateOf(false)
     }
     fun getItem(): Item{
+        item.parentId = parent?.id ?: 0
         item.heading = heading
         item.targetDate = targetDate
         item.targetTime = targetTime
@@ -83,10 +89,11 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSe
     Dialog(onDismissRequest = onDismiss){
         val context = LocalContext.current
         Surface(modifier = Modifier.fillMaxWidth().background(Color.LightGray)) {
-            Column(modifier = Modifier.fillMaxWidth()
-                .padding(8.dp)) {
+            Column(modifier = Modifier.fillMaxWidth()) {
                 if(parent != null){
                     Text(text = "add to list ${parent!!.heading}", fontSize = 20.sp)
+                }else{
+                    Text(text = "WARNING PARENT IS NULL", fontSize = 20.sp)
                 }
                 OutlinedTextField(
                     value = heading,
@@ -96,44 +103,26 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSe
                     label = { Text("heading") }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = DateTImeFormatter.format(targetTime),
-                    fontSize = 24.sp,
-                    modifier = Modifier.clickable {
-                        showTimeDialog = true
-                    }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = DateTImeFormatter.format(targetDate),
-                    fontSize = 24.sp,
-                    modifier = Modifier.clickable {
-                        showDateDialog = true
-                    })
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Checkbox(checked = isCalendarItem, onCheckedChange = {
-                        isCalendarItem = !isCalendarItem
-                    })
-                    Text(text = stringResource(R.string.show_in_calendar))
-                }
-                Spacer(modifier = Modifier.height(8.dp))
                 //val scrollState = rememberScrollState()
-                ItemSettingsEditor(item = item)
+                ItemSettingDate(date = targetDate, onEvent = {
+                    showDateDialog = true
+                })
+                ItemSettingTime(targetTime = targetTime, onEvent = {
+                    showTimeDialog = true
+                })
+                //ItemSettingsEditor(item = item, parent = parent)
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Button(onClick = onDismiss) {
-                        Text(text = "dismiss")
+                        Text(text = stringResource(R.string.dismiss))
                     }
                     Button(onClick = {
                         onConfirm(getItem())
                     }) {
-                        Text(text = "ok")
+                        Text(text = stringResource(R.string.ok))
                     }
                 }
             }

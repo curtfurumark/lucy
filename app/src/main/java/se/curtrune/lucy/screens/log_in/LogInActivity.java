@@ -21,10 +21,10 @@ import androidx.core.content.ContextCompat;
 import java.sql.SQLException;
 
 import se.curtrune.lucy.R;
+import se.curtrune.lucy.app.UserPrefs;
 import se.curtrune.lucy.screens.main.MainActivity;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.Settings;
-import se.curtrune.lucy.app.User;
 import se.curtrune.lucy.screens.index.IndexActivity;
 import se.curtrune.lucy.workers.InternetWorker;
 import se.curtrune.lucy.workers.NotificationsWorker;
@@ -77,7 +77,7 @@ public class LogInActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             checkNotificationPermission();
         }
-       /* if (User.usesPassword(this) && !User.isDevMode(this)) {
+       /* if (UserPrefs.usesPassword(this) && !UserPrefs.isDevMode(this)) {
             log("...using password");
         } else {
 */            startUserActivity();
@@ -115,7 +115,7 @@ public class LogInActivity extends AppCompatActivity {
 
     private void initDayNightMode(){
         log("...initDayNightMode()");
-        if (User.getDarkMode(this)){
+        if (UserPrefs.getDarkMode(this)){
             SettingsWorker.setDarkMode();
         }else {
             SettingsWorker.setLightMode();
@@ -125,7 +125,7 @@ public class LogInActivity extends AppCompatActivity {
 
     private void initDevMode(){
         if( VERBOSE) log("...initDevMode()");
-        Lucinda.Dev = User.isDevMode(this);
+        Lucinda.Dev = UserPrefs.isDevMode(this);
         log("...devMode", Lucinda.Dev);
 
     }
@@ -181,7 +181,7 @@ public class LogInActivity extends AppCompatActivity {
             return;
         }
         String pwd = editTextPwd.getText().toString();
-        if( User.validatePassword("user", pwd, this)){
+        if( UserPrefs.validatePassword("user", pwd, this)){
             startUserActivity();
         }else{
             Toast.makeText(this, "incorrect password", Toast.LENGTH_LONG).show();
@@ -195,7 +195,7 @@ public class LogInActivity extends AppCompatActivity {
      */
     private void startUserActivity(){
         log("...startUserActivity()");
-        Settings.StartActivity startActivity = User.getStartActivity(this);
+        Settings.StartActivity startActivity = UserPrefs.getStartActivity(this);
         switch (startActivity){
             case INDEX_ACTIVITY:
                 startActivity(new Intent(this, IndexActivity.class));

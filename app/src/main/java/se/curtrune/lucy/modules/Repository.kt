@@ -3,6 +3,7 @@ package se.curtrune.lucy.modules
 import android.app.Application
 import android.content.Context
 import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.app.Settings
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.State
 import se.curtrune.lucy.classes.Type
@@ -268,6 +269,14 @@ class Repository (val context: Application){
         println("Repository.touchParents()")
         LocalDB(context).use { db ->
             db.touchParents(item)
+        }
+    }
+
+    fun getTodoRoot(): Item {
+        val settings = Settings.getInstance(context)
+        val id = settings.getRootID(Settings.Root.TODO)
+        LocalDB(context).use { db ->
+            return db.selectItem(id)
         }
     }
 }

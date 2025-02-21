@@ -33,7 +33,7 @@ import java.util.Set;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.SimpleAdapter;
 import se.curtrune.lucy.app.Settings;
-import se.curtrune.lucy.app.User;
+import se.curtrune.lucy.app.UserPrefs;
 import se.curtrune.lucy.dialogs.AddCategoryDialog;
 import se.curtrune.lucy.dialogs.AddPanicURLDialog;
 import se.curtrune.lucy.dialogs.PasswordDialog;
@@ -106,7 +106,7 @@ public class CustomizeFragment extends Fragment {
     }
     private void addCategory(String category){
         log("...addCategory(String)", category);
-        User.addCategory(category, getContext());
+        UserPrefs.addCategory(category, getContext());
         categories.add(category);
         categoryAdapter.notifyDataSetChanged();
     }
@@ -126,7 +126,7 @@ public class CustomizeFragment extends Fragment {
             Toast.makeText(getContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
             return;
         }
-        User.setIcePhoneNumber(intPhoneNumber, getContext());
+        UserPrefs.setIcePhoneNumber(intPhoneNumber, getContext());
         Toast.makeText(getContext() ,getString( R.string.ice_added), Toast.LENGTH_LONG).show();
 
     }
@@ -137,17 +137,17 @@ public class CustomizeFragment extends Fragment {
             Toast.makeText(getContext(), "not a valid url", Toast.LENGTH_LONG).show();
             return;
         }
-        User.addPanicUrl(url, getContext());
+        UserPrefs.addPanicUrl(url, getContext());
         initPanicURLS();
     }
     private  void deleteCategory(String category){
         log("...deleteCategory(String)", category);
-        User.deleteCategory(category, getContext());
+        UserPrefs.deleteCategory(category, getContext());
 
     }
     private void deletePanicURL(String url){
         log("...deletePanicURL()");
-        User.deletePanicUrl(url, getContext());
+        UserPrefs.deletePanicUrl(url, getContext());
         initPanicURLS();
     }
 
@@ -183,7 +183,7 @@ public class CustomizeFragment extends Fragment {
         textViewAddURL.setOnClickListener(view->showAddUrlDialog());
         checkBoxPassword.setOnClickListener(view->{
             if( checkBoxPassword.isChecked()){
-                if( !User.usesPassword(getContext())){
+                if( !UserPrefs.usesPassword(getContext())){
                     showPasswordDialog();
                 }
             }else{
@@ -205,7 +205,7 @@ public class CustomizeFragment extends Fragment {
     }
     private void initRecyclerCategories(){
         if( VERBOSE) log("...initRecyclerCategories()");
-        categories = new ArrayList<>(Arrays.asList( User.getCategories(getContext())));
+        categories = new ArrayList<>(Arrays.asList( UserPrefs.getCategories(getContext())));
         categoryAdapter = new SimpleAdapter(categories, category ->{
             log("...onItemClick(String)", category);
             showDeleteCategoryDialog();
@@ -218,7 +218,7 @@ public class CustomizeFragment extends Fragment {
 
     private void initPanicURLS(){
         log("...initPanicURLS())");
-        Set<String> urls = User.getPanicUrls(getContext());
+        Set<String> urls = UserPrefs.getPanicUrls(getContext());
         for( String url: urls){
             log("...url", url);
         }
@@ -238,7 +238,7 @@ public class CustomizeFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 log("spinner first page.onItemSelected(....)", adapter.getItem(position).toString());
-                User.setFirstPage(adapter.getItem(position), getContext());
+                UserPrefs.setFirstPage(adapter.getItem(position), getContext());
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -254,8 +254,8 @@ public class CustomizeFragment extends Fragment {
         builder.setMessage(getString(R.string.are_you_sure));
         builder.setPositiveButton(getString(R.string.delete), (dialog, which) -> {
             log("...on positive button click");
-            User.deletePanicUrl(url, getContext());
-            panicUrlAdapter.setList(new ArrayList<>(User.getPanicUrls(getContext())));
+            UserPrefs.deletePanicUrl(url, getContext());
+            panicUrlAdapter.setList(new ArrayList<>(UserPrefs.getPanicUrls(getContext())));
         });
         builder.setNegativeButton(getString(R.string.dismiss), (dialog, which) -> {
             log("...on negative button click");
@@ -275,12 +275,12 @@ public class CustomizeFragment extends Fragment {
     private void panicAction(Settings.PanicAction panicAction){
         log("...panicAction(PanicAction)", panicAction.toString());
         if( panicAction.equals(Settings.PanicAction.ICE)){
-            if( User.getICE(getContext() )== -1){
+            if( UserPrefs.getICE(getContext() )== -1){
                 Toast.makeText(getContext(), "please add an ice phone number", Toast.LENGTH_LONG).show();
                 return;
             }
         }
-        User.setPanicAction(panicAction, getContext());
+        UserPrefs.setPanicAction(panicAction, getContext());
     }
     private void printSharedPreferences(){
         Settings.printAll(requireContext());
@@ -289,28 +289,28 @@ public class CustomizeFragment extends Fragment {
         log("...removePassword()");
         //TODO, confirm with pwd
         Toast.makeText(getContext(), "remove password, are you sure?", Toast.LENGTH_LONG).show();
-        User.setUsesPassword(false, getContext());
+        UserPrefs.setUsesPassword(false, getContext());
     }
     private void setLanguage(int id){
         log("...setLanguage(int)", id);
         if( id == R.id.customizeFragment_radioButtonEnglish){
             log("ENGLISH");
-            User.setLanguage("en", getContext());
+            UserPrefs.setLanguage("en", getContext());
         }else{
             log("SWEDISH");
-            User.setLanguage("sv", getContext());
+            UserPrefs.setLanguage("sv", getContext());
         }
     }
     private void setUserInterface(){
         log("...setUserInterface()") ;
-        checkBoxPassword.setChecked(User.usesPassword(getContext()));
-        checkBoxDarkMode.setChecked(User.getDarkMode(getContext()));
+        checkBoxPassword.setChecked(UserPrefs.usesPassword(getContext()));
+        checkBoxDarkMode.setChecked(UserPrefs.getDarkMode(getContext()));
         setLanguage();
         setPanicAction();
     }
     private void setLanguage(){
         log("..setLanguage()");
-        String language = User.getLanguage(getContext());
+        String language = UserPrefs.getLanguage(getContext());
         switch (language){
             case "sv":
                 radioButtonSwedish.setChecked(true);
@@ -323,7 +323,7 @@ public class CustomizeFragment extends Fragment {
     }
     private void setPanicAction(){
         log("...setPanicAction()");
-        Settings.PanicAction panicAction = User.getPanicAction(getContext());
+        Settings.PanicAction panicAction = UserPrefs.getPanicAction(getContext());
         log("...panicAction", panicAction.toString());
         switch (panicAction){
             case URL:
@@ -342,8 +342,8 @@ public class CustomizeFragment extends Fragment {
                 radioButtonPending.setChecked(true);
                 break;
         }
-        if( User.getICE(getContext()) != -1){
-            String stringICE = String.valueOf(User.getICE(getContext()));
+        if( UserPrefs.getICE(getContext()) != -1){
+            String stringICE = String.valueOf(UserPrefs.getICE(getContext()));
             editTextICE.setText(stringICE);
         }
     }
@@ -377,8 +377,8 @@ public class CustomizeFragment extends Fragment {
         PasswordDialog dialog = new PasswordDialog();
         dialog.setCallback(pwd -> {
             log("...onPassword(String)", pwd);
-            User.setUsesPassword(true, getContext());
-            User.setPassword(pwd, getContext());
+            UserPrefs.setUsesPassword(true, getContext());
+            UserPrefs.setPassword(pwd, getContext());
         });
         dialog.show(getChildFragmentManager(), "set password");
     }
@@ -393,7 +393,7 @@ public class CustomizeFragment extends Fragment {
     }
     private void toggleDarkMode(){
         log("...toggleDarkMode()");
-        User.setUseDarkMode(checkBoxDarkMode.isChecked(), getContext());
+        UserPrefs.setUseDarkMode(checkBoxDarkMode.isChecked(), getContext());
         if(checkBoxDarkMode.isChecked()){
             SettingsWorker.setDarkMode();
         }else{

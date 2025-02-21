@@ -30,7 +30,7 @@ import java.time.LocalTime;
 import java.util.Locale;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.app.User;
+import se.curtrune.lucy.app.UserPrefs;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.util.Constants;
@@ -173,7 +173,7 @@ public class MentalDialog extends BottomSheetDialogFragment {
     }
     private void initDefaults(){
         if( VERBOSE) log("...initDefaults()");
-        categories = User.getCategories(getContext());
+        categories = UserPrefs.getCategories(getContext());
         assert categories.length > 0;
         category = categories[0];
 
@@ -343,7 +343,7 @@ public class MentalDialog extends BottomSheetDialogFragment {
             setMentalLabels();
             setSeekBars();
         }
-        if( User.isDevMode(getContext())){
+        if( UserPrefs.isDevMode(getContext())){
             setUserInterfaceDev();
         }
         updateUserInterface();
