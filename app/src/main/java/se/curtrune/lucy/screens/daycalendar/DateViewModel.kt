@@ -146,10 +146,28 @@ class DateViewModel: ViewModel(){
     }
     private fun search(filter: String, everywhere: Boolean){
         println("DateViewModel.search($filter, everywhere: $everywhere)")
-        val filteredItems: List<Item> = items.filter { item-> item.contains(filter)  }
-        _state.update { it.copy(
-            items = filteredItems
-        ) }
+        if( everywhere){
+            if( filter.isEmpty()){
+                _state.update {it.copy(
+                    items = items
+                )
+                }
+            }else {
+                val filteredItems = repository.search(filter)
+                _state.update {
+                    it.copy(
+                        items = filteredItems
+                    )
+                }
+            }
+        }else {
+            val filteredItems: List<Item> = items.filter { item -> item.contains(filter) }
+            _state.update {
+                it.copy(
+                    items = filteredItems
+                )
+            }
+        }
 
     }
     fun setCalendarDate(calendarDate: CalenderDate) {

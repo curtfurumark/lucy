@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -36,6 +37,9 @@ fun MentalMeter4(
     }
     var percent by remember {
         mutableFloatStateOf(0F)
+    }
+    var mutableItem by remember {
+        mutableStateOf(item)
     }
     mentalLevel = when(state.currentField){
         Field.ENERGY -> item.energy + 5
@@ -63,15 +67,21 @@ fun MentalMeter4(
         return l -5
     }
     fun setLevel(x: Float) {
+        println("setLevel: $x")
         val fraction = x / boxWidth
         val level = myRound(fraction) * 10
+        println("level: $level")
         when(state.currentField){
-            Field.ENERGY -> {item.energy = level.toInt() }
+            Field.ENERGY -> {
+                println("setting energy level: ${level.toInt()}")
+                mutableItem.energy = level.toInt()
+                item.energy = level.toInt() }
             Field.ANXIETY -> {item.anxiety = level.toInt()}
             Field.STRESS -> {item.stress = level.toInt()}
             Field.MOOD -> {item.mood = level.toInt()}
             Field.DURATION -> TODO()
         }
+        mentalLevel = level.toInt()
         onEvent(MyDateEvent.UpdateItem(item))
     }
     Box(
@@ -109,10 +119,10 @@ fun MentalMeter4(
             Text(text = "${item.heading} ${DateTImeFormatter.format(item.targetTime)}")
             Text(text = "${state.currentField.name } ${
                 when(state.currentField){
-                    Field.ENERGY ->item.energy
-                    Field.ANXIETY -> item.anxiety
-                    Field.STRESS -> item.stress
-                    Field.MOOD -> item.mood
+                    Field.ENERGY ->mutableItem.energy
+                    Field.ANXIETY -> mutableItem.anxiety
+                    Field.STRESS -> mutableItem.stress
+                    Field.MOOD -> mutableItem.mood
                     Field.DURATION -> item.duration.toString()
                 }
             }", fontSize = 20.sp)

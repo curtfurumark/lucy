@@ -29,7 +29,9 @@ import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.composables.ItemSettings
 import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.Repeat
 import se.curtrune.lucy.composables.AddItemDialog
+import se.curtrune.lucy.statistics.StatisticsPeriod
 import se.curtrune.lucy.util.DateTImeFormatter
 import java.time.LocalDate
 import java.time.LocalTime
@@ -40,22 +42,33 @@ fun ItemSettingsEditor(item: Item, parent: Item?){
         .fillMaxWidth()){
         item {  ItemSettingDate(item = item)}
         item {  ItemSettingTime(item = item)}
-        item{ ItemSettingCalendar(item = item) }
-        item {  ItemSettingRepeat(item = item)}
+        item{ ItemSettingCalendar(item = item, onEvent = {
+
+        }) }
+        item {ItemSettingRepeat(item = item)}
         item{ItemSettingCategory(item = parent)}
-        item{ItemSettingNotification(item = item)}
-        item{ItemSettingTags(item = parent)}
-        item{ItemSettingColor(item = parent)}
-        item{ItemSettingPrioritized(item = item)}
+        item{ItemSettingNotification(item = item, onEvent = {
+            println("notification event")
+        })}
+        item{ItemSettingTags(item = parent, onEvent = {
+            println("tags event")
+        })}
+        item{ItemSettingColor(item = parent, onEvent = {
+            println("event color dialog")
+        })}
+        item{ItemSettingPrioritized(item = item, onEvent = {
+            println("event prioritized")
+        })}
     }
 }
-
 @Composable
-fun ItemSettingCalendar(item: Item){
+fun ItemSettingCalendar(item: Item, onEvent: (Boolean) -> Unit){
     var isCalendarItem by remember {
         mutableStateOf(false)
     }
-    Box(modifier = Modifier.fillMaxWidth().border(Dp.Hairline, color = Color.LightGray)) {
+    Box(modifier = Modifier.fillMaxWidth()
+        .border(Dp.Hairline, color = Color.LightGray)
+        .padding(start = 8.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -64,6 +77,7 @@ fun ItemSettingCalendar(item: Item){
             Text(text = stringResource(R.string.is_calender))
             Checkbox(checked = item.isCalenderItem, onCheckedChange = {
                 isCalendarItem = !isCalendarItem
+                onEvent(isCalendarItem)
             })
         }
     }
@@ -78,9 +92,33 @@ fun ItemSettingCategory(item: Item?){
     }
 }
 @Composable
-fun ItemSettingColor(item: Item?){
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Text(text = stringResource(R.string.color))
+fun ItemSettingCategory(category: String, onEvent: () -> Unit){
+    Box(modifier = Modifier.fillMaxWidth()
+        .border(Dp.Hairline,  color = Color.LightGray)
+        .padding(8.dp)) {
+        Row(modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = stringResource(R.string.category))
+            //if (item != null) {
+            Text(text = category, modifier = Modifier.clickable {
+                onEvent()
+            })
+        }
+    }
+}
+
+@Composable
+fun ItemSettingColor(item: Item?, onEvent: () -> Unit){
+    Box(modifier = Modifier.fillMaxWidth()
+        .padding(8.dp)
+        .clickable {
+            onEvent()
+        }) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Text(text = stringResource(R.string.color))
+        }
     }
 }
 
@@ -103,51 +141,93 @@ fun ItemSettingDate(item: Item){
 }
 @Composable
 fun ItemSettingDate(date: LocalDate, onEvent: ()->Unit){
-     Row(
-            modifier = Modifier.padding(8.dp)
-                .border(Dp.Hairline, color = Color.LightGray)
-                .fillMaxWidth()
-                .clickable {
-                    println("set date")
-                    onEvent()
-                },
+    Box(modifier = Modifier.fillMaxWidth()
+        .border(Dp.Hairline, color = Color.LightGray)
+        .clickable { onEvent() }) {
+        Row(modifier = Modifier.fillMaxWidth()
+            .padding(8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
-                )
+        )
         {
-            Text(text = stringResource(R.string.date),
-                modifier = Modifier.padding(8.dp))
-            if( date.toEpochDay() > 0){
+            Text(
+                text = stringResource(R.string.date)
+            )
+            if (date.toEpochDay() > 0) {
                 Text(text = DateTImeFormatter.format(date))
             }
         }
-}
-@Composable
-fun ItemSettingNotification(item: Item){
-    Column(modifier = Modifier.padding(4.dp)){
-        Text(text = stringResource(R.string.notification))
     }
 }
 @Composable
-fun ItemSettingPrioritized(item: Item){
-    Column(modifier = Modifier.padding(4.dp)){
-        Text(text = stringResource(R.string.is_prioritized))
+fun ItemSettingNotification(item: Item, onEvent: () -> Unit){
+    Box(modifier = Modifier.fillMaxWidth()
+        .border(Dp.Hairline, color = Color.LightGray)
+        .padding(8.dp)
+        .clickable {
+            onEvent()
+        }) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Text(text = stringResource(R.string.notification))
+        }
+    }
+}
+@Composable
+fun ItemSettingPrioritized(item: Item, onEvent: (Boolean) -> Unit){
+    var isPrioritized by remember {
+        mutableStateOf(item.isPrioritized)
+    }
+    Box(modifier = Modifier.fillMaxWidth()
+        .padding(8.dp)
+        .clickable {
+            isPrioritized = !isPrioritized
+            onEvent(isPrioritized)
+        }) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Text(text = stringResource(R.string.is_prioritized))
+        }
     }
 }
 
 @Composable
 fun ItemSettingRepeat(item: Item){
-    Column(modifier = Modifier.padding(4.dp)){
+    Column(modifier = Modifier.padding(4.dp)) {
         Text(text = stringResource(R.string.repeat))
-        Text(text = if( item.hasPeriod()) item.period.toString() else "no repeat")
+        Text(text = if (item.hasPeriod()) item.period.toString() else "no repeat")
     }
 }
 @Composable
-fun ItemSettingTags(item: Item?){
-    Column(modifier = Modifier.padding(4.dp)){
-        Text(text = stringResource(R.string.tags))
-        if (item != null) {
-            Text(text = item.tags)
+fun ItemSettingRepeat(repeat: Repeat?, onEvent: () -> Unit){
+    Box(modifier = Modifier.fillMaxWidth()
+        .border(Dp.Hairline, color = Color.LightGray)
+        .clickable {
+        onEvent()
+    }) {
+        Column(
+            modifier = Modifier.padding(8.dp).fillMaxWidth()
+                .clickable {
+                onEvent()
+            }) {
+            Text(text = stringResource(R.string.repeat))
+            if (repeat != null) {
+                Text(text = repeat.toString())
+            }
+        }
+    }
+}
+@Composable
+fun ItemSettingTags(item: Item?, onEvent: () -> Unit){
+    Box(modifier = Modifier.fillMaxWidth()
+        .border(Dp.Hairline, color = Color.LightGray)
+        .padding(8.dp)
+        .clickable {
+            onEvent()
+        }) {
+        Column(modifier = Modifier.padding(4.dp)) {
+            Text(text = stringResource(R.string.tags))
+            if (item != null) {
+                Text(text = item.tags)
+            }
         }
     }
 }
@@ -169,21 +249,24 @@ fun ItemSettingTime(item: Item){
 }
 @Composable
 fun ItemSettingTime(targetTime: LocalTime, onEvent: () -> Unit){
+    Box(modifier = Modifier.fillMaxWidth()
+        .border(Dp.Hairline, color = Color.LightGray)
+        .clickable { onEvent() }) {
         Row(
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier
                 .fillMaxWidth()
-                //.padding(4.dp)
-                .clickable { onEvent() }
-                .border(Dp.Hairline, color = Color.LightGray),
+                .padding(8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = stringResource(R.string.time),
-                modifier = Modifier.padding(8.dp))
+            Text(
+                text = stringResource(R.string.time)
+            )
             if (targetTime.toSecondOfDay() > 0) {
                 Text(text = DateTImeFormatter.format(targetTime))
             }
         }
+    }
 }
 
 @Composable

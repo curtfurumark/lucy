@@ -99,7 +99,7 @@
             android:exported="true"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".screens.week_calendar.WeekCalendarActivityKt"
+            android:name=".screens.week_calendar.WeekFragment"
             android:exported="false" />
 
         <receiver android:name=".notifications.AlarmReceiver" />

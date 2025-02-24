@@ -7,6 +7,9 @@ import se.curtrune.lucy.app.Settings
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.State
 import se.curtrune.lucy.classes.Type
+import se.curtrune.lucy.classes.calender.CalenderDate
+import se.curtrune.lucy.classes.calender.Week
+import se.curtrune.lucy.persist.CalenderWorker
 import se.curtrune.lucy.persist.ItemsWorker
 import se.curtrune.lucy.persist.LocalDB
 import se.curtrune.lucy.persist.Queeries
@@ -84,6 +87,10 @@ class Repository (val context: Application){
             res = true
         }
         return res
+    }
+    fun getEvents(week: Week): List<CalenderDate> {
+        Logger.log("CalendarWorker.getEvents(Week, Context)", week.toString())
+        return CalenderWorker.getCalenderDates(week.firstDateOfWeek, week.lastDateOfWeek, context)
     }
 
     /**

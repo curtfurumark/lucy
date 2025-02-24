@@ -63,10 +63,11 @@ class CalendarDayFragment() : Fragment() {
                         mutableStateOf(false)
                     }
                     val dayViewModel = viewModel<DateViewModel>()
-                    val mainViewModel = viewModel<MainViewModel>()
+                    //val mainViewModel = viewModel<MainViewModel>()
+                    val mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
                     mainViewModel.filter.observe(requireActivity()) { filter ->
-                        println("hello filter: $filter")
-                        //dayViewModel.onEvent(DayEvent.Search(filter, false))
+                        //println("hello filter: $filter")
+                        dayViewModel.onEvent(DayEvent.Search(filter, true))
                     }
                     if( calendarDate != null){
                         dayViewModel.setCalendarDate(calendarDate!!)

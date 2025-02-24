@@ -13,12 +13,26 @@ import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.workers.RepeatWorker;
 
 public class RepeatTest {
+
+
+    public void repeatWeekDaysMonSat(){
+
+    }
     @Test
     public void repeatOneWeek(){
         Repeat repeat = new Repeat();
         repeat.setPeriod(2, Repeat.Unit.WEEK);
         LocalDate nextDate = repeat.getNextDate();
         assertEquals(LocalDate.now().plusWeeks(1), nextDate);
+    }
+
+    @Test
+    public void repeatEveryDayStarting(){
+        Repeat repeat = new Repeat();
+        repeat.setFirstDate(LocalDate.of(2025, 1, 1));
+        repeat.setPeriod(1, Repeat.Unit.DAY);
+        LocalDate firstDate = repeat.getNextDate();
+
     }
     @Test
     public void repeatEveryOtherWeek(){

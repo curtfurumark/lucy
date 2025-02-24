@@ -179,7 +179,7 @@
     <string name="swedish">swedish</string>
     <string name="english">english</string>
     <string name="open_db" translatable="false">open db</string>
-    <string name="add_to_list">add to list</string>
+    <string name="add_to_list">add to list: %1$s</string>
     <string name="every_day">every day</string>
     <string name="every_week">every week</string>
     <string name="every_month">every month</string>

@@ -57,6 +57,7 @@ import se.curtrune.lucy.screens.monthcalendar.MonthFragment
 import se.curtrune.lucy.screens.projects.ProjectsFragment
 import se.curtrune.lucy.screens.todo.TodoFragment
 import se.curtrune.lucy.screens.week_calendar.CalendarWeekHostFragment
+import se.curtrune.lucy.screens.week_calendar.WeekFragment
 import se.curtrune.lucy.util.Constants
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.web.VersionInfo
@@ -144,20 +145,15 @@ class MainActivity : AppCompatActivity() {
                         navigate(EstimateFragment())
                     }*/
                     R.id.navigationDrawer_weekly -> {
-                        navigate(CalendarWeekHostFragment())
+                        //navigate(CalendarWeekHostFragment())
+                        navigate(WeekFragment())
                     }
-                    /*R.id.navigationDrawer_contactFragment -> {
-                        navigate(ContactFragment())
-                    }*/
                     R.id.navigationDrawer_messageBoardFragment -> {
                         navigate(MessageBoardFragment())
                     }
                     R.id.navigationDrawer_medicines  ->{
                         navigate(MedicineFragment())
                     }
-                    /*R.id.navigationDrawer_countDownTimer -> {
-                        navigate(TimerFragment())
-                    }*/
                     R.id.navigationDrawer_customizeFragment -> {
                         navigate(CustomizeFragment())
                     }

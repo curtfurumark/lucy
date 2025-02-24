@@ -102,11 +102,11 @@ class DevActivityViewModel : ViewModel() {
     }
     fun onEvent(event: TopAppBarEvent){
         when(event){
-            TopAppBarEvent.OnBoost -> { onBoost()}
-            TopAppBarEvent.OnPanic -> { onPanic()}
+            is TopAppBarEvent.OnBoost -> { onBoost()}
+            is TopAppBarEvent.OnPanic -> { onPanic()}
             is TopAppBarEvent.OnSearch -> {search(event.filter)}
-            TopAppBarEvent.DayCalendar -> {dayCalendar()}
-            TopAppBarEvent.Menu -> {}
+            is TopAppBarEvent.DayCalendar -> {dayCalendar()}
+            is TopAppBarEvent.Menu -> {}
         }
 
     }

@@ -1,21 +1,13 @@
 package se.curtrune.lucy.composables
 
-import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -25,24 +17,25 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.composables.ItemSettings
 import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.composables.top_app_bar.ItemSettingCalendar
+import se.curtrune.lucy.composables.top_app_bar.ItemSettingCategory
+import se.curtrune.lucy.composables.top_app_bar.ItemSettingColor
 import se.curtrune.lucy.composables.top_app_bar.ItemSettingDate
+import se.curtrune.lucy.composables.top_app_bar.ItemSettingNotification
+import se.curtrune.lucy.composables.top_app_bar.ItemSettingPrioritized
+import se.curtrune.lucy.composables.top_app_bar.ItemSettingRepeat
+import se.curtrune.lucy.composables.top_app_bar.ItemSettingTags
 import se.curtrune.lucy.composables.top_app_bar.ItemSettingTime
-import se.curtrune.lucy.composables.top_app_bar.ItemSettingsEditor
-import se.curtrune.lucy.util.Converter
-import se.curtrune.lucy.util.DateTImeFormatter
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -54,6 +47,7 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSe
     if( settings.parent == null){
         println("AddItemDialog, ItemSettings.parent is null")
     }
+
     var heading by remember{
         mutableStateOf("")
     }
@@ -69,13 +63,31 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSe
     var isCalendarItem by remember {
         mutableStateOf(settings.isCalendarItem)
     }
+    var category by remember {
+        mutableStateOf(settings.parent?.category ?: "")
+    }
     val item by remember {
         mutableStateOf(Item())
     }
     var showTimeDialog by remember {
         mutableStateOf(false)
     }
+    var showCategoryDialog by remember {
+        mutableStateOf(false)
+    }
     var showDateDialog by remember {
+        mutableStateOf(false)
+    }
+    var showRepeatDialog by remember {
+        mutableStateOf(false)
+    }
+    var showTagsDialog by remember {
+        mutableStateOf(false)
+    }
+    var showColorDialog by remember {
+        mutableStateOf(false)
+    }
+    var showNotificationDialog by remember {
         mutableStateOf(false)
     }
     fun getItem(): Item{
@@ -83,15 +95,15 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSe
         item.heading = heading
         item.targetDate = targetDate
         item.targetTime = targetTime
+        item.category = category
         item.setIsCalenderItem(isCalendarItem)
         return item
     }
     Dialog(onDismissRequest = onDismiss){
-        val context = LocalContext.current
         Surface(modifier = Modifier.fillMaxWidth().background(Color.LightGray)) {
             Column(modifier = Modifier.fillMaxWidth()) {
                 if(parent != null){
-                    Text(text = "add to list ${parent!!.heading}", fontSize = 20.sp)
+                    Text(text = stringResource(R.string.add_to_list, parent!!.heading), fontSize = 20.sp)
                 }else{
                     Text(text = "WARNING PARENT IS NULL", fontSize = 20.sp)
                 }
@@ -100,17 +112,37 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSe
                     onValueChange = { heading = it },
                     modifier = Modifier
                         .fillMaxWidth(),
-                    label = { Text("heading") }
+                    label = { Text(stringResource(R.string.heading)) }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                //val scrollState = rememberScrollState()
                 ItemSettingDate(date = targetDate, onEvent = {
                     showDateDialog = true
                 })
                 ItemSettingTime(targetTime = targetTime, onEvent = {
                     showTimeDialog = true
                 })
-                //ItemSettingsEditor(item = item, parent = parent)
+                ItemSettingRepeat(item.period, onEvent = {
+                    showRepeatDialog = true
+                })
+                ItemSettingCategory(category, onEvent = {
+                    showCategoryDialog = true
+                })
+                ItemSettingCalendar(item = item, onEvent = { isCalendarItem->
+                    item.setIsCalenderItem(isCalendarItem)
+                })
+                ItemSettingTags(item = item, onEvent = {
+                    showTagsDialog = true
+                })
+                ItemSettingColor(item = item, onEvent = {
+                    showColorDialog = true
+                })
+                ItemSettingNotification(item = item, onEvent = {
+                    showNotificationDialog = true
+                })
+                ItemSettingPrioritized(item = item, onEvent = { isPrioritized ->
+                    println("event item: ${item.heading} is prioritized: $isPrioritized")
+                })
+
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -128,6 +160,10 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSe
             }
         }
     }
+    if( showCategoryDialog){
+        println("showCategoryDialog()")
+        //Cate
+    }
     if( showTimeDialog){
         TimePickerDialog(
             onDismiss = {
@@ -144,6 +180,16 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSe
         }, onDateSelected = {
                 targetDate = it
         })
+    }
+    if(showRepeatDialog){
+        RepeatDialog(onDismiss = {
+            showRepeatDialog = false
+        }, onConfirm = { repeat->
+            println("on confirm repeat")
+            item.setRepeat(repeat)
+            showRepeatDialog = false
+        },
+            repeatIn = item.period)
     }
 }
 

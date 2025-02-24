@@ -120,23 +120,14 @@ fun DateItem(
             onDismissRequest ={
                 showContextMenu = false
             } ) {
-            listOf(item.heading,"postpone", "delete", "start timer", "view stats", "edit").forEach {
-                DropdownItem(it, onClick = { action->
+            ContextActions.entries.forEach{
+                DropdownItem(it.name, onClick = { action->
                     println("action: $action")
                     when(action){
-                        "postpone"->{
-                            onEvent(DayEvent.ShowPostponeDialog(item))
-                        }
-                        "start timer"->{
-                            onEvent(DayEvent.StartTimer(item))
-                        }
-                        "delete" ->{
-                            onEvent(DayEvent.DeleteItem(item))
-                        }
-                        "view stats" ->{
+                        ContextActions.VIEW_STATS.name ->{
                             onEvent(DayEvent.ShowStats(item))
                         }
-                        "edit" ->{
+                        ContextActions.EDIT.name ->{
                             onEvent(DayEvent.EditItem(item))
                         }
                     }
@@ -145,5 +136,7 @@ fun DateItem(
             }
         }
     }
-
+}
+enum class ContextActions{
+    VIEW_STATS, EDIT
 }

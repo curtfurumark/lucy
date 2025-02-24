@@ -48,10 +48,9 @@ class RepeatActivity : ComponentActivity() {
                 RepeatList(list = repeats)
                 if (showDialog) {
                     RepeatDialog(onDismiss = {
-                        println("onDismmiss")
+                        println("onDismiss")
                         showDialog = false
-                    }) {
-                    }
+                    }, repeatIn = null, onConfirm = {})
                 }
             }
         }

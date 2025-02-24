@@ -15,6 +15,7 @@ import se.curtrune.lucy.classes.calender.Week;
 import se.curtrune.lucy.persist.CalenderWorker;
 
 public class CalendarWeekViewModel extends ViewModel {
+
     private Week currentWeek = new Week();
     private MutableLiveData<Week> mutableWeek = new MutableLiveData<>();
     private int numWeeks = 10;

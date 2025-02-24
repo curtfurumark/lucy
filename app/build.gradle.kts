@@ -12,8 +12,8 @@ android {
         applicationId = "se.curtrune.lucy"
         minSdk = 24
         targetSdk = 34
-        versionCode = 13
-        versionName = "even serpents shine"
+        versionCode = 14
+        versionName = "from here to eternity"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

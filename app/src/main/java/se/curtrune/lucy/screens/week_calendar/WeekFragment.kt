@@ -1,8 +1,9 @@
 package se.curtrune.lucy.screens.week_calendar
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,11 +19,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -32,27 +37,80 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import se.curtrune.lucy.activities.kotlin.composables.ItemSettings
+import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.classes.calender.Week
-import se.curtrune.lucy.viewmodel.WeekViewModel
+import se.curtrune.lucy.composables.AddItemDialog
+import se.curtrune.lucy.composables.AddItemFab
+import se.curtrune.lucy.screens.daycalendar.CalendarDayFragment
+import se.curtrune.lucy.screens.daycalendar.DayChannel
+import se.curtrune.lucy.screens.main.MainViewModel
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
-class WeekCalendarActivityKt : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            Column {
-                EnergyBox()
-                MyWeekCalendar()
+class WeekFragment : Fragment() {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        return ComposeView(requireActivity()).apply {
+            setContent {
+                val weekViewModel = viewModel<WeekViewModel>()
+                val state = weekViewModel.state.collectAsState()
+                var showAddItemDialog by remember {
+                    mutableStateOf(false)
+                }
+                LaunchedEffect(weekViewModel) {
+                    weekViewModel.eventFlow.collect{ event->
+                        when(event){
+                            is WeekChannel.ShowAddItemDialog -> {
+                                showAddItemDialog = true
+                            }
+                            is WeekChannel.ShowMessage -> {}
+                            is WeekChannel.ViewDay -> {
+                                navigate(event.calendarDate)
+                            }
+                        }
+                    }
+                }
+                LucyTheme {
+                    Scaffold(floatingActionButton = { AddItemFab {
+                        println("on fab click")
+                        weekViewModel.onEvent(WeekEvent.ShowAddItemDialog)
+                    }}) { padding ->
+                        MyWeekCalendar(
+                            modifier = Modifier.padding(padding),
+                            state = state.value,
+                            onEvent = { event ->
+                                weekViewModel.onEvent(event)
+                            })
+                    }
+                    if(showAddItemDialog){
+                        //val settings = I
+                        AddItemDialog(onDismiss = {
+                            showAddItemDialog = false
+                        }, onConfirm = { item->
+                            weekViewModel.onEvent(WeekEvent.AddItem(item))
+                        }, settings = ItemSettings(
+                            parent = state.value.currentParent,
+                            targetTime = LocalTime.now(),
+                            targetDate = LocalDate.now(),
+                            isCalendarItem = true
+                        ))
+                    }
+                }
             }
         }
     }
@@ -87,60 +145,44 @@ class WeekCalendarActivityKt : ComponentActivity() {
     }
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    fun MyWeekCalendar(){
-        val weekViewModel = viewModel<WeekViewModel>(
-            factory = object : ViewModelProvider.Factory {
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return WeekViewModel(applicationContext) as T
-                }
-            }
-        )
-        var calendarDates by remember {
-            mutableStateOf(weekViewModel.calendarDates.value)
-        }
+    fun MyWeekCalendar(modifier: Modifier = Modifier, state: WeekState, onEvent: (WeekEvent) -> Unit){
         var currentPage by remember{
-            mutableIntStateOf(weekViewModel.initialPage)
+            mutableIntStateOf(state.initialPage)
         }
         val pagerState = rememberPagerState(pageCount = {
-            weekViewModel.numPages
-        }, initialPage = currentPage)
-        var currentWeek by remember {
-            mutableStateOf(weekViewModel.mutableWeek)
-        }
-        weekViewModel.calendarDates.observe(LocalLifecycleOwner.current){
-            println("calendarDates on changed ")
-            calendarDates = it
-        }
-        currentWeek?.let { it.value?.let { it1 -> CalendarWeekHeading(week = it1) } }
+            state.numPages
+        }, initialPage = state.initialPage)
+        Column(modifier = modifier){
+        CalendarWeekHeading(week = state.currentWeek)
         HorizontalPager(state = pagerState) {
-            //println("...pagerState ${pagerState.currentPage} currentPage $currentPage, it$it")
-            if( pagerState.currentPage != currentPage){
+            if (pagerState.currentPage != currentPage) {
                 println("...pagerState ${pagerState.currentPage} currentPage $currentPage, it$it")
-                println("...hey ho lets go")
-                weekViewModel.onPage(pagerState.currentPage)
+                onEvent(WeekEvent.OnPage(pagerState.currentPage))
                 currentPage = pagerState.currentPage
             }
 
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2)
             ) {
-                calendarDates?.let { it1 ->
-                    items(it1.size) {
-                        val calendarDate = calendarDates?.get(it)
-                        if (calendarDate != null) {
-                            DateView(calendarDate, onClick = {
-                                println(" on calendar date click ${it.date}")
-                            })
-                        }
-                    }
+                items(state.calendarDates) { calendarDate ->
+                    DateView(calendarDate = calendarDate, onEvent = onEvent)
                 }
-
             }
         }
+        }
+    }
+    private fun navigate(calendarDate: CalenderDate){
+        println("MonthFragment.navigate(CalendarDate")
+        val mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
+        mainViewModel.updateFragment(
+            CalendarDayFragment(
+                calendarDate
+            )
+        )
     }
 
     @Composable
-    fun DateView(calendarDate: CalenderDate, onClick: (CalenderDate)->Unit){
+    fun DateView(calendarDate: CalenderDate, onEvent: (WeekEvent)->Unit){
         Box(
             modifier = Modifier
                 .padding(8.dp)
@@ -148,7 +190,8 @@ class WeekCalendarActivityKt : ComponentActivity() {
                 .clip(RoundedCornerShape(5.dp))
                 .background(Color.Blue)
                 .clickable {
-                    onClick(calendarDate)
+                    onEvent(WeekEvent.CalendarDateClick(calendarDate))
+                    //onClick(calendarDate)
                 },
             contentAlignment = Alignment.TopStart
         ){
@@ -169,7 +212,7 @@ class WeekCalendarActivityKt : ComponentActivity() {
     fun MyPreview(){
         Column {
             CalendarWeekHeading(Week())
-            WeekCalendarActivityKt()
+            WeekFragment()
         }
     }
 
