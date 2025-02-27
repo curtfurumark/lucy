@@ -12,6 +12,7 @@ import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.State
 import se.curtrune.lucy.screens.appointments.UIEvent
+import se.curtrune.lucy.screens.item_editor.ItemEvent
 import se.curtrune.lucy.util.Logger
 
 class TodoViewModel : ViewModel() {
@@ -73,13 +74,20 @@ class TodoViewModel : ViewModel() {
     private fun sort() {
         //mutableItems.value!!.sortWith(Comparator.comparingLong { obj: Item -> obj.compare() })
     }
-    fun onEvent(event: TodoEvent){
+    fun onEvent(event: ItemEvent){
         when(event){
-            is TodoEvent.Delete -> {delete(event.item)}
-            is TodoEvent.Edit -> { editItem(event.item)}
-            is TodoEvent.Insert -> {insert(event.item)}
-            is TodoEvent.Update -> {update(event.item)}
-            is TodoEvent.Postpone -> {postpone(event.item)}
+            is ItemEvent.Delete -> {delete(event.item)}
+            is ItemEvent.Edit -> { editItem(event.item)}
+            is ItemEvent.Update -> {update(event.item)}
+            is ItemEvent.CancelTimer -> {}
+            is ItemEvent.GetChildren -> {}
+            is ItemEvent.GetChildrenType -> {}
+            is ItemEvent.GetItem -> {}
+            is ItemEvent.PauseTimer -> {}
+            is ItemEvent.ResumeTimer -> {}
+            is ItemEvent.StartTimer -> {}
+            is ItemEvent.InsertItem -> {}
+            is ItemEvent.ShowAddItemDialog -> {}
         }
     }
     fun postpone(item: Item){

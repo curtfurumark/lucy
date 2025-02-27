@@ -37,6 +37,8 @@ class MainViewModel : ViewModel() {
     private val mutableMessage = MutableLiveData<String>()
     private val mutableAffirmation = MutableLiveData<Affirmation>()
     private val mutableFilter = MutableLiveData<String>()
+    private val _filter = MutableStateFlow<String>("")
+    val filter = _filter.asStateFlow()
     private val _mental = MutableLiveData<Mental>()
     var mental: LiveData<Mental> = _mental
     init {
@@ -108,8 +110,9 @@ class MainViewModel : ViewModel() {
         recyclerMode.value = rm
     }
     fun filter(query: String) {
-        Logger.log("LucindaViewModel.filter(query)", query)
-        mutableFilter.value = query
+        Logger.log("MainViewModel.filter(query)", query)
+        //mutableFilter.value = query
+        _filter.update { query }
     }
 
     fun getPanicAction(context: Context?): PanicAction {
@@ -143,8 +146,8 @@ class MainViewModel : ViewModel() {
     }
     val affirmation: LiveData<Affirmation>
         get() = mutableAffirmation
-    val filter: LiveData<String>
-        get() = mutableFilter
+/*    val filter: LiveData<String>
+        get() = mutableFilter*/
 
     //private final MutableLiveData<Integer> energy = new MutableLiveData<>();
     enum class RecyclerMode {

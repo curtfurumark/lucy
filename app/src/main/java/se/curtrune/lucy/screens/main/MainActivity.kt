@@ -37,7 +37,7 @@ import se.curtrune.lucy.fragments.CustomizeFragment
 import se.curtrune.lucy.fragments.SequenceFragment
 import se.curtrune.lucy.modules.MentalModule
 import se.curtrune.lucy.persist.ItemsWorker
-import se.curtrune.lucy.screens.EnchiladaFragment
+import se.curtrune.lucy.screens.enchilada.EnchiladaFragment
 import se.curtrune.lucy.screens.affirmations.Quote
 import se.curtrune.lucy.screens.appointments.AppointmentsFragment
 import se.curtrune.lucy.screens.contacts.ContactsFragment

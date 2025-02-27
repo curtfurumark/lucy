@@ -180,6 +180,18 @@ class Repository (val context: Application){
         return null
     }
 
+    /**
+     * selects all the items
+     * @param context, context context
+     * @return all the items in the table items
+     */
+    fun selectItems(): List<Item> {
+        println("Repository.selectItems()")
+        LocalDB(context).use { db ->
+            return db.selectItems()
+        }
+    }
+
     fun selectItems(date: LocalDate ): List<Item> {
         println("Repository.selectItems(${date.toString()})")
         val queery = Queeries.selectItems(date)

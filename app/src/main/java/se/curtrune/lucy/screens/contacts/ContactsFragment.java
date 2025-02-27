@@ -115,13 +115,15 @@ public class ContactsFragment extends Fragment {
                 Toast.makeText(getContext(), error, Toast.LENGTH_LONG);
             }
         });
-        mainViewModel.getFilter().observe(requireActivity(), new Observer<String>() {
+/*        mainViewModel.getFilter().observe(requireActivity(), new Observer<String>() {
             @Override
             public void onChanged(String filter) {
                 log("MainViewModel.getFilter(String)", filter);
                 contactsViewModel.filterContacts(filter);
             }
-        });
+        });*/
+        var filter = mainViewModel.getFilter();
+        //filter.collect()
         contactsViewModel.getContacts().observe(requireActivity(), new Observer<List<Item>>() {
             @Override
             public void onChanged(List<Item> items) {

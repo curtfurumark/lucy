@@ -65,10 +65,18 @@ class CalendarDayFragment() : Fragment() {
                     val dayViewModel = viewModel<DateViewModel>()
                     //val mainViewModel = viewModel<MainViewModel>()
                     val mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
-                    mainViewModel.filter.observe(requireActivity()) { filter ->
+                    val filter = mainViewModel.filter.collectAsState()
+/*                    filter.apply {
+                        println("applying filter: ")
+                    }*/
+                    LaunchedEffect(filter.value) {
+                        println("launched effect, calendar day filter: ${filter.value} ")
+                        dayViewModel.onEvent(DayEvent.Search(filter.value, true))
+                    }
+/*                    mainViewModel.filter.observe(requireActivity()) { filter ->
                         //println("hello filter: $filter")
                         dayViewModel.onEvent(DayEvent.Search(filter, true))
-                    }
+                    }*/
                     if( calendarDate != null){
                         dayViewModel.setCalendarDate(calendarDate!!)
                     }

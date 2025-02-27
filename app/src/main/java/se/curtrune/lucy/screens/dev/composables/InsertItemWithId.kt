@@ -19,7 +19,7 @@ import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.screens.dev.DevEvent
 
 @Composable
-fun UndoDeleteTest(onEvent: (DevEvent)->Unit){
+fun InsertItemWithID(onEvent: (DevEvent)->Unit){
     Card(modifier = Modifier.fillMaxWidth()){
         var itemID by remember{
             mutableStateOf("")
@@ -28,7 +28,7 @@ fun UndoDeleteTest(onEvent: (DevEvent)->Unit){
             mutableStateOf("")
         }
         Column() {
-            Text(text = "reinsert deleted item", fontSize = 24.sp)
+            Text(text = "insert item with id", fontSize = 24.sp)
             OutlinedTextField(
                 value = itemID,
                 onValueChange = { itemID = it },
@@ -54,6 +54,8 @@ fun UndoDeleteTest(onEvent: (DevEvent)->Unit){
                 val item = Item()
                 item.heading = heading
                 item.id = itemID.toLong()
+                itemID = ""
+                heading = ""
                 onEvent(DevEvent.InsertItemWithID(item))
 
             }) {

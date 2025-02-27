@@ -144,11 +144,11 @@ public class ProjectsFragment extends Fragment implements
             projectsViewModel.setRoot(currentParent);
             addTab(currentParent);
         }
-        mainViewModel.getFilter().observe(requireActivity(), filter -> {
+/*        mainViewModel.getFilter().observe(requireActivity(), filter -> {
             log("ProjectsFragment.getFilter(String))", filter);
             filter(filter);
             //projectsViewModel.filter(filter);
-        });
+        });*/
     }
     private void initSwipe(){
         if( VERBOSE) log("...initSwipe()");

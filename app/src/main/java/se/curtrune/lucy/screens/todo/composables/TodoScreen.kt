@@ -11,16 +11,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.screens.item_editor.ItemEvent
 import se.curtrune.lucy.screens.todo.TodoEvent
 import se.curtrune.lucy.screens.todo.TodoState
 import se.curtrune.lucy.screens.todo.TodoViewModel
 
 @Composable
-fun TodoScreen(state: TodoState, onEvent: (TodoEvent)->Unit) {
+fun TodoScreen(state: TodoState, onEvent: (ItemEvent)->Unit) {
     ItemList(state = state, onEvent = onEvent)
 }
 @Composable
-fun ItemList(state: TodoState, onEvent: (TodoEvent) -> Unit){
+fun ItemList(state: TodoState, onEvent: (ItemEvent) -> Unit){
     LazyColumn(modifier = Modifier.fillMaxWidth()){
         items(state.items){item->
             BasicItem(item, onEvent = onEvent)

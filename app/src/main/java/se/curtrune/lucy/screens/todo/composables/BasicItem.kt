@@ -21,22 +21,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.screens.daycalendar.composables.SwipeBackground
+import se.curtrune.lucy.screens.item_editor.ItemEvent
 import se.curtrune.lucy.screens.todo.TodoEvent
 
 
 @Composable
-fun BasicItem(item: Item, onEvent: (TodoEvent)->Unit){
+fun BasicItem(item: Item, onEvent: (ItemEvent)->Unit){
     val context = LocalContext.current
     val swipeState = rememberSwipeToDismissBoxState(
         confirmValueChange = {
             if( it == SwipeToDismissBoxValue.EndToStart){
-                onEvent(TodoEvent.Delete(item))
-                Toast.makeText(context, "delete: ${item.heading}", Toast.LENGTH_LONG).show()
+                onEvent(ItemEvent.Delete(item))
+                //Toast.makeText(context, "delete: ${item.heading}", Toast.LENGTH_LONG).show()
                 true
             }else if (it == SwipeToDismissBoxValue.StartToEnd){
-                onEvent(TodoEvent.Postpone(item))
+                //onEvent(TodoEvent.Postpone(item))
                 //onEvent(DateEvent.ShowPostponeDialog(true))
-                Toast.makeText(context, "postpone: ${item.heading}", Toast.LENGTH_LONG).show()
+                //Toast.makeText(context, "postpone: ${item.heading}", Toast.LENGTH_LONG).show()
                 true
             }
             false
@@ -49,7 +50,7 @@ fun BasicItem(item: Item, onEvent: (TodoEvent)->Unit){
         Card(modifier = Modifier.fillMaxWidth()
             .background(color = Color.DarkGray)
             .clickable {
-                onEvent(TodoEvent.Edit(item))
+                onEvent(ItemEvent.Edit(item))
             }) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -58,7 +59,7 @@ fun BasicItem(item: Item, onEvent: (TodoEvent)->Unit){
                 Checkbox(checked = item.isDone, onCheckedChange = {
                     println("on checkbox checked $it")
                     item.setIsDone(it)
-                    onEvent(TodoEvent.Update(item))
+                    onEvent(ItemEvent.Update(item))
                 })
                 Text(
                     modifier = Modifier.padding(2.dp),

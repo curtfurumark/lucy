@@ -196,6 +196,9 @@ class ItemSessionViewModel : ViewModel() {
             is ItemEvent.GetChildren -> {}
             is ItemEvent.GetItem -> {}
             is ItemEvent.GetChildrenType -> {}
+            is ItemEvent.Edit -> {}
+            is ItemEvent.InsertItem -> {}
+            is ItemEvent.ShowAddItemDialog -> {}
         }
     }
 

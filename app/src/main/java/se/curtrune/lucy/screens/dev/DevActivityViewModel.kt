@@ -98,6 +98,9 @@ class DevActivityViewModel : ViewModel() {
             is ItemEvent.GetChildren -> {getChildren(event.item)}
             is ItemEvent.GetItem -> {getItem(event.id)}
             is ItemEvent.GetChildrenType -> {getChildrenType(event.parent, event.type)}
+            is ItemEvent.Edit -> {}
+            is ItemEvent.InsertItem -> {}
+            is ItemEvent.ShowAddItemDialog -> {}
         }
     }
     fun onEvent(event: TopAppBarEvent){

@@ -183,6 +183,7 @@ public class ItemsWorker {
      * @param context, context context
      * @return all the items in the table items
      */
+    @Deprecated
     public static List<Item> selectItems(Context context) {
         if(VERBOSE) log("ItemsWorker.selectItems(Context");
         try (LocalDB db = new LocalDB(context)) {

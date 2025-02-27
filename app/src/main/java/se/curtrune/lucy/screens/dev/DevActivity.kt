@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -61,8 +62,8 @@ import se.curtrune.lucy.screens.main.MainState
 import se.curtrune.lucy.composables.top_app_bar.LucindaControls
 import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
 import se.curtrune.lucy.modules.TimeModule
+import se.curtrune.lucy.screens.dev.composables.InsertItemWithID
 import se.curtrune.lucy.screens.dev.composables.ItemsTabsTest
-import se.curtrune.lucy.screens.dev.composables.UndoDeleteTest
 import se.curtrune.lucy.services.TimeServiceConstants
 import se.curtrune.lucy.services.TimerService
 import se.curtrune.lucy.util.Logger
@@ -148,6 +149,22 @@ class DevActivity : AppCompatActivity() {
                                 .verticalScroll(scrollState),
                             verticalArrangement = Arrangement.SpaceEvenly,
                         ) {
+
+                            var showInsertItemWithId by remember {
+                                mutableStateOf(false)
+                            }
+                            Text(text = "insert item with id", fontSize = 24.sp,
+                                modifier = Modifier.clickable {
+                                    showInsertItemWithId = !showInsertItemWithId
+                                })
+                            AnimatedVisibility(
+                                visible = showInsertItemWithId
+                            ) {
+                                InsertItemWithID(onEvent = { event->
+                                    devViewModel.onEvent(event)
+                                })
+                            }
+                            //Column()
 /*                            ItemsTabsTest(state = state.value, onEvent = { event->
                                 devViewModel.onEvent(event)
                             })*/

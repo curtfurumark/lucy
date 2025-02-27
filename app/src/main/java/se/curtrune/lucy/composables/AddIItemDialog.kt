@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -162,6 +163,9 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSe
     }
     if( showCategoryDialog){
         println("showCategoryDialog()")
+        CategoryDialog(category = item.category, dismiss= {
+            println("category dialog dismiss")
+        })
         //Cate
     }
     if( showTimeDialog){
@@ -180,6 +184,14 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSe
         }, onDateSelected = {
                 targetDate = it
         })
+    }
+    if( showColorDialog){
+        ColorPicker(dismiss = {
+            showColorDialog = false
+        }, onColor = { color ->
+            item.color = color.toArgb()
+        })
+
     }
     if(showRepeatDialog){
         RepeatDialog(onDismiss = {

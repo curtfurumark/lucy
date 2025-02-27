@@ -1,5 +1,6 @@
 package se.curtrune.lucy.composables.top_app_bar
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -111,14 +112,20 @@ fun ItemSettingCategory(category: String, onEvent: () -> Unit){
 
 @Composable
 fun ItemSettingColor(item: Item?, onEvent: () -> Unit){
-    Box(modifier = Modifier.fillMaxWidth()
-        .padding(8.dp)
-        .clickable {
-            onEvent()
-        }) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Text(text = stringResource(R.string.color))
+    if (item != null) {
+        Box(modifier = Modifier.fillMaxWidth()
+            .border(Dp.Hairline, color = Color.LightGray)
+            .padding(8.dp)
+            .background(color = Color(item.color))
+            .clickable {
+                onEvent()
+            }) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Text(text = stringResource(R.string.color))
+            }
         }
+    }else{
+        Text(text = "item is null")
     }
 }
 
