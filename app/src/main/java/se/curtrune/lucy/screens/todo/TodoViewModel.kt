@@ -11,9 +11,11 @@ import kotlinx.coroutines.launch
 import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.State
+import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
 import se.curtrune.lucy.screens.appointments.UIEvent
 import se.curtrune.lucy.screens.item_editor.ItemEvent
 import se.curtrune.lucy.util.Logger
+import java.util.Comparator
 
 class TodoViewModel : ViewModel() {
     private val _state = MutableStateFlow(TodoState())
@@ -38,32 +40,30 @@ class TodoViewModel : ViewModel() {
         }
     }
 
- /*   fun filter(filter: String?) {
-        val filteredItems: MutableList<Item> =
-            items!!.stream().filter { item: Item -> item.contains(filter) }.collect(
-            Collectors.toList()
-        )
-        mutableItems.value = filteredItems
-    }*/
+    fun filter(filter: String?, everywhere: Boolean) {
+        val filteredItems = items.filter { item: Item -> item.contains(filter)  }
+        _state.update { it.copy(
+            items = filteredItems
+        ) }
+    }
 
 /*    fun getItem(index: Int): Item {
         return mutableItems.value!![index]
     }*/
     init {
         items = repository.selectItems(State.TODO).toMutableList()
-        items.sortWith(compareByDescending { it.compare() })
-        //items.sortedWith(compareByDescending { it.targetDate })
+        items.sortWith(Comparator.comparingLong() { it.compare() })
         _state.update { it.copy(
             items = items
         ) }
     }
-    fun editItem(item: Item){
+    private fun editItem(item: Item){
         viewModelScope.launch {
             eventChannel.send(ChannelEvent.Edit(item))
         }
     }
 
-    fun insert(item: Item) {
+    private fun insert(item: Item) {
         //var item = item
         println("TodoFragmentViewModel.insert(Item)")
         val itemWithID = repository.insert(item)
@@ -87,10 +87,26 @@ class TodoViewModel : ViewModel() {
             is ItemEvent.ResumeTimer -> {}
             is ItemEvent.StartTimer -> {}
             is ItemEvent.InsertItem -> {}
-            is ItemEvent.ShowAddItemDialog -> {}
+            is ItemEvent.ShowAddItemDialog -> {showAddItemDialog()}
         }
     }
+    fun onEvent(event: TopAppBarEvent){
+        when(event){
+            TopAppBarEvent.DayCalendar -> TODO()
+            TopAppBarEvent.Menu -> TODO()
+            TopAppBarEvent.OnBoost -> TODO()
+            TopAppBarEvent.OnPanic -> TODO()
+            is TopAppBarEvent.OnSearch -> {filter(event.filter, event.everywhere)}
+        }
+
+    }
     fun postpone(item: Item){
+
+    }
+    private fun showAddItemDialog(){
+        viewModelScope.launch {
+            eventChannel.send(ChannelEvent.ShowAddItemDialog)
+        }
 
     }
     private fun showMessage(message: String){

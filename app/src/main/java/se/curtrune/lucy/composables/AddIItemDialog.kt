@@ -13,6 +13,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,12 +27,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import se.curtrune.lucy.R
-import se.curtrune.lucy.activities.kotlin.composables.ItemSettings
+import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
 import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.Notification
+import se.curtrune.lucy.classes.Type
+import se.curtrune.lucy.composables.top_app_bar.ItemSettingAppointment
 import se.curtrune.lucy.composables.top_app_bar.ItemSettingCalendar
 import se.curtrune.lucy.composables.top_app_bar.ItemSettingCategory
 import se.curtrune.lucy.composables.top_app_bar.ItemSettingColor
 import se.curtrune.lucy.composables.top_app_bar.ItemSettingDate
+import se.curtrune.lucy.composables.top_app_bar.ItemSettingLocation
 import se.curtrune.lucy.composables.top_app_bar.ItemSettingNotification
 import se.curtrune.lucy.composables.top_app_bar.ItemSettingPrioritized
 import se.curtrune.lucy.composables.top_app_bar.ItemSettingRepeat
@@ -42,9 +47,10 @@ import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSettings){
+fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: DialogSettings){
     println("AddItemDialog() settings date ${settings.targetDate.toString()}")
-    //println(" target time converted ${Converter.format(settings.targetTime)}")
+    println("AddItemDialog() settings calender:  ${settings.isCalendarItem}")
+    println("AddItemDialog() settings appointment ${settings.isAppointment}")
     if( settings.parent == null){
         println("AddItemDialog, ItemSettings.parent is null")
     }
@@ -61,14 +67,18 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSe
     val parent by remember {
         mutableStateOf(settings.parent)
     }
-    var isCalendarItem by remember {
-        mutableStateOf(settings.isCalendarItem)
-    }
+
     var category by remember {
         mutableStateOf(settings.parent?.category ?: "")
     }
     val item by remember {
         mutableStateOf(Item())
+    }
+    if( settings.isAppointment){
+        item.type = Type.APPOINTMENT
+    }
+    if( settings.isCalendarItem){
+        item.setIsCalenderItem(true)
     }
     var showTimeDialog by remember {
         mutableStateOf(false)
@@ -91,13 +101,22 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSe
     var showNotificationDialog by remember {
         mutableStateOf(false)
     }
+    LaunchedEffect(true) {
+        if( settings.isAppointment){
+            println("setting type to APPOINTMENT")
+            item.type = Type.APPOINTMENT
+        }
+        if( settings.isCalendarItem){
+            item.setIsCalenderItem(true)
+        }
+    }
     fun getItem(): Item{
         item.parentId = parent?.id ?: 0
         item.heading = heading
         item.targetDate = targetDate
         item.targetTime = targetTime
         item.category = category
-        item.setIsCalenderItem(isCalendarItem)
+        //item.setIsCalenderItem(isCalendarItem)
         return item
     }
     Dialog(onDismissRequest = onDismiss){
@@ -131,6 +150,19 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSe
                 ItemSettingCalendar(item = item, onEvent = { isCalendarItem->
                     item.setIsCalenderItem(isCalendarItem)
                 })
+                ItemSettingAppointment(item = item) { isAppointment->
+                    if( isAppointment) {
+                        item.type = Type.APPOINTMENT
+                    }else{
+                        item.type = Type.NODE
+                    }
+                }
+                ItemSettingPrioritized(item = item, onEvent = { isPrioritized ->
+                    println("event item: ${item.heading} is prioritized: $isPrioritized")
+                })
+                if( item.type == Type.APPOINTMENT){
+                    ItemSettingLocation()
+                }
                 ItemSettingTags(item = item, onEvent = {
                     showTagsDialog = true
                 })
@@ -139,9 +171,6 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSe
                 })
                 ItemSettingNotification(item = item, onEvent = {
                     showNotificationDialog = true
-                })
-                ItemSettingPrioritized(item = item, onEvent = { isPrioritized ->
-                    println("event item: ${item.heading} is prioritized: $isPrioritized")
                 })
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -162,9 +191,13 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSe
         }
     }
     if( showCategoryDialog){
-        println("showCategoryDialog()")
         CategoryDialog(category = item.category, dismiss= {
             println("category dialog dismiss")
+            showCategoryDialog = false
+        }, onCategory = {
+            println("...onCategory: $it")
+            item.category = it
+            showCategoryDialog = false
         })
         //Cate
     }
@@ -175,6 +208,7 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSe
         },
             onConfirm = {timePickerState ->
                 targetTime = LocalTime.of(timePickerState.hour, timePickerState.minute)
+                item.targetTime = targetTime
                 showTimeDialog = false
             })
     }
@@ -183,6 +217,7 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSe
             showDateDialog = false
         }, onDateSelected = {
                 targetDate = it
+            item.targetDate = it
         })
     }
     if( showColorDialog){
@@ -190,8 +225,8 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSe
             showColorDialog = false
         }, onColor = { color ->
             item.color = color.toArgb()
+            showColorDialog = false
         })
-
     }
     if(showRepeatDialog){
         RepeatDialog(onDismiss = {
@@ -203,12 +238,28 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: ItemSe
         },
             repeatIn = item.period)
     }
+    if( showTagsDialog){
+        TagsDialog(onDismiss = {
+            showTagsDialog = false
+        }, onConfirm = { tags ->
+            showTagsDialog = false
+            item.tags = tags
+        })
+    }
+    if(showNotificationDialog){
+        NotificationDialog(onDismiss = {
+            showNotificationDialog = false
+        }, onConfirm = { notification->
+            item.notification = notification
+
+        })
+    }
 }
 
 @Composable
 @Preview
 fun PreviewAddItemDialog(){
-    val settings = ItemSettings()
+    val settings = DialogSettings()
     settings.targetDate = LocalDate.now()
     settings.targetTime = LocalTime.now()
     AddItemDialog(onConfirm = {} , onDismiss = {}, settings = settings)

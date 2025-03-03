@@ -17,7 +17,7 @@ import se.curtrune.lucy.screens.todo.TodoState
 import se.curtrune.lucy.screens.todo.TodoViewModel
 
 @Composable
-fun TodoScreen(state: TodoState, onEvent: (ItemEvent)->Unit) {
+fun TodoScreen(modifier: Modifier = Modifier,state: TodoState, onEvent: (ItemEvent)->Unit) {
     ItemList(state = state, onEvent = onEvent)
 }
 @Composable

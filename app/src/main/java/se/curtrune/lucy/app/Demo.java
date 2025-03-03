@@ -8,10 +8,12 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import se.curtrune.lucy.LucindaApplication;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
+import se.curtrune.lucy.modules.Repository;
 import se.curtrune.lucy.persist.LocalDB;
 import se.curtrune.lucy.persist.ItemsWorker;
 
@@ -58,7 +60,8 @@ public class Demo {
     }
     public static void insertAppointments(Context context){
         log("...insertAppointments(Context)");
-        Item root = ItemsWorker.getAppointmentsRoot(context);
+        Repository repository = LucindaApplication.repository;
+        Item root = repository.getAppointmentsRoot();
         Item misaDev = getAppointment("misa dev", LocalDate.of(2024, 4, 26), LocalTime.of(10, 0));
         Item mayTheForce = getAppointment("may the 4h be with you", LocalDate.of(2024, 5, 4), LocalTime.of(0,0));
         LocalDB db = new LocalDB(context);

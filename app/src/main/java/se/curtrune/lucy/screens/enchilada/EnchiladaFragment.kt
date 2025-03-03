@@ -1,12 +1,9 @@
 package se.curtrune.lucy.screens.enchilada
 
-import android.app.AlertDialog
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.LaunchedEffect
@@ -18,29 +15,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import se.curtrune.lucy.R
-import se.curtrune.lucy.activities.kotlin.composables.ItemSettings
+import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.adapters.ItemAdapter
 import se.curtrune.lucy.classes.Item
-import se.curtrune.lucy.classes.State
 import se.curtrune.lucy.composables.AddItemDialog
 import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
-import se.curtrune.lucy.persist.ItemsWorker
 import se.curtrune.lucy.screens.ItemChannel
 import se.curtrune.lucy.screens.enchilada.composables.EnchiladaScreen
 import se.curtrune.lucy.screens.item_editor.ItemEditorFragment
 import se.curtrune.lucy.screens.item_editor.ItemEvent
 import se.curtrune.lucy.screens.main.MainViewModel
-import se.curtrune.lucy.screens.week_calendar.WeekChannel
 import se.curtrune.lucy.util.Logger
 
 /**
@@ -107,7 +95,7 @@ class EnchiladaFragment : Fragment() {
                     }, onConfirm = { item->
                         enchiladaViewModel.onEvent(ItemEvent.InsertItem(item))
                     }
-                    , settings = ItemSettings())
+                    , settings = DialogSettings())
                 }
             }
         }

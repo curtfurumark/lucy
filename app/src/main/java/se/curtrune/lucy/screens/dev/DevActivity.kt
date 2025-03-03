@@ -17,12 +17,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,6 +51,7 @@ import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.MediaContent
 import se.curtrune.lucy.classes.Notification
 import se.curtrune.lucy.composables.CountDownTimerService
+import se.curtrune.lucy.composables.NavigationDrawer
 import se.curtrune.lucy.composables.Search
 import se.curtrune.lucy.composables.StopWatchUsingService
 import se.curtrune.lucy.composables.top_app_bar.FlexibleTopBar
@@ -64,6 +69,7 @@ import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
 import se.curtrune.lucy.modules.TimeModule
 import se.curtrune.lucy.screens.dev.composables.InsertItemWithID
 import se.curtrune.lucy.screens.dev.composables.ItemsTabsTest
+import se.curtrune.lucy.screens.dev.composables.TestSwipeAble
 import se.curtrune.lucy.services.TimeServiceConstants
 import se.curtrune.lucy.services.TimerService
 import se.curtrune.lucy.util.Logger
@@ -125,58 +131,77 @@ class DevActivity : AppCompatActivity() {
                 var showSearch by remember {
                     mutableStateOf(false)
                 }
-                Scaffold(
-                    topBar = { FlexibleTopBar(
-                        scrollBehavior = scrollBehavior,
-                        content = {
-                            LucindaTopAppBar(onEvent = {appBarEvent->
-                                devViewModel.onEvent(appBarEvent)
-                            })
-                        }
-                        , onEvent = { event ->
-                            devViewModel.onEvent(event)
-                        }
-                    ) }
-
-                ) { padding->
-                    Surface(
-                        modifier = Modifier.fillMaxSize()
-                            .background(MaterialTheme.colorScheme.background)
-                            .padding(padding)
-                    ) {
-                        Column(
-                            modifier = Modifier.background(MaterialTheme.colorScheme.background)
-                                .verticalScroll(scrollState),
-                            verticalArrangement = Arrangement.SpaceEvenly,
-                        ) {
-
-                            var showInsertItemWithId by remember {
-                                mutableStateOf(false)
-                            }
-                            Text(text = "insert item with id", fontSize = 24.sp,
-                                modifier = Modifier.clickable {
-                                    showInsertItemWithId = !showInsertItemWithId
-                                })
-                            AnimatedVisibility(
-                                visible = showInsertItemWithId
-                            ) {
-                                InsertItemWithID(onEvent = { event->
+                val drawerState = rememberDrawerState(DrawerValue.Closed)
+                ModalNavigationDrawer(drawerState = drawerState,
+                    drawerContent = {
+                        NavigationDrawer()
+                    }) {
+                    Scaffold(
+                        topBar = {
+                            FlexibleTopBar(
+                                scrollBehavior = scrollBehavior,
+                                content = {
+                                    LucindaTopAppBar(onEvent = { appBarEvent ->
+                                        devViewModel.onEvent(appBarEvent)
+                                    })
+                                }, onEvent = { event ->
                                     devViewModel.onEvent(event)
-                                })
-                            }
-                            //Column()
-/*                            ItemsTabsTest(state = state.value, onEvent = { event->
+                                }
+                            )
+                        }
+
+                    ) { padding ->
+                        Surface(
+                            modifier = Modifier.fillMaxSize()
+                                .background(MaterialTheme.colorScheme.background)
+                                .padding(padding)
+                        ) {
+                            Column(
+                                modifier = Modifier.background(MaterialTheme.colorScheme.background)
+                                    .verticalScroll(scrollState),
+                                verticalArrangement = Arrangement.SpaceEvenly,
+                            ) {
+                                var testSwipeAbleItem by remember {
+                                    mutableStateOf(false)
+                                }
+                                Text(
+                                    text = "test swipeable item",
+                                    modifier = Modifier.clickable {
+                                        testSwipeAbleItem = !testSwipeAbleItem
+                                    }
+                                )
+                                AnimatedVisibility(visible = testSwipeAbleItem) {
+                                    TestSwipeAble()
+                                }
+
+                                var showInsertItemWithId by remember {
+                                    mutableStateOf(false)
+                                }
+                                Text(text = "insert item with id", fontSize = 24.sp,
+                                    modifier = Modifier.clickable {
+                                        showInsertItemWithId = !showInsertItemWithId
+                                    })
+                                AnimatedVisibility(
+                                    visible = showInsertItemWithId
+                                ) {
+                                    InsertItemWithID(onEvent = { event ->
+                                        devViewModel.onEvent(event)
+                                    })
+                                }
+                                //Column()
+                                /*                            ItemsTabsTest(state = state.value, onEvent = { event->
                                 devViewModel.onEvent(event)
                             })*/
-                            Spacer(modifier = Modifier.height(16.dp))
-                            StopWatchUsingService( onCommand = { action->
-                                println("command: $action")
-                                sendCommandToTimeService(action)
-                            })
-                            Spacer(modifier = Modifier.height(16.dp))
-                            CountDownTimerService(15, onCommand ={ command, duration->
-                                sendCommandToTimeService(command, duration)
-                            } )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                StopWatchUsingService(onCommand = { action ->
+                                    println("command: $action")
+                                    sendCommandToTimeService(action)
+                                })
+                                Spacer(modifier = Modifier.height(16.dp))
+                                CountDownTimerService(15, onCommand = { command, duration ->
+                                    sendCommandToTimeService(command, duration)
+                                })
+                            }
                         }
                     }
                 }

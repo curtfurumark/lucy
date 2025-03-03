@@ -11,5 +11,11 @@
     <color name="teal_700">#FF018786</color>
     <color name="red">#FFAA0000</color>
     <color name="mental_red">#640D2A</color>
+    <color name="light_brown">#A9634D</color>
+    <color name="brown">#753724</color>
+    <color name="pink">#C59F9F</color>
+    <color name="dark_brown">#4E1D0E</color>
+    <color name="ochre">#B19236</color>
     <color name="mental_green">#054943</color>
+    <color name="light_green">#3ABCB0</color>
 </resources>

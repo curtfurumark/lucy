@@ -4,6 +4,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.RepeatKt
+import se.curtrune.lucy.persist.RepeatItems
+import se.curtrune.lucy.persist.Repeater
 import java.time.DayOfWeek
 import java.time.LocalDate
 
@@ -23,63 +25,52 @@ class RepeatTestNew {
             lastDate = lastDate,
             isInfinite = false
         )
-        val items = Repeater.getDates(repeat)
+        val items = Repeater.getItems(repeat)
         items.forEach{ item ->
             println("heading: ${item.heading}, dayOfWeek: ${item.targetDate.dayOfWeek}")
         }
         assertEquals(2, items.size )
 
     }
+    @Test
+    fun repeaterBasicEveryDayForAWeek(){
+        println("repeat every day for a week")
+        val basicRepeat = RepeatItems.BasicRepeat(
+            firstDate = LocalDate.of(2025, 3, 3),
+            lastDate = LocalDate.of(2025, 3, 9),
+            isInfinite = false,
+            qualifier = 1,
+            unit = Repeater.Unit.DAY,
+            template = Item("repeat me mon to sun")
+        )
+        val repeater = Repeater
+        val items = repeater.getItems(repeat =basicRepeat)
+        items.forEach{ item->
+            println(item.toString())
+        }
+        assertEquals(7, items.size)
+    }
+    @Test
+    fun repeaterInfiniteEveryDayTest(){
+        println("infinite repeat every day")
+        val infiniteRepeat = RepeatItems.BasicRepeat(
+            firstDate = LocalDate.of(2025, 3, 3),
+            lastDate = LocalDate.of(2025, 3, 9),//should be ignored
+            isInfinite = true,
+            qualifier = 1,
+            unit = Repeater.Unit.DAY,
+            template = Item("repeat me mon to sun")
+        )
+        val repeater = Repeater
+        val lastInfiniteDay = repeater.lastInfiniteDate
+        val items = repeater.getItems(infiniteRepeat)
+        items.forEach{ item->
+            println(item.toString())
+        }
+        assertEquals(32, items.size)
+    }
 }
 
-sealed interface RepeatItems{
-    //var lastActualDate: LocalDate
-    data class BasicRepeat(val firstDate: LocalDate, val lastDate: LocalDate): RepeatItems {
-    }
 
-    data class RepeatWeekDays(
-        val item: Item,
-        val weekDays: List<DayOfWeek>,
-        val firstDate: LocalDate,
-        val lastDate: LocalDate,
-        var lastActualDate: LocalDate? = null,
-        val isInfinite: Boolean): RepeatItems {
-    }
-}
 
-object Repeater{
-    fun getDates(repeat: RepeatItems): List<Item>{
-        return when(repeat){
-            is RepeatItems.BasicRepeat -> {
-                getDates(repeat)
-            }
-            is RepeatItems.RepeatWeekDays -> {
-                getDates(repeat)
-            }
-        }
-    }
-    private fun getDates(repeat: RepeatItems.BasicRepeat): List<Item>{
-        val dates: MutableList<Item> = mutableListOf()
-        return dates
-    }
-    private fun getDates(repeatWeekDays: RepeatItems.RepeatWeekDays): List<Item>{
-        println("getDates()")
-        val items: MutableList<Item> = mutableListOf<Item>()
-        var currentDate = repeatWeekDays.firstDate
-        val lastDate = if( repeatWeekDays.isInfinite) repeatWeekDays.firstDate.plusMonths(1) else repeatWeekDays.lastDate
-        if( repeatWeekDays.isInfinite){
-            repeatWeekDays.lastActualDate = lastDate
-        }
-        while (currentDate.isBefore(lastDate)){
-            repeatWeekDays.weekDays.forEach{ dayOfWeek ->
-                if( currentDate.dayOfWeek.equals(dayOfWeek)){
-                    val item = Item(repeatWeekDays.item)
-                    item.targetDate = currentDate
-                    items.add(item)
-                }
-            }
-            currentDate = currentDate.plusDays(1)
-        }
-        return items
-    }
-}
+

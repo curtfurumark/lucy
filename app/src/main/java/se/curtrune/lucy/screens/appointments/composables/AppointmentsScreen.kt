@@ -15,9 +15,9 @@ import se.curtrune.lucy.screens.appointments.AppointmentsState
 fun AppointmentsScreen(state: AppointmentsState, onEvent: (AppointmentEvent)->Unit){
     LazyColumn(modifier = Modifier.fillMaxWidth()) {
         items(state.items){ item->
-            AppointmentItem(appointment = item, onEvent = {
+            AppointmentItem(appointment = item, onEvent = { event->
                 //println(" onEvent ${it.toString()}")
-                onEvent(AppointmentEvent.Edit(item))
+                onEvent(event)
             })
             Spacer(modifier = Modifier.height(4.dp))
         }

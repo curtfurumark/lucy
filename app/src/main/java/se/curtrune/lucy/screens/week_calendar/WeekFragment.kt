@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,6 +24,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,24 +39,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import se.curtrune.lucy.activities.kotlin.composables.ItemSettings
+import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.classes.calender.Week
 import se.curtrune.lucy.composables.AddItemDialog
 import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.screens.daycalendar.CalendarDayFragment
-import se.curtrune.lucy.screens.daycalendar.DayChannel
 import se.curtrune.lucy.screens.main.MainViewModel
 import java.time.LocalDate
 import java.time.LocalTime
@@ -103,12 +103,8 @@ class WeekFragment : Fragment() {
                             showAddItemDialog = false
                         }, onConfirm = { item->
                             weekViewModel.onEvent(WeekEvent.AddItem(item))
-                        }, settings = ItemSettings(
-                            parent = state.value.currentParent,
-                            targetTime = LocalTime.now(),
-                            targetDate = LocalDate.now(),
-                            isCalendarItem = true
-                        ))
+                            showAddItemDialog = false
+                        }, settings = weekViewModel.dialogSettings)
                     }
                 }
             }
@@ -185,7 +181,7 @@ class WeekFragment : Fragment() {
     fun DateView(calendarDate: CalenderDate, onEvent: (WeekEvent)->Unit){
         Box(
             modifier = Modifier
-                .padding(8.dp)
+                .padding(4.dp)
                 .aspectRatio(1f)
                 .clip(RoundedCornerShape(5.dp))
                 .background(Color.Blue)
@@ -195,10 +191,24 @@ class WeekFragment : Fragment() {
                 },
             contentAlignment = Alignment.TopStart
         ){
-            Column( modifier = Modifier.padding(4.dp), horizontalAlignment =Alignment.Start ) {
-                Text(text = formatDate(calendarDate.date), fontSize = 20.sp, color = Color.White)
+            Column(
+                modifier = Modifier.padding(4.dp),
+                horizontalAlignment =Alignment.Start
+            ) {
+                Text(
+                    text = formatDate(calendarDate.date),
+                    fontSize = 20.sp,
+                    color = Color.White)
                 for(event in calendarDate.items){
-                    Text(text = "${event.targetTime.toString()} ${event.heading}", color = Color.Yellow)
+                    Box(
+                        modifier = Modifier.fillMaxWidth()
+                            .border(Dp.Hairline, color = Color.Black)) {
+                        Text(
+                            text = "${event.targetTime.toString()} ${event.heading}",
+                            maxLines = 1,
+                            color = Color.Yellow
+                        )
+                    }
                 }
             }
         }

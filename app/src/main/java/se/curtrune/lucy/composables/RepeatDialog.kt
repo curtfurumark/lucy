@@ -1,6 +1,5 @@
 package se.curtrune.lucy.composables
 
-import android.widget.AutoCompleteTextView.OnDismissListener
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,9 +14,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -35,19 +33,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import se.curtrune.lucy.R
-import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.Repeat
-import se.curtrune.lucy.dialogs.RepeatDialog
+import se.curtrune.lucy.persist.RepeatItems
+import se.curtrune.lucy.persist.Repeater
 import se.curtrune.lucy.screens.medicine.composable.DropdownItem
 import java.time.LocalDate
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RepeatDialog(
         onDismiss: ()->Unit, onConfirm:
         (Repeat)->Unit,
         repeatIn: Repeat?
 ) {
+    val repeatableSpec: RepeatItems.BasicRepeat
     var showCustom by remember{
+        mutableStateOf(false)
+    }
+    var showDatePicker by remember {
         mutableStateOf(false)
     }
     var showWeekDays by remember {
@@ -57,8 +60,21 @@ fun RepeatDialog(
         mutableStateOf(repeatIn?:Repeat())
     }
     var repeatUnit by remember{
-        mutableStateOf(repeat.unit)
+        mutableStateOf(Repeater.Unit.DAY)
     }
+    var isWeekDays by remember {
+        mutableStateOf(false)
+    }
+    var isInfinite by remember {
+        mutableStateOf(true)
+    }
+    var firstDate by remember {
+        mutableStateOf(LocalDate.now())
+    }
+    var lastDate by remember {
+        mutableStateOf(LocalDate.now()) }
+
+    //var repeater = Repeater
     Dialog(onDismissRequest = onDismiss) {
         Card(shape = RoundedCornerShape(16.dp), modifier   = Modifier
             .fillMaxWidth()
@@ -67,49 +83,63 @@ fun RepeatDialog(
             )){
             Column(modifier = Modifier.fillMaxWidth()
                 .padding(8.dp)) {
-
                 Row(modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically){
+                    Checkbox(checked = isInfinite, onCheckedChange =
+                    {isInfinite = !isInfinite})
+                    Text(text = "infinite")
+                }
+                Row(modifier = Modifier.fillMaxWidth()
+                    .clickable {
+                        showDatePicker = true
+                    },
                     verticalAlignment = Alignment.CenterVertically ){
                     Text(text = stringResource(R.string.from, ""),
                         fontSize = 20.sp)
                     Text(text = LocalDate.now().toString())
                 }
-                Row(modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically ){
-                    Text(text = stringResource(R.string.to, ""),
-                        fontSize = 20.sp)
-                    Text(text = LocalDate.now().toString())
+                AnimatedVisibility(visible = !isInfinite) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(R.string.to, ""),
+                            fontSize = 20.sp
+                        )
+                        Text(text = LocalDate.now().toString())
+                    }
                 }
                 Row(modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically ){
-                    Checkbox(checked = repeatUnit == Repeat.Unit.DAY,
+                    Checkbox(checked = repeatUnit == Repeater.Unit.DAY,
                         onCheckedChange = {
                             repeat.setPeriod(1, Repeat.Unit.DAY)
-                            repeatUnit = Repeat.Unit.DAY
+                            repeatUnit = Repeater.Unit.DAY
                         })
                     Text(text = stringResource(R.string.every_day))
                 }
                 Row(modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically){
-                    Checkbox(checked = repeatUnit == Repeat.Unit.WEEK, onCheckedChange = {
+                    Checkbox(checked = repeatUnit == Repeater.Unit.WEEK, onCheckedChange = {
                         repeat.setPeriod(1, Repeat.Unit.WEEK)
-                        repeatUnit = Repeat.Unit.WEEK
+                        repeatUnit = Repeater.Unit.WEEK
                     })
                     Text(text = stringResource(R.string.every_week))
                 }
                 Row(modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically){
-                    Checkbox(checked = repeatUnit == Repeat.Unit.MONTH, onCheckedChange = {
+                    Checkbox(checked = repeatUnit == Repeater.Unit.MONTH, onCheckedChange = {
                         repeat.setPeriod(1, Repeat.Unit.MONTH)
-                        repeatUnit = Repeat.Unit.MONTH
+                        repeatUnit = Repeater.Unit.MONTH
                     })
                     Text(text = stringResource(R.string.every_month))
                 }
                 Row(modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically){
-                    Checkbox(checked = repeatUnit == Repeat.Unit.YEAR, onCheckedChange = {
+                    Checkbox(checked = repeatUnit == Repeater.Unit.YEAR, onCheckedChange = {
                         repeat.setPeriod(1, Repeat.Unit.YEAR)
-                        repeatUnit = Repeat.Unit.YEAR
+                        repeatUnit = Repeater.Unit.YEAR
                     })
                     Text(text = stringResource(R.string.every_year))
                 }
@@ -161,7 +191,7 @@ fun RepeatDialog(
                     }
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = "weekdays", fontSize = 24.sp,
+/*                Text(text = "weekdays", fontSize = 24.sp,
                     modifier = Modifier.clickable {
                         showWeekDays = !showWeekDays
                     })
@@ -174,7 +204,7 @@ fun RepeatDialog(
                             repeat.remove(dayOfWeek)
                         }
                     }
-                }
+                }*/
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween) {
@@ -188,6 +218,13 @@ fun RepeatDialog(
                 }
             }
         }
+    }
+    if( showDatePicker) {
+        DatePickerModal(onDismiss = {
+            showDatePicker = false
+        }, onDateSelected = { date ->
+            println("date: $date")
+        })
     }
 }
 @Composable

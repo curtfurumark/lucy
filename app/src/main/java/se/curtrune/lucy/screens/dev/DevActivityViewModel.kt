@@ -109,9 +109,8 @@ class DevActivityViewModel : ViewModel() {
             is TopAppBarEvent.OnPanic -> { onPanic()}
             is TopAppBarEvent.OnSearch -> {search(event.filter)}
             is TopAppBarEvent.DayCalendar -> {dayCalendar()}
-            is TopAppBarEvent.Menu -> {}
+            is TopAppBarEvent.Menu -> { showNavigationDrawer()}
         }
-
     }
     private fun onPanic(){
         println("onPanic()")
@@ -124,6 +123,9 @@ class DevActivityViewModel : ViewModel() {
         println("DevViewModel.search($filter)")
         val items = repository.search(filter)
         println("number items found ${items.size}")
+    }
+    private fun showNavigationDrawer(){
+        println("showNavigationDrawer()")
     }
     private fun update(item: Item){
         println("update(${item.heading})")

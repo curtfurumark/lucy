@@ -20,7 +20,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.composables.AddItemDialog
-import se.curtrune.lucy.activities.kotlin.composables.ItemSettings
+import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
 import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.screens.daycalendar.CalendarDayFragment
 import se.curtrune.lucy.screens.main.MainViewModel
@@ -90,7 +90,7 @@ class MonthFragment : Fragment() {
                                             )
                                         )
                                     }
-                                    , settings = ItemSettings(isCalendarItem = true, targetDate = state.value.currentCalendarDate!!.date)
+                                    , settings = DialogSettings(isCalendarItem = true, targetDate = state.value.currentCalendarDate!!.date)
                                 )
                             }
                         }

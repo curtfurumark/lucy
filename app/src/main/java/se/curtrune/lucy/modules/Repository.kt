@@ -147,6 +147,13 @@ class Repository (val context: Application){
             return db.insert(child)
         }
     }
+    fun getAppointmentsRoot(): Item {
+        val settings = Settings.getInstance(context)
+        val id = settings.getRootID(Settings.Root.APPOINTMENTS)
+        LocalDB(context).use { db ->
+            return db.selectItem(id)
+        }
+    }
     fun restoreDeleted(item: Item): Item? {
         println("Repository.restoreDeleted(${item.heading})")
         var deletedItem: Item? = null
@@ -161,6 +168,18 @@ class Repository (val context: Application){
             return db.selectItems(Queeries.searchItems(filter))
         }
 
+    }
+
+    /**
+     * selects all the items with type set to Appointment
+     * @return all the items matching
+     */
+    fun selectAppointments(): List<Item> {
+        println("Repository.selectAppointments()")
+        val query = Queeries.selectAppointments()
+        LocalDB(context).use { db ->
+            return db.selectItems(query)
+        }
     }
     fun selectChildren(parent: Item?): List<Item> {
         println("Repository.selectChildren(Item)")

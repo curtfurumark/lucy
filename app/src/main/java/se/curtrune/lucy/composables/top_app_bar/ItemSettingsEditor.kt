@@ -10,9 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,11 +25,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.R
-import se.curtrune.lucy.activities.kotlin.composables.ItemSettings
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.Repeat
-import se.curtrune.lucy.composables.AddItemDialog
-import se.curtrune.lucy.statistics.StatisticsPeriod
 import se.curtrune.lucy.util.DateTImeFormatter
 import java.time.LocalDate
 import java.time.LocalTime
@@ -84,6 +78,28 @@ fun ItemSettingCalendar(item: Item, onEvent: (Boolean) -> Unit){
     }
 }
 @Composable
+fun ItemSettingAppointment(item: Item, onEvent: (Boolean) -> Unit){
+    println("ItemSettingAppointment()is appointment: ${item.isAppointment}")
+    var isAppointment by remember {
+        mutableStateOf(item.isAppointment)
+    }
+    Box(modifier = Modifier.fillMaxWidth()
+        .border(Dp.Hairline, color = Color.LightGray)
+        .padding(start = 8.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = "appointment")
+            Checkbox(checked = isAppointment, onCheckedChange = {
+                isAppointment = !isAppointment
+                onEvent(isAppointment)
+            })
+        }
+    }
+}
+@Composable
 fun ItemSettingCategory(item: Item?){
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(text = stringResource(R.string.category))
@@ -96,6 +112,7 @@ fun ItemSettingCategory(item: Item?){
 fun ItemSettingCategory(category: String, onEvent: () -> Unit){
     Box(modifier = Modifier.fillMaxWidth()
         .border(Dp.Hairline,  color = Color.LightGray)
+        .clickable { onEvent() }
         .padding(8.dp)) {
         Row(modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -166,8 +183,19 @@ fun ItemSettingDate(date: LocalDate, onEvent: ()->Unit){
         }
     }
 }
+
+@Composable
+fun ItemSettingLocation(){
+    Box(modifier = Modifier.fillMaxWidth()
+        .border(Dp.Hairline, color = Color.LightGray)){
+        Text(text = "location")
+    }
+}
 @Composable
 fun ItemSettingNotification(item: Item, onEvent: () -> Unit){
+    if( item.hasNotification()){
+
+    }
     Box(modifier = Modifier.fillMaxWidth()
         .border(Dp.Hairline, color = Color.LightGray)
         .padding(8.dp)
@@ -185,13 +213,20 @@ fun ItemSettingPrioritized(item: Item, onEvent: (Boolean) -> Unit){
         mutableStateOf(item.isPrioritized)
     }
     Box(modifier = Modifier.fillMaxWidth()
-        .padding(8.dp)
+        .border(Dp.Hairline, color = Color.LightGray)
+        .padding(4.dp)
         .clickable {
             isPrioritized = !isPrioritized
             onEvent(isPrioritized)
         }) {
-        Column(modifier = Modifier.fillMaxWidth()) {
+        Row(modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween) {
             Text(text = stringResource(R.string.is_prioritized))
+            Checkbox(checked = isPrioritized, onCheckedChange = {
+                isPrioritized = !isPrioritized
+                onEvent(isPrioritized)
+            })
         }
     }
 }

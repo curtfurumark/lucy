@@ -168,7 +168,6 @@ class DateViewModel: ViewModel(){
                 )
             }
         }
-
     }
     fun setCalendarDate(calendarDate: CalenderDate) {
         println("DateViewModel.setCalendarDate(${calendarDate.date.toString()})")
@@ -176,10 +175,15 @@ class DateViewModel: ViewModel(){
 
     }
     private fun setCurrentDate(newDate: LocalDate){
+        println("DateViewModel.setCurrentDate(${newDate.toString()})")
+        items = repository.selectItems(newDate)
+        items.forEach{item->
+            println(item)
+        }
         _state.update {it.copy(
-            currentWeek = Week(newDate),
-            date = newDate,
-            items = repository.selectItems(newDate)
+                currentWeek = Week(newDate),
+                date = newDate,
+                items = items
             )
         }
     }

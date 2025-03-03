@@ -56,7 +56,6 @@ import se.curtrune.lucy.screens.message_board.MessageBoardFragment
 import se.curtrune.lucy.screens.monthcalendar.MonthFragment
 import se.curtrune.lucy.screens.projects.ProjectsFragment
 import se.curtrune.lucy.screens.todo.TodoFragment
-import se.curtrune.lucy.screens.week_calendar.CalendarWeekHostFragment
 import se.curtrune.lucy.screens.week_calendar.WeekFragment
 import se.curtrune.lucy.util.Constants
 import se.curtrune.lucy.util.Logger
@@ -303,7 +302,7 @@ class MainActivity : AppCompatActivity() {
         Logger.log("...navigate(FirstPage)", firstPage.toString())
         when (firstPage) {
             FirstPage.CALENDER_DATE -> navigate(CalendarDayFragment())
-            FirstPage.CALENDER_WEEK -> navigate(CalendarWeekHostFragment())
+            FirstPage.CALENDER_WEEK -> navigate(WeekFragment())
             FirstPage.CALENDER_MONTH -> navigate(MonthFragment())
             FirstPage.CALENDER_APPOINTMENTS -> navigate(AppointmentsFragment())
             FirstPage.TODO_FRAGMENT -> navigate(TodoFragment())

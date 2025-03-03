@@ -46,7 +46,7 @@ fun LucindaTopAppBar(onEvent: (TopAppBarEvent)->Unit){
             .padding(4.dp)){
             Icon(imageVector = Icons.Default.Menu, contentDescription = "main menu",
                 modifier = Modifier.clickable {
-
+                    onEvent(TopAppBarEvent.Menu)
                 })
             Spacer(modifier = Modifier.weight(1f))
             Icon(imageVector = Icons.Default.Search, contentDescription = "search",

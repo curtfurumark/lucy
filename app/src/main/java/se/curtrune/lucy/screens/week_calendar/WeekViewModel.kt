@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.classes.calender.Week
@@ -29,9 +30,10 @@ class WeekViewModel: ViewModel() {
     val state = _state.asStateFlow()
     private var week = Week()
     var mutableWeek: MutableLiveData<Week> = MutableLiveData()
-    var calendarDates: MutableLiveData<List<CalenderDate>> = MutableLiveData()
+    //var calendarDates: MutableLiveData<List<CalenderDate>> = MutableLiveData()
     var initialPage: Int = 5
     var currentPage = initialPage
+    var dialogSettings = DialogSettings()
     //var numPages: Int = 10
     init{
         println("init week view model with context")
@@ -46,13 +48,18 @@ class WeekViewModel: ViewModel() {
     private fun addItem(item: Item){
         println("addItem(${item.heading})")
         repository.insert(item)
-        //TODO insert item into calendarDates if date is in current week
-
+        _state.update { it.copy(
+            calendarDates = repository.getEvents(it.currentWeek)
+        ) }
     }
     private fun calendarDateClick(calenderDate: CalenderDate){
         println("calendarDateClick()")
         if( calenderDate.items.isEmpty()){
             println("show add item dialog")
+            dialogSettings = DialogSettings()
+            dialogSettings.isCalendarItem = true
+            dialogSettings.targetDate = calenderDate.date
+            dialogSettings.parent = repository.getTodoRoot()
             viewModelScope.launch {
                 eventChannel.send(WeekChannel.ShowAddItemDialog(calenderDate.date))
             }
@@ -86,7 +93,9 @@ class WeekViewModel: ViewModel() {
         ) }
     }
     private fun showAddItemDialog(){
-        println("...showAddItemDialog()")
+        dialogSettings = DialogSettings()
+        dialogSettings.isCalendarItem = true
+        dialogSettings.parent = repository.getTodoRoot()
         viewModelScope.launch {
             eventChannel.send(WeekChannel.ShowAddItemDialog(LocalDate.now()))
         }

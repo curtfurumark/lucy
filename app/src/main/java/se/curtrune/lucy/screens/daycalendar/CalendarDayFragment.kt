@@ -21,9 +21,8 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import se.curtrune.lucy.activities.kotlin.composables.ItemSettings
+import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.ItemStatistics
@@ -47,7 +46,7 @@ class CalendarDayFragment() : Fragment() {
     }
 
     constructor(calendarDate: CalenderDate) : this() {
-        println("CalendarDayFragment(CalendarDate, calendarDate constructor")
+        println("CalendarDayFragment(${calendarDate.date.toString()})")
         this.calendarDate = calendarDate
     }
 
@@ -73,12 +72,11 @@ class CalendarDayFragment() : Fragment() {
                         println("launched effect, calendar day filter: ${filter.value} ")
                         dayViewModel.onEvent(DayEvent.Search(filter.value, true))
                     }
-/*                    mainViewModel.filter.observe(requireActivity()) { filter ->
-                        //println("hello filter: $filter")
-                        dayViewModel.onEvent(DayEvent.Search(filter, true))
-                    }*/
                     if( calendarDate != null){
+                        println("calendarDate != null")
                         dayViewModel.setCalendarDate(calendarDate!!)
+                    }else{
+                        println("calendarDate is null")
                     }
                     val state = dayViewModel.state.collectAsState()
                     val context = LocalContext.current
@@ -129,7 +127,7 @@ class CalendarDayFragment() : Fragment() {
                                         showAddItemDialog = false
                                         dayViewModel.onEvent(DayEvent.AddItem(item))
                                     },
-                                    settings = ItemSettings(
+                                    settings = DialogSettings(
                                         targetDate = state.value.date,
                                         targetTime = LocalTime.now(),
                                         parent = state.value.currentParent)

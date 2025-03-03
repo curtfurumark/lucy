@@ -17,15 +17,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.skydoves.colorpickerview.ColorPickerView
+import se.curtrune.lucy.R
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ColorPicker(dismiss: ()->Unit, onColor: (Color)->Unit){
-    val colorList = listOf(Color.LightGray, Color.DarkGray, Color.Gray, Color.Red, Color.Green, Color.Blue)
+    val colorList = listOf(
+        Color.LightGray, Color.DarkGray, Color.Gray, Color.Red, Color.Green, Color.Blue,
+        colorResource(R.color.light_brown),
+        colorResource(R.color.brown),
+        colorResource(R.color.dark_brown),
+        colorResource(R.color.ochre),
+        colorResource(R.color.pink),
+        colorResource(R.color.mental_green),
+        colorResource(R.color.quote)
+    )
+
     Dialog(onDismissRequest = dismiss) {
         Card(
             modifier = Modifier.fillMaxWidth()

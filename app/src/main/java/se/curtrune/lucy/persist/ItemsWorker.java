@@ -207,18 +207,7 @@ public class ItemsWorker {
         }
     }
 
-    /**
-     * selects all the items with type set to Appointment
-     * @param context context context
-     * @return all the items matching
-     */
-    public static List<Item> selectAppointments(Context context) {
-        if(VERBOSE) log("ItemsWorker.selectAppointments(Context)");
-        String query = Queeries.selectAppointments();
-        try (LocalDB db = new LocalDB(context)) {
-            return db.selectItems(query);
-        }
-    }
+
     public static List<Item> selectAppointments(LocalDate date, Context context) {
         if(VERBOSE) log("ItemsWorker.selectAppointments(LocalDate, Context)");
         String query = Queeries.selectAppointments(date);
@@ -321,13 +310,6 @@ public class ItemsWorker {
         }
     }
 
-    public static Item getAppointmentsRoot(Context context){
-        Settings settings = Settings.getInstance(context);
-        long id = settings.getRootID(APPOINTMENTS);
-        try(LocalDB db = new LocalDB( context)) {
-            return db.selectItem(id);
-        }
-    }
 
     public static Item getPanicRoot(Context context) {
         Settings settings = Settings.getInstance(context);
