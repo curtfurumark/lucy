@@ -12,5 +12,7 @@ data class MonthCalendarState(
     var calendarMonth: CalenderMonth? = null,
     var showAddItemDialog: Boolean = false,
     var currentCalendarDate: CalenderDate? = null,
-    var navigateToDate: Boolean = false
+    var navigateToDate: Boolean = false,
+    var pageCount: Int = 24,
+    var initialPage: Int = 12
 )

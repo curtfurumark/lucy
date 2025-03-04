@@ -23,10 +23,9 @@ import se.curtrune.lucy.activities.economy.classes.Transaction;
 import se.curtrune.lucy.activities.economy.persist.ECDBAdmin;
 import se.curtrune.lucy.activities.economy.persist.EcQueeries;
 import se.curtrune.lucy.classes.Item;
-import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.Repeat;
 
-public class LocalDB extends SQLiteOpenHelper {
+public class SqliteLocalDB extends SQLiteOpenHelper {
     private static final String DB_NAME = "lucy.db";
     private static final String ITEMS_TABLE = "items";
 
@@ -38,14 +37,14 @@ public class LocalDB extends SQLiteOpenHelper {
 
     private SQLiteDatabase db;
 
-    public LocalDB(@Nullable Context context) {
+    public SqliteLocalDB(@Nullable Context context) {
         super(context, DB_NAME, null, DB_VERSION);
-        if( VERBOSE) log("LocalDB(Context)");
+        if( VERBOSE) log("SqliteLocalDB(Context)");
     }
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        log("LocalDB.onCreate(SQLiteDatabase)");
+        log("SqliteLocalDB.onCreate(SQLiteDatabase)");
         log("...creating table items", Queeries.CREATE_TABLE_ITEMS);
         sqLiteDatabase.execSQL(Queeries.CREATE_TABLE_ITEMS);
         log("...creating table repeat", Queeries.CREATE_TABLE_REPEAT);
@@ -57,7 +56,7 @@ public class LocalDB extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
-        log("LocalDB.onUpgrade(SQLiteDatabase, int, int)");
+        log("SqliteLocalDB.onUpgrade(SQLiteDatabase, int, int)");
         log(String.format(Locale.getDefault(), "oldVersion %d newVersion %d", oldVersion, newVersion));
         sqLiteDatabase.execSQL(Queeries.CREATE_TABLE_REPEAT);
         sqLiteDatabase.execSQL(Queeries.DROP_TABLE_MENTAL);
@@ -69,14 +68,14 @@ public class LocalDB extends SQLiteOpenHelper {
     }
 
     public void close() {
-        if( VERBOSE) log("LocalDB.close()");
+        if( VERBOSE) log("SqliteLocalDB.close()");
         if (db != null && db.isOpen()) {
             db.close();
             db = null;
         }
     }
     public int getNumberChildren(long id){
-        log("LocalDB.getNumberChildren(long)", id);
+        log("SqliteLocalDB.getNumberChildren(long)", id);
         db = this.getWritableDatabase();
         String query = String.format(Locale.getDefault(), "SELECT count(*) FROM items WHERE parentId = %d", id);
         //String queery = "SELECT count(*) FROM items WHERE parentId = %d"
@@ -89,7 +88,7 @@ public class LocalDB extends SQLiteOpenHelper {
         return numberOfChildren;
     }
     public int getNumberChildren(long id, SQLiteDatabase db){
-        log("LocalDB.getNumberChildren(long, SQLiteDataBase)", id);
+        log("SqliteLocalDB.getNumberChildren(long, SQLiteDataBase)", id);
         String query = String.format(Locale.getDefault(), "SELECT count(*) FROM items WHERE parentId = %d", id);
         Cursor cursor = db.rawQuery(query, null);
         cursor.moveToFirst();
@@ -100,7 +99,7 @@ public class LocalDB extends SQLiteOpenHelper {
     }
 
     public int delete(Item item) {
-        log("LocalDB.delete(Item)", item.getHeading());
+        log("SqliteLocalDB.delete(Item)", item.getHeading());
         db = this.getWritableDatabase();
         String whereClause = String.format(Locale.getDefault(), "id = %d", item.getID());
         int rowsAffected = db.delete(ITEMS_TABLE, whereClause, null);
@@ -117,7 +116,7 @@ public class LocalDB extends SQLiteOpenHelper {
         return rowsAffected;
     }
     public int delete(Long id) {
-        if( VERBOSE) log("LocalDB.delete(Item)");
+        if( VERBOSE) log("SqliteLocalDB.delete(Item)");
         db = this.getWritableDatabase();
         String whereClause = String.format(Locale.getDefault(), "id = %d", id);
         int rowsAffected = db.delete(ITEMS_TABLE, whereClause, null);
@@ -134,7 +133,7 @@ public class LocalDB extends SQLiteOpenHelper {
     }
 
     public void executeSQL(String sql) {
-        log("LocalDB.executeSQL(String sql)", sql);
+        log("SqliteLocalDB.executeSQL(String sql)", sql);
         db = this.getWritableDatabase();
         try {
             db.execSQL(sql);
@@ -147,14 +146,14 @@ public class LocalDB extends SQLiteOpenHelper {
     }
 
     public Item getParent(Item item) {
-        if( VERBOSE) log("LocalDB.getParent(Item)");
+        if( VERBOSE) log("SqliteLocalDB.getParent(Item)");
         return selectItem(item.getParentId());
     }
     public static String getDbName(){
         return DB_NAME;
     }
     public List<String> getTableNames() {
-        if( VERBOSE) log("LocalDB.getTableNames()");
+        if( VERBOSE) log("SqliteLocalDB.getTableNames()");
         List<String> tableNames = new ArrayList<>();
         String query = "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name";
         db = this.getReadableDatabase();
@@ -186,12 +185,12 @@ public class LocalDB extends SQLiteOpenHelper {
      */
 
     public Item insert(Item item) {
-        if( VERBOSE) log("LocalDB.insert(Item)", item.getHeading());
+        if( VERBOSE) log("SqliteLocalDB.insert(Item)", item.getHeading());
         if (VERBOSE) log(item);
         db = this.getWritableDatabase();
         long id = db.insert(ITEMS_TABLE, null, DBAdmin.getContentValues(item));
         if (id == -1) {
-            log("ERROR: LocalDB.insert(Item) insert returned -1, not good enough");
+            log("ERROR: SqliteLocalDB.insert(Item) insert returned -1, not good enough");
         } else if( VERBOSE){
             if( VERBOSE) log("...item inserted with id ", id);
             log(item);
@@ -201,7 +200,7 @@ public class LocalDB extends SQLiteOpenHelper {
         return item;
     }
     public void insert(List<Item> items) {
-        log("LocalDB.insert(List<Item>)");
+        log("SqliteLocalDB.insert(List<Item>)");
         db = this.getWritableDatabase();
         for(Item item: items){
             long id = db.insert(ITEMS_TABLE, null, DBAdmin.getContentValues(item));
@@ -214,7 +213,7 @@ public class LocalDB extends SQLiteOpenHelper {
     }
 
     public Repeat insert(Repeat repeat){
-        log("LocalDB.insert(Repeat)");
+        log("SqliteLocalDB.insert(Repeat)");
         db = this.getWritableDatabase();
         long id = db.insert(TABLE_REPEAT, null, DBAdmin.getContentValues(repeat));
         if(id == -1){
@@ -227,7 +226,7 @@ public class LocalDB extends SQLiteOpenHelper {
     }
 
     public Transaction insert(Transaction transaction) {
-        if( VERBOSE) log("LocalDB.insert(Transaction)");
+        if( VERBOSE) log("SqliteLocalDB.insert(Transaction)");
         db = this.getWritableDatabase();
         long id = db.insert(TABLE_TRANSACTIONS, null, DBAdmin.getContentValues(transaction));
         if (id != -1) {
@@ -240,7 +239,7 @@ public class LocalDB extends SQLiteOpenHelper {
     }
 
     public Item insertChild(Item parent, Item child) {
-        if( VERBOSE) log("LocalDB.insertChild(Item, Item)");
+        if( VERBOSE) log("SqliteLocalDB.insertChild(Item, Item)");
         if(VERBOSE) log("\tparent", parent.getHeading());
         if(VERBOSE) log("\tchild", child.getHeading());
         child.setParentId(parent.getID());
@@ -255,7 +254,7 @@ public class LocalDB extends SQLiteOpenHelper {
     }
 
     public void open() {
-        if( VERBOSE) log("LocalDB.open()");
+        if( VERBOSE) log("SqliteLocalDB.open()");
         db = this.getReadableDatabase();
     }
     public void restore(Item item){
@@ -263,7 +262,7 @@ public class LocalDB extends SQLiteOpenHelper {
         db.insert(ITEMS_TABLE, null, DBAdmin.getContentValues(item));
     }
     public List<Asset> selectAssets(String queery) {
-        if( VERBOSE) log("LocalDB.selectAssets()");
+        if( VERBOSE) log("SqliteLocalDB.selectAssets()");
         db = this.getReadableDatabase();
         List<Asset> assets = new ArrayList<>();
         Cursor cursor = db.rawQuery(queery, null);
@@ -284,7 +283,7 @@ public class LocalDB extends SQLiteOpenHelper {
      * @return a list of items, matched by the query
      */
     public List<Item> selectItems(String query) {
-        if( VERBOSE) log("LocalDB.selectItems(String query)", query);
+        if( VERBOSE) log("SqliteLocalDB.selectItems(String query)", query);
         db = this.getReadableDatabase();
         List<Item> items = new ArrayList<>();
         Cursor cursor = db.rawQuery(query, null);
@@ -300,9 +299,9 @@ public class LocalDB extends SQLiteOpenHelper {
 
 
     public List<Item> selectItems(LocalDate date, Context context) {
-        if( VERBOSE) log("LocalDB.selectItems(LocalDate) ", date.toString());
+        if( VERBOSE) log("SqliteLocalDB.selectItems(LocalDate) ", date.toString());
         List<Item> items;
-        try(LocalDB db = new LocalDB(context)){
+        try(SqliteLocalDB db = new SqliteLocalDB(context)){
             items = db.selectItems(Queeries.selectItems(date));
         }
         return items;
@@ -310,7 +309,7 @@ public class LocalDB extends SQLiteOpenHelper {
 
 
     public List<Item> selectItems() {
-        if( VERBOSE) log("LocalDB.selectItems()");
+        if( VERBOSE) log("SqliteLocalDB.selectItems()");
         return selectItems(Queeries.selectItems());
     }
 
@@ -351,7 +350,7 @@ public class LocalDB extends SQLiteOpenHelper {
         return repeat;
     }
     public List<Repeat> selectRepeats(){
-        log("LocalDB.selectRepeats(Context)");
+        log("SqliteLocalDB.selectRepeats(Context)");
         List<Repeat> repeats = new ArrayList<>();
         String queery = "SELECT * FROM repeat";
         db = this.getReadableDatabase();
@@ -386,7 +385,7 @@ public class LocalDB extends SQLiteOpenHelper {
     }
 
     public void touch(Item item) {
-        log("LocalDB.touch(Item)");
+        log("SqliteLocalDB.touch(Item)");
         db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put("updated", LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
@@ -401,7 +400,7 @@ public class LocalDB extends SQLiteOpenHelper {
      */
 
     public void touchParents(Item item) {
-        log("LocalDB.touchParents(Item)", item.getHeading());
+        log("SqliteLocalDB.touchParents(Item)", item.getHeading());
         Item parent;
         Item child = item;
         while ((parent = getParent(child)) != null) {
@@ -416,7 +415,7 @@ public class LocalDB extends SQLiteOpenHelper {
      * @return returns 1 if successful
      */
     public int update(Item item) {
-        if( VERBOSE) log("LocalDB.update(Item)", item.getHeading());
+        if( VERBOSE) log("SqliteLocalDB.update(Item)", item.getHeading());
         if( VERBOSE) log(item);
         db = this.getWritableDatabase();
         String whereClause = String.format(Locale.getDefault(), "id = %d", item.getID());
@@ -427,7 +426,7 @@ public class LocalDB extends SQLiteOpenHelper {
     }
 
     public List<Transaction> selectTransactions(String queery) {
-        log("LocalDB.selectTransactions(String)", queery);
+        log("SqliteLocalDB.selectTransactions(String)", queery);
         db = this.getReadableDatabase();
         List<Transaction> transactions = new ArrayList<>();
         Cursor cursor = db.rawQuery(queery, null);
@@ -446,7 +445,7 @@ public class LocalDB extends SQLiteOpenHelper {
      * @return asset with db id or null if action for some stupid reason failed
      */
     public Asset insert(Asset asset) {
-        log("LocalDB.insert(Asset)");
+        log("SqliteLocalDB.insert(Asset)");
         db = this.getWritableDatabase();
         long id = db.insert(TABLE_ASSETS, null, ECDBAdmin.getContentValues(asset));
         if (id != -1) {
@@ -460,7 +459,7 @@ public class LocalDB extends SQLiteOpenHelper {
 
 
     public int update(Repeat repeat){
-        if( VERBOSE) log("LocalDB.update(Repeat)");
+        if( VERBOSE) log("SqliteLocalDB.update(Repeat)");
         if( VERBOSE) log(repeat);
         db = this.getWritableDatabase();
         String whereClause = String.format(Locale.getDefault(), "id = %d", repeat.getID());
@@ -471,7 +470,7 @@ public class LocalDB extends SQLiteOpenHelper {
     }
 
     public void getColumns(String tableName) {
-        log("LocalDB.getColumns(String)", tableName);
+        log("SqliteLocalDB.getColumns(String)", tableName);
         //String queery = String.format(Locale.getDefault(),"SELECT sql FROM sqlite_master WHERE tbl_name = '%s' AND type = 'table'", tableName);
         //String queery = String.format(Locale.getDefault(), "PRAGMA table_info(%s)", tableName);
         String queery = String.format(Locale.getDefault(),"SELECT * FROM %s LIMIT 1", tableName);

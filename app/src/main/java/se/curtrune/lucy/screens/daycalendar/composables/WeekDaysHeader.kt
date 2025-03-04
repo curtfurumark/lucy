@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.screens.daycalendar.DayEvent
 import se.curtrune.lucy.screens.daycalendar.DayCalendarState
-import se.curtrune.lucy.util.johanna
+import se.curtrune.lucy.util.cecilia
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
@@ -35,7 +35,7 @@ fun DayOfWeek(date: LocalDate, state: DayCalendarState, onEvent: (DayEvent) -> U
         Text(
             text =
             date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
-                .johanna(),
+                .cecilia(),
             color = color
         )
         Text(text = date.dayOfMonth.toString(), color = color)
@@ -45,7 +45,7 @@ fun DayOfWeek(date: LocalDate, state: DayCalendarState, onEvent: (DayEvent) -> U
 @Composable
 fun DaysOfWeek(state: DayCalendarState, onEvent: (DayEvent)->Unit){
     Column(modifier = Modifier.fillMaxWidth()) {
-        val header = "${state.date.month.getDisplayName(TextStyle.FULL_STANDALONE, Locale.getDefault()).johanna()} v ${state.currentWeek.weekNumber}"
+        val header = "${state.date.month.getDisplayName(TextStyle.FULL_STANDALONE, Locale.getDefault()).cecilia()} v ${state.currentWeek.weekNumber}"
         Row(modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center){
             Text(text = header)

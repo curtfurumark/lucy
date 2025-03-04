@@ -11,7 +11,12 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
@@ -21,7 +26,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.composables.AddItemDialog
 import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
+import se.curtrune.lucy.activities.kotlin.dev.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.calender.CalenderDate
+import se.curtrune.lucy.screens.ItemChannel
 import se.curtrune.lucy.screens.daycalendar.CalendarDayFragment
 import se.curtrune.lucy.screens.main.MainViewModel
 
@@ -43,21 +50,33 @@ class MonthFragment : Fragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                MaterialTheme {
-                    val monthViewModel = viewModel<MonthViewModel>(
-                        factory = object : ViewModelProvider.Factory {
-                            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                                return MonthViewModel(requireActivity()) as T
+                LucyTheme{
+                    val monthViewModel = viewModel<MonthViewModel>()
+                    val state = monthViewModel.state.collectAsState()
+                    var showAddItemDialog by remember{
+                        mutableStateOf(false)
+                    }
+                    var showMessage by remember {
+                        mutableStateOf(false)
+                    }
+                    LaunchedEffect(monthViewModel) {
+                        monthViewModel.eventChannel.collect { event ->
+                            when (event) {
+                                MonthChannel.ShowAddItemDialog -> {
+                                    showAddItemDialog = true
+                                }
+                                is MonthChannel.ShowMessage -> {
+                                    showMessage = true
+                                }
                             }
                         }
-                    )
-                    val state = monthViewModel.state.collectAsState()
+                    }
                     Scaffold() { padding->
                         Surface(modifier =  Modifier.padding(padding)
                             .background(Color.Gray)) {
                             val pagerState = rememberPagerState(pageCount = {
-                                10
-                            }, initialPage = 5)
+                                state.value.pageCount
+                            }, initialPage = state.value.initialPage)
                             HorizontalPager(state = pagerState) {
                                 println(" pager state ${pagerState.currentPage}")
                                 if ( !pagerState.isScrollInProgress){
@@ -70,9 +89,8 @@ class MonthFragment : Fragment() {
                             if( state.value.navigateToDate){
                                 state.value.navigateToDate = false
                                 state.value.currentCalendarDate?.let { navigate(it) }
-
                             }
-                            if( state.value.showAddItemDialog){
+                            if( showAddItemDialog){
                                 println("should show add item dialog")
                                 AddItemDialog(
                                     onDismiss = {

@@ -1,22 +1,23 @@
 package se.curtrune.lucy.modules
 
 import android.app.Application
-import android.content.Context
 import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.app.Settings
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.State
 import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.classes.calender.CalenderDate
+import se.curtrune.lucy.classes.calender.CalenderMonth
 import se.curtrune.lucy.classes.calender.Week
 import se.curtrune.lucy.persist.CalenderWorker
 import se.curtrune.lucy.persist.ItemsWorker
-import se.curtrune.lucy.persist.LocalDB
+import se.curtrune.lucy.persist.SqliteLocalDB
 import se.curtrune.lucy.persist.Queeries
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.workers.NotificationsWorker
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.YearMonth
 
 class Repository (val context: Application){
     private val mentalModule = LucindaApplication.mentalModule
@@ -62,7 +63,7 @@ class Repository (val context: Application){
         println("Repository.delete(${item.heading})")
         var res = false
         var rowsAffected: Int
-        LocalDB(context).use { db ->
+        SqliteLocalDB(context).use { db ->
             rowsAffected = db.delete(item)
         }
         if (rowsAffected != 1) {
@@ -77,7 +78,7 @@ class Repository (val context: Application){
         println("Repository.delete(id: $id)")
         var res = false
         var rowsAffected: Int
-        LocalDB(context).use { db ->
+        SqliteLocalDB(context).use { db ->
             rowsAffected = db.delete(id)
         }
         if (rowsAffected != 1) {
@@ -87,6 +88,17 @@ class Repository (val context: Application){
             res = true
         }
         return res
+    }
+
+    fun getCalenderMonth(yearMonth: YearMonth): CalenderMonth {
+        Logger.log("...getCalenderMonth(YearMonth)", yearMonth.toString())
+        val calenderMonth = CalenderMonth(yearMonth)
+        calenderMonth.calenderDates = CalenderWorker.getCalenderDates(
+            calenderMonth.firstDate,
+            calenderMonth.lastDate,
+            context
+        )
+        return calenderMonth
     }
     fun getEvents(week: Week): List<CalenderDate> {
         Logger.log("CalendarWorker.getEvents(Week, Context)", week.toString())
@@ -104,7 +116,7 @@ class Repository (val context: Application){
             return null
         }
         if (VERBOSE) println("Repository.getParent(${item.heading})")
-        LocalDB(context).use { db ->
+        SqliteLocalDB(context).use { db ->
             return db.selectItem(item.parentId)
         }
     }
@@ -127,7 +139,7 @@ class Repository (val context: Application){
             return ItemsWorker.insertRepeat(item, context)
         }
         var itemWithID: Item? = null
-        LocalDB(context).use { db ->
+        SqliteLocalDB(context).use { db ->
             itemWithID = db.insert(item)
         }
         mentalModule.update()
@@ -143,28 +155,28 @@ class Repository (val context: Application){
         if (child.hasPeriod()) {
             return ItemsWorker.insertRepeat(child, context)
         }
-        LocalDB(context).use { db ->
+        SqliteLocalDB(context).use { db ->
             return db.insert(child)
         }
     }
     fun getAppointmentsRoot(): Item {
         val settings = Settings.getInstance(context)
         val id = settings.getRootID(Settings.Root.APPOINTMENTS)
-        LocalDB(context).use { db ->
+        SqliteLocalDB(context).use { db ->
             return db.selectItem(id)
         }
     }
     fun restoreDeleted(item: Item): Item? {
         println("Repository.restoreDeleted(${item.heading})")
         var deletedItem: Item? = null
-        LocalDB(context).use { db ->
+        SqliteLocalDB(context).use { db ->
             deletedItem = db.insert(item)
         }
         return deletedItem
     }
     fun search(filter: String): List<Item>{
         println("Repository.search($filter)")
-        LocalDB(context).use { db ->
+        SqliteLocalDB(context).use { db ->
             return db.selectItems(Queeries.searchItems(filter))
         }
 
@@ -177,20 +189,20 @@ class Repository (val context: Application){
     fun selectAppointments(): List<Item> {
         println("Repository.selectAppointments()")
         val query = Queeries.selectAppointments()
-        LocalDB(context).use { db ->
+        SqliteLocalDB(context).use { db ->
             return db.selectItems(query)
         }
     }
     fun selectChildren(parent: Item?): List<Item> {
         println("Repository.selectChildren(Item)")
-        LocalDB(context).use { db ->
+        SqliteLocalDB(context).use { db ->
             return db.selectItems(Queeries.selectChildren(parent))
         }
     }
     fun selectItem(id: Long): Item? {
         println("Repository.selectItem(long, Context)")
         try {
-            LocalDB(context).use { db ->
+            SqliteLocalDB(context).use { db ->
                 return  db.selectItem(id)
             }
         } catch (e: Exception) {
@@ -206,7 +218,7 @@ class Repository (val context: Application){
      */
     fun selectItems(): List<Item> {
         println("Repository.selectItems()")
-        LocalDB(context).use { db ->
+        SqliteLocalDB(context).use { db ->
             return db.selectItems()
         }
     }
@@ -215,14 +227,14 @@ class Repository (val context: Application){
         println("Repository.selectItems(${date.toString()})")
         val queery = Queeries.selectItems(date)
         var items: List<Item>
-        LocalDB(context).use { db ->
+        SqliteLocalDB(context).use { db ->
             items = db.selectItems(queery)
         }
         return items
     }
     fun selectItems(date: LocalDate, state: State): List<Item> {
         if(VERBOSE) println("Repository.selectItems(Date ${date.toString()}, State: ${state.toString()})")
-        LocalDB(context).use { db ->
+        SqliteLocalDB(context).use { db ->
             return db.selectItems(Queeries.selectItems(date, state))
         }
     }
@@ -236,14 +248,14 @@ class Repository (val context: Application){
      */
     fun selectItems(firstDate: LocalDate?, lastDate: LocalDate?): List<Item> {
         println("Repository.selectItems($firstDate, $lastDate)")
-        LocalDB(context).use { db ->
+        SqliteLocalDB(context).use { db ->
             val query = Queeries.selectItems(firstDate, lastDate, State.DONE)
             return db.selectItems(query)
         }
     }
     fun selectItems(state: State): List<Item> {
         println("Repository.selectItems(state: ${state.toString()})")
-        LocalDB(context).use { db ->
+        SqliteLocalDB(context).use { db ->
             return db.selectItems(Queeries.selectItems(state))
         }
     }
@@ -256,12 +268,12 @@ class Repository (val context: Application){
      */
     fun selectItems(type: Type): List<Item> {
         val query = Queeries.selectItems(type)
-        LocalDB(context).use { db ->
+        SqliteLocalDB(context).use { db ->
             return db.selectItems(query)
         }
     }
     fun selectTemplateChildren(parent: Item?): List<Item> {
-        LocalDB(context).use { db ->
+        SqliteLocalDB(context).use { db ->
             return db.selectItems(Queeries.selectTemplateChildren(parent))
         }
     }
@@ -272,7 +284,7 @@ class Repository (val context: Application){
             mentalModule.update()
             return updateTemplate(item)
         }
-        LocalDB(context).use { db ->
+        SqliteLocalDB(context).use { db ->
             item.updated = LocalDateTime.now()
             return db.update(item)
         }
@@ -283,7 +295,7 @@ class Repository (val context: Application){
 
     private fun updateTemplate(template: Item): Int {
         println("Repository.updateTemplate(Item: ${template.heading})")
-        LocalDB(context).use { db ->
+        SqliteLocalDB(context).use { db ->
             if (template.isDone) {
                 //if (ItemsWorker.VERBOSE) Logger.log("...template is done, will spawn a child")
                 template.state = State.TODO
@@ -305,7 +317,7 @@ class Repository (val context: Application){
     }
     fun touchParents(item: Item) {
         println("Repository.touchParents()")
-        LocalDB(context).use { db ->
+        SqliteLocalDB(context).use { db ->
             db.touchParents(item)
         }
     }
@@ -313,7 +325,7 @@ class Repository (val context: Application){
     fun getTodoRoot(): Item {
         val settings = Settings.getInstance(context)
         val id = settings.getRootID(Settings.Root.TODO)
-        LocalDB(context).use { db ->
+        SqliteLocalDB(context).use { db ->
             return db.selectItem(id)
         }
     }

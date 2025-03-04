@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
@@ -28,11 +29,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import se.curtrune.lucy.R
+import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.Repeat
 import se.curtrune.lucy.persist.RepeatItems
 import se.curtrune.lucy.persist.Repeater
@@ -43,10 +46,8 @@ import java.time.LocalDate
 @Composable
 fun RepeatDialog(
         onDismiss: ()->Unit, onConfirm:
-        (Repeat)->Unit,
-        repeatIn: Repeat?
+        (RepeatItems.BasicRepeat)->Unit
 ) {
-    val repeatableSpec: RepeatItems.BasicRepeat
     var showCustom by remember{
         mutableStateOf(false)
     }
@@ -57,7 +58,14 @@ fun RepeatDialog(
         mutableStateOf(false)
     }
     val repeat by remember {
-        mutableStateOf(repeatIn?:Repeat())
+        mutableStateOf(RepeatItems.BasicRepeat(
+            template = Item("repeat template"),
+            firstDate = LocalDate.now(),
+            lastDate = LocalDate.now(),
+            isInfinite = true,
+            qualifier = 1,
+            unit = Repeater.Unit.DAY
+        ))
     }
     var repeatUnit by remember{
         mutableStateOf(Repeater.Unit.DAY)
@@ -70,6 +78,15 @@ fun RepeatDialog(
     }
     var firstDate by remember {
         mutableStateOf(LocalDate.now())
+    }
+    var setFirstDate by remember {
+        mutableStateOf(false)
+    }
+    var setLastDate by remember {
+        mutableStateOf(false)
+    }
+    var qualifier by remember {
+        mutableStateOf("1")
     }
     var lastDate by remember {
         mutableStateOf(LocalDate.now()) }
@@ -85,12 +102,15 @@ fun RepeatDialog(
                 .padding(8.dp)) {
                 Row(modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically){
-                    Checkbox(checked = isInfinite, onCheckedChange =
-                    {isInfinite = !isInfinite})
+                    Checkbox(checked = isInfinite, onCheckedChange = {
+                        isInfinite = !isInfinite
+                        repeat.isInfinite = isInfinite
+                    })
                     Text(text = "infinite")
                 }
                 Row(modifier = Modifier.fillMaxWidth()
                     .clickable {
+                        setFirstDate = true
                         showDatePicker = true
                     },
                     verticalAlignment = Alignment.CenterVertically ){
@@ -100,7 +120,11 @@ fun RepeatDialog(
                 }
                 AnimatedVisibility(visible = !isInfinite) {
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth()
+                            .clickable {
+                                setLastDate = true
+                                showDatePicker = true
+                            },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
@@ -114,31 +138,31 @@ fun RepeatDialog(
                     verticalAlignment = Alignment.CenterVertically ){
                     Checkbox(checked = repeatUnit == Repeater.Unit.DAY,
                         onCheckedChange = {
-                            repeat.setPeriod(1, Repeat.Unit.DAY)
                             repeatUnit = Repeater.Unit.DAY
+                            repeat.unit = repeatUnit
                         })
                     Text(text = stringResource(R.string.every_day))
                 }
                 Row(modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically){
-                    Checkbox(checked = repeatUnit == Repeater.Unit.WEEK, onCheckedChange = {
-                        repeat.setPeriod(1, Repeat.Unit.WEEK)
+                    Checkbox(checked = repeat.unit == Repeater.Unit.WEEK, onCheckedChange = {
                         repeatUnit = Repeater.Unit.WEEK
+                        repeat.unit = repeatUnit
                     })
                     Text(text = stringResource(R.string.every_week))
                 }
                 Row(modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically){
-                    Checkbox(checked = repeatUnit == Repeater.Unit.MONTH, onCheckedChange = {
-                        repeat.setPeriod(1, Repeat.Unit.MONTH)
-                        repeatUnit = Repeater.Unit.MONTH
+                    Checkbox(checked = repeat.unit == Repeater.Unit.MONTH, onCheckedChange = {
+                        repeatUnit =Repeater.Unit.MONTH
+                        repeat.unit = repeatUnit
                     })
                     Text(text = stringResource(R.string.every_month))
                 }
                 Row(modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically){
                     Checkbox(checked = repeatUnit == Repeater.Unit.YEAR, onCheckedChange = {
-                        repeat.setPeriod(1, Repeat.Unit.YEAR)
+                        repeat.unit = Repeater.Unit.YEAR
                         repeatUnit = Repeater.Unit.YEAR
                     })
                     Text(text = stringResource(R.string.every_year))
@@ -150,12 +174,6 @@ fun RepeatDialog(
                     })
                 AnimatedVisibility(visible = showCustom){
                     //Text(text = "custom period")
-                    var quantifier by remember {
-                        mutableStateOf("1")
-                    }
-                    var unit by remember {
-                        mutableStateOf("day")
-                    }
                     var unitDropdownExpanded by remember {
                         mutableStateOf(false)
                     }
@@ -166,11 +184,15 @@ fun RepeatDialog(
                         Text(text = "every")
                         TextField(
                             modifier = Modifier.width(60.dp),
-                            value = quantifier, onValueChange = {
-                                quantifier = it
+                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                            value = qualifier, onValueChange = {
+                                qualifier = it
+                                if( qualifier.isNotBlank()) {
+                                    repeat.qualifier = qualifier.toLong()
+                                }
 
                         })
-                        Text(text = unit,
+                        Text(text = repeatUnit.name,
                             modifier = Modifier.clickable {
                                 unitDropdownExpanded = !unitDropdownExpanded
                             })
@@ -178,11 +200,11 @@ fun RepeatDialog(
                             unitDropdownExpanded = false
                             println("dismissed")
                         } ){
-                            val actions = listOf("day", "week", "month", "year")
-                            actions.forEach { action->
-                                DropdownItem(action = action, onClick = { name->
+                            Repeater.Unit.entries.forEach{ unit->
+                                DropdownItem(action = unit.name, onClick = { name->
                                     println("action name: $name")
-                                    unit = name
+                                    repeatUnit = unit
+                                    repeat.unit = unit
                                     unitDropdownExpanded = false
                                 })
                             }
@@ -223,17 +245,20 @@ fun RepeatDialog(
         DatePickerModal(onDismiss = {
             showDatePicker = false
         }, onDateSelected = { date ->
-            println("date: $date")
+            if( setFirstDate){
+                firstDate = date
+            }else{
+                lastDate = date
+            }
+            setFirstDate = false
+            setLastDate = false
+            showDatePicker = false
         })
     }
 }
-@Composable
-fun CustomRepeat(){
 
-
-}
 @Preview
 @Composable
 fun Preview(){
-    se.curtrune.lucy.composables.RepeatDialog(onConfirm = {}, onDismiss = {}, repeatIn = null)
+    se.curtrune.lucy.composables.RepeatDialog(onConfirm = {}, onDismiss = {})
 }

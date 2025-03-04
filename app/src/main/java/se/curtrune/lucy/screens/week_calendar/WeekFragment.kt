@@ -56,6 +56,8 @@ import se.curtrune.lucy.composables.AddItemDialog
 import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.screens.daycalendar.CalendarDayFragment
 import se.curtrune.lucy.screens.main.MainViewModel
+import se.curtrune.lucy.screens.week_calendar.composables.CalendarWeekHeading
+import se.curtrune.lucy.screens.week_calendar.composables.WeekCalendar
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -90,12 +92,22 @@ class WeekFragment : Fragment() {
                         println("on fab click")
                         weekViewModel.onEvent(WeekEvent.ShowAddItemDialog)
                     }}) { padding ->
-                        MyWeekCalendar(
-                            modifier = Modifier.padding(padding),
-                            state = state.value,
-                            onEvent = { event ->
-                                weekViewModel.onEvent(event)
-                            })
+                        val pagerState = rememberPagerState(pageCount = {
+                            weekViewModel.pagerState.numPages //pagerstate is a bad name, change it
+                        }, initialPage = weekViewModel.pagerState.initialPage
+                        )
+                        HorizontalPager(state = pagerState) {
+                            println(" pager state ${pagerState.currentPage}")
+                            if (!pagerState.isScrollInProgress) {
+                                weekViewModel.onEvent(WeekEvent.OnPage(pagerState.currentPage))
+                            }
+                            WeekCalendar(
+                                modifier = Modifier.padding(padding),
+                                state = state.value,
+                                onEvent = { event ->
+                                    weekViewModel.onEvent(event)
+                                })
+                        }
                     }
                     if(showAddItemDialog){
                         //val settings = I
@@ -111,34 +123,8 @@ class WeekFragment : Fragment() {
         }
     }
 
-    @Composable
-    fun CalendarWeekHeading(week: Week) {
-        Row( modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-            Text(text = week.month.toString(),
-                color = Color.White,
-                fontSize = 18.sp
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(
-                text = "v ${week.weekNumber}",
-                color = Color.White,
-                fontSize = 18.sp,
-                textAlign = TextAlign.Center)
-        }
-    }
-    @Composable
-    fun EnergyBox(){
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .height(100.dp)
-            .background(Color.Blue)
-            .padding(16.dp)
-        ){
-            Text(text = "energi", fontSize = 24.sp, color = Color.White)
-        }
-    }
+
+
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
     fun MyWeekCalendar(modifier: Modifier = Modifier, state: WeekState, onEvent: (WeekEvent) -> Unit){

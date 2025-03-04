@@ -64,12 +64,12 @@ object Repeater{
 sealed interface RepeatItems{
     //var lastActualDate: LocalDate
     data class BasicRepeat(
-        val template: Item,
+        var template: Item,
         val firstDate: LocalDate,
         val lastDate: LocalDate,
-        val qualifier: Long,
-        val unit: Repeater.Unit,
-        val isInfinite: Boolean ): RepeatItems {
+        var qualifier: Long,
+        var unit: Repeater.Unit,
+        var isInfinite: Boolean ): RepeatItems {
     }
     data class RepeatWeekDays(
         val item: Item,

@@ -1,13 +1,17 @@
 package se.curtrune.lucy.composables
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -23,12 +27,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
 import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.ItemDuration
 import se.curtrune.lucy.classes.Notification
 import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.composables.top_app_bar.ItemSettingAppointment
@@ -42,6 +48,7 @@ import se.curtrune.lucy.composables.top_app_bar.ItemSettingPrioritized
 import se.curtrune.lucy.composables.top_app_bar.ItemSettingRepeat
 import se.curtrune.lucy.composables.top_app_bar.ItemSettingTags
 import se.curtrune.lucy.composables.top_app_bar.ItemSettingTime
+import se.curtrune.lucy.screens.medicine.composable.DropdownItem
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -169,6 +176,9 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: Dialog
                 ItemSettingColor(item = item, onEvent = {
                     showColorDialog = true
                 })
+                ItemSettingDuration(onEvent = { itemDuration->
+                    println("itemDuration: ${itemDuration.toString()}")
+                })
                 ItemSettingNotification(item = item, onEvent = {
                     showNotificationDialog = true
                 })
@@ -233,10 +243,9 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: Dialog
             showRepeatDialog = false
         }, onConfirm = { repeat->
             println("on confirm repeat")
-            item.setRepeat(repeat)
+            //item.setRepeat(repeat)
             showRepeatDialog = false
-        },
-            repeatIn = item.period)
+        })
     }
     if( showTagsDialog){
         TagsDialog(onDismiss = {
@@ -254,6 +263,39 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: Dialog
 
         })
     }
+}
+
+@Composable
+fun ItemSettingDuration(onEvent: (ItemDuration)->Unit){
+    var showDropdown by remember {
+        mutableStateOf(false)
+    }
+    var itemDuration by remember {
+        mutableStateOf(ItemDuration.Type.DAY)
+    }
+    Box(
+        modifier = Modifier.fillMaxWidth()
+            .border(Dp.Hairline, color = Color.LightGray)
+            .clickable {
+                showDropdown = !showDropdown
+            }){
+        Column(modifier = Modifier.fillMaxWidth()){
+            Text(text = stringResource(R.string.duration))
+            Text(text = itemDuration.name)
+            DropdownMenu(expanded = showDropdown, onDismissRequest = {
+                showDropdown = false
+            }) {
+                ItemDuration.Type.entries.forEach { durationType->
+                    DropdownItem(action = durationType.name) {
+                        itemDuration = durationType
+                        showDropdown = false
+                    }
+                }
+            }
+        }
+
+    }
+
 }
 
 @Composable

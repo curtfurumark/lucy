@@ -12,7 +12,7 @@ import java.util.Locale;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.persist.ItemsWorker;
-import se.curtrune.lucy.persist.LocalDB;
+import se.curtrune.lucy.persist.SqliteLocalDB;
 
 public class RepeatWorker {
     public static boolean VERBOSE = false;
@@ -49,7 +49,7 @@ public class RepeatWorker {
     }
     public static Item insertItemWithRepeat(Item template, Context context){
         log("RepeatTest.insertItemWithRepeat(Item)", template.getHeading());
-        try(LocalDB db = new LocalDB(context)) {
+        try(SqliteLocalDB db = new SqliteLocalDB(context)) {
             template.setIsTemplate(true);
             template = db.insert(template);
             Repeat repeat = template.getPeriod();

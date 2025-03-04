@@ -1,12 +1,9 @@
 package se.curtrune.lucy.screens.db_admin
 
-import android.content.Context
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import se.curtrune.lucy.persist.DBAdmin
-import se.curtrune.lucy.persist.LocalDB
+import se.curtrune.lucy.persist.SqliteLocalDB
 
 class DbAdminViewModel:  ViewModel() {
     private var _state = MutableStateFlow(DbAdminState())
@@ -14,7 +11,7 @@ class DbAdminViewModel:  ViewModel() {
     //private lateinit var context: Context
 
     init {
-        _state.value.dbName = LocalDB.getDbName()
+        _state.value.dbName = SqliteLocalDB.getDbName()
         //DBAdmin.getTableNames(context)
         //LocalContext.current
     }

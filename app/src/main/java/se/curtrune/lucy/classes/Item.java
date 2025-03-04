@@ -32,6 +32,7 @@ public class Item implements Serializable , Listable {
     protected long created;
     protected long updated;
     protected long duration;
+    protected int durationType;
 
     protected long target_date;
     protected int target_time;

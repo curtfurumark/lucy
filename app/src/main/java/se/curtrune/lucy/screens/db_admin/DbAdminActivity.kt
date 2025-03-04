@@ -12,11 +12,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.activities.kotlin.dev.ui.theme.LucyTheme
-import se.curtrune.lucy.persist.LocalDB
+import se.curtrune.lucy.persist.SqliteLocalDB
 
 class DbAdminActivity : ComponentActivity() {
     private fun getDbPath():String{
-        val file = getDatabasePath(LocalDB.getDbName())
+        val file = getDatabasePath(SqliteLocalDB.getDbName())
         println("db path ${file.absolutePath}")
         return file.absolutePath
     }

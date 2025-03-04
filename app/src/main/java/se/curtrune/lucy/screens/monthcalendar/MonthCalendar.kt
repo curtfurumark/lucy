@@ -11,9 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import java.time.DayOfWeek
-import java.time.format.TextStyle
-import java.util.Locale
+import androidx.compose.ui.unit.sp
+import se.curtrune.lucy.util.DateTImeFormatter
+import se.curtrune.lucy.util.cecilia
 
 @Composable
 fun MonthCalendar(state: MonthCalendarState, onEvent: (MonthCalendarEvent)->Unit){
@@ -21,7 +21,7 @@ fun MonthCalendar(state: MonthCalendarState, onEvent: (MonthCalendarEvent)->Unit
     println("MonthCalendar()year: ${ym.year} month: ${ym.month} ")
     Column(modifier = Modifier.background(Color.Black)) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-            Text(text = state.yearMonth.toString(), color = Color.White)
+            Text(text = DateTImeFormatter.format(state.yearMonth).cecilia(), fontSize = 18.sp)
         }
         WeekDaysHeader()
         LazyVerticalGrid(
@@ -30,7 +30,7 @@ fun MonthCalendar(state: MonthCalendarState, onEvent: (MonthCalendarEvent)->Unit
             content = {
                 val calendarDates = state.calendarMonth!!.calenderDates
                 items(calendarDates.size){index->
-                     DateView(calendarDates[index], onEvent = onEvent)
+                     MonthDate(calendarDates[index], onEvent = onEvent)
                 }
             }
         )

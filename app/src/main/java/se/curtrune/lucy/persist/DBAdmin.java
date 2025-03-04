@@ -5,7 +5,6 @@ import static se.curtrune.lucy.util.Logger.log;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -20,7 +19,6 @@ import se.curtrune.lucy.app.App;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.MedicineContent;
-import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.classes.Type;
@@ -34,13 +32,13 @@ public class DBAdmin {
     public static void addColumnRepeatIdToTableItems(Context context){
         log("DBAdmin.alterColumnRepeatIdToTableItems(Context)");
         String queery = Queeries.ADD_COLUMN_REPEAT_ID_TO_ITEMS;
-        try(LocalDB db = new LocalDB(context)){
+        try(SqliteLocalDB db = new SqliteLocalDB(context)){
             db.executeSQL(queery);
         }
     }
     public static void createTables(Context context) {
         log("DBAdmin.createTables()");
-        try(LocalDB  db = new LocalDB(context)) {
+        try(SqliteLocalDB db = new SqliteLocalDB(context)) {
             db.executeSQL(Queeries.DROP_TABLE_ITEMS);
             db.executeSQL(Queeries.CREATE_TABLE_ITEMS);
             db.executeSQL(EcQueeries.DROP_TABLE_TRANSACTIONS);
@@ -65,38 +63,38 @@ public class DBAdmin {
     }
     public static  void createItemsTable(Context context) {
         log("DBAdmin.createItemsTable()");
-        try(LocalDB db = new LocalDB(context)) {
+        try(SqliteLocalDB db = new SqliteLocalDB(context)) {
             db.executeSQL(Queeries.CREATE_TABLE_ITEMS);
         }
     }
     public static void createRepeatTable(Context context){
         log("...createRepeatTable");
-        try(LocalDB db = new LocalDB(context)){
+        try(SqliteLocalDB db = new SqliteLocalDB(context)){
             db.executeSQL(Queeries.CREATE_TABLE_REPEAT);
 
         }
     }
     public static void dropTableItems(Context context) {
-        try(LocalDB db = new LocalDB(context)) {
+        try(SqliteLocalDB db = new SqliteLocalDB(context)) {
             db.executeSQL(Queeries.DROP_TABLE_ITEMS);
         }
     }
     public static  void dropTableMental(Context context) {
         log("DBAdmin.dropTableMental(Context)");
-        try(LocalDB db = new LocalDB(context)){
+        try(SqliteLocalDB db = new SqliteLocalDB(context)){
             db.executeSQL(Queeries.DROP_TABLE_MENTAL);
         }
     }
     public static void dropTableRepeat(Context context){
         log("...dropTableRepeat(Context)");
-        try(LocalDB db = new LocalDB(context)){
+        try(SqliteLocalDB db = new SqliteLocalDB(context)){
             db.executeSQL(Queeries.DROP_TABLE_REPEAT);
         }
     }
 
     public static void dropTables(Context context){
         log("DBAdmin.dropTables()");
-        try(LocalDB db = new LocalDB(context)) {
+        try(SqliteLocalDB db = new SqliteLocalDB(context)) {
             db.executeSQL(Queeries.DROP_TABLE_ITEMS);
             db.executeSQL(Queeries.DROP_TABLE_MENTAL);
             db.executeSQL(Queeries.DROP_TABLE_REPEAT);
@@ -107,7 +105,7 @@ public class DBAdmin {
     }
     public static void listColumns(String table, Context context){
         log("RepeatTest.listColumns(String table)");
-        try(LocalDB db = new LocalDB(context)){
+        try(SqliteLocalDB db = new SqliteLocalDB(context)){
             db.getColumns(table);
         }
     }
@@ -247,7 +245,7 @@ public class DBAdmin {
     public static void insertRootItems(Context context) {
         log("...insertRootItems(Context)");
         Settings settings = Settings.getInstance(context);
-        try(LocalDB db = new LocalDB(context)) {
+        try(SqliteLocalDB db = new SqliteLocalDB(context)) {
             //create the root item
             Item root = new Item("root");
             root.setType(Type.ROOT);
@@ -276,20 +274,20 @@ public class DBAdmin {
 
     public static void listTables(Context context) {
         log("DBAdmin.listTables()");
-        try(LocalDB db = new LocalDB(context)) {
+        try(SqliteLocalDB db = new SqliteLocalDB(context)) {
             db.getTableNames().forEach(System.out::println);
         }
     }
     public static List<String> getTableNames(Context context){
         log("DBAdmin.listTables()");
-        try(LocalDB db = new LocalDB(context)) {
+        try(SqliteLocalDB db = new SqliteLocalDB(context)) {
             return db.getTableNames();
         }
     }
 
     public static void addMentalColumnsToItemsTable(Context context) {
         log("DBAdmin.addMentalColumnsToItemsTable(Context)");
-        try(LocalDB db = new LocalDB(context)){
+        try(SqliteLocalDB db = new SqliteLocalDB(context)){
             db.executeSQL(Queeries.ADD_COLUMN_ANXIETY_TO_ITEMS);
             log("column anxiety added");
             db.executeSQL(Queeries.ADD_COLUMN_ENERGY_TO_ITEMS);

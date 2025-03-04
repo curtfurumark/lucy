@@ -20,7 +20,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -52,25 +51,19 @@ import se.curtrune.lucy.classes.MediaContent
 import se.curtrune.lucy.classes.Notification
 import se.curtrune.lucy.composables.CountDownTimerService
 import se.curtrune.lucy.composables.NavigationDrawer
-import se.curtrune.lucy.composables.Search
 import se.curtrune.lucy.composables.StopWatchUsingService
 import se.curtrune.lucy.composables.top_app_bar.FlexibleTopBar
 import se.curtrune.lucy.dialogs.RepeatDialog
 import se.curtrune.lucy.persist.DBAdmin
 import se.curtrune.lucy.persist.ItemsWorker
-import se.curtrune.lucy.persist.LocalDB
+import se.curtrune.lucy.persist.SqliteLocalDB
 
-import se.curtrune.lucy.screens.dev.composables.SetGeneratedToTemplateChildren
 import se.curtrune.lucy.screens.log_in.LogInActivity
 import se.curtrune.lucy.screens.main.MainActivity
-import se.curtrune.lucy.screens.main.MainState
-import se.curtrune.lucy.composables.top_app_bar.LucindaControls
 import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
-import se.curtrune.lucy.modules.TimeModule
 import se.curtrune.lucy.screens.dev.composables.InsertItemWithID
-import se.curtrune.lucy.screens.dev.composables.ItemsTabsTest
+import se.curtrune.lucy.screens.dev.composables.RepeatTest
 import se.curtrune.lucy.screens.dev.composables.TestSwipeAble
-import se.curtrune.lucy.services.TimeServiceConstants
 import se.curtrune.lucy.services.TimerService
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.viewmodel.UpdateLucindaViewModel
@@ -78,7 +71,6 @@ import se.curtrune.lucy.web.VersionInfo
 import se.curtrune.lucy.workers.NotificationsWorker
 import java.time.LocalDate
 import java.time.LocalTime
-import java.time.YearMonth
 import java.util.Locale
 import java.util.function.Consumer
 
@@ -110,7 +102,7 @@ class DevActivity : AppCompatActivity() {
     }
     private fun copyDatabase(){
         println("DevActivity.copyDatabase()")
-        val dbFile = getDatabasePath(LocalDB.getDbName())
+        val dbFile = getDatabasePath(SqliteLocalDB.getDbName())
         println("...absolute path ${dbFile.absolutePath}")
 
     }
@@ -164,8 +156,21 @@ class DevActivity : AppCompatActivity() {
                                 var testSwipeAbleItem by remember {
                                     mutableStateOf(false)
                                 }
+                                var showRepeatTest by remember {
+                                    mutableStateOf(false)
+                                }
+                                Text(
+                                    text = "test repeat",
+                                    fontSize = 24.sp,
+                                    modifier = Modifier.clickable {
+                                        showRepeatTest = !showRepeatTest
+                                    })
+                                AnimatedVisibility(visible = showRepeatTest) {
+                                    RepeatTest()
+                                }
                                 Text(
                                     text = "test swipeable item",
+                                    fontSize = 24.sp,
                                     modifier = Modifier.clickable {
                                         testSwipeAbleItem = !testSwipeAbleItem
                                     }
@@ -290,7 +295,7 @@ class DevActivity : AppCompatActivity() {
 
     private fun openDB() {
         Logger.log("...openDB")
-        val db = LocalDB(this)
+        val db = SqliteLocalDB(this)
         db.open()
     }
 
@@ -324,7 +329,8 @@ class DevActivity : AppCompatActivity() {
 
     private fun runCode() {
         Logger.log("...runCode()")
-        val calendarMonth = CalendarMonthTest.getCalendarMonth(YearMonth.now(), applicationContext)
+/*        val repository = LucindaApplication.repository
+        val calendarMonth = repository.getCalendarMonth(YearMonth.now(), applicationContext)
         val item = Item()
         item.heading = "test calendarMonth"
         item.targetDate = LocalDate.now()
@@ -334,7 +340,9 @@ class DevActivity : AppCompatActivity() {
         val calendarDate = calendarMonth.getCalenderDate(LocalDate.now())
         calendarDate.items.forEach{ dateItem->
             println(dateItem.toString())
-        }        //RepeatTest.createRepeatItemDecember(this);
+        }*/
+
+    //RepeatTest.createRepeatItemDecember(this);
         //RepeatTest.selectRepeats(this);
         //RepeatTest.listInstances(6, this);
         //RepeatTest.setLastDate(6, LocalDate.of(2024, 12, 22), this);
@@ -380,7 +388,7 @@ class DevActivity : AppCompatActivity() {
 
     private fun printTableNames() {
         Logger.log("...printTableNames()")
-        LocalDB(this).use { db ->
+        SqliteLocalDB(this).use { db ->
             val names = db.tableNames
             names.forEach(Consumer { x: String? -> println(x) })
         }

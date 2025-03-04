@@ -1,11 +1,9 @@
 package se.curtrune.lucy.modules
 
 import android.app.Application
-import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import se.curtrune.lucy.LucindaApplication
-import se.curtrune.lucy.persist.LocalDB
+import se.curtrune.lucy.persist.SqliteLocalDB
 import se.curtrune.lucy.screens.dev.SystemInfo
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -24,7 +22,7 @@ class SystemInfoModule(val context: Application) {
         systemInfo.add(SystemInfo("HARDWARE", Build.HARDWARE))
         systemInfo.add(SystemInfo("MODEL", Build.MODEL))
         systemInfo.add(SystemInfo("MANUFACTURER", Build.MANUFACTURER))
-        systemInfo.add(SystemInfo("LOCAL_DB_VERSION", LocalDB.getDbVersion().toString()))
+        systemInfo.add(SystemInfo("LOCAL_DB_VERSION", SqliteLocalDB.getDbVersion().toString()))
         systemInfo.add(SystemInfo("DISPLAY", Build.DISPLAY))
         systemInfo.add(SystemInfo("BRAND", Build.BRAND))
         systemInfo.add(SystemInfo("PRODUCT", Build.PRODUCT))

@@ -24,7 +24,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.activities.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.Repeat
 import se.curtrune.lucy.composables.RepeatDialog
-import se.curtrune.lucy.persist.LocalDB
+import se.curtrune.lucy.persist.SqliteLocalDB
 import se.curtrune.lucy.viewmodel.RepeatViewModel
 
 class RepeatActivity : ComponentActivity() {
@@ -40,7 +40,8 @@ class RepeatActivity : ComponentActivity() {
             val viewModel = viewModel<RepeatViewModel>()
             viewModel.initViewModel(LocalContext.current)
             //viewModel.showDialog
-            val db: LocalDB = LocalDB(this)
+            val db: SqliteLocalDB =
+                SqliteLocalDB(this)
             val repeats : List<Repeat> = db.selectRepeats()
             println("number of repeats ${repeats.size}");
             LucyTheme {
@@ -50,7 +51,7 @@ class RepeatActivity : ComponentActivity() {
                     RepeatDialog(onDismiss = {
                         println("onDismiss")
                         showDialog = false
-                    }, repeatIn = null, onConfirm = {})
+                    }, onConfirm = {})
                 }
             }
         }

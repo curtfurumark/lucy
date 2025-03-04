@@ -70,7 +70,7 @@ public class ItemsWorker {
             Toast.makeText(context, "unlink not implemented", Toast.LENGTH_LONG).show();
         }else{*/
         int rowsAffected;
-        try (LocalDB db = new LocalDB(context)) {
+        try (SqliteLocalDB db = new SqliteLocalDB(context)) {
             rowsAffected = db.delete(item);
         }
         if( rowsAffected != 1){
@@ -94,7 +94,7 @@ public class ItemsWorker {
             log("WARNING, parent item is null, returning null");
             return null;
         }
-        try (LocalDB db = new LocalDB(context)) {
+        try (SqliteLocalDB db = new SqliteLocalDB(context)) {
             return db.selectItem(item.getParentId());
         }
     }
@@ -124,7 +124,7 @@ public class ItemsWorker {
                 break;
         }
         if( VERBOSE) log("root id ", rootID);
-        try (LocalDB db = new LocalDB(context)) {
+        try (SqliteLocalDB db = new SqliteLocalDB(context)) {
             return db.selectItem(rootID);
         }
     }
@@ -145,7 +145,7 @@ public class ItemsWorker {
         if (item.hasPeriod()){
             return insertRepeat(item, context);
         }else {
-            try (LocalDB db = new LocalDB(context)) {
+            try (SqliteLocalDB db = new SqliteLocalDB(context)) {
                 item = db.insert(item);
             }
         }
@@ -163,7 +163,7 @@ public class ItemsWorker {
         if(child.hasPeriod()){
             return insertRepeat(child, context);
         }
-        try (LocalDB db = new LocalDB(context)) {
+        try (SqliteLocalDB db = new SqliteLocalDB(context)) {
             return db.insert(child);
         }
     }
@@ -186,7 +186,7 @@ public class ItemsWorker {
     @Deprecated
     public static List<Item> selectItems(Context context) {
         if(VERBOSE) log("ItemsWorker.selectItems(Context");
-        try (LocalDB db = new LocalDB(context)) {
+        try (SqliteLocalDB db = new SqliteLocalDB(context)) {
             return db.selectItems();
         }
     }
@@ -201,7 +201,7 @@ public class ItemsWorker {
     @Deprecated
     public static List<Item> selectItems(LocalDate firstDate, LocalDate lastDate, Context context) {
         if(VERBOSE)log("ItemsWorker.selectItems(LocalDate, LocalDate, Context");
-        try (LocalDB db = new LocalDB(context)) {
+        try (SqliteLocalDB db = new SqliteLocalDB(context)) {
             String query = Queeries.selectItems(firstDate, lastDate, State.DONE);
             return db.selectItems(query);
         }
@@ -212,20 +212,20 @@ public class ItemsWorker {
         if(VERBOSE) log("ItemsWorker.selectAppointments(LocalDate, Context)");
         String query = Queeries.selectAppointments(date);
         Queeries.selectCalenderItems(date);
-        try (LocalDB db = new LocalDB(context)) {
+        try (SqliteLocalDB db = new SqliteLocalDB(context)) {
             return db.selectItems(query);
         }
     }
 
     public static List<Item> selectChildren(Item parent, Context context){
         if(VERBOSE) log("ItemsWorker.selectChildren(Item, Context)");
-        try (LocalDB db = new LocalDB(context)) {
+        try (SqliteLocalDB db = new SqliteLocalDB(context)) {
             return db.selectItems(Queeries.selectChildren(parent));
         }
     }
     @Deprecated
     public static List<Item> selectTemplateChildren(Item parent, Context context){
-        try(LocalDB db = new LocalDB(context)){
+        try(SqliteLocalDB db = new SqliteLocalDB(context)){
             return db.selectItems(Queeries.selectTemplateChildren(parent));
         }
     }
@@ -234,7 +234,7 @@ public class ItemsWorker {
     public static Item selectItem(long id, Context context) {
         log("ItemsWorker.selectItem(long, Context)");
         Item item = null;
-        try(LocalDB db = new LocalDB(context)){
+        try(SqliteLocalDB db = new SqliteLocalDB(context)){
             item = db.selectItem(id);
         }catch (Exception e){
             log("EXCEPTION", e.getMessage());
@@ -251,21 +251,21 @@ public class ItemsWorker {
     @Deprecated
     public static List<Item> selectItems(LocalDate date, State state, Context context){
         if(VERBOSE) log("ItemsWorker.selectItems(Date, State, Context)");
-        try (LocalDB db = new LocalDB(context)) {
+        try (SqliteLocalDB db = new SqliteLocalDB(context)) {
             return db.selectItems(Queeries.selectItems(date, state));
         }
     }
 
     public static List<Item> selectItems(State state, Context context) {
         if(VERBOSE) log("ItemsWorker.selectItems(State state)", state.toString());
-        try (LocalDB db = new LocalDB(context)) {
+        try (SqliteLocalDB db = new SqliteLocalDB(context)) {
             return db.selectItems(Queeries.selectItems(state));
         }
     }
 
     public static List<Item> selectItems(LocalDate date, Type type, Context context) {
         if(VERBOSE) log("ItemsWorker.selectItems(LocalDate, Type, Context)", type.toString());
-        try (LocalDB db = new LocalDB(context)) {
+        try (SqliteLocalDB db = new SqliteLocalDB(context)) {
             return db.selectItems(Queeries.selectItems(date, type));
         }
     }
@@ -278,14 +278,14 @@ public class ItemsWorker {
      */
     public static List<Item> selectItems(Type type, Context context) {
         String query = Queeries.selectItems(type);
-        try (LocalDB db = new LocalDB(context)) {
+        try (SqliteLocalDB db = new SqliteLocalDB(context)) {
             return db.selectItems(query);
         }
     }
     public static List<Repeat> selectRepeats(Context context){
         log("ItemsWorker.selectRepeats()");
         String queery = Queeries.selectRepeats();
-        try(LocalDB db = new LocalDB(context)){
+        try(SqliteLocalDB db = new SqliteLocalDB(context)){
             return  db.selectRepeats();
         }
     }
@@ -299,13 +299,13 @@ public class ItemsWorker {
     public static List<Item> selectTodayList(LocalDate date, Context context){
         if( VERBOSE) log("ItemsWorker.selectTodayList(LocalDate, Context)", date.toString());
         String query = Queeries.selectTodayList(date);
-        try (LocalDB db = new LocalDB(context)) {
+        try (SqliteLocalDB db = new SqliteLocalDB(context)) {
             return db.selectItems(query);
         }
     }
     public static void setHasChild(Item item, boolean hasChild, Context context) {
         if(VERBOSE) log("ItemsWorker.setHasChild(Item, Context)", item.getHeading());
-        try (LocalDB db = new LocalDB(context)) {
+        try (SqliteLocalDB db = new SqliteLocalDB(context)) {
             db.setItemHasChild(item.getID(), hasChild);
         }
     }
@@ -314,14 +314,14 @@ public class ItemsWorker {
     public static Item getPanicRoot(Context context) {
         Settings settings = Settings.getInstance(context);
         long id = settings.getRootID(PANIC);
-        try(LocalDB db = new LocalDB( context)) {
+        try(SqliteLocalDB db = new SqliteLocalDB( context)) {
             return db.selectItem(id);
         }
     }
     public static Item getProjectsRoot(Context context){
         Settings settings = Settings.getInstance(context);
         long id = settings.getRootID(PROJECTS);
-        try(LocalDB db = new LocalDB( context)) {
+        try(SqliteLocalDB db = new SqliteLocalDB( context)) {
             return db.selectItem(id);
         }
     }
@@ -330,21 +330,21 @@ public class ItemsWorker {
     public static Item getTodoRoot(Context context){
         Settings settings = Settings.getInstance(context);
         long id = settings.getRootID(TODO);
-        try (LocalDB db = new LocalDB(context)) {
+        try (SqliteLocalDB db = new SqliteLocalDB(context)) {
             return db.selectItem(id);
         }
     }
     public static Item getDailyRoot(Context context){
         Settings settings = Settings.getInstance(context);
         long id = settings.getRootID(DAILY);
-        try (LocalDB db = new LocalDB(context)) {
+        try (SqliteLocalDB db = new SqliteLocalDB(context)) {
             return db.selectItem(id);
         }
     }
 
     public static List<Item> selectIsCalenderItems(YearMonth yearMonth, Context context) {
         if (VERBOSE) log("ItemsWorker.selectCalenderItems(YearMonth)");
-        try (LocalDB db = new LocalDB(context)) {
+        try (SqliteLocalDB db = new SqliteLocalDB(context)) {
             String queery = Queeries.selectIsCalendarItems(yearMonth);
             return db.selectItems(queery);
         }
@@ -352,7 +352,7 @@ public class ItemsWorker {
 
     public static List<Item> selectAppointments(YearMonth yearMonth, Context context) {
         if (VERBOSE) log("ItemsWorker.selectAppointments(YearMonth)", yearMonth.toString());
-        try (LocalDB db = new LocalDB(context)) {
+        try (SqliteLocalDB db = new SqliteLocalDB(context)) {
             String queery = Queeries.selectAppointments(yearMonth);
             return db.selectItems(queery);
         }
@@ -362,7 +362,7 @@ public class ItemsWorker {
         if(VERBOSE) log("ItemsWorker.selectItems(Week, Context)");
         String queery = Queeries.selectItems(week);
         List<Item> items;
-        try(LocalDB db = new LocalDB(context)){
+        try(SqliteLocalDB db = new SqliteLocalDB(context)){
             items = db.selectItems(queery);
         }
         return items;
@@ -372,13 +372,13 @@ public class ItemsWorker {
         if( VERBOSE) log("ItemsWorker.selectCalenderItems(LocalDate, Context)");
         String queery = Queeries.selectCalenderItems(currentDate);
         if(VERBOSE) log("queery", queery);
-        try(LocalDB db = new LocalDB(context)){
+        try(SqliteLocalDB db = new SqliteLocalDB(context)){
             return db.selectItems(queery);
         }
     }
     public  static void touchParents(Item item, Context context){
         if(VERBOSE) log("ItemsWorker.touchParents()");
-        try (LocalDB db = new LocalDB(context)) {
+        try (SqliteLocalDB db = new SqliteLocalDB(context)) {
             db.touchParents(item);
         }
     }
@@ -396,7 +396,7 @@ public class ItemsWorker {
         if(item.isTemplate() && item.isDone()){
             return updateTemplate(item, context);
         }else {
-            try (LocalDB db = new LocalDB(context)) {
+            try (SqliteLocalDB db = new SqliteLocalDB(context)) {
                 item.setUpdated(LocalDateTime.now());
                 return db.update(item);
             }
@@ -404,7 +404,7 @@ public class ItemsWorker {
     }
     public static int update(Repeat repeat, Context context){
         log("ItemsWorker.update(Repeat, Context)");
-        try(LocalDB db = new LocalDB(context)){
+        try(SqliteLocalDB db = new SqliteLocalDB(context)){
             return db.update(repeat);
         }
     }
@@ -420,7 +420,7 @@ public class ItemsWorker {
     @Deprecated
     private static int updateTemplate(Item template, Context context) {
         log("ItemsWorker.updateTemplate(Item, Context)", template.getHeading());
-        try (LocalDB db = new LocalDB(context)) {
+        try (SqliteLocalDB db = new SqliteLocalDB(context)) {
             if (template.isDone()) {
                 if (VERBOSE) log("...template is done, will spawn a child");
                 template.setState(State.TODO);
@@ -442,7 +442,7 @@ public class ItemsWorker {
         log("ItemsWorker.selectEvents(Week, Context)");
         String queery = Queeries.selectEvents(week);
         List<Item> items;
-        try(LocalDB db = new LocalDB(context)){
+        try(SqliteLocalDB db = new SqliteLocalDB(context)){
             items = db.selectItems(queery);
         }
         return items;
@@ -452,7 +452,7 @@ public class ItemsWorker {
         if( VERBOSE )log("ItemsWorker.selectItems(LocalDate, Context)");
         String queery = Queeries.selectItems(date);
         List<Item> items;
-        try(LocalDB db = new LocalDB(context)){
+        try(SqliteLocalDB db = new SqliteLocalDB(context)){
             items = db.selectItems(queery);
         }
         return items;
@@ -481,7 +481,7 @@ public class ItemsWorker {
 
     public static void insert(List<Item> items, Context context) {
         log("ItemsWorker(List<Item>, Context)");
-        try(LocalDB db = new LocalDB(context)){
+        try(SqliteLocalDB db = new SqliteLocalDB(context)){
             db.insert(items);
         }
     }
@@ -494,7 +494,7 @@ public class ItemsWorker {
      */
     public static Repeat insert(Repeat repeat, Context context) {
         log("ItemsWorker.insert(Repeat, Context)");
-        try(LocalDB db = new LocalDB(context)){
+        try(SqliteLocalDB db = new SqliteLocalDB(context)){
             repeat = db.insert(repeat);
         }catch (Exception e){
             log("EXCEPTION", e.getMessage());
@@ -505,7 +505,7 @@ public class ItemsWorker {
 
     public static Repeat selectRepeat(long id, Context context) {
         log("ItemsWorker.selectRepeat(long, Context)");
-        try(LocalDB db = new LocalDB(context)){
+        try(SqliteLocalDB db = new SqliteLocalDB(context)){
             return db.selectRepeat(id);
         }
     }

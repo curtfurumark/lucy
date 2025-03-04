@@ -3,7 +3,9 @@ package se.curtrune.lucy.util
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.YearMonth
 import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
 import java.util.Locale
 
 object DateTImeFormatter {
@@ -35,5 +37,9 @@ object DateTImeFormatter {
         val seconds = secs % 60
         val stringDays = if( days > 0 ) "$days day${if (days > 1) "s " else " "}" else ""
         return String.format(Locale.getDefault(), "%s%02d:%02d:%02d", stringDays, hours, minutes, seconds)
+    }
+
+    fun format(yearMonth: YearMonth): String{
+        return String.format(Locale.getDefault(), "%s", yearMonth.month.getDisplayName(TextStyle.FULL, Locale.getDefault()))
     }
 }

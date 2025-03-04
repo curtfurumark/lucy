@@ -29,12 +29,12 @@ class WeekViewModel: ViewModel() {
     private val _state = MutableStateFlow(WeekState())
     val state = _state.asStateFlow()
     private var week = Week()
+    //val pagerState = MutableStateFlow(PagerState())
+    val pagerState = PagerState()
     var mutableWeek: MutableLiveData<Week> = MutableLiveData()
-    //var calendarDates: MutableLiveData<List<CalenderDate>> = MutableLiveData()
-    var initialPage: Int = 5
-    var currentPage = initialPage
+    //var initialPage: Int = 5
+    var currentPage = pagerState.initialPage
     var dialogSettings = DialogSettings()
-    //var numPages: Int = 10
     init{
         println("init week view model with context")
         mutableWeek.value = week

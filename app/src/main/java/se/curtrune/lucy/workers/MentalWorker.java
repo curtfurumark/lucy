@@ -11,7 +11,7 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.persist.ItemsWorker;
-import se.curtrune.lucy.persist.LocalDB;
+import se.curtrune.lucy.persist.SqliteLocalDB;
 import se.curtrune.lucy.persist.Queeries;
 
 public class MentalWorker {
@@ -46,7 +46,7 @@ public class MentalWorker {
         int energy = 0;
         int mood = 0;
         int stress = 0;
-        try(LocalDB db = new LocalDB(context)){
+        try(SqliteLocalDB db = new SqliteLocalDB(context)){
             items = db.selectItems(queery);
             anxiety = items.stream().mapToInt(Item::getAnxiety).sum();
             energy = items.stream().mapToInt(Item::getEnergy).sum();

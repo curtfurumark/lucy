@@ -7,12 +7,12 @@ import java.time.YearMonth
 
 class CalendarMonthTest {
 
-    companion object{
+/*    companion object{
         fun getCalendarMonth(yearMonth: YearMonth, context: Context): CalenderMonth {
             println("getCalendarMonth(${yearMonth.toString()})")
-            val calendarMonth = CalenderWorker.getCalenderMonth(yearMonth, context)
+            val calendarMonth = .getCalenderMonth(yearMonth, context)
             println("calendarMonth ${calendarMonth.firstDateOfMonth.toString()}")
             return calendarMonth
         }
-    }
+    }*/
 }

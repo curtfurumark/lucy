@@ -14,7 +14,7 @@ import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.modules.Repository;
-import se.curtrune.lucy.persist.LocalDB;
+import se.curtrune.lucy.persist.SqliteLocalDB;
 import se.curtrune.lucy.persist.ItemsWorker;
 
 public class Demo {
@@ -64,7 +64,7 @@ public class Demo {
         Item root = repository.getAppointmentsRoot();
         Item misaDev = getAppointment("misa dev", LocalDate.of(2024, 4, 26), LocalTime.of(10, 0));
         Item mayTheForce = getAppointment("may the 4h be with you", LocalDate.of(2024, 5, 4), LocalTime.of(0,0));
-        LocalDB db = new LocalDB(context);
+        SqliteLocalDB db = new SqliteLocalDB(context);
         db.setItemHasChild(root.getID(), true);
         root.setHasChild(true);
         db.insertChild(root, misaDev);
@@ -78,7 +78,7 @@ public class Demo {
         createMiddagsTips(context);
     }
     public static void createReadingList(Context context){
-        LocalDB db = new LocalDB(context);
+        SqliteLocalDB db = new SqliteLocalDB(context);
         Item projectsRoot = ItemsWorker.getRootItem(Settings.Root.PROJECTS, context);
         Item readingList = getProjectItem("reading list");
         readingList = db.insertChild(projectsRoot, readingList);
@@ -137,7 +137,7 @@ public class Demo {
     }
     public static void createShoppingList(Context context){
         log("Demo.createShoppingList()");
-        try(LocalDB db = new LocalDB(context)){
+        try(SqliteLocalDB db = new SqliteLocalDB(context)){
             Item projects = ItemsWorker.getProjectsRoot(context);
             Item shoppingList = getProjectItem("shopping list");
             db.insertChild(projects, shoppingList);
@@ -159,7 +159,7 @@ public class Demo {
     }
     public static void insertPanic(Context context){
         log("...insertPanic(Context)");
-        LocalDB db = new LocalDB(context);
+        SqliteLocalDB db = new SqliteLocalDB(context);
         Item panicRoot = ItemsWorker.getPanicRoot(context);
         db.insertChild(panicRoot, getPanicItem("breathe") );
         db.insertChild(panicRoot, getPanicItem("go for a walk") );
@@ -167,7 +167,7 @@ public class Demo {
     }
     public static void insertRepeatItems(Context context){
         log("...insertRepeatItems(Context)");
-        LocalDB db = new LocalDB(context);
+        SqliteLocalDB db = new SqliteLocalDB(context);
         Item root = ItemsWorker.getDailyRoot(context);
         db.insertChild( root, getRepeatItem("medicin am", 1, LocalTime.of(8, 0)));
         db.insertChild(root, getRepeatItem("borsta tänderna am", 1, LocalTime.of(8, 10)));

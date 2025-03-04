@@ -8,19 +8,18 @@ import android.database.Cursor;
 
 import se.curtrune.lucy.activities.economy.classes.Asset;
 import se.curtrune.lucy.activities.economy.classes.Transaction;
-import se.curtrune.lucy.persist.LocalDB;
-import se.curtrune.lucy.persist.Queeries;
+import se.curtrune.lucy.persist.SqliteLocalDB;
 
 public class ECDBAdmin {
     public static void dropTables(Context context){
         log("ECDBAdmin.dropTables()");
-        LocalDB db = new LocalDB(context);
+        SqliteLocalDB db = new SqliteLocalDB(context);
         db.executeSQL(EcQueeries.DROP_TABLE_TRANSACTIONS);
         db.executeSQL(EcQueeries.DROP_TABLE_ASSETS);
     }
     public static void createEconomyTables(Context context) {
         log("DBAdmin.createEconomyTables()");
-        LocalDB db = new LocalDB(context);
+        SqliteLocalDB db = new SqliteLocalDB(context);
         db.executeSQL(EcQueeries.CREATE_TABLE_TRANSACTIONS);
         db.executeSQL(EcQueeries.CREATE_TABLE_ASSETS);
     }
