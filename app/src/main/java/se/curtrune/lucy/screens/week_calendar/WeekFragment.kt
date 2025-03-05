@@ -74,13 +74,18 @@ class WeekFragment : Fragment() {
                 var showAddItemDialog by remember {
                     mutableStateOf(false)
                 }
+                var showMessageDialog by remember {
+                    mutableStateOf(false)
+                }
                 LaunchedEffect(weekViewModel) {
                     weekViewModel.eventFlow.collect{ event->
                         when(event){
                             is WeekChannel.ShowAddItemDialog -> {
                                 showAddItemDialog = true
                             }
-                            is WeekChannel.ShowMessage -> {}
+                            is WeekChannel.ShowMessage -> {
+                                showMessageDialog = true
+                            }
                             is WeekChannel.ViewDay -> {
                                 navigate(event.calendarDate)
                             }
@@ -88,10 +93,7 @@ class WeekFragment : Fragment() {
                     }
                 }
                 LucyTheme {
-                    Scaffold(floatingActionButton = { AddItemFab {
-                        println("on fab click")
-                        weekViewModel.onEvent(WeekEvent.ShowAddItemDialog)
-                    }}) { padding ->
+                    Scaffold(){ padding ->
                         val pagerState = rememberPagerState(pageCount = {
                             weekViewModel.pagerState.numPages //pagerstate is a bad name, change it
                         }, initialPage = weekViewModel.pagerState.initialPage
@@ -118,41 +120,16 @@ class WeekFragment : Fragment() {
                             showAddItemDialog = false
                         }, settings = weekViewModel.dialogSettings)
                     }
+                    if(showMessageDialog){
+
+
+                    }
                 }
             }
         }
     }
 
 
-
-    @OptIn(ExperimentalFoundationApi::class)
-    @Composable
-    fun MyWeekCalendar(modifier: Modifier = Modifier, state: WeekState, onEvent: (WeekEvent) -> Unit){
-        var currentPage by remember{
-            mutableIntStateOf(state.initialPage)
-        }
-        val pagerState = rememberPagerState(pageCount = {
-            state.numPages
-        }, initialPage = state.initialPage)
-        Column(modifier = modifier){
-        CalendarWeekHeading(week = state.currentWeek)
-        HorizontalPager(state = pagerState) {
-            if (pagerState.currentPage != currentPage) {
-                println("...pagerState ${pagerState.currentPage} currentPage $currentPage, it$it")
-                onEvent(WeekEvent.OnPage(pagerState.currentPage))
-                currentPage = pagerState.currentPage
-            }
-
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2)
-            ) {
-                items(state.calendarDates) { calendarDate ->
-                    DateView(calendarDate = calendarDate, onEvent = onEvent)
-                }
-            }
-        }
-        }
-    }
     private fun navigate(calendarDate: CalenderDate){
         println("MonthFragment.navigate(CalendarDate")
         val mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
@@ -163,46 +140,6 @@ class WeekFragment : Fragment() {
         )
     }
 
-    @Composable
-    fun DateView(calendarDate: CalenderDate, onEvent: (WeekEvent)->Unit){
-        Box(
-            modifier = Modifier
-                .padding(4.dp)
-                .aspectRatio(1f)
-                .clip(RoundedCornerShape(5.dp))
-                .background(Color.Blue)
-                .clickable {
-                    onEvent(WeekEvent.CalendarDateClick(calendarDate))
-                    //onClick(calendarDate)
-                },
-            contentAlignment = Alignment.TopStart
-        ){
-            Column(
-                modifier = Modifier.padding(4.dp),
-                horizontalAlignment =Alignment.Start
-            ) {
-                Text(
-                    text = formatDate(calendarDate.date),
-                    fontSize = 20.sp,
-                    color = Color.White)
-                for(event in calendarDate.items){
-                    Box(
-                        modifier = Modifier.fillMaxWidth()
-                            .border(Dp.Hairline, color = Color.Black)) {
-                        Text(
-                            text = "${event.targetTime.toString()} ${event.heading}",
-                            maxLines = 1,
-                            color = Color.Yellow
-                        )
-                    }
-                }
-            }
-        }
-    }
-    private fun formatDate(date: LocalDate): String{
-        return date.format(DateTimeFormatter.ofPattern("d E"))
-        //String.format(Locale.getDefault(), "%d %s", date.dayOfMonth, date.dayOfWeek.getDisplayName())
-    }
     @Composable
     @Preview
     fun MyPreview(){

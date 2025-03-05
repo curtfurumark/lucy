@@ -1,5 +1,6 @@
 package se.curtrune.lucy.util
 
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -41,5 +42,10 @@ object DateTImeFormatter {
 
     fun format(yearMonth: YearMonth): String{
         return String.format(Locale.getDefault(), "%s", yearMonth.month.getDisplayName(TextStyle.FULL, Locale.getDefault()))
+    }
+
+    fun format(dayOfWeek: DayOfWeek, textStyle: TextStyle): String{
+        //return String.format(Locale.getDefault(), "%s %d",dayOfWeek.getDisplayName(textStyle, Locale.getDefault()).cecilia())
+        return dayOfWeek.getDisplayName(textStyle, Locale.getDefault()).cecilia()
     }
 }

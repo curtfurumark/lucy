@@ -9,6 +9,5 @@ sealed interface MonthCalendarEvent {
     data class CalendarDateClick(val calendarDate: CalenderDate): MonthCalendarEvent
     data class MonthYear( val  yearMonth: YearMonth): MonthCalendarEvent
     data class Pager(val page: Int): MonthCalendarEvent
-    data class ShowAddItemDialog(val show: Boolean): MonthCalendarEvent
-    //data class AddEvent
+    data object ShowYearMonthDialog: MonthCalendarEvent
 }

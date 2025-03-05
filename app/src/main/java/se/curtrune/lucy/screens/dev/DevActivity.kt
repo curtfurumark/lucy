@@ -63,6 +63,7 @@ import se.curtrune.lucy.screens.main.MainActivity
 import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
 import se.curtrune.lucy.screens.dev.composables.InsertItemWithID
 import se.curtrune.lucy.screens.dev.composables.RepeatTest
+import se.curtrune.lucy.screens.dev.composables.TestScrollableYearMonth
 import se.curtrune.lucy.screens.dev.composables.TestSwipeAble
 import se.curtrune.lucy.services.TimerService
 import se.curtrune.lucy.util.Logger
@@ -158,6 +159,18 @@ class DevActivity : AppCompatActivity() {
                                 }
                                 var showRepeatTest by remember {
                                     mutableStateOf(false)
+                                }
+                                var showScrollableYearMonth by remember {
+                                    mutableStateOf(true)
+                                }
+                                Text(
+                                    text = "test scrollable year month",
+                                    fontSize = 24.sp,
+                                    modifier = Modifier.clickable {
+                                        showScrollableYearMonth = !showScrollableYearMonth
+                                    })
+                                AnimatedVisibility(visible = showScrollableYearMonth) {
+                                    TestScrollableYearMonth()
                                 }
                                 Text(
                                     text = "test repeat",

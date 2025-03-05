@@ -26,6 +26,7 @@ class MonthViewModel: ViewModel() {
     private val _state = MutableStateFlow(MonthCalendarState())
     val state = _state.asStateFlow()
     val dialogSettings = DialogSettings()
+        //private set
 
     private var currentPage = state.value.initialPage
     init {
@@ -38,11 +39,7 @@ class MonthViewModel: ViewModel() {
             println(" number of months to add $numMonths")
             currentPage = newPageIndex
             currentYearMonth = currentYearMonth.plusMonths(numMonths.toLong())
-            _state.update { it.copy(
-                    yearMonth = currentYearMonth,
-                    calendarMonth = repository.getCalenderMonth(currentYearMonth)
-                )
-            }
+            setYearMonth(currentYearMonth)
         }
     }
     fun onEvent(event : MonthCalendarEvent){
@@ -50,36 +47,45 @@ class MonthViewModel: ViewModel() {
         when(event){
             is MonthCalendarEvent.MonthYear -> {println("yearmonth changed")}
             is MonthCalendarEvent.Pager -> {onPager(event.page)}
-            is MonthCalendarEvent.ShowAddItemDialog -> { //TODO deprecate
-                println("please, show add item dialog: ${event.show}")
-                _state.update {  it.copy(
-                    showAddItemDialog = event.show
-                )}
-            }
             is MonthCalendarEvent.CalendarDateClick -> {
                 println("on calendar date click ")
                 if( event.calendarDate.hasEvents()){
                     println("go to day calendar")
                     _state.update { it.copy(
                         currentCalendarDate = event.calendarDate,
-                        navigateToDate = true
                     ) }
+                    viewModelScope.launch {
+                        _eventChannel.send(MonthChannel.NavigateToDayCalendar)
+                    }
                 }else{
                     dialogSettings.targetDate = event.calendarDate.date
                     dialogSettings.isCalendarItem = true
                     viewModelScope.launch {
                         _eventChannel.send(MonthChannel.ShowAddItemDialog)
                     }
-                    _state.update { it.copy(
-                        showAddItemDialog = true,
-                        currentCalendarDate = event.calendarDate
-                    ) }
                 }
             }
             is MonthCalendarEvent.InsertItem ->  {
                 insertItem(event.item)
             }
+
+            MonthCalendarEvent.ShowYearMonthDialog -> {
+                showYearMonthDialog()
+            }
         }
+    }
+    private fun setYearMonth(yearMonth: YearMonth){
+        println("setYearMonth(${yearMonth.toString()})")
+        _state.update {
+            it.copy(
+                yearMonth = currentYearMonth,
+                calendarMonth = repository.getCalenderMonth(currentYearMonth)
+            )
+        }
+    }
+    private fun showYearMonthDialog(){
+        println("show yearMonth dialog")
+
     }
     private fun insertItem(item: Item){
         println("...ViewModel.insertItem(Item) ${item.heading}")

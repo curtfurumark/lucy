@@ -1,5 +1,7 @@
 package se.curtrune.lucy.composables
 
+import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -10,9 +12,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -22,9 +27,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -61,9 +68,12 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: Dialog
     if( settings.parent == null){
         println("AddItemDialog, ItemSettings.parent is null")
     }
-
+    val context = LocalContext.current
     var heading by remember{
         mutableStateOf("")
+    }
+    var isEvent by remember {//has time and date
+        mutableStateOf(true)
     }
     var targetTime by remember {
         mutableStateOf(settings.targetTime)
@@ -123,7 +133,6 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: Dialog
         item.targetDate = targetDate
         item.targetTime = targetTime
         item.category = category
-        //item.setIsCalenderItem(isCalendarItem)
         return item
     }
     Dialog(onDismissRequest = onDismiss){
@@ -139,14 +148,28 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: Dialog
                     onValueChange = { heading = it },
                     modifier = Modifier
                         .fillMaxWidth(),
-                    label = { Text(stringResource(R.string.heading)) }
+                    label = { Text(stringResource(R.string.heading))},
+                    supportingText = {
+                        if( heading.isBlank()) {
+                            Text(
+                                text = "heading required",
+                                color = MaterialTheme.colorScheme.error)
+                        }
+                    }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                ItemSettingDate(date = targetDate, onEvent = {
-                    showDateDialog = true
-                })
-                ItemSettingTime(targetTime = targetTime, onEvent = {
-                    showTimeDialog = true
+                AnimatedVisibility(visible = isEvent) {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        ItemSettingDate(date = targetDate, onEvent = {
+                            showDateDialog = true
+                        })
+                        ItemSettingTime(targetTime = targetTime, onEvent = {
+                            showTimeDialog = true
+                        })
+                    }
+                }
+                ItemSettingNoTime(onEvent = {
+                    isEvent = it
                 })
                 ItemSettingRepeat(item.period, onEvent = {
                     showRepeatDialog = true
@@ -192,7 +215,12 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: Dialog
                         Text(text = stringResource(R.string.dismiss))
                     }
                     Button(onClick = {
-                        onConfirm(getItem())
+                        if( heading.isNotBlank()) {
+                            onConfirm(getItem())
+                        }else{
+                            println("missing heading")
+                           Toast.makeText(context, context.resources.getString(R.string.missing_heading), Toast.LENGTH_LONG).show()
+                        }
                     }) {
                         Text(text = stringResource(R.string.ok))
                     }
@@ -295,7 +323,27 @@ fun ItemSettingDuration(onEvent: (ItemDuration)->Unit){
         }
 
     }
-
+}
+@Composable
+fun ItemSettingNoTime(onEvent:(Boolean)->Unit){
+    var timedItem by remember {
+        mutableStateOf(true)
+    }
+    Box(modifier = Modifier.fillMaxWidth()
+        .border(Dp.Hairline, color = Color.LightGray)
+        .padding(start = 8.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = stringResource(R.string.timed_item))
+            Checkbox(checked = timedItem, onCheckedChange = {
+                timedItem = !timedItem
+                onEvent(timedItem)
+            })
+        }
+    }
 }
 
 @Composable

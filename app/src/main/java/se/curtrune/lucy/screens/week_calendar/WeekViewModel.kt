@@ -83,6 +83,10 @@ class WeekViewModel: ViewModel() {
     }
     private fun onPage(newPageIndex: Int){
         println("...onPage($newPageIndex)")
+        if( newPageIndex == currentPage){
+            println("no need to update week, new page same as old page")
+            return
+        }
         val numWeeks: Int =  newPageIndex - currentPage
         println(" number of weeks to add $numWeeks")
         currentPage = newPageIndex

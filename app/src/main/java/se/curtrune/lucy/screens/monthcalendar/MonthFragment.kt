@@ -8,7 +8,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
@@ -21,21 +20,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.composables.AddItemDialog
 import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
 import se.curtrune.lucy.activities.kotlin.dev.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.calender.CalenderDate
-import se.curtrune.lucy.screens.ItemChannel
 import se.curtrune.lucy.screens.daycalendar.CalendarDayFragment
 import se.curtrune.lucy.screens.main.MainViewModel
+import se.curtrune.lucy.screens.monthcalendar.composables.MonthCalendar
 
 class MonthFragment : Fragment() {
 
     private fun navigate(calendarDate: CalenderDate){
-        println("MonthFragment.navigate(CalendarDate")
+        println("MonthFragment.navigate(CalendarDate)")
         val mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
         mainViewModel.updateFragment(
             CalendarDayFragment(
@@ -68,6 +66,10 @@ class MonthFragment : Fragment() {
                                 is MonthChannel.ShowMessage -> {
                                     showMessage = true
                                 }
+
+                                MonthChannel.NavigateToDayCalendar -> {
+                                    state.value.currentCalendarDate?.let { navigate(it) }
+                                }
                             }
                         }
                     }
@@ -79,39 +81,30 @@ class MonthFragment : Fragment() {
                             }, initialPage = state.value.initialPage)
                             HorizontalPager(state = pagerState) {
                                 println(" pager state ${pagerState.currentPage}")
-                                if ( !pagerState.isScrollInProgress){
+                                if (!pagerState.isScrollInProgress) {
                                     monthViewModel.onPager(pagerState.currentPage)
                                 }
                                 MonthCalendar(state = state.value, onEvent = { event ->
                                     monthViewModel.onEvent(event)
                                 })
                             }
-                            if( state.value.navigateToDate){
-                                state.value.navigateToDate = false
-                                state.value.currentCalendarDate?.let { navigate(it) }
-                            }
-                            if( showAddItemDialog){
-                                println("should show add item dialog")
-                                AddItemDialog(
-                                    onDismiss = {
-                                    monthViewModel.onEvent(
-                                        MonthCalendarEvent.ShowAddItemDialog(
-                                            false
-                                        )
-                                    )
-                                },
-                                    onConfirm ={ item->
-                                        monthViewModel.onEvent(MonthCalendarEvent.InsertItem(item))
-                                        monthViewModel.onEvent(
-                                            MonthCalendarEvent.ShowAddItemDialog(
-                                                false
-                                            )
-                                        )
-                                    }
-                                    , settings = DialogSettings(isCalendarItem = true, targetDate = state.value.currentCalendarDate!!.date)
-                                )
-                            }
                         }
+                    }
+                    if( showMessage){
+                        println("show message")
+                    }
+                    if( showAddItemDialog){
+                        println("should show add item dialog")
+                        AddItemDialog(
+                            onDismiss = {
+                                showAddItemDialog = false
+                            },
+                            onConfirm ={ item->
+                                monthViewModel.onEvent(MonthCalendarEvent.InsertItem(item))
+                                showAddItemDialog = false
+                            }
+                            , settings = monthViewModel.dialogSettings
+                        )
                     }
                 }
             }
