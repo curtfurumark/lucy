@@ -27,6 +27,7 @@ class LucindaApplication: Application() {
 
     override fun onCreate() {
         super.onCreate()
+        calendarModule = CalendarModule(this)
         timeModule = TimeModule(this)
         mentalModule = MentalModule(this)
         localDB = SqliteLocalDB(this)

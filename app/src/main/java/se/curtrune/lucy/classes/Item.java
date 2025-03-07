@@ -32,7 +32,6 @@ public class Item implements Serializable , Listable {
     protected long created;
     protected long updated;
     protected long duration;
-    protected int durationType;
 
     protected long target_date;
     protected int target_time;
@@ -46,7 +45,7 @@ public class Item implements Serializable , Listable {
     protected Repeat repeat;
     //protected MentalStats estimate;
     protected Notification notification;
-    //protected Mental mental;
+    protected ItemDuration.Type durationType;
     protected int energy;
     protected int anxiety;
     protected int stress;
@@ -172,6 +171,9 @@ public class Item implements Serializable , Listable {
         //TODO, implement some sort of duration worker getInstances children add duration divide by number of instances
         return 0;
     }
+    public ItemDuration.Type getDurationType() {
+        return durationType;
+    }
     public int getMood(){
         return mood;
     }
@@ -192,7 +194,7 @@ public class Item implements Serializable , Listable {
         return priority;
     }
 
-    public Repeat getPeriod(){
+    public Repeat getRepeat(){
         return repeat;
     }
     public Reward getReward(){
@@ -250,7 +252,7 @@ public class Item implements Serializable , Listable {
     public boolean hasItemParent(){
         return parent != null;
     }
-    public boolean hasPeriod(){
+    public boolean hasRepeat(){
         return repeat != null;
     }
     public boolean hasNotification(){return notification != null;}
@@ -349,30 +351,14 @@ public class Item implements Serializable , Listable {
     public void setDuration(long  duration){
         this.duration = duration;
     }
-
-    /**
-     * WTF is this
-     * calculate duration in some weird way
-     * @param now
-     */
-
-    public void setDuration(LocalDateTime now){
-        duration  = now.toEpochSecond(ZoneOffset.UTC) - updated;
-    }
-/*    public void setEstimate(MentalStats estimate){
-        this.estimate = estimate;
-    }*/
+    @Deprecated
     public void setEstimatedDuration(long seconds) {
-/*        if( estimate == null){
-            estimate = new MentalStats();
-        }
-        estimate.setDuration(seconds);*/
+
     }
-/*    public void setEstimate(String json){
-        if( json != null){
-            this.estimate = new Gson().fromJson(json, MentalStats.class);
-        }
-    }*/
+    public void setDurationType(ItemDuration.Type durationType){
+        this.durationType = durationType;
+    }
+
     public void setHeading(String heading) {
         this.heading = heading;
     }
@@ -383,13 +369,7 @@ public class Item implements Serializable , Listable {
     public void setNotification(Notification notification){
         this.notification = notification;
     }
-/*    public void setNotification(String json){
-        if( json != null && json.startsWith("{")) {
-            if( VERBOSE) log("...setNotification, json", json);
-            notification = new Gson().fromJson(json, Notification.class);
-            if( VERBOSE) log(notification);
-        }
-    }*/
+
     public void setId(long id) {
         this.id = id;
     }
@@ -487,7 +467,7 @@ public class Item implements Serializable , Listable {
      */
     public void updateTargetDate(){
         log("...updateTargetDate()");
-        if( hasPeriod()){
+        if( hasRepeat()){
             target_date = repeat.getNextDate().toEpochDay();
         }
     }
@@ -501,4 +481,6 @@ public class Item implements Serializable , Listable {
         anxiety = mental.getAnxiety();
         stress = mental.getStress();
     }
+
+
 }

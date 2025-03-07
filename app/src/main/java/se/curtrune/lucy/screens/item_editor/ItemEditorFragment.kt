@@ -597,7 +597,7 @@ class ItemEditorFragment : Fragment {
         if (itemSessionViewModel!!.itemHasRepeat()) {
             val repeat = Objects.requireNonNull(
                 itemSessionViewModel!!.getCurrentItem().value
-            )?.period
+            )?.repeat
             Logger.log("...item has repeat")
             Logger.log(repeat)
         }

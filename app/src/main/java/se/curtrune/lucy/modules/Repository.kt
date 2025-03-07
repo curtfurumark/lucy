@@ -135,7 +135,7 @@ class Repository (val context: Application){
         if (item.hasNotification()) {
             NotificationsWorker.setNotification(item, context)
         }
-        if (item.hasPeriod()) {
+        if (item.hasRepeat()) {
             return ItemsWorker.insertRepeat(item, context)
         }
         var itemWithID: Item? = null
@@ -152,7 +152,7 @@ class Repository (val context: Application){
             ItemsWorker.setHasChild(parent, true, context)
         }
         child.parentId = parent.id
-        if (child.hasPeriod()) {
+        if (child.hasRepeat()) {
             return ItemsWorker.insertRepeat(child, context)
         }
         SqliteLocalDB(context).use { db ->
@@ -305,7 +305,7 @@ class Repository (val context: Application){
                     template,
                     child
                 ) //creates and inserts mental, or rather insert(Item) does
-                if (template.hasPeriod()) {
+                if (template.hasRepeat()) {
                     template.updateTargetDate()
                 } else {
                     template.targetDate = LocalDate.now()

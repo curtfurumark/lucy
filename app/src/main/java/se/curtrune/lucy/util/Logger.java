@@ -103,9 +103,9 @@ public class Logger {
 /*            log("\t\tduration", item.getEstimate().getDuration());
             log("\t\tenergy", item.getEstimate().getEnergy());*/
         }
-        log("\thas repeat", item.hasPeriod());
-        if( item.hasPeriod()){
-            log("\t\trepeat.toString", item.getPeriod().toString());
+        log("\thas repeat", item.hasRepeat());
+        if( item.hasRepeat()){
+            log("\t\trepeat.toString", item.getRepeat().toString());
         }
         log("\thas notification", item.hasNotification());
         log("\tcolor", item.getColor());

@@ -64,7 +64,7 @@ public class NotificationsWorker {
     }
     public static void setNotification(Item item, Context context){
         log("NotificationWorker.setNotification(Item)", item.getHeading());
-        if(item.hasPeriod()){
+        if(item.hasRepeat()){
             setRepeatingNotification(item, context);
         }else{
             setSingleNotification(item, context);
@@ -74,7 +74,7 @@ public class NotificationsWorker {
         log("...setRepeatingNotification()");
         Notification notification = item.getNotification();
         assert notification != null;
-        Repeat repeat = item.getPeriod();
+        Repeat repeat = item.getRepeat();
         assert repeat != null;
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, notification.getDate().getYear());

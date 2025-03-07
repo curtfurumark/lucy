@@ -37,6 +37,7 @@ class DateViewModel: ViewModel(){
     }
     private fun addItem(item: Item){
         println("...addItem(Item) ${item.heading}")
+        //println("item duration type ${item.itemDuration?.type}")
         if( repository.insert(item) == null){
             println("error inserting item")
             return

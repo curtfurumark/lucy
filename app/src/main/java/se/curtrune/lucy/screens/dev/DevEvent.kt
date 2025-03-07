@@ -7,5 +7,6 @@ sealed interface DevEvent{
     data object CreateItemTree: DevEvent
     data class InsertItemWithID(val item: Item): DevEvent
     data object ResetApp: DevEvent
+    data class RunQuery(val query: String): DevEvent
     data class Search(val query: String, val everywhere: Boolean): DevEvent
 }

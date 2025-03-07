@@ -75,7 +75,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
         if( item.hasNotification()){
             holder.imageViewNotificationIcon.setVisibility(View.VISIBLE);
         }
-        if( item.hasPeriod()){
+        if( item.hasRepeat()){
             holder.imageViewRepeatIcon.setVisibility(View.VISIBLE);
         }
         if(item.isPrioritized()){

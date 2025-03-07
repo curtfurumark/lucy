@@ -74,7 +74,7 @@ public class EasyAlarm  {
                 log("...canScheduleExactAlarm");
                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
                 //alarmManager.setRepeating();
-/*                if(item.hasPeriod()){
+/*                if(item.hasRepeat()){
                   alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), , );
                 }*/
             }else{

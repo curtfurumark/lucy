@@ -142,7 +142,7 @@ public class ItemsWorker {
         if( item.hasNotification()){
             NotificationsWorker.setNotification(item, context);
         }
-        if (item.hasPeriod()){
+        if (item.hasRepeat()){
             return insertRepeat(item, context);
         }else {
             try (SqliteLocalDB db = new SqliteLocalDB(context)) {
@@ -160,7 +160,7 @@ public class ItemsWorker {
             setHasChild(parent, true, context);
         }
         child.setParentId(parent.getID());
-        if(child.hasPeriod()){
+        if(child.hasRepeat()){
             return insertRepeat(child, context);
         }
         try (SqliteLocalDB db = new SqliteLocalDB(context)) {
@@ -427,7 +427,7 @@ public class ItemsWorker {
                 Item child = createActualItem(template);
                 child.setType(Type.TEMPLATE_CHILD);
                 child = db.insertChild(template, child);//creates and inserts mental, or rather insert(Item) does
-                if (template.hasPeriod()) {
+                if (template.hasRepeat()) {
                     template.updateTargetDate();
                 }else{
                     template.setTargetDate(LocalDate.now());

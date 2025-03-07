@@ -52,7 +52,7 @@ public class RepeatWorker {
         try(SqliteLocalDB db = new SqliteLocalDB(context)) {
             template.setIsTemplate(true);
             template = db.insert(template);
-            Repeat repeat = template.getPeriod();
+            Repeat repeat = template.getRepeat();
             if( repeat.isInfinite()){
                 repeat.setLastDate(maxDate);
             }

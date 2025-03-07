@@ -22,6 +22,7 @@ import se.curtrune.lucy.classes.MedicineContent;
 import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.classes.Type;
+import se.curtrune.lucy.util.gson.MyGson;
 
 public class DBAdmin {
 
@@ -111,7 +112,8 @@ public class DBAdmin {
     }
     public static Item getItem(Cursor cursor){
         Item item = new Item();
-        Gson gson = new Gson();
+        //Gson gson = new Gson();
+        Gson gson = MyGson.INSTANCE.getMyGson();
         item.setId(cursor.getLong(0));
         item.setHeading(cursor.getString(1));
         item.setComment(cursor.getString(2));
@@ -132,6 +134,11 @@ public class DBAdmin {
             Repeat repeat = gson.fromJson(jsonRepeat, Repeat.class);
             item.setRepeat(repeat);
         }*/
+        if( cursor.getString(16) != null) {
+            log("string is ", cursor.getString(16));
+
+            //item.setDurationType();
+        }
         Notification notification = gson.fromJson(cursor.getString(17), Notification.class);
         item.setNotification(notification);
         item.setIsTemplate(cursor.getInt(18) != 0);
@@ -179,8 +186,12 @@ public class DBAdmin {
         cv.put("isCalenderItem", item.isCalenderItem()? 1:0);
         cv.put("category", item.getCategory());
         cv.put("parentID", item.getParentId());
-        if( item.getPeriod() != null) {
-            cv.put("repeat", item.getPeriod().toJson());
+        if( item.getRepeat() != null) {
+            cv.put("repeat", item.getRepeat().toJson());
+        }
+        //well change name of field, please TODO
+        if( item.getDurationType() != null){
+            cv.put("estimate", gson.toJson(item.getDurationType()));
         }
 /*        if( item.getEstimate() != null){
             cv.put("estimate", item.getEstimate().toJson());

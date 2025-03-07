@@ -15,7 +15,7 @@ import se.curtrune.lucy.screens.dev.test_cases.LocalDBTest
 import se.curtrune.lucy.screens.item_editor.ItemEvent
 import se.curtrune.lucy.util.Logger
 
-class DevActivityViewModel : ViewModel() {
+class DevViewModel : ViewModel() {
     private var repository = LucindaApplication.repository
     private var _mentalModule = LucindaApplication.mentalModule
     private var _mental = MutableStateFlow(_mentalModule.current)
@@ -85,6 +85,7 @@ class DevActivityViewModel : ViewModel() {
             is DevEvent.ResetApp -> {resetLucinda()}
             is DevEvent.InsertItemWithID -> {insertItemWithID(event.item)}
             is DevEvent.AddTab -> {addTab(event.heading)}
+            is DevEvent.RunQuery -> { runQuery(event.query)}
         }
     }
     fun onEvent(event: ItemEvent){
@@ -118,6 +119,12 @@ class DevActivityViewModel : ViewModel() {
     }
     private fun resetLucinda(){
         println("resetLucinda()")
+    }
+    private fun runQuery(query: String){
+        println("runQuery($query)")
+        val db = LucindaApplication.localDB
+        db.executeSQL(query)
+
     }
     private fun search(filter: String){
         println("DevViewModel.search($filter)")

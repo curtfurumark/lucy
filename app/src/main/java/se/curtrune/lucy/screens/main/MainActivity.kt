@@ -56,6 +56,7 @@ import se.curtrune.lucy.screens.message_board.MessageBoardFragment
 import se.curtrune.lucy.screens.monthcalendar.MonthFragment
 import se.curtrune.lucy.screens.projects.ProjectsFragment
 import se.curtrune.lucy.screens.todo.TodoFragment
+import se.curtrune.lucy.screens.user_settings.UserSettingsFragment
 import se.curtrune.lucy.screens.week_calendar.WeekFragment
 import se.curtrune.lucy.util.Constants
 import se.curtrune.lucy.util.Logger
@@ -154,7 +155,8 @@ class MainActivity : AppCompatActivity() {
                         navigate(MedicineFragment())
                     }
                     R.id.navigationDrawer_customizeFragment -> {
-                        navigate(CustomizeFragment())
+                        //navigate(CustomizeFragment())
+                        navigate(UserSettingsFragment())
                     }
                     R.id.navigationDrawer_mentalFragment -> {
                         navigate(MentalDateFragment())

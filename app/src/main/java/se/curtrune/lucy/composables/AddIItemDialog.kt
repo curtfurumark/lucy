@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
@@ -42,7 +44,6 @@ import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.ItemDuration
-import se.curtrune.lucy.classes.Notification
 import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.composables.top_app_bar.ItemSettingAppointment
 import se.curtrune.lucy.composables.top_app_bar.ItemSettingCalendar
@@ -129,15 +130,17 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: Dialog
     }
     fun getItem(): Item{
         item.parentId = parent?.id ?: 0
-        item.heading = heading
         item.targetDate = targetDate
         item.targetTime = targetTime
         item.category = category
         return item
     }
     Dialog(onDismissRequest = onDismiss){
+        val scrollState = rememberScrollState()
         Surface(modifier = Modifier.fillMaxWidth().background(Color.LightGray)) {
-            Column(modifier = Modifier.fillMaxWidth()) {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+                    .verticalScroll(scrollState)) {
                 if(parent != null){
                     Text(text = stringResource(R.string.add_to_list, parent!!.heading), fontSize = 20.sp)
                 }else{
@@ -145,7 +148,9 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: Dialog
                 }
                 OutlinedTextField(
                     value = heading,
-                    onValueChange = { heading = it },
+                    onValueChange = {
+                        heading = it
+                        item.heading = it},
                     modifier = Modifier
                         .fillMaxWidth(),
                     label = { Text(stringResource(R.string.heading))},
@@ -170,12 +175,13 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: Dialog
                 }
                 ItemSettingNoTime(onEvent = {
                     isEvent = it
+                    //TODO
                 })
-                ItemSettingRepeat(item.period, onEvent = {
+                ItemSettingRepeat(item.repeat, onEvent = {
                     showRepeatDialog = true
                 })
-                ItemSettingCategory(category, onEvent = {
-                    showCategoryDialog = true
+                ItemSettingCategory(item = item, onEvent = { category->
+                    item.category = category
                 })
                 ItemSettingCalendar(item = item, onEvent = { isCalendarItem->
                     item.setIsCalenderItem(isCalendarItem)
@@ -190,6 +196,12 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: Dialog
                 ItemSettingPrioritized(item = item, onEvent = { isPrioritized ->
                     println("event item: ${item.heading} is prioritized: $isPrioritized")
                 })
+                ItemSettingTemplate(item = item, onEvent = { isTemplate ->
+                    item.setIsTemplate(isTemplate)
+                })
+                ItemSettingSyncWithGoogle(item = item, onEvent = {
+                    println("sync with google calendar")
+                })
                 if( item.type == Type.APPOINTMENT){
                     ItemSettingLocation()
                 }
@@ -199,8 +211,9 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: Dialog
                 ItemSettingColor(item = item, onEvent = {
                     showColorDialog = true
                 })
-                ItemSettingDuration(onEvent = { itemDuration->
-                    println("itemDuration: ${itemDuration.toString()}")
+                ItemSettingDuration(onEvent = { durationType->
+                    println("duration type: ${durationType.name}")
+                    item.durationType = durationType
                 })
                 ItemSettingNotification(item = item, onEvent = {
                     showNotificationDialog = true
@@ -294,12 +307,12 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: Dialog
 }
 
 @Composable
-fun ItemSettingDuration(onEvent: (ItemDuration)->Unit){
+fun ItemSettingDuration(onEvent: (ItemDuration.Type)->Unit){
     var showDropdown by remember {
         mutableStateOf(false)
     }
     var itemDuration by remember {
-        mutableStateOf(ItemDuration.Type.DAY)
+        mutableStateOf(ItemDuration.Type.SECONDS)
     }
     Box(
         modifier = Modifier.fillMaxWidth()
@@ -317,11 +330,54 @@ fun ItemSettingDuration(onEvent: (ItemDuration)->Unit){
                     DropdownItem(action = durationType.name) {
                         itemDuration = durationType
                         showDropdown = false
+                        onEvent(itemDuration)
                     }
                 }
             }
         }
 
+    }
+}
+@Composable
+fun ItemSettingSyncWithGoogle(item: Item, onEvent: (Boolean)->Unit){
+    var syncWithGoogle by remember {
+        mutableStateOf(false)
+    }
+    Box(modifier = Modifier.fillMaxWidth()
+        .border(Dp.Hairline, color = Color.LightGray)
+        .padding(start = 8.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = stringResource(R.string.add_to_google_cal))
+            Checkbox(checked = syncWithGoogle, onCheckedChange = {
+                syncWithGoogle = !syncWithGoogle
+                onEvent(syncWithGoogle)
+            })
+        }
+    }
+}
+@Composable
+fun ItemSettingTemplate(item: Item, onEvent: (Boolean) -> Unit){
+    var isTemplate by remember {
+        mutableStateOf(item.isTemplate)
+    }
+    Box(modifier = Modifier.fillMaxWidth()
+        .border(Dp.Hairline, color = Color.LightGray)
+        .padding(start = 8.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = stringResource(R.string.is_template))
+            Checkbox(checked = isTemplate, onCheckedChange = {
+                isTemplate = !isTemplate
+                onEvent(isTemplate)
+            })
+        }
     }
 }
 @Composable

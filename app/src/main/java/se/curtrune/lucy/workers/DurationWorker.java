@@ -23,7 +23,7 @@ public class DurationWorker {
         long duration = 0;
         List<Item> children = ItemsWorker.selectChildren(template, context);
         //template that never has been actualized
-        if( children.size() == 0){
+        if(children.isEmpty()){
             return template.getEstimatedDuration();
         }
         for( Item child: children){

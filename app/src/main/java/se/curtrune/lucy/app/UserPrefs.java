@@ -2,7 +2,10 @@ package se.curtrune.lucy.app;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import android.app.Application;
 import android.content.Context;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +17,7 @@ import java.util.Set;
 import se.curtrune.lucy.workers.SettingsWorker;
 
 public class UserPrefs {
+    private static final String KEY_GOOGLE_CALENDAR_ID = "KEY_GOOGLE_CALENDAR_ID";
     public static boolean VERBOSE = false;
     public static final String KEY_ICE_PHONE_NUMBER = "KEY_ICE_PHONE_NUMBER";
     public static final String USE_DARK_MODE = "USE_DARK_MODE";
@@ -21,6 +25,7 @@ public class UserPrefs {
     public static final String USES_PASSWORD = "USES_PASSWORD";
     public static final String KEY_CATEGORIES = "KEY_CATEGORIES";
     public static final String KEY_PASSWORD = "KEY_PASSWORD";
+    public static final String SYNC_WITH_GOOGLE_CALENDAR = "SYNC_WITH_GOOGLE_CALENDAR";
     public static final String KEY_PANIC_ACTION = "KEY_PANIC_ACTION";
     public static final String KEY_PANIC_URLS = "KEY_PANIC_URLS";
     public static final String KEY_LANGUAGE = "KEY_LANGUAGE";
@@ -73,6 +78,9 @@ public class UserPrefs {
     public static Settings.StartActivity getStartActivity(Context context) {
         int ordinal = Settings.getInt(KEY_FIRST_PAGE, Settings.StartActivity.TODAY_ACTIVITY.ordinal(), context);
         return Settings.StartActivity.values()[ordinal];
+    }
+    public static boolean getSyncWithGoogleCalendar(Context context){
+        return Settings.getBoolean(SYNC_WITH_GOOGLE_CALENDAR, false, context);
     }
 
     public static String getLanguage(Context context) {
@@ -133,7 +141,9 @@ public class UserPrefs {
         Settings.addInt(KEY_FIRST_PAGE, firstPage.ordinal(), context);
     }
 
-
+    public static void setSyncWithGoogleCalendar(boolean syncWithGoogleCalendar, Context context) {
+        Settings.addBoolean(SYNC_WITH_GOOGLE_CALENDAR, syncWithGoogleCalendar, context);
+    }
     public static void setUseDarkMode(boolean darkMode, Context context) {
         log("UserPrefs.setUseDarkMode(boolean, Context)");
         Settings.addBoolean(USE_DARK_MODE, darkMode, context);
@@ -190,4 +200,11 @@ public class UserPrefs {
     }
 
 
+    public static int getGoogleCalendarID(@NotNull Application context) {
+        return Settings.getInt(KEY_GOOGLE_CALENDAR_ID, -1, context);
+    }
+
+    public static void setGoogleCalendarID(int id, @NotNull Application context) {
+        Settings.addInt(KEY_GOOGLE_CALENDAR_ID, id, context);
+    }
 }

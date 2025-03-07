@@ -61,6 +61,7 @@ import se.curtrune.lucy.persist.SqliteLocalDB
 import se.curtrune.lucy.screens.log_in.LogInActivity
 import se.curtrune.lucy.screens.main.MainActivity
 import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
+import se.curtrune.lucy.screens.dev.composables.DurationTest
 import se.curtrune.lucy.screens.dev.composables.InsertItemWithID
 import se.curtrune.lucy.screens.dev.composables.RepeatTest
 import se.curtrune.lucy.screens.dev.composables.TestScrollableYearMonth
@@ -113,7 +114,7 @@ class DevActivity : AppCompatActivity() {
         println("...initContent()")
         val composeView = findViewById<ComposeView>(R.id.devActivity_composeView)
         composeView?.setContent {
-            val devViewModel = viewModel<DevActivityViewModel>()
+            val devViewModel = viewModel<DevViewModel>()
             val state = devViewModel.state.collectAsState()
             val context = LocalContext.current
             val mental = devViewModel.mental
@@ -154,6 +155,7 @@ class DevActivity : AppCompatActivity() {
                                     .verticalScroll(scrollState),
                                 verticalArrangement = Arrangement.SpaceEvenly,
                             ) {
+                                DurationTest()
                                 var testSwipeAbleItem by remember {
                                     mutableStateOf(false)
                                 }

@@ -10,7 +10,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,9 +28,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.R
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.Repeat
+import se.curtrune.lucy.screens.medicine.composable.DropdownItem
 import se.curtrune.lucy.util.DateTImeFormatter
 import java.time.LocalDate
 import java.time.LocalTime
@@ -109,10 +115,17 @@ fun ItemSettingCategory(item: Item?){
     }
 }
 @Composable
-fun ItemSettingCategory(category: String, onEvent: () -> Unit){
+fun ItemSettingCategory(item: Item, onEvent: (String) -> Unit){
+    var category by remember {
+        mutableStateOf(item.category)
+    }
+    var categoryListExpanded by remember {
+        mutableStateOf(false)
+    }
+    val categories = LucindaApplication.userSettings.getCategories()
     Box(modifier = Modifier.fillMaxWidth()
         .border(Dp.Hairline,  color = Color.LightGray)
-        .clickable { onEvent() }
+        .clickable {categoryListExpanded = !categoryListExpanded }
         .padding(8.dp)) {
         Row(modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -120,9 +133,18 @@ fun ItemSettingCategory(category: String, onEvent: () -> Unit){
         ) {
             Text(text = stringResource(R.string.category))
             //if (item != null) {
-            Text(text = category, modifier = Modifier.clickable {
-                onEvent()
-            })
+            Text(text = category)
+            Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = "chose category")
+            DropdownMenu(expanded = categoryListExpanded, onDismissRequest = {
+                categoryListExpanded = false
+            }) {
+                categories.forEach {
+                    DropdownItem(action =it) { cat ->
+                        category = cat
+                        categoryListExpanded = false
+                    }
+                }
+            }
         }
     }
 }
@@ -235,7 +257,7 @@ fun ItemSettingPrioritized(item: Item, onEvent: (Boolean) -> Unit){
 fun ItemSettingRepeat(item: Item){
     Column(modifier = Modifier.padding(4.dp)) {
         Text(text = stringResource(R.string.repeat))
-        Text(text = if (item.hasPeriod()) item.period.toString() else "no repeat")
+        Text(text = if (item.hasRepeat()) item.repeat.toString() else "no repeat")
     }
 }
 @Composable

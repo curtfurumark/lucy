@@ -267,4 +267,7 @@
     <string name="average_stress_1f">average stress %1$.2f</string>
     <string name="number_of_occasions_d">number of occasions %1$d</string>
     <string name="timed_item">timed event</string>
+    <string name="add_to_google_cal">add to google calendar</string>
+    <string name="sync_with_google_calendar">sync with google calendar</string>
+    <string name="choose_a_calendar">choose a calendar to sync with</string>
 </resources>

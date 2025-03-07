@@ -1,9 +1,22 @@
 package se.curtrune.lucy.classes
 
 data class ItemDuration(
-    val type:  Type
+    var type:  Type = Type.SECONDS
 ){
+    var seconds: Long = 0
     enum class Type{
-        DAY, WEEK, MONTH, YEAR
+        SECONDS, DAY, WEEK, MONTH, YEAR
+    }
+    init {
+        type = Type.SECONDS
+    }
+    fun setHours(hour: Int){
+        seconds += hour * 3600
+    }
+    fun setMinutes(minutes: Int){
+        seconds += minutes * 60
+    }
+    fun setSeconds(seconds: Int){
+        this.seconds += seconds
     }
 }

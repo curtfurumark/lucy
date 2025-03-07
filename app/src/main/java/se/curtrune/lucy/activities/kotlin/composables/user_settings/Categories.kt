@@ -17,11 +17,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
+import se.curtrune.lucy.screens.user_settings.UserEvent
+import se.curtrune.lucy.screens.user_settings.UserState
 
 @Composable
-fun Categories(
-    categories: List<String>,
-    onAddCategory: (String)->Unit){
+fun Categories(state: UserState, onEvent: (UserEvent)->Unit){
     Card(modifier = Modifier.fillMaxWidth()){
         Column() {
             Row(
@@ -38,19 +39,20 @@ fun Categories(
                     contentDescription = "add category"
                 )
             }
-            categories.forEach { category->
+            state.categories.forEach { category->
                 Text(text = category, modifier = Modifier.padding(start = 8.dp))
             }
         }
     }
-
 }
 @Composable
 @Preview(showBackground = true)
 fun Preview(){
-    Categories(getCategories(), onAddCategory = {
-        println("onAddCategory $it")
-    })
+    LucyTheme {
+        val state = UserState()
+        state.categories = listOf("work", "play", "art", "music")
+        Categories(state = state) { }
+    }
 }
 fun getCategories(): List<String>{
     return listOf("home", "work", "play", "household","dev")

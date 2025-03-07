@@ -22,4 +22,26 @@ class UserSettings(val context: Application) {
             Array<String>::class.java
         )
     }
+
+    var language: String
+        get() = UserPrefs.getLanguage(context)
+        set(value){
+            UserPrefs.setLanguage(value, context)
+        }
+    var googleCalendarId: Int
+        get() = UserPrefs.getGoogleCalendarID(context)
+        set(value){
+            UserPrefs.setGoogleCalendarID(value, context)
+        }
+    var darkMode: Boolean
+        get() = UserPrefs.getDarkMode(context)
+        set(value){
+            UserPrefs.setUseDarkMode(value, context)
+            //field = value
+        }
+    var syncWithGoogleCalendar: Boolean
+        get() = UserPrefs.getSyncWithGoogleCalendar(context)
+        set(value){
+            UserPrefs.setSyncWithGoogleCalendar(value, context)
+        }
 }

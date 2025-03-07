@@ -3,12 +3,7 @@ package se.curtrune.lucy.screens.item_editor
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.R
 import se.curtrune.lucy.classes.Item
@@ -111,8 +106,8 @@ class ItemSessionViewModel : ViewModel() {
             ItemSetting.Key.TIME
         )
         var repeatValue = ""
-        if (item.hasPeriod()) {
-            repeatValue = item.period.toString()
+        if (item.hasRepeat()) {
+            repeatValue = item.repeat.toString()
         }
         val repeatSetting =
             KeyValueSetting(context.getString(R.string.repeat), repeatValue, ItemSetting.Key.REPEAT)
