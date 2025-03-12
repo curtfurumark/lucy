@@ -61,9 +61,12 @@ import se.curtrune.lucy.persist.SqliteLocalDB
 import se.curtrune.lucy.screens.log_in.LogInActivity
 import se.curtrune.lucy.screens.main.MainActivity
 import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
+import se.curtrune.lucy.screens.dev.composables.CalendarWeekTest
 import se.curtrune.lucy.screens.dev.composables.DurationTest
+import se.curtrune.lucy.screens.dev.composables.ExecuteQuery
 import se.curtrune.lucy.screens.dev.composables.InsertItemWithID
 import se.curtrune.lucy.screens.dev.composables.RepeatTest
+import se.curtrune.lucy.screens.dev.composables.RetroFitTest
 import se.curtrune.lucy.screens.dev.composables.TestScrollableYearMonth
 import se.curtrune.lucy.screens.dev.composables.TestSwipeAble
 import se.curtrune.lucy.services.TimerService
@@ -155,7 +158,7 @@ class DevActivity : AppCompatActivity() {
                                     .verticalScroll(scrollState),
                                 verticalArrangement = Arrangement.SpaceEvenly,
                             ) {
-                                DurationTest()
+                                //DurationTest()
                                 var testSwipeAbleItem by remember {
                                     mutableStateOf(false)
                                 }
@@ -163,7 +166,33 @@ class DevActivity : AppCompatActivity() {
                                     mutableStateOf(false)
                                 }
                                 var showScrollableYearMonth by remember {
-                                    mutableStateOf(true)
+                                    mutableStateOf(false)
+                                }
+                                var showRunSQL by remember {
+                                    mutableStateOf(false)
+                                }
+                                var showItemDuration by remember {
+                                    mutableStateOf(false)
+                                }
+                                var showStopwatchService by remember{
+                                    mutableStateOf(false)
+                                }
+                                if( showRunSQL){
+                                    ExecuteQuery(onEvent = {event->
+                                        devViewModel.onEvent(event)
+                                    })
+                                }
+                                Spacer(modifier = Modifier.height(16.dp))
+                                CalendarWeekTest()
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    modifier = Modifier.clickable {
+                                        showItemDuration =!showItemDuration
+                                    },
+                                    text = "show item duration test",
+                                    fontSize = 24.sp)
+                                if(showItemDuration) {
+                                    DurationTest()
                                 }
                                 Text(
                                     text = "test scrollable year month",
@@ -212,11 +241,18 @@ class DevActivity : AppCompatActivity() {
                                 /*                            ItemsTabsTest(state = state.value, onEvent = { event->
                                 devViewModel.onEvent(event)
                             })*/
+                                Text(text = "stopwatch service", fontSize = 24.sp,
+                                    modifier = Modifier.clickable {
+                                        showStopwatchService = !showStopwatchService
+                                    })
                                 Spacer(modifier = Modifier.height(16.dp))
-                                StopWatchUsingService(onCommand = { action ->
-                                    println("command: $action")
-                                    sendCommandToTimeService(action)
-                                })
+                                AnimatedVisibility(visible = showStopwatchService) {
+                                    StopWatchUsingService(onCommand = { action ->
+                                        println("command: $action")
+                                        sendCommandToTimeService(action)
+                                    })
+                                }
+
                                 Spacer(modifier = Modifier.height(16.dp))
                                 CountDownTimerService(15, onCommand = { command, duration ->
                                     sendCommandToTimeService(command, duration)

@@ -177,6 +177,10 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: Dialog
                     isEvent = it
                     //TODO
                 })
+                ItemSettingDuration(item= item, onEvent = { itemDuration->
+                    println("duration type: ${itemDuration.type.name}")
+                    item.itemDuration = itemDuration
+                })
                 ItemSettingRepeat(item.repeat, onEvent = {
                     showRepeatDialog = true
                 })
@@ -211,10 +215,7 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: Dialog
                 ItemSettingColor(item = item, onEvent = {
                     showColorDialog = true
                 })
-                ItemSettingDuration(onEvent = { durationType->
-                    println("duration type: ${durationType.name}")
-                    item.durationType = durationType
-                })
+
                 ItemSettingNotification(item = item, onEvent = {
                     showNotificationDialog = true
                 })
@@ -307,12 +308,15 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: Dialog
 }
 
 @Composable
-fun ItemSettingDuration(onEvent: (ItemDuration.Type)->Unit){
+fun ItemSettingDuration(item: Item ,onEvent: (ItemDuration)->Unit){
     var showDropdown by remember {
         mutableStateOf(false)
     }
     var itemDuration by remember {
-        mutableStateOf(ItemDuration.Type.SECONDS)
+        mutableStateOf(ItemDuration())
+    }
+    var itemDurationType by remember {
+        mutableStateOf(item.itemDuration?.type?: ItemDuration.Type.SECONDS)
     }
     Box(
         modifier = Modifier.fillMaxWidth()
@@ -322,13 +326,14 @@ fun ItemSettingDuration(onEvent: (ItemDuration.Type)->Unit){
             }){
         Column(modifier = Modifier.fillMaxWidth()){
             Text(text = stringResource(R.string.duration))
-            Text(text = itemDuration.name)
+            Text(text = itemDurationType.name)
             DropdownMenu(expanded = showDropdown, onDismissRequest = {
                 showDropdown = false
             }) {
                 ItemDuration.Type.entries.forEach { durationType->
                     DropdownItem(action = durationType.name) {
-                        itemDuration = durationType
+                        itemDuration.type = durationType
+                        itemDurationType = durationType
                         showDropdown = false
                         onEvent(itemDuration)
                     }

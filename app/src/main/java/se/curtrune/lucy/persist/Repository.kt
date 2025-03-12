@@ -1,4 +1,4 @@
-package se.curtrune.lucy.modules
+package se.curtrune.lucy.persist
 
 import android.app.Application
 import se.curtrune.lucy.LucindaApplication
@@ -6,13 +6,9 @@ import se.curtrune.lucy.app.Settings
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.State
 import se.curtrune.lucy.classes.Type
-import se.curtrune.lucy.classes.calender.CalenderDate
+import se.curtrune.lucy.classes.calender.CalendarWeek
 import se.curtrune.lucy.classes.calender.CalenderMonth
 import se.curtrune.lucy.classes.calender.Week
-import se.curtrune.lucy.persist.CalenderWorker
-import se.curtrune.lucy.persist.ItemsWorker
-import se.curtrune.lucy.persist.SqliteLocalDB
-import se.curtrune.lucy.persist.Queeries
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.workers.NotificationsWorker
 import java.time.LocalDate
@@ -93,17 +89,18 @@ class Repository (val context: Application){
     fun getCalenderMonth(yearMonth: YearMonth): CalenderMonth {
         Logger.log("...getCalenderMonth(YearMonth)", yearMonth.toString())
         val calenderMonth = CalenderMonth(yearMonth)
-        calenderMonth.calenderDates = CalenderWorker.getCalenderDates(
+        calenderMonth.calenderDates = CalendarHelper.getCalenderDates(
             calenderMonth.firstDate,
             calenderMonth.lastDate,
             context
         )
         return calenderMonth
     }
-    fun getEvents(week: Week): List<CalenderDate> {
-        Logger.log("CalendarWorker.getEvents(Week, Context)", week.toString())
-        return CalenderWorker.getCalenderDates(week.firstDateOfWeek, week.lastDateOfWeek, context)
+    fun getCalendarWeek(week: Week): CalendarWeek {
+        println("getCalendarWeek(${week.toString()})")
+        return CalendarHelper.getCalendarWeek(week)
     }
+
 
     /**
      * @param item, the item for which you wish to get its parent
@@ -236,6 +233,21 @@ class Repository (val context: Application){
         if(VERBOSE) println("Repository.selectItems(Date ${date.toString()}, State: ${state.toString()})")
         SqliteLocalDB(context).use { db ->
             return db.selectItems(Queeries.selectItems(date, state))
+        }
+    }
+    fun selectItems(query: String):List<Item>{
+        println("selectItems($query)")
+        SqliteLocalDB(context).use { db->
+            return db.selectItems(query)
+        }
+    }
+
+    /**
+     * selects all the items for week where field isCalendarItem is set to 1
+     */
+    fun selectItems(week: Week): List<Item>{
+        SqliteLocalDB(context).use { db->
+            return db.selectItems(Queeries.selectItems(week))
         }
     }
 

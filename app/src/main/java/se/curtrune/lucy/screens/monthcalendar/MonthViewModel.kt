@@ -1,9 +1,7 @@
 package se.curtrune.lucy.screens.monthcalendar
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,9 +11,6 @@ import kotlinx.coroutines.launch
 import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
 import se.curtrune.lucy.classes.Item
-import se.curtrune.lucy.persist.CalenderWorker
-import se.curtrune.lucy.persist.ItemsWorker
-import se.curtrune.lucy.screens.daycalendar.DayChannel
 import java.time.YearMonth
 
 class MonthViewModel: ViewModel() {

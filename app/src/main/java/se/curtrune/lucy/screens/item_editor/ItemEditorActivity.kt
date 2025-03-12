@@ -31,8 +31,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.composables.ItemSettingDuration
 import se.curtrune.lucy.item_settings.ItemSetting
 import se.curtrune.lucy.persist.ItemsWorker
 
@@ -40,14 +42,18 @@ class ItemEditorActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val repository = LucindaApplication.repository
             LucyTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    var item = ItemsWorker.selectItem(51, applicationContext)
-                    ItemEditor(item =item )
+                    //val item = ItemsWorker.selectItem(51, applicationContext)
+                    val item = repository.selectItem(10075)
+                    if (item != null) {
+                        ItemEditor(item =item )
+                    }
                 }
             }
         }
@@ -56,8 +62,9 @@ class ItemEditorActivity : ComponentActivity() {
 
 @Composable
 fun ItemEditor(item: Item) {
-    var itemViewModel = viewModel<ItemSessionViewModel>()
-    var itemSettings = itemViewModel.getItemSettings(item, LocalContext.current)
+    println("ItemEditor: item ${item.heading}")
+    //var itemViewModel = viewModel<ItemSessionViewModel>()
+    //var itemSettings = itemViewModel.getItemSettings(item, LocalContext.current)
     var heading by remember {
         mutableStateOf(item.heading)
     }
@@ -98,11 +105,14 @@ fun ItemEditor(item: Item) {
             println("slider on value change $it")
             energy = it
         })
-        LazyColumn{
+        ItemSettingDuration(item = item, onEvent = {
+            println("onEvent item setting duration")
+        })
+/*        LazyColumn{
             items(itemSettings.size){
                 ItemSetting(itemSettings[it])
             }
-        }
+        }*/
 
     }
 }

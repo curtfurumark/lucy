@@ -13,7 +13,7 @@ import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
-import se.curtrune.lucy.modules.Repository;
+import se.curtrune.lucy.persist.Repository;
 import se.curtrune.lucy.persist.SqliteLocalDB;
 import se.curtrune.lucy.persist.ItemsWorker;
 

@@ -37,7 +37,11 @@ class DateViewModel: ViewModel(){
     }
     private fun addItem(item: Item){
         println("...addItem(Item) ${item.heading}")
-        //println("item duration type ${item.itemDuration?.type}")
+        if( item.itemDuration != null) {
+            println("...itemDuration: ${item.itemDuration.type.name}")
+        }else{
+            println("...itemDuration is null")
+        }
         if( repository.insert(item) == null){
             println("error inserting item")
             return
@@ -195,10 +199,11 @@ class DateViewModel: ViewModel(){
             return
         }
         val nWeeks = page - currentWeekPage
-       // val newWeek = state.value.currentWeek.plusWeek(nWeeks)
+        val newDate = _state.value.date.plusWeeks(nWeeks.toLong())
         _state.update { it.copy(
            currentWeek =  it.currentWeek.plusWeek(nWeeks),
-            date = it.date.plusWeeks(nWeeks.toLong())
+            date = newDate,
+            items =  repository.selectItems(newDate)
         ) }
         currentWeekPage = page
     }

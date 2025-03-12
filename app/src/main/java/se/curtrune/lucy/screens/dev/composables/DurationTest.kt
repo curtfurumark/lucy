@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
+import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.ItemDuration
 import se.curtrune.lucy.composables.ItemSettingDuration
 import se.curtrune.lucy.util.gson.MyGson
@@ -56,8 +57,8 @@ fun DurationTest(){
                 Text(text = "to json")
             }
         }
-        ItemSettingDuration(onEvent = {
-            itemDuration.type = it
+        ItemSettingDuration(item = Item("i am item"),onEvent = {
+            itemDuration = it
         })
         AnimatedVisibility(visible = durationType.equals(ItemDuration.Type.SECONDS)) {
             Row(

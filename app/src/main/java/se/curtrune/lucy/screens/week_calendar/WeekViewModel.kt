@@ -1,10 +1,8 @@
 package se.curtrune.lucy.screens.week_calendar
 
-import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,10 +14,6 @@ import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
 import se.curtrune.lucy.classes.Item
 import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.classes.calender.Week
-import se.curtrune.lucy.util.Logger
-import se.curtrune.lucy.persist.CalenderWorker
-import se.curtrune.lucy.screens.daycalendar.DayCalendarState
-import se.curtrune.lucy.screens.daycalendar.DayChannel
 import java.time.LocalDate
 
 class WeekViewModel: ViewModel() {
@@ -40,8 +34,8 @@ class WeekViewModel: ViewModel() {
         mutableWeek.value = week
         _state.update { it.copy(
             currentWeek = Week(),
+            calendarWeek = repository.getCalendarWeek(it.currentWeek),
             currentParent = repository.getTodoRoot(),
-            calendarDates = repository.getEvents(it.currentWeek)
         ) }
 
     }
@@ -49,7 +43,7 @@ class WeekViewModel: ViewModel() {
         println("addItem(${item.heading})")
         repository.insert(item)
         _state.update { it.copy(
-            calendarDates = repository.getEvents(it.currentWeek)
+            calendarWeek = repository.getCalendarWeek(it.currentWeek)
         ) }
     }
     private fun calendarDateClick(calenderDate: CalenderDate){
@@ -93,7 +87,7 @@ class WeekViewModel: ViewModel() {
         week = week.plusWeek(numWeeks)
         _state.update { it.copy(
             currentWeek = week,
-            calendarDates = repository.getEvents(week)
+            calendarWeek = repository.getCalendarWeek(week)
         ) }
     }
     private fun showAddItemDialog(){

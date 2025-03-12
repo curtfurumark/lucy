@@ -2,6 +2,8 @@ package se.curtrune.lucy.persist;
 
 import static se.curtrune.lucy.util.Logger.log;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
@@ -221,7 +223,7 @@ public class Queeries {
     }
 
     public static String selectItems(Week week) {
-        return String.format(Locale.getDefault(), "SELECT * FROM items WHERE targetDate >= %d AND targetDate <= %d ORDER by targetDate DESC",
+        return String.format(Locale.getDefault(), "SELECT * FROM items WHERE targetDate >= %d AND targetDate <= %d AND isCalenderItem = 1  ORDER by targetDate DESC",
                 week.getMonday().toEpochDay(), week.getLastDateOfWeek().toEpochDay());
     }
 
@@ -288,5 +290,19 @@ public class Queeries {
 
     public static String selectRepeats() {
         return "SELECT * FROM repeat";
+    }
+
+    /**
+     * all items with duration,
+     * need to filter itemDuration type SECONDS
+     * @param week, the week
+     * @return a query
+     *
+     */
+    @NotNull
+    public static String selectAllWeekItems(@NotNull Week week) {
+        long epochStart = week.getFirstDateOfWeek().toEpochDay();
+        long epochEnd = week.getLastDateOfWeek().toEpochDay();
+        return String.format(Locale.getDefault(),"SELECT * FROM items WHERE targetDate >= %d AND targetDate <= %d AND estimate IS NOT NULL", epochStart, epochEnd);
     }
 }

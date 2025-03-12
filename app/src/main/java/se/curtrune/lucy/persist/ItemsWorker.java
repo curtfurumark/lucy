@@ -231,6 +231,7 @@ public class ItemsWorker {
     }
 
     //MIGRATED TO REPOSITORY
+    @Deprecated
     public static Item selectItem(long id, Context context) {
         log("ItemsWorker.selectItem(long, Context)");
         Item item = null;
@@ -368,6 +369,7 @@ public class ItemsWorker {
         return items;
     }
 
+    @Deprecated
     public static List<Item> selectCalenderItems(LocalDate currentDate, Context context) {
         if( VERBOSE) log("ItemsWorker.selectCalenderItems(LocalDate, Context)");
         String queery = Queeries.selectCalenderItems(currentDate);

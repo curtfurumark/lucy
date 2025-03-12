@@ -6,7 +6,7 @@ import se.curtrune.lucy.modules.CalendarModule
 import se.curtrune.lucy.modules.MentalModule
 import se.curtrune.lucy.modules.SystemInfoModule
 import se.curtrune.lucy.persist.SqliteLocalDB
-import se.curtrune.lucy.modules.Repository
+import se.curtrune.lucy.persist.Repository
 import se.curtrune.lucy.modules.TimeModule
 import se.curtrune.lucy.modules.UserSettings
 import se.curtrune.lucy.statistics.Statistics

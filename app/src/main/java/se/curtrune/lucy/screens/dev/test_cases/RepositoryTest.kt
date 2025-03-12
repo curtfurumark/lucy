@@ -2,6 +2,8 @@ package se.curtrune.lucy.screens.dev.test_cases
 
 import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.calender.Week
+import se.curtrune.lucy.persist.Queeries
 
 class RepositoryTest {
     private val repository= LucindaApplication.repository
@@ -23,6 +25,14 @@ class RepositoryTest {
         }
         repository.restoreDeleted(itemWithId)
 
+
+    }
+    fun testGetWeekCalendar(){
+        println("testGetWeekCalendar")
+        val items = repository.selectItems(Queeries.selectAllWeekItems(Week()))
+        items.forEach{ item ->
+            println("${item.heading} ${item.itemDuration.type.name}")
+        }
 
     }
 

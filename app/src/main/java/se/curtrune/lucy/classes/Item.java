@@ -45,7 +45,7 @@ public class Item implements Serializable , Listable {
     protected Repeat repeat;
     //protected MentalStats estimate;
     protected Notification notification;
-    protected ItemDuration.Type durationType;
+    protected ItemDuration  itemDuration;
     protected int energy;
     protected int anxiety;
     protected int stress;
@@ -171,8 +171,8 @@ public class Item implements Serializable , Listable {
         //TODO, implement some sort of duration worker getInstances children add duration divide by number of instances
         return 0;
     }
-    public ItemDuration.Type getDurationType() {
-        return durationType;
+    public ItemDuration getItemDuration() {
+        return itemDuration;
     }
     public int getMood(){
         return mood;
@@ -355,8 +355,8 @@ public class Item implements Serializable , Listable {
     public void setEstimatedDuration(long seconds) {
 
     }
-    public void setDurationType(ItemDuration.Type durationType){
-        this.durationType = durationType;
+    public void setItemDuration(ItemDuration itemDuration){
+        this.itemDuration = itemDuration;
     }
 
     public void setHeading(String heading) {

@@ -54,10 +54,12 @@ fun WeekDate(calendarDate: CalenderDate, onEvent: (WeekEvent)->Unit){
                 textAlign = TextAlign.Center,
                 text = "${DateTImeFormatter.format(calendarDate.date.dayOfWeek, TextStyle.SHORT)} ${calendarDate.date.dayOfMonth}",
                 fontSize = 20.sp)
-            for(event in calendarDate.items){
+            //for(event in calendarDate.items){
+            calendarDate.items.reversed().forEach { event->
                 Box(
                     modifier = Modifier.fillMaxWidth()
-                        .border(Dp.Hairline, color = Color.Black)) {
+                        .border(Dp.Hairline, color = Color.Black)
+                ) {
                     Text(
                         text = "${event.targetTime.toString()} ${event.heading}",
                         maxLines = 1
@@ -67,6 +69,7 @@ fun WeekDate(calendarDate: CalenderDate, onEvent: (WeekEvent)->Unit){
         }
     }
 }
+
 @Composable
 @Preview( uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewWeekDate(){

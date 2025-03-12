@@ -1,6 +1,7 @@
-package se.curtrune.lucy.screens.affirmations
+package se.curtrune.lucy.web
 
 import retrofit2.http.GET
+import se.curtrune.lucy.screens.affirmations.Quote
 
 interface QuoteApi {
 

@@ -22,7 +22,7 @@ import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
 import se.curtrune.lucy.screens.affirmations.AffirmationWorker
 import se.curtrune.lucy.screens.affirmations.AffirmationWorker.RequestAffirmationCallback
-import se.curtrune.lucy.screens.affirmations.RetrofitInstance
+import se.curtrune.lucy.web.RetrofitInstance
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.web.CheckForUpdateThread
 import se.curtrune.lucy.web.VersionInfo

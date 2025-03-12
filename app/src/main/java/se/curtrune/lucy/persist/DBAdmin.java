@@ -18,6 +18,7 @@ import se.curtrune.lucy.activities.economy.persist.EcQueeries;
 import se.curtrune.lucy.app.App;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.ItemDuration;
 import se.curtrune.lucy.classes.MedicineContent;
 import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.classes.Repeat;
@@ -135,7 +136,15 @@ public class DBAdmin {
             item.setRepeat(repeat);
         }*/
         if( cursor.getString(16) != null) {
-            log("string is ", cursor.getString(16));
+            String json = cursor.getString(16);
+            log("item duration json  ", json);
+            try{
+                ItemDuration itemDuration = gson.fromJson(json, ItemDuration.class);
+                item.setItemDuration(itemDuration);
+            }catch (Exception e){
+                log("exception", e.getMessage());
+                e.printStackTrace();
+            }
 
             //item.setDurationType();
         }
@@ -170,7 +179,7 @@ public class DBAdmin {
 
     public static ContentValues getContentValues(Item item) {
         if( VERBOSE) log("DBAdmin.getContentValues(Item)");
-        Gson gson = new Gson();
+        Gson gson = MyGson.INSTANCE.getMyGson();
         ContentValues cv = new ContentValues();
         cv.put("heading", item.getHeading());
         cv.put("comment", item.getComment());
@@ -190,8 +199,9 @@ public class DBAdmin {
             cv.put("repeat", item.getRepeat().toJson());
         }
         //well change name of field, please TODO
-        if( item.getDurationType() != null){
-            cv.put("estimate", gson.toJson(item.getDurationType()));
+        if( item.getItemDuration() != null){
+            log("item has duration, adding to field estimate");
+            cv.put("estimate", gson.toJson(item.getItemDuration()));
         }
 /*        if( item.getEstimate() != null){
             cv.put("estimate", item.getEstimate().toJson());
