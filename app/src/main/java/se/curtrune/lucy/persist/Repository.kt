@@ -97,7 +97,7 @@ class Repository (val context: Application){
         return calenderMonth
     }
     fun getCalendarWeek(week: Week): CalendarWeek {
-        println("getCalendarWeek(${week.toString()})")
+        println("Repository.getCalendarWeek(${week.toString()})")
         return CalendarHelper.getCalendarWeek(week)
     }
 

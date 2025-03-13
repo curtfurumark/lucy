@@ -13,6 +13,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,10 +36,15 @@ import java.time.format.TextStyle
 
 @Composable
 fun WeekDate(calendarDate: CalenderDate, onEvent: (WeekEvent)->Unit){
+    var backgroundColor by remember {
+        mutableStateOf(Color.Transparent)
+    }
+    if( calendarDate.date == LocalDate.now()){
+        backgroundColor = MaterialTheme.colorScheme.secondaryContainer
+    }
     Box(
         modifier = Modifier
-            //.padding(4.dp)
-            .border(Dp.Hairline, color = Color.LightGray)
+            .border(2.dp, color = Color.DarkGray)
             .aspectRatio(1.2F)
             .clip(RoundedCornerShape(5.dp))
             .background(color = MaterialTheme.colorScheme.background)
@@ -49,19 +58,19 @@ fun WeekDate(calendarDate: CalenderDate, onEvent: (WeekEvent)->Unit){
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                modifier = Modifier.fillMaxWidth(),
-                //border(Dp.Hairline, color = Color.LightGray),
+                modifier = Modifier.fillMaxWidth()
+                    .background(backgroundColor),
                 textAlign = TextAlign.Center,
                 text = "${DateTImeFormatter.format(calendarDate.date.dayOfWeek, TextStyle.SHORT)} ${calendarDate.date.dayOfMonth}",
                 fontSize = 20.sp)
-            //for(event in calendarDate.items){
             calendarDate.items.reversed().forEach { event->
                 Box(
                     modifier = Modifier.fillMaxWidth()
                         .border(Dp.Hairline, color = Color.Black)
                 ) {
                     Text(
-                        text = "${event.targetTime.toString()} ${event.heading}",
+                        modifier = Modifier.padding(start = 2.dp),
+                        text = "${DateTImeFormatter.format(event.targetTime)} ${event.heading}",
                         maxLines = 1
                     )
                 }

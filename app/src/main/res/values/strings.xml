@@ -118,6 +118,7 @@
     <string name="add_category">add category</string>
     <string name="color">color</string>
     <string name="week">week</string>
+    <string name="week_with_number">week $1%d</string>
     <string name="month">month</string>
     <string name="send">send</string>
     <string name="lucinda" translatable="false">lucinda</string>

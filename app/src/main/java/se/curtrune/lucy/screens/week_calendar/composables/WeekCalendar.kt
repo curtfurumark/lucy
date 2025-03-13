@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.magnifier
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,12 +19,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import se.curtrune.lucy.classes.Item
-import se.curtrune.lucy.classes.calender.Week
+import se.curtrune.lucy.R
 import se.curtrune.lucy.screens.week_calendar.WeekEvent
 import se.curtrune.lucy.screens.week_calendar.WeekState
 
@@ -51,8 +52,7 @@ fun ThisWeekView(state: WeekState, onEvent: (WeekEvent) -> Unit){
     println("ThisWeekView, number of items: ${state.calendarWeek.allWeekItems.size}")
     Box(
         modifier = Modifier
-            //.padding(4.dp)
-            .border(Dp.Hairline, color = Color.LightGray)
+            .border(1.dp, color = Color.DarkGray)
             .aspectRatio(1.2F)
             .clip(RoundedCornerShape(5.dp))
             .background(color = MaterialTheme.colorScheme.background)
@@ -67,9 +67,8 @@ fun ThisWeekView(state: WeekState, onEvent: (WeekEvent) -> Unit){
         ) {
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                //border(Dp.Hairline, color = Color.LightGray),
                 textAlign = TextAlign.Center,
-                text = "week ${state.calendarWeek.week.weekNumber}",
+                text = stringResource(R.string.week_with_number, state.currentWeek.weekNumber),
                 fontSize = 20.sp
             )
             state.calendarWeek.allWeekItems.forEach{ item ->
@@ -78,7 +77,8 @@ fun ThisWeekView(state: WeekState, onEvent: (WeekEvent) -> Unit){
                         .border(Dp.Hairline, color = Color.Black)
                 ) {
                     Text(
-                        text = "${item.targetTime.toString()} ${item.heading}",
+                        modifier = Modifier.padding(start = 2.dp),
+                        text = item.heading,
                         maxLines = 1
                     )
                 }

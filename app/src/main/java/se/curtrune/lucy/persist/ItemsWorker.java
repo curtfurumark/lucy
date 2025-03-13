@@ -82,22 +82,7 @@ public class ItemsWorker {
         return res;
     }
 
-    /**
-     * @param item, the item for which you wish to get its parent
-     * @param context context context context
-     * @return the parent, TODO, null if not parent?
-     * MIGRATED TO REPOSITORY
-     */
-    public static Item getParent(Item item, Context context) {
-        if( VERBOSE) log("ItemsWorker.getParent(Item, Context)");
-        if( item == null){
-            log("WARNING, parent item is null, returning null");
-            return null;
-        }
-        try (SqliteLocalDB db = new SqliteLocalDB(context)) {
-            return db.selectItem(item.getParentId());
-        }
-    }
+
 
     public static Item getRootItem(Settings.Root root, Context context){
         if( VERBOSE) log("ItemsWorker.getRootItem(Settings.Root, Context)");
@@ -343,22 +328,6 @@ public class ItemsWorker {
         }
     }
 
-    public static List<Item> selectIsCalenderItems(YearMonth yearMonth, Context context) {
-        if (VERBOSE) log("ItemsWorker.selectCalenderItems(YearMonth)");
-        try (SqliteLocalDB db = new SqliteLocalDB(context)) {
-            String queery = Queeries.selectIsCalendarItems(yearMonth);
-            return db.selectItems(queery);
-        }
-    }
-
-    public static List<Item> selectAppointments(YearMonth yearMonth, Context context) {
-        if (VERBOSE) log("ItemsWorker.selectAppointments(YearMonth)", yearMonth.toString());
-        try (SqliteLocalDB db = new SqliteLocalDB(context)) {
-            String queery = Queeries.selectAppointments(yearMonth);
-            return db.selectItems(queery);
-        }
-    }
-
     public static List<Item> selectItems(Week week, Context context) {
         if(VERBOSE) log("ItemsWorker.selectItems(Week, Context)");
         String queery = Queeries.selectItems(week);
@@ -440,15 +409,7 @@ public class ItemsWorker {
         }
     }
 
-    public static List<Item> selectEvents(Week week, Context context) {
-        log("ItemsWorker.selectEvents(Week, Context)");
-        String queery = Queeries.selectEvents(week);
-        List<Item> items;
-        try(SqliteLocalDB db = new SqliteLocalDB(context)){
-            items = db.selectItems(queery);
-        }
-        return items;
-    }
+
 
     public static List<Item> selectItems(LocalDate date, Context context) {
         if( VERBOSE )log("ItemsWorker.selectItems(LocalDate, Context)");

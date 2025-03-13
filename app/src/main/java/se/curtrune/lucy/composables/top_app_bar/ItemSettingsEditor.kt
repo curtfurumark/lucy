@@ -65,7 +65,7 @@ fun ItemSettingsEditor(item: Item, parent: Item?){
 @Composable
 fun ItemSettingCalendar(item: Item, onEvent: (Boolean) -> Unit){
     var isCalendarItem by remember {
-        mutableStateOf(false)
+        mutableStateOf(item.isCalenderItem)
     }
     Box(modifier = Modifier.fillMaxWidth()
         .border(Dp.Hairline, color = Color.LightGray)
@@ -76,7 +76,7 @@ fun ItemSettingCalendar(item: Item, onEvent: (Boolean) -> Unit){
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text = stringResource(R.string.is_calender))
-            Checkbox(checked = item.isCalenderItem, onCheckedChange = {
+            Checkbox(checked = isCalendarItem, onCheckedChange = {
                 isCalendarItem = !isCalendarItem
                 onEvent(isCalendarItem)
             })

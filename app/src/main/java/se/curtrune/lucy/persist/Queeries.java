@@ -212,43 +212,12 @@ public class Queeries {
         return String.format(Locale.getDefault(), "SELECT * FROM items WHERE parentID = %d", id);
     }
 
-
-
-    public static String selectMentalsFromItems(LocalDate date, State state) {
-        log("...selectMentalsFromItems(LocalDate");
-        long startOfDay = date.atStartOfDay().toEpochSecond(ZoneOffset.UTC);
-        long endOfDay = startOfDay + (3600 * 24);
-        return String.format(Locale.getDefault(), "SELECT mental FROM items WHERE updated >= %d AND updated <= %d  AND state = %d",
-                startOfDay, endOfDay, state.ordinal());
-    }
-
     public static String selectItems(Week week) {
         return String.format(Locale.getDefault(), "SELECT * FROM items WHERE targetDate >= %d AND targetDate <= %d AND isCalenderItem = 1  ORDER by targetDate DESC",
                 week.getMonday().toEpochDay(), week.getLastDateOfWeek().toEpochDay());
     }
 
 
-    public static String selectCalendarMonth(YearMonth yearMonth) {
-        LocalDate lastDate = yearMonth.atEndOfMonth();
-        LocalDate firstDate = yearMonth.atDay(1);
-        return String.format(Locale.getDefault(), "SELECT * FROM items WHERE targetDate >= %d AND targetDate <= %d AND isCalenderItem = 1 ORDER by targetDate DESC",
-                firstDate.toEpochDay(), lastDate.toEpochDay());
-
-    }
-
-    public static String selectAppointments(YearMonth yearMonth) {
-        LocalDate lastDate = yearMonth.atEndOfMonth();
-        LocalDate firstDate = yearMonth.atDay(1);
-        return String.format(Locale.getDefault(), "SELECT * FROM items WHERE targetDate >= %d AND targetDate <= %d AND type = %d ORDER by targetDate DESC",
-                firstDate.toEpochDay(), lastDate.toEpochDay(), Type.APPOINTMENT.ordinal());
-    }
-
-    public static String selectIsCalendarItems(YearMonth yearMonth) {
-        LocalDate lastDate = yearMonth.atEndOfMonth();
-        LocalDate firstDate = yearMonth.atDay(1);
-        return String.format(Locale.getDefault(), "SELECT * FROM items WHERE targetDate >= %d AND targetDate <= %d AND isCalenderItem = 1 ORDER by targetDate DESC",
-                firstDate.toEpochDay(), lastDate.toEpochDay(), Type.APPOINTMENT.ordinal());
-    }
 
     public static String selectCalenderItems(LocalDate date) {
         return String.format(Locale.getDefault(),
@@ -257,22 +226,12 @@ public class Queeries {
 
     }
 
-    public static String selectMentalChildren(Item item) {
-        return String.format(Locale.getDefault(), "SELECT * FROM mentals WHERE itemID = %d ORDER BY date DESC",
-                item.getID()
-        );
-    }
 
     public static String selectLucindaTodo() {
         return String.format(Locale.getDefault(), "SELECT * FROM lucinda_todo");
 
     }
 
-    public static String selectEvents(Week week) {
-        LocalDate firstDate = week.getFirstDateOfWeek();
-        LocalDate lastDate = week.getLastDateOfWeek();
-        return selectItems(firstDate, lastDate);
-    }
 
     public static String selectTemplateChildren(Item parent) {
         return String.format(Locale.getDefault(), "SELECT * FROM items WHERE parentId = %d AND type = %d ORDER BY updated DESC",

@@ -88,6 +88,7 @@
     <string name="add_category">Lägg till kategori</string>
     <string name="color">Färg</string>
     <string name="week">Vecka</string>
+    <string name="week_with_number">Vecka %1$s</string>
     <string name="month">Månad</string>
     <string name="send">Skicka</string>
     <string name="user">user</string>
@@ -106,6 +107,7 @@
     <string name="timer">Timer</string>
     <string name="estimate_today">Beräkning idag</string>
     <string name="enchilada">Allt</string>
+    <string name="welcome">Välkommen!</string>
     <string name="invalid_password">lösen ord måste vara minst 8 tecken</string>
     <string name="stress_level">Stress:  %1$d</string>
     <string name="add_mental">Lägg till mental</string>
@@ -199,6 +201,7 @@
     <string name="add_to_google_cal">add to google calendar</string>
     <string name="sync_with_google_calendar">sync with google calendar</string>
     <string name="choose_a_calendar">choose a calendar to sync with</string>
+    <string name="type_here">skriv här</string>
 
 
 </resources>

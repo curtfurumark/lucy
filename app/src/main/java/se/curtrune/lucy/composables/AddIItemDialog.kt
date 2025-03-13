@@ -188,6 +188,7 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: Dialog
                     item.category = category
                 })
                 ItemSettingCalendar(item = item, onEvent = { isCalendarItem->
+                    println(" setting is calendar item to $isCalendarItem")
                     item.setIsCalenderItem(isCalendarItem)
                 })
                 ItemSettingAppointment(item = item) { isAppointment->

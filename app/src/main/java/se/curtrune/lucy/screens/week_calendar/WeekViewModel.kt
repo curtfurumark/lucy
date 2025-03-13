@@ -30,7 +30,7 @@ class WeekViewModel: ViewModel() {
     var currentPage = pagerState.initialPage
     var dialogSettings = DialogSettings()
     init{
-        println("init week view model with context")
+        println("WeekViewModel.init")
         mutableWeek.value = week
         _state.update { it.copy(
             currentWeek = Week(),

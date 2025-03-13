@@ -12,9 +12,14 @@ import java.time.LocalDate
 object CalendarHelper {
     private val repository = LucindaApplication.repository
     fun getCalendarWeek(week: Week): CalendarWeek {
+        println("CalendarHelper.getCalendarWeek(${week.toString()})")
         val items = repository.selectItems(week)
+        items.forEach{item->
+            println(item.toString())
+        }
         val (allWeek, rest) = items.partition { item->item.itemDuration != null }
         val calendarDates = getCalendarDates(week, rest)
+        println("...number of all week ${allWeek.size}")
         val calendarWeek = CalendarWeek(week = week, calendarDates = calendarDates, allWeekItems =  allWeek)
         return calendarWeek
     }
@@ -61,7 +66,7 @@ object CalendarHelper {
         }
         return calenderDates
     }
-    fun selectCalenderItems(currentDate: LocalDate?, context: Context?): List<Item> {
+    private fun selectCalenderItems(currentDate: LocalDate?, context: Context?): List<Item> {
         println("CalendarHelper.selectCalenderItems(LocalDate, Context)")
         val queery = Queeries.selectCalenderItems(currentDate)
         println("queery $queery")
