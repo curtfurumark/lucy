@@ -15,7 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.activities.kotlin.dev.ui.theme.LucyTheme
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.screens.monthcalendar.MonthCalendarEvent
 import java.time.LocalDate
@@ -47,7 +47,10 @@ fun MonthDate(calendarDate:CalenderDate, onEvent: (MonthCalendarEvent)->Unit){
 fun PreviewMonthDate(){
     val calendarDate = CalenderDate()
     calendarDate.date = LocalDate.now()
-    calendarDate.items = listOf(Item("pizza"), Item("tvättstuga"))
+    calendarDate.items = listOf(
+        Item("pizza"),
+        Item("tvättstuga")
+    )
     LucyTheme {
         MonthDate(calendarDate = calendarDate) { }
     }

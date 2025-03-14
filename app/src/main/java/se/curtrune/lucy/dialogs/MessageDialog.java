@@ -21,7 +21,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import java.time.LocalDateTime;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.classes.Message;
+import se.curtrune.lucy.screens.message_board.Message;
 
 
 public class MessageDialog extends BottomSheetDialogFragment {
@@ -73,10 +73,10 @@ public class MessageDialog extends BottomSheetDialogFragment {
             Message message = new Message();
             message.setCreated(LocalDateTime.now());
         }
-        message.setUser(editTextUser.getText().toString());
-        message.setContent(editTextContent.getText().toString());
-        message.setSubject(editTextSubject.getText().toString());
-        message.setCategory(category);
+        message.user = editTextUser.getText().toString();
+        message.content = editTextContent.getText().toString();
+        message.subject = editTextSubject.getText().toString();
+        message.category = category;
         return message;
 
     }
@@ -120,10 +120,10 @@ public class MessageDialog extends BottomSheetDialogFragment {
     private void setUserInterface(){
         log("...setUserInterface()");
         if(mode.equals(Mode.EDIT)){
-            editTextUser.setText(message.getUser());
-            editTextContent.setText(message.getContent());
-            editTextSubject.setText(message.getSubject());
-            int position = categoryAdapter.getPosition(message.getCategory());
+            editTextUser.setText(message.user);
+            editTextContent.setText(message.content);
+            editTextSubject.setText(message.subject);
+            int position = categoryAdapter.getPosition(message.category);
             spinnerCategories.setSelection(position);
             buttonSave.setText(getString(R.string.update));
         }

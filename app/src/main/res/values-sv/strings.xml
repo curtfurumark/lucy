@@ -18,7 +18,7 @@
     <string name="days">Dagar</string>
     <string name="monday">m</string>
     <string name="tuesday">t</string>
-    <string name="wednesday">o</string>
+    <string name="wednesday">Onsdag</string>
     <string name="thursday">t</string>
     <string name="friday">f</string>
     <string name="saturday">l</string>
@@ -27,6 +27,7 @@
     <string name="parent_item_heading">parent item heading</string>
     <string name="parent_item">Förälder lista</string>
     <string name="comment">Kommentar</string>
+    <string name="location">Plats</string>
     <string name="show_affirmation">Affirmera mig!</string>
     <string name="start">Start</string>
     <string name="done">Färdig</string>
@@ -91,7 +92,7 @@
     <string name="week_with_number">Vecka %1$s</string>
     <string name="month">Månad</string>
     <string name="send">Skicka</string>
-    <string name="user">user</string>
+    <string name="user">Användarnamn</string>
     <string name="mental">Mental</string>
     <string name="game">Spel</string>
     <string name="panic_action">Panik knapp</string>
@@ -119,7 +120,6 @@
     <string name="sequence">Sekvens</string>
     <string name="customize">Anpassa</string>
     <string name="show_in_calendar">Visa i kalender</string>
-    <string name="is_template">Mall</string>
     <string name="is_prioritized">Prioriterad</string>
     <string name="add_notification">add notification</string>
     <string name="tags">Sökord</string>
@@ -169,6 +169,7 @@
     <string name="ice">ICE</string>
     <string name="add_webpage">Lägg till webbsida</string>
     <string name="pending">Avvakta</string>
+    <string name="description">Beskrivning</string>
     <string name="add">Lägg tilll</string>
     <string name="no_internet_connection">Ingen anslutning till internet.</string>
     <string name="mental_history">Mental historia</string>
@@ -184,6 +185,7 @@
     <string name="doctor">Läkare</string>
     <string name="medicine_name">Läkemedlets namn</string>
     <string name="quantity">Antal</string>
+    <string name="confirm">Bekräfta</string>
     <string name="one_hour">En timme</string>
     <string name="one_day">En dag</string>
     <string name="one_week">En vecka</string>
@@ -202,6 +204,9 @@
     <string name="sync_with_google_calendar">sync with google calendar</string>
     <string name="choose_a_calendar">choose a calendar to sync with</string>
     <string name="type_here">skriv här</string>
+    <string name="add_a_message_to_the_message_board">Lägg till i anslagstavlan</string>
+    <string name="is_template">template</string>
+    <string name="updated">Uppdaterad</string>
 
 
 </resources>

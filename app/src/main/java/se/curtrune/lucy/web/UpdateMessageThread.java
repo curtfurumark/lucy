@@ -7,7 +7,7 @@ import android.os.Looper;
 
 import com.google.gson.Gson;
 
-import se.curtrune.lucy.classes.Message;
+import se.curtrune.lucy.screens.message_board.Message;
 import se.curtrune.lucy.persist.DB1Result;
 import se.curtrune.lucy.persist.Queeries;
 import se.curtrune.lucy.util.Constants;

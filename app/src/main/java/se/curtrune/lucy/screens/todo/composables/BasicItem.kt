@@ -1,6 +1,5 @@
 package se.curtrune.lucy.screens.todo.composables
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -19,10 +18,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.screens.daycalendar.composables.SwipeBackground
 import se.curtrune.lucy.screens.item_editor.ItemEvent
-import se.curtrune.lucy.screens.todo.TodoEvent
 
 
 @Composable

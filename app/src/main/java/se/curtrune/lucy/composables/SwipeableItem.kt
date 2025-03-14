@@ -1,7 +1,6 @@
 package se.curtrune.lucy.composables
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
@@ -11,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.screens.daycalendar.composables.SwipeBackground
 import se.curtrune.lucy.screens.item_editor.ItemEvent
 

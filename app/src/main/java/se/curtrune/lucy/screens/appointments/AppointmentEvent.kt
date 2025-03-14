@@ -1,6 +1,6 @@
 package se.curtrune.lucy.screens.appointments
 
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 
 sealed interface AppointmentEvent {
     data class InsertAppointment(val item: Item): AppointmentEvent

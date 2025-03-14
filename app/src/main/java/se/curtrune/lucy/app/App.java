@@ -1,6 +1,6 @@
 package se.curtrune.lucy.app;
 
-import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.item.Item;
 import se.curtrune.lucy.classes.Type;
 
 public class App {

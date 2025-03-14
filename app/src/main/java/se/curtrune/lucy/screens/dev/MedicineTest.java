@@ -4,7 +4,7 @@ import static se.curtrune.lucy.util.Logger.log;
 
 import android.content.Context;
 
-import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.item.Item;
 import se.curtrune.lucy.classes.MedicineContent;
 import se.curtrune.lucy.persist.ItemsWorker;
 

@@ -1,6 +1,6 @@
 package se.curtrune.lucy.screens.dev
 
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.screens.dev.composables.MyTab
 

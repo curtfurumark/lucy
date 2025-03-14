@@ -1,6 +1,6 @@
 package se.curtrune.lucy.activities.kotlin.composables
 
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import java.time.LocalDate
 import java.time.LocalTime
 

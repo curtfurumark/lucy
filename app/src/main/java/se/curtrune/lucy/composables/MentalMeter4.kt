@@ -21,7 +21,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.R
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.screens.my_day.MyDateEvent
 import se.curtrune.lucy.screens.my_day.MyDayState
 import se.curtrune.lucy.util.DateTImeFormatter

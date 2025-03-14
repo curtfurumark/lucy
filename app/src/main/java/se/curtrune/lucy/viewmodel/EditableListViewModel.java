@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.item.Item;
 import se.curtrune.lucy.persist.ItemsWorker;
 
 

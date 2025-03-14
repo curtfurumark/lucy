@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.compose.foundation.content.MediaType.Companion.Text
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -24,14 +22,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.screens.item_editor.ItemEditorFragment
 import se.curtrune.lucy.screens.main.MainViewModel
 import se.curtrune.lucy.screens.medicine.composable.AddMedicineFab
 import se.curtrune.lucy.screens.medicine.composable.AdverseEffectDialog
 import se.curtrune.lucy.screens.medicine.composable.MedicineDialog
 import se.curtrune.lucy.screens.medicine.composable.MedicineList
-import se.curtrune.lucy.screens.todo.ChannelEvent
 
 class MedicineFragment : Fragment() {
     override fun onCreateView(

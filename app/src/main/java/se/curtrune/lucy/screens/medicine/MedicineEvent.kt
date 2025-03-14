@@ -1,6 +1,6 @@
 package se.curtrune.lucy.screens.medicine
 
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 
 sealed interface MedicineEvent {
     data class Delete(val item: Item): MedicineEvent

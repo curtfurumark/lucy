@@ -1,6 +1,6 @@
 package se.curtrune.lucy.screens.appointments
 
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 
 sealed interface UIEvent{
     data class EditItem(val item: Item): UIEvent

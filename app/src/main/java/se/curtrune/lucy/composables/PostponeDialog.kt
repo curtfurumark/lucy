@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.ui.theme.LucyTheme
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 
 enum class PostponeAmount{
     ONE_HOUR, TWO_HOURS, ONE_DAY, ONE_WEEK, ONE_MONTH
@@ -120,6 +120,8 @@ fun PostponeDialog(onDismiss: ()->Unit, onConfirm: (PostponeDetails)->Unit, item
 @Composable
 fun PreviewDialog(){
     LucyTheme {
-        PostponeDialog(onDismiss = {}, onConfirm = {}, Item("i am an item"))
+        PostponeDialog(onDismiss = {}, onConfirm = {},
+            Item("i am an item")
+        )
     }
 }

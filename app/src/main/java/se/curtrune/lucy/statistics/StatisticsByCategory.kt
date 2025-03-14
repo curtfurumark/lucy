@@ -1,6 +1,6 @@
 package se.curtrune.lucy.statistics
 
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 
 class StatisticsByCategory(val items: List<Item>) {
     private val  categoryMap = HashMap<String,MutableList<Item>>()

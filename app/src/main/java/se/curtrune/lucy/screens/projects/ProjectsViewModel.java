@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.item.Item;
 
 public class ProjectsViewModel extends ViewModel {
     private Item currentParent;

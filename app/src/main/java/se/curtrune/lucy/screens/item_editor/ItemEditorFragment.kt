@@ -46,7 +46,7 @@ import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.app.UserPrefs
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.classes.Repeat
 import se.curtrune.lucy.classes.State

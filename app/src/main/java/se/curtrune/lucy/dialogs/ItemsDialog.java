@@ -22,7 +22,7 @@ import java.util.List;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.screens.daycalendar.CalenderAdapter;
-import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.item.Item;
 
 /**
  * dialog that shows a list of items supplied to its constructor

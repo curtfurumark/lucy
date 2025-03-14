@@ -1,6 +1,6 @@
 package se.curtrune.lucy.screens.todo
 
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 
 sealed interface TodoEvent {
     data class Insert(val item: Item): TodoEvent

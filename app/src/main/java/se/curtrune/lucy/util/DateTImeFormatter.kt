@@ -5,12 +5,17 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.YearMonth
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 
 object DateTImeFormatter {
 
+    fun epochSecondToFormattedDateTimeString(epochSeconds: Long): String{
+        return format( LocalDateTime.ofEpochSecond(epochSeconds, 0, ZoneOffset.UTC))
+
+    }
     fun format(date: LocalDate): String {
         return date.format(DateTimeFormatter.ofPattern(Converter.DATE_FORMAT_PATTERN))
     }

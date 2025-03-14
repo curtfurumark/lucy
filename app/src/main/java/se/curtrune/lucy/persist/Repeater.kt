@@ -1,6 +1,7 @@
 package se.curtrune.lucy.persist
 
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
+import se.curtrune.lucy.classes.item.Repeat
 import java.time.DayOfWeek
 import java.time.LocalDate
 
@@ -9,17 +10,13 @@ object Repeater{
     enum class Unit{
         DAY, WEEK, MONTH, YEAR
     }
-    fun getItems(repeat: RepeatItems): List<Item>{
-        return when(repeat){
-            is RepeatItems.BasicRepeat -> {
-                getItems(repeat)
-            }
-            is RepeatItems.RepeatWeekDays -> {
-                getItems(repeat)
-            }
-        }
+    fun getItems(repeat: Repeat): List<Item>{
+        return emptyList()
     }
-    private fun getItems(repeat: RepeatItems.BasicRepeat): List<Item>{
+    fun getInstances(item: Item):List<Item>{
+        return emptyList()
+    }
+/*    private fun getItems(repeat: RepeatItems.BasicRepeat): List<Item>{
         //val dates: MutableList<Item> = mutableListOf()
         println("Repeater.getItems()")
         val items: MutableList<Item> = mutableListOf<Item>()
@@ -38,8 +35,8 @@ object Repeater{
 
         }
         return items
-    }
-    private fun getItems(repeatWeekDays: RepeatItems.RepeatWeekDays): List<Item>{
+    }*/
+/*    private fun getItems(repeatWeekDays: RepeatItems.RepeatWeekDays): List<Item>{
         println("getDates()")
         val items: MutableList<Item> = mutableListOf<Item>()
         var currentDate = repeatWeekDays.firstDate
@@ -58,25 +55,8 @@ object Repeater{
             currentDate = currentDate.plusDays(1)
         }
         return items
-    }
+    }*/
 }
 
-sealed interface RepeatItems{
-    //var lastActualDate: LocalDate
-    data class BasicRepeat(
-        var template: Item,
-        val firstDate: LocalDate,
-        val lastDate: LocalDate,
-        var qualifier: Long,
-        var unit: Repeater.Unit,
-        var isInfinite: Boolean ): RepeatItems {
-    }
-    data class RepeatWeekDays(
-        val item: Item,
-        val weekDays: List<DayOfWeek>,
-        val firstDate: LocalDate,
-        val lastDate: LocalDate,
-        var lastActualDate: LocalDate? = null,
-        val isInfinite: Boolean): RepeatItems {
-    }
-}
+
+

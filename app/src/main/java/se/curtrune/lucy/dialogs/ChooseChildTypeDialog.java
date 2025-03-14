@@ -17,7 +17,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import java.util.Locale;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.item.Item;
 
 public class ChooseChildTypeDialog extends BottomSheetDialogFragment {
     private RadioButton radioButtonChild;

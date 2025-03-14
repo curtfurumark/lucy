@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.item.Item;
 import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.persist.ItemsWorker;
 import se.curtrune.lucy.persist.SqliteLocalDB;

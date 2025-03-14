@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import se.curtrune.lucy.LucindaApplication;
-import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.item.Item;
 import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;

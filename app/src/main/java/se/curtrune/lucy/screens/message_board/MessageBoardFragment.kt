@@ -1,28 +1,35 @@
 package se.curtrune.lucy.screens.message_board
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
-import se.curtrune.lucy.classes.Message
+import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.dialogs.MessageDialog
+import se.curtrune.lucy.screens.message_board.composables.AddMessageBottomSheet
 import se.curtrune.lucy.screens.message_board.composables.MessageBoardScreen
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.workers.InternetWorker
-import java.util.stream.Collectors
 
 /**
  * A simple [Fragment] subclass.
@@ -32,8 +39,6 @@ import java.util.stream.Collectors
 class MessageBoardFragment : Fragment(), OnTabSelectedListener {
     // TODO: Rename and change types of parameters
     private var addMessageButton: FloatingActionButton? = null
-    private var recyclerMessages: RecyclerView? = null
-    private val messages: List<Message>? = null
     private var tabLayout: TabLayout? = null
     private var tabMessages: TabLayout.Tab? = null
     private var tabWip: TabLayout.Tab? = null
@@ -48,30 +53,50 @@ class MessageBoardFragment : Fragment(), OnTabSelectedListener {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         return ComposeView(requireActivity()).apply {
             setContent{
                 val messageViewModel = viewModel<MessageBoardViewModel>()
                 val state = messageViewModel.state.collectAsState()
+                var showAddMessageBottomSheet by remember {
+                    mutableStateOf(false)
+                }
+                LaunchedEffect(messageViewModel) {
+                    messageViewModel.eventFlow.collect{ event->
+                        println("event $event ")
+                        when(event){
+                            is MessageChannel.ShowAddMessageBottomSheet -> {showAddMessageBottomSheet = true}
+                            is MessageChannel.ShowSnackBar -> {
+                                println("snackbar message: ${event.message}")
+                            }
+                        }
+                    }
+                }
                 LucyTheme {
-                    MessageBoardScreen(state = state.value, onEvent = { event ->
-                        messageViewModel.onEvent(event)
-                    })
+                    Scaffold(floatingActionButton = { AddItemFab {
+                        messageViewModel.onEvent(MessageBoardEvent.OnAddMessageClick)
+                    }}) { padding->
+                        MessageBoardScreen(
+                            modifier = Modifier.padding(padding),state = state.value, onEvent = { event ->
+                            messageViewModel.onEvent(event)
+                        })
+                    }
+                    if(showAddMessageBottomSheet){
+                        AddMessageBottomSheet(onDismiss = {
+                            showAddMessageBottomSheet = false
+                        }, onSave = { message->
+                            showAddMessageBottomSheet = false
+                            messageViewModel.onEvent(MessageBoardEvent.NewMessage(message))
+                        })
+                    }
                 }
             }
         }
     }
-
-    private fun initListeners() {
-        Logger.log("...initListeners()")
-        addMessageButton!!.setOnClickListener { view: View? -> showMessageDialog() }
-        tabLayout!!.addOnTabSelectedListener(this)
-        tabMessages!!.select()
-    }
-
     private fun initTabs() {
         Logger.log("...initTabs()")
         tabMessages = tabLayout!!.newTab()
@@ -96,52 +121,6 @@ class MessageBoardFragment : Fragment(), OnTabSelectedListener {
         tabLayout!!.addTab(tabWip!!)
     }
 
-    /*    private void selectMessages(){
-        log("...selectMessages()");
-        if(!InternetWorker.isConnected(getContext())){
-            log("...not connected to the internet, cannot get messages");
-            Toast.makeText(getContext() , requireContext().getString(R.string.no_internet_connection), Toast.LENGTH_LONG).show();
-            return;
-        }
-        MessageWorker.selectMessages(new MessageWorker.OnMessagesSelected() {
-            @Override
-            public void onMessages(List<Message> messageList) {
-                log("...onMessages(List<Message>) size",messageList.size() );
-                messages = messageList;
-                setUserInterface(messages);
-            }
-
-            @Override
-            public void onError(String message) {
-                log("...onError(String message)");
-                Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
-            }
-        });
-    }*/
-    private fun observe() {
-/*        messageBoardViewModel!!.messages.observe(
-            requireActivity()
-        ) { value ->
-            Logger.log("...observe messages ")
-            value.forEach(Consumer { x: Message? -> println(x) })
-            adapter!!.setList(messages)
-        }*/
-    }
-
-    private fun selectTab(category: String) {
-        Logger.log("...selectTab()", category)
-        if (category == "bug") {
-            tabBugs!!.select()
-        } else if (category == "suggestion") {
-            tabSuggestions!!.select()
-        } else if (category == "wip") {
-            tabWip!!.select()
-        } else if (category == "message") {
-            tabMessages!!.select()
-        } else {
-            Logger.log("WARNING NO SUCH TAB")
-        }
-    }
 
     private fun showMessageDialog() {
         if (!InternetWorker.isConnected(context)) {
@@ -156,7 +135,7 @@ class MessageBoardFragment : Fragment(), OnTabSelectedListener {
                 "MessageDialog.onMessage(Message, Mode)",
                 message.subject
             )
-            messageBoardViewModel!!.insert(message, context)
+            //messageBoardViewModel!!.insert(message, context)
         }
         dialog.show(childFragmentManager, "add message")
     }
@@ -176,12 +155,12 @@ class MessageBoardFragment : Fragment(), OnTabSelectedListener {
 
     private fun showMessageDialog(message: Message) {
         Logger.log("...showMessageDialog(Message)")
-        val dialog = MessageDialog(message)
+/*        val dialog = MessageDialog(message)
         dialog.setCallback { message, mode ->
             Logger.log("...onMessage updated(Message, Mode)")
             messageBoardViewModel!!.update(message, context)
         }
-        dialog.show(childFragmentManager, "edit message")
+        dialog.show(childFragmentManager, "edit message")*/
     }
 
     companion object {

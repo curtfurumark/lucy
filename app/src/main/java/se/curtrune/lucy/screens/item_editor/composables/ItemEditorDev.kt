@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.app.Settings
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.screens.item_editor.ItemEvent
 import se.curtrune.lucy.util.Converter

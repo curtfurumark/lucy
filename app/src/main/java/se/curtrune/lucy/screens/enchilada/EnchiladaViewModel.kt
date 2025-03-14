@@ -1,8 +1,5 @@
 package se.curtrune.lucy.screens.enchilada
 
-import android.content.Context
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
@@ -12,14 +9,10 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import se.curtrune.lucy.LucindaApplication
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
-import se.curtrune.lucy.persist.ItemsWorker
 import se.curtrune.lucy.screens.ItemChannel
 import se.curtrune.lucy.screens.item_editor.ItemEvent
-import se.curtrune.lucy.screens.week_calendar.WeekChannel
-import se.curtrune.lucy.util.Logger
-import java.util.stream.Collectors
 
 class EnchiladaViewModel : ViewModel() {
     private val repository = LucindaApplication.repository

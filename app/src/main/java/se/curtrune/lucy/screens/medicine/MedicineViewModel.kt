@@ -9,10 +9,9 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import se.curtrune.lucy.LucindaApplication
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.MedicineContent
 import se.curtrune.lucy.classes.Type
-import se.curtrune.lucy.screens.todo.ChannelEvent
 
 class MedicineViewModel(
 ) : ViewModel(){

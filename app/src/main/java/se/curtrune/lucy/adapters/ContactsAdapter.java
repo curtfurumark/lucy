@@ -18,7 +18,7 @@ import java.util.List;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Contact;
-import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.item.Item;
 
 
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder>{

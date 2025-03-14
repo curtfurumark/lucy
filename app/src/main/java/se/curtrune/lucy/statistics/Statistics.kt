@@ -1,6 +1,6 @@
 package se.curtrune.lucy.statistics
 
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.State
 import java.time.LocalDate
 

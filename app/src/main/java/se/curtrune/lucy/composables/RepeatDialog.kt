@@ -35,9 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import se.curtrune.lucy.R
-import se.curtrune.lucy.classes.Item
-import se.curtrune.lucy.classes.Repeat
-import se.curtrune.lucy.persist.RepeatItems
+import se.curtrune.lucy.classes.item.Repeat
 import se.curtrune.lucy.persist.Repeater
 import se.curtrune.lucy.screens.medicine.composable.DropdownItem
 import java.time.LocalDate
@@ -46,7 +44,7 @@ import java.time.LocalDate
 @Composable
 fun RepeatDialog(
         onDismiss: ()->Unit, onConfirm:
-        (RepeatItems.BasicRepeat)->Unit
+        (Repeat)->Unit
 ) {
     var showCustom by remember{
         mutableStateOf(false)
@@ -58,17 +56,10 @@ fun RepeatDialog(
         mutableStateOf(false)
     }
     val repeat by remember {
-        mutableStateOf(RepeatItems.BasicRepeat(
-            template = Item("repeat template"),
-            firstDate = LocalDate.now(),
-            lastDate = LocalDate.now(),
-            isInfinite = true,
-            qualifier = 1,
-            unit = Repeater.Unit.DAY
-        ))
+        mutableStateOf(Repeat())
     }
     var repeatUnit by remember{
-        mutableStateOf(Repeater.Unit.DAY)
+        mutableStateOf(Repeat.Unit.DAY)
     }
     var isWeekDays by remember {
         mutableStateOf(false)
@@ -136,34 +127,34 @@ fun RepeatDialog(
                 }
                 Row(modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically ){
-                    Checkbox(checked = repeatUnit == Repeater.Unit.DAY,
+                    Checkbox(checked = repeatUnit == Repeat.Unit.DAY,
                         onCheckedChange = {
-                            repeatUnit = Repeater.Unit.DAY
+                            repeatUnit = Repeat.Unit.DAY
                             repeat.unit = repeatUnit
                         })
                     Text(text = stringResource(R.string.every_day))
                 }
                 Row(modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically){
-                    Checkbox(checked = repeat.unit == Repeater.Unit.WEEK, onCheckedChange = {
-                        repeatUnit = Repeater.Unit.WEEK
+                    Checkbox(checked = repeat.unit == Repeat.Unit.WEEK, onCheckedChange = {
+                        repeatUnit = Repeat.Unit.WEEK
                         repeat.unit = repeatUnit
                     })
                     Text(text = stringResource(R.string.every_week))
                 }
                 Row(modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically){
-                    Checkbox(checked = repeat.unit == Repeater.Unit.MONTH, onCheckedChange = {
-                        repeatUnit =Repeater.Unit.MONTH
+                    Checkbox(checked = repeat.unit == Repeat.Unit.MONTH, onCheckedChange = {
+                        repeatUnit =Repeat.Unit.MONTH
                         repeat.unit = repeatUnit
                     })
                     Text(text = stringResource(R.string.every_month))
                 }
                 Row(modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically){
-                    Checkbox(checked = repeatUnit == Repeater.Unit.YEAR, onCheckedChange = {
-                        repeat.unit = Repeater.Unit.YEAR
-                        repeatUnit = Repeater.Unit.YEAR
+                    Checkbox(checked = repeatUnit == Repeat.Unit.YEAR, onCheckedChange = {
+                        repeat.unit = Repeat.Unit.YEAR
+                        repeatUnit = Repeat.Unit.YEAR
                     })
                     Text(text = stringResource(R.string.every_year))
                 }
@@ -188,7 +179,7 @@ fun RepeatDialog(
                             value = qualifier, onValueChange = {
                                 qualifier = it
                                 if( qualifier.isNotBlank()) {
-                                    repeat.qualifier = qualifier.toLong()
+                                    repeat.qualifier = qualifier.toInt()
                                 }
 
                         })
@@ -200,7 +191,7 @@ fun RepeatDialog(
                             unitDropdownExpanded = false
                             println("dismissed")
                         } ){
-                            Repeater.Unit.entries.forEach{ unit->
+                            Repeat.Unit.entries.forEach{ unit->
                                 DropdownItem(action = unit.name, onClick = { name->
                                     println("action name: $name")
                                     repeatUnit = unit

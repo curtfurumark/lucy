@@ -8,7 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.MentalMeter4
 import se.curtrune.lucy.screens.my_day.MyDateEvent
 import se.curtrune.lucy.screens.my_day.MyDayState

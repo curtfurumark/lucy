@@ -13,9 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import se.curtrune.lucy.classes.Item;
 import se.curtrune.lucy.classes.Mental;
-import se.curtrune.lucy.classes.Type;
 
 public class Settings {
     private static final String PREFERENCES_NAME =  "PREFERENCES_NAME";

@@ -15,7 +15,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.item.Item;
 
 public class WeekItemAdapter extends RecyclerView.Adapter<WeekItemAdapter.ViewHolder> {
     private List<Item> items;

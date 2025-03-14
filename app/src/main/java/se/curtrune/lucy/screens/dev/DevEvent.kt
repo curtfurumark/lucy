@@ -1,6 +1,6 @@
 package se.curtrune.lucy.screens.dev
 
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 
 sealed interface DevEvent{
     data class AddTab(val heading: String): DevEvent

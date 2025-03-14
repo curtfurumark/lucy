@@ -9,8 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import se.curtrune.lucy.activities.threads.SelectThread;
-import se.curtrune.lucy.classes.Message;
-import se.curtrune.lucy.persist.DB1Result;
+import se.curtrune.lucy.screens.message_board.Message;
 import se.curtrune.lucy.persist.Queeries;
 import se.curtrune.lucy.web.InsertThread;
 import se.curtrune.lucy.web.UpdateMessageThread;

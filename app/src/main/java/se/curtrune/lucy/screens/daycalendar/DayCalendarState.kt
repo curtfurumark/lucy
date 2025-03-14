@@ -1,6 +1,6 @@
 package se.curtrune.lucy.screens.daycalendar
 
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.calender.Week
 import java.time.LocalDate
 

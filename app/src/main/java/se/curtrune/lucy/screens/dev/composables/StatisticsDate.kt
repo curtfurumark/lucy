@@ -15,8 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import se.curtrune.lucy.classes.Item
-import se.curtrune.lucy.util.Converter
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.util.DateTImeFormatter
 import java.time.LocalDate
 

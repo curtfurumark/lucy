@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.R
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.item_settings.CheckBoxSetting
 import se.curtrune.lucy.item_settings.ItemSetting

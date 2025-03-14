@@ -1,6 +1,6 @@
 package se.curtrune.lucy.classes.google_calendar
 
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime

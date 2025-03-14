@@ -9,10 +9,9 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import se.curtrune.lucy.LucindaApplication
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.State
 import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
-import se.curtrune.lucy.screens.appointments.UIEvent
 import se.curtrune.lucy.screens.item_editor.ItemEvent
 import se.curtrune.lucy.util.Logger
 import java.util.Comparator

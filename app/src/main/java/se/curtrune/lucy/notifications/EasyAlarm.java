@@ -6,15 +6,13 @@ import static se.curtrune.lucy.util.Logger.log;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 
 import java.util.Calendar;
-import java.util.Locale;
 
-import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.item.Item;
 import se.curtrune.lucy.classes.Notification;
 
 public class EasyAlarm  {

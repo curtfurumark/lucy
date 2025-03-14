@@ -1,6 +1,6 @@
 package se.curtrune.lucy.screens.monthcalendar
 
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.calender.CalenderDate
 import java.time.YearMonth
 

@@ -31,7 +31,7 @@ import java.util.Locale;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.app.UserPrefs;
-import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.item.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.util.Constants;
 import se.curtrune.lucy.util.Converter;

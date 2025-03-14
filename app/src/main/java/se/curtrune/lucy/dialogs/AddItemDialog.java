@@ -36,7 +36,7 @@ import java.util.Locale;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Action;
-import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.item.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.classes.State;

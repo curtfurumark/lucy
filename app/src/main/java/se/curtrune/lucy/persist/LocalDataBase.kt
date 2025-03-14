@@ -1,7 +1,7 @@
 package se.curtrune.lucy.persist
 
 import se.curtrune.lucy.activities.economy.classes.Transaction
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 
 interface LocalDataBase {
     fun delete(item: Item)

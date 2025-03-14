@@ -46,7 +46,7 @@ import se.curtrune.lucy.screens.RepeatActivity
 import se.curtrune.lucy.activities.kotlin.dev.ui.theme.LucyTheme
 import se.curtrune.lucy.app.Lucinda
 import se.curtrune.lucy.app.Settings
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.MediaContent
 import se.curtrune.lucy.classes.Notification
 import se.curtrune.lucy.composables.CountDownTimerService
@@ -66,7 +66,6 @@ import se.curtrune.lucy.screens.dev.composables.DurationTest
 import se.curtrune.lucy.screens.dev.composables.ExecuteQuery
 import se.curtrune.lucy.screens.dev.composables.InsertItemWithID
 import se.curtrune.lucy.screens.dev.composables.RepeatTest
-import se.curtrune.lucy.screens.dev.composables.RetroFitTest
 import se.curtrune.lucy.screens.dev.composables.TestScrollableYearMonth
 import se.curtrune.lucy.screens.dev.composables.TestSwipeAble
 import se.curtrune.lucy.services.TimerService

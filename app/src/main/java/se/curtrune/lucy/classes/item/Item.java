@@ -1,4 +1,4 @@
-package se.curtrune.lucy.classes;
+package se.curtrune.lucy.classes.item;
 
 
 import static se.curtrune.lucy.util.Logger.log;
@@ -16,6 +16,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import se.curtrune.lucy.classes.Contact;
+import se.curtrune.lucy.classes.Content;
+import se.curtrune.lucy.classes.ItemDuration;
+import se.curtrune.lucy.classes.Listable;
+import se.curtrune.lucy.classes.Mental;
+import se.curtrune.lucy.classes.Notification;
+import se.curtrune.lucy.classes.Repeat;
+import se.curtrune.lucy.classes.Reward;
+import se.curtrune.lucy.classes.State;
+import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.util.Converter;
 
 public class Item implements Serializable , Listable {
@@ -45,7 +55,7 @@ public class Item implements Serializable , Listable {
     protected Repeat repeat;
     //protected MentalStats estimate;
     protected Notification notification;
-    protected ItemDuration  itemDuration;
+    protected ItemDuration itemDuration;
     protected int energy;
     protected int anxiety;
     protected int stress;
@@ -396,11 +406,6 @@ public class Item implements Serializable , Listable {
         this.parent_id = parent_id;
     }
 
-/*    public void setPeriod(String strPeriod){
-        if( strPeriod != null && !strPeriod.isEmpty()){
-            repeat = new Gson().fromJson(strPeriod, Repeat.class);
-        }
-    }*/
     public void setRepeat(Repeat repeat){
         this.repeat = repeat;
     }

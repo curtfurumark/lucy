@@ -10,12 +10,11 @@ import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.item.Item;
 
 public class ChooseActionDialog extends BottomSheetDialogFragment {
     private Button buttonEdit;

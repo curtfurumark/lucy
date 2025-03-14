@@ -1,7 +1,7 @@
 package se.curtrune.lucy
 
 import org.junit.Test
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.PostponeAmount
 import se.curtrune.lucy.modules.PostponeWorker
 import se.curtrune.lucy.util.Converter
@@ -38,7 +38,7 @@ class PostponeTest {
         }
         printItems(filteredItems)
     }
-    private fun postpone(item: Item, minutes: Long , from: LocalTime): LocalTime{
+    private fun postpone(item: Item, minutes: Long, from: LocalTime): LocalTime{
         val newTime = item.targetTime.plusMinutes(minutes)
         println("new time ${newTime.toString()}")
         //if( item.targetTime.plusMinutes(minutes).isAfter(LocalTime.of(23, 59, 59))){

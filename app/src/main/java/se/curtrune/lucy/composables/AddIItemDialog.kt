@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.ItemDuration
 import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.composables.top_app_bar.ItemSettingAppointment
@@ -128,7 +128,7 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: Dialog
             item.setIsCalenderItem(true)
         }
     }
-    fun getItem(): Item{
+    fun getItem(): Item {
         item.parentId = parent?.id ?: 0
         item.targetDate = targetDate
         item.targetTime = targetTime
@@ -286,7 +286,7 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: Dialog
             showRepeatDialog = false
         }, onConfirm = { repeat->
             println("on confirm repeat")
-            //item.setRepeat(repeat)
+            //item.repeat = repeat
             showRepeatDialog = false
         })
     }
@@ -309,7 +309,7 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: Dialog
 }
 
 @Composable
-fun ItemSettingDuration(item: Item ,onEvent: (ItemDuration)->Unit){
+fun ItemSettingDuration(item: Item, onEvent: (ItemDuration)->Unit){
     var showDropdown by remember {
         mutableStateOf(false)
     }

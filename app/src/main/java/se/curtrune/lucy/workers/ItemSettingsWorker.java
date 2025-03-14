@@ -3,7 +3,7 @@ package se.curtrune.lucy.workers;
 import java.util.ArrayList;
 import java.util.List;
 
-import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.item.Item;
 import se.curtrune.lucy.classes.KeyValueSetting;
 import se.curtrune.lucy.classes.Setting;
 

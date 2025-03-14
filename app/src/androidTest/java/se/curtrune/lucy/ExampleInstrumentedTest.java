@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
 import static se.curtrune.lucy.util.Logger.log;
 
-import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.item.Item;
 import se.curtrune.lucy.persist.ItemsWorker;
 
 /**

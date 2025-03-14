@@ -21,7 +21,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.AddItemDialog
 import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.screens.item_editor.ItemEditorFragment

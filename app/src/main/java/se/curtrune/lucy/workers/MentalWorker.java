@@ -7,7 +7,7 @@ import android.content.Context;
 import java.time.LocalDate;
 import java.util.List;
 
-import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.item.Item;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.persist.ItemsWorker;

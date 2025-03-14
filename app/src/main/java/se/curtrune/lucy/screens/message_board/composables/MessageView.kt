@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
-import se.curtrune.lucy.classes.Message
+import se.curtrune.lucy.screens.message_board.Message
 import se.curtrune.lucy.util.DateTImeFormatter
 
 @Composable
@@ -22,7 +22,7 @@ fun MessageView(message: Message){
             Text(text = message.subject)
             Text(text = message.content)
             Text(text = message.user)
-            Text(text = DateTImeFormatter.format(message.created))
+            Text(text = DateTImeFormatter.epochSecondToFormattedDateTimeString(message.created))
         }
     }
 }

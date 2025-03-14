@@ -2,7 +2,7 @@ package se.curtrune.lucy
 
 import org.junit.Assert.*
 import org.junit.Test
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.statistics.Statistics
 
 class StatisticsTest {

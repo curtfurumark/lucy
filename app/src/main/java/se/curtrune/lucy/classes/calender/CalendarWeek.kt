@@ -1,6 +1,6 @@
 package se.curtrune.lucy.classes.calender
 
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 
 data class CalendarWeek(
     val week: Week = Week(),

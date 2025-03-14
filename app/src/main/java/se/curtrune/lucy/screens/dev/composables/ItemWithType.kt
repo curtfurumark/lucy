@@ -15,9 +15,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.Type
-import se.curtrune.lucy.screens.dev.DevEvent
 import se.curtrune.lucy.screens.item_editor.ItemEvent
 
 @Composable

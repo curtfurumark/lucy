@@ -4,6 +4,8 @@ import static se.curtrune.lucy.util.Logger.log;
 
 import java.util.List;
 
+import se.curtrune.lucy.classes.item.Item;
+
 public class ItemStatistics {
     private List<Item> items;
     private int energy;

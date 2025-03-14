@@ -13,6 +13,8 @@ import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.Locale;
 
+import se.curtrune.lucy.classes.item.Item;
+
 public class Mental implements Listable, Serializable {
     private long id;
     private String heading;

@@ -1,6 +1,6 @@
 package se.curtrune.lucy.screens.appointments
 
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 
 data class AppointmentsState(
     val items: List<Item> = emptyList(),

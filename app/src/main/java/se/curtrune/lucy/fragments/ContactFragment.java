@@ -16,7 +16,7 @@ import androidx.fragment.app.Fragment;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.app.Settings;
-import se.curtrune.lucy.classes.Message;
+import se.curtrune.lucy.screens.message_board.Message;
 import se.curtrune.lucy.workers.MessageWorker;
 
 /**
@@ -71,8 +71,8 @@ public class ContactFragment extends Fragment {
     private Message getMessage(){
         log("...getMessage()");
         Message message = new Message();
-        message.setSubject(editTextSubject.getText().toString());
-        message.setContent(editTextSubject.getText().toString());
+        message.subject = editTextSubject.getText().toString();
+        message.content = editTextSubject.getText().toString();
         return message;
     }
     private void initComponents(View view){

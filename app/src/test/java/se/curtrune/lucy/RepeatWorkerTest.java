@@ -8,7 +8,7 @@ import org.junit.Test;
 import java.time.LocalDate;
 import java.util.List;
 
-import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.item.Item;
 import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.workers.RepeatWorker;
 

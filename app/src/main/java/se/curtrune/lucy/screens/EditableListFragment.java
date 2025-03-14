@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.EditableListAdapter;
-import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.item.Item;
 import se.curtrune.lucy.viewmodel.EditableListViewModel;
 
 

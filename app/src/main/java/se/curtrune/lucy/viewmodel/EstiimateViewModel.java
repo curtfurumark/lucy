@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.item.Item;
 import se.curtrune.lucy.classes.ItemStatistics;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.persist.ItemsWorker;

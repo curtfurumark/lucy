@@ -17,7 +17,7 @@ import se.curtrune.lucy.activities.economy.persist.ECDBAdmin;
 import se.curtrune.lucy.activities.economy.persist.EcQueeries;
 import se.curtrune.lucy.app.App;
 import se.curtrune.lucy.app.Settings;
-import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.item.Item;
 import se.curtrune.lucy.classes.ItemDuration;
 import se.curtrune.lucy.classes.MedicineContent;
 import se.curtrune.lucy.classes.Notification;

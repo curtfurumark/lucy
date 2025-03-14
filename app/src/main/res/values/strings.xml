@@ -136,7 +136,6 @@
     <string name="user">user</string>
     <string name="mental">Mental</string>
     <string name="is_appointment" translatable="false">is appointment</string>
-    <string name="is_template">is template</string>
     <string name="_00_00_00" translatable="false">00:00:00</string>
     <string name="updated">updated</string>
     <string name="state">state</string>
@@ -271,4 +270,5 @@
     <string name="add_to_google_cal">add to google calendar</string>
     <string name="sync_with_google_calendar">sync with google calendar</string>
     <string name="choose_a_calendar">choose a calendar to sync with</string>
+    <string name="is_template">template</string>
 </resources>

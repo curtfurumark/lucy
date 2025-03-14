@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.screens.week_calendar.WeekEvent
 import se.curtrune.lucy.util.DateTImeFormatter
@@ -85,7 +85,10 @@ fun PreviewWeekDate(){
     LucyTheme {
         val calendarDate = CalenderDate()
         calendarDate.date = LocalDate.now()
-        calendarDate.items = listOf(Item("dev"), Item("play bass"))
+        calendarDate.items = listOf(
+            Item("dev"),
+            Item("play bass")
+        )
         WeekDate(calendarDate = calendarDate) {
             println("hello")
         }

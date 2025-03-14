@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import se.curtrune.lucy.LucindaApplication
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
 import se.curtrune.lucy.persist.SqliteLocalDB

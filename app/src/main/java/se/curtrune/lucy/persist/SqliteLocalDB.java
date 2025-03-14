@@ -22,7 +22,7 @@ import se.curtrune.lucy.activities.economy.classes.Asset;
 import se.curtrune.lucy.activities.economy.classes.Transaction;
 import se.curtrune.lucy.activities.economy.persist.ECDBAdmin;
 import se.curtrune.lucy.activities.economy.persist.EcQueeries;
-import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.item.Item;
 import se.curtrune.lucy.classes.Repeat;
 
 public class SqliteLocalDB extends SQLiteOpenHelper {

@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.R
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.Repeat
 import se.curtrune.lucy.screens.medicine.composable.DropdownItem
 import se.curtrune.lucy.util.DateTImeFormatter

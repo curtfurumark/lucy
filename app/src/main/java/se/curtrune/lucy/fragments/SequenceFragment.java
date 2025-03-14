@@ -28,7 +28,7 @@ import java.util.Locale;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.SequenceAdapter;
-import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.item.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.DurationDialog;
 import se.curtrune.lucy.screens.item_editor.ItemEditorFragment;

@@ -1,7 +1,7 @@
 package se.curtrune.lucy.screens.my_day
 
 import se.curtrune.lucy.composables.Field
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import java.time.LocalDate
 
 data class MyDayState(

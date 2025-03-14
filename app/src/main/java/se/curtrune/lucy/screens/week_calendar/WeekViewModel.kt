@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.classes.calender.Week
 import java.time.LocalDate

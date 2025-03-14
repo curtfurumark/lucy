@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import se.curtrune.lucy.classes.Contact;
-import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.item.Item;
 import se.curtrune.lucy.classes.Type;
 
 public class ContactsViewModel extends ViewModel {

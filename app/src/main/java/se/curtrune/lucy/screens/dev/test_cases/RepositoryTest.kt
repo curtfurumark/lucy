@@ -1,7 +1,7 @@
 package se.curtrune.lucy.screens.dev.test_cases
 
 import se.curtrune.lucy.LucindaApplication
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.calender.Week
 import se.curtrune.lucy.persist.Queeries
 
@@ -10,7 +10,8 @@ class RepositoryTest {
 
     fun testRestore(){
         println("RepositoryTest.testRestore()")
-        val item = Item("delete and restore me, please")
+        val item =
+            Item("delete and restore me, please")
         var itemWithId = repository.insert(item)
         if (itemWithId != null) {
             println("item inserted with id ${itemWithId.id})")

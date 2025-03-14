@@ -1,6 +1,6 @@
 package se.curtrune.lucy.screens.daycalendar
 
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.PostponeDetails
 import java.time.LocalDate
 
@@ -14,7 +14,7 @@ sealed interface DayEvent{
     data object RestoreDeletedItem: DayEvent
     data class ShowActionsMenu(val item: Item): DayEvent
     data class Postpone(val postponeInfo: PostponeDetails): DayEvent
-    data class RequestDelete(val item: Item ): DayEvent
+    data class RequestDelete(val item: Item): DayEvent
     data class ShowChildren(val item: Item): DayEvent
     data class ShowPostponeDialog(val item: Item): DayEvent
     data object HidePostponeDialog: DayEvent

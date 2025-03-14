@@ -7,7 +7,7 @@ import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
-import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.item.Item;
 
 /**
  * represents a month of appointments with leading and trailing dates'

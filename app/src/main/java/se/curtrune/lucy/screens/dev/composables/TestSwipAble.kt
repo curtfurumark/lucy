@@ -9,10 +9,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.MyItem
 import se.curtrune.lucy.composables.SwipeAbleItem
-import se.curtrune.lucy.screens.item_editor.ItemEvent
 
 @Composable
 fun TestSwipeAble(){

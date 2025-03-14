@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import se.curtrune.lucy.R
 import se.curtrune.lucy.composables.TimePickerDialog
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.MedicineContent
 import java.time.LocalTime
 

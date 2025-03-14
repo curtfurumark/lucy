@@ -24,7 +24,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.ItemStatistics
 import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.composables.AddItemDialog

@@ -1,7 +1,7 @@
 package se.curtrune.lucy.screens.dev.test_cases
 
 import se.curtrune.lucy.LucindaApplication
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import java.time.LocalDate
 
 class LocalDBTest {

@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.item.Item;
 
 public class EditableListAdapter extends RecyclerView.Adapter<EditableListAdapter.ViewHolder>{
     private List<Item> items;

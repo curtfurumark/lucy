@@ -1,7 +1,6 @@
 package se.curtrune.lucy.screens.daycalendar.composables
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Row
@@ -28,7 +27,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.composables.TimePickerDialog
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.screens.daycalendar.DayEvent
 import se.curtrune.lucy.screens.medicine.composable.DropdownItem
 import se.curtrune.lucy.util.DateTImeFormatter

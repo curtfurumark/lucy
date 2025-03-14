@@ -6,12 +6,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.YearMonth;
 import java.time.ZoneOffset;
 import java.util.Locale;
 
-import se.curtrune.lucy.classes.Item;
-import se.curtrune.lucy.classes.Message;
+import se.curtrune.lucy.classes.item.Item;
+import se.curtrune.lucy.screens.message_board.Message;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.classes.calender.Week;
@@ -95,7 +94,7 @@ public class Queeries {
 
     public static String insert(Message message) {
         return String.format(Locale.getDefault(), "INSERT INTO messages(subject, content, user, created, category) values " +
-                "('%s', '%s', '%s', %d, '%s')", message.getSubject(), message.getContent(), message.getUser(), message.getCreatedEpoch(), message.getCategory());
+                "('%s', '%s', '%s', %d, '%s')", message.subject, message.content, message.user, message.created, message.category);
     }
 
     public static String insertCategory(String category) {
@@ -240,7 +239,7 @@ public class Queeries {
 
     public static String updateMessage(Message message) {
         return String.format(Locale.getDefault(), "UPDATE messages SET subject = '%s', content = '%s', user = '%s', category = '%s' WHERE id =%d",
-                message.getSubject(), message.getContent(), message.getUser(), message.getCategory(), message.getId());
+                message.subject, message.content, message.user, message.category, message.id);
     }
 
     public static String selectRepeat(long id) {

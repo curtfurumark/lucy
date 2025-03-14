@@ -1,12 +1,10 @@
 package se.curtrune.lucy.modules
 
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.PostponeAmount
-import se.curtrune.lucy.composables.PostponeDetails
-import java.time.LocalTime
 
 object PostponeWorker {
-    fun postponeItem(item: Item, amount: PostponeAmount): Item{
+    fun postponeItem(item: Item, amount: PostponeAmount): Item {
         when(amount){
             PostponeAmount.ONE_HOUR ->  postponeItemMinutes(item, 60)
             PostponeAmount.TWO_HOURS -> postponeItemMinutes(item, 120)
@@ -16,7 +14,7 @@ object PostponeWorker {
         }
         return item
     }
-    private fun postponeItemMinutes(item: Item, minutes: Long): Item{
+    private fun postponeItemMinutes(item: Item, minutes: Long): Item {
         val oldTargetTime = item.targetTime
         val newTargetTime = item.targetTime.plusMinutes(minutes)
         if( newTargetTime.isBefore(oldTargetTime)){//overflow to next day,

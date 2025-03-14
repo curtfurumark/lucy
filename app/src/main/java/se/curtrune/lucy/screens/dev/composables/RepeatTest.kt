@@ -8,15 +8,13 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
+import se.curtrune.lucy.classes.item.Repeat
 import se.curtrune.lucy.composables.RepeatDialog
-import se.curtrune.lucy.persist.RepeatItems
 import se.curtrune.lucy.persist.Repeater
 
 @Composable
@@ -25,10 +23,10 @@ fun RepeatTest() {
         mutableStateOf(false)
     }
     var repeat by remember {
-        mutableStateOf<RepeatItems.BasicRepeat?>(null)
+        mutableStateOf(Repeat())
     }
     //var items = remember { mutableStateListOf<Item>() }
-    Column(modifier = Modifier.fillMaxWidth()) {
+/*    Column(modifier = Modifier.fillMaxWidth()) {
         Text(text = "repeater test")
         Text(text = repeat?.toString() ?: "no repeat set")
         Text(
@@ -39,7 +37,8 @@ fun RepeatTest() {
 
         Row(modifier = Modifier.fillMaxWidth()){
             Button(onClick = {
-                val template = Item("temp template")
+                val template =
+                    Item("temp template")
                 repeat?.template = template
                 val items = repeat?.let { Repeater.getItems(it) }
                 items?.forEach{ item->
@@ -48,10 +47,9 @@ fun RepeatTest() {
             }) {
                 Text(text = "run test")
             }
-        }
+        }*/
     }
-
-    if( showRepeatDialog){
+/*    if( showRepeatDialog){
         RepeatDialog(onDismiss = {
             showRepeatDialog = false
         }
@@ -60,5 +58,5 @@ fun RepeatTest() {
                 repeat = it
                 showRepeatDialog = false
             })
-    }
-}
+    }*/
+//}

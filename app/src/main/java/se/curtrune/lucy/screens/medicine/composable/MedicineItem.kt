@@ -31,7 +31,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.MedicineContent
 import se.curtrune.lucy.screens.medicine.MedicineEvent
 

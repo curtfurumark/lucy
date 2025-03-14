@@ -1,6 +1,6 @@
 package se.curtrune.lucy.screens
 
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 
 sealed interface ItemChannel{
     data class Edit(val item: Item): ItemChannel

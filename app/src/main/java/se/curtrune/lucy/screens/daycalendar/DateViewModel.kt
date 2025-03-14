@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import se.curtrune.lucy.LucindaApplication
-import se.curtrune.lucy.classes.Item
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.classes.calender.Week
 import se.curtrune.lucy.composables.PostponeDetails
@@ -214,7 +214,9 @@ class DateViewModel: ViewModel(){
         println("...showChildren(${item.heading})")
         if( !state.value.showTabs){
             _state.update { it.copy(
-                tabs = it.tabs +  Item(LocalDate.now().toString())
+                tabs = it.tabs + Item(
+                    LocalDate.now().toString()
+                )
             ) }
         }
         _state.update { it.copy(

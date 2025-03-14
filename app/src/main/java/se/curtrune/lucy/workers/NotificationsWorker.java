@@ -15,7 +15,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.item.Item;
 import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.notifications.AlarmReceiver;

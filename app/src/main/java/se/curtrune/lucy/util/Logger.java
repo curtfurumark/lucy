@@ -11,10 +11,10 @@ import java.util.Map;
 
 import se.curtrune.lucy.activities.economy.classes.Transaction;
 import se.curtrune.lucy.classes.Contact;
-import se.curtrune.lucy.classes.Item;
+import se.curtrune.lucy.classes.item.Item;
 import se.curtrune.lucy.classes.ItemStatistics;
 import se.curtrune.lucy.classes.Mental;
-import se.curtrune.lucy.classes.Message;
+import se.curtrune.lucy.screens.message_board.Message;
 import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.classes.State;
@@ -133,9 +133,9 @@ public class Logger {
     }
     public static void log(Message message){
         log("Logger.log(Message)");
-        log("\tsubject", message.getSubject());
-        log("\tcontent", message.getContent());
-        log("\tuser", message.getUser());
+        log("\tsubject", message.subject);
+        log("\tcontent", message.content);
+        log("\tuser", message.user);
         log("\tcreated", message.getCreated());
     }
     public static void log(Notification notification){
