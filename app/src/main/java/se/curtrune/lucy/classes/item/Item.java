@@ -22,7 +22,7 @@ import se.curtrune.lucy.classes.ItemDuration;
 import se.curtrune.lucy.classes.Listable;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.Notification;
-import se.curtrune.lucy.classes.Repeat;
+import se.curtrune.lucy.classes.item.Repeat;
 import se.curtrune.lucy.classes.Reward;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
@@ -473,7 +473,8 @@ public class Item implements Serializable , Listable {
     public void updateTargetDate(){
         log("...updateTargetDate()");
         if( hasRepeat()){
-            target_date = repeat.getNextDate().toEpochDay();
+            //TODO, repeater.get next date?
+            //target_date = repeat.getNextDate().toEpochDay();
         }
     }
     public boolean isAppointment() {

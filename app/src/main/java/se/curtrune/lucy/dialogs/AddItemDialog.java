@@ -444,7 +444,8 @@ public class AddItemDialog extends BottomSheetDialogFragment {
             currentItemSetting.setValue(repeat.toString());
             newItem.setRepeat(repeat);
             itemSettingAdapter.notifyDataSetChanged();
-            log(repeat);
+            //log(repeat);
+            log(repeat.toString());
         });
         dialog.show(getChildFragmentManager(), "repeat");
     }

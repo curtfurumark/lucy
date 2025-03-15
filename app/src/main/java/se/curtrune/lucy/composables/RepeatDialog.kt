@@ -70,6 +70,7 @@ fun RepeatDialog(
     var firstDate by remember {
         mutableStateOf(LocalDate.now())
     }
+    repeat.firstDate = firstDate
     var setFirstDate by remember {
         mutableStateOf(false)
     }
@@ -237,8 +238,10 @@ fun RepeatDialog(
             showDatePicker = false
         }, onDateSelected = { date ->
             if( setFirstDate){
+                repeat.firstDate = date
                 firstDate = date
             }else{
+                repeat.lastDate = date
                 lastDate = date
             }
             setFirstDate = false

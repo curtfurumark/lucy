@@ -23,7 +23,7 @@ import se.curtrune.lucy.activities.economy.classes.Transaction;
 import se.curtrune.lucy.activities.economy.persist.ECDBAdmin;
 import se.curtrune.lucy.activities.economy.persist.EcQueeries;
 import se.curtrune.lucy.classes.item.Item;
-import se.curtrune.lucy.classes.Repeat;
+import se.curtrune.lucy.classes.item.Repeat;
 
 public class SqliteLocalDB extends SQLiteOpenHelper {
     private static final String DB_NAME = "lucy.db";
@@ -220,7 +220,7 @@ public class SqliteLocalDB extends SQLiteOpenHelper {
             log("ERROR  inserting repeat");
             return null;
         }
-        repeat.setID(id);
+        repeat.setTemplateID(id);
         return repeat;
 
     }
@@ -460,9 +460,9 @@ public class SqliteLocalDB extends SQLiteOpenHelper {
 
     public int update(Repeat repeat){
         if( VERBOSE) log("SqliteLocalDB.update(Repeat)");
-        if( VERBOSE) log(repeat);
+        if( VERBOSE) log(repeat.toString());
         db = this.getWritableDatabase();
-        String whereClause = String.format(Locale.getDefault(), "id = %d", repeat.getID());
+        String whereClause = String.format(Locale.getDefault(), "id = %d", repeat.getTemplateID());
         int rowsAffected = db.update(TABLE_REPEAT, DBAdmin.getContentValues(repeat), whereClause, null);
         log("...update item ok: ", rowsAffected == 1);
         db.close();

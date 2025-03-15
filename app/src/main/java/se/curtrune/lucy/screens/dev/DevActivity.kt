@@ -42,12 +42,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.R
-import se.curtrune.lucy.screens.RepeatActivity
+import se.curtrune.lucy.screens.repeat.RepeatActivity
 import se.curtrune.lucy.activities.kotlin.dev.ui.theme.LucyTheme
 import se.curtrune.lucy.app.Lucinda
 import se.curtrune.lucy.app.Settings
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.classes.MediaContent
 import se.curtrune.lucy.classes.Notification
 import se.curtrune.lucy.composables.CountDownTimerService
 import se.curtrune.lucy.composables.NavigationDrawer
@@ -361,22 +360,6 @@ class DevActivity : AppCompatActivity() {
     }
 
 
-    private fun creteItemWithMedia() {
-        Logger.log("...createItemWithMedia()")
-        var item = Item("item with media")
-        val media = MediaContent()
-        media.setFileType(MediaContent.FileType.TEXT)
-        media.setFilePath("dkjdkj")
-        item.content = media
-        item = ItemsWorker.insertChild(
-            ItemsWorker.getRootItem(
-                Settings.Root.PROJECTS,
-                this
-            ), item, this
-        )
-        Logger.log("...item inserted with id", item.id)
-    }
-
     private fun runCode() {
         Logger.log("...runCode()")
 /*        val repository = LucindaApplication.repository
@@ -466,13 +449,14 @@ class DevActivity : AppCompatActivity() {
         val dialog = RepeatDialog()
         dialog.setCallback { repeat ->
             Logger.log("...onRepeat(Repeat)", repeat.toString())
-            Logger.log(repeat)
+            Logger.log(repeat.toString())
         }
         dialog.show(supportFragmentManager, "repeat dialog")
     }
 
     private fun testNotification() {
-        Logger.log("...testNotification()")
+        println("...testNotification()")
+        val repository = LucindaApplication.repository
         val notification = Notification()
         val targetTime = LocalTime.now().plusMinutes(5)
         notification.time = targetTime
@@ -486,7 +470,7 @@ class DevActivity : AppCompatActivity() {
         val todoParent = ItemsWorker.getRootItem(Settings.Root.TODO, this)
         item.parentId = todoParent.id
         item.notification = notification
-        item = ItemsWorker.insertChild(todoParent, item, this)
+        item = repository.insertChild(todoParent, item)
         Logger.log(item)
         NotificationsWorker.setNotification(item, this)
     }

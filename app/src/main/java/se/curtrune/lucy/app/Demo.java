@@ -10,7 +10,6 @@ import java.time.LocalTime;
 
 import se.curtrune.lucy.LucindaApplication;
 import se.curtrune.lucy.classes.item.Item;
-import se.curtrune.lucy.classes.Repeat;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.persist.Repository;
@@ -33,10 +32,10 @@ public class Demo {
         item.setIsTemplate(true);
         item.setTargetDate(LocalDate.now());
         item.setTargetTime(time);
-        item.setIsCalenderItem(true);
+/*        item.setIsCalenderItem(true);
         Repeat repeat = new Repeat();
         repeat.setPeriod(days, Repeat.Unit.DAY);
-        item.setRepeat(repeat);
+        item.setRepeat(repeat);*/
         item.setParentId(settings.getRootID(Settings.Root.DAILY));
         return item;
     }
@@ -103,7 +102,7 @@ public class Demo {
     }
     public static void createMiddagsTips(Context context){
         log("...createMiddagsTips()");
-        Item projects = ItemsWorker.getProjectsRoot(context);
+/*        Item projects = ItemsWorker.getProjectsRoot(context);
         Item middagsRoot = new Item("middagstips");
         middagsRoot.setParent(projects);
         ItemsWorker.insertChild(projects, middagsRoot, context);
@@ -132,7 +131,7 @@ public class Demo {
 
         Item step1 = new Item("1. koka pastan");
         Item step2 = new Item("2. stek bacon");
-        Item step3 = new Item("3. rör ihop äggulor och parmesan");
+        Item step3 = new Item("3. rör ihop äggulor och parmesan");*/
 
     }
     public static void createShoppingList(Context context){

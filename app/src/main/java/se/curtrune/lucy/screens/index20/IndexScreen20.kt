@@ -13,7 +13,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.screens.economy.EconomyActivity
 import se.curtrune.lucy.screens.item_editor.ItemEditorActivity
-import se.curtrune.lucy.screens.RepeatActivity
+import se.curtrune.lucy.screens.repeat.RepeatActivity
 import se.curtrune.lucy.screens.db_admin.DbAdminActivity
 import se.curtrune.lucy.screens.medicine.MedicineFragment
 import se.curtrune.lucy.screens.week_calendar.WeekFragment

@@ -21,7 +21,7 @@ import se.curtrune.lucy.classes.item.Item;
 import se.curtrune.lucy.classes.ItemDuration;
 import se.curtrune.lucy.classes.MedicineContent;
 import se.curtrune.lucy.classes.Notification;
-import se.curtrune.lucy.classes.Repeat;
+import se.curtrune.lucy.classes.item.Repeat;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.util.gson.MyGson;
 
@@ -196,7 +196,8 @@ public class DBAdmin {
         cv.put("category", item.getCategory());
         cv.put("parentID", item.getParentId());
         if( item.getRepeat() != null) {
-            cv.put("repeat", item.getRepeat().toJson());
+            //cv.put("repeat", item.getRepeat().toJson());
+            cv.put("repeat", gson.toJson(item.getRepeat()));
         }
         //well change name of field, please TODO
         if( item.getItemDuration() != null){
@@ -250,7 +251,7 @@ public class DBAdmin {
         long id = cursor.getLong(0);
         String json = cursor.getString(1);
         Repeat repeat =  new Gson().fromJson(json, Repeat.class);
-        repeat.setID(id);
+        repeat.setTemplateID(id);
         return repeat;
     }
 

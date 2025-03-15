@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Locale;
 
 import se.curtrune.lucy.classes.item.Item;
-import se.curtrune.lucy.classes.Repeat;
+import se.curtrune.lucy.classes.item.Repeat;
 import se.curtrune.lucy.persist.ItemsWorker;
 import se.curtrune.lucy.persist.SqliteLocalDB;
 
@@ -59,12 +59,12 @@ public class RepeatWorker {
             repeat.setTemplateID(template.getID());
             repeat = ItemsWorker.insert(repeat, context);
             if (repeat != null) {
-                repeat.setUpdated(LocalDate.now());
-                template.setRepeatID(repeat.getID());
+                repeat.setLastActualDate(LocalDate.now());
+                template.setRepeatID(repeat.getId());
                 db.update(template);
                 List<Item> items = RepeatWorker.createInstances(repeat, context);
                 for (Item instance : items) {
-                    instance.setRepeatID(repeat.getID());
+                    instance.setRepeatID(repeat.getId());
                 }
                 ItemsWorker.insert(items, context);
             }else{
@@ -96,8 +96,6 @@ public class RepeatWorker {
             case YEAR:
                 nextDate =  currentDate.plusYears(qualifier);
                 break;
-            case DAYS_OF_WEEK:
-                return null;
         }
         if( nextDate.isAfter(repeat.getLastDate())){
             repeat.setLastDate(currentDate);//the last "valid/repeat" date
@@ -123,9 +121,9 @@ public class RepeatWorker {
         for(Repeat repeat: repeats){
             if(repeat.isInfinite()){
                 if( updateNeeded(repeat)){
-                    log("CREATE NEW INSTANCES, repeat id", repeat.getID());
+                    log("CREATE NEW INSTANCES, repeat id", repeat.getId());
                     repeat = updateRepeat(repeat, context);
-                    log(repeat);
+                    log(repeat.toString());
                     List<Item> instances = createInstances(repeat, context);
                     saveInstances(instances, context);
                     log("new instances of item saved");
@@ -133,7 +131,7 @@ public class RepeatWorker {
                         log(String.format(Locale.getDefault(), "%s, %s", item.getHeading(), item.getTargetDate().toString()));
                     }
                 }else{
-                    log("NO UPDATED NEEDED FOR repeat id", repeat.getID());
+                    log("NO UPDATED NEEDED FOR repeat id", repeat.getId());
                 }
             }
         }
@@ -158,13 +156,13 @@ public class RepeatWorker {
      * @return repeat updated in database
      */
     public static Repeat updateRepeat(Repeat repeat, Context context){
-        log("...updateRepeat(Repeat) id", repeat.getID());
-        log(repeat);
+        log("...updateRepeat(Repeat) id", repeat.getId());
+        log(repeat.toString());
         LocalDate previousLastDate = repeat.getLastDate();
         repeat.setLastDate(maxDate);
         LocalDate firstDate = getNextDate(previousLastDate, repeat);
         repeat.setFirstDate(firstDate);
-        repeat.setUpdated(LocalDate.now());
+        repeat.setLastActualDate(LocalDate.now());
         int rowsAffected = ItemsWorker.update(repeat, context);
         if( rowsAffected != -1 ){
             log("ERROR, updating repeat");

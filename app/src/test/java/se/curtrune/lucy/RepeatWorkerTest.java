@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import se.curtrune.lucy.classes.item.Item;
-import se.curtrune.lucy.classes.Repeat;
+import se.curtrune.lucy.classes.item.Repeat;
 import se.curtrune.lucy.workers.RepeatWorker;
 
 public class RepeatWorkerTest {
@@ -96,10 +96,11 @@ public class RepeatWorkerTest {
     public void testLogRepeat(){
         log("...testLogRepeat()");
         Repeat repeat = new Repeat();
-        repeat.setPeriod(1, Repeat.Unit.DAY);
+        repeat.setUnit(Repeat.Unit.DAY);
+        repeat.setQualifier(1);
         repeat.setFirstDate(LocalDate.now());
-        repeat.setInfinity(true);
-        log(repeat);
+        repeat.setInfinite(true);
+        log(repeat.toString());
         assertEquals(repeat.getUnit(), Repeat.Unit.DAY);
     }
     @Test

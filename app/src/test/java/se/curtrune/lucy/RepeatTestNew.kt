@@ -15,23 +15,25 @@ class RepeatTestNew {
     @Test
     fun repeatTueSat(){
         //from mon to mon
-/*        println("repeatTueSat")
+        println("repeatTueSat")
         val weekDays = listOf<DayOfWeek>(DayOfWeek.TUESDAY, DayOfWeek.SATURDAY)
         val firstDate = LocalDate.of(2025, 2, 24)
         val lastDate = firstDate.plusWeeks(1)
+        val item = Item("bålövningar")
         println("firstDate: $firstDate, lastDate: $lastDate")
-        val repeat = RepeatItems.RepeatWeekDays(
-            item = Item("test item"),
+        val repeat = Repeat(
+            //item = Item("test item"),
             weekDays = weekDays,
             firstDate = firstDate,
             lastDate = lastDate,
             isInfinite = false
         )
-        val items = Repeater.getItems(repeat)
-        items.forEach{ item ->
-            println("heading: ${item.heading}, dayOfWeek: ${item.targetDate.dayOfWeek}")
+        item.repeat = repeat
+        val items = Repeater.createInstances(item)
+        items.forEach{ instance ->
+            println("heading: ${instance.heading}, dayOfWeek: ${instance.targetDate.dayOfWeek}")
         }
-        assertEquals(2, items.size )*/
+        assertEquals(2, items.size )
 
     }
     @Test
@@ -67,20 +69,21 @@ class RepeatTestNew {
     @Test
     fun repeaterBasicEveryDayForAWeek(){
         println("repeat every day for a week")
-/*        val basicRepeat = RepeatItems.BasicRepeat(
+        val repeat = Repeat(
             firstDate = LocalDate.of(2025, 3, 3),
             lastDate = LocalDate.of(2025, 3, 9),
             isInfinite = false,
             qualifier = 1,
-            unit = Repeater.Unit.DAY,
-            template = Item("repeat me mon to sun")
+            unit = Repeat.Unit.DAY,
         )
+        val item = Item("one week, every day")
+        item.repeat = repeat
         val repeater = Repeater
-        val items = repeater.getItems(repeat =basicRepeat)
+        val items = repeater.createInstances(item)
         items.forEach{ item->
             println(item.toString())
         }
-        assertEquals(7, items.size)*/
+        assertEquals(7, items.size)
     }
     @Test
     fun repeaterInfiniteEveryDayTest(){
@@ -93,13 +96,15 @@ class RepeatTestNew {
             unit = Repeat.Unit.DAY,
             templateID = 0
         )
-        val item = Item("hello")
+        val item = Item("borsta tänderna")
         item.repeat = infiniteRepeat
         val repeater = Repeater
-        val lastInfiniteDay = repeater.lastInfiniteDate
-        val items = repeater.getItems(infiniteRepeat)
-        items.forEach{ item->
-            println(item.toString())
+        //val lastInfiniteDay = repeater.lastInfiniteDate
+        val items = repeater.createInstances(item)
+        //val items = repeater.getItems(infiniteRepeat)
+        println("number of items: ${items.size}")
+        items.forEach{ instance->
+            println(instance.toString())
         }
         assertEquals(32, items.size)
     }

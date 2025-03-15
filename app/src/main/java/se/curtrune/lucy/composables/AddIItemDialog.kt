@@ -286,7 +286,7 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: Dialog
             showRepeatDialog = false
         }, onConfirm = { repeat->
             println("on confirm repeat")
-            //item.repeat = repeat
+            item.repeat = repeat
             showRepeatDialog = false
         })
     }

@@ -62,7 +62,7 @@
             android:label="@string/title_activity_index_kt"
             android:theme="@style/Theme.Lucy" />
         <activity
-            android:name=".screens.RepeatActivity"
+            android:name=".screens.repeat.RepeatActivity"
             android:exported="false"
             android:label="@string/title_activity_repeat"
             android:theme="@style/Theme.Lucy" />

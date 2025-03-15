@@ -16,7 +16,7 @@ import se.curtrune.lucy.classes.ItemStatistics;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.screens.message_board.Message;
 import se.curtrune.lucy.classes.Notification;
-import se.curtrune.lucy.classes.Repeat;
+import se.curtrune.lucy.classes.item.Repeat;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.classes.calender.Week;
@@ -154,14 +154,14 @@ public class Logger {
             return;
         }
         //Item template = ItemsWorker.selectItem(repeat.getTemplateID(),)
-        log("\tid", repeat.getID());
+        log("\tid", repeat.getId());
         log("\tunit", repeat.getUnit().toString());
         log("\tqualifier", repeat.getQualifier());
         //log("\ttoJson", repeat.toJson());
         log("\ttemplateID",repeat.getTemplateID());
         log("\tfirstDate", repeat.getFirstDate());
         log("\tlastDate", repeat.getLastDate());
-        log("\tupdated", repeat.getUpdated());
+        log("\tupdated", repeat.getLastActualDate());
         log("\tinfinity", repeat.isInfinite());
     }
 

@@ -25,7 +25,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import java.time.LocalDate;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.classes.Repeat;
+import se.curtrune.lucy.classes.item.Repeat;
 
 
 public class RepeatDialog extends BottomSheetDialogFragment {
@@ -93,7 +93,9 @@ public class RepeatDialog extends BottomSheetDialogFragment {
             int qualifier = Integer.parseInt(stringQualifier);
             log("...qualifier", qualifier);
             log("...dayWeekYearMonth", dayWeekMonthYear);
-            repeat.setPeriod(qualifier, Repeat.Unit.valueOf(dayWeekMonthYear.toUpperCase()) );
+            //repeat.setPeriod(qualifier, Repeat.Unit.valueOf(dayWeekMonthYear.toUpperCase()) );'
+            repeat.setQualifier(qualifier);
+            repeat.setUnit(Repeat.Unit.valueOf(dayWeekMonthYear.toUpperCase()));
             listener.onRepeat(repeat);
             dismiss();
         }else{
@@ -173,13 +175,14 @@ public class RepeatDialog extends BottomSheetDialogFragment {
     }
     private void onInfinityClick(){
         log("...onInfinityClick()");
-        repeat.setInfinity(switchInfinity.isChecked());
+        repeat.setInfinite(switchInfinity.isChecked());
     }
     private void onRepeat(Repeat.Unit unit){
         log("...onRepeat(Unit)", unit.toString());
-        repeat.setPeriod(1, unit);
+        repeat.setUnit(unit);
+        repeat.setQualifier(1);
         if(textViewLastDate.getText().toString().isEmpty()){
-            repeat.setInfinity(true);
+            repeat.setInfinite(true);
         }
         listener.onRepeat(repeat);
         dismiss();

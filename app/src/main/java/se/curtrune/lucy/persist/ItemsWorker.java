@@ -16,7 +16,7 @@ import java.util.List;
 
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.item.Item;
-import se.curtrune.lucy.classes.Repeat;
+import se.curtrune.lucy.classes.item.Repeat;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.classes.calender.Week;
@@ -127,39 +127,13 @@ public class ItemsWorker {
             NotificationsWorker.setNotification(item, context);
         }
         if (item.hasRepeat()){
-            return insertRepeat(item, context);
+            return insert(item, context);
         }else {
             try (SqliteLocalDB db = new SqliteLocalDB(context)) {
                 item = db.insert(item);
             }
         }
         return item;
-    }
-
-    //MIGRATED
-    public  static Item insertChild(Item parent, Item child, Context context)  {
-        if(VERBOSE)log("ItemsWorker.insertChild(Item, Item, Context)");
-        if( !parent.hasChild()){
-            log("....no children for this parent, yet, parent: ", parent.getHeading());
-            setHasChild(parent, true, context);
-        }
-        child.setParentId(parent.getID());
-        if(child.hasRepeat()){
-            return insertRepeat(child, context);
-        }
-        try (SqliteLocalDB db = new SqliteLocalDB(context)) {
-            return db.insert(child);
-        }
-    }
-
-    /**
-     * @param template, the template to use for creating instances
-     * @param context, context
-     * @return the saved item with id
-     */
-    public static Item insertRepeat(Item template, Context context){
-        log("ItemsWorker.insertRepeat(Item, Context)", template.getHeading());
-        return RepeatWorker.insertItemWithRepeat(template, context);
     }
 
     /**

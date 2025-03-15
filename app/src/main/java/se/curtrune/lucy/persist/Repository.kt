@@ -9,6 +9,7 @@ import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.classes.calender.CalendarWeek
 import se.curtrune.lucy.classes.calender.CalenderMonth
 import se.curtrune.lucy.classes.calender.Week
+import se.curtrune.lucy.classes.item.Repeat
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.workers.NotificationsWorker
 import java.time.LocalDate
@@ -133,7 +134,7 @@ class Repository (val context: Application){
             NotificationsWorker.setNotification(item, context)
         }
         if (item.hasRepeat()) {
-            return ItemsWorker.insertRepeat(item, context)
+            return createInstances(item)
         }
         var itemWithID: Item? = null
         SqliteLocalDB(context).use { db ->
@@ -150,17 +151,28 @@ class Repository (val context: Application){
         }
         child.parentId = parent.id
         if (child.hasRepeat()) {
-            return ItemsWorker.insertRepeat(child, context)
+            return createInstances(child)
         }
         SqliteLocalDB(context).use { db ->
             return db.insert(child)
         }
+    }
+    private fun createInstances(item: Item):  Item{
+        println("insertItemWithRepeat()")
+        val items = Repeater.createInstances(item)
+
+        return item
     }
     fun getAppointmentsRoot(): Item {
         val settings = Settings.getInstance(context)
         val id = settings.getRootID(Settings.Root.APPOINTMENTS)
         SqliteLocalDB(context).use { db ->
             return db.selectItem(id)
+        }
+    }
+    fun insert(items: List<Item>){
+        SqliteLocalDB(context).use { db->
+            db.insert(items)
         }
     }
     fun restoreDeleted(item: Item): Item? {
@@ -282,6 +294,11 @@ class Repository (val context: Application){
         val query = Queeries.selectItems(type)
         SqliteLocalDB(context).use { db ->
             return db.selectItems(query)
+        }
+    }
+    fun selectRepeats(): List<Repeat>{
+        SqliteLocalDB(context).use { db->
+            return db.selectRepeats()
         }
     }
     fun selectTemplateChildren(parent: Item?): List<Item> {

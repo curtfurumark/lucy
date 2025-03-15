@@ -17,7 +17,7 @@ import java.util.List;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.item.Item;
 import se.curtrune.lucy.classes.Notification;
-import se.curtrune.lucy.classes.Repeat;
+import se.curtrune.lucy.classes.item.Repeat;
 import se.curtrune.lucy.notifications.AlarmReceiver;
 import se.curtrune.lucy.persist.ItemsWorker;
 
@@ -92,7 +92,7 @@ public class NotificationsWorker {
         intent.putExtra(INTENT_ITEM_ID, item.getID());
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, (int) item.getID(), intent, PendingIntent.FLAG_IMMUTABLE);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),repeat.getIntervalMilliseconds(), pendingIntent);
+        //alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),repeat.getIntervalMilliseconds(), pendingIntent);
     }
     private static void setSingleNotification(Item item, Context context){
         log("...setSingleNotification()");

@@ -20,7 +20,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Contact;
-import se.curtrune.lucy.classes.Repeat;
 
 public class ContactDialog extends BottomSheetDialogFragment {
     private Contact contact;

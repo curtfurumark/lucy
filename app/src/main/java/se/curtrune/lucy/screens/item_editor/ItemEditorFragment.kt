@@ -48,7 +48,7 @@ import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.app.UserPrefs
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.Mental
-import se.curtrune.lucy.classes.Repeat
+import se.curtrune.lucy.classes.item.Repeat
 import se.curtrune.lucy.classes.State
 import se.curtrune.lucy.dialogs.AddItemDialog
 import se.curtrune.lucy.dialogs.ChooseCategoryDialog
@@ -58,10 +58,9 @@ import se.curtrune.lucy.dialogs.DurationDialog
 import se.curtrune.lucy.dialogs.NotificationDialog
 import se.curtrune.lucy.dialogs.RepeatDialog
 import se.curtrune.lucy.dialogs.TagsDialog
-import se.curtrune.lucy.screens.EditableListFragment
+import se.curtrune.lucy.screens.editable_list.EditableListFragment
 import se.curtrune.lucy.item_settings.ItemSetting
 import se.curtrune.lucy.item_settings.ItemSettingAdapter
-import se.curtrune.lucy.persist.ItemsWorker
 import se.curtrune.lucy.screens.item_editor.composables.ItemEditorDev
 import se.curtrune.lucy.screens.main.MainViewModel
 import se.curtrune.lucy.util.Converter
@@ -432,14 +431,8 @@ class ItemEditorFragment : Fragment {
             )
             when (childType) {
                 ChildType.CHILD -> showAddChildItemDialog()
-                ChildType.LIST -> lucindaViewModel!!.updateFragment(
-                    EditableListFragment(
-                        currentItem
-                    )
-                )
-                ChildType.PHOTOGRAPH ->                     //Toast.makeText(getContext(), "NOT IMPLEMENTED", Toast.LENGTH_LONG).show();
-                    //takePhoto();
-                    openCameraAndSaveImage()
+                ChildType.LIST -> println("go to editable list fragment")
+                ChildType.PHOTOGRAPH -> openCameraAndSaveImage()
             }
         }
         dialog.show(childFragmentManager, "choose type")
@@ -449,8 +442,8 @@ class ItemEditorFragment : Fragment {
         Logger.log("...showAddChildItemDialog()")
         val dialog = AddItemDialog(currentItem, false)
         dialog.setCallback { item: Item? ->
-            val itemWithId = ItemsWorker.insertChild(currentItem, item, context)
-            if (VERBOSE) Logger.log(itemWithId)
+            //val itemWithId = ItemsWorker.insertChild(currentItem, item, context)
+            //if (VERBOSE) Logger.log(itemWithId)
             returnToPreviousFragment()
         }
         dialog.show(requireActivity().supportFragmentManager, "add child")
@@ -599,7 +592,7 @@ class ItemEditorFragment : Fragment {
                 itemSessionViewModel!!.getCurrentItem().value
             )?.repeat
             Logger.log("...item has repeat")
-            Logger.log(repeat)
+            Logger.log(repeat.toString())
         }
         val dialog = RepeatDialog()
 
