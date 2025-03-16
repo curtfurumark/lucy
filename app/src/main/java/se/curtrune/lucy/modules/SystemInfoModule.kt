@@ -51,4 +51,11 @@ class SystemInfoModule(val context: Application) {
             e.printStackTrace()
         }
     }
+    fun getVersionCode():Long{
+        val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            return pInfo.longVersionCode
+        }
+        return pInfo.versionCode.toLong()
+    }
 }

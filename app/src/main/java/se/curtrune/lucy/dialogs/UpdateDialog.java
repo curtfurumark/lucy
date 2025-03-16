@@ -56,7 +56,7 @@ public class UpdateDialog extends BottomSheetDialogFragment {
     private void initUserInterface(){
         textViewHeading.setText("update available");
         String strInfo = String.format(Locale.getDefault(),"version: %d\nname: %s\nfeatures: %s",
-                versionInfo.getVersionCode(), versionInfo.getVersionName(), versionInfo.getVersionInfo());
+                versionInfo.versionCode, versionInfo.versionName, versionInfo.versionInfo);
         textViewInfo.setText(strInfo);
 
     }

@@ -65,6 +65,9 @@ class MessageBoardFragment : Fragment(), OnTabSelectedListener {
                 var showAddMessageBottomSheet by remember {
                     mutableStateOf(false)
                 }
+                var showProgressBar by remember {
+                    mutableStateOf(false)
+                }
                 LaunchedEffect(messageViewModel) {
                     messageViewModel.eventFlow.collect{ event->
                         println("event $event ")
@@ -72,6 +75,10 @@ class MessageBoardFragment : Fragment(), OnTabSelectedListener {
                             is MessageChannel.ShowAddMessageBottomSheet -> {showAddMessageBottomSheet = true}
                             is MessageChannel.ShowSnackBar -> {
                                 println("snackbar message: ${event.message}")
+                            }
+
+                            is MessageChannel.ShowProgressBar -> {
+                                showProgressBar =event.show
                             }
                         }
                     }

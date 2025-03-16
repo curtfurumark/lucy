@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -31,29 +32,29 @@ import se.curtrune.lucy.app.FirstPage
 import se.curtrune.lucy.app.Settings.PanicAction
 import se.curtrune.lucy.app.UserPrefs
 import se.curtrune.lucy.classes.Mental
+import se.curtrune.lucy.composables.top_app_bar.LucindaControls
 import se.curtrune.lucy.dialogs.PanicActionDialog
 import se.curtrune.lucy.dialogs.UpdateDialog
-import se.curtrune.lucy.fragments.CustomizeFragment
 import se.curtrune.lucy.fragments.SequenceFragment
 import se.curtrune.lucy.modules.MentalModule
 import se.curtrune.lucy.persist.ItemsWorker
-import se.curtrune.lucy.screens.enchilada.EnchiladaFragment
+import se.curtrune.lucy.screens.affirmations.Affirmation
 import se.curtrune.lucy.screens.affirmations.Quote
 import se.curtrune.lucy.screens.appointments.AppointmentsFragment
 import se.curtrune.lucy.screens.contacts.ContactsFragment
 import se.curtrune.lucy.screens.daycalendar.CalendarDayFragment
 import se.curtrune.lucy.screens.dev.DevActivity
 import se.curtrune.lucy.screens.duration.DurationFragment
+import se.curtrune.lucy.screens.enchilada.EnchiladaFragment
 import se.curtrune.lucy.screens.index20.IndexActivityKt
 import se.curtrune.lucy.screens.log_in.LogInActivity
 import se.curtrune.lucy.screens.main.composables.ChoosePanicActionDialog
-import se.curtrune.lucy.composables.top_app_bar.LucindaControls
 import se.curtrune.lucy.screens.main.composables.QuoteDialog
 import se.curtrune.lucy.screens.medicine.MedicineFragment
 import se.curtrune.lucy.screens.mental_stats.MentalStatsFragment
-import se.curtrune.lucy.screens.my_day.MentalDateFragment
 import se.curtrune.lucy.screens.message_board.MessageBoardFragment
 import se.curtrune.lucy.screens.monthcalendar.MonthFragment
+import se.curtrune.lucy.screens.my_day.MentalDateFragment
 import se.curtrune.lucy.screens.projects.ProjectsFragment
 import se.curtrune.lucy.screens.todo.TodoFragment
 import se.curtrune.lucy.screens.user_settings.UserSettingsFragment
@@ -67,8 +68,6 @@ import java.util.Objects
 class MainActivity : AppCompatActivity() {
     private var drawerLayout: DrawerLayout? = null
     private var mainViewModel: MainViewModel? = null
-    //private var textViewPanic: TextView? = null
-    //private var textViewBoost: TextView? = null
     private var textViewLucindaHome: TextView? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,18 +113,12 @@ class MainActivity : AppCompatActivity() {
                     Objects.requireNonNull(item.title).toString()
                 )
                 when (item.itemId) {
-/*                    R.id.navigationDrawer_graphFragment -> {
-                        navigate(DailyGraphFragment())
-                    }*/
                     R.id.navigationDrawer_monthCalender -> {
                         navigate(MonthFragment())
                     }
                     R.id.bottomNavigation_today -> {
                         navigate(CalendarDayFragment())
                     }
-                    /*R.id.navigationDrawer_topTen -> {
-                        navigate(TopTenFragment())
-                    }*/
                     R.id.bottomNavigation_todo -> {
                         navigate(TodoFragment())
                     }
@@ -192,6 +185,9 @@ class MainActivity : AppCompatActivity() {
             var showPanicDialog by remember{
                 mutableStateOf(false)
             }
+            var showAffirmation by remember {
+                mutableStateOf(false)
+            }
             var showQuoteDialog by remember {
                 mutableStateOf(false)
             }
@@ -206,7 +202,8 @@ class MainActivity : AppCompatActivity() {
                             //Toast.makeText(applicationContext, "panic", Toast.LENGTH_LONG).show()
                         }
                         is MainChannelEvent.ShowAffirmation -> {
-                            Toast.makeText(applicationContext, "affirmation", Toast.LENGTH_LONG).show()
+                            Toast.makeText(applicationContext,
+                                event.affirmation?.affirmation ?: "you're the greatest", Toast.LENGTH_LONG).show()
                         }
                         is MainChannelEvent.ShowBoostDialog -> {
                             Toast.makeText(applicationContext, "boost me", Toast.LENGTH_LONG).show()
@@ -215,6 +212,12 @@ class MainActivity : AppCompatActivity() {
                         is MainChannelEvent.ShowQuoteDialog -> {
                             quote = event.quote!!
                             showQuoteDialog = true
+                        }
+
+                        is MainChannelEvent.UpdateAvailable -> {
+                            if (state != null) {
+                                state.value.versionInfo?.let { showUpdateDialog(it) }
+                            }
                         }
                     }
                 }
@@ -245,6 +248,10 @@ class MainActivity : AppCompatActivity() {
                     showQuoteDialog = false
                 }, quote = quote)
             }
+            if( showAffirmation){
+
+
+            }
 
         }
     }
@@ -260,20 +267,6 @@ class MainActivity : AppCompatActivity() {
         mainViewModel!!.fragment.observe(this) { fragment: Fragment? ->
             Logger.log(" new fragment observed")
             navigate(fragment)
-        }
-
-/*        mainViewModel!!.affirmation.observe(
-            this
-        ) { affirmation: Affirmation -> this.showBoostDialog(affirmation) }*/
-        mainViewModel!!.updateAvailable().observe(this) { versionInfo: VersionInfo ->
-            Logger.log("...updateAvailable(VersionInfo)")
-            val dialog = UpdateDialog(versionInfo) {
-                Logger.log("here we go")
-                Toast.makeText(applicationContext, "here we go,", Toast.LENGTH_LONG).show()
-                Logger.log("updated url", versionInfo.url)
-                openWebPage(versionInfo.url)
-            }
-            dialog.show(supportFragmentManager, "update lucinda")
         }
         mainViewModel!!.message.observe(
             this
@@ -357,10 +350,9 @@ class MainActivity : AppCompatActivity() {
                 startActivity(Intent(this, DevActivity::class.java))
             }
             R.id.mainActivityCheckForUpdate -> {
-                mainViewModel!!.checkIfUpdateAvailable(this)
+                mainViewModel?.onEvent(MainEvent.CheckForUpdate)
             }
             R.id.mainActivity_calendar -> {
-                //navigate(CalenderDateFragmentOld())
                 navigate(CalendarDayFragment())
             }
             R.id.mainActivity_lucinda20 -> {
@@ -442,11 +434,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-/*    private fun showBoostDialog(affirmation: Affirmation) {
+    @Composable
+    private fun showBoostDialog(affirmation: Affirmation) {
         Logger.log("...showBoostDialog(Affirmation)")
-        val boostDialog = BoostDialog(affirmation.affirmation)
-        boostDialog.show(supportFragmentManager, "boost me")
-    }*/
+        //val boostDialog = BoostDialog(affirmation.affirmation)
+        //boostDialog.show(supportFragmentManager, "boost me")
+    }
 
     private fun showPanicAction() {
         val panicAction = mainViewModel!!.getPanicAction(this)
@@ -482,6 +475,15 @@ class MainActivity : AppCompatActivity() {
                     Toast.LENGTH_LONG
                 ).show()
         }
+    }
+    private fun showUpdateDialog(versionInfo: VersionInfo){
+        val dialog = UpdateDialog(versionInfo) {
+            Logger.log("here we go")
+            Toast.makeText(applicationContext, "here we go,", Toast.LENGTH_LONG).show()
+            Logger.log("updated url", versionInfo.url)
+            versionInfo.url?.let { openWebPage(it) }
+        }
+        dialog.show(supportFragmentManager, "update lucinda")
     }
 
     companion object {

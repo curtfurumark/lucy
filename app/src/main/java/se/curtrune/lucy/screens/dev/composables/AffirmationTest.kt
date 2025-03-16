@@ -6,32 +6,33 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import se.curtrune.lucy.web.RetrofitInstance
+import kotlinx.coroutines.launch
+import se.curtrune.lucy.web.LucindaApi
 
 @Composable
-fun RetroFitTest(){
-    var reply by remember {
+fun AffirmationTest(){
+    val scope = rememberCoroutineScope()
+    var affirmation by remember{
         mutableStateOf("")
-    }
-    LaunchedEffect(true) {
-        val messages = RetrofitInstance.messageApi.getMessages()
-        messages.forEach{ message->
-            println(message.toString())
-        }
     }
     Card(modifier = Modifier.fillMaxWidth()){
         Column(modifier = Modifier.fillMaxWidth()){
-            Text(text = reply)
+           Text(text = affirmation)
             Button(onClick = {
-                println("onClick")
-            }){
-                Text(text ="hello")
+                scope.launch {
+                    println("onClick in coroutine scope")
+                    val affirmationObject = LucindaApi.create().getAffirmation()
+                    println("after api call")
+                    affirmation = affirmationObject.affirmation
+                }
+            }) {
+                Text(text = "get affirmed")
             }
         }
     }

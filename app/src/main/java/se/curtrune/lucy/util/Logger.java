@@ -21,7 +21,6 @@ import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.classes.calender.Week;
 import se.curtrune.lucy.persist.DB1Result;
-import se.curtrune.lucy.web.HTTPRequest;
 import se.curtrune.lucy.web.VersionInfo;
 
 public class Logger {
@@ -53,19 +52,7 @@ public class Logger {
         log(description + ": " + value);
 
     }
-    public static void log(HTTPRequest request){
-        log("log(HTTPRequest)");
-        if( request == null){
-            log("...request is null");
-            return;
-        }
-        log("...url", request.getUrl());
-        log("...http method", request.getHttpMethod().toString());
-        Map<String, String> params = request.getParams();
-        for( String key: params.keySet()){
-            log("......"  +key, params.get(key));
-        }
-    }
+
     public static void log(Item item){
         log("Logger.log(Item)");
         if( item == null){
@@ -275,11 +262,10 @@ public class Logger {
 
     public static void log(VersionInfo versionInfo) {
         log("log(VersionInfo)");
-        log("\t\turl", versionInfo.getUrl());
-        log("\t\tfileName", versionInfo.getFileName());
-        log("\t\tversionCode", versionInfo.getVersionCode());
-        log("\t\tversionName", versionInfo.getVersionName());
-        log("\t\tinfo", versionInfo.getVersionInfo());
+        log("\t\turl", versionInfo.url);
+        log("\t\tversionCode", versionInfo.versionCode);
+        log("\t\tversionName", versionInfo.versionName);
+        log("\t\tinfo", versionInfo.versionInfo);
     }
     public static void log(Week week){
         log("Logger.log(Week)");

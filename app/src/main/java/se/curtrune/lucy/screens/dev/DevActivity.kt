@@ -60,16 +60,18 @@ import se.curtrune.lucy.persist.SqliteLocalDB
 import se.curtrune.lucy.screens.log_in.LogInActivity
 import se.curtrune.lucy.screens.main.MainActivity
 import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
+import se.curtrune.lucy.screens.dev.composables.AffirmationTest
 import se.curtrune.lucy.screens.dev.composables.CalendarWeekTest
+import se.curtrune.lucy.screens.dev.composables.CheckForUpdateKtor
 import se.curtrune.lucy.screens.dev.composables.DurationTest
 import se.curtrune.lucy.screens.dev.composables.ExecuteQuery
+import se.curtrune.lucy.screens.dev.composables.GetQuoteKtor
 import se.curtrune.lucy.screens.dev.composables.InsertItemWithID
 import se.curtrune.lucy.screens.dev.composables.RepeatTest
 import se.curtrune.lucy.screens.dev.composables.TestScrollableYearMonth
 import se.curtrune.lucy.screens.dev.composables.TestSwipeAble
 import se.curtrune.lucy.services.TimerService
 import se.curtrune.lucy.util.Logger
-import se.curtrune.lucy.viewmodel.UpdateLucindaViewModel
 import se.curtrune.lucy.web.VersionInfo
 import se.curtrune.lucy.workers.NotificationsWorker
 import java.time.LocalDate
@@ -91,18 +93,6 @@ class DevActivity : AppCompatActivity() {
         initContent()
     }
 
-
-
-    private fun checkForLucindaUpdate() {
-        Logger.log("...checkForLucindaUpdate()")
-        val updateLucindaViewModel = ViewModelProvider(this)[UpdateLucindaViewModel::class.java]
-        updateLucindaViewModel.checkForNewVersion()
-        updateLucindaViewModel.versionInfo.observe(this, object : Observer<VersionInfo?> {
-            override fun onChanged(value: VersionInfo?) {
-                Logger.log("...onChanged, VersionInfo available", value.toString())
-            }
-        })
-    }
     private fun copyDatabase(){
         println("DevActivity.copyDatabase()")
         val dbFile = getDatabasePath(SqliteLocalDB.getDbName())
@@ -180,6 +170,9 @@ class DevActivity : AppCompatActivity() {
                                         devViewModel.onEvent(event)
                                     })
                                 }
+                                GetQuoteKtor()
+                                //AffirmationTest()
+                                //CheckForUpdateKtor()
                                 Spacer(modifier = Modifier.height(16.dp))
                                 CalendarWeekTest()
                                 Spacer(modifier = Modifier.height(16.dp))

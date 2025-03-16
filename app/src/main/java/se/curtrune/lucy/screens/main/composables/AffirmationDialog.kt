@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.Dialog
 import se.curtrune.lucy.R
-import se.curtrune.lucy.classes.Affirmation
+import se.curtrune.lucy.screens.affirmations.Affirmation
 
 @Composable
 fun AffirmationDialog(onDismiss: ()-> Unit, affirmation: Affirmation){

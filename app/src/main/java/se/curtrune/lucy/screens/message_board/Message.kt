@@ -5,8 +5,8 @@ import java.time.ZoneOffset
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-//import kotlinx.serialization.Serializable
-//@Serializable
+import kotlinx.serialization.Serializable
+@Serializable
 data class Message(
     @JvmField
     var subject: String = "",

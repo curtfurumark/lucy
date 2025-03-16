@@ -17,7 +17,6 @@ import androidx.fragment.app.Fragment;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.screens.message_board.Message;
-import se.curtrune.lucy.workers.MessageWorker;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -102,9 +101,9 @@ public class ContactFragment extends Fragment {
         //if( intent.resolveActivity(getContext().getPackageManager()) != null) {
             startActivity(Intent.createChooser(intent, "choose client"));
             log("...message sent, well not really but you know what i mean");
-        insert(getMessage());
+        //insert(getMessage());
     }
-    private void insert(Message message){
+/*    private void insert(Message message){
         log("...insert(Message)");
         MessageWorker.insert(message, result -> {
             log("...onItemInsert(DB1Result) ok", result.isOK());
@@ -112,7 +111,7 @@ public class ContactFragment extends Fragment {
                 log("...error inserting message");
             }
         });
-    }
+    }*/
     private void setUserInterface(){
         log("...setUserInterface()");
         editTextMailAddress.setText(Settings.DEV_EMAIL);
