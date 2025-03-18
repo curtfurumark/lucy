@@ -1,16 +1,18 @@
 package se.curtrune.lucy.util
 
 import java.time.DayOfWeek
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.YearMonth
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 
-object DateTImeFormatter {
+object DateTImeConverter {
 
     fun epochSecondToFormattedDateTimeString(epochSeconds: Long): String{
         return format( LocalDateTime.ofEpochSecond(epochSeconds, 0, ZoneOffset.UTC))
@@ -52,5 +54,13 @@ object DateTImeFormatter {
     fun format(dayOfWeek: DayOfWeek, textStyle: TextStyle): String{
         //return String.format(Locale.getDefault(), "%s %d",dayOfWeek.getDisplayName(textStyle, Locale.getDefault()).cecilia())
         return dayOfWeek.getDisplayName(textStyle, Locale.getDefault()).cecilia()
+    }
+    fun epochMillisToLocalDate(epochMillis: Long): LocalDate{
+        return  LocalDateTime.ofInstant(Instant.ofEpochMilli(epochMillis), ZoneId.systemDefault()).toLocalDate()
+
+    }
+    fun epochMillisToLocalTime(epochMillis: Long): LocalTime{
+        return  LocalDateTime.ofInstant(Instant.ofEpochMilli(epochMillis), ZoneId.systemDefault()).toLocalTime()
+
     }
 }

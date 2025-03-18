@@ -13,16 +13,21 @@ data class Message(
     @JvmField
     var content: String = "",
     @JvmField
-    var category: String? = null,
+    var category: String = "message",
     @JvmField
     var user: String = "",
     @JvmField
     var id: Long = 0,
     @JvmField
-    var created: Long = 0
+    var created: Long = 0,
+    @JvmField
+    var state: Int = State.TODO.ordinal
 
 )
 {
+    enum class State{
+        TODO, WIP, DONE
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun getCreated(): LocalDateTime {

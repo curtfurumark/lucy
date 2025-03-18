@@ -15,7 +15,7 @@ class RepeatViewModel: ViewModel() {
     val state = _state.asStateFlow()
     var showDialog =  mutableStateOf(false)
     init {
-        val repeats = repository.selectRepeats()
+        val repeats = repository.selectRepeats().reversed()
         _state.update { it.copy(
             repeats = repeats
         ) }

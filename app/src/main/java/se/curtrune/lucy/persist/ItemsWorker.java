@@ -21,7 +21,6 @@ import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.classes.calender.Week;
 import se.curtrune.lucy.workers.NotificationsWorker;
-import se.curtrune.lucy.workers.RepeatWorker;
 
 public class ItemsWorker {
     public static boolean VERBOSE = false;
@@ -346,6 +345,7 @@ public class ItemsWorker {
             }
         }
     }
+    @Deprecated
     public static int update(Repeat repeat, Context context){
         log("ItemsWorker.update(Repeat, Context)");
         try(SqliteLocalDB db = new SqliteLocalDB(context)){
@@ -428,6 +428,7 @@ public class ItemsWorker {
      * @param context, context, context
      * @return the inserted Repeat or null if insert failed
      */
+    @Deprecated
     public static Repeat insert(Repeat repeat, Context context) {
         log("ItemsWorker.insert(Repeat, Context)");
         try(SqliteLocalDB db = new SqliteLocalDB(context)){

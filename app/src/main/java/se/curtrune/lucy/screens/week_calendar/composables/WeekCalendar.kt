@@ -52,12 +52,12 @@ fun ThisWeekView(state: WeekState, onEvent: (WeekEvent) -> Unit){
     println("ThisWeekView, number of items: ${state.calendarWeek.allWeekItems.size}")
     Box(
         modifier = Modifier
-            .border(1.dp, color = Color.DarkGray)
+            .border(2.dp, color = Color.DarkGray)
             .aspectRatio(1.2F)
             .clip(RoundedCornerShape(5.dp))
             .background(color = MaterialTheme.colorScheme.background)
             .clickable {
-                //onEvent(WeekEvent.CalendarDateClick(calendarDate))
+                onEvent(WeekEvent.OnAllWeekClick(state.currentWeek))
             },
         contentAlignment = Alignment.TopStart
     ){

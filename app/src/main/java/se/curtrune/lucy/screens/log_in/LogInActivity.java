@@ -28,7 +28,6 @@ import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.screens.index.IndexActivity;
 import se.curtrune.lucy.workers.InternetWorker;
 import se.curtrune.lucy.workers.NotificationsWorker;
-import se.curtrune.lucy.workers.RepeatWorker;
 import se.curtrune.lucy.workers.SettingsWorker;
 
 /**
@@ -204,10 +203,6 @@ public class LogInActivity extends AppCompatActivity {
                 startActivity(new Intent(this, MainActivity.class));
                 break;
         }
-    }
-    private void updateRepeats(){
-        log("...updateRepeats()");
-        RepeatWorker.updateRepeats(this);
     }
     private boolean validateInput(){
         log("...validateInput()");

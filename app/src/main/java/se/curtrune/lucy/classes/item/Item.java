@@ -92,17 +92,18 @@ public class Item implements Serializable , Listable {
      * when a template spawns a child
      * @param item, the template item
      */
-    public Item(Item item){
+    public Item(Item other){
         this();
-        this.type = item.getType().ordinal();
-        this.heading = item.getHeading();
-        this.duration = item.getDuration();
-        this.category = item.getCategory();
-        this.tags = item.getTags();
+        this.type = other.getType().ordinal();
+        this.heading = other.getHeading();
+        this.duration = other.getDuration();
+        this.category = other.getCategory();
+        this.tags = other.getTags();
         this.target_time = LocalTime.now().toSecondOfDay();
         this.target_date = LocalDate.now().toEpochDay();
         //this.estimate = item.getEstimate();
-        this.color = item.getColor();
+        this.repeatID = other.repeatID;
+        this.color = other.getColor();
     }
     public long compare(){
         if( type == Type.APPOINTMENT.ordinal()){return target_date;}

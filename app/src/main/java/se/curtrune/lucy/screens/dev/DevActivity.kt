@@ -1,10 +1,12 @@
 package se.curtrune.lucy.screens.dev
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -68,6 +70,7 @@ import se.curtrune.lucy.screens.dev.composables.ExecuteQuery
 import se.curtrune.lucy.screens.dev.composables.GetQuoteKtor
 import se.curtrune.lucy.screens.dev.composables.InsertItemWithID
 import se.curtrune.lucy.screens.dev.composables.RepeatTest
+import se.curtrune.lucy.screens.dev.composables.TestGoogleCalendars
 import se.curtrune.lucy.screens.dev.composables.TestScrollableYearMonth
 import se.curtrune.lucy.screens.dev.composables.TestSwipeAble
 import se.curtrune.lucy.services.TimerService
@@ -100,6 +103,7 @@ class DevActivity : AppCompatActivity() {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @OptIn(ExperimentalMaterial3Api::class)
     private fun initContent(){
         println("...initContent()")
@@ -170,7 +174,8 @@ class DevActivity : AppCompatActivity() {
                                         devViewModel.onEvent(event)
                                     })
                                 }
-                                GetQuoteKtor()
+                                TestGoogleCalendars()
+                                //GetQuoteKtor()
                                 //AffirmationTest()
                                 //CheckForUpdateKtor()
                                 Spacer(modifier = Modifier.height(16.dp))

@@ -65,7 +65,7 @@ fun RepeatDialog(
         mutableStateOf(false)
     }
     var isInfinite by remember {
-        mutableStateOf(true)
+        mutableStateOf(repeat.isInfinite)
     }
     var firstDate by remember {
         mutableStateOf(LocalDate.now())

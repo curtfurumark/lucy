@@ -30,7 +30,7 @@ import se.curtrune.lucy.composables.TimePickerDialog
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.screens.daycalendar.DayEvent
 import se.curtrune.lucy.screens.medicine.composable.DropdownItem
-import se.curtrune.lucy.util.DateTImeFormatter
+import se.curtrune.lucy.util.DateTImeConverter
 import java.time.LocalTime
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -102,7 +102,7 @@ fun DateItem(
                 item.setIsDone(isDone)
                 onEvent(DayEvent.UpdateItem(item))
             })
-            Text(text = DateTImeFormatter.format(item.targetTime), fontSize = 18.sp, modifier = Modifier.padding(end = 8.dp).clickable {
+            Text(text = DateTImeConverter.format(item.targetTime), fontSize = 18.sp, modifier = Modifier.padding(end = 8.dp).clickable {
                 println(" on targetTimeClick")
                 showTimePicker = true
             })

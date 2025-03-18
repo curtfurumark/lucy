@@ -24,7 +24,7 @@ import se.curtrune.lucy.R
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.screens.my_day.MyDateEvent
 import se.curtrune.lucy.screens.my_day.MyDayState
-import se.curtrune.lucy.util.DateTImeFormatter
+import se.curtrune.lucy.util.DateTImeConverter
 import kotlin.math.roundToInt
 
 @Composable
@@ -116,7 +116,7 @@ fun MentalMeter4(
             drawRect( color = mentalRed, size = Size((size.width * myRound(mentalLevel * 0.1f)), size.height ))
         }){
         Column(modifier = Modifier.fillMaxWidth()) {
-            Text(text = "${item.heading} ${DateTImeFormatter.format(item.targetTime)}")
+            Text(text = "${item.heading} ${DateTImeConverter.format(item.targetTime)}")
             Text(text = "${state.currentField.name } ${
                 when(state.currentField){
                     Field.ENERGY ->mutableItem.energy

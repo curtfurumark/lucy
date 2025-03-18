@@ -30,7 +30,7 @@ class LucindaApplication: Application() {
         calendarModule = CalendarModule(this)
         timeModule = TimeModule(this)
         mentalModule = MentalModule(this)
-        localDB = SqliteLocalDB(this)
+        localDB  =  SqliteLocalDB(this)
         systemInfoModule = SystemInfoModule(this)
         repository = Repository(this)
         statistics = Statistics(repository.selectItems(LocalDate.now()))

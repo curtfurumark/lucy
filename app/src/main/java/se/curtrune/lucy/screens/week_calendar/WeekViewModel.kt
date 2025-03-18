@@ -69,11 +69,15 @@ class WeekViewModel: ViewModel() {
         println("WeekViewModel.onEvent(WeekEvent)")
         when(event){
             is WeekEvent.CalendarDateClick -> {calendarDateClick(event.calendarDate)}
-            is WeekEvent.Week -> {}
+            is WeekEvent.OnAllWeekClick -> {onAllWeekClick(event.week)}
             is WeekEvent.OnPage -> {onPage(event.page)}
             is WeekEvent.ShowAddItemDialog -> showAddItemDialog()
             is WeekEvent.AddItem -> {addItem(event.item)}
         }
+    }
+    private fun onAllWeekClick(week: Week){
+
+
     }
     private fun onPage(newPageIndex: Int){
         println("...onPage($newPageIndex)")

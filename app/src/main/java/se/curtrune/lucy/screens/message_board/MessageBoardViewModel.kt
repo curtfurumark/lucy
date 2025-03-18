@@ -9,13 +9,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import se.curtrune.lucy.screens.message_board.composables.MessageBoardState
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.web.LucindaApi
 
 class MessageBoardViewModel : ViewModel() {
     private val lucindaApi = LucindaApi.create()
     private var messages :  MutableList<Message> = mutableListOf()
+    private var filteredMessages: List<Message> = emptyList()
     private val _state = MutableStateFlow(MessageBoardState())
     val state = _state.asStateFlow()
     private val mutableError = MutableLiveData<String>()
@@ -30,8 +30,9 @@ class MessageBoardViewModel : ViewModel() {
         viewModelScope.launch {
             eventChannel.send(MessageChannel.ShowProgressBar(true))
             messages  = lucindaApi.getMessages().reversed().toMutableList()
+            filteredMessages = messages.filter { message->message.category != "todo" }
             _state.update { it.copy(
-                messages = messages
+                messages = filteredMessages
             ) }
             eventChannel.send(MessageChannel.ShowProgressBar(false))
         }
@@ -39,12 +40,14 @@ class MessageBoardViewModel : ViewModel() {
 
     private fun insert(message: Message) {
         println("MessageBoardViewModel.insert(${message.toString()})")
+        message.category = _state.value.category
         viewModelScope.launch {
             val strResult = lucindaApi.insertMessage(message)
             println("strResult: $strResult")
             messages.add(message)
+            messages.sortBy { message->message.created }
             _state.update { it.copy(
-                messages = messages
+                messages = messages.reversed()
             ) }
         }
 
@@ -61,7 +64,32 @@ class MessageBoardViewModel : ViewModel() {
             is MessageBoardEvent.OnAddMessageClick -> {
                 showAddMessageDialog()
             }
+
+            is MessageBoardEvent.SelectedCategory -> {
+                setSelectedCategory(event.category)
+            }
+
+            is MessageBoardEvent.OnMessageClick -> {
+                onMessageClick(event.message)
+            }
         }
+    }
+    private fun onMessageClick(message: Message){
+        println("onMessageClick")
+        _state.update { it.copy(
+            currentMessage = message
+        ) }
+        viewModelScope.launch {
+            eventChannel.send(MessageChannel.ShowAddMessageBottomSheet)
+        }
+    }
+    private fun setSelectedCategory(category: String){
+        println("setSelectedCategory($category)")
+        filteredMessages = messages.filter { message->message.category == category }
+        _state.update { it.copy(
+            category =  category,
+            messages =  filteredMessages
+        ) }
     }
     private fun showAddMessageDialog(){
         viewModelScope.launch {

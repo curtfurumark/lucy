@@ -250,8 +250,8 @@ public class DBAdmin {
         if( VERBOSE)log("...getRepeat(Cursor)");
         long id = cursor.getLong(0);
         String json = cursor.getString(1);
-        Repeat repeat =  new Gson().fromJson(json, Repeat.class);
-        repeat.setTemplateID(id);
+        Repeat repeat = new Gson().fromJson(json, Repeat.class);
+        repeat.setId(id);
         return repeat;
     }
 

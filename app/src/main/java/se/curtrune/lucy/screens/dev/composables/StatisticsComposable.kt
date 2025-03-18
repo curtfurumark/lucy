@@ -27,7 +27,7 @@ import androidx.compose.ui.res.stringResource
 import se.curtrune.lucy.R
 import se.curtrune.lucy.util.Converter
 import se.curtrune.lucy.statistics.StatisticsPeriod
-import se.curtrune.lucy.util.DateTImeFormatter
+import se.curtrune.lucy.util.DateTImeConverter
 import java.time.LocalDate
 
 @Composable
@@ -99,48 +99,30 @@ fun StatisticsComposable(){
             }
             Row(modifier = Modifier.fillMaxWidth()){
                 var options = listOf("category", "date", "tags")
-
-                    SingleChoiceSegmentedButtonRow {
-                        options.forEachIndexed{ index, label->
-                            SegmentedButton(onClick = {
-                                selectedCategory = index
-                                if( index == 0){
-                                    sortedByCategory = true
-                                    sortedByDate = false
-                                }else if (index == 1){
-                                    sortedByDate = true
-                                    sortedByCategory = false
-                                }else{
-                                    println("tags not implemented")
-                                }
-                            },
-                                shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
-                                selected = index == selectedCategory
-                            ) {
-                                Text(label)
+                SingleChoiceSegmentedButtonRow {
+                    options.forEachIndexed{ index, label->
+                        SegmentedButton(onClick = {
+                            selectedCategory = index
+                            if( index == 0){
+                                sortedByCategory = true
+                                sortedByDate = false
+                            }else if (index == 1){
+                                sortedByDate = true
+                                sortedByCategory = false
+                            }else{
+                                println("tags not implemented")
                             }
+                        },
+                            shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
+                            selected = index == selectedCategory
+                        ) {
+                            Text(label)
+                        }
                     }
-
                 }
             }
-/*            Row(modifier = Modifier.fillMaxWidth()){
-                Checkbox(checked = sortedByCategory, onCheckedChange = {
-                    sortedByCategory = !sortedByCategory
-                    sortedByDate = !sortedByCategory
-
-                })
-                Text(text = "sort by category")
-            }
-            Row(modifier = Modifier.fillMaxWidth()){
-                Checkbox(checked = sortedByDate, onCheckedChange = {
-                    sortedByDate = !sortedByDate
-                    sortedByCategory = !sortedByDate
-                })
-                Text(text = "sort by date")
-
-            }*/
-            Text(text = "estimated duration: ${DateTImeFormatter.formatSeconds(stats.statistics.duration)}")
-            Text(text = "actual duration: ${DateTImeFormatter.formatSeconds(stats.statistics.durationActual)}")
+            Text(text = "estimated duration: ${DateTImeConverter.formatSeconds(stats.statistics.duration)}")
+            Text(text = "actual duration: ${DateTImeConverter.formatSeconds(stats.statistics.durationActual)}")
             if(sortedByCategory) {
                 stats.statistics.groupedByCategory.forEach{ (category, items) ->
                     StatisticsCategory(heading = category, items = items)

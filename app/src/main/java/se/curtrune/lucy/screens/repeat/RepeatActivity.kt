@@ -33,6 +33,8 @@ import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.item.Repeat
 import se.curtrune.lucy.composables.RepeatDialog
 import se.curtrune.lucy.persist.SqliteLocalDB
+import se.curtrune.lucy.screens.repeat.composables.RepeatInfo
+import se.curtrune.lucy.screens.repeat.composables.RepeatList
 
 class RepeatActivity : ComponentActivity() {
     //lateinit var showDialog
@@ -59,56 +61,4 @@ class RepeatActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun RepeatList(repeats: List<Repeat>){
-    LazyColumn(modifier = Modifier.fillMaxWidth()){
-        items(repeats) { repeat->
-            RepeatInfo(repeat = repeat)
-            Spacer(modifier = Modifier.height(2.dp))
-        }
-    }
-}
-@Composable
-fun RepeatInfo(repeat: Repeat){
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth()
-            .clickable {
-                println("on repeat click id ${repeat.id}")
-            }) {
-            Text(text = "id: ${repeat.id}", color = MaterialTheme.colorScheme.onSecondaryContainer)
-            Text(
-                text = "template id: ${repeat.templateID}",
-                color = MaterialTheme.colorScheme.onSecondaryContainer
-            )
-            Text(
-                text = "first date: ${repeat.firstDate.toString()})",
-                color = MaterialTheme.colorScheme.onSecondaryContainer
-            )
-            Text(
-                text = "last date ${repeat.lastDate.toString()}",
-                color = MaterialTheme.colorScheme.onSecondaryContainer
-            )
-            Text(
-                text = "is infinity ${repeat.isInfinite}",
-                color = MaterialTheme.colorScheme.onSecondaryContainer
-            )
-            Text(
-                text = "updated ${repeat.lastDate}",
-                color = MaterialTheme.colorScheme.onSecondaryContainer
-            )
-            Text(
-                text = "${repeat.weekDays}"
-            )
-        }
-    }
-}
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    LucyTheme {
-        //RepeatList(list = )
-    }
-}

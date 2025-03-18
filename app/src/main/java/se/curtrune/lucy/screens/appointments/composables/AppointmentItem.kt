@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.screens.appointments.AppointmentEvent
-import se.curtrune.lucy.util.DateTImeFormatter
+import se.curtrune.lucy.util.DateTImeConverter
 
 
 @Composable
@@ -47,7 +47,7 @@ fun AppointmentItem(appointment: Item, onEvent: (AppointmentEvent)->Unit){
         }
 
         Text(
-            text = "${DateTImeFormatter.format(appointment.targetTime)}, ${DateTImeFormatter.format(appointment.targetDate)}",
+            text = "${DateTImeConverter.format(appointment.targetTime)}, ${DateTImeConverter.format(appointment.targetDate)}",
             modifier = Modifier.padding(start = 8.dp))
         if( appointment.comment.isNotBlank()) {
             Text(text = appointment.comment,

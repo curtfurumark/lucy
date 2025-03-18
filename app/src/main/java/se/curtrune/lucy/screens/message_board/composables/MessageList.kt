@@ -6,13 +6,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import se.curtrune.lucy.screens.message_board.MessageBoardEvent
+import se.curtrune.lucy.screens.message_board.MessageBoardState
 
 
 @Composable
 fun MessageList(state: MessageBoardState, onEvent: (MessageBoardEvent)->Unit){
     LazyColumn (modifier = Modifier.fillMaxWidth()){
         items(state.messages){ message->
-            MessageView(message = message)
+            MessageView(message = message, onEvent= onEvent)
         }
     }
 }

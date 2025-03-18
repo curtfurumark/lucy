@@ -3,8 +3,6 @@ package se.curtrune.lucy.persist
 import android.content.Context
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.item.Repeat
-import se.curtrune.lucy.util.Logger
-import se.curtrune.lucy.workers.RepeatWorker
 import java.time.LocalDate
 
 object Repeater{
@@ -15,12 +13,18 @@ object Repeater{
     fun getItems(repeat: Repeat): List<Item>{
         return emptyList()
     }
+
+    /**
+     * should only be called with a saved item,
+     * children requires template id
+     */
     fun createInstances(item: Item):List<Item>{
-        println("Repeater.getInstances()")
+        println("Repeater.getInstances($item)")
         if( !item.hasRepeat()){
             println("WARNING, trying to get instances from item with no repeat")
             return emptyList()
         }
+        println(item.repeat.toString())
         if( item.repeat.weekDays.isNotEmpty()){
             return createInstancesWeekDays(item)
         }
@@ -28,7 +32,7 @@ object Repeater{
         val items: MutableList<Item> = mutableListOf()
         var currentDate = repeat.firstDate?: return emptyList()
 
-        val lastDate = if( repeat.isInfinite) repeat.firstDate?.plusMonths(1) else repeat.lastDate
+        val lastDate = if( repeat.isInfinite) repeat.firstDate.plusMonths(1) else repeat.lastDate
         while(currentDate.isBefore(lastDate) || currentDate == lastDate){
             val instance = Item(item)
             instance.targetDate = currentDate
@@ -43,34 +47,6 @@ object Repeater{
         return items
     }
 
-    /**
-     * @param template, the template to use for creating instances
-     * @param context, context
-     * @return the saved item with id
-     */
-    fun insertRepeat(template: Item, context: Context?): Item {
-        Logger.log("ItemsWorker.insertRepeat(Item, Context)", template.heading)
-        return RepeatWorker.insertItemWithRepeat(template, context)
-    }
-/*    private fun getItems(repeat: Repeat): List<Item>{
-        //val dates: MutableList<Item> = mutableListOf()
-        println("Repeater.getItems()")
-        val items: MutableList<Item> = mutableListOf<Item>()
-        var currentDate = repeat.firstDate
-        val lastDate = if( repeat.isInfinite) repeat.firstDate.plusMonths(1) else repeat.lastDate
-        while(currentDate.isBefore(lastDate) || currentDate == lastDate){
-            val actualItem = Item(repeat.template)
-            actualItem.targetDate = currentDate
-            items.add(actualItem)
-            currentDate = when(repeat.unit){
-                Unit.DAY -> currentDate.plusDays(repeat.qualifier)
-                Unit.WEEK -> currentDate.plusWeeks(repeat.qualifier)
-                Unit.MONTH -> {currentDate.plusMonths(repeat.qualifier)}
-                Unit.YEAR -> {currentDate.plusYears(repeat.qualifier)}
-            }
-        }
-        return items
-    }*/
     private fun createInstancesWeekDays(item: Item): List<Item>{
         println("createInstancesWeekDays(${item.heading})")
         val items: MutableList<Item> = mutableListOf<Item>()

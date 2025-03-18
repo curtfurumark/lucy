@@ -33,7 +33,7 @@ import se.curtrune.lucy.R
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.item.Repeat
 import se.curtrune.lucy.screens.medicine.composable.DropdownItem
-import se.curtrune.lucy.util.DateTImeFormatter
+import se.curtrune.lucy.util.DateTImeConverter
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -180,7 +180,7 @@ fun ItemSettingDate(item: Item){
         {
             Text(text = stringResource(R.string.date))
             if (item.targetDateEpochDay > 0) {
-                Text(text = DateTImeFormatter.format(item.targetDate))
+                Text(text = DateTImeConverter.format(item.targetDate))
             }
         }
     }
@@ -200,7 +200,7 @@ fun ItemSettingDate(date: LocalDate, onEvent: ()->Unit){
                 text = stringResource(R.string.date)
             )
             if (date.toEpochDay() > 0) {
-                Text(text = DateTImeFormatter.format(date))
+                Text(text = DateTImeConverter.format(date))
             }
         }
     }
@@ -306,7 +306,7 @@ fun ItemSettingTime(item: Item){
         ) {
             Text(text = stringResource(R.string.time))
             if (item.targetTimeSecondOfDay > 0) {
-                Text(text = DateTImeFormatter.format(item.targetTime))
+                Text(text = DateTImeConverter.format(item.targetTime))
             }
         }
     }
@@ -327,7 +327,7 @@ fun ItemSettingTime(targetTime: LocalTime, onEvent: () -> Unit){
                 text = stringResource(R.string.time)
             )
             if (targetTime.toSecondOfDay() > 0) {
-                Text(text = DateTImeFormatter.format(targetTime))
+                Text(text = DateTImeConverter.format(targetTime))
             }
         }
     }

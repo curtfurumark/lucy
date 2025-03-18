@@ -12,7 +12,7 @@ data class Repeat(
     var firstDate: LocalDate = LocalDate.now(),
     var lastDate: LocalDate? = null,
     var lastActualDate: LocalDate? = null,
-    var isInfinite: Boolean = false
+    var isInfinite: Boolean = true
 ){
     enum class Unit{
         DAY, WEEK, MONTH, YEAR

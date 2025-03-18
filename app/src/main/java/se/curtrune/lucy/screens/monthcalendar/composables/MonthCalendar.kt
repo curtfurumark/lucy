@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.screens.monthcalendar.MonthCalendarEvent
 import se.curtrune.lucy.screens.monthcalendar.MonthCalendarState
-import se.curtrune.lucy.util.DateTImeFormatter
+import se.curtrune.lucy.util.DateTImeConverter
 import se.curtrune.lucy.util.cecilia
 
 @Composable
@@ -51,6 +51,6 @@ fun MonthHeader(state: MonthCalendarState, onEvent: (MonthCalendarEvent) -> Unit
             onEvent(MonthCalendarEvent.MonthYear(state.yearMonth))
         },
         horizontalArrangement = Arrangement.Center) {
-        Text(text = DateTImeFormatter.format(state.yearMonth).cecilia(), fontSize = 18.sp)
+        Text(text = DateTImeConverter.format(state.yearMonth).cecilia(), fontSize = 18.sp)
     }
 }

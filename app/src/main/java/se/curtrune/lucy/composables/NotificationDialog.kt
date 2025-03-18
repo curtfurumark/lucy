@@ -29,7 +29,7 @@ import androidx.compose.ui.window.Dialog
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.Notification
-import se.curtrune.lucy.util.DateTImeFormatter
+import se.curtrune.lucy.util.DateTImeConverter
 import java.time.LocalTime
 
 
@@ -86,7 +86,7 @@ fun NotificationDialog(onDismiss: ()->Unit, onConfirm: (Notification)->Unit){
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(text = stringResource(R.string.time))
-                    Text(text = DateTImeFormatter.format(time))
+                    Text(text = DateTImeConverter.format(time))
                 }
                 Row(modifier = Modifier.fillMaxWidth()
                     .padding(4.dp),

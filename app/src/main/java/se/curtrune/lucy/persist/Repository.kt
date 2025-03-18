@@ -1,14 +1,16 @@
 package se.curtrune.lucy.persist
 
 import android.app.Application
+import android.content.Context
+import androidx.core.content.res.use
 import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.app.Settings
-import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.State
 import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.classes.calender.CalendarWeek
 import se.curtrune.lucy.classes.calender.CalenderMonth
 import se.curtrune.lucy.classes.calender.Week
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.item.Repeat
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.workers.NotificationsWorker
@@ -120,7 +122,6 @@ class Repository (val context: Application){
     }
 
     /**
-     * if item hasRepeat, creates instance up until RepeatWorker.maxDate
      * return the the template
      * if item has notification, sets notification
      * @param item, the item to be inserted
@@ -134,7 +135,7 @@ class Repository (val context: Application){
             NotificationsWorker.setNotification(item, context)
         }
         if (item.hasRepeat()) {
-            return createInstances(item)
+            return insertRepeat(item)
         }
         var itemWithID: Item? = null
         SqliteLocalDB(context).use { db ->
@@ -142,6 +143,17 @@ class Repository (val context: Application){
         }
         mentalModule.update()
         return itemWithID
+    }
+    fun insert(repeat: Repeat?): Repeat? {
+        println("Repository.insert(Repeat)")
+        try {
+            SqliteLocalDB(context).use { db ->
+                return  db.insert(repeat)
+            }
+        } catch (e: java.lang.Exception) {
+            Logger.log("EXCEPTION", e.message)
+            return null
+        }
     }
     fun insertChild(parent: Item, child: Item): Item {
         if (VERBOSE) println("Repository.insertChild(Item, Item)")
@@ -157,11 +169,12 @@ class Repository (val context: Application){
             return db.insert(child)
         }
     }
-    private fun createInstances(item: Item):  Item{
-        println("insertItemWithRepeat()")
-        val items = Repeater.createInstances(item)
 
-        return item
+    private fun createInstances(template: Item):  Item{
+        println("createInstances($template)")
+        val items = Repeater.createInstances(template)
+        insert(items)
+        return template
     }
     fun getAppointmentsRoot(): Item {
         val settings = Settings.getInstance(context)
@@ -173,6 +186,29 @@ class Repository (val context: Application){
     fun insert(items: List<Item>){
         SqliteLocalDB(context).use { db->
             db.insert(items)
+        }
+    }
+    private fun insertRepeat(template: Item): Item?{
+        println("insertRepeat()")
+        if( !template.hasRepeat()){
+            println("should not happen, insertRepeat should only be called if item has repeat")
+            return null
+        }
+        SqliteLocalDB(context).use{db->
+            template.type = Type.REPEAT_TEMPLATE
+            val templateWithID = db.insert(template)
+            if( templateWithID == null){
+                println("trouble in paradise")
+                return null
+            }
+            val repeat = template.repeat
+            repeat.templateID = templateWithID.id
+            val repeatWithId = db.insert(template.repeat)
+            templateWithID.repeatID = repeatWithId.id
+            db.update(templateWithID)
+            val items = Repeater.createInstances(templateWithID)
+            db.insert(items)
+            return templateWithID
         }
     }
     fun restoreDeleted(item: Item): Item? {
@@ -188,9 +224,7 @@ class Repository (val context: Application){
         SqliteLocalDB(context).use { db ->
             return db.selectItems(Queeries.searchItems(filter))
         }
-
     }
-
     /**
      * selects all the items with type set to Appointment
      * @return all the items matching
@@ -316,6 +350,12 @@ class Repository (val context: Application){
         SqliteLocalDB(context).use { db ->
             item.updated = LocalDateTime.now()
             return db.update(item)
+        }
+    }
+    fun update(repeat: Repeat): Int {
+        println("Repository.update(Repeat)")
+        SqliteLocalDB(context).use { db ->
+            return db.update(repeat)
         }
     }
     companion object{

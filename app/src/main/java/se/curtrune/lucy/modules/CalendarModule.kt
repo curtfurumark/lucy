@@ -8,8 +8,11 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.CalendarContract
 import androidx.annotation.RequiresApi
+import se.curtrune.lucy.classes.ItemDuration
 import se.curtrune.lucy.classes.google_calendar.GoogleCalendar
 import se.curtrune.lucy.classes.google_calendar.GoogleCalendarEvent
+import se.curtrune.lucy.classes.item.Item
+import se.curtrune.lucy.util.DateTImeConverter
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -17,12 +20,12 @@ import java.time.ZoneId
 class CalendarModule(private val application: Application) {
     init{
         println("CalendarModule.init()")
-        val cr = application.contentResolver
+/*        val cr = application.contentResolver
         if( cr != null){
             println("got cr")
         }else{
             println("cr is null")
-        }
+        }*/
     }
     companion object{
         const val PROJECTION_ID_INDEX:Int = 0
@@ -135,6 +138,15 @@ class CalendarModule(private val application: Application) {
         return events
     }
     @RequiresApi(Build.VERSION_CODES.O)
+    fun getGoogleEventsAsItems(calendarID: Int): List<Item>{
+        val googleCalendarEvents = getEvents(calendarID)
+        val itemList : MutableList<Item> = mutableListOf()
+        googleCalendarEvents.forEach{ googleEvent->
+            itemList.add(toItem(googleEvent))
+        }
+        return itemList
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
     fun getEvents(): List<GoogleCalendarEvent>{
         println("CalendarModule.getEvents()")
         val events: MutableList<GoogleCalendarEvent> = mutableListOf()
@@ -214,5 +226,18 @@ class CalendarModule(private val application: Application) {
         }
         val eventID: Long = uri?.lastPathSegment?.toLong() ?: -1L
         println("...eventID: $eventID")
+    }
+    private fun toItem(googleCalendarEvent: GoogleCalendarEvent): Item{
+        println("toItem(GoogleCalendarEvent)")
+        val item = Item()
+        item.heading = googleCalendarEvent.title
+        item.description = googleCalendarEvent.description
+        item.targetDate = DateTImeConverter.epochMillisToLocalDate(googleCalendarEvent.dtStart)
+        item.targetTime =DateTImeConverter.epochMillisToLocalTime(googleCalendarEvent.dtStart)
+        item.setIsCalenderItem(true)
+        if( googleCalendarEvent.isAllDay){
+            item.itemDuration = ItemDuration(type = ItemDuration.Type.DAY)
+        }
+        return item
     }
 }

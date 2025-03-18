@@ -30,21 +30,30 @@ import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.screens.week_calendar.WeekEvent
-import se.curtrune.lucy.util.DateTImeFormatter
+import se.curtrune.lucy.util.DateTImeConverter
 import java.time.LocalDate
 import java.time.format.TextStyle
 
 @Composable
 fun WeekDate(calendarDate: CalenderDate, onEvent: (WeekEvent)->Unit){
+    println("WeekDate ${calendarDate.date.toString()}")
     var backgroundColor by remember {
         mutableStateOf(Color.Transparent)
     }
+    var borderColor by remember {
+        mutableStateOf(Color.DarkGray)
+    }
     if( calendarDate.date == LocalDate.now()){
+        println("is today")
         backgroundColor = MaterialTheme.colorScheme.secondaryContainer
+        borderColor = MaterialTheme.colorScheme.onSecondaryContainer
+    }else{ //shouldn't be necessary, but it is,
+        borderColor = Color.Transparent
+        borderColor= Color.DarkGray
     }
     Box(
         modifier = Modifier
-            .border(2.dp, color = Color.DarkGray)
+            .border(2.dp, color = borderColor)
             .aspectRatio(1.2F)
             .clip(RoundedCornerShape(5.dp))
             .background(color = MaterialTheme.colorScheme.background)
@@ -58,10 +67,10 @@ fun WeekDate(calendarDate: CalenderDate, onEvent: (WeekEvent)->Unit){
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                modifier = Modifier.fillMaxWidth()
-                    .background(backgroundColor),
+                modifier = Modifier.fillMaxWidth(),
+                    //.background(backgroundColor),
                 textAlign = TextAlign.Center,
-                text = "${DateTImeFormatter.format(calendarDate.date.dayOfWeek, TextStyle.SHORT)} ${calendarDate.date.dayOfMonth}",
+                text = "${DateTImeConverter.format(calendarDate.date.dayOfWeek, TextStyle.SHORT)} ${calendarDate.date.dayOfMonth}",
                 fontSize = 20.sp)
             calendarDate.items.reversed().forEach { event->
                 Box(
@@ -70,7 +79,7 @@ fun WeekDate(calendarDate: CalenderDate, onEvent: (WeekEvent)->Unit){
                 ) {
                     Text(
                         modifier = Modifier.padding(start = 2.dp),
-                        text = "${DateTImeFormatter.format(event.targetTime)} ${event.heading}",
+                        text = "${DateTImeConverter.format(event.targetTime)} ${event.heading}",
                         maxLines = 1
                     )
                 }
