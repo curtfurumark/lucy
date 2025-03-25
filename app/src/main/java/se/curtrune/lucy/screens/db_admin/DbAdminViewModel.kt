@@ -11,7 +11,7 @@ class DbAdminViewModel:  ViewModel() {
     //private lateinit var context: Context
 
     init {
-        _state.value.dbName = SqliteLocalDB.getDbName()
+        _state.value.dbName = SqliteLocalDB.dbName
         //DBAdmin.getTableNames(context)
         //LocalContext.current
     }

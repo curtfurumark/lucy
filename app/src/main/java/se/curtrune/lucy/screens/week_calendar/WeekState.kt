@@ -7,7 +7,7 @@ import se.curtrune.lucy.classes.calender.Week
 data class WeekState(
     //val calendarDates: List<CalenderDate> = emptyList(),
     val calendarWeek: CalendarWeek = CalendarWeek(),
-    //val allWeekItems: List<Item> = emptyList(),
+    val showContextMenu: Boolean = false,
     val currentWeek: Week = Week(),
     val currentParent: Item? = null,
     val numPages: Int = 10,

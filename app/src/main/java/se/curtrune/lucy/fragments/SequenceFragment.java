@@ -107,14 +107,14 @@ public class SequenceFragment extends Fragment implements SequenceAdapter.Callba
     }
     private void initSequence(){
         log("...initSequence()");
-        items = ItemsWorker.selectChildren(parentItem, getContext());
+/*        items = ItemsWorker.selectChildren(parentItem, getContext());
         items.sort(Comparator.comparingLong(Item::getTargetTimeSecondOfDay));
         log("...number of items in sequence", items.size());
         if( items.size() < 1){
             Toast.makeText(getContext(), "need at least one item for this thing to make sense", Toast.LENGTH_LONG).show();
             return;
         }
-        currentItem = items.get(currentItemIndex);
+        currentItem = items.get(currentItemIndex);*/
     }
     private void initComponents(View view){
         log("...initComponents()");
@@ -215,7 +215,7 @@ public class SequenceFragment extends Fragment implements SequenceAdapter.Callba
     @Override
     public void onEditTime(Item item) {
         log("SequenceActivity.onEditTime(Item)");
-        LocalTime rightNow = LocalTime.now();
+/*        LocalTime rightNow = LocalTime.now();
         int minutes = rightNow.getMinute();
         int hour = rightNow.getHour();
         TimePickerDialog timePicker = new TimePickerDialog(getContext(), (view, hourOfDay, minute) -> {
@@ -225,20 +225,20 @@ public class SequenceFragment extends Fragment implements SequenceAdapter.Callba
             items.sort(Comparator.comparingLong(Item::getTargetTimeSecondOfDay));
             adapter.notifyDataSetChanged();
         }, hour, minutes, true);
-        timePicker.show();
+        timePicker.show();*/
     }
 
     @Override
     public void onEditDuration(Item item) {
         log("...onEditDuration(Item)");
-        DurationDialog dialog = new DurationDialog(Duration.ofSeconds(0), duration->{
+/*        DurationDialog dialog = new DurationDialog(Duration.ofSeconds(0), duration->{
             log("...onDurationDialog(Duration)");
             item.setDuration(duration.getSeconds());
             ItemsWorker.update(item, getContext());
             adapter.notifyDataSetChanged();
             updateUserInterface();
         });
-        dialog.show(getChildFragmentManager(), "edit duration");
+        dialog.show(getChildFragmentManager(), "edit duration");*/
     }
 
     @Override
@@ -249,18 +249,12 @@ public class SequenceFragment extends Fragment implements SequenceAdapter.Callba
     @Override
     public void onCheckboxClicked(Item item, boolean checked) {
         log("...onCheckboxClicked(Item, boolean)", checked);
-        item.setState(checked ? State.DONE: State.TODO);
+/*        item.setState(checked ? State.DONE: State.TODO);
         int rowsAffected = ItemsWorker.update(item, getContext());
         if( rowsAffected != 1){
             log("ERROR, error updating state of item");
         }
-        updateUserInterface();
-    }
-    private void update(Item item){
-        log("...update(Item)", item.getHeading());
-        ItemsWorker.update(item, getContext());
-        items.sort(Comparator.comparingLong(Item::getTargetTimeSecondOfDay));
-        adapter.notifyDataSetChanged();
+        updateUserInterface();*/
     }
 
     /**

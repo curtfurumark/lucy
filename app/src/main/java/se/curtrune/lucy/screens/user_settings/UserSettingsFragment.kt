@@ -78,7 +78,6 @@ class UserSettingsFragment: Fragment() {
                 if(showMessage){
                     Toast.makeText(context, "message", Toast.LENGTH_LONG).show()
                 }
-
             }
         }
     }

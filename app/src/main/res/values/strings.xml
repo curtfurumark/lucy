@@ -271,4 +271,5 @@
     <string name="sync_with_google_calendar">sync with google calendar</string>
     <string name="choose_a_calendar">choose a calendar to sync with</string>
     <string name="is_template">template</string>
+    <string name="all_week_heading">all week</string>
 </resources>

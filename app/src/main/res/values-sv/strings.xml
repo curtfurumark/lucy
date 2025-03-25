@@ -207,6 +207,7 @@
     <string name="add_a_message_to_the_message_board">Lägg till i anslagstavlan</string>
     <string name="is_template">template</string>
     <string name="updated">Uppdaterad</string>
+    <string name="all_week_heading">hela veckan</string>
 
 
 </resources>

@@ -50,13 +50,7 @@ public class Converter {
     public static String format(LocalTime time){
         return time.format(DateTimeFormatter.ofPattern(TIME_FORMAT_PATTERN));
     }
-    @Deprecated
-    public static String format(LocalDateTime dateTime) {
-        if (dateTime == null) {
-            return "";
-        }
-        return dateTime.format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT_PATTERN));
-    }
+
     /**
      *
      * @param dateTime, the dateTime to be converted to formatted string representation
@@ -70,8 +64,7 @@ public class Converter {
     }
 
 
-
-    /**
+  /**
      *
      * @param secs number of seconds to format
      * @return secs formatted HH:mm:ss
@@ -83,7 +76,4 @@ public class Converter {
         return String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, seconds);
     }
 
-    public static String formatDate(long date) {
-        return LocalDate.ofEpochDay(date).format(DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN));
-    }
 }

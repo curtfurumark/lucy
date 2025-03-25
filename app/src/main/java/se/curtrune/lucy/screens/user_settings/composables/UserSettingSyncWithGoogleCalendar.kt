@@ -38,6 +38,12 @@ fun UserSettingSyncWithGoogleCalendar(state: UserState, onEvent: (UserEvent)->Un
     var syncWithGoogle by remember {
         mutableStateOf(state.syncWithGoogle)
     }
+    var calendarID by remember {
+        mutableStateOf(state.googleCalendarID)
+    }
+    var showCalendars by remember {
+        mutableStateOf(false)
+    }
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Row(
@@ -57,11 +63,11 @@ fun UserSettingSyncWithGoogleCalendar(state: UserState, onEvent: (UserEvent)->Un
                         Text(text = stringResource(R.string.choose_a_calendar))
                     }
                     Row(modifier = Modifier.fillMaxWidth()){
-                        Text(text = "calendar id: ${state.googleCalendarID}")
+                        Text(text = "sync with calendar id: ${state.googleCalendarID}")
                     }
                     Row(modifier = Modifier.fillMaxWidth()){
                         Button(onClick = {
-                            onEvent(UserEvent.GetEvents(7))
+                            onEvent(UserEvent.GetEvents(state.googleCalendarID))
                         }){
                             Text(text = "get events")
                         }

@@ -20,8 +20,8 @@ class MentalModule(private val application: Application) {
     var estimated = _estimated.asStateFlow()
     init{
         println("MentalModule.init")
-        _current.value = MentalWorker.getMental(date, application)
-        currentMental.value = MentalWorker.getMental(date, application)
+        //_current.value = MentalWorker.getMental(date, application)
+        //currentMental.value = MentalWorker.getMental(date, application)
     }
     companion object{
         //lateinit var mental: Mental

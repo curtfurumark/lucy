@@ -13,7 +13,7 @@ class MessageTest {
             subject = "my subject",
             content = "my content",
             category = "todo",
-            state = Message.State.TODO
+            state = Message.State.TODO.ordinal
         )
         val json = Gson().toJson(message)
         println("json: $json")

@@ -23,10 +23,8 @@ class WeekViewModel: ViewModel() {
     private val _state = MutableStateFlow(WeekState())
     val state = _state.asStateFlow()
     private var week = Week()
-    //val pagerState = MutableStateFlow(PagerState())
     val pagerState = PagerState()
     var mutableWeek: MutableLiveData<Week> = MutableLiveData()
-    //var initialPage: Int = 5
     var currentPage = pagerState.initialPage
     var dialogSettings = DialogSettings()
     init{
@@ -73,11 +71,25 @@ class WeekViewModel: ViewModel() {
             is WeekEvent.OnPage -> {onPage(event.page)}
             is WeekEvent.ShowAddItemDialog -> showAddItemDialog()
             is WeekEvent.AddItem -> {addItem(event.item)}
+            is WeekEvent.OnAllWeekLongClick -> {
+                onAllWeekLongClick(event.week)
+            }
         }
     }
     private fun onAllWeekClick(week: Week){
+        println("onAllWeekClick(Week)")
+        viewModelScope.launch {
+            eventChannel.send(
+                WeekChannel.ShowAddAllWeekNote
+            )
+        }
 
-
+    }
+    private fun onAllWeekLongClick(week: Week){
+        println("onAllWeekLongClick(${week.toString()})")
+        viewModelScope.launch {
+            eventChannel.send(WeekChannel.ShowAddAllWeekNote)
+        }
     }
     private fun onPage(newPageIndex: Int){
         println("...onPage($newPageIndex)")

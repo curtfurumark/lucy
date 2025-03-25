@@ -16,39 +16,31 @@ import se.curtrune.lucy.composables.PostponeDetails
 import se.curtrune.lucy.modules.PostponeWorker
 import java.time.LocalDate
 
-class DateViewModel: ViewModel(){
-    private val repository = LucindaApplication.repository
-    private val timeModule = LucindaApplication.timeModule
+class DateViewModelBasic: ViewModel(){
+    private var repository = LucindaApplication.repository
     private var currentWeekPage = 5
     private var items: List<Item> = emptyList()
     private val eventChannel = Channel<DayChannel>()
     val eventFlow = eventChannel.receiveAsFlow()
     private val _state = MutableStateFlow(DayCalendarState())
     private var latestDeletedItem: Item? = null
-    private val todoRoot: Item? = repository.getTodoRoot()
+    private val todoRoot: Item? = null
     val state = _state.asStateFlow()
     //private lateinit var _tabStack: TabStack
 
     init{
-        println("DateViewModel.init")
+        println("DateViewModelBasic.init")
         items = repository.selectItems(_state.value.date)
-        _state.value.items = items
-        _state.value.currentParent = todoRoot
+        _state.update {
+            it.copy(
+                items = items,
+                currentParent = repository.getTodoRoot()
+            )
+        }
+
     }
     private fun addItem(item: Item){
         println("...addItem(Item) ${item.heading}")
-        if( item.itemDuration != null) {
-            println("...itemDuration: ${item.itemDuration.type.name}")
-        }else{
-            println("...itemDuration is null")
-        }
-        if( repository.insert(item) == null){
-            println("error inserting item")
-            return
-        }
-        _state.update { it.copy(
-            items = repository.selectItems(state.value.date)
-        ) }
     }
     private fun confirmDelete(item: Item){
         println("...confirmDelete(${item.heading})")
@@ -61,16 +53,7 @@ class DateViewModel: ViewModel(){
     }
     private fun deleteItem(item: Item){
         println("DateViewModel.deleteItem(${item.heading}")
-        latestDeletedItem = item
-        if( !repository.delete(item)){
-            println("error deleting item")
-            _state.value.errorMessage = "error deleting ${item.heading}"
-        }else{
-            println("item deleted ok")
-            _state.update { it.copy(
-                items = it.items.minus(item)
-            ) }
-        }
+
     }
 
     private fun editItem(item: Item){
@@ -112,67 +95,15 @@ class DateViewModel: ViewModel(){
     }
     private fun postpone(postponeDetails: PostponeDetails){
         println("postpone(${postponeDetails.toString()})")
-        if( postponeDetails.postPoneAll){
-            val postponeItem = postponeDetails.item ?: return
-            val postponeAmount = postponeDetails.amount
-            println("postpone item and all items after")
-            val filteredItems = state.value.items.filter { item-> item.targetTime.isAfter(postponeItem.targetTime) }
-            filteredItems.forEach{ item->
-                println(item.toString())
-                repository.update(PostponeWorker.postponeItem(item, amount = postponeAmount ))
-                if( item.targetDate != state.value.date){
-                    _state.update { it.copy(
-                        items = it.items.minus(item)
-                    ) }
-                }
-            }
-            //sort list, needed or not, better safe than sorry
-            sortItems()
-            repository.update(postponeItem)
-        }else{
-            println(" postpone single item")
-            val postponeItem = postponeDetails.item?:return
-            repository.update(PostponeWorker.postponeItem(postponeItem, postponeDetails.amount))
-            //if item has been postponed out of current date
-            if(postponeItem.targetDate != state.value.date){
-                _state.update { it.copy(
-                    items = it.items.minus(postponeItem)
-                ) }
-            }else{
-                sortItems()
-            }
-        }
+
     }
     private fun restoreDeletedItem(){
         println("restoreDeletedItem")
-        //repository.restore()
-        repository
 
     }
     private fun search(filter: String, everywhere: Boolean){
         println("DateViewModel.search($filter, everywhere: $everywhere)")
-        if( everywhere){
-            if( filter.isEmpty()){
-                _state.update {it.copy(
-                        items = items
-                    )
-                }
-            }else {
-                val filteredItems = repository.search(filter)
-                _state.update {
-                    it.copy(
-                        items = filteredItems
-                    )
-                }
-            }
-        }else {
-            val filteredItems: List<Item> = items.filter { item -> item.contains(filter) }
-            _state.update {
-                it.copy(
-                    items = filteredItems
-                )
-            }
-        }
+
     }
     fun setCalendarDate(calendarDate: CalenderDate) {
         println("DateViewModel.setCalendarDate(${calendarDate.date.toString()})")
@@ -181,16 +112,7 @@ class DateViewModel: ViewModel(){
     }
     private fun setCurrentDate(newDate: LocalDate){
         println("DateViewModel.setCurrentDate(${newDate.toString()})")
-        items = repository.selectItems(newDate)
-        items.forEach{item->
-            println(item)
-        }
-        _state.update {it.copy(
-                currentWeek = Week(newDate),
-                date = newDate,
-                items = items
-            )
-        }
+
     }
     private fun setCurrentWeek(page: Int){
         println("setCurrentWeek(page : $page)")
@@ -200,11 +122,11 @@ class DateViewModel: ViewModel(){
         }
         val nWeeks = page - currentWeekPage
         val newDate = _state.value.date.plusWeeks(nWeeks.toLong())
-        _state.update { it.copy(
+/*        _state.update { it.copy(
            currentWeek =  it.currentWeek.plusWeek(nWeeks),
             date = newDate,
             items =  repository.selectItems(newDate)
-        ) }
+        ) }*/
         currentWeekPage = page
     }
     private fun getWeek(){
@@ -219,12 +141,12 @@ class DateViewModel: ViewModel(){
                 )
             ) }
         }
-        _state.update { it.copy(
+/*        _state.update { it.copy(
            items = repository.selectChildren(item),
             currentParent = item,
             showTabs = true,
             tabs = it.tabs + item,
-            ) }
+            ) }*/
     }
     private fun showPostponeDialog(item: Item){
         _state.update { it.copy(
@@ -245,11 +167,11 @@ class DateViewModel: ViewModel(){
     }
     private fun startTimer(item: Item){
         println("startTimer(${item.heading})")
-        timeModule.startTimer(item.id)
+        //timeModule.startTimer(item.id)
     }
     private fun tabSelected(index : Int, item: Item?){
         println("tabSelected($index)")
-        if( index == 0){
+/*        if( index == 0){
             _state.update {  it.copy(
                 items = repository.selectItems(state.value.date),
                 showTabs = false,
@@ -267,18 +189,18 @@ class DateViewModel: ViewModel(){
                 currentParent = parentItem,
                 items = repository.selectChildren(parentItem)
             ) }
-        }
+        }*/
     }
     private fun updateItem(item: Item){
         println("...updateItem(${item.heading})")
-        val rowsAffected = repository.update(item)
+/*        val rowsAffected = repository.update(item)
         if( rowsAffected != 1){
             println("error updating item")
         }
         _state.update { state ->
             state.copy(
                 items = state.items.sortedBy { it.targetTime }
-        ) }
+        ) }*/
     }
     private fun sortItems(items: List<Item>): List<Item>{
         return items.sortedBy { it.targetTime }

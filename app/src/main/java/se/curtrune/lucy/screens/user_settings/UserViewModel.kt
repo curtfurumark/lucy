@@ -58,6 +58,7 @@ class UserViewModel: ViewModel(){
             is UserEvent.GoogleCalendar -> {googleCalendarId(event.id)}
             is UserEvent.GetEvents -> { getEvents(event.calendarID)}
             is UserEvent.Language -> { setLanguage(event.language)}
+            is UserEvent.SyncWithCalendar -> {syncWithCalendar(event.calendarID)}
         }
 
     }
@@ -68,6 +69,10 @@ class UserViewModel: ViewModel(){
     private fun setLanguage(language: String){
         userSettings.language = language
     }
+    private fun syncWithCalendar(calendarID: Int) {
+        userSettings.googleCalendarId = calendarID
+    }
+
     private fun syncWithGoogleCalendar(sync: Boolean){
         println("sync with google calendar($sync)")
         userSettings.syncWithGoogleCalendar = sync

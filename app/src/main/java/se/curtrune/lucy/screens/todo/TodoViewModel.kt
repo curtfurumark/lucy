@@ -87,6 +87,10 @@ class TodoViewModel : ViewModel() {
             is ItemEvent.StartTimer -> {}
             is ItemEvent.InsertItem -> {}
             is ItemEvent.ShowAddItemDialog -> {showAddItemDialog()}
+            is ItemEvent.InsertChild -> {
+                //TODO, implement this
+                println("insert child TODO")
+            }
         }
     }
     fun onEvent(event: TopAppBarEvent){

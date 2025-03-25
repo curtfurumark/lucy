@@ -31,6 +31,8 @@ import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.screens.item_editor.ItemEvent
 import se.curtrune.lucy.util.Converter
+import se.curtrune.lucy.util.DateTImeConverter
+import java.time.format.DateTimeFormatter
 
 
 @Composable
@@ -45,8 +47,8 @@ fun ItemEditorDev(item: Item, onEvent: (ItemEvent)->Unit) {
         Spacer(modifier = Modifier.height(4.dp))
         EditType(item, onEvent = onEvent)
         Spacer(modifier = Modifier.height(4.dp))
-        Text(text = "created: ${Converter.format(item.created)}", color = Color.White)
-        Text(text = "updated: ${Converter.format(item.updated)}", color = Color.White)
+        Text(text = "created: ${DateTImeConverter.format(item.created)}", color = Color.White)
+        Text(text = "updated: ${DateTImeConverter.format(item.updated)}", color = Color.White)
     }
 }
 

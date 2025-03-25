@@ -77,7 +77,8 @@ public class Demo {
         createMiddagsTips(context);
     }
     public static void createReadingList(Context context){
-        SqliteLocalDB db = new SqliteLocalDB(context);
+        //println("...createReadingList(Context)");
+/*        SqliteLocalDB db = new SqliteLocalDB(context);
         Item projectsRoot = ItemsWorker.getRootItem(Settings.Root.PROJECTS, context);
         Item readingList = getProjectItem("reading list");
         readingList = db.insertChild(projectsRoot, readingList);
@@ -98,7 +99,7 @@ public class Demo {
         Item fish = getProjectItem("so long and thanks for all the fish");
         db.insertChild(douglas, fish);
         Item restaurant = getProjectItem("the restaurant at the end of the universe");
-        db.insertChild(douglas, restaurant);
+        db.insertChild(douglas, restaurant);*/
     }
     public static void createMiddagsTips(Context context){
         log("...createMiddagsTips()");
@@ -136,7 +137,7 @@ public class Demo {
     }
     public static void createShoppingList(Context context){
         log("Demo.createShoppingList()");
-        try(SqliteLocalDB db = new SqliteLocalDB(context)){
+/*        try(SqliteLocalDB db = new SqliteLocalDB(context)){
             Item projects = ItemsWorker.getProjectsRoot(context);
             Item shoppingList = getProjectItem("shopping list");
             db.insertChild(projects, shoppingList);
@@ -154,26 +155,26 @@ public class Demo {
             db.insertChild(shoppingList, butter);
             db.insertChild(shoppingList, salt);
             db.insertChild(shoppingList, jam);
-        }
+        }*/
     }
     public static void insertPanic(Context context){
         log("...insertPanic(Context)");
-        SqliteLocalDB db = new SqliteLocalDB(context);
+/*        SqliteLocalDB db = new SqliteLocalDB(context);
         Item panicRoot = ItemsWorker.getPanicRoot(context);
         db.insertChild(panicRoot, getPanicItem("breathe") );
         db.insertChild(panicRoot, getPanicItem("go for a walk") );
-        db.insertChild(panicRoot,getPanicItem("read a book"));
+        db.insertChild(panicRoot,getPanicItem("read a book"));*/
     }
     public static void insertRepeatItems(Context context){
         log("...insertRepeatItems(Context)");
-        SqliteLocalDB db = new SqliteLocalDB(context);
+/*        SqliteLocalDB db = new SqliteLocalDB(context);
         Item root = ItemsWorker.getDailyRoot(context);
         db.insertChild( root, getRepeatItem("medicin am", 1, LocalTime.of(8, 0)));
         db.insertChild(root, getRepeatItem("borsta tänderna am", 1, LocalTime.of(8, 10)));
         db.insertChild(root,getRepeatItem("borsta tänderna pm", 1, LocalTime.of(21, 0)));
         db.insertChild(root, getRepeatItem("plocka", 0, LocalTime.of(0,0)));
         db.insertChild(root, getRepeatItem("promenad", 1, LocalTime.of(14, 0)));
-        db.insertChild(root, getRepeatItem("vattna blommor", 3, LocalTime.of(11, 0)));
+        db.insertChild(root, getRepeatItem("vattna blommor", 3, LocalTime.of(11, 0)));*/
     }
     public static void insertDemo(Context context) throws SQLException {
         log("DBAdmin.insertDemo(Context)");

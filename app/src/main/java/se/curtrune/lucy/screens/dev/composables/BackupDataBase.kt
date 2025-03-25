@@ -8,17 +8,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
+import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.persist.DBAdmin
 import se.curtrune.lucy.screens.dev.DevEvent
 
 @Composable
 fun BackupDataBase(onEventCopy: ()->Unit){
+    val context = LucindaApplication.contextModule.application
     Card(modifier = Modifier.fillMaxWidth()) {
         Column() {
             Text(text = "copy db to external", fontSize = 24.sp)
             Button(onClick = {
-                //onEvent(DevEvent.CreateItemTree)
+                DBAdmin.backupDataBase(context)
             }){
-                Text("create tree")
+                Text("back up data")
             }
         }
     }

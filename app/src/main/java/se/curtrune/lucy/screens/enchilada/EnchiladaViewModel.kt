@@ -45,6 +45,7 @@ class EnchiladaViewModel : ViewModel() {
             is ItemEvent.Edit -> {edit(event.item)}
             is ItemEvent.InsertItem -> {insertItem(event.item)}
             is ItemEvent.ShowAddItemDialog -> {showAddItemDialog()}
+            is ItemEvent.InsertChild -> {println("insert child")}
         }
     }
     fun onEvent(event: TopAppBarEvent){

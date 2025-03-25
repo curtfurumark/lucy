@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.item.Item
@@ -61,8 +62,13 @@ class CalendarDayFragment() : Fragment() {
                     var showAddItemDialog by remember{
                         mutableStateOf(false)
                     }
-                    val dayViewModel = viewModel<DateViewModel>()
+                    println("before initialization of date view model")
+                    //val dayViewModel = viewModel<DateViewModel>()
+                    //val dayViewModel = ViewModelProvider(requireActivity())[DateViewModel::class.java]
+                    val dayViewModel: DateViewModel = viewModel()
+                    println("after initialization of date view model")
                     val mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
+                    println("after initialization of main view model")
                     val filter = mainViewModel.filter.collectAsState()
                     LaunchedEffect(filter.value) {
                         println("launched effect, calendar day filter: ${filter.value} ")
@@ -162,9 +168,10 @@ class CalendarDayFragment() : Fragment() {
             Toast.makeText(context, "not a template", Toast.LENGTH_SHORT).show()
             return
         }
-        val items = ItemsWorker.selectTemplateChildren(
-            item,
-            context
+        //TODO
+        val repository = LucindaApplication.repository
+        val items = repository.selectTemplateChildren(
+            item
         )
         val statistics = ItemStatistics(items)
         val dialog = ItemStatisticsDialog(statistics)

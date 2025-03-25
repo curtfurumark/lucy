@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.Window
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -28,6 +29,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -62,7 +64,9 @@ import se.curtrune.lucy.persist.SqliteLocalDB
 import se.curtrune.lucy.screens.log_in.LogInActivity
 import se.curtrune.lucy.screens.main.MainActivity
 import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
+import se.curtrune.lucy.screens.daycalendar.DayChannel
 import se.curtrune.lucy.screens.dev.composables.AffirmationTest
+import se.curtrune.lucy.screens.dev.composables.BackupDataBase
 import se.curtrune.lucy.screens.dev.composables.CalendarWeekTest
 import se.curtrune.lucy.screens.dev.composables.CheckForUpdateKtor
 import se.curtrune.lucy.screens.dev.composables.DurationTest
@@ -70,6 +74,7 @@ import se.curtrune.lucy.screens.dev.composables.ExecuteQuery
 import se.curtrune.lucy.screens.dev.composables.GetQuoteKtor
 import se.curtrune.lucy.screens.dev.composables.InsertItemWithID
 import se.curtrune.lucy.screens.dev.composables.RepeatTest
+import se.curtrune.lucy.screens.dev.composables.RepositoryTest
 import se.curtrune.lucy.screens.dev.composables.TestGoogleCalendars
 import se.curtrune.lucy.screens.dev.composables.TestScrollableYearMonth
 import se.curtrune.lucy.screens.dev.composables.TestSwipeAble
@@ -86,9 +91,12 @@ class DevActivity : AppCompatActivity() {
     private val alarmRinging = false
     private var lucinda: Lucinda? = null
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.dev_activity)
+        //requestWindowFeature(Window.FEATURE_NO_TITLE)
+        supportActionBar?.hide()
         title = "lucinda dev"
         println("DevActivity.onCreate(Bundle)")
         //printSystemInfo()
@@ -96,12 +104,6 @@ class DevActivity : AppCompatActivity() {
         initContent()
     }
 
-    private fun copyDatabase(){
-        println("DevActivity.copyDatabase()")
-        val dbFile = getDatabasePath(SqliteLocalDB.getDbName())
-        println("...absolute path ${dbFile.absolutePath}")
-
-    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     @OptIn(ExperimentalMaterial3Api::class)
@@ -113,13 +115,20 @@ class DevActivity : AppCompatActivity() {
             val state = devViewModel.state.collectAsState()
             val context = LocalContext.current
             val mental = devViewModel.mental
+            LaunchedEffect(devViewModel) {
+                devViewModel.eventFlow.collect{ event->
+                    when(event){
+                        is DevChannel.NavigateToDayCalendar -> {
+                            navigateToDayCalendar()
+                        }
+                        is DevChannel.ShowNavigationDrawer -> {}
+                    }
+                }
+            }
             LucyTheme {
                 val scope = rememberCoroutineScope()
                 val scrollState = rememberScrollState()
                 val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-                var showSearch by remember {
-                    mutableStateOf(false)
-                }
                 val drawerState = rememberDrawerState(DrawerValue.Closed)
                 ModalNavigationDrawer(drawerState = drawerState,
                     drawerContent = {
@@ -169,12 +178,36 @@ class DevActivity : AppCompatActivity() {
                                 var showStopwatchService by remember{
                                     mutableStateOf(false)
                                 }
+                                var showRepositoryTest by remember {
+                                    mutableStateOf(false)
+                                }
+                                val showGoogleCalendar by remember {
+                                    mutableStateOf(true)
+                                }
+                                val showBackupDataBase by remember {
+                                    mutableStateOf(false)
+                                }
+                                val showCountDownService by remember {
+                                    mutableStateOf(false)
+                                }
                                 if( showRunSQL){
                                     ExecuteQuery(onEvent = {event->
                                         devViewModel.onEvent(event)
                                     })
                                 }
-                                TestGoogleCalendars()
+                                if( showRepositoryTest) {
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    RepositoryTest()
+                                }
+                                if( showGoogleCalendar) {
+                                    TestGoogleCalendars()
+                                }
+                                if( showBackupDataBase) {
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    BackupDataBase(onEventCopy = {
+                                        println("please copy database")
+                                    })
+                                }
                                 //GetQuoteKtor()
                                 //AffirmationTest()
                                 //CheckForUpdateKtor()
@@ -249,10 +282,12 @@ class DevActivity : AppCompatActivity() {
                                     })
                                 }
 
-                                Spacer(modifier = Modifier.height(16.dp))
-                                CountDownTimerService(15, onCommand = { command, duration ->
-                                    sendCommandToTimeService(command, duration)
-                                })
+                                if( showCountDownService) {
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    CountDownTimerService(15, onCommand = { command, duration ->
+                                        sendCommandToTimeService(command, duration)
+                                    })
+                                }
                             }
                         }
                     }
@@ -416,6 +451,10 @@ class DevActivity : AppCompatActivity() {
 
         //showAddItemDialog();
     }
+    private fun navigateToDayCalendar() {
+        startActivity(Intent(this, MainActivity::class.java))
+    }
+
 
     private fun printTableNames() {
         Logger.log("...printTableNames()")
@@ -465,7 +504,11 @@ class DevActivity : AppCompatActivity() {
         item.heading = heading
         item.targetDate = LocalDate.now()
         item.targetTime = targetTime
-        val todoParent = ItemsWorker.getRootItem(Settings.Root.TODO, this)
+        val todoParent = repository.getRootItem(Settings.Root.TODO)
+        if( todoParent == null){
+            println("todoParent == null")
+            return
+        }
         item.parentId = todoParent.id
         item.notification = notification
         item = repository.insertChild(todoParent, item)

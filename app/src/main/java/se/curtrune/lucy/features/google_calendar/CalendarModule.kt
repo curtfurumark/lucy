@@ -1,4 +1,4 @@
-package se.curtrune.lucy.modules
+package se.curtrune.lucy.features.google_calendar
 
 import android.app.Application
 import android.content.ContentValues
@@ -14,6 +14,7 @@ import se.curtrune.lucy.classes.google_calendar.GoogleCalendarEvent
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.util.DateTImeConverter
 import java.time.Instant
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 
@@ -115,8 +116,6 @@ class CalendarModule(private val application: Application) {
         val events: MutableList<GoogleCalendarEvent> = mutableListOf()
         val bundle = Bundle()
         bundle.putInt(CalendarContract.Events.CALENDAR_ID, calendarID)
-        //CalendarContract.Instances.CALENDAR_ID
-        //val selectionArgs = arrayOf(calendarID.toString())
         val whereClause = "${CalendarContract.Events.CALENDAR_ID}=$calendarID"
         //val cursor = application.contentResolver.query(CalendarContract.Events.CONTENT_URI, PROJECTION_CALENDAR_EVENTS, bundle, null)
         val cursor = application.contentResolver.query(
@@ -128,6 +127,34 @@ class CalendarModule(private val application: Application) {
             println("got myself a cursor, column count: $colCount")
             while(cursor.moveToNext()){
                 //println("moving to next/first)")
+                events.add(cursorToGoogleEvent(cursor))
+            }
+        }
+        else{
+            println("cursor is null")
+        }
+        cursor?.close()
+        return events
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getEvents(calendarID: Int, firstDate: LocalDate):List<GoogleCalendarEvent>{
+        println("getEvents from calendar with id: $calendarID, starting from date: ${firstDate.toString()}")
+        val events: MutableList<GoogleCalendarEvent> = mutableListOf()
+        val bundle = Bundle()
+        bundle.putInt(CalendarContract.Events.CALENDAR_ID, calendarID)
+        val firstDateMillis = firstDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        val whereClause = "${CalendarContract.Events.CALENDAR_ID}=$calendarID AND ${CalendarContract.Events.DTSTART} >= $firstDateMillis"
+       // val whereClause = "${CalendarContract.Events.CALENDAR_ID}= ? , ${CalendarContract.Events.DTSTART} >= ?"
+        val whereArgs = arrayOf("$calendarID", "$firstDateMillis")
+        println("whereClause: $whereClause")
+        val cursor = application.contentResolver.query(
+            CalendarContract.Events.CONTENT_URI,
+            PROJECTION_CALENDAR_EVENTS,
+            whereClause, emptyArray(), null)
+        if( cursor != null){
+            val colCount = cursor.columnCount
+            println("got myself a cursor, column count: $colCount")
+            while(cursor.moveToNext()){
                 events.add(cursorToGoogleEvent(cursor))
             }
         }
@@ -197,6 +224,9 @@ class CalendarModule(private val application: Application) {
             println("cursor is null")
         }
         return events
+    }
+    fun getHolidays(){
+        println("CalendarModule.getHolidays()")
     }
     fun insertItem(){
 

@@ -1,4 +1,4 @@
-package se.curtrune.lucy.modules
+package se.curtrune.lucy.features
 
 import android.app.Application
 import android.content.Intent
@@ -8,6 +8,9 @@ import se.curtrune.lucy.services.TimerService.Companion.ACTION_PAUSE_STOPWATCH
 import se.curtrune.lucy.services.TimerService.Companion.ACTION_START_STOPWATCH
 
 class TimeModule(private val application: Application){
+    init {
+        println("TimeModule.init{}")
+    }
     fun cancelTimer(){
         sendCommand(ACTION_CANCEL_STOPWATCH)
     }

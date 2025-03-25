@@ -61,7 +61,7 @@ class ItemSessionViewModel : ViewModel() {
         checkNotNull(item)
         this.currentItem = item
         if (currentItem!!.repeatID > 0) {
-            val repeat = ItemsWorker.selectRepeat(currentItem!!.repeatID, context)
+            val repeat =    repository.selectRepeat(currentItem!!.repeatID)
             currentItem!!.setRepeat(repeat)
         }
         mutableCurrentItem.value = currentItem
@@ -194,7 +194,15 @@ class ItemSessionViewModel : ViewModel() {
             is ItemEvent.Edit -> {}
             is ItemEvent.InsertItem -> {}
             is ItemEvent.ShowAddItemDialog -> {}
+            is ItemEvent.InsertChild -> {
+                insertChild(event.item)
+            }
         }
+    }
+    private fun insertChild(item: Item){
+        println("ItemSessionViewModel.insertChild(${item.heading})")
+        currentItem?.let { repository.insertChild(it, item) }
+
     }
 
     private fun pauseTimer() {

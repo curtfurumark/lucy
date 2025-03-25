@@ -22,7 +22,7 @@ class SystemInfoModule(val context: Application) {
         systemInfo.add(SystemInfo("HARDWARE", Build.HARDWARE))
         systemInfo.add(SystemInfo("MODEL", Build.MODEL))
         systemInfo.add(SystemInfo("MANUFACTURER", Build.MANUFACTURER))
-        systemInfo.add(SystemInfo("LOCAL_DB_VERSION", SqliteLocalDB.getDbVersion().toString()))
+        systemInfo.add(SystemInfo("LOCAL_DB_VERSION", SqliteLocalDB.dbVersion.toString()))
         systemInfo.add(SystemInfo("DISPLAY", Build.DISPLAY))
         systemInfo.add(SystemInfo("BRAND", Build.BRAND))
         systemInfo.add(SystemInfo("PRODUCT", Build.PRODUCT))

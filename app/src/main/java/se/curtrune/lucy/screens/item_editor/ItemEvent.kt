@@ -10,6 +10,7 @@ sealed interface ItemEvent {
     data class GetChildrenType(val parent: Item, val type: Type): ItemEvent
     data class GetItem(val id: Long): ItemEvent
     data class InsertItem(val item: Item): ItemEvent
+    data class InsertChild(val item: Item): ItemEvent
     data class Update(val item: Item): ItemEvent
     data object StartTimer: ItemEvent
     data object PauseTimer: ItemEvent

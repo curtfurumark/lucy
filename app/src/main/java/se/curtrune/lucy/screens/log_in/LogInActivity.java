@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat;
 
 import java.sql.SQLException;
 
+import se.curtrune.lucy.LucindaApplication;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.app.UserPrefs;
 import se.curtrune.lucy.screens.main.MainActivity;
@@ -85,12 +86,8 @@ public class LogInActivity extends AppCompatActivity {
 
     private void checkInternetConnection(){
         log("...checkInternetConnection()");
-        boolean isConnected = InternetWorker.isConnected(this);
+        boolean isConnected = LucindaApplication.internetWorker.isConnected();
         log("...isConnected", isConnected);
-        if( !isConnected){
-            Toast.makeText(this, "no internet connection", Toast.LENGTH_LONG).show();
-        }
-
     }
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     private void checkNotificationPermission() {

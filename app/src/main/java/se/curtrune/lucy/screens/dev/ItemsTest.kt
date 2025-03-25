@@ -16,7 +16,7 @@ object ItemsTest {
         Logger.log("...createFamilyItems()")
         var rootItem = Item("rootItem")
         val todoRoot = repository.getTodoRoot()
-        rootItem = repository.insertChild(todoRoot, rootItem)
+        rootItem = todoRoot?.let { repository.insertChild(it, rootItem) }!!
         var child1 = Item("child1")
         child1 = repository.insertChild(rootItem, child1)
         var child2  = Item("child2")
@@ -30,17 +30,17 @@ object ItemsTest {
 
     fun deleteTree(parent: Item, context: Context?) {
         Logger.log("...deleteTree(Item)", parent.heading)
-        ItemsWorker.deleteTree(parent, context)
+        repository.deleteTree(parent)
     }
 
     fun deleteTree(parentID: Long, context: Context?) {
         Logger.log("ItemTest.deleteTree(long, Context)")
-        val item = ItemsWorker.selectItem(parentID, context)
+        val item = repository.selectItem(parentID)
         if (item == null) {
             Logger.log(" no item with that id found ")
             return
         }
         ItemsWorker.VERBOSE = true
-        ItemsWorker.deleteTree(item, context)
+        repository.deleteTree(item)
     }
 }

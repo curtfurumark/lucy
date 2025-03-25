@@ -36,11 +36,6 @@ object CalendarHelper {
         }
         return calenderDates
     }
-/*    fun getCalendarDates(week: Week): List<CalenderDate> {
-        Logger.log("CalendarWorker.getEvents(Week, Context)", week.toString())
-        repository.getCalendarWeek()
-        return getCalenderDates(week.firstDateOfWeek, week.lastDateOfWeek)
-    }*/
 
     /**
      * this one is supposed to return items to be shown in week or month calender
@@ -70,8 +65,9 @@ object CalendarHelper {
         println("CalendarHelper.selectCalenderItems(LocalDate, Context)")
         val queery = Queeries.selectCalenderItems(currentDate)
         println("queery $queery")
-        SqliteLocalDB(context).use { db ->
-            return db.selectItems(queery)
-        }
+        val db = SqliteLocalDB(context)
+        val items =db.selectItems(queery)
+        db.close()
+        return items
     }
 }

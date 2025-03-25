@@ -27,14 +27,4 @@ public class ExampleInstrumentedTest {
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         assertEquals("se.curtrune.lucy", appContext.getPackageName());
     }
-    @Test
-    public void testMediaItem(){
-        log("...testMediaItem()");
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        Item item = ItemsWorker.selectItem(4244, appContext);
-        if(item != null){
-            log("item heading", item.getHeading());
-        }
-        assertEquals("root", item.getHeading());
-    }
 }

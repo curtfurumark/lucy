@@ -27,12 +27,14 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import se.curtrune.lucy.LucindaApplication;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.ItemAdapter;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.classes.item.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.dialogs.AddItemDialog;
+import se.curtrune.lucy.persist.Repository;
 import se.curtrune.lucy.screens.item_editor.ItemEditorFragment;
 import se.curtrune.lucy.fragments.SequenceFragment;
 import se.curtrune.lucy.screens.main.MainViewModel;
@@ -43,6 +45,8 @@ public class ProjectsFragment extends Fragment implements
         TabLayout.OnTabSelectedListener {
 
     private RecyclerView recycler;
+    //private Repository repository = LucindaApplication.repository;
+    private final Repository repository = LucindaApplication.repository;
     private TabLayout tabLayout;
     private FloatingActionButton buttonAddItem;
     private ItemAdapter adapter;
@@ -90,7 +94,7 @@ public class ProjectsFragment extends Fragment implements
         }else{
             log("...mental deleted from db");
         }*/
-        boolean deleted = ItemsWorker.delete(item, getContext());
+        boolean deleted = repository.delete(item);
         if( !deleted){
             log("...error deleting item");
             Toast.makeText(getContext(), "error deleting item", Toast.LENGTH_LONG).show();
@@ -102,7 +106,7 @@ public class ProjectsFragment extends Fragment implements
     }
     private void descend(Item item){
         log("...descend(Item)", item.getHeading());
-        items = ItemsWorker.selectChildren(item, getContext());
+        items = repository.selectChildren(item);
         currentParent = item;
         projectsViewModel.push(item);
         adapter.setList(items);
@@ -140,7 +144,7 @@ public class ProjectsFragment extends Fragment implements
             currentParent = projectsViewModel.getCurrentParent();
         }else{
             log("\t\tempty stack, setting root/currentParent");
-            currentParent = ItemsWorker.getRootItem(Settings.Root.PROJECTS, getContext());
+            currentParent = repository.getRootItem(Settings.Root.PROJECTS);
             projectsViewModel.setRoot(currentParent);
             addTab(currentParent);
         }
@@ -220,11 +224,11 @@ public class ProjectsFragment extends Fragment implements
     public void onCheckboxClicked(Item item, boolean checked) {
         log("...onCheckboxClicked(Item, boolean)", checked);
         item.setState(checked ? State.DONE: State.TODO);
-        int rowsAffected = ItemsWorker.update(item, getContext());
+        int rowsAffected = repository.update(item);
         if( rowsAffected != 1){
             log("ERROR updating state of item", item.getHeading());
         }
-        items = ItemsWorker.selectChildren(currentParent, getContext());
+        items = repository.selectChildren(currentParent);
         items.sort(Comparator.comparingLong(Item::compare));
         adapter.notifyDataSetChanged();
 
@@ -243,7 +247,7 @@ public class ProjectsFragment extends Fragment implements
         AddItemDialog dialog = new AddItemDialog(currentParent, false);
         dialog.setCallback(item -> {
             log("...AddItemDialog.onAddItem(Item)", item.getHeading());
-            item = ItemsWorker.insert(item, getContext());
+            item = repository.insert(item);
             if(VERBOSE) log(item);
             items.add(item);
             items.sort(Comparator.comparingLong(Item::compare));
@@ -254,7 +258,7 @@ public class ProjectsFragment extends Fragment implements
     private void showChildren(TabLayout.Tab tab){
         log("...showChildren(Tab)", Objects.requireNonNull(tab.getText()).toString());
         Item parent = (Item) tab.getTag();
-        items = ItemsWorker.selectChildren(parent, getContext());
+        items = repository.selectChildren(parent);
         adapter.setList(items);
     }
     private void showDeleteDialog(Item item){

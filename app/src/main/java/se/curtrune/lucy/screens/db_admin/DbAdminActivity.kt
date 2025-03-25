@@ -16,7 +16,7 @@ import se.curtrune.lucy.persist.SqliteLocalDB
 
 class DbAdminActivity : ComponentActivity() {
     private fun getDbPath():String{
-        val file = getDatabasePath(SqliteLocalDB.getDbName())
+        val file = getDatabasePath(SqliteLocalDB.dbName)
         println("db path ${file.absolutePath}")
         return file.absolutePath
     }

@@ -25,6 +25,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.navigation.NavigationView
+import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.flying_fish.GameActivity
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
@@ -32,6 +33,7 @@ import se.curtrune.lucy.app.FirstPage
 import se.curtrune.lucy.app.Settings.PanicAction
 import se.curtrune.lucy.app.UserPrefs
 import se.curtrune.lucy.classes.Mental
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.top_app_bar.LucindaControls
 import se.curtrune.lucy.dialogs.PanicActionDialog
 import se.curtrune.lucy.dialogs.UpdateDialog
@@ -219,6 +221,10 @@ class MainActivity : AppCompatActivity() {
                                 state.value.versionInfo?.let { showUpdateDialog(it) }
                             }
                         }
+
+                        is MainChannelEvent.StartSequence -> {
+                            navigate(SequenceFragment(event.root))
+                        }
                     }
                 }
             }
@@ -365,7 +371,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun openWebPage(url: String) {
         Logger.log("...openWebPage(String url)", url)
-        if (!InternetWorker.isConnected(this)) {
+        if (LucindaApplication.internetWorker.isConnected()) {
             Toast.makeText(this, R.string.no_internet_connection, Toast.LENGTH_LONG).show()
             return
         }
@@ -414,19 +420,16 @@ class MainActivity : AppCompatActivity() {
                     GameActivity::class.java
                 )
             )
-
             PanicAction.URL -> {
                 val url = UserPrefs.getRandomPanicUrl(this)
                 openWebPage(url)
             }
 
             PanicAction.SEQUENCE -> {
-                val panicRoot = ItemsWorker.getPanicRoot(this)
-                if (panicRoot == null) {
-                    Logger.log("ERROR...panicRoot == null")
-                } else {
-                    navigate(SequenceFragment(panicRoot))
-                }
+                println("...SEQUENCE")
+                mainViewModel!!.onEvent(MainEvent.StartSequence(Item()))
+                //navigate(SequenceFragment(panicRoot))
+                //}
             }
 
             PanicAction.ICE -> panicActionICE()
@@ -434,14 +437,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    @Composable
-    private fun showBoostDialog(affirmation: Affirmation) {
-        Logger.log("...showBoostDialog(Affirmation)")
-        //val boostDialog = BoostDialog(affirmation.affirmation)
-        //boostDialog.show(supportFragmentManager, "boost me")
-    }
-
-    private fun showPanicAction() {
+/*    private fun showPanicAction() {
         val panicAction = mainViewModel!!.getPanicAction(this)
         Logger.log("...showPanicAction()", panicAction.toString())
         when (panicAction) {
@@ -475,7 +471,7 @@ class MainActivity : AppCompatActivity() {
                     Toast.LENGTH_LONG
                 ).show()
         }
-    }
+    }*/
     private fun showUpdateDialog(versionInfo: VersionInfo){
         val dialog = UpdateDialog(versionInfo) {
             Logger.log("here we go")

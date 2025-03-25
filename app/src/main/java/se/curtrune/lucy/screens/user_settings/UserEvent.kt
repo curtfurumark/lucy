@@ -5,5 +5,6 @@ sealed interface UserEvent {
     data class GetEvents(val calendarID: Int): UserEvent
     data class Language(val language: String): UserEvent
     data class SyncWithGoogle(val sync: Boolean): UserEvent
+    data class SyncWithCalendar(val calendarID: Int): UserEvent
     data class GoogleCalendar(val id: Int): UserEvent
 }

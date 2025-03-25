@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Menu
@@ -54,11 +55,13 @@ fun LucindaTopAppBar(onEvent: (TopAppBarEvent)->Unit){
                     showSearchField = !showSearchField
 
                 })
+            Spacer(modifier = Modifier.width(8.dp))
             Icon(imageVector = Icons.Default.DateRange, contentDescription = "day calendar",
                 modifier =  Modifier.clickable {
                     onEvent(TopAppBarEvent.DayCalendar)
 
                 })
+            Spacer(modifier = Modifier.width(8.dp))
             Icon(imageVector = Icons.Default.MoreVert, contentDescription = "action menu",
                 modifier = Modifier.clickable {
                     onEvent(TopAppBarEvent.Menu)

@@ -22,6 +22,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
+import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.composables.AddItemFab
@@ -75,8 +76,8 @@ class MessageBoardFragment : Fragment(), OnTabSelectedListener {
                             is MessageChannel.ShowAddMessageBottomSheet -> {showAddMessageBottomSheet = true}
                             is MessageChannel.ShowSnackBar -> {
                                 println("snackbar message: ${event.message}")
+                                Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
                             }
-
                             is MessageChannel.ShowProgressBar -> {
                                 showProgressBar =event.show
                             }
@@ -130,7 +131,7 @@ class MessageBoardFragment : Fragment(), OnTabSelectedListener {
 
 
     private fun showMessageDialog() {
-        if (!InternetWorker.isConnected(context)) {
+        if (!LucindaApplication.internetWorker.isConnected()) {
             Logger.log("...trying to add a message to message board without internet connection")
             Toast.makeText(context, getString(R.string.no_internet_connection), Toast.LENGTH_LONG)
                 .show()

@@ -2,12 +2,15 @@ package se.curtrune.lucy.screens.message_board.composables
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
@@ -21,7 +24,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -57,6 +65,10 @@ fun AddMessageBottomSheet(onDismiss: ()->Unit, onSave: (Message)->Unit){
     var isTodo by remember {
         mutableStateOf(false)
     }
+    val focusRequester =  remember {
+        FocusRequester()
+    }
+    val focusManager = LocalFocusManager.current
     ModalBottomSheet(
         onDismissRequest = {
             onDismiss()
@@ -66,21 +78,34 @@ fun AddMessageBottomSheet(onDismiss: ()->Unit, onSave: (Message)->Unit){
         //val windowInsets = LocalWindowInsets.
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
+                    .focusRequester(focusRequester),
                 textAlign = TextAlign.Center,
                 text = stringResource(R.string.add_a_message_to_the_message_board),
                 fontSize = 20.sp)
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
+                maxLines = 1,
                 value = subject,
                 onValueChange = {
                     subject = it
                     message.subject = it},
-                label = {Text(text = stringResource(R.string.subject))})
+                label = {Text(text = stringResource(R.string.subject))},
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                keyboardActions = KeyboardActions(
+                    onNext = {
+                        val stat = focusManager.moveFocus(FocusDirection.Down)
+                        println("move focus down: $stat")
+                    }
+                )
+
+            )
             OutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
+                    .focusable(true),
                 value = content,
+                ///singleLine = true,
                 onValueChange = {
                     content = it
                     message.content = it},

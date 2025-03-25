@@ -10,6 +10,7 @@ sealed interface WeekEvent{
     data class CalendarDateClick(val calendarDate: CalenderDate): WeekEvent
     data object ShowAddItemDialog: WeekEvent
     data class OnAllWeekClick(val week: Week): WeekEvent
+    data class OnAllWeekLongClick(val week: Week): WeekEvent
     data class OnPage(val page: Int): WeekEvent
 
 }

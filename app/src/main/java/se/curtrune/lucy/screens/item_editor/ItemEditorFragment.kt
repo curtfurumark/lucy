@@ -5,6 +5,7 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -21,6 +22,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
 import android.widget.TimePicker
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.material3.Text
@@ -110,6 +112,7 @@ class ItemEditorFragment : Fragment {
         this.currentItem = item
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -153,6 +156,7 @@ class ItemEditorFragment : Fragment {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun initItemSettingRecycler() {
         Logger.log("....initItemSettingRecycler")
         itemSettingAdapter = ItemSettingAdapter(
@@ -442,7 +446,8 @@ class ItemEditorFragment : Fragment {
         Logger.log("...showAddChildItemDialog()")
         val dialog = AddItemDialog(currentItem, false)
         dialog.setCallback { item: Item? ->
-            //val itemWithId = ItemsWorker.insertChild(currentItem, item, context)
+            item?.let { ItemEvent.InsertChild(it) }?.let { itemSessionViewModel!!.onEvent(it) }
+            //val itemWithId = repos.insertChild(currentItem, item, context)
             //if (VERBOSE) Logger.log(itemWithId)
             returnToPreviousFragment()
         }
@@ -489,6 +494,7 @@ class ItemEditorFragment : Fragment {
             .show()
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun showDateDialog() {
         val datePickerDialog = DatePickerDialog(requireContext())
         datePickerDialog.setOnDateSetListener { view: DatePicker?, year: Int, month: Int, dayOfMonth: Int ->

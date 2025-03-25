@@ -2,14 +2,19 @@ package se.curtrune.lucy.screens.dev
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
 import se.curtrune.lucy.persist.SqliteLocalDB
+import se.curtrune.lucy.screens.daycalendar.DayChannel
 import se.curtrune.lucy.screens.dev.composables.MyTab
 import se.curtrune.lucy.screens.dev.test_cases.LocalDBTest
 import se.curtrune.lucy.screens.item_editor.ItemEvent
@@ -20,6 +25,8 @@ class DevViewModel : ViewModel() {
     private var _mentalModule = LucindaApplication.mentalModule
     private var _mental = MutableStateFlow(_mentalModule.current)
     var mental = _mental.asStateFlow()
+    private val eventChannel = Channel<DevChannel>()
+    val eventFlow = eventChannel.receiveAsFlow()
     private var _state = MutableStateFlow(DevState())
     val state = _state.asStateFlow()
 
@@ -31,6 +38,9 @@ class DevViewModel : ViewModel() {
     }
     private fun dayCalendar(){
         println("day calendar")
+        viewModelScope.launch {
+            eventChannel.send(DevChannel.NavigateToDayCalendar)
+        }
     }
     private fun addTab(heading: String){
         val newTab = MyTab.ItemTab(Item(heading))
@@ -102,6 +112,7 @@ class DevViewModel : ViewModel() {
             is ItemEvent.Edit -> {}
             is ItemEvent.InsertItem -> {}
             is ItemEvent.ShowAddItemDialog -> {}
+            is ItemEvent.InsertChild -> {insertItem(event.item)}
         }
     }
     fun onEvent(event: TopAppBarEvent){
@@ -112,6 +123,9 @@ class DevViewModel : ViewModel() {
             is TopAppBarEvent.DayCalendar -> {dayCalendar()}
             is TopAppBarEvent.Menu -> { showNavigationDrawer()}
         }
+    }
+    private fun insertItem(item: Item){
+        println("insertItem(${item.heading})")
     }
     private fun onPanic(){
         println("onPanic()")

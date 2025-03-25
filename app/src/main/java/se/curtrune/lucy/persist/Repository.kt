@@ -2,8 +2,6 @@ package se.curtrune.lucy.persist
 
 import android.app.Application
 import android.content.Context
-import androidx.core.content.res.use
-import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.app.Settings
 import se.curtrune.lucy.classes.State
 import se.curtrune.lucy.classes.Type
@@ -19,9 +17,9 @@ import java.time.LocalDateTime
 import java.time.YearMonth
 
 class Repository (val context: Application){
-    private val mentalModule = LucindaApplication.mentalModule
+    //private val mentalModule = LucindaApplication.mentalModule
     init {
-        println("init")
+        println("Repository.init{}")
     }
 
     /**
@@ -55,20 +53,17 @@ class Repository (val context: Application){
     /**
      * deletes an item, but if it has children, //TODO delete children recursively
      * @param item, the item to delete from the db
-     * @param context context context context
      * @return true if item was deleted false otherwise
      */
     fun delete(item: Item): Boolean {
         println("Repository.delete(${item.heading})")
         var res = false
-        var rowsAffected: Int
-        SqliteLocalDB(context).use { db ->
-            rowsAffected = db.delete(item)
-        }
+        val db = SqliteLocalDB(context)
+        val rowsAffected = db.delete(item)
         if (rowsAffected != 1) {
             println("ERROR deleting item ${item.heading}")
         } else {
-            mentalModule.update()
+            //mentalModule.update()
             res = true
         }
         return res
@@ -76,21 +71,19 @@ class Repository (val context: Application){
     fun delete(id: Long): Boolean {
         println("Repository.delete(id: $id)")
         var res = false
-        var rowsAffected: Int
-        SqliteLocalDB(context).use { db ->
-            rowsAffected = db.delete(id)
-        }
+        val db = SqliteLocalDB(context)
+        val rowsAffected = db.delete(id)
         if (rowsAffected != 1) {
             println("ERROR deleting item id: $id")
         } else {
-            mentalModule.update()
+            //mentalModule.update()
             res = true
         }
         return res
     }
 
     fun getCalenderMonth(yearMonth: YearMonth): CalenderMonth {
-        Logger.log("...getCalenderMonth(YearMonth)", yearMonth.toString())
+        println("Repository.getCalenderMonth($yearMonth)")
         val calenderMonth = CalenderMonth(yearMonth)
         calenderMonth.calenderDates = CalendarHelper.getCalenderDates(
             calenderMonth.firstDate,
@@ -100,14 +93,12 @@ class Repository (val context: Application){
         return calenderMonth
     }
     fun getCalendarWeek(week: Week): CalendarWeek {
-        println("Repository.getCalendarWeek(${week.toString()})")
+        println("Repository.getCalendarWeek($week)")
         return CalendarHelper.getCalendarWeek(week)
     }
 
-
     /**
      * @param item, the item for which you wish to get its parent
-     * @param context context context context
      * @return the parent, TODO, null if not parent?
      */
     fun getParent(item: Item?): Item? {
@@ -116,8 +107,29 @@ class Repository (val context: Application){
             return null
         }
         if (VERBOSE) println("Repository.getParent(${item.heading})")
+        val db = SqliteLocalDB(context)
+        val parent = db.getParent(item)
+        db.close()
+        return parent
+    }
+    fun getRootItem(root: Settings.Root?): Item? {
+        if (ItemsWorker.VERBOSE) Logger.log("ItemsWorker.getRootItem(Settings.Root, Context)")
+        val settings = Settings.getInstance(context)
+        var rootID: Long = -1
+        when (root) {
+            Settings.Root.APPOINTMENTS -> rootID = settings.getRootID(Settings.Root.APPOINTMENTS)
+            Settings.Root.TODO -> rootID = settings.getRootID(Settings.Root.TODO)
+            Settings.Root.DAILY -> rootID = settings.getRootID(Settings.Root.DAILY)
+            Settings.Root.PROJECTS -> rootID = settings.getRootID(Settings.Root.PROJECTS)
+            Settings.Root.PANIC -> rootID = settings.getRootID(Settings.Root.PANIC)
+            Settings.Root.THE_ROOT -> rootID = settings.getRootID(Settings.Root.THE_ROOT)
+            null -> {
+                println("root is null")
+            }
+        }
+        if (ItemsWorker.VERBOSE) Logger.log("root id ", rootID)
         SqliteLocalDB(context).use { db ->
-            return db.selectItem(item.parentId)
+            return db.selectItem(rootID)
         }
     }
 
@@ -125,11 +137,9 @@ class Repository (val context: Application){
      * return the the template
      * if item has notification, sets notification
      * @param item, the item to be inserted
-     * @param context context context
      * @return the inserted item, with its id field set to whatever db decided, autoincrement
      */
     fun insert(item: Item): Item? {
-
         println("Repository.insert(Item) ${item.heading}")
         if (item.hasNotification()) {
             NotificationsWorker.setNotification(item, context)
@@ -137,14 +147,13 @@ class Repository (val context: Application){
         if (item.hasRepeat()) {
             return insertRepeat(item)
         }
-        var itemWithID: Item? = null
-        SqliteLocalDB(context).use { db ->
-            itemWithID = db.insert(item)
-        }
-        mentalModule.update()
+        val db = SqliteLocalDB(context)
+        val itemWithID = db.insert(item)
+        db.close()
+        //mentalModule.update()
         return itemWithID
     }
-    fun insert(repeat: Repeat?): Repeat? {
+    fun insert(repeat: Repeat): Repeat? {
         println("Repository.insert(Repeat)")
         try {
             SqliteLocalDB(context).use { db ->
@@ -158,16 +167,17 @@ class Repository (val context: Application){
     fun insertChild(parent: Item, child: Item): Item {
         if (VERBOSE) println("Repository.insertChild(Item, Item)")
         if (!parent.hasChild()) {
-            Logger.log("....no children for this parent, yet, parent: ", parent.heading)
-            ItemsWorker.setHasChild(parent, true, context)
+            println("....no children for this parent, yet, parent: ${parent.heading}")
+            setHasChild(parent, true, context)
         }
         child.parentId = parent.id
         if (child.hasRepeat()) {
             return createInstances(child)
         }
-        SqliteLocalDB(context).use { db ->
-            return db.insert(child)
-        }
+        val db = SqliteLocalDB(context)
+        val itemWithID = db.insert(child)
+        db.close()
+        return itemWithID
     }
 
     private fun createInstances(template: Item):  Item{
@@ -176,17 +186,18 @@ class Repository (val context: Application){
         insert(items)
         return template
     }
-    fun getAppointmentsRoot(): Item {
+    fun getAppointmentsRoot(): Item? {
         val settings = Settings.getInstance(context)
         val id = settings.getRootID(Settings.Root.APPOINTMENTS)
-        SqliteLocalDB(context).use { db ->
-            return db.selectItem(id)
-        }
+        val db = SqliteLocalDB(context)
+        val item = db.selectItem(id)
+        db.close()
+        return item
     }
     fun insert(items: List<Item>){
-        SqliteLocalDB(context).use { db->
-            db.insert(items)
-        }
+        val db = SqliteLocalDB(context)
+        db.insert(items)
+        db.close()
     }
     private fun insertRepeat(template: Item): Item?{
         println("insertRepeat()")
@@ -194,36 +205,44 @@ class Repository (val context: Application){
             println("should not happen, insertRepeat should only be called if item has repeat")
             return null
         }
-        SqliteLocalDB(context).use{db->
+/*        SqliteLocalDB(context).use{db->
             template.type = Type.REPEAT_TEMPLATE
             val templateWithID = db.insert(template)
-            if( templateWithID == null){
-                println("trouble in paradise")
-                return null
-            }
             val repeat = template.repeat
             repeat.templateID = templateWithID.id
             val repeatWithId = db.insert(template.repeat)
-            templateWithID.repeatID = repeatWithId.id
+            templateWithID.repeatID = repeatWithId!!.id
             db.update(templateWithID)
             val items = Repeater.createInstances(templateWithID)
             db.insert(items)
             return templateWithID
-        }
+        }*/
+        val db = SqliteLocalDB(context)
+        template.type = Type.REPEAT_TEMPLATE
+        val templateWithID = db.insert(template)
+        val repeat = template.repeat
+        repeat.templateID = templateWithID.id
+        val repeatWithID = db.insert(template.repeat)
+        templateWithID.repeatID = repeatWithID!!.id
+        db.update(templateWithID)
+        val items = Repeater.createInstances(templateWithID)
+        db.insert(items)
+        return templateWithID
     }
-    fun restoreDeleted(item: Item): Item? {
+    fun restoreDeleted(item: Item): Item {
         println("Repository.restoreDeleted(${item.heading})")
-        var deletedItem: Item? = null
-        SqliteLocalDB(context).use { db ->
-            deletedItem = db.insert(item)
-        }
-        return deletedItem
+        //var deletedItem: Item? = null
+        val db = SqliteLocalDB(context)
+        val insertedItem = db.insert(item)
+        db.close()
+        return insertedItem
     }
     fun search(filter: String): List<Item>{
         println("Repository.search($filter)")
-        SqliteLocalDB(context).use { db ->
-            return db.selectItems(Queeries.searchItems(filter))
-        }
+        val db = SqliteLocalDB(context)
+        val items = db.selectItems(Queeries.searchItems(filter))
+        db.close()
+        return items
     }
     /**
      * selects all the items with type set to Appointment
@@ -232,131 +251,161 @@ class Repository (val context: Application){
     fun selectAppointments(): List<Item> {
         println("Repository.selectAppointments()")
         val query = Queeries.selectAppointments()
-        SqliteLocalDB(context).use { db ->
-            return db.selectItems(query)
-        }
+        val db = SqliteLocalDB(context)
+        val items = db.selectItems(query)
+        db.close()
+        return items
     }
     fun selectChildren(parent: Item?): List<Item> {
         println("Repository.selectChildren(Item)")
-        SqliteLocalDB(context).use { db ->
-            return db.selectItems(Queeries.selectChildren(parent))
-        }
+        val db =   SqliteLocalDB(context)
+        val items =  db.selectItems(Queeries.selectChildren(parent))
+        db.close()
+        return items
     }
     fun selectItem(id: Long): Item? {
         println("Repository.selectItem(long, Context)")
-        try {
-            SqliteLocalDB(context).use { db ->
-                return  db.selectItem(id)
-            }
-        } catch (e: Exception) {
-            Logger.log("EXCEPTION", e.message)
-        }
-        return null
+        val db = SqliteLocalDB(context)
+        val item = db.selectItem(id)
+        db.close()
+        return item
     }
 
     /**
      * selects all the items
-     * @param context, context context
      * @return all the items in the table items
      */
     fun selectItems(): List<Item> {
         println("Repository.selectItems()")
-        SqliteLocalDB(context).use { db ->
-            return db.selectItems()
-        }
+        val db= SqliteLocalDB(context)
+        val items = db.selectItems()
+        db.close()
+        return items
     }
 
     fun selectItems(date: LocalDate ): List<Item> {
-        println("Repository.selectItems(${date.toString()})")
+        println("Repository.selectItems($date)")
         val queery = Queeries.selectItems(date)
-        var items: List<Item>
-        SqliteLocalDB(context).use { db ->
-            items = db.selectItems(queery)
-        }
+        val db = SqliteLocalDB(context)
+        val items = db.selectItems(queery)
         return items
     }
     fun selectItems(date: LocalDate, state: State): List<Item> {
-        if(VERBOSE) println("Repository.selectItems(Date ${date.toString()}, State: ${state.toString()})")
-        SqliteLocalDB(context).use { db ->
-            return db.selectItems(Queeries.selectItems(date, state))
-        }
+        if(VERBOSE) println("Repository.selectItems(Date $date, State: $state)")
+        val db = SqliteLocalDB(context)
+        val items = db.selectItems(Queeries.selectItems(date, state))
+        db.close()
+        return items
     }
     fun selectItems(query: String):List<Item>{
         println("selectItems($query)")
-        SqliteLocalDB(context).use { db->
-            return db.selectItems(query)
-        }
+        val db = SqliteLocalDB(context)
+        val items = db.selectItems(query)
+        db.close()
+        return items
     }
 
     /**
      * selects all the items for week where field isCalendarItem is set to 1
      */
     fun selectItems(week: Week): List<Item>{
-        SqliteLocalDB(context).use { db->
-            return db.selectItems(Queeries.selectItems(week))
-        }
+        println("Repository.selectItems($week)")
+        val db = SqliteLocalDB(context)
+        val items = db.selectItems(Queeries.selectItems(week))
+        db.close()
+        return items
     }
 
     /**
      * select done items as specified by argument
      * @param firstDate first date inclusive
      * @param lastDate last date inclusive
-     * @param context just the frigging context
      * @return a list as specified
      */
     fun selectItems(firstDate: LocalDate?, lastDate: LocalDate?): List<Item> {
         println("Repository.selectItems($firstDate, $lastDate)")
-        SqliteLocalDB(context).use { db ->
-            val query = Queeries.selectItems(firstDate, lastDate, State.DONE)
-            return db.selectItems(query)
-        }
+        val db = SqliteLocalDB(context)
+        val items = db.selectItems(Queeries.selectItems(firstDate, lastDate, State.DONE))
+        db.close()
+        return items
     }
     fun selectItems(state: State): List<Item> {
-        println("Repository.selectItems(state: ${state.toString()})")
-        SqliteLocalDB(context).use { db ->
-            return db.selectItems(Queeries.selectItems(state))
-        }
+        println("Repository.selectItems(state: $state)")
+        val db = SqliteLocalDB(context)
+        val items = db.selectItems(Queeries.selectItems(state))
+        db.close()
+        return items
     }
 
     /**
      * not in use right now, but i suspect it will be need some time in the not so distant future
      * @param type the type to be selected,
-     * @param context context context context
      * @return a list of item of said type
      */
     fun selectItems(type: Type): List<Item> {
         val query = Queeries.selectItems(type)
+        val db = SqliteLocalDB(context)
+        val items = db.selectItems(query)
+        db.close()
+        return items
+    }
+    fun selectRepeat(id: Long): Repeat? {
+        println("ItemsWorker.selectRepeat(id: $id)")
         SqliteLocalDB(context).use { db ->
-            return db.selectItems(query)
+            return db.selectRepeat(id)
+        }
+    }
+    fun deleteTree(parent: Item) {
+        Logger.log("ItemsWorker.deleteTree(Item, Context)", parent.heading)
+        if (parent.hasChild()) {
+            val children = selectChildren(parent)
+            for (item in children) {
+                deleteTree(item)
+            }
+        }
+        Logger.log("DELETE ME", parent.heading)
+        val stat = delete(parent)
+        if (!stat) {
+            Logger.log("ERROR DELETING ITEM")
         }
     }
     fun selectRepeats(): List<Repeat>{
-        SqliteLocalDB(context).use { db->
-            return db.selectRepeats()
-        }
+        val db = SqliteLocalDB(context)
+        val repeats = db.selectRepeats()
+        db.close()
+        return repeats
     }
     fun selectTemplateChildren(parent: Item?): List<Item> {
-        SqliteLocalDB(context).use { db ->
-            return db.selectItems(Queeries.selectTemplateChildren(parent))
-        }
+        val db = SqliteLocalDB(context)
+        val children = db.selectItems(Queeries.selectTemplateChildren(parent))
+        db.close()
+        return children
+    }
+    private fun setHasChild(item: Item, hasChild: Boolean, context: Context?) {
+        if (ItemsWorker.VERBOSE) Logger.log("ItemsWorker.setHasChild(Item, Context)", item.heading)
+        val db = SqliteLocalDB(context)
+        db.setItemHasChild(item.id, hasChild)
+        db.close()
     }
 
     fun update(item: Item): Int {
         println("Repository.update(${item.heading})")
         if (item.isTemplate && item.isDone) {
-            mentalModule.update()
+            //mentalModule.update()
             return updateTemplate(item)
         }
-        SqliteLocalDB(context).use { db ->
-            item.updated = LocalDateTime.now()
-            return db.update(item)
-        }
+        val db = SqliteLocalDB(context)
+        item.updated = LocalDateTime.now()
+        val rowsAffected = db.update(item)
+        db.close()
+        return rowsAffected
     }
     fun update(repeat: Repeat): Int {
         println("Repository.update(Repeat)")
-        SqliteLocalDB(context).use { db ->
-            return db.update(repeat)
-        }
+        val db = SqliteLocalDB(context)
+        val rowsAffected = db.update(repeat)
+        db.close()
+        return rowsAffected
     }
     companion object{
         var VERBOSE = false
@@ -364,38 +413,39 @@ class Repository (val context: Application){
 
     private fun updateTemplate(template: Item): Int {
         println("Repository.updateTemplate(Item: ${template.heading})")
-        SqliteLocalDB(context).use { db ->
-            if (template.isDone) {
-                //if (ItemsWorker.VERBOSE) Logger.log("...template is done, will spawn a child")
-                template.state = State.TODO
-                var child = createActualItem(template)
-                child.type = Type.TEMPLATE_CHILD
-                child = db.insertChild(
-                    template,
-                    child
-                ) //creates and inserts mental, or rather insert(Item) does
-                if (template.hasRepeat()) {
-                    template.updateTargetDate()
-                } else {
-                    template.targetDate = LocalDate.now()
-                }
-                template.duration = 0
+        val db = SqliteLocalDB(context)
+        if (template.isDone) {
+            template.state = State.TODO
+            var child = createActualItem(template)
+            child.type = Type.TEMPLATE_CHILD
+            child = db.insertChild(
+                template,
+                child
+            )
+            if (template.hasRepeat()) {
+                template.updateTargetDate()
+            } else {
+                template.targetDate = LocalDate.now()
             }
-            return db.update(template)
+            template.duration = 0
         }
+        val rowsAffected = db.update(template)
+        db.close()
+        return rowsAffected
     }
     fun touchParents(item: Item) {
         println("Repository.touchParents()")
-        SqliteLocalDB(context).use { db ->
-            db.touchParents(item)
-        }
+        val db = SqliteLocalDB(context)
+        db.touchParents(item)
+        db.close()
     }
 
-    fun getTodoRoot(): Item {
+    fun getTodoRoot(): Item? {
         val settings = Settings.getInstance(context)
         val id = settings.getRootID(Settings.Root.TODO)
-        SqliteLocalDB(context).use { db ->
-            return db.selectItem(id)
-        }
+        val db = SqliteLocalDB(context)
+        val item = db.selectItem(id)
+        db.close()
+        return item
     }
 }
