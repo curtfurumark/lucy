@@ -10,16 +10,17 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.classes.google_calendar.GoogleFactory
+import se.curtrune.lucy.modules.MainModule
 
 class UserViewModel: ViewModel(){
-    private val calendarModule = LucindaApplication.calendarModule
+    private val calendarModule = LucindaApplication.appModule.googleCalendarModule
     private val eventChannel = Channel<UserChannel>()
     val eventFlow = eventChannel.receiveAsFlow()
     private val _state = MutableStateFlow(UserState())
     val state = _state.asStateFlow()
-    private val userSettings = LucindaApplication.userSettings
+    private val userSettings = LucindaApplication.appModule.userSettings
     var categories = emptyList<String>()
     init {
         _state.update { it.copy(
@@ -28,6 +29,7 @@ class UserViewModel: ViewModel(){
             googleCalendarID = userSettings.googleCalendarId,
             language = userSettings.language
         ) }
+        MainModule.setTitle("inställningar")
     }
     @RequiresApi(Build.VERSION_CODES.O)
     private fun getEvents(calendarID: Int){
@@ -51,7 +53,7 @@ class UserViewModel: ViewModel(){
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun onEvent(event: UserEvent){
-        println("...onEvent(${event.toString()})")
+        println("...onEvent($event)")
         when(event){
             is UserEvent.DarkMode -> {setDarkMode(event.darkMode)}
             is UserEvent.SyncWithGoogle -> {syncWithGoogleCalendar(event.sync)}

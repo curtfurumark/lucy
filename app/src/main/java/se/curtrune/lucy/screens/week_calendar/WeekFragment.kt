@@ -39,8 +39,9 @@ class WeekFragment : Fragment() {
     ): View {
         return ComposeView(requireActivity()).apply {
             setContent {
-                requireActivity().title = "vecka"
                 val weekViewModel = viewModel<WeekViewModel>()
+                val mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
+                mainViewModel.setTitle("vecka")
                 val state = weekViewModel.state.collectAsState()
                 var showAddItemDialog by remember {
                     mutableStateOf(false)

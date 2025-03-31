@@ -9,14 +9,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.web.LucindaApi
-import se.curtrune.lucy.workers.InternetWorker
 
 class MessageBoardViewModel : ViewModel() {
     private val lucindaApi = LucindaApi.create()
-    private val internetWorker = LucindaApplication.internetWorker
+    private val internetWorker = LucindaApplication.appModule.internetWorker
     private var messages :  MutableList<Message> = mutableListOf()
     private var filteredMessages: List<Message> = emptyList()
     private val _state = MutableStateFlow(MessageBoardState())
@@ -84,7 +83,7 @@ class MessageBoardViewModel : ViewModel() {
         }
     }
     private fun onMessageClick(message: Message){
-        println("onMessageClick")
+        println("onMessageClick(${message.toString()})")
         _state.update { it.copy(
             currentMessage = message
         ) }

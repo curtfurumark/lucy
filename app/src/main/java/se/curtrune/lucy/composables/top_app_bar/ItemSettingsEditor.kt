@@ -28,7 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.R
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.item.Repeat
@@ -122,7 +122,7 @@ fun ItemSettingCategory(item: Item, onEvent: (String) -> Unit){
     var categoryListExpanded by remember {
         mutableStateOf(false)
     }
-    val categories = LucindaApplication.userSettings.getCategories()
+    val categories = LucindaApplication.appModule.userSettings.getCategories()
     Box(modifier = Modifier.fillMaxWidth()
         .border(Dp.Hairline,  color = Color.LightGray)
         .clickable {categoryListExpanded = !categoryListExpanded }

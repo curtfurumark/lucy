@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.app.Settings
 import se.curtrune.lucy.app.Settings.PanicAction
 import se.curtrune.lucy.app.UserPrefs
@@ -22,10 +22,12 @@ import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.web.LucindaApi
 
 class MainViewModel : ViewModel() {
-    private val repository = LucindaApplication.repository
-    private val mentalModule = LucindaApplication.mentalModule
+    private val repository = LucindaApplication.appModule.repository
+    private val mentalModule = LucindaApplication.appModule.mentalModule
     private val  _state =  MutableStateFlow(MainState())
     val state = _state.asStateFlow()
+    private val _topAppBarState = MutableStateFlow(TopAppBarState())
+    val topAppBarState = _topAppBarState.asStateFlow()
     private val _eventChannel = Channel<MainChannelEvent>()
     val eventChannel = _eventChannel.receiveAsFlow()
     private val mutableMessage = MutableLiveData<String>()
@@ -45,11 +47,11 @@ class MainViewModel : ViewModel() {
     private fun checkIfUpdateAvailable() {
         Logger.log("LucindaViewModel.checkIfUpdateAvailable()")
         LucindaApplication.contextModule
-        if( LucindaApplication.internetWorker.isConnected()){
+        if( LucindaApplication.appModule.internetWorker.isConnected()){
             println("...internet is connected")
             viewModelScope.launch {
                 val latestVersion = LucindaApi.create().getUpdateAvailable()
-                val currentVersion = LucindaApplication.systemInfoModule.getVersionCode()
+                val currentVersion = LucindaApplication.appModule.systemInfoModule.getVersionCode()
                 if( currentVersion < latestVersion.versionCode){
                     println("update of lucinda available")
                     _state.update { it.copy(
@@ -87,12 +89,37 @@ class MainViewModel : ViewModel() {
         }
     }
     fun onEvent(event: TopAppBarEvent){
+        println("MainViewModel.onEvent(${event})")
         when(event){
-            TopAppBarEvent.DayCalendar -> {}
-            TopAppBarEvent.Menu -> {}
-            TopAppBarEvent.OnBoost -> { requestAffirmation()}
-            TopAppBarEvent.OnPanic -> {showPanicDialog()}
-            is TopAppBarEvent.OnSearch -> {}
+            is TopAppBarEvent.DayCalendar -> { showDayCalendar()}
+            is TopAppBarEvent.DrawerMenu -> { openNavigationDrawer()}
+            is TopAppBarEvent.OnBoost -> { requestAffirmation()}
+            is TopAppBarEvent.OnPanic -> {showPanicDialog()}
+            is TopAppBarEvent.OnSearch -> {filter(event.filter, event.everywhere)}
+            is TopAppBarEvent.DayClicked -> { showDayCalendar()}
+            is TopAppBarEvent.WeekClicked -> {}
+            is TopAppBarEvent.MedicinesClicked -> TODO()
+            is TopAppBarEvent.MonthClicked -> TODO()
+            is TopAppBarEvent.SettingsClicked -> TODO()
+            is TopAppBarEvent.ActionMenu -> {println("action menu")}
+        }
+    }
+    private fun openNavigationDrawer(){
+        Logger.log("LucindaViewModel.openNavigationDrawer()")
+        viewModelScope.launch {
+            _eventChannel.send(MainChannelEvent.OpenNavigationDrawer)
+        }
+    }
+    fun setTitle(title: String){
+        println("MainViewModel.setTitle($title)")
+        _topAppBarState.update { it.copy(
+            title = title
+        ) }
+    }
+    private fun showDayCalendar(){
+        println("MainViewModel.showDayCalendar()")
+        viewModelScope.launch {
+            _eventChannel.send(MainChannelEvent.ShowDayCalendar)
         }
     }
     private fun startSequence(){
@@ -108,8 +135,8 @@ class MainViewModel : ViewModel() {
     }
 
 
-    fun filter(query: String) {
-        Logger.log("MainViewModel.filter(query)", query)
+    fun filter(query: String, everywhere: Boolean) {
+        println("MainViewModel.filter($query, everywhere $everywhere)")
         //mutableFilter.value = query
         _filter.update { query }
     }

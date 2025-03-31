@@ -1,6 +1,5 @@
 package se.curtrune.lucy.screens.dev.composables
 
-import androidx.compose.foundation.content.MediaType.Companion.Text
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,14 +13,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.classes.calender.Week
 import se.curtrune.lucy.persist.Queeries
 
 @Composable
 fun CalendarWeekTest(){
-    val repository = LucindaApplication.repository
+    val repository = LucindaApplication.appModule.repository
     var result by remember {
         mutableStateOf("")
     }

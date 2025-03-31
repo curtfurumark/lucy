@@ -9,17 +9,18 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.classes.calender.Week
+import se.curtrune.lucy.modules.MainModule
 import java.time.LocalDate
 
 class WeekViewModel: ViewModel() {
     private val eventChannel = Channel<WeekChannel>()
     val eventFlow = eventChannel.receiveAsFlow()
-    private val repository = LucindaApplication.repository
+    private val repository = LucindaApplication.appModule.repository
     private val _state = MutableStateFlow(WeekState())
     val state = _state.asStateFlow()
     private var week = Week()
@@ -35,6 +36,7 @@ class WeekViewModel: ViewModel() {
             calendarWeek = repository.getCalendarWeek(it.currentWeek),
             currentParent = repository.getTodoRoot(),
         ) }
+        MainModule.setTitle(state.value.currentWeek)
 
     }
     private fun addItem(item: Item){
@@ -105,6 +107,7 @@ class WeekViewModel: ViewModel() {
             currentWeek = week,
             calendarWeek = repository.getCalendarWeek(week)
         ) }
+        MainModule.setTitle(week)
     }
     private fun showAddItemDialog(){
         dialogSettings = DialogSettings()

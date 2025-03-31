@@ -4,15 +4,15 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.Field
 import se.curtrune.lucy.util.Logger
 import java.time.LocalDate
 
 class MentalDateViewModel() : ViewModel() {
-    private val mentalModule = LucindaApplication.mentalModule
-    private val repository = LucindaApplication.repository
+    private val mentalModule = LucindaApplication.appModule.mentalModule
+    private val repository = LucindaApplication.appModule.repository
     private var allItems: List<Item> = mutableListOf()
     //var mutableItems = MutableLiveData<List<Item>?>()
     //private var _items: List<Item> = emptyList()

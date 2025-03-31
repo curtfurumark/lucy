@@ -19,7 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.screens.dev.DevState
@@ -112,7 +112,7 @@ fun SetGeneratedToTemplateChildren(state: DevState, onEvent: (ItemEvent)->Unit){
  */
 fun setChildrenToGenerated(parentID: Long){
     println("setChildrenToGenerated($parentID)")
-    val localDB = LucindaApplication.localDB
+    val localDB = LucindaApplication.appModule.sqliteLocalDB
     val parent = localDB.selectItem(parentID)
     if( parent == null){
         println("could not find an item with aforementioned id")
@@ -133,7 +133,7 @@ fun setChildrenToGenerated(parentID: Long){
 
 
 fun getItem(id: Long): Item? {
-    val localDB = LucindaApplication.localDB
+    val localDB = LucindaApplication.appModule.sqliteLocalDB
     return localDB.selectItem(id)
 }
 

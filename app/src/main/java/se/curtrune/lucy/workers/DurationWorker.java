@@ -6,9 +6,8 @@ import android.content.Context;
 
 import java.util.List;
 
-import se.curtrune.lucy.LucindaApplication;
+import se.curtrune.lucy.modules.LucindaApplication;
 import se.curtrune.lucy.classes.item.Item;
-import se.curtrune.lucy.persist.ItemsWorker;
 import se.curtrune.lucy.persist.Repository;
 
 public class DurationWorker {
@@ -22,7 +21,7 @@ public class DurationWorker {
      */
     public static long calculateTemplateDuration(Item template, Context context){
         if( VERBOSE) log("DurationWorker.calculateTemplateDuration()");
-        Repository repository = LucindaApplication.repository;
+        Repository repository = LucindaApplication.appModule.getRepository();
         long duration = 0;
         List<Item> children = repository.selectChildren(template);
         //template that never has been actualized

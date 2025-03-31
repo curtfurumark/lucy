@@ -15,14 +15,14 @@
         android:orientation="vertical"
         android:visibility="visible">
 
-        <com.google.android.material.appbar.MaterialToolbar
+        <!--com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/navigationDrawer_toolbar"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:elevation="4dp"
             android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             android:theme="@style/ThemeOverlay.AppCompat.DayNight"
-            app:navigationIcon="@drawable/baseline_menu_24" />
+            app:navigationIcon="@drawable/baseline_menu_24" /-->
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/mainActivity_layoutTop"

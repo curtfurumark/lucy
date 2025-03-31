@@ -40,13 +40,6 @@ fun WeekCalendar(modifier: Modifier = Modifier, state: WeekState, onEvent: (Week
             items(state.calendarWeek.calendarDates){ calendarDate->
                 WeekDate(calendarDate = calendarDate, onEvent = onEvent)
             }
-/*            item{ WeekDate(calendarDate = state.calendarWeek.calendarDates[3], onEvent = onEvent)}
-            item{ WeekDate(calendarDate = state.calendarWeek.calendarDates[0], onEvent = onEvent)}
-            item{ WeekDate(calendarDate = state.calendarWeek.calendarDates[4], onEvent = onEvent)}
-            item{ WeekDate(calendarDate = state.calendarWeek.calendarDates[1], onEvent = onEvent)}
-            item{ WeekDate(calendarDate = state.calendarWeek.calendarDates[5], onEvent = onEvent)}
-            item{ WeekDate(calendarDate = state.calendarWeek.calendarDates[2], onEvent = onEvent)}
-            item{ WeekDate(calendarDate = state.calendarWeek.calendarDates[6], onEvent = onEvent)}*/
         }
     }
 }

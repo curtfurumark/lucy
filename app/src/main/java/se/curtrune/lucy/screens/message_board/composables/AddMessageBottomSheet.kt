@@ -2,6 +2,7 @@ package se.curtrune.lucy.screens.message_board.composables
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
@@ -41,26 +44,32 @@ import se.curtrune.lucy.screens.message_board.Message
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
+
+enum class Mode{
+    EDIT, CREATE
+}
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddMessageBottomSheet(onDismiss: ()->Unit, onSave: (Message)->Unit){
+fun AddMessageBottomSheet(messageIn: Message, onDismiss: ()->Unit, onSave: (Message)->Unit){
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
     val message by remember{
-        mutableStateOf(Message())
+        mutableStateOf(messageIn)
     }
+    val mode = if(messageIn.id == 0L) Mode.CREATE else Mode.EDIT
+
     var subject by remember {
-        mutableStateOf("")
+        mutableStateOf(messageIn.subject)
     }
     val category by remember {
-        mutableStateOf("message")
+        mutableStateOf(messageIn.category)
     }
     var content by remember {
-        mutableStateOf("")
+        mutableStateOf(messageIn.content)
     }
     var user by remember {
-        mutableStateOf("")
+        mutableStateOf(messageIn.user)
     }
     var isTodo by remember {
         mutableStateOf(false)
@@ -105,7 +114,6 @@ fun AddMessageBottomSheet(onDismiss: ()->Unit, onSave: (Message)->Unit){
                 modifier = Modifier.fillMaxWidth()
                     .focusable(true),
                 value = content,
-                ///singleLine = true,
                 onValueChange = {
                     content = it
                     message.content = it},
@@ -118,6 +126,33 @@ fun AddMessageBottomSheet(onDismiss: ()->Unit, onSave: (Message)->Unit){
                     message.user = it },
                 label = {Text(text = stringResource(R.string.user))})
             Spacer(modifier = Modifier.height(16.dp))
+            if( mode ==Mode.EDIT){
+                Row(){
+                    var expanded by remember {
+                        mutableStateOf(false)
+                    }
+                    var state by remember {
+                        mutableStateOf(Message.State.entries[messageIn.state].name)
+                    }
+                    Text(
+                        text =Message.State.entries[messageIn.state].name,
+                        modifier = Modifier.clickable {
+                            expanded = !expanded
+                        })
+                    DropdownMenu(expanded = expanded, onDismissRequest = {
+                        expanded = false
+                    }) {
+                        Message.State.entries.forEach{
+                            DropdownMenuItem(text = {it.name}, onClick = {
+                                state = it.name
+                                message.state = it.ordinal
+                                expanded = false
+                            })
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+            }
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -149,9 +184,13 @@ fun AddMessageBottomSheet(onDismiss: ()->Unit, onSave: (Message)->Unit){
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-@Preview
+@Preview(showBackground = true)
 fun PreviewBottomSheet(){
     LucyTheme {
-        AddMessageBottomSheet(onDismiss = {}, onSave = {})
+        val message = Message()
+        message.subject = "test"
+        message.content = "test"
+        message.user = "curt rune"
+        AddMessageBottomSheet(messageIn = message, onDismiss = {}, onSave = {})
     }
 }

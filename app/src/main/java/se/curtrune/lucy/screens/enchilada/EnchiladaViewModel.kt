@@ -8,14 +8,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
+import se.curtrune.lucy.modules.MainModule
 import se.curtrune.lucy.screens.ItemChannel
 import se.curtrune.lucy.screens.item_editor.ItemEvent
 
 class EnchiladaViewModel : ViewModel() {
-    private val repository = LucindaApplication.repository
+    private val repository = LucindaApplication.appModule.repository
     private var items: List<Item> = mutableListOf()
     private val _state = MutableStateFlow(EnchiladaState())
     val state = _state.asStateFlow()
@@ -25,10 +26,10 @@ class EnchiladaViewModel : ViewModel() {
 
     init {
         items = repository.selectItems()
-        //Logger.log("EnchiladaViewModel()")
         _state.update { it.copy(
             items = items
         ) }
+        MainModule.setTitle("enchilada")
     }
 
     fun onEvent(event: ItemEvent){
@@ -51,10 +52,16 @@ class EnchiladaViewModel : ViewModel() {
     fun onEvent(event: TopAppBarEvent){
         when(event){
             is TopAppBarEvent.DayCalendar -> {}
-            is TopAppBarEvent.Menu -> {}
+            is TopAppBarEvent.DrawerMenu -> {}
             is TopAppBarEvent.OnBoost -> {}
             is TopAppBarEvent.OnPanic -> {}
             is TopAppBarEvent.OnSearch -> {filter(event.filter)}
+            is TopAppBarEvent.DayClicked -> {}
+            is TopAppBarEvent.WeekClicked -> {}
+            is TopAppBarEvent.MedicinesClicked -> TODO()
+            is TopAppBarEvent.MonthClicked -> TODO()
+            is TopAppBarEvent.SettingsClicked -> TODO()
+            TopAppBarEvent.ActionMenu -> TODO()
         }
     }
 
@@ -94,6 +101,10 @@ class EnchiladaViewModel : ViewModel() {
         if( rowsAffected != 1){
             showMessage("error updating item: ${item.heading}")
         }
-
     }
+/*    private fun weekClicked(){
+        viewModelScope.launch {
+            eventChannel.send(DevChannel.NavigateToWeekCalendar)
+        }
+    }*/
 }

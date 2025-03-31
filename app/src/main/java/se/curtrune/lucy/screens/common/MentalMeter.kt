@@ -8,12 +8,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
 
 @Composable
 fun MentalMeter(){
     Card(modifier = Modifier.fillMaxWidth()){
-        val mental = LucindaApplication.mentalModule.getCurrentMental()
+        val mental = LucindaApplication.appModule.mentalModule.getCurrentMental()
         Column(){
             Text(text = "anxiety: ${mental.anxiety.toString()}", fontSize = 24.sp)
             Text(text = "energy: ${mental.energy.toString()}", fontSize = 24.sp)

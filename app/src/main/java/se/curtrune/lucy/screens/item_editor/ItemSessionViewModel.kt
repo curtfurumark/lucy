@@ -4,14 +4,13 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.R
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.item_settings.CheckBoxSetting
 import se.curtrune.lucy.item_settings.ItemSetting
 import se.curtrune.lucy.item_settings.KeyValueSetting
-import se.curtrune.lucy.persist.ItemsWorker
 import se.curtrune.lucy.services.TimerService
 import se.curtrune.lucy.util.Converter
 import se.curtrune.lucy.util.Logger
@@ -22,8 +21,8 @@ class ItemSessionViewModel : ViewModel() {
     private val currentItemSetting: ItemSetting? = null
     private var timerRunning = false
     private var elapsedTime = 0L
-    private val repository = LucindaApplication.repository
-    private val timeModule = LucindaApplication.timeModule
+    private val repository = LucindaApplication.appModule.repository
+    private val timeModule = LucindaApplication.appModule.timeModule
     private val mutableTimerState = MutableLiveData<TimerState>()
     private val mutableDuration = MutableLiveData<Long>()
     private val mutableError = MutableLiveData<String>()

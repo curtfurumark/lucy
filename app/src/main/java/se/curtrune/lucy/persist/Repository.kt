@@ -112,8 +112,8 @@ class Repository (val context: Application){
         db.close()
         return parent
     }
-    fun getRootItem(root: Settings.Root?): Item? {
-        if (ItemsWorker.VERBOSE) Logger.log("ItemsWorker.getRootItem(Settings.Root, Context)")
+    fun getRootItem(root: Settings.Root): Item? {
+        println("Repository.getRootItem(Settings.Root ${root.name})")
         val settings = Settings.getInstance(context)
         var rootID: Long = -1
         when (root) {
@@ -123,14 +123,12 @@ class Repository (val context: Application){
             Settings.Root.PROJECTS -> rootID = settings.getRootID(Settings.Root.PROJECTS)
             Settings.Root.PANIC -> rootID = settings.getRootID(Settings.Root.PANIC)
             Settings.Root.THE_ROOT -> rootID = settings.getRootID(Settings.Root.THE_ROOT)
-            null -> {
-                println("root is null")
-            }
         }
-        if (ItemsWorker.VERBOSE) Logger.log("root id ", rootID)
-        SqliteLocalDB(context).use { db ->
-            return db.selectItem(rootID)
-        }
+        println("root id:$root ")
+        val db = SqliteLocalDB(context)
+        val item = db.selectItem(rootID)
+        db.close()
+        return item
     }
 
     /**
@@ -168,7 +166,7 @@ class Repository (val context: Application){
         if (VERBOSE) println("Repository.insertChild(Item, Item)")
         if (!parent.hasChild()) {
             println("....no children for this parent, yet, parent: ${parent.heading}")
-            setHasChild(parent, true, context)
+            setHasChild(parent, true)
         }
         child.parentId = parent.id
         if (child.hasRepeat()) {
@@ -381,8 +379,8 @@ class Repository (val context: Application){
         db.close()
         return children
     }
-    private fun setHasChild(item: Item, hasChild: Boolean, context: Context?) {
-        if (ItemsWorker.VERBOSE) Logger.log("ItemsWorker.setHasChild(Item, Context)", item.heading)
+    private fun setHasChild(item: Item, hasChild: Boolean) {
+        println("Repository.setHasChild(Item: $item.heading, hasChild: $hasChild)")
         val db = SqliteLocalDB(context)
         db.setItemHasChild(item.id, hasChild)
         db.close()

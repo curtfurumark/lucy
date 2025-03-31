@@ -9,20 +9,20 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
+import se.curtrune.lucy.app.FirstPage
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
 import se.curtrune.lucy.persist.SqliteLocalDB
-import se.curtrune.lucy.screens.daycalendar.DayChannel
 import se.curtrune.lucy.screens.dev.composables.MyTab
 import se.curtrune.lucy.screens.dev.test_cases.LocalDBTest
 import se.curtrune.lucy.screens.item_editor.ItemEvent
 import se.curtrune.lucy.util.Logger
 
 class DevViewModel : ViewModel() {
-    private var repository = LucindaApplication.repository
-    private var _mentalModule = LucindaApplication.mentalModule
+    private var repository = LucindaApplication.appModule.repository
+    private var _mentalModule = LucindaApplication.appModule.mentalModule
     private var _mental = MutableStateFlow(_mentalModule.current)
     var mental = _mental.asStateFlow()
     private val eventChannel = Channel<DevChannel>()
@@ -32,9 +32,9 @@ class DevViewModel : ViewModel() {
 
     init{
         println("....initBlock")
-        _state.value.systemInfoList = LucindaApplication.systemInfoModule.systemInfo
+        _state.value.systemInfoList = LucindaApplication.appModule.systemInfoModule.systemInfo
         println("...number of sys infos: ${_state.value.systemInfoList.size}")
-        _state.value.mental = LucindaApplication.mentalModule.current.value
+        _state.value.mental = LucindaApplication.appModule.mentalModule.current.value
     }
     private fun dayCalendar(){
         println("day calendar")
@@ -121,11 +121,28 @@ class DevViewModel : ViewModel() {
             is TopAppBarEvent.OnPanic -> { onPanic()}
             is TopAppBarEvent.OnSearch -> {search(event.filter)}
             is TopAppBarEvent.DayCalendar -> {dayCalendar()}
-            is TopAppBarEvent.Menu -> { showNavigationDrawer()}
+            is TopAppBarEvent.DrawerMenu -> { showNavigationDrawer()}
+            is TopAppBarEvent.DayClicked -> {dayCalendar()}
+            is TopAppBarEvent.WeekClicked -> {weekCalendar()}
+            is TopAppBarEvent.MedicinesClicked -> { println("medicines") }
+            is TopAppBarEvent.MonthClicked -> {
+                monthCalendar()
+            }
+            is TopAppBarEvent.SettingsClicked -> {
+                println("settings clicked")
+            }
+
+            TopAppBarEvent.ActionMenu -> TODO()
         }
     }
     private fun insertItem(item: Item){
         println("insertItem(${item.heading})")
+    }
+    private fun monthCalendar(){
+        println("month calendar")
+        viewModelScope.launch {
+            eventChannel.send(DevChannel.Navigate(FirstPage.CALENDER_MONTH))
+        }
     }
     private fun onPanic(){
         println("onPanic()")
@@ -136,7 +153,7 @@ class DevViewModel : ViewModel() {
     }
     private fun runQuery(query: String){
         println("runQuery($query)")
-        val db = LucindaApplication.localDB
+        val db = LucindaApplication.appModule.sqliteLocalDB
         db.executeSQL(query)
 
     }
@@ -147,6 +164,9 @@ class DevViewModel : ViewModel() {
     }
     private fun showNavigationDrawer(){
         println("showNavigationDrawer()")
+        viewModelScope.launch {
+            eventChannel.send(DevChannel.ShowNavigationDrawer(true))
+        }
     }
     private fun update(item: Item){
         println("update(${item.heading})")
@@ -160,5 +180,11 @@ class DevViewModel : ViewModel() {
     }
     private fun filterList(){
 
+    }
+    private fun weekCalendar() {
+        println("DevViewModel.weekCalendar()")
+        viewModelScope.launch {
+            eventChannel.send(DevChannel.NavigateToWeekCalendar)
+        }
     }
 }

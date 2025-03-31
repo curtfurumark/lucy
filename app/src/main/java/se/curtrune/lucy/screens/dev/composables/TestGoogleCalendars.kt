@@ -10,14 +10,13 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import java.time.LocalDate
 
@@ -30,7 +29,7 @@ fun TestGoogleCalendars(){
     var firstDate by remember {
         mutableStateOf(LocalDate.now())
     }
-    val calendarModule = LucindaApplication.calendarModule
+    val calendarModule = LucindaApplication.appModule.googleCalendarModule
     Column(modifier = Modifier.fillMaxWidth()){
         Text(text = "just testing calendar module", fontSize = 20.sp)
         OutlinedTextField(

@@ -11,7 +11,10 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -25,22 +28,20 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.navigation.NavigationView
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.flying_fish.GameActivity
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.app.FirstPage
 import se.curtrune.lucy.app.Settings.PanicAction
 import se.curtrune.lucy.app.UserPrefs
-import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.composables.top_app_bar.LucindaControls
+import se.curtrune.lucy.composables.top_app_bar.FlexibleTopBar
+import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
 import se.curtrune.lucy.dialogs.PanicActionDialog
 import se.curtrune.lucy.dialogs.UpdateDialog
 import se.curtrune.lucy.fragments.SequenceFragment
-import se.curtrune.lucy.modules.MentalModule
-import se.curtrune.lucy.persist.ItemsWorker
-import se.curtrune.lucy.screens.affirmations.Affirmation
+import se.curtrune.lucy.modules.MainModule
 import se.curtrune.lucy.screens.affirmations.Quote
 import se.curtrune.lucy.screens.appointments.AppointmentsFragment
 import se.curtrune.lucy.screens.contacts.ContactsFragment
@@ -64,7 +65,6 @@ import se.curtrune.lucy.screens.week_calendar.WeekFragment
 import se.curtrune.lucy.util.Constants
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.web.VersionInfo
-import se.curtrune.lucy.workers.InternetWorker
 import java.util.Objects
 
 class MainActivity : AppCompatActivity() {
@@ -91,23 +91,23 @@ class MainActivity : AppCompatActivity() {
 
     private fun initComponents() {
         if (VERBOSE) Logger.log("...initComponents()")
-        val toolbar = findViewById<MaterialToolbar>(R.id.navigationDrawer_toolbar)
-        setSupportActionBar(toolbar)
+        //val toolbar = findViewById<MaterialToolbar>(R.id.navigationDrawer_toolbar)
+       // setSupportActionBar(toolbar)
 
         drawerLayout = findViewById(R.id.navigationDrawer_drawerLayout)
         val navigationView =
             findViewById<NavigationView>(R.id.navigationDrawerActivity_navigationView)
         val view = navigationView.inflateHeaderView(R.layout.navigation_header)
         textViewLucindaHome = view.findViewById(R.id.navigationHeader_lucindaHome)
-        val actionBarDrawerToggle =
-            ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close)
-        drawerLayout!!.addDrawerListener(actionBarDrawerToggle)
+/*        val actionBarDrawerToggle =
+            ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close)*/
+/*        drawerLayout!!.addDrawerListener(actionBarDrawerToggle)
         actionBarDrawerToggle.syncState()
-        Objects.requireNonNull(supportActionBar)?.setDisplayHomeAsUpEnabled(true)
+        //Objects.requireNonNull(supportActionBar)?.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener { v: View? ->
             if (VERBOSE) Logger.log("... toolbar on click")
             drawerLayout!!.open()
-        }
+        }*/
         val onNavigationItemSelectedListener =
             NavigationView.OnNavigationItemSelectedListener { item: MenuItem ->
                 Logger.log(
@@ -140,7 +140,6 @@ class MainActivity : AppCompatActivity() {
                         navigate(EstimateFragment())
                     }*/
                     R.id.navigationDrawer_weekly -> {
-                        //navigate(CalendarWeekHostFragment())
                         navigate(WeekFragment())
                     }
                     R.id.navigationDrawer_messageBoardFragment -> {
@@ -150,7 +149,6 @@ class MainActivity : AppCompatActivity() {
                         navigate(MedicineFragment())
                     }
                     R.id.navigationDrawer_customizeFragment -> {
-                        //navigate(CustomizeFragment())
                         navigate(UserSettingsFragment())
                     }
                     R.id.navigationDrawer_mentalFragment -> {
@@ -178,9 +176,10 @@ class MainActivity : AppCompatActivity() {
             }
         navigationView.setNavigationItemSelectedListener(onNavigationItemSelectedListener)
     }
+    @OptIn(ExperimentalMaterial3Api::class)
     private fun initContent(){
         println("initContent()")
-        val composeView = findViewById<ComposeView>(R.id.mainActivity_composeView)
+        //val composeView = findViewById<ComposeView>(R.id.mainActivity_composeView)
         val composeViewMental = findViewById<ComposeView>(R.id.mainActivity_composeViewMental)
         composeViewMental.setContent {
             val state = mainViewModel?.state?.collectAsState()
@@ -196,6 +195,8 @@ class MainActivity : AppCompatActivity() {
             var quote by remember {
                 mutableStateOf(Quote())
             }
+            //var topAppBarState = mainViewModel?.topAppBarState?.collectAsState()
+            val topAppBarState = MainModule.topAppBarState.collectAsState()
             LaunchedEffect(mainViewModel) {
                 mainViewModel?.eventChannel?.collect { event ->
                     when (event) {
@@ -225,42 +226,53 @@ class MainActivity : AppCompatActivity() {
                         is MainChannelEvent.StartSequence -> {
                             navigate(SequenceFragment(event.root))
                         }
+
+                        is MainChannelEvent.OpenNavigationDrawer -> {
+                            println("open navigation drawer")
+                            drawerLayout!!.open()
+                        }
+
+                        MainChannelEvent.ShowDayCalendar -> {
+                            navigate(CalendarDayFragment())
+                        }
                     }
                 }
             }
-
+            val drawerState = rememberDrawerState(DrawerValue.Closed)
+            val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
             LucyTheme {
-                val currentMental = MentalModule.currentMental
-                var mental by remember{
-                    mutableStateOf(Mental())
-                }
-                currentMental.observe(this) {
-                    println("MENTAL CHANGE ${it.energy}")
-                    mental = it
-                }
-                if (state != null) {
-                    LucindaControls(state = state.value, onEvent = { event->
-                        mainViewModel?.onEvent(event)
-                    })
+                if( state != null){
+                    FlexibleTopBar(
+                        scrollBehavior = scrollBehavior,
+                        content = {
+                            LucindaTopAppBar(
+                                state = topAppBarState!!.value,
+                                onEvent = { appBarEvent ->
+                                    println("appBarEvent ${appBarEvent.toString()}")
+                                    mainViewModel!!.onEvent(appBarEvent)
+                                })
+                        }, onEvent = { event ->
+                            //devViewModel.onEvent(event)
+                        }
+                    )
                 }
             }
-            if( showPanicDialog){
+            if (showPanicDialog) {
                 ChoosePanicActionDialog(onDismiss = {
                     showPanicDialog = false
                 })
             }
-            if(showQuoteDialog){
+            if (showQuoteDialog) {
                 QuoteDialog(onDismiss = {
                     showQuoteDialog = false
                 }, quote = quote)
             }
-            if( showAffirmation){
-
-
+            if (showAffirmation) {
+                println("showAffirmation")
             }
-
         }
     }
+
 
     private fun initListeners() {
         println("...initListeners()")
@@ -311,17 +323,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        Logger.log("MainActivity.onBackPressed()")
-        //super.onBackPressed();
-        if (drawerLayout!!.isDrawerOpen(GravityCompat.START)) {
-            Logger.log("...drawerLayout is open, closing")
-            drawerLayout!!.close()
-        } else {
-            super.onBackPressed()
-        }
-    }
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_activity_menu, menu)
         val searchView = menu.findItem(R.id.mainActivity_search).actionView as SearchView?
@@ -339,7 +340,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun onQueryTextChange(filter: String): Boolean {
                 Logger.log("...onQueryTextChange(String)", filter)
-                mainViewModel!!.filter(filter)
+                mainViewModel!!.filter(filter, true)
                 return false
             }
         })
@@ -371,7 +372,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun openWebPage(url: String) {
         Logger.log("...openWebPage(String url)", url)
-        if (LucindaApplication.internetWorker.isConnected()) {
+        if (LucindaApplication.appModule.internetWorker.isConnected()) {
             Toast.makeText(this, R.string.no_internet_connection, Toast.LENGTH_LONG).show()
             return
         }

@@ -8,17 +8,18 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.classes.calender.Week
 import se.curtrune.lucy.composables.PostponeDetails
+import se.curtrune.lucy.modules.MainModule
 import se.curtrune.lucy.modules.PostponeWorker
 import java.time.LocalDate
 
 class DateViewModel: ViewModel(){
-    private val repository = LucindaApplication.repository
-    private val timeModule = LucindaApplication.timeModule
+    private val repository = LucindaApplication.appModule.repository
+    private val timeModule = LucindaApplication.appModule.timeModule
     private var currentWeekPage = 5
     private var items: List<Item> = emptyList()
     private val eventChannel = Channel<DayChannel>()
@@ -34,6 +35,7 @@ class DateViewModel: ViewModel(){
         items = repository.selectItems(_state.value.date)
         _state.value.items = items
         _state.value.currentParent = todoRoot
+        MainModule.setTitle(_state.value.currentWeek)
     }
     private fun addItem(item: Item){
         println("...addItem(Item) ${item.heading}")
@@ -191,6 +193,7 @@ class DateViewModel: ViewModel(){
                 items = items
             )
         }
+        MainModule.setTitle(Week(newDate))
     }
     private fun setCurrentWeek(page: Int){
         println("setCurrentWeek(page : $page)")
@@ -205,11 +208,10 @@ class DateViewModel: ViewModel(){
             date = newDate,
             items =  repository.selectItems(newDate)
         ) }
+        MainModule.setTitle(Week(newDate))
         currentWeekPage = page
     }
-    private fun getWeek(){
 
-    }
     private fun showChildren(item: Item){
         println("...showChildren(${item.heading})")
         if( !state.value.showTabs){

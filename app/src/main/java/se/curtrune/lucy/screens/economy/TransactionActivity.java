@@ -20,12 +20,11 @@ import java.util.List;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.activities.economy.workers.TransactionWorker;
-import se.curtrune.lucy.adapters.TransactionAdapter;
 import se.curtrune.lucy.activities.economy.classes.Transaction;
 
 public class TransactionActivity extends AppCompatActivity{
 
-    private TransactionAdapter adapter;
+    //private TransactionAdapter adapter;
     private Transaction currentTransaction;
     private EditText editTextDescription;
     private EditText editTextAmount;

@@ -24,10 +24,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.dev.ui.theme.LucyTheme
-import se.curtrune.lucy.app.UserPrefs
 import se.curtrune.lucy.screens.medicine.composable.DropdownItem
 
 
@@ -40,7 +39,7 @@ fun CategoryDialog(category: String? ,dismiss: ()->Unit, onCategory: (String)->U
         mutableStateOf(false)
     }
     //User.getCategories()
-    val categories = LucindaApplication.userSettings.getCategories()
+    val categories = LucindaApplication.appModule.userSettings.getCategories()
     Dialog(onDismissRequest = {
         dismiss()
     }){

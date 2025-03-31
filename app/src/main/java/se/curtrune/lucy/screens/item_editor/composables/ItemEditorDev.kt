@@ -25,14 +25,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.app.Settings
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.screens.item_editor.ItemEvent
-import se.curtrune.lucy.util.Converter
 import se.curtrune.lucy.util.DateTImeConverter
-import java.time.format.DateTimeFormatter
 
 
 @Composable
@@ -57,7 +55,7 @@ fun ItemEditorDev(item: Item, onEvent: (ItemEvent)->Unit) {
 
 @Composable
 fun EditViewParent(item: Item, onEvent: (ItemEvent) -> Unit){
-    val repository = LucindaApplication.repository
+    val repository = LucindaApplication.appModule.repository
     val parent = repository.getParent(item)
     var todoList by remember {
         mutableStateOf(false)
@@ -86,7 +84,7 @@ fun EditViewParent(item: Item, onEvent: (ItemEvent) -> Unit){
             )
             Button( onClick = {
                 if(todoList) {
-                    item.parentId = LucindaApplication.settings.getRootID(Settings.Root.TODO)
+                    item.parentId = LucindaApplication.appModule.settings.getRootID(Settings.Root.TODO)
                 }else{
                     item.parentId = newParentID.toLong()
                 }
@@ -117,7 +115,7 @@ fun EditHasChild(item: Item, onEvent: (ItemEvent) -> Unit){
 }
 @Composable
 fun EditParent(item: Item, onEvent: (ItemEvent) -> Unit){
-    val repository = LucindaApplication.repository
+    val repository = LucindaApplication.appModule.repository
     val parent = repository.getParent(item)
     val showChoseParentDialog by remember {
         mutableStateOf(false)

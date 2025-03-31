@@ -8,14 +8,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.MedicineContent
 import se.curtrune.lucy.classes.Type
+import se.curtrune.lucy.modules.MainModule
 
 class MedicineViewModel(
 ) : ViewModel(){
-    private val repository = LucindaApplication.repository
+    private val repository = LucindaApplication.appModule.repository
     private val  _state = MutableStateFlow(MedicineState())
     val state = _state.asStateFlow()
     private val eventChannel = Channel<MedicineChannelEvent>()
@@ -25,6 +26,7 @@ class MedicineViewModel(
         _state.update { it.copy(
             items = repository.selectItems(Type.MEDICIN)
         ) }
+        MainModule.setTitle("mediciner")
     }
     fun addMedicine(medicine: MedicineContent){
         println("MedicineViewModel.addMedicine(medicine)")

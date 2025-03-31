@@ -5,7 +5,6 @@ import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.Window
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -41,46 +40,40 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.R
-import se.curtrune.lucy.screens.repeat.RepeatActivity
 import se.curtrune.lucy.activities.kotlin.dev.ui.theme.LucyTheme
+import se.curtrune.lucy.app.FirstPage
 import se.curtrune.lucy.app.Lucinda
 import se.curtrune.lucy.app.Settings
-import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.Notification
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.CountDownTimerService
 import se.curtrune.lucy.composables.NavigationDrawer
 import se.curtrune.lucy.composables.StopWatchUsingService
 import se.curtrune.lucy.composables.top_app_bar.FlexibleTopBar
+import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
 import se.curtrune.lucy.dialogs.RepeatDialog
 import se.curtrune.lucy.persist.DBAdmin
-import se.curtrune.lucy.persist.ItemsWorker
 import se.curtrune.lucy.persist.SqliteLocalDB
-
-import se.curtrune.lucy.screens.log_in.LogInActivity
-import se.curtrune.lucy.screens.main.MainActivity
-import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
-import se.curtrune.lucy.screens.daycalendar.DayChannel
-import se.curtrune.lucy.screens.dev.composables.AffirmationTest
 import se.curtrune.lucy.screens.dev.composables.BackupDataBase
 import se.curtrune.lucy.screens.dev.composables.CalendarWeekTest
-import se.curtrune.lucy.screens.dev.composables.CheckForUpdateKtor
 import se.curtrune.lucy.screens.dev.composables.DurationTest
 import se.curtrune.lucy.screens.dev.composables.ExecuteQuery
-import se.curtrune.lucy.screens.dev.composables.GetQuoteKtor
 import se.curtrune.lucy.screens.dev.composables.InsertItemWithID
 import se.curtrune.lucy.screens.dev.composables.RepeatTest
 import se.curtrune.lucy.screens.dev.composables.RepositoryTest
 import se.curtrune.lucy.screens.dev.composables.TestGoogleCalendars
 import se.curtrune.lucy.screens.dev.composables.TestScrollableYearMonth
 import se.curtrune.lucy.screens.dev.composables.TestSwipeAble
+import se.curtrune.lucy.screens.log_in.LogInActivity
+import se.curtrune.lucy.screens.main.MainActivity
+import se.curtrune.lucy.screens.main.TopAppBarState
+import se.curtrune.lucy.screens.repeat.RepeatActivity
 import se.curtrune.lucy.services.TimerService
+import se.curtrune.lucy.util.Constants
 import se.curtrune.lucy.util.Logger
-import se.curtrune.lucy.web.VersionInfo
 import se.curtrune.lucy.workers.NotificationsWorker
 import java.time.LocalDate
 import java.time.LocalTime
@@ -115,13 +108,24 @@ class DevActivity : AppCompatActivity() {
             val state = devViewModel.state.collectAsState()
             val context = LocalContext.current
             val mental = devViewModel.mental
+            val drawerState = rememberDrawerState(DrawerValue.Closed)
             LaunchedEffect(devViewModel) {
                 devViewModel.eventFlow.collect{ event->
                     when(event){
                         is DevChannel.NavigateToDayCalendar -> {
                             navigateToDayCalendar()
                         }
-                        is DevChannel.ShowNavigationDrawer -> {}
+                        is DevChannel.ShowNavigationDrawer -> {
+                            println("...showNavigationDrawer")
+                            drawerState.open()
+                        }
+                        is DevChannel.NavigateToWeekCalendar -> {
+                            navigate(FirstPage.CALENDER_WEEK)
+                        }
+
+                        is DevChannel.Navigate -> {
+                            navigate(event.fragment)
+                        }
                     }
                 }
             }
@@ -129,17 +133,21 @@ class DevActivity : AppCompatActivity() {
                 val scope = rememberCoroutineScope()
                 val scrollState = rememberScrollState()
                 val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-                val drawerState = rememberDrawerState(DrawerValue.Closed)
+
                 ModalNavigationDrawer(drawerState = drawerState,
                     drawerContent = {
-                        NavigationDrawer()
+                        NavigationDrawer(onEvent = { event->
+                            devViewModel.onEvent(event)
+                        })
                     }) {
                     Scaffold(
                         topBar = {
                             FlexibleTopBar(
                                 scrollBehavior = scrollBehavior,
                                 content = {
-                                    LucindaTopAppBar(onEvent = { appBarEvent ->
+                                    LucindaTopAppBar(
+                                        state = TopAppBarState(title = "dev"),
+                                        onEvent = { appBarEvent ->
                                         devViewModel.onEvent(appBarEvent)
                                     })
                                 }, onEvent = { event ->
@@ -150,12 +158,14 @@ class DevActivity : AppCompatActivity() {
 
                     ) { padding ->
                         Surface(
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier
+                                .fillMaxSize()
                                 .background(MaterialTheme.colorScheme.background)
                                 .padding(padding)
                         ) {
                             Column(
-                                modifier = Modifier.background(MaterialTheme.colorScheme.background)
+                                modifier = Modifier
+                                    .background(MaterialTheme.colorScheme.background)
                                     .verticalScroll(scrollState),
                                 verticalArrangement = Arrangement.SpaceEvenly,
                             ) {
@@ -296,7 +306,7 @@ class DevActivity : AppCompatActivity() {
         }
     }
     private fun sendCommandToTimeService(command: String){
-        val timeModule = LucindaApplication.timeModule
+        val timeModule = LucindaApplication.appModule.timeModule
         println("DevActivity.sendCommandToService $command")
         timeModule.sendCommand(command)
 /*        Intent( this, TimerService::class.java).also {
@@ -454,6 +464,15 @@ class DevActivity : AppCompatActivity() {
     private fun navigateToDayCalendar() {
         startActivity(Intent(this, MainActivity::class.java))
     }
+    private fun navigate(firstPage: FirstPage){
+        println("DevActivity.navigate(firstPage: ${firstPage.name})")
+        val intentTodo = Intent(
+            this,
+            MainActivity::class.java
+        )
+        intentTodo.putExtra(Constants.MAIN_ACTIVITY_CHILD_FRAGMENT, firstPage.toString())
+        startActivity(intentTodo)
+    }
 
 
     private fun printTableNames() {
@@ -493,7 +512,7 @@ class DevActivity : AppCompatActivity() {
 
     private fun testNotification() {
         println("...testNotification()")
-        val repository = LucindaApplication.repository
+        val repository = LucindaApplication.appModule.repository
         val notification = Notification()
         val targetTime = LocalTime.now().plusMinutes(5)
         notification.time = targetTime

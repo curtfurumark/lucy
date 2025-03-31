@@ -18,7 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.util.Converter
 import se.curtrune.lucy.statistics.Statistics
@@ -26,7 +26,7 @@ import se.curtrune.lucy.statistics.Statistics
 @Deprecated(message = "use Statistics")
 @Composable
 fun CategoryStatistics(statistics: Statistics){
-    val repository = LucindaApplication.repository
+    val repository = LucindaApplication.appModule.repository
     Column(modifier = Modifier.fillMaxWidth()) {
         Button(onClick = {
             //statistics = Statistics(repository.selectItems(LocalDate.now().plusDays(1)))

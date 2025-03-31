@@ -2,7 +2,6 @@ package se.curtrune.lucy.fragments;
 
 import static se.curtrune.lucy.util.Logger.log;
 
-import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,22 +19,16 @@ import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
-import java.time.Duration;
-import java.time.LocalTime;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.adapters.SequenceAdapter;
 import se.curtrune.lucy.classes.item.Item;
-import se.curtrune.lucy.classes.State;
-import se.curtrune.lucy.dialogs.DurationDialog;
 import se.curtrune.lucy.screens.item_editor.ItemEditorFragment;
 import se.curtrune.lucy.util.Converter;
 import se.curtrune.lucy.screens.main.MainViewModel;
 import se.curtrune.lucy.workers.DurationWorker;
-import se.curtrune.lucy.persist.ItemsWorker;
 
 public class SequenceFragment extends Fragment implements SequenceAdapter.Callback{
 

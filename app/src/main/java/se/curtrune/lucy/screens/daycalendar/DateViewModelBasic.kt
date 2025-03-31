@@ -8,16 +8,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.calender.CalenderDate
-import se.curtrune.lucy.classes.calender.Week
 import se.curtrune.lucy.composables.PostponeDetails
-import se.curtrune.lucy.modules.PostponeWorker
 import java.time.LocalDate
 
 class DateViewModelBasic: ViewModel(){
-    private var repository = LucindaApplication.repository
+    private var repository = LucindaApplication.appModule.repository
     private var currentWeekPage = 5
     private var items: List<Item> = emptyList()
     private val eventChannel = Channel<DayChannel>()

@@ -4,14 +4,13 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.persist.ItemsWorker
 import se.curtrune.lucy.util.Logger
 
 
 class EditableListViewModel : ViewModel() {
-    private val repository = LucindaApplication.repository
+    private val repository = LucindaApplication.appModule.repository
     private var parent: Item? = null
     private val mutableItems = MutableLiveData<MutableList<Item>>()
     fun setParent(parent: Item?) {

@@ -1,13 +1,12 @@
 package se.curtrune.lucy.screens.dev
 
 import android.content.Context
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.persist.ItemsWorker
 import se.curtrune.lucy.util.Logger
 
 object ItemsTest {
-    private val repository = LucindaApplication.repository
+    private val repository = LucindaApplication.appModule.repository
     fun testDeleteTree(context: Context?) {
         Logger.log("...testDeleteTree()")
     }
@@ -40,7 +39,7 @@ object ItemsTest {
             Logger.log(" no item with that id found ")
             return
         }
-        ItemsWorker.VERBOSE = true
+        //ItemsWorker.VERBOSE = true
         repository.deleteTree(item)
     }
 }

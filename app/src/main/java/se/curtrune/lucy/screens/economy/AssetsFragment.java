@@ -26,7 +26,6 @@ import java.util.List;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.activities.economy.classes.Asset;
 import se.curtrune.lucy.activities.economy.workers.TransactionWorker;
-import se.curtrune.lucy.adapters.AssetAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -35,7 +34,7 @@ import se.curtrune.lucy.adapters.AssetAdapter;
  */
 public class AssetsFragment extends Fragment {
     private RecyclerView recycler;
-    private AssetAdapter adapter;
+    //private AssetAdapter adapter;
     private List<Asset> assets;
     private EditText editTextAccount;
     private EditText editTextAmount;
@@ -125,7 +124,7 @@ public class AssetsFragment extends Fragment {
     }
     private void initRecycler(){
         log("...initRecycler()");
-        adapter = new AssetAdapter(assets, new AssetAdapter.Callback() {
+/*        adapter = new AssetAdapter(assets, new AssetAdapter.Callback() {
             @Override
             public void onItemClick(Asset asset) {
                 log("...onItemClick(Transaction)");
@@ -141,7 +140,7 @@ public class AssetsFragment extends Fragment {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recycler.setLayoutManager(layoutManager);
         recycler.setItemAnimator(new DefaultItemAnimator());
-        recycler.setAdapter(adapter);
+        recycler.setAdapter(adapter);*/
     }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -152,7 +151,7 @@ public class AssetsFragment extends Fragment {
     }
     private void saveAsset(){
         log("...saveAsset");
-        if( !validateInput()){
+/*        if( !validateInput()){
             return;
         }
         Asset asset = getAsset();
@@ -162,7 +161,7 @@ public class AssetsFragment extends Fragment {
         }else{
             assets.add(asset);
             adapter.notifyDataSetChanged();
-        }
+        }*/
 
     }
 

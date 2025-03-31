@@ -15,12 +15,13 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -29,10 +30,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.R
+import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.screens.main.MainState
+import se.curtrune.lucy.screens.main.TopAppBarState
 
 @Composable
-fun LucindaTopAppBar(onEvent: (TopAppBarEvent)->Unit){
+fun LucindaTopAppBar(
+    state: TopAppBarState,
+    onEvent: (TopAppBarEvent)->Unit){
     Column(modifier = Modifier.fillMaxWidth()){
         var showSearchField by remember{
             mutableStateOf(false)
@@ -43,16 +48,23 @@ fun LucindaTopAppBar(onEvent: (TopAppBarEvent)->Unit){
         var searchEverywhere by remember {
             mutableStateOf(false)
         }
+        var  showActionMenu by remember {
+            mutableStateOf(false)
+        }
         Row(modifier = Modifier.fillMaxWidth()
             .padding(4.dp)){
             Icon(imageVector = Icons.Default.Menu, contentDescription = "main menu",
                 modifier = Modifier.clickable {
-                    onEvent(TopAppBarEvent.Menu)
+                    onEvent(TopAppBarEvent.DrawerMenu)
                 })
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = state.title, fontSize = MaterialTheme.typography.titleLarge.fontSize )
             Spacer(modifier = Modifier.weight(1f))
             Icon(imageVector = Icons.Default.Search, contentDescription = "search",
                 modifier = Modifier.clickable {
                     showSearchField = !showSearchField
+                    searchFilter = ""
+                    onEvent(TopAppBarEvent.OnSearch(searchFilter, searchEverywhere))
 
                 })
             Spacer(modifier = Modifier.width(8.dp))
@@ -64,9 +76,14 @@ fun LucindaTopAppBar(onEvent: (TopAppBarEvent)->Unit){
             Spacer(modifier = Modifier.width(8.dp))
             Icon(imageVector = Icons.Default.MoreVert, contentDescription = "action menu",
                 modifier = Modifier.clickable {
-                    onEvent(TopAppBarEvent.Menu)
+                    onEvent(TopAppBarEvent.ActionMenu)
                 }
             )
+            DropdownMenu(expanded = showActionMenu, onDismissRequest = {
+                showActionMenu = false
+            }){
+
+            }
         }
         AnimatedVisibility(visible = showSearchField) {
             Row(modifier = Modifier.fillMaxWidth()) {
@@ -82,15 +99,20 @@ fun LucindaTopAppBar(onEvent: (TopAppBarEvent)->Unit){
                 )
             }
         }
-        Row(){
+        Row(modifier = Modifier.fillMaxWidth()){
             LucindaControls(state = MainState(), onEvent = onEvent)
         }
     }
 }
 
 @Composable
-@Preview
-
+@Preview(showBackground = true)
 fun PreviewTopAppBar(){
-    LucindaTopAppBar(onEvent = {})
+    LucyTheme {
+        val state = TopAppBarState()
+        state.title = "preview"
+        LucindaTopAppBar(state = state, onEvent = {})
+
+        //LucindaTopAppBar(title = "dev", onEvent = {})
+    }
 }

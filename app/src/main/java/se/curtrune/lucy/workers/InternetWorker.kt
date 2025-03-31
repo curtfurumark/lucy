@@ -1,10 +1,8 @@
 package se.curtrune.lucy.workers
 
 import android.app.Application
-import android.content.Context
 import android.net.ConnectivityManager
 import androidx.core.content.ContextCompat
-import se.curtrune.lucy.LucindaApplication
 import se.curtrune.lucy.util.Logger
 
 class InternetWorker(val application: Application){

@@ -21,6 +21,8 @@ data class Message(
     @JvmField
     var created: Long = 0,
     @JvmField
+    var updated: Long = 0,
+    @JvmField
     var state: Int = State.TODO.ordinal
 
 )

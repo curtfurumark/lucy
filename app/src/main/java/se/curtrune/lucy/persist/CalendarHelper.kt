@@ -1,7 +1,7 @@
 package se.curtrune.lucy.persist
 
 import android.content.Context
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.calender.CalendarWeek
 import se.curtrune.lucy.classes.calender.CalenderDate
@@ -10,7 +10,7 @@ import se.curtrune.lucy.util.Logger
 import java.time.LocalDate
 
 object CalendarHelper {
-    private val repository = LucindaApplication.repository
+    private val repository = LucindaApplication.appModule.repository
     fun getCalendarWeek(week: Week): CalendarWeek {
         println("CalendarHelper.getCalendarWeek(${week.toString()})")
         val items = repository.selectItems(week)

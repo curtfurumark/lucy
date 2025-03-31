@@ -1,12 +1,12 @@
 package se.curtrune.lucy.screens.dev.test_cases
 
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.calender.Week
 import se.curtrune.lucy.persist.Queeries
 
 class RepositoryTest {
-    private val repository= LucindaApplication.repository
+    private val repository= LucindaApplication.appModule.repository
 
     fun testRestore(){
         println("RepositoryTest.testRestore()")

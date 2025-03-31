@@ -11,10 +11,10 @@ android {
 
     defaultConfig {
         applicationId = "se.curtrune.lucy"
-        minSdk = 21
+        minSdk = 24
         targetSdk = 34
-        versionCode = 15
-        versionName = "language problem"
+        versionCode = 16
+        versionName = "city of fun"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

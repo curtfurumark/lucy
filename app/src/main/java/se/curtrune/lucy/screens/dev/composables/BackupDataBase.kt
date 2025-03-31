@@ -8,9 +8,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.persist.DBAdmin
-import se.curtrune.lucy.screens.dev.DevEvent
 
 @Composable
 fun BackupDataBase(onEventCopy: ()->Unit){

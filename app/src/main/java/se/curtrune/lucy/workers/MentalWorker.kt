@@ -1,11 +1,10 @@
 package se.curtrune.lucy.workers
 
 import android.content.Context
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.classes.State
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.persist.ItemsWorker
 import se.curtrune.lucy.persist.Queeries
 import se.curtrune.lucy.persist.SqliteLocalDB
 import se.curtrune.lucy.util.Logger
@@ -13,7 +12,7 @@ import java.time.LocalDate
 
 object MentalWorker {
     var VERBOSE: Boolean = false
-    val repository = LucindaApplication.repository
+    val repository = LucindaApplication.appModule.repository
 
     /*** @param date the date you wish to examine
      * @param context, context

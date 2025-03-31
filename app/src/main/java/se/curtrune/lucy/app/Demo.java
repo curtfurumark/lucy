@@ -8,13 +8,12 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import se.curtrune.lucy.LucindaApplication;
+import se.curtrune.lucy.modules.LucindaApplication;
 import se.curtrune.lucy.classes.item.Item;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.persist.Repository;
 import se.curtrune.lucy.persist.SqliteLocalDB;
-import se.curtrune.lucy.persist.ItemsWorker;
 
 public class Demo {
     private static Settings settings;
@@ -59,7 +58,7 @@ public class Demo {
     }
     public static void insertAppointments(Context context){
         log("...insertAppointments(Context)");
-        Repository repository = LucindaApplication.repository;
+        Repository repository = LucindaApplication.appModule.getRepository();
         Item root = repository.getAppointmentsRoot();
         Item misaDev = getAppointment("misa dev", LocalDate.of(2024, 4, 26), LocalTime.of(10, 0));
         Item mayTheForce = getAppointment("may the 4h be with you", LocalDate.of(2024, 5, 4), LocalTime.of(0,0));
@@ -92,7 +91,7 @@ public class Demo {
         moneyForNothing.setParentId(wodehouse.getID());
         db.insertChild(wodehouse, moneyForNothing);
 
-        Item douglas = getProjectItem("douglas adams");
+        Item douglas = getProjectItem("douglas  adams");
         db.insertChild(readingList, douglas);
         Item hitchHiker = getProjectItem("hitch hikers guide to the galaxy");
         db.insertChild(douglas, hitchHiker);

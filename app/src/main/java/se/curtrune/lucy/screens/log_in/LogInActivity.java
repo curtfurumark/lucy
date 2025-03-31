@@ -20,14 +20,13 @@ import androidx.core.content.ContextCompat;
 
 import java.sql.SQLException;
 
-import se.curtrune.lucy.LucindaApplication;
+import se.curtrune.lucy.modules.LucindaApplication;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.app.UserPrefs;
 import se.curtrune.lucy.screens.main.MainActivity;
 import se.curtrune.lucy.app.Lucinda;
 import se.curtrune.lucy.app.Settings;
 import se.curtrune.lucy.screens.index.IndexActivity;
-import se.curtrune.lucy.workers.InternetWorker;
 import se.curtrune.lucy.workers.NotificationsWorker;
 import se.curtrune.lucy.workers.SettingsWorker;
 
@@ -86,7 +85,7 @@ public class LogInActivity extends AppCompatActivity {
 
     private void checkInternetConnection(){
         log("...checkInternetConnection()");
-        boolean isConnected = LucindaApplication.internetWorker.isConnected();
+        boolean isConnected = LucindaApplication.appModule.getInternetWorker().isConnected();
         log("...isConnected", isConnected);
     }
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)

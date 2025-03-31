@@ -14,13 +14,12 @@ import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.List;
 
-import se.curtrune.lucy.LucindaApplication;
+import se.curtrune.lucy.modules.LucindaApplication;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.item.Item;
 import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.classes.item.Repeat;
 import se.curtrune.lucy.notifications.AlarmReceiver;
-import se.curtrune.lucy.persist.ItemsWorker;
 import se.curtrune.lucy.persist.Repository;
 
 public class NotificationsWorker {
@@ -57,7 +56,7 @@ public class NotificationsWorker {
 
     public static void setNotifications(LocalDate date, Context context){
         log("NotificationsWorker.setNotifications(LocalDate)");
-        Repository repository = LucindaApplication.repository;
+        Repository repository = LucindaApplication.appModule.getRepository();
         List<Item> items = repository.selectItems(date);
         for( Item item: items){
             if( item.hasNotification()){

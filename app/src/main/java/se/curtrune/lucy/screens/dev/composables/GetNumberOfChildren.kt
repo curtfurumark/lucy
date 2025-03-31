@@ -15,12 +15,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
 
 @Composable
 fun GetNumberOfChildren() {
     Card() {
-        val localDb = LucindaApplication.localDB
+        val localDb = LucindaApplication.appModule.sqliteLocalDB
         Column(modifier = Modifier.fillMaxWidth()) {
             var itemId by remember {
                 mutableStateOf("0")

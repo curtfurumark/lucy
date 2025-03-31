@@ -19,7 +19,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
-import se.curtrune.lucy.adapters.ItemAdapter
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.AddItemDialog
 import se.curtrune.lucy.composables.AddItemFab
@@ -37,7 +36,7 @@ import se.curtrune.lucy.util.Logger
  * create an instance of this fragment.
  */
 class EnchiladaFragment : Fragment() {
-    private var adapter: ItemAdapter? = null
+   // private var adapter: ItemAdapter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

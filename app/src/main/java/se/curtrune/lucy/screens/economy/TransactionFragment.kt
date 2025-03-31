@@ -20,7 +20,6 @@ import androidx.fragment.app.Fragment
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.economy.classes.Transaction
 import se.curtrune.lucy.activities.economy.workers.TransactionWorker
-import se.curtrune.lucy.adapters.TransactionAdapter
 import se.curtrune.lucy.util.Logger
 import java.time.LocalDate
 
@@ -30,7 +29,7 @@ import java.time.LocalDate
  * create an instance of this fragment.
  */
 class TransactionFragment : Fragment() {
-    private var adapter: TransactionAdapter? = null
+    //private var adapter: TransactionAdapter? = null
     private var currentTransaction: Transaction? = null
     private var editTextDescription: EditText? = null
     private var editTextAmount: EditText? = null
@@ -122,14 +121,14 @@ class TransactionFragment : Fragment() {
 
     private fun saveTransaction() {
         Logger.log("...saveTransaction()")
-        if (!validateInput()) {
+/*        if (!validateInput()) {
             return
         }
         currentTransaction = transaction
         currentTransaction = TransactionWorker.insert(currentTransaction, context)
         transactions!!.add(currentTransaction)
         adapter!!.notifyDataSetChanged()
-        resetUserInterface()
+        resetUserInterface()*/
     }
 
     private fun setUserInterface(transaction: Transaction) {

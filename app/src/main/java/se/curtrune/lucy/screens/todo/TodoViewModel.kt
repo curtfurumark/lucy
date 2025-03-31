@@ -8,10 +8,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.State
 import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
+import se.curtrune.lucy.modules.MainModule
 import se.curtrune.lucy.screens.item_editor.ItemEvent
 import se.curtrune.lucy.util.Logger
 import java.util.Comparator
@@ -19,7 +20,7 @@ import java.util.Comparator
 class TodoViewModel : ViewModel() {
     private val _state = MutableStateFlow(TodoState())
     val state = _state.asStateFlow()
-    private val repository = LucindaApplication.repository
+    private val repository = LucindaApplication.appModule.repository
     private var items: MutableList<Item> = mutableListOf()
     private val eventChannel = Channel<ChannelEvent>()
     val eventFlow = eventChannel.receiveAsFlow()
@@ -55,6 +56,7 @@ class TodoViewModel : ViewModel() {
         _state.update { it.copy(
             items = items
         ) }
+        MainModule.setTitle("todo/att göra")
     }
     private fun editItem(item: Item){
         viewModelScope.launch {
@@ -96,10 +98,16 @@ class TodoViewModel : ViewModel() {
     fun onEvent(event: TopAppBarEvent){
         when(event){
             TopAppBarEvent.DayCalendar -> TODO()
-            TopAppBarEvent.Menu -> TODO()
+            TopAppBarEvent.DrawerMenu -> TODO()
             TopAppBarEvent.OnBoost -> TODO()
             TopAppBarEvent.OnPanic -> TODO()
             is TopAppBarEvent.OnSearch -> {filter(event.filter, event.everywhere)}
+            TopAppBarEvent.DayClicked -> TODO()
+            TopAppBarEvent.WeekClicked -> TODO()
+            TopAppBarEvent.MedicinesClicked -> TODO()
+            TopAppBarEvent.MonthClicked -> TODO()
+            TopAppBarEvent.SettingsClicked -> TODO()
+            TopAppBarEvent.ActionMenu -> TODO()
         }
 
     }

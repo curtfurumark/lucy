@@ -8,13 +8,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
 import se.curtrune.lucy.classes.item.Item
+import se.curtrune.lucy.modules.MainModule
 import java.time.YearMonth
 
 class MonthViewModel: ViewModel() {
-    private val repository = LucindaApplication.repository
+    private val repository = LucindaApplication.appModule.repository
     private var currentYearMonth = YearMonth.now()
     private val _eventChannel = Channel<MonthChannel>()
     val eventChannel = _eventChannel.receiveAsFlow()
@@ -26,6 +27,7 @@ class MonthViewModel: ViewModel() {
     private var currentPage = state.value.initialPage
     init {
         _state.value.calendarMonth = repository.getCalenderMonth(state.value.yearMonth)
+        MainModule.setTitle(currentYearMonth)
     }
     fun onPager(newPageIndex: Int){
         println("...onPager($newPageIndex)")
@@ -77,6 +79,7 @@ class MonthViewModel: ViewModel() {
                 calendarMonth = repository.getCalenderMonth(currentYearMonth)
             )
         }
+        MainModule.setTitle(currentYearMonth)
     }
     private fun showYearMonthDialog(){
         println("show yearMonth dialog")

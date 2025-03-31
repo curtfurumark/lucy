@@ -8,14 +8,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import se.curtrune.lucy.LucindaApplication
+import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.Type
+import se.curtrune.lucy.modules.MainModule
 import se.curtrune.lucy.util.Logger
 
 class AppointmentsViewModel : ViewModel() {
-    private val repository = LucindaApplication.repository
+    private val repository = LucindaApplication.appModule.repository
     private val _state = MutableStateFlow(AppointmentsState())
     private val eventChannel = Channel<UIEvent>()
     private var items: List<Item> = mutableListOf()
@@ -26,8 +27,9 @@ class AppointmentsViewModel : ViewModel() {
         items = repository.selectAppointments()
         _state.update {it.copy(
             items = items
-        )
+            )
         }
+        MainModule.setTitle("möten")
     }
     private fun insert(item: Item) {
         println("AppointmentsViewModel(Item, Context)")
