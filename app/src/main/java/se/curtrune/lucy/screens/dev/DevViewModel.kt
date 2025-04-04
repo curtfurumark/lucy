@@ -96,6 +96,7 @@ class DevViewModel : ViewModel() {
             is DevEvent.InsertItemWithID -> {insertItemWithID(event.item)}
             is DevEvent.AddTab -> {addTab(event.heading)}
             is DevEvent.RunQuery -> { runQuery(event.query)}
+            is DevEvent.InsertItem -> {insertItem(event.item)}
         }
     }
     fun onEvent(event: ItemEvent){
@@ -133,10 +134,17 @@ class DevViewModel : ViewModel() {
             }
 
             TopAppBarEvent.ActionMenu -> TODO()
+            TopAppBarEvent.CheckForUpdate -> TODO()
+            TopAppBarEvent.DevActivity -> TODO()
         }
     }
     private fun insertItem(item: Item){
         println("insertItem(${item.heading})")
+        val itemWithID = repository.insert(item)
+        if(itemWithID == null){
+            println("error inserting item")
+            return
+        }
     }
     private fun monthCalendar(){
         println("month calendar")

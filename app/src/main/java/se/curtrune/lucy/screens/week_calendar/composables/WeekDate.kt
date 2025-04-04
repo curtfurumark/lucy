@@ -1,9 +1,11 @@
 package se.curtrune.lucy.screens.week_calendar.composables
 
 import android.content.res.Configuration
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -34,6 +36,7 @@ import se.curtrune.lucy.util.DateTImeConverter
 import java.time.LocalDate
 import java.time.format.TextStyle
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WeekDate(calendarDate: CalenderDate, onEvent: (WeekEvent)->Unit){
     var backgroundColor by remember {
@@ -56,10 +59,12 @@ fun WeekDate(calendarDate: CalenderDate, onEvent: (WeekEvent)->Unit){
             .aspectRatio(1.2F)
             .clip(RoundedCornerShape(5.dp))
             .background(color = MaterialTheme.colorScheme.background)
-            .clickable {
-                onEvent(WeekEvent.CalendarDateClick(calendarDate))
-            },
-        contentAlignment = Alignment.TopStart
+            .combinedClickable(onClick = {
+                onEvent(WeekEvent.CalendarDateClick(calendarDate)) },
+                onLongClick = {
+                    onEvent(WeekEvent.CalendarDateLongClick(calendarDate))
+                }),
+            contentAlignment = Alignment.TopStart
     ){
         Column(
             modifier = Modifier.padding(2.dp),
@@ -67,16 +72,17 @@ fun WeekDate(calendarDate: CalenderDate, onEvent: (WeekEvent)->Unit){
         ) {
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                    //.background(backgroundColor),
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
                 textAlign = TextAlign.Center,
                 text = "${DateTImeConverter.format(calendarDate.date.dayOfWeek, TextStyle.SHORT)} ${calendarDate.date.dayOfMonth}",
                 fontSize = 20.sp)
-            calendarDate.items.reversed().forEach { event->
+            calendarDate.items.forEach { event->
                 Box(
                     modifier = Modifier.fillMaxWidth()
                         .border(Dp.Hairline, color = Color.Black)
                 ) {
                     Text(
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
                         modifier = Modifier.padding(start = 2.dp),
                         text = "${DateTImeConverter.format(event.targetTime)} ${event.heading}",
                         maxLines = 1

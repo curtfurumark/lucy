@@ -10,17 +10,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.composables.ItemFieldChooser
 import se.curtrune.lucy.composables.MyDatePicker
-import se.curtrune.lucy.screens.my_day.MyDateEvent
+import se.curtrune.lucy.screens.my_day.MyDayEvent
 import se.curtrune.lucy.screens.my_day.MyDayState
 
 @Composable
-fun MyDayHeader(state: MyDayState, onEvent: (MyDateEvent)->Unit){
+fun MyDayHeader(state: MyDayState, onEvent: (MyDayEvent)->Unit){
     Column(modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         MyDatePicker(state = state, onDate = { date ->
             println(" on date chosen")
-            onEvent(MyDateEvent.Date(date))
+            onEvent(MyDayEvent.Date(date))
         })
         Spacer(modifier = Modifier.height(8.dp))
         SelectAllDayOrCurrent(state.allDay, onEvent = { event ->
@@ -29,7 +29,7 @@ fun MyDayHeader(state: MyDayState, onEvent: (MyDateEvent)->Unit){
         })
         ItemFieldChooser(onFieldChosen = { field ->
             println("field chosen, ${field.name}")
-            onEvent(MyDateEvent.Field(field))
+            onEvent(MyDayEvent.Field(field))
         })
     }
 }

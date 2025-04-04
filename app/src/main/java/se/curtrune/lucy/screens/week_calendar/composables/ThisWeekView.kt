@@ -66,6 +66,7 @@ fun ThisWeekView(state: WeekState, onEvent: (WeekEvent) -> Unit){
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
                 text = stringResource(R.string.week_with_number, state.currentWeek.weekNumber),
                 fontSize = 20.sp
             )
@@ -77,6 +78,7 @@ fun ThisWeekView(state: WeekState, onEvent: (WeekEvent) -> Unit){
                     Text(
                         modifier = Modifier.padding(start = 2.dp),
                         text = item.heading,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer,
                         maxLines = 1
                     )
                 }

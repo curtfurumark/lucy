@@ -61,9 +61,19 @@ class UserViewModel: ViewModel(){
             is UserEvent.GetEvents -> { getEvents(event.calendarID)}
             is UserEvent.Language -> { setLanguage(event.language)}
             is UserEvent.SyncWithCalendar -> {syncWithCalendar(event.calendarID)}
+            is UserEvent.ImportEvents -> { importEvents(event.googleCalendarID)}
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun importEvents(calendarID: Int) {
+        println("importEvents($calendarID)")
+        viewModelScope.launch {
+            calendarModule.importGoogleEvents(calendarID)
         }
 
     }
+
     private fun setDarkMode(darkMode: Boolean){
         println("UserViewModel.setDarkMode($darkMode)")
         userSettings.darkMode = darkMode

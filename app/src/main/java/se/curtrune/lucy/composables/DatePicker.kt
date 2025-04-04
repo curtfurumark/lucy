@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,7 +25,10 @@ import java.time.LocalDate
 @Composable
 fun MyDatePicker(state: MyDayState, onDate: (LocalDate)->Unit) {
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-        Text(text = LocalDate.now().toString(), color = Color.White, fontSize = 24.sp)
+        Text(
+            text = state.date.toString(),
+            color = MaterialTheme.colorScheme.onBackground,
+            fontSize = 24.sp)
     }
 }
 @Composable

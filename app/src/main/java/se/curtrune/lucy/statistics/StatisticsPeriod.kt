@@ -4,16 +4,6 @@ import se.curtrune.lucy.modules.LucindaApplication
 import java.time.LocalDate
 
 class StatisticsPeriod(var from: LocalDate, var to: LocalDate) {
-/*    constructor(period: Period) : this() {
-        val firstDate = when(period){
-            Period.DAY -> {LocalDate.now()}
-            Period.WEEK -> {LocalDate.now().minusWeeks(1)}
-            Period.MONTH -> {LocalDate.now().minusMonths(1)}
-            Period.YEAR -> {LocalDate.now().minusYears(1)}
-        }
-        this.from = firstDate
-        this.to = LocalDate.now()
-    }*/
     private val repository = LucindaApplication.appModule.repository
     lateinit var statistics: Statistics
     init {

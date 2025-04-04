@@ -144,10 +144,3 @@ fun SwipeBackground(state: SwipeToDismissBoxState){
         Icon(imageVector = Icons.Default.PlayArrow, contentDescription = "postpone", tint = Color.Black)
     }
 }
-
-@Composable
-fun Header(){
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
-        Text(text = LocalDate.now().toString())
-    }
-}

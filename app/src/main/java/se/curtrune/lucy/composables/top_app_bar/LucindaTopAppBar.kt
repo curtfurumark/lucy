@@ -28,11 +28,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
+import se.curtrune.lucy.composables.MentalMeter
+//import se.curtrune.lucy.screens.common.MentalMeter
 import se.curtrune.lucy.screens.main.MainState
 import se.curtrune.lucy.screens.main.TopAppBarState
+import se.curtrune.lucy.screens.medicine.composable.DropdownItem
 
 @Composable
 fun LucindaTopAppBar(
@@ -58,7 +62,8 @@ fun LucindaTopAppBar(
                     onEvent(TopAppBarEvent.DrawerMenu)
                 })
             Spacer(modifier = Modifier.width(8.dp))
-            Text(text = state.title, fontSize = MaterialTheme.typography.titleLarge.fontSize )
+            MentalMeter(mental = state.mental)
+            //Text(text = state.title, fontSize = MaterialTheme.typography.titleLarge.fontSize )
             Spacer(modifier = Modifier.weight(1f))
             Icon(imageVector = Icons.Default.Search, contentDescription = "search",
                 modifier = Modifier.clickable {
@@ -76,13 +81,21 @@ fun LucindaTopAppBar(
             Spacer(modifier = Modifier.width(8.dp))
             Icon(imageVector = Icons.Default.MoreVert, contentDescription = "action menu",
                 modifier = Modifier.clickable {
-                    onEvent(TopAppBarEvent.ActionMenu)
+                    //onEvent(TopAppBarEvent.ActionMenu)
+                    showActionMenu = !showActionMenu
                 }
             )
             DropdownMenu(expanded = showActionMenu, onDismissRequest = {
                 showActionMenu = false
             }){
-
+                DropdownItem("dev activity") {
+                    showActionMenu = false
+                    onEvent(TopAppBarEvent.DevActivity)
+                }
+                DropdownItem("check for update") {
+                    showActionMenu = false
+                    onEvent(TopAppBarEvent.CheckForUpdate)
+                }
             }
         }
         AnimatedVisibility(visible = showSearchField) {
@@ -100,13 +113,14 @@ fun LucindaTopAppBar(
             }
         }
         Row(modifier = Modifier.fillMaxWidth()){
-            LucindaControls(state = MainState(), onEvent = onEvent)
+            LucindaControls(state = state, onEvent = onEvent)
         }
     }
 }
 
 @Composable
 @Preview(showBackground = true)
+@PreviewLightDark
 fun PreviewTopAppBar(){
     LucyTheme {
         val state = TopAppBarState()

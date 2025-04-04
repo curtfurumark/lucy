@@ -12,6 +12,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -102,11 +103,19 @@ fun DateItem(
                 item.setIsDone(isDone)
                 onEvent(DayEvent.UpdateItem(item))
             })
-            Text(text = DateTImeConverter.format(item.targetTime), fontSize = 18.sp, modifier = Modifier.padding(end = 8.dp).clickable {
-                println(" on targetTimeClick")
+            Text(
+                text = DateTImeConverter.format(item.targetTime),
+                fontSize = 18.sp,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                modifier = Modifier
+                    .padding(end = 8.dp)
+                    .clickable {
                 showTimePicker = true
             })
-            Text(text = item.heading, fontSize = 18.sp)
+            Text(
+                text = item.heading,
+                fontSize = 18.sp,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,)
             Spacer(modifier = Modifier.weight(1f))
             if( item.hasChild()) {
                 Text(text = ">", modifier = Modifier.padding(end = 4.dp))

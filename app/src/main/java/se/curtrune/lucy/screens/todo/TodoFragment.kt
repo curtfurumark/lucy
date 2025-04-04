@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -22,7 +23,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.composables.AddItemDialog
+import se.curtrune.lucy.composables.add_item.AddItemDialog
 import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
 import se.curtrune.lucy.screens.item_editor.ItemEditorFragment
@@ -51,6 +52,17 @@ class TodoFragment : Fragment() {
                 var showAddItemDialog by remember {
                     mutableStateOf(false)
                 }
+                @Composable
+                fun ShowAddItemDialog(settings: DialogSettings) {
+                    AddItemDialog(
+                        onDismiss = {
+                            showAddItemDialog = false
+                        },
+                        onConfirm = { item ->
+                            todoViewModel.onEvent(ItemEvent.InsertItem(item))
+                            showAddItemDialog = false
+                        }, settings = settings)
+                }
                 LaunchedEffect(todoViewModel) {
                     todoViewModel.eventFlow.collect{ event->
                         when(event){
@@ -69,6 +81,7 @@ class TodoFragment : Fragment() {
 
                             ChannelEvent.ShowAddItemDialog -> {
                                 showAddItemDialog = true
+                                //ShowAddItemDialog(settings = DialogSettings())
                             }
                         }
                     }
@@ -91,12 +104,14 @@ class TodoFragment : Fragment() {
                             },
                                 onConfirm = { item ->
                                     todoViewModel.onEvent(ItemEvent.InsertItem(item))
-                                }, settings = DialogSettings())
+                                    showAddItemDialog = false
+                                }, settings = state.value.newItemSettings)
                         }
+
                     }
                 }
             }
-            }
+        }
     }
 
 
@@ -109,6 +124,7 @@ class TodoFragment : Fragment() {
             )
         )
     }
+
 
 
 

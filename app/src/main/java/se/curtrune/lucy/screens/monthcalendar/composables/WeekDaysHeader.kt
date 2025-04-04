@@ -29,7 +29,6 @@ fun WeekDaysHeader() {
             ) {
                 Text(
                     text = it.getDisplayName(TextStyle.NARROW, Locale.getDefault()).uppercase(),
-                    color = Color.White
                 )
             }
         }

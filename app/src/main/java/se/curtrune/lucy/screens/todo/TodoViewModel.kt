@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
 import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.State
@@ -26,18 +27,18 @@ class TodoViewModel : ViewModel() {
     val eventFlow = eventChannel.receiveAsFlow()
 
     fun delete(item: Item) {
-        println("TodoViewModel(${item.heading})")
+        println("TodoViewModel.delete(${item.heading})")
         val stat = repository.delete(item)
         if (!stat) {
             println("ERROR deleting item")
             showMessage("error deleting item: ${item.heading}")
-        } else {
-            showProgressBar(true)
-            _state.update { it.copy(
-                items =  repository.selectItems(State.TODO)
-            ) }
-            showProgressBar(false)
+            return
         }
+        showProgressBar(true)
+        _state.update { it.copy(
+            items =  repository.selectItems(State.TODO)
+        ) }
+        showProgressBar(false)
     }
 
     fun filter(filter: String?, everywhere: Boolean) {
@@ -65,11 +66,18 @@ class TodoViewModel : ViewModel() {
     }
 
     private fun insert(item: Item) {
-        //var item = item
-        println("TodoFragmentViewModel.insert(Item)")
+        println("TodoViewModel.insert(Item)")
         val itemWithID = repository.insert(item)
-        //mutableItems.value!!.add(itemWithID)
-        sort()
+        if( itemWithID == null){
+            println("ERROR inserting item")
+            showMessage("error inserting item: ${item.heading}")
+            return
+        }
+        items.add(itemWithID)
+        items.sortWith(Comparator.comparingLong() { it.compare() })
+        _state.update { it.copy(
+            items = items
+        ) }
     }
 
     private fun sort() {
@@ -87,7 +95,7 @@ class TodoViewModel : ViewModel() {
             is ItemEvent.PauseTimer -> {}
             is ItemEvent.ResumeTimer -> {}
             is ItemEvent.StartTimer -> {}
-            is ItemEvent.InsertItem -> {}
+            is ItemEvent.InsertItem -> { insert(event.item)}
             is ItemEvent.ShowAddItemDialog -> {showAddItemDialog()}
             is ItemEvent.InsertChild -> {
                 //TODO, implement this
@@ -108,6 +116,8 @@ class TodoViewModel : ViewModel() {
             TopAppBarEvent.MonthClicked -> TODO()
             TopAppBarEvent.SettingsClicked -> TODO()
             TopAppBarEvent.ActionMenu -> TODO()
+            TopAppBarEvent.CheckForUpdate -> TODO()
+            TopAppBarEvent.DevActivity -> TODO()
         }
 
     }
@@ -115,6 +125,10 @@ class TodoViewModel : ViewModel() {
 
     }
     private fun showAddItemDialog(){
+        val parent = repository.getTodoRoot()
+        _state.update { it.copy(
+            newItemSettings = DialogSettings(isCalendarItem = false, parent = parent)
+        ) }
         viewModelScope.launch {
             eventChannel.send(ChannelEvent.ShowAddItemDialog)
         }

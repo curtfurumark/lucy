@@ -21,9 +21,10 @@ import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.R
 import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.screens.main.MainState
+import se.curtrune.lucy.screens.main.TopAppBarState
 
 @Composable
-fun MentalMeter(state: MainState){
+fun MentalMeter(state: TopAppBarState){
     println("MentalMeter recomposition")
     Row(modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,

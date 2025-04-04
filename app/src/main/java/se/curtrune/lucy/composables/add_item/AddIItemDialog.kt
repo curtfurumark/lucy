@@ -1,4 +1,4 @@
-package se.curtrune.lucy.composables
+package se.curtrune.lucy.composables.add_item
 
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
@@ -45,6 +45,13 @@ import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.ItemDuration
 import se.curtrune.lucy.classes.Type
+import se.curtrune.lucy.composables.CategoryDialog
+import se.curtrune.lucy.composables.ColorPicker
+import se.curtrune.lucy.composables.DatePickerModal
+import se.curtrune.lucy.composables.NotificationDialog
+import se.curtrune.lucy.composables.RepeatDialog
+import se.curtrune.lucy.composables.TagsDialog
+import se.curtrune.lucy.composables.TimePickerDialog
 import se.curtrune.lucy.composables.top_app_bar.ItemSettingAppointment
 import se.curtrune.lucy.composables.top_app_bar.ItemSettingCalendar
 import se.curtrune.lucy.composables.top_app_bar.ItemSettingCategory
@@ -206,6 +213,7 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: Dialog
                 })
                 ItemSettingSyncWithGoogle(item = item, onEvent = {
                     println("sync with google calendar")
+                    item.setSyncWithGoogle(it)
                 })
                 if( item.type == Type.APPOINTMENT){
                     ItemSettingLocation()

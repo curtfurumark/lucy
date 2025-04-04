@@ -12,5 +12,6 @@ sealed interface TopAppBarEvent {
     data object MonthClicked : TopAppBarEvent
     data object MedicinesClicked : TopAppBarEvent
     data object SettingsClicked : TopAppBarEvent
-
+    data object DevActivity : TopAppBarEvent
+    data object CheckForUpdate : TopAppBarEvent
 }

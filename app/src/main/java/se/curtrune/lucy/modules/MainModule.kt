@@ -1,10 +1,13 @@
 package se.curtrune.lucy.modules
 
+import androidx.compose.material3.Text
+import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import se.curtrune.lucy.classes.calender.Week
 import se.curtrune.lucy.screens.main.TopAppBarState
+import se.curtrune.lucy.util.DateTImeConverter
 import se.curtrune.lucy.util.cecilia
 import java.time.YearMonth
 import java.time.format.TextStyle
@@ -18,9 +21,10 @@ object MainModule{
             title = title
         ) }
     }
+
     fun setTitle(yearMonth: YearMonth){
         _topAppBarState.update { it.copy(
-            title = yearMonth.toString()
+            title =  DateTImeConverter.format(yearMonth).cecilia()
             )
         }
     }

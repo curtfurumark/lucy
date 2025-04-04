@@ -20,6 +20,7 @@ class MessageBoardViewModel : ViewModel() {
     private var filteredMessages: List<Message> = emptyList()
     private val _state = MutableStateFlow(MessageBoardState())
     val state = _state.asStateFlow()
+    private var currentCategory: String = "message"
     private val mutableError = MutableLiveData<String>()
     private val eventChannel = Channel<MessageChannel>()
     val eventFlow = eventChannel.receiveAsFlow()
@@ -53,15 +54,11 @@ class MessageBoardViewModel : ViewModel() {
             val strResult = lucindaApi.insertMessage(message)
             println("strResult: $strResult")
             messages.add(message)
-            messages.sortBy { message->message.created }
+            filteredMessages = messages.filter { message->message.category == currentCategory }.sortedByDescending { it.created }
             _state.update { it.copy(
-                messages = messages.reversed()
+                messages = filteredMessages
             ) }
         }
-
-    }
-
-    fun filter(category: String?) {
     }
     fun onEvent(event: MessageBoardEvent){
         println("onEvent(${event.toString()})")
@@ -93,6 +90,7 @@ class MessageBoardViewModel : ViewModel() {
     }
     private fun setSelectedCategory(category: String){
         println("setSelectedCategory($category)")
+        currentCategory = category
         filteredMessages = messages.filter { message->message.category == category }
         _state.update { it.copy(
             category =  category,

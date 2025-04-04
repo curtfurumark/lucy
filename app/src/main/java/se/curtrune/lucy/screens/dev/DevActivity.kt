@@ -49,9 +49,14 @@ import se.curtrune.lucy.app.Lucinda
 import se.curtrune.lucy.app.Settings
 import se.curtrune.lucy.classes.Notification
 import se.curtrune.lucy.classes.item.Item
+import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.composables.CountDownTimerService
+import se.curtrune.lucy.composables.MentalMeter4
 import se.curtrune.lucy.composables.NavigationDrawer
 import se.curtrune.lucy.composables.StopWatchUsingService
+import se.curtrune.lucy.composables.add_item.AddItemBottomSheet
+import se.curtrune.lucy.composables.add_item.DefaultItemSettings
+import se.curtrune.lucy.composables.add_item.TargetTimePicker
 import se.curtrune.lucy.composables.top_app_bar.FlexibleTopBar
 import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
 import se.curtrune.lucy.dialogs.RepeatDialog
@@ -70,6 +75,7 @@ import se.curtrune.lucy.screens.dev.composables.TestSwipeAble
 import se.curtrune.lucy.screens.log_in.LogInActivity
 import se.curtrune.lucy.screens.main.MainActivity
 import se.curtrune.lucy.screens.main.TopAppBarState
+import se.curtrune.lucy.screens.my_day.MyDayState
 import se.curtrune.lucy.screens.repeat.RepeatActivity
 import se.curtrune.lucy.services.TimerService
 import se.curtrune.lucy.util.Constants
@@ -108,6 +114,9 @@ class DevActivity : AppCompatActivity() {
             val state = devViewModel.state.collectAsState()
             val context = LocalContext.current
             val mental = devViewModel.mental
+            var showBottomSheet by remember {
+                mutableStateOf(false)
+            }
             val drawerState = rememberDrawerState(DrawerValue.Closed)
             LaunchedEffect(devViewModel) {
                 devViewModel.eventFlow.collect{ event->
@@ -141,6 +150,12 @@ class DevActivity : AppCompatActivity() {
                         })
                     }) {
                     Scaffold(
+                        floatingActionButton = {
+                            AddItemFab {
+                                println("...floatingActionButton")
+                                showBottomSheet = true
+                            }
+                        },
                         topBar = {
                             FlexibleTopBar(
                                 scrollBehavior = scrollBehavior,
@@ -199,6 +214,17 @@ class DevActivity : AppCompatActivity() {
                                 }
                                 val showCountDownService by remember {
                                     mutableStateOf(false)
+                                }
+                                //TargetTimePicker()
+                                val item = Item().also {
+                                    it.energy = 3
+                                    it.anxiety =  2
+                                    it.mood = 1
+                                    it.stress = 0
+                                    it.heading = "hello"
+                                }
+                                MentalMeter4(item = item, state = MyDayState() ) { event->
+                                    println("...onEvent(event): ${event.toString()}")
                                 }
                                 if( showRunSQL){
                                     ExecuteQuery(onEvent = {event->
@@ -298,6 +324,18 @@ class DevActivity : AppCompatActivity() {
                                         sendCommandToTimeService(command, duration)
                                     })
                                 }
+                            }
+                            if( showBottomSheet){
+                                AddItemBottomSheet(
+                                    defaultItemSettings = DefaultItemSettings(),
+                                    onDismiss = {
+                                    println("...onDismiss")
+                                    showBottomSheet = false
+                                }, onSave ={ item->
+                                    println("...onSave: ${item.heading}")
+                                    devViewModel.onEvent(DevEvent.InsertItem(item))
+                                    showBottomSheet = false
+                                } )
                             }
                         }
                     }

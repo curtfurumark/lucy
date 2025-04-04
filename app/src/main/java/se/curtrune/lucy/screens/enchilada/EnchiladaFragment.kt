@@ -20,9 +20,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.composables.AddItemDialog
+import se.curtrune.lucy.composables.add_item.AddItemDialog
 import se.curtrune.lucy.composables.AddItemFab
-import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
 import se.curtrune.lucy.screens.ItemChannel
 import se.curtrune.lucy.screens.enchilada.composables.EnchiladaScreen
 import se.curtrune.lucy.screens.item_editor.ItemEditorFragment
@@ -59,7 +58,7 @@ class EnchiladaFragment : Fragment() {
                 val filter = mainViewModel.filter.collectAsState()
                 LaunchedEffect(filter.value) {
                     println("filter observed: ${filter.value}")
-                    enchiladaViewModel.onEvent(TopAppBarEvent.OnSearch(filter.value, false))
+                    //enchiladaViewModel.onEvent(TopAppBarEvent.OnSearch(filter.value, false))
                 }
                 LaunchedEffect(enchiladaViewModel) {
                     enchiladaViewModel.eventFlow.collect{ event->

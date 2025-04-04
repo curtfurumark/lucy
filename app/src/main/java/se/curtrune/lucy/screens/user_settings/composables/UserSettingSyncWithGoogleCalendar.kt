@@ -65,6 +65,12 @@ fun UserSettingSyncWithGoogleCalendar(state: UserState, onEvent: (UserEvent)->Un
                         }){
                             Text(text = "get events")
                         }
+                        Button(onClick = {
+                            onEvent(UserEvent.ImportEvents(state.googleCalendarID))
+                            showCalendars = !showCalendars
+                        }){
+                            Text(text = "import google events")
+                        }
                     }
                     Row(modifier = Modifier.fillMaxWidth()) {
                         val calendars = LucindaApplication.appModule.googleCalendarModule.getCalendars()

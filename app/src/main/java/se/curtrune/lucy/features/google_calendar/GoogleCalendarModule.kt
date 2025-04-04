@@ -11,7 +11,9 @@ import androidx.annotation.RequiresApi
 import se.curtrune.lucy.classes.ItemDuration
 import se.curtrune.lucy.classes.google_calendar.GoogleCalendar
 import se.curtrune.lucy.classes.google_calendar.GoogleCalendarEvent
+import se.curtrune.lucy.classes.google_calendar.GoogleFactory.itemToGoogleEvent
 import se.curtrune.lucy.classes.item.Item
+import se.curtrune.lucy.persist.Repository
 import se.curtrune.lucy.util.DateTImeConverter
 import java.time.Instant
 import java.time.LocalDate
@@ -228,8 +230,9 @@ class GoogleCalendarModule(private val application: Application) {
     fun getHolidays(){
         println("CalendarModule.getHolidays()")
     }
-    fun insertItem(){
-
+    fun insertItem(item: Item, calendarID: Int){
+        val googleCalendarEvent = itemToGoogleEvent(item, calendarID)
+        insertEvent(googleCalendarEvent)
     }
     fun insertEvent(myCalendarEvent: GoogleCalendarEvent){
         insertEvent(
@@ -269,5 +272,13 @@ class GoogleCalendarModule(private val application: Application) {
             item.itemDuration = ItemDuration(type = ItemDuration.Type.DAY)
         }
         return item
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun importGoogleEvents(calendarID: Int) {
+        println("CalendarModule.importGoogleEvents()")
+        val items = getGoogleEventsAsItems(calendarID)
+        val repository = Repository(application)
+        repository.insert(items)
     }
 }

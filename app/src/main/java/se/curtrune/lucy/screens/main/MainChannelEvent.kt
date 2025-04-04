@@ -8,9 +8,11 @@ sealed interface MainChannelEvent{
     data object  UpdateAvailable: MainChannelEvent
     data class ShowBoostDialog(val quote: Quote? = null): MainChannelEvent
     data class ShowAffirmation(val affirmation: Affirmation? = null): MainChannelEvent
+    data class ShowMessage(val message: String): MainChannelEvent
     data object ShowPanicDialog: MainChannelEvent
     data object OpenNavigationDrawer : MainChannelEvent
     data object ShowDayCalendar : MainChannelEvent
     data class StartSequence(val root: Item) : MainChannelEvent
     data class ShowQuoteDialog(val quote: Quote? = null): MainChannelEvent
+    data object NavigateDevActivity: MainChannelEvent
 }

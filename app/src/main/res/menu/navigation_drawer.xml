@@ -42,9 +42,6 @@
         android:icon="@drawable/baseline_checklist_24"
         android:title="@string/enchilada" />
     <item
-        android:id="@+id/navigationDrawer_graphFragment"
-        android:title="@string/graph_today" />
-    <item
         android:id="@+id/navigationDrawer_mentalStatsFragment"
         android:title="@string/mental_history" />
     <!--/group-->

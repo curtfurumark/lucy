@@ -10,14 +10,14 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
-import se.curtrune.lucy.screens.my_day.MyDateEvent
+import se.curtrune.lucy.screens.my_day.MyDayEvent
 
 /**
  * "all day" is index 0, current is index 1
  * find a better solution
  */
 @Composable
-fun SelectAllDayOrCurrent(isAllDay: Boolean, onEvent: (MyDateEvent)->Unit){
+fun SelectAllDayOrCurrent(isAllDay: Boolean, onEvent: (MyDayEvent)->Unit){
     var selectedIndex by remember {
         mutableIntStateOf(if (isAllDay) 0 else 1)
     }
@@ -28,7 +28,7 @@ fun SelectAllDayOrCurrent(isAllDay: Boolean, onEvent: (MyDateEvent)->Unit){
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
                 onClick = {
                     selectedIndex = index
-                    onEvent(MyDateEvent.AllDay(selectedIndex == 0))
+                    onEvent(MyDayEvent.AllDay(selectedIndex == 0))
                           },
                 selected = selectedIndex == index
             ){

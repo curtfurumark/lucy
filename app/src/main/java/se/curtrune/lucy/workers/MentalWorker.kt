@@ -39,7 +39,7 @@ object MentalWorker {
      * @return Mental sum for done items
      */
     fun getCurrentMental(date: LocalDate, context: Context?): Mental {
-        Logger.log("MentalWorker.getCurrentMental(LocalDate)", date.toString())
+        println("MentalWorker.getCurrentMental(LocalDate $date)")
         val queery = Queeries.selectItems(date, State.DONE)
         var items: List<Item>
         var anxiety = 0

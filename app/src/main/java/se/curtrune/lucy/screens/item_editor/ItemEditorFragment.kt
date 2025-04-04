@@ -234,7 +234,7 @@ class ItemEditorFragment : Fragment {
         lucindaViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
         itemSessionViewModel = ViewModelProvider(requireActivity())[ItemSessionViewModel::class.java]
         itemSessionViewModel!!.init(currentItem!!, context)
-        //mentalViewModel = new ViewModelProvider(requireActivity()).get(MentalViewModel.class);
+        //mentalViewModel = new ViewModelProvider(requireActivity()).get(MyDayViewModel.class);
     }
 
 

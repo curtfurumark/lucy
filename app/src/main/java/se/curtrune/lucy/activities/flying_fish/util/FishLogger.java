@@ -43,7 +43,4 @@ public class FishLogger extends Logger {
         //System.out.println("....flatten: " + rect.flattenToString());
     }
 
-    public static void log(String s) {
-        System.out.println(s);
-    }
 }

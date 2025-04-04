@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.ItemDuration
-import se.curtrune.lucy.composables.ItemSettingDuration
+import se.curtrune.lucy.composables.add_item.ItemSettingDuration
 import se.curtrune.lucy.util.gson.MyGson
 
 @Composable

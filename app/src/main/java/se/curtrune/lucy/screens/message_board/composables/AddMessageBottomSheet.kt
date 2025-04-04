@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -22,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -35,6 +38,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
@@ -52,7 +56,9 @@ enum class Mode{
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddMessageBottomSheet(messageIn: Message, onDismiss: ()->Unit, onSave: (Message)->Unit){
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
     val scope = rememberCoroutineScope()
     val message by remember{
         mutableStateOf(messageIn)
@@ -71,17 +77,19 @@ fun AddMessageBottomSheet(messageIn: Message, onDismiss: ()->Unit, onSave: (Mess
     var user by remember {
         mutableStateOf(messageIn.user)
     }
-    var isTodo by remember {
-        mutableStateOf(false)
-    }
     val focusRequester =  remember {
         FocusRequester()
     }
+    val headingID by remember {
+        mutableIntStateOf(if(mode == Mode.EDIT) R.string.edit_message else R.string.add_a_message_to_the_message_board)
+    }
+
     val focusManager = LocalFocusManager.current
     ModalBottomSheet(
         onDismissRequest = {
             onDismiss()
         },
+        //contentWindowInsets = {WindowInsets.ime},
         sheetState =  sheetState)
     {
         //val windowInsets = LocalWindowInsets.
@@ -90,7 +98,7 @@ fun AddMessageBottomSheet(messageIn: Message, onDismiss: ()->Unit, onSave: (Mess
                 modifier = Modifier.fillMaxWidth()
                     .focusRequester(focusRequester),
                 textAlign = TextAlign.Center,
-                text = stringResource(R.string.add_a_message_to_the_message_board),
+                text = stringResource(headingID),
                 fontSize = 20.sp)
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
@@ -184,6 +192,7 @@ fun AddMessageBottomSheet(messageIn: Message, onDismiss: ()->Unit, onSave: (Mess
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
+@PreviewLightDark
 @Preview(showBackground = true)
 fun PreviewBottomSheet(){
     LucyTheme {

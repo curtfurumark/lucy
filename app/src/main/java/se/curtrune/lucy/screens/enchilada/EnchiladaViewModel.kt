@@ -49,7 +49,7 @@ class EnchiladaViewModel : ViewModel() {
             is ItemEvent.InsertChild -> {println("insert child")}
         }
     }
-    fun onEvent(event: TopAppBarEvent){
+/*    fun onEvent(event: TopAppBarEvent){
         when(event){
             is TopAppBarEvent.DayCalendar -> {}
             is TopAppBarEvent.DrawerMenu -> {}
@@ -63,7 +63,7 @@ class EnchiladaViewModel : ViewModel() {
             is TopAppBarEvent.SettingsClicked -> TODO()
             TopAppBarEvent.ActionMenu -> TODO()
         }
-    }
+    }*/
 
     private fun delete(item: Item): Boolean {
         println("EnchiladaViewModel.delete(Item)")

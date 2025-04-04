@@ -24,6 +24,7 @@ import se.curtrune.lucy.web.LucindaApi
 class MainViewModel : ViewModel() {
     private val repository = LucindaApplication.appModule.repository
     private val mentalModule = LucindaApplication.appModule.mentalModule
+    private val internetWorker = LucindaApplication.appModule.internetWorker
     private val  _state =  MutableStateFlow(MainState())
     val state = _state.asStateFlow()
     private val _topAppBarState = MutableStateFlow(TopAppBarState())
@@ -46,8 +47,8 @@ class MainViewModel : ViewModel() {
 
     private fun checkIfUpdateAvailable() {
         Logger.log("LucindaViewModel.checkIfUpdateAvailable()")
-        LucindaApplication.contextModule
-        if( LucindaApplication.appModule.internetWorker.isConnected()){
+        //LucindaApplication.contextModule
+        if( checkInternet()){
             println("...internet is connected")
             viewModelScope.launch {
                 val latestVersion = LucindaApi.create().getUpdateAvailable()
@@ -63,7 +64,9 @@ class MainViewModel : ViewModel() {
                 }
             }
         }else{
-            Logger.log("...internet is not connected")
+            viewModelScope.launch {
+                _eventChannel.send(MainChannelEvent.ShowMessage("no internet connection"))
+            }
         }
 
     }
@@ -102,7 +105,20 @@ class MainViewModel : ViewModel() {
             is TopAppBarEvent.MonthClicked -> TODO()
             is TopAppBarEvent.SettingsClicked -> TODO()
             is TopAppBarEvent.ActionMenu -> {println("action menu")}
+            TopAppBarEvent.CheckForUpdate -> {checkIfUpdateAvailable()}
+            TopAppBarEvent.DevActivity -> {navigateDevActivity()}
         }
+    }
+
+    private fun navigateDevActivity() {
+        println("MainViewModel.navigate()")
+        viewModelScope.launch {
+           _eventChannel.send(MainChannelEvent.NavigateDevActivity)
+        }
+    }
+
+    private fun checkInternet(): Boolean{
+        return internetWorker.isConnected()
     }
     private fun openNavigationDrawer(){
         Logger.log("LucindaViewModel.openNavigationDrawer()")
@@ -151,6 +167,13 @@ class MainViewModel : ViewModel() {
 
     private fun requestAffirmation() {
         println("LucindaViewModel.requestAffirmation()")
+        if( !checkInternet()){
+            viewModelScope.launch {
+                _eventChannel.send(MainChannelEvent.ShowMessage("no internet connection"))
+            }
+            println("...internet is not connected")
+            return
+        }
         viewModelScope.launch {
             val affirmation = LucindaApi.create().getAffirmation()
             println(affirmation.toString())
@@ -158,7 +181,6 @@ class MainViewModel : ViewModel() {
                 MainChannelEvent.ShowAffirmation(affirmation)
             )
         }
-
     }
     private fun requestQuote(){
         println("requestQuote()")

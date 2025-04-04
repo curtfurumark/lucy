@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.composables.ItemSettingDuration
+import se.curtrune.lucy.composables.add_item.ItemSettingDuration
 import se.curtrune.lucy.item_settings.ItemSetting
 
 class ItemEditorActivity : ComponentActivity() {

@@ -35,16 +35,10 @@ public class Converter {
         return formatUI(LocalDateTime.ofEpochSecond(epoch, 0, ZoneOffset.UTC));
     }
 
-    public static String formatTime(long secondOfDay){
-        return LocalTime.ofSecondOfDay(secondOfDay).format(DateTimeFormatter.ofPattern(TIME_FORMAT_PATTERN));
-    }
 
     @Deprecated
     public static String format(LocalDate date){
         return date.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN));
-    }
-    public static String formatShort(LocalDate date){
-        return date.format(DateTimeFormatter.ofPattern(DATE_FORMAT_SHORT_PATTERN));
     }
     @Deprecated
     public static String format(LocalTime time){

@@ -7,7 +7,7 @@ sealed interface ProjectsEvent{
     data class OnItemClick(val item: Item) : ProjectsEvent
     data class UpdateItem(val item: Item) : ProjectsEvent
     data class OnLongItemClick(val item: Item) : ProjectsEvent
-    data class OnTabClick(val tab: String) : ProjectsEvent
+    data class OnTabClick(val tab: ProjectTab) : ProjectsEvent
     data object Descend: ProjectsEvent
     data object Ascend: ProjectsEvent
 }

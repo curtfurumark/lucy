@@ -1,52 +1,54 @@
 package se.curtrune.lucy.screens.my_day
 
+import android.os.Bundle
+import androidx.lifecycle.AbstractSavedStateViewModelFactory
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.savedstate.SavedStateRegistryOwner
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.Field
+import se.curtrune.lucy.modules.MainModule
 import se.curtrune.lucy.util.Logger
 import java.time.LocalDate
 
-class MentalDateViewModel() : ViewModel() {
+class MyDayViewModel(val date: LocalDate, savedStateHandle: SavedStateHandle) : ViewModel() {
     private val mentalModule = LucindaApplication.appModule.mentalModule
     private val repository = LucindaApplication.appModule.repository
     private var allItems: List<Item> = mutableListOf()
-    //var mutableItems = MutableLiveData<List<Item>?>()
-    //private var _items: List<Item> = emptyList()
-    //var items: LiveData<List<Item>> = liveData {mutableItems  }
     private var filteredItems: List<Item> = emptyList()
-    //var mutableAllDay = MutableLiveData<Boolean>(true)
     private var _state = MutableStateFlow(MyDayState())
     var state = _state.asStateFlow()
     init{
-        println("init MentalDateViewModel(Context)")
-        allItems = repository.selectItems(LocalDate.now())
+        println("init{ date: $date}")
+        allItems = repository.selectItems(date)
         _state.update { it.copy(
-            items = allItems
+            items = allItems,
+            date = date,
+            mental = mentalModule.getCurrentMental()
         ) }
-        //items.sort(Comparator.comparingLong { obj: Item -> obj.compareTargetTime() })
-        setAllDay(_state.value.allDay)
+        MainModule.setTitle("min dag")
     }
-    fun onEvent(event: MyDateEvent){
+    fun onEvent(event: MyDayEvent){
         println("MentalDateViewModel.onEvent(MentalEvent)")
         when(event){
-            is MyDateEvent.Date -> {
+            is MyDayEvent.Date -> {
                 setDate(event.date)
             }
-            is MyDateEvent.SetEditField -> TODO()
-            is MyDateEvent.UpdateItem -> {
+            is MyDayEvent.SetEditField -> TODO()
+            is MyDayEvent.UpdateItem -> {
                 updateItem(event.item)
             }
 
-            is MyDateEvent.AllDay -> { setAllDay(event.allDay)}
-            is MyDateEvent.ShowDatePicker ->  {
+            is MyDayEvent.AllDay -> { setAllDay(event.allDay)}
+            is MyDayEvent.ShowDatePicker ->  {
                 println("show date picker")
             }
 
-            is MyDateEvent.Field -> { setField(event.field)}
+            is MyDayEvent.Field -> { setField(event.field)}
         }
 
     }
@@ -68,6 +70,11 @@ class MentalDateViewModel() : ViewModel() {
         println("....updateItem(Item)")
         repository.update(item)
         mentalModule.update()
+        _state.update {
+            it.copy(
+                mental = mentalModule.getCurrentMental()
+            )
+        }
     }
 
     private fun setAllDay(allDay: Boolean) {
@@ -82,5 +89,23 @@ class MentalDateViewModel() : ViewModel() {
                 )
             }
         }
+    }
+}
+
+class MyDayViewModelFactory(
+    private val date: LocalDate,
+    owner: SavedStateRegistryOwner,
+    defaultArgs: Bundle? = null
+) : AbstractSavedStateViewModelFactory(owner, defaultArgs) {
+    override fun <T : ViewModel> create(
+        key: String,
+        modelClass: Class<T>,
+        handle: SavedStateHandle
+    ): T {
+        if (modelClass.isAssignableFrom(MyDayViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return MyDayViewModel(date, handle) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

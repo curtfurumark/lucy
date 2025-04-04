@@ -3,14 +3,9 @@ package se.curtrune.lucy.screens.main
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SearchView
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarDefaults
@@ -22,11 +17,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
-import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.navigation.NavigationView
 import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.R
@@ -49,7 +42,6 @@ import se.curtrune.lucy.screens.daycalendar.CalendarDayFragment
 import se.curtrune.lucy.screens.dev.DevActivity
 import se.curtrune.lucy.screens.duration.DurationFragment
 import se.curtrune.lucy.screens.enchilada.EnchiladaFragment
-import se.curtrune.lucy.screens.index20.IndexActivityKt
 import se.curtrune.lucy.screens.log_in.LogInActivity
 import se.curtrune.lucy.screens.main.composables.ChoosePanicActionDialog
 import se.curtrune.lucy.screens.main.composables.QuoteDialog
@@ -57,7 +49,7 @@ import se.curtrune.lucy.screens.medicine.MedicineFragment
 import se.curtrune.lucy.screens.mental_stats.MentalStatsFragment
 import se.curtrune.lucy.screens.message_board.MessageBoardFragment
 import se.curtrune.lucy.screens.monthcalendar.MonthFragment
-import se.curtrune.lucy.screens.my_day.MentalDateFragment
+import se.curtrune.lucy.screens.my_day.MyDayFragment
 import se.curtrune.lucy.screens.projects.ProjectsFragment
 import se.curtrune.lucy.screens.todo.TodoFragment
 import se.curtrune.lucy.screens.user_settings.UserSettingsFragment
@@ -70,7 +62,7 @@ import java.util.Objects
 class MainActivity : AppCompatActivity() {
     private var drawerLayout: DrawerLayout? = null
     private var mainViewModel: MainViewModel? = null
-    private var textViewLucindaHome: TextView? = null
+    //private var textViewLucindaHome: TextView? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
@@ -98,16 +90,7 @@ class MainActivity : AppCompatActivity() {
         val navigationView =
             findViewById<NavigationView>(R.id.navigationDrawerActivity_navigationView)
         val view = navigationView.inflateHeaderView(R.layout.navigation_header)
-        textViewLucindaHome = view.findViewById(R.id.navigationHeader_lucindaHome)
-/*        val actionBarDrawerToggle =
-            ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close)*/
-/*        drawerLayout!!.addDrawerListener(actionBarDrawerToggle)
-        actionBarDrawerToggle.syncState()
-        //Objects.requireNonNull(supportActionBar)?.setDisplayHomeAsUpEnabled(true)
-        toolbar.setNavigationOnClickListener { v: View? ->
-            if (VERBOSE) Logger.log("... toolbar on click")
-            drawerLayout!!.open()
-        }*/
+        //textViewLucindaHome = view.findViewById(R.id.navigationHeader_lucindaHome)
         val onNavigationItemSelectedListener =
             NavigationView.OnNavigationItemSelectedListener { item: MenuItem ->
                 Logger.log(
@@ -152,7 +135,7 @@ class MainActivity : AppCompatActivity() {
                         navigate(UserSettingsFragment())
                     }
                     R.id.navigationDrawer_mentalFragment -> {
-                        navigate(MentalDateFragment())
+                        navigate(MyDayFragment())
                     }
                     R.id.navigationDrawer_mentalStatsFragment -> {
                         navigate(MentalStatsFragment())
@@ -179,7 +162,6 @@ class MainActivity : AppCompatActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     private fun initContent(){
         println("initContent()")
-        //val composeView = findViewById<ComposeView>(R.id.mainActivity_composeView)
         val composeViewMental = findViewById<ComposeView>(R.id.mainActivity_composeViewMental)
         composeViewMental.setContent {
             val state = mainViewModel?.state?.collectAsState()
@@ -232,8 +214,13 @@ class MainActivity : AppCompatActivity() {
                             drawerLayout!!.open()
                         }
 
-                        MainChannelEvent.ShowDayCalendar -> {
-                            navigate(CalendarDayFragment())
+                        is MainChannelEvent.ShowDayCalendar -> { navigate(CalendarDayFragment()) }
+                        is MainChannelEvent.ShowMessage -> {
+                            Toast.makeText(applicationContext, event.message, Toast.LENGTH_LONG).show()
+                        }
+
+                        MainChannelEvent.NavigateDevActivity -> {
+                            startActivity(Intent(applicationContext, DevActivity::class.java))
                         }
                     }
                 }
@@ -276,7 +263,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initListeners() {
         println("...initListeners()")
-        textViewLucindaHome!!.setOnClickListener { view: View? -> openWebPage("https://curtfurumark.se/lucinda") }
+        //textViewLucindaHome!!.setOnClickListener { view: View? -> openWebPage("https://curtfurumark.se/lucinda") }
     }
 
     private fun initViewModel() {
@@ -321,52 +308,6 @@ class MainActivity : AppCompatActivity() {
             FirstPage.TODO_FRAGMENT -> navigate(TodoFragment())
 
         }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.main_activity_menu, menu)
-        val searchView = menu.findItem(R.id.mainActivity_search).actionView as SearchView?
-        if (searchView == null) {
-            Logger.log("searchView == null, onCreteOptionsMenu(Menu), MainActivity")
-            return false
-        }
-        searchView.queryHint = "search"
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                Logger.log("...onQueryTextSubmit(String)", query)
-
-                return false
-            }
-
-            override fun onQueryTextChange(filter: String): Boolean {
-                Logger.log("...onQueryTextChange(String)", filter)
-                mainViewModel!!.filter(filter, true)
-                return false
-            }
-        })
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        Logger.log(
-            "...onOptionsItemSelected(MenuItem item)",
-            Objects.requireNonNull(item.title).toString()
-        )
-        when (item.itemId) {
-            R.id.mainActivity_dev -> {
-                startActivity(Intent(this, DevActivity::class.java))
-            }
-            R.id.mainActivityCheckForUpdate -> {
-                mainViewModel?.onEvent(MainEvent.CheckForUpdate)
-            }
-            R.id.mainActivity_calendar -> {
-                navigate(CalendarDayFragment())
-            }
-            R.id.mainActivity_lucinda20 -> {
-                startActivity(Intent(this, IndexActivityKt::class.java))
-            }
-        }
-        return super.onOptionsItemSelected(item)
     }
 
 

@@ -22,7 +22,6 @@ import se.curtrune.lucy.classes.ItemDuration;
 import se.curtrune.lucy.classes.Listable;
 import se.curtrune.lucy.classes.Mental;
 import se.curtrune.lucy.classes.Notification;
-import se.curtrune.lucy.classes.item.Repeat;
 import se.curtrune.lucy.classes.Reward;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
@@ -42,6 +41,7 @@ public class Item implements Serializable , Listable {
     protected long created;
     protected long updated;
     protected long duration;
+    protected boolean syncWithGoogle;
 
     protected long target_date;
     protected int target_time;
@@ -90,7 +90,7 @@ public class Item implements Serializable , Listable {
 
     /**
      * when a template spawns a child
-     * @param item, the template item
+     * @param other, the template item
      */
     public Item(Item other){
         this();
@@ -274,6 +274,9 @@ public class Item implements Serializable , Listable {
     public boolean isCalenderItem(){
         return isCalenderItem;
     }
+    public boolean isSyncWithGoogle(){
+        return syncWithGoogle;
+    }
     public boolean isCategory(String category){
         if( this.category == null){
             log("Item this.category == null, returning false");
@@ -432,6 +435,9 @@ public class Item implements Serializable , Listable {
     }
     public void setState(State state) {
         this.state = state.ordinal();
+    }
+    public void setSyncWithGoogle(boolean syncWithGoogle){
+        this.syncWithGoogle = syncWithGoogle;
     }
     public void setTargetDate(LocalDate localDate) {
         this.target_date = localDate != null? localDate.toEpochDay() : 0;

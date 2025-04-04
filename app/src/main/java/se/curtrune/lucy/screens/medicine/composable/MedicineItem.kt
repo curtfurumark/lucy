@@ -79,7 +79,9 @@ fun MedicineItem(item: Item, onEvent: (MedicineEvent) -> Unit){
             Row(modifier =  Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(
-                    text = medicine.name.uppercase(), fontSize = 20.sp,
+                    text = medicine.name.uppercase(),
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowDown,
@@ -90,13 +92,13 @@ fun MedicineItem(item: Item, onEvent: (MedicineEvent) -> Unit){
             }
             AnimatedVisibility(showAll) {
                 Column(modifier =  Modifier.fillMaxWidth()) {
-                    Text(text = medicine.dosage)
-                    Text(text = medicine.doctor)
-                    Text(text = medicine.bipacksedel)
-                    Text(text = "totalt antal:")
-                    Text(text = "antal per dag:")
-                    Text(text = "uttag kvar")
-                    Text(text = "giltigt till och med")
+                    Text(text = medicine.dosage, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                    Text(text = medicine.doctor, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                    Text(text = medicine.bipacksedel, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                    Text(text = "totalt antal:", color = MaterialTheme.colorScheme.onPrimaryContainer)
+                    Text(text = "antal per dag:", color = MaterialTheme.colorScheme.onPrimaryContainer)
+                    Text(text = "uttag kvar", color = MaterialTheme.colorScheme.onPrimaryContainer)
+                    Text(text = "giltigt till och med", color = MaterialTheme.colorScheme.onPrimaryContainer)
                 }
             }
         }

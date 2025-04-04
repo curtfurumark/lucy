@@ -29,7 +29,9 @@ class ProjectsViewModel : ViewModel() {
         _state.update{
             it.copy(
                 items = items,
-                currentParent = currentParent)
+                currentParent = currentParent,
+                tabs = it.tabs + ProjectTab(parent = currentParent, index = 0)
+            )
         }
     }
     fun filter(filter: String?) {
@@ -63,7 +65,7 @@ class ProjectsViewModel : ViewModel() {
         }
     }
 
-    private fun onTabClick(tab: String) {
+    private fun onTabClick(tab: ProjectTab) {
         println("...onTabClick($tab)")
 
     }
@@ -92,7 +94,7 @@ class ProjectsViewModel : ViewModel() {
                 it.copy(
                     items = items,
                     currentParent = item,
-                    tabs = it.tabs + item.heading)
+                    tabs = it.tabs + ProjectTab(parent = item, index = stack.size -   1))
             }
             state.value.tabs.forEach{
                 println("...$it")

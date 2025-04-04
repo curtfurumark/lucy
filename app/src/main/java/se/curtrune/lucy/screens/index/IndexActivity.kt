@@ -9,6 +9,7 @@ import androidx.compose.ui.platform.ComposeView
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.app.FirstPage
+import se.curtrune.lucy.screens.dev.DevActivity
 import se.curtrune.lucy.screens.index.composables.IndexScreen20
 import se.curtrune.lucy.screens.index20.IndexActivityKt
 import se.curtrune.lucy.screens.main.MainActivity
@@ -40,7 +41,7 @@ class IndexActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.indexActivity_jetpackCompose) {
-            startActivity(Intent(this, IndexActivityKt::class.java))
+            startActivity(Intent(this, DevActivity::class.java))
         }
         return super.onOptionsItemSelected(item)
     }

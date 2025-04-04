@@ -15,6 +15,7 @@ import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.classes.calender.Week
 import se.curtrune.lucy.modules.MainModule
+import se.curtrune.lucy.screens.my_day.MyDayFragment
 import java.time.LocalDate
 
 class WeekViewModel: ViewModel() {
@@ -50,10 +51,11 @@ class WeekViewModel: ViewModel() {
         println("calendarDateClick()")
         if( calenderDate.items.isEmpty()){
             println("show add item dialog")
-            dialogSettings = DialogSettings()
-            dialogSettings.isCalendarItem = true
-            dialogSettings.targetDate = calenderDate.date
-            dialogSettings.parent = repository.getTodoRoot()
+            dialogSettings = DialogSettings().apply {
+                isCalendarItem = true
+                targetDate = calenderDate.date
+                parent = repository.getTodoRoot()
+            }
             viewModelScope.launch {
                 eventChannel.send(WeekChannel.ShowAddItemDialog(calenderDate.date))
             }
@@ -76,8 +78,18 @@ class WeekViewModel: ViewModel() {
             is WeekEvent.OnAllWeekLongClick -> {
                 onAllWeekLongClick(event.week)
             }
+
+            is WeekEvent.CalendarDateLongClick -> { calendarDateLongClick(event.calendarDate) }
         }
     }
+
+    private fun calendarDateLongClick(calendarDate: CalenderDate) {
+        println("WeekViewModel.calendarDateLongClick(${calendarDate.date.toString()})")
+        viewModelScope.launch {
+            eventChannel.send(WeekChannel.Navigate(MyDayFragment(date = calendarDate.date)))
+        }
+    }
+
     private fun onAllWeekClick(week: Week){
         println("onAllWeekClick(Week)")
         viewModelScope.launch {
@@ -85,7 +97,6 @@ class WeekViewModel: ViewModel() {
                 WeekChannel.ShowAddAllWeekNote
             )
         }
-
     }
     private fun onAllWeekLongClick(week: Week){
         println("onAllWeekLongClick(${week.toString()})")

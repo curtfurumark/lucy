@@ -28,7 +28,7 @@ import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.ItemStatistics
 import se.curtrune.lucy.classes.calender.CalenderDate
-import se.curtrune.lucy.composables.AddItemDialog
+import se.curtrune.lucy.composables.add_item.AddItemDialog
 import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.composables.ConfirmDeleteDialog
 import se.curtrune.lucy.dialogs.ItemStatisticsDialog
@@ -62,8 +62,6 @@ class CalendarDayFragment() : Fragment() {
                         mutableStateOf(false)
                     }
                     println("before initialization of date view model")
-                    //val dayViewModel = viewModel<DateViewModel>()
-                    //val dayViewModel = ViewModelProvider(requireActivity())[DateViewModel::class.java]
                     val dayViewModel: DateViewModel = viewModel()
                     println("after initialization of date view model")
                     val mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]

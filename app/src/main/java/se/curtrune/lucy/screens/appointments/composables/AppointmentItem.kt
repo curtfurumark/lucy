@@ -42,15 +42,18 @@ fun AppointmentItem(appointment: Item, onEvent: (AppointmentEvent)->Unit){
             Text(
                 modifier = Modifier.padding(start = 4.dp),
                 text = appointment.heading,
-                fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                color = MaterialTheme.colorScheme.onSurface,
+                fontSize = MaterialTheme.typography.titleLarge.fontSize,
                 maxLines =  1)
         }
 
         Text(
             text = "${DateTImeConverter.format(appointment.targetTime)}, ${DateTImeConverter.format(appointment.targetDate)}",
-            modifier = Modifier.padding(start = 8.dp))
+            modifier = Modifier.padding(start = 8.dp),
+            color = MaterialTheme.colorScheme.onSurface)
         if( appointment.comment.isNotBlank()) {
-            Text(text = appointment.comment,
+            Text(
+                text = appointment.comment,
                 modifier = Modifier.padding(start = 8.dp))
         }
     }

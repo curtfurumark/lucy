@@ -91,12 +91,13 @@ class SqliteLocalDB(context: Context?) :
     }
 
     fun delete(item: Item): Int {
-        Logger.log("SqliteLocalDB.delete(Item)", item.heading)
+        println("SqliteLocalDB.delete(Item $item.heading)")
         db = this.writableDatabase
         val whereClause = String.format(Locale.getDefault(), "id = %d", item.id)
+        println("delete ...where: $whereClause")
         val rowsAffected = db!!.delete(ITEMS_TABLE, whereClause, null)
         if (rowsAffected != 1) {
-            Logger.log("some kind of error deleting item")
+            println("some kind of error deleting item: ${item.heading}, id: ${item.id}")
         } else {
             Logger.log("...item deleted")
             if (getNumberChildren(item.parentId) == 0) { // we have just deleted the last child'

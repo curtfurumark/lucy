@@ -19,10 +19,11 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.R
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.screens.my_day.MyDateEvent
+import se.curtrune.lucy.screens.my_day.MyDayEvent
 import se.curtrune.lucy.screens.my_day.MyDayState
 import se.curtrune.lucy.util.DateTImeConverter
 import kotlin.math.roundToInt
@@ -31,17 +32,21 @@ import kotlin.math.roundToInt
 fun MentalMeter4(
     item: Item,
     state: MyDayState,
-    onEvent: (MyDateEvent)->Unit) {
-    var mentalLevel by remember {
+    onEvent: (MyDayEvent)->Unit) {
+    //0 - 10
+    var mentalSliderLevel by remember {
         mutableIntStateOf(0)
     }
     var percent by remember {
         mutableFloatStateOf(0F)
     }
+/*    var level by remember {
+        mutableIntStateOf(0)
+    }*/
     var mutableItem by remember {
         mutableStateOf(item)
     }
-    mentalLevel = when(state.currentField){
+    mentalSliderLevel = when(state.currentField){
         Field.ENERGY -> item.energy + 5
         Field.ANXIETY -> item.anxiety + 5
         Field.STRESS -> item.stress + 5
@@ -67,13 +72,15 @@ fun MentalMeter4(
         return l -5
     }
     fun setLevel(x: Float) {
-        println("setLevel: $x")
+        println("...setLevel: $x")
         val fraction = x / boxWidth
-        val level = myRound(fraction) * 10
+        println("fraction: $fraction")
+        val level = myRound(fraction) * 10 -5
         println("level: $level")
         when(state.currentField){
             Field.ENERGY -> {
                 println("setting energy level: ${level.toInt()}")
+                mentalSliderLevel = level.toInt()
                 mutableItem.energy = level.toInt()
                 item.energy = level.toInt() }
             Field.ANXIETY -> {item.anxiety = level.toInt()}
@@ -81,12 +88,12 @@ fun MentalMeter4(
             Field.MOOD -> {item.mood = level.toInt()}
             Field.DURATION -> TODO()
         }
-        mentalLevel = level.toInt()
-        onEvent(MyDateEvent.UpdateItem(item))
+        mentalSliderLevel = level.toInt() -5
+        onEvent(MyDayEvent.UpdateItem(item))
     }
     Box(
         modifier = Modifier.fillMaxWidth()
-            .clickable { mentalLevel++ }
+            //.clickable { mentalSliderLevel++ }
             .pointerInput(true){
                 detectTapGestures {
                     println("tap $it.x")
@@ -103,8 +110,10 @@ fun MentalMeter4(
                 detectDragGestures { change, dragAmount ->
                     println("change x ${change.position.x}")
                     tapX = change.position.x
+                    change.consume()
+                    //change.scrollDelta
                     percent = tapX / size.width
-                    println("dragAmount $dragAmount")
+                    println("dragAmount: x  ${dragAmount.x}")
                     setLevel(tapX)
                     //onLevelChange(xToLevel(tapX))
                 }
@@ -113,19 +122,22 @@ fun MentalMeter4(
             boxWidth = size.width
             boxHeight = size.height
             drawRect(color = mentalGreen)
-            drawRect( color = mentalRed, size = Size((size.width * myRound(mentalLevel * 0.1f)), size.height ))
+            println("mental slider level: $mentalSliderLevel")
+            drawRect( color = mentalRed, size = Size((size.width * myRound(mentalSliderLevel * 0.1f)), size.height ))
         }){
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(text = "${item.heading} ${DateTImeConverter.format(item.targetTime)}")
-            Text(text = "${state.currentField.name } ${
-                when(state.currentField){
+            Text(text = "${state.currentField} ${mentalSliderLevel - 5}")
+/*            Text(text = "${state.currentField.name } ${
+               when(state.currentField){
                     Field.ENERGY ->mutableItem.energy
                     Field.ANXIETY -> mutableItem.anxiety
                     Field.STRESS -> mutableItem.stress
                     Field.MOOD -> mutableItem.mood
                     Field.DURATION -> item.duration.toString()
                 }
-            }", fontSize = 20.sp)
+            }")*/
+            //}", fontSize = 20.sp)
             //Text(text = "height: $boxHeight")
             //Text(text = "width: $boxWidth")
             //Text(text = "tap x: $tapX")
@@ -138,3 +150,19 @@ fun MentalMeter4(
 fun myRound(f:  Float): Float{
     return (f * 10).roundToInt() * 0.1f
 }
+@Composable
+@Preview
+fun PreviewMentalMeter() {
+    val item = Item().also {
+        it.energy = -5
+        it.anxiety = 5
+        it.stress = 5
+        it.mood = -3
+        it.heading ="dev"
+    }
+    val myDayState = MyDayState().also {
+        it.currentField = Field.MOOD
+    }
+    MentalMeter4(item = item, state = myDayState, onEvent = {})
+}
+

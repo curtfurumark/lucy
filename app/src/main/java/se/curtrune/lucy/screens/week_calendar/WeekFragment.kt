@@ -25,7 +25,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.classes.calender.Week
-import se.curtrune.lucy.composables.AddItemDialog
+import se.curtrune.lucy.composables.add_item.AddItemDialog
 import se.curtrune.lucy.screens.daycalendar.CalendarDayFragment
 import se.curtrune.lucy.screens.main.MainViewModel
 import se.curtrune.lucy.screens.week_calendar.composables.CalendarWeekHeading
@@ -68,6 +68,8 @@ class WeekFragment : Fragment() {
                                 println("show add to all week dialog")
                                 showAddToAllWeekDialog = true
                             }
+                            is WeekChannel.Navigate -> {navigate(event.fragment)}
+                            WeekChannel.NavigateMyDay ->{}
                         }
                     }
                 }
@@ -126,6 +128,11 @@ class WeekFragment : Fragment() {
                 calendarDate
             )
         )
+    }
+    private fun navigate(fragment: Fragment){
+        println("navigate to ${fragment.javaClass.name}")
+        val mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
+        mainViewModel.updateFragment(fragment)
     }
 
     @Composable

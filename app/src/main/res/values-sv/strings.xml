@@ -208,6 +208,7 @@
     <string name="is_template">template</string>
     <string name="updated">Uppdaterad</string>
     <string name="all_week_heading">hela veckan</string>
+    <string name="edit_message">edit message</string>
 
 
 </resources>

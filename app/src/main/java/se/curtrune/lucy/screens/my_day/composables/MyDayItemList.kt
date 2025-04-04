@@ -10,11 +10,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.MentalMeter4
-import se.curtrune.lucy.screens.my_day.MyDateEvent
+import se.curtrune.lucy.screens.my_day.MyDayEvent
 import se.curtrune.lucy.screens.my_day.MyDayState
 
 @Composable
-fun MyDayItemList(state: MyDayState, onEvent: (MyDateEvent)->Unit){
+fun MyDayItemList(state: MyDayState, onEvent: (MyDayEvent)->Unit){
     LazyColumn(modifier = Modifier.fillMaxWidth()) {
         items(state.items) { item: Item ->
             println("item ${item.heading}")

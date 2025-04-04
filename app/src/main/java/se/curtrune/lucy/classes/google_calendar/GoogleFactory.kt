@@ -21,9 +21,9 @@ object GoogleFactory {
         return item
 
     }
-    fun itemToGoogleEvent(item: Item): GoogleCalendarEvent{
+    fun itemToGoogleEvent(item: Item, calendarID: Int): GoogleCalendarEvent{
         val googleEvent = GoogleCalendarEvent(
-            calendarID = 7,
+            calendarID = calendarID,
             accountName = "",
             title = item.heading,
             dtStart = localDateTimeToMillisEpoch(item.targetDate, item.targetTime),

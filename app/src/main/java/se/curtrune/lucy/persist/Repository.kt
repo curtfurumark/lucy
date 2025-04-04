@@ -10,6 +10,8 @@ import se.curtrune.lucy.classes.calender.CalenderMonth
 import se.curtrune.lucy.classes.calender.Week
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.item.Repeat
+import se.curtrune.lucy.features.google_calendar.GoogleCalendarModule
+import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.workers.NotificationsWorker
 import java.time.LocalDate
@@ -141,6 +143,11 @@ class Repository (val context: Application){
         println("Repository.insert(Item) ${item.heading}")
         if (item.hasNotification()) {
             NotificationsWorker.setNotification(item, context)
+        }
+        if (item.isSyncWithGoogle) {
+            val userSettings = LucindaApplication.appModule.userSettings
+            val calendarID = userSettings.googleCalendarId
+            GoogleCalendarModule(context).insertItem(item, calendarID)
         }
         if (item.hasRepeat()) {
             return insertRepeat(item)
