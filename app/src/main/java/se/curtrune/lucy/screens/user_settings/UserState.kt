@@ -7,6 +7,7 @@ data class UserState(
     var syncWithGoogle: Boolean = false,
     var googleCalendarID: Int = -1,
     val isDarkMode: Boolean = true,
+    val usePassword: Boolean = false,
     val language: String = "sv",
     val calendarEvents: List<GoogleCalendarEvent> = emptyList(),
     var categories: List<String> = emptyList()

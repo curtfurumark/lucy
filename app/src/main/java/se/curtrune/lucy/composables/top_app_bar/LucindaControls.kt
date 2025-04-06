@@ -29,7 +29,7 @@ fun LucindaControls(state: TopAppBarState, onEvent: (TopAppBarEvent)->Unit) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                ColorCircle(color = Color.Green, onClick = {
+                ColorCircle(color = Color.Green.copy(alpha = 0.4f), onClick = {
                     onEvent(TopAppBarEvent.OnBoost)
                 })
                 Text(
@@ -38,7 +38,7 @@ fun LucindaControls(state: TopAppBarState, onEvent: (TopAppBarEvent)->Unit) {
                     color = MaterialTheme.colorScheme.onPrimary
                 )
                 //MentalMeter(mental = state.mental)
-                ColorCircle(color = Color.Red, onClick = {
+                ColorCircle(color = Color.Red.copy(alpha = 0.4f), onClick = {
                     onEvent(TopAppBarEvent.OnPanic)
                 })
             }

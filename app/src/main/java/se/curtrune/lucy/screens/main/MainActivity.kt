@@ -42,7 +42,7 @@ import se.curtrune.lucy.screens.daycalendar.CalendarDayFragment
 import se.curtrune.lucy.screens.dev.DevActivity
 import se.curtrune.lucy.screens.duration.DurationFragment
 import se.curtrune.lucy.screens.enchilada.EnchiladaFragment
-import se.curtrune.lucy.screens.log_in.LogInActivity
+import se.curtrune.lucy.screens.log_in.OldLogInActivity
 import se.curtrune.lucy.screens.main.composables.ChoosePanicActionDialog
 import se.curtrune.lucy.screens.main.composables.QuoteDialog
 import se.curtrune.lucy.screens.medicine.MedicineFragment
@@ -147,7 +147,7 @@ class MainActivity : AppCompatActivity() {
                         Logger.log("...log out")
                         val intent = Intent(
                             this,
-                            LogInActivity::class.java
+                            OldLogInActivity::class.java
                         )
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                         startActivity(intent)

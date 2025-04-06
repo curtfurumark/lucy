@@ -23,6 +23,11 @@ class UserSettings(val context: Application) {
         )
     }
 
+    var password: String
+        get() = UserPrefs.getPassword(context)
+        set(value){
+            UserPrefs.setPassword(value, context)
+        }
     var language: String
         get() = UserPrefs.getLanguage(context)
         set(value){

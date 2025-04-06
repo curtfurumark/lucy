@@ -58,7 +58,7 @@ public class Demo {
     }
     public static void insertAppointments(Context context){
         log("...insertAppointments(Context)");
-        Repository repository = LucindaApplication.appModule.getRepository();
+/*        Repository repository = LucindaApplication.appModule.getRepository();
         Item root = repository.getAppointmentsRoot();
         Item misaDev = getAppointment("misa dev", LocalDate.of(2024, 4, 26), LocalTime.of(10, 0));
         Item mayTheForce = getAppointment("may the 4h be with you", LocalDate.of(2024, 5, 4), LocalTime.of(0,0));
@@ -67,13 +67,13 @@ public class Demo {
         root.setHasChild(true);
         db.insertChild(root, misaDev);
         db.insertChild(root, mayTheForce);
-        log("...appointments inserted maybe");
+        log("...appointments inserted maybe");*/
     }
     public static void insertProjects(Context context){
         log("...insertProjects(Context)");
-        createReadingList(context);
+/*        createReadingList(context);
         createShoppingList(context);
-        createMiddagsTips(context);
+        createMiddagsTips(context);*/
     }
     public static void createReadingList(Context context){
         //println("...createReadingList(Context)");
@@ -178,9 +178,9 @@ public class Demo {
     public static void insertDemo(Context context) throws SQLException {
         log("DBAdmin.insertDemo(Context)");
         settings = Settings.getInstance(context);
-        insertRepeatItems(context);
+/*        insertRepeatItems(context);
         insertProjects(context);
         insertPanic(context);
-        insertAppointments(context);
+        insertAppointments(context);*/
     }
 }

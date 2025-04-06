@@ -1,6 +1,5 @@
 package se.curtrune.lucy.screens.user_settings.composables
 
-import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
@@ -12,9 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -34,13 +31,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.activities.kotlin.composables.user_settings.Categories
 import se.curtrune.lucy.screens.user_settings.UserEvent
 import se.curtrune.lucy.screens.user_settings.UserState
-import se.curtrune.lucy.screens.user_settings.UserViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -69,7 +62,8 @@ fun UserSettings(state: UserState, onEvent: (UserEvent)->Unit){
         Spacer(modifier = Modifier.height(8.dp))
         PanicButton()
         Spacer(modifier = Modifier.height(8.dp))
-        ColorsSetting()
+        //ColorsSetting()
+        PassWordSetting(state = state, onEvent = onEvent)
         Spacer(modifier = Modifier.height(8.dp))
         Categories(state = state, onEvent = onEvent)
         }
