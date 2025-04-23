@@ -62,6 +62,7 @@ class UserViewModel: ViewModel(){
             is UserEvent.Language -> { setLanguage(event.language)}
             is UserEvent.SyncWithCalendar -> {syncWithCalendar(event.calendarID)}
             is UserEvent.ImportEvents -> { importEvents(event.googleCalendarID)}
+            is UserEvent.SetPassword -> {setPassword(event.password)}
         }
     }
 
@@ -77,6 +78,10 @@ class UserViewModel: ViewModel(){
     private fun setDarkMode(darkMode: Boolean){
         println("UserViewModel.setDarkMode($darkMode)")
         userSettings.darkMode = darkMode
+    }
+    private fun setPassword(pwd: String){
+        println("UserViewModel.setPassword($pwd)")
+        userSettings.password = pwd
     }
     private fun setLanguage(language: String){
         userSettings.language = language

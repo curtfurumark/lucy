@@ -39,7 +39,7 @@ fun CalendarWeekTest(){
                     Text(text = "get all weekers")
                 }
                 Button(onClick = {
-                    val everything = repository.selectItems(Week())
+                    val everything = repository.selectItems(Week(), false)
                     println("found ${everything.size} items")
                     val (allWeek, rest) = everything.partition { it.itemDuration != null }
                     println("allWeek: ${allWeek.size} items")

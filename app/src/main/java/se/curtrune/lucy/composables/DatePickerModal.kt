@@ -17,7 +17,10 @@ fun DatePickerModal(
     onDateSelected: (LocalDate) -> Unit,
     onDismiss: () -> Unit
 ) {
-    val datePickerState = rememberDatePickerState()
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = System.currentTimeMillis()
+    )
+
     fun getLocalDate(millis: Long): LocalDate{
         return  Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()).toLocalDate()
     }
@@ -26,6 +29,7 @@ fun DatePickerModal(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = {
+                println("datePickerState.selectedDateMillis: ${datePickerState.selectedDateMillis}")
                 datePickerState.selectedDateMillis?.let { getLocalDate(it) }
                     ?.let { onDateSelected(it) }
                 onDismiss()

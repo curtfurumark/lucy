@@ -63,13 +63,13 @@ fun ThisWeekView(state: WeekState, onEvent: (WeekEvent) -> Unit){
             modifier = Modifier.padding(2.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
+/*            Text(
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                 text = stringResource(R.string.week_with_number, state.currentWeek.weekNumber),
                 fontSize = 20.sp
-            )
+            )*/
             state.calendarWeek.allWeekItems.forEach{ item ->
                 Box(
                     modifier = Modifier.fillMaxWidth()

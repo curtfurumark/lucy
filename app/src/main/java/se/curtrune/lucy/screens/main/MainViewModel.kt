@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.ktor.utils.io.tryCopyException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -46,21 +47,30 @@ class MainViewModel : ViewModel() {
 
 
     private fun checkIfUpdateAvailable() {
-        Logger.log("LucindaViewModel.checkIfUpdateAvailable()")
+        Logger.log("MainViewModel.checkIfUpdateAvailable()")
         //LucindaApplication.contextModule
         if( checkInternet()){
             println("...internet is connected")
             viewModelScope.launch {
-                val latestVersion = LucindaApi.create().getUpdateAvailable()
-                val currentVersion = LucindaApplication.appModule.systemInfoModule.getVersionCode()
-                if( currentVersion < latestVersion.versionCode){
-                    println("update of lucinda available")
-                    _state.update { it.copy(
-                        versionInfo =  latestVersion
-                    ) }
-                    _eventChannel.send(MainChannelEvent.UpdateAvailable)
-                }else{
-                    println("...lucinda is up to date")
+                try {
+                    val latestVersion = LucindaApi.create().getUpdateAvailable()
+                    val currentVersion =
+                        LucindaApplication.appModule.systemInfoModule.getVersionCode()
+                    if (currentVersion < latestVersion.versionCode) {
+                        println("update of lucinda available")
+                        _state.update {
+                            it.copy(
+                                versionInfo = latestVersion
+                            )
+                        }
+                        _eventChannel.send(MainChannelEvent.UpdateAvailable)
+                    } else {
+                        println("...lucinda is up to date")
+                    }
+                }catch (e: Exception){
+                    println("an exception occurred while checking for updates")
+                    e.printStackTrace()
+                    _eventChannel.send(MainChannelEvent.ShowMessage("an exception occurred while checking for updates"))
                 }
             }
         }else{

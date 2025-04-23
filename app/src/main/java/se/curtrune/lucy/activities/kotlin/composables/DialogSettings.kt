@@ -8,6 +8,7 @@ data class DialogSettings(var isCalendarItem: Boolean = false,
                           var targetTime: LocalTime = LocalTime.ofSecondOfDay(0),
                           var targetDate: LocalDate = LocalDate.ofEpochDay(0),
                           var parent: Item? = null,
-                          var isAppointment: Boolean = false
+                          var isAppointment: Boolean = false,
+                          var isEvent: Boolean = true
 )
 

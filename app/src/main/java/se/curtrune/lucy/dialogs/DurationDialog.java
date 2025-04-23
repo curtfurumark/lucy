@@ -16,6 +16,8 @@ import androidx.annotation.Nullable;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.util.Locale;
 
 import se.curtrune.lucy.R;
 
@@ -84,10 +86,10 @@ public class DurationDialog extends BottomSheetDialogFragment {
         buttonDismiss.setOnClickListener(view->dismiss());
     }
     private void initUserInterface(){
-        log("initUserInterface()");
-        editTextHours.setText(String.valueOf(duration.getSeconds()% 3600));
-        editTextMinutes.setText(String.valueOf(duration.getSeconds() % 3600 ));
-        editTextSeconds.setText(String.valueOf(duration.getSeconds() % 3600));
+        log("...initUserInterface()");
+        editTextHours.setText(String.format(Locale.getDefault(),"%02d", duration.getSeconds() /3600));
+        editTextMinutes.setText(String.format(Locale.getDefault(), "%02d", duration.getSeconds() %3600 / 60));
+        editTextSeconds.setText(String.format(Locale.getDefault(), "%02d", duration.getSeconds()% 3600 % 60));
     }
     @Override
     public void onAttach(@NonNull Context context) {

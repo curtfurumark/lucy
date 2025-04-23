@@ -43,7 +43,8 @@ fun AppointmentItem(appointment: Item, onEvent: (AppointmentEvent)->Unit){
                 modifier = Modifier.padding(start = 4.dp),
                 text = appointment.heading,
                 color = MaterialTheme.colorScheme.onSurface,
-                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                fontWeight = MaterialTheme.typography.titleMedium.fontWeight,
                 maxLines =  1)
         }
 

@@ -15,6 +15,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,11 +25,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.item.Item
+import se.curtrune.lucy.composables.DatePickerModal
 import se.curtrune.lucy.composables.RepeatDialog
+import se.curtrune.lucy.composables.TimePickerDialog
+import se.curtrune.lucy.composables.top_app_bar.ItemSettingAppointment
 import se.curtrune.lucy.composables.top_app_bar.ItemSettingDate
 import se.curtrune.lucy.composables.top_app_bar.ItemSettingRepeat
 import se.curtrune.lucy.composables.top_app_bar.ItemSettingTime
@@ -46,7 +49,7 @@ fun AddItemBottomSheet(defaultItemSettings: DefaultItemSettings, onDismiss: () -
         mutableStateOf(false)
     }
     val item by remember {
-        mutableStateOf(Item())
+        mutableStateOf(defaultItemSettings.item)
     }
     var targetDate by remember {
         mutableStateOf(defaultItemSettings.targetDate)
@@ -60,6 +63,9 @@ fun AddItemBottomSheet(defaultItemSettings: DefaultItemSettings, onDismiss: () -
     var showTimeDialog by remember {
         mutableStateOf(false)
     }
+    var isEvent by remember {
+        mutableStateOf(defaultItemSettings.isEvent)
+    }
 
     ModalBottomSheet(
         onDismissRequest = { /* Handle dismissal */ },
@@ -68,6 +74,8 @@ fun AddItemBottomSheet(defaultItemSettings: DefaultItemSettings, onDismiss: () -
         Column(
             modifier = Modifier.fillMaxWidth()
                 .verticalScroll(scrollState)) {
+            val parentHeading = defaultItemSettings.parent?.heading?: "parent is null"
+            Text(text = parentHeading)
             OutlinedTextField(
                 value = heading,
                 onValueChange = {
@@ -86,9 +94,6 @@ fun AddItemBottomSheet(defaultItemSettings: DefaultItemSettings, onDismiss: () -
                     }
                 }
             )
-            var isEvent by remember {
-                mutableStateOf(false)
-            }
             AnimatedVisibility(visible = isEvent) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     ItemSettingDate(date = targetDate, onEvent = {
@@ -99,10 +104,13 @@ fun AddItemBottomSheet(defaultItemSettings: DefaultItemSettings, onDismiss: () -
                     })
                 }
             }
-            ItemSettingNoTime(onEvent = {
-                isEvent = it
-                //TODO
+            ItemSettingAppointment(item = item, onEvent = {
+                item.setIsAppointment(it)
             })
+            AnimatedVisibility(visible = item.isAppointment) {
+
+            }
+            ItemSettingIsEvent(isEvent = isEvent, onEvent = { isEvent = it })
             ItemSettingRepeat(item.repeat, onEvent = {
                 showRepeatDialog = true
             })
@@ -136,6 +144,26 @@ fun AddItemBottomSheet(defaultItemSettings: DefaultItemSettings, onDismiss: () -
                 showRepeatDialog = false
             })
         }
+        if( showDateDialog){
+            DatePickerModal( onDismiss = {
+                showDateDialog = false
+            }, onDateSelected = { date->
+                println("onDateSelected: $date")
+                targetDate = date
+                item.targetDate = date
+                showDateDialog = false
+            })
+        }
+        if( showTimeDialog){
+            TimePickerDialog(
+                onDismiss = {showTimeDialog = false},
+                onConfirm = {timePickerState ->
+                    targetTime = LocalTime.of(timePickerState.hour, timePickerState.minute)
+                    item.targetTime = targetTime
+                    showTimeDialog = false
+                }
+            )
+        }
     }
 }
 
@@ -143,7 +171,11 @@ data class DefaultItemSettings(
     val targetDate: LocalDate = LocalDate.now(),
     val targetTime: LocalTime =  LocalTime.of(0, 0, 0),
     val isTemplate: Boolean = false,
-    val isCalendarItem: Boolean = false
+    val isCalendarItem: Boolean = false,
+    val parent: Item? = null,
+    val item: Item = Item(),
+    val isAppointment: Boolean = false,
+    val isEvent: Boolean = true
 
 )
 @Composable

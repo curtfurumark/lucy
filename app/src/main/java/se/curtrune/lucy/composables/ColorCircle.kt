@@ -27,7 +27,7 @@ fun ColorCircle(color: Color, onColorClick: (Color)->Unit){
 @Composable
 fun ColorCircle(color: Color, onClick: ()->Unit){
     Box(modifier = Modifier
-        .size(50.dp)
+        .size(40.dp)
         .padding(8.dp)
         .clip(CircleShape)
         .background(color)

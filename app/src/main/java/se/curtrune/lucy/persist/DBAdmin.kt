@@ -67,18 +67,20 @@ class DBAdmin {
 
         @JvmStatic
         fun createTables(context: Context?) {
-            Logger.log("DBAdmin.createTables()")
-            SqliteLocalDB(context).use { db ->
-                db.executeSQL(Queeries.DROP_TABLE_ITEMS)
-                db.executeSQL(Queeries.CREATE_TABLE_ITEMS)
-                db.executeSQL(EcQueeries.DROP_TABLE_TRANSACTIONS)
-                db.executeSQL(EcQueeries.CREATE_TABLE_TRANSACTIONS)
-                db.executeSQL(EcQueeries.DROP_TABLE_ASSETS)
-                db.executeSQL(EcQueeries.CREATE_TABLE_ASSETS)
-                db.executeSQL(Queeries.DROP_TABLE_REPEAT)
-                db.executeSQL(Queeries.CREATE_TABLE_REPEAT)
-                Logger.log("...tables created")
-            }
+            println("DBAdmin.createTables()")
+            val db = SqliteLocalDB(context)
+            //SqliteLocalDB(context).use { db ->
+            db.executeSQL(Queeries.DROP_TABLE_ITEMS)
+            db.executeSQL(Queeries.CREATE_TABLE_ITEMS)
+            db.executeSQL(EcQueeries.DROP_TABLE_TRANSACTIONS)
+            db.executeSQL(EcQueeries.CREATE_TABLE_TRANSACTIONS)
+            db.executeSQL(EcQueeries.DROP_TABLE_ASSETS)
+            db.executeSQL(EcQueeries.CREATE_TABLE_ASSETS)
+            db.executeSQL(Queeries.DROP_TABLE_REPEAT)
+            db.executeSQL(Queeries.CREATE_TABLE_REPEAT)
+            Logger.log("...tables created")
+            db.close()
+            //}
         }
 
         fun createEconomyTables(context: Context?) {
@@ -306,31 +308,29 @@ class DBAdmin {
         fun insertRootItems(context: Context?) {
             Logger.log("...insertRootItems(Context)")
             val settings = Settings.getInstance(context)
-            SqliteLocalDB(context).use { db ->
-                //create the root item
-                var root = Item("root")
-                root.type = Type.ROOT
-                root = db.insert(root)
-                settings.addRootID(Settings.Root.THE_ROOT, root.id, context)
+            val db = SqliteLocalDB(context)
+            //create the root item
+            var root = Item("root")
+            root.type = Type.ROOT
+            root = db.insert(root)
+            settings.addRootID(Settings.Root.THE_ROOT, root.id, context)
 
-                var todayRoot = App.getRootItem("today")
-                var todoRoot = App.getRootItem("todo")
-                var projectsRoot = App.getRootItem("projects")
-                var appointmentsRoot = App.getRootItem("appointments")
-                var panicRoot = App.getRootItem("panicList")
-
-                //Item panicAttacks = App.getRootItem("panicAttacks");
-                appointmentsRoot = db.insertChild(root, appointmentsRoot)
-                settings.addRootID(Settings.Root.APPOINTMENTS, appointmentsRoot.id, context)
-                todayRoot = db.insertChild(root, todayRoot)
-                settings.addRootID(Settings.Root.DAILY, todayRoot.id, context)
-                projectsRoot = db.insertChild(root, projectsRoot)
-                settings.addRootID(Settings.Root.PROJECTS, projectsRoot.id, context)
-                todoRoot = db.insertChild(root, todoRoot)
-                settings.addRootID(Settings.Root.TODO, todoRoot.id, context)
-                panicRoot = db.insertChild(root, panicRoot)
-                settings.addRootID(Settings.Root.PANIC, panicRoot.id, context)
-            }
+            var todayRoot = App.getRootItem("today")
+            var todoRoot = App.getRootItem("todo")
+            var projectsRoot = App.getRootItem("projects")
+            var appointmentsRoot = App.getRootItem("appointments")
+            var panicRoot = App.getRootItem("panicList")
+            appointmentsRoot = db.insertChild(root, appointmentsRoot)
+            settings.addRootID(Settings.Root.APPOINTMENTS, appointmentsRoot.id, context)
+            todayRoot = db.insertChild(root, todayRoot)
+            settings.addRootID(Settings.Root.DAILY, todayRoot.id, context)
+            projectsRoot = db.insertChild(root, projectsRoot)
+            settings.addRootID(Settings.Root.PROJECTS, projectsRoot.id, context)
+            todoRoot = db.insertChild(root, todoRoot)
+            settings.addRootID(Settings.Root.TODO, todoRoot.id, context)
+            panicRoot = db.insertChild(root, panicRoot)
+            settings.addRootID(Settings.Root.PANIC, panicRoot.id, context)
+            db.close()
         }
 
         fun listTables(context: Context?) {

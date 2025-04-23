@@ -5,8 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.fragment.app.Fragment
@@ -33,16 +38,19 @@ class DurationFragment : Fragment() {
     }
 
     private fun initContent(view: View) {
-        println("...initContent(View)")
         val composeView = view.findViewById<ComposeView>(R.id.durationFragment_composeView)
         composeView!!.setContent {
             LucyTheme {
                 val durationViewModel = viewModel<DurationViewModel>()
-                val state = durationViewModel.state.collectAsState()
-                val context = LocalContext.current
-                DurationScreen(state = state.value, onEvent = { event ->
+                val state by durationViewModel.state.collectAsState()
+                DurationScreen(state = state, onEvent = { event ->
+                    println("fragment onEvent: $event")
                     durationViewModel.onEvent(event)
                 })
+                if (state.showProgressBar) {
+                    println("showProgressBar")
+                    CircularProgressIndicator()
+                }
             }
         }
     }

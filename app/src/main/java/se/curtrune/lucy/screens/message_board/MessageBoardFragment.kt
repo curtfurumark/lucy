@@ -25,6 +25,7 @@ import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.screens.message_board.composables.AddMessageBottomSheet
 import se.curtrune.lucy.screens.message_board.composables.MessageBoardScreen
+import se.curtrune.lucy.screens.message_board.composables.Mode
 import se.curtrune.lucy.util.Logger
 
 /**
@@ -81,15 +82,15 @@ class MessageBoardFragment : Fragment(){
                         })
                     }
                     if(showAddMessageBottomSheet){
-                        var messageIn = Message()
-                        if( state.value.currentMessage != null){
-                            messageIn = state.value.currentMessage!!
-                        }
-                        AddMessageBottomSheet(messageIn=  messageIn, onDismiss = {
+                        AddMessageBottomSheet(defaultMessage = state.value.defaultMessage, onDismiss = {
                             showAddMessageBottomSheet = false
-                        }, onSave = { message->
+                        }, onSave = { message, mode->
                             showAddMessageBottomSheet = false
-                            messageViewModel.onEvent(MessageBoardEvent.NewMessage(message))
+                            if(mode == Mode.CREATE) {
+                                messageViewModel.onEvent(MessageBoardEvent.NewMessage(message))
+                            }else{
+                                messageViewModel.onEvent(MessageBoardEvent.UpdateMessage(message))
+                            }
                         })
                     }
                 }

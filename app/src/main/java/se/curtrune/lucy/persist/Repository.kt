@@ -262,7 +262,7 @@ class Repository (val context: Application){
         return items
     }
     fun selectChildren(parent: Item?): List<Item> {
-        println("Repository.selectChildren(Item)")
+        println("Repository.selectChildren(Item: ${parent?.heading})")
         val db =   SqliteLocalDB(context)
         val items =  db.selectItems(Queeries.selectChildren(parent))
         db.close()
@@ -313,10 +313,10 @@ class Repository (val context: Application){
     /**
      * selects all the items for week where field isCalendarItem is set to 1
      */
-    fun selectItems(week: Week): List<Item>{
+    fun selectItems(week: Week, calendarItem: Boolean): List<Item>{
         println("Repository.selectItems($week)")
         val db = SqliteLocalDB(context)
-        val items = db.selectItems(Queeries.selectItems(week))
+        val items = db.selectItems(Queeries.selectItems(week, calendarItem) )
         db.close()
         return items
     }
@@ -327,10 +327,17 @@ class Repository (val context: Application){
      * @param lastDate last date inclusive
      * @return a list as specified
      */
+    fun selectItems(firstDate: LocalDate?, lastDate: LocalDate?, state: State): List<Item> {
+        println("Repository.selectItems($firstDate, $lastDate, state: ${state.name})")
+        val db = SqliteLocalDB(context)
+        val items = db.selectItems(Queeries.selectItems(firstDate, lastDate, state))
+        db.close()
+        return items
+    }
     fun selectItems(firstDate: LocalDate?, lastDate: LocalDate?): List<Item> {
         println("Repository.selectItems($firstDate, $lastDate)")
         val db = SqliteLocalDB(context)
-        val items = db.selectItems(Queeries.selectItems(firstDate, lastDate, State.DONE))
+        val items = db.selectItems(Queeries.selectItems(firstDate, lastDate))
         db.close()
         return items
     }
@@ -452,5 +459,9 @@ class Repository (val context: Application){
         val item = db.selectItem(id)
         db.close()
         return item
+    }
+
+    fun selectItems(week: Week): List<Item> {
+        return selectItems(week.firstDateOfWeek, week.lastDateOfWeek)
     }
 }

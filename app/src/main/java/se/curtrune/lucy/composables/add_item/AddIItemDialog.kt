@@ -180,7 +180,7 @@ fun AddItemDialog(onDismiss: ()->Unit, onConfirm: (Item)->Unit, settings: Dialog
                         })
                     }
                 }
-                ItemSettingNoTime(onEvent = {
+                ItemSettingIsEvent(isEvent = isEvent, onEvent = {
                     isEvent = it
                     //TODO
                 })
@@ -395,9 +395,9 @@ fun ItemSettingTemplate(item: Item, onEvent: (Boolean) -> Unit){
     }
 }
 @Composable
-fun ItemSettingNoTime(onEvent:(Boolean)->Unit){
+fun ItemSettingIsEvent(isEvent: Boolean, onEvent:(Boolean)->Unit){
     var timedItem by remember {
-        mutableStateOf(true)
+        mutableStateOf(isEvent)
     }
     Box(modifier = Modifier.fillMaxWidth()
         .border(Dp.Hairline, color = Color.LightGray)
@@ -408,7 +408,7 @@ fun ItemSettingNoTime(onEvent:(Boolean)->Unit){
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text = stringResource(R.string.timed_item))
-            Checkbox(checked = timedItem, onCheckedChange = {
+            Checkbox(checked = isEvent, onCheckedChange = {
                 timedItem = !timedItem
                 onEvent(timedItem)
             })

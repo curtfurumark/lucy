@@ -209,6 +209,8 @@
     <string name="updated">Uppdaterad</string>
     <string name="all_week_heading">hela veckan</string>
     <string name="edit_message">edit message</string>
+    <string name="show_password">show password</string>
+    <string name="no_category"><![CDATA[<no category>]]></string>
 
 
 </resources>

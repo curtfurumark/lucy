@@ -28,8 +28,6 @@ class ItemSessionViewModel : ViewModel() {
     private val mutableError = MutableLiveData<String>()
     private val mutableCurrentItem = MutableLiveData<Item?>()
     private var currentItem: Item? = null
-    private var currentTimerItem: Item? = null
-    //private var kronos: Kronos? = null
 
     init{
         mutableTimerState.value = TimerState.PENDING
@@ -48,8 +46,6 @@ class ItemSessionViewModel : ViewModel() {
 
     private fun cancelTimer() {
         Logger.log("ItemSessionViewModel.cancelTimer()")
-        //timerRunning = false
-        //kronos!!.reset()
         timeModule.cancelTimer()
         mutableDuration.value = 0L
         mutableTimerState.value = TimerState.PENDING
@@ -57,7 +53,6 @@ class ItemSessionViewModel : ViewModel() {
 
     fun init(item: Item, context: Context?) {
         Logger.log("ItemSessionViewModel.init(Item)")
-        checkNotNull(item)
         this.currentItem = item
         if (currentItem!!.repeatID > 0) {
             val repeat =    repository.selectRepeat(currentItem!!.repeatID)
@@ -88,7 +83,6 @@ class ItemSessionViewModel : ViewModel() {
     enum class TimerState{
         PENDING, RUNNING, PAUSED,
     }
-    //private var timerState2 = TimerState.PENDING
 
     fun getItemSettings(item: Item, context: Context): List<ItemSetting> {
         checkNotNull(item)

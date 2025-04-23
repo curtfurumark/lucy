@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.screens.duration.DurationEvent
 import se.curtrune.lucy.screens.duration.DurationPeriod
 import se.curtrune.lucy.screens.medicine.composable.DropdownItem
+import se.curtrune.lucy.statistics.StatisticsPeriod
 
 @Composable
 fun PeriodDropDown(onEvent: (DurationEvent)->Unit){
@@ -44,7 +45,7 @@ fun PeriodDropDown(onEvent: (DurationEvent)->Unit){
                 expanded = false }
             , containerColor = Color.Gray
         ){
-            DurationPeriod.entries.forEach { period->
+            StatisticsPeriod.Companion.Period.entries.forEach { period->
                 DropdownItem(action = period.name, onClick = {
                     onEvent(DurationEvent.SetPeriod(period))
                     currentPeriod = period.name

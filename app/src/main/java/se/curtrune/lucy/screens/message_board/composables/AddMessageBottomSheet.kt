@@ -2,25 +2,25 @@ package se.curtrune.lucy.screens.message_board.composables
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -52,30 +52,37 @@ import java.time.ZoneOffset
 enum class Mode{
     EDIT, CREATE
 }
+
+data class DefaultMessage(
+    val mode: Mode = Mode.CREATE,
+    val message: Message = Message()
+)
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddMessageBottomSheet(messageIn: Message, onDismiss: ()->Unit, onSave: (Message)->Unit){
+fun AddMessageBottomSheet(defaultMessage: DefaultMessage, onDismiss: ()->Unit, onSave: (Message, Mode)->Unit){
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
     val scope = rememberCoroutineScope()
-    val message by remember{
-        mutableStateOf(messageIn)
+    var message by remember{
+        mutableStateOf(defaultMessage.message)
     }
-    val mode = if(messageIn.id == 0L) Mode.CREATE else Mode.EDIT
+    val mode by remember {
+        mutableStateOf(defaultMessage.mode)
+    }
 
     var subject by remember {
-        mutableStateOf(messageIn.subject)
+        mutableStateOf(defaultMessage.message.subject)
     }
     val category by remember {
-        mutableStateOf(messageIn.category)
+        mutableStateOf(defaultMessage.message.category)
     }
     var content by remember {
-        mutableStateOf(messageIn.content)
+        mutableStateOf(defaultMessage.message.content)
     }
     var user by remember {
-        mutableStateOf(messageIn.user)
+        mutableStateOf(defaultMessage.message.user)
     }
     val focusRequester =  remember {
         FocusRequester()
@@ -89,10 +96,8 @@ fun AddMessageBottomSheet(messageIn: Message, onDismiss: ()->Unit, onSave: (Mess
         onDismissRequest = {
             onDismiss()
         },
-        //contentWindowInsets = {WindowInsets.ime},
         sheetState =  sheetState)
     {
-        //val windowInsets = LocalWindowInsets.
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
                 modifier = Modifier.fillMaxWidth()
@@ -116,7 +121,6 @@ fun AddMessageBottomSheet(messageIn: Message, onDismiss: ()->Unit, onSave: (Mess
                         println("move focus down: $stat")
                     }
                 )
-
             )
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth()
@@ -140,22 +144,34 @@ fun AddMessageBottomSheet(messageIn: Message, onDismiss: ()->Unit, onSave: (Mess
                         mutableStateOf(false)
                     }
                     var state by remember {
-                        mutableStateOf(Message.State.entries[messageIn.state].name)
+                        mutableStateOf(Message.State.entries[message.state].name)
                     }
-                    Text(
-                        text =Message.State.entries[messageIn.state].name,
-                        modifier = Modifier.clickable {
-                            expanded = !expanded
-                        })
+                    TextButton(onClick = {
+                        expanded = !expanded
+                    }) {
+                        Text(
+                            text = Message.State.entries[message.state].name
+                        )
+                    }
                     DropdownMenu(expanded = expanded, onDismissRequest = {
                         expanded = false
                     }) {
                         Message.State.entries.forEach{
-                            DropdownMenuItem(text = {it.name}, onClick = {
-                                state = it.name
-                                message.state = it.ordinal
-                                expanded = false
-                            })
+                            println("menu text: ${it.name}")
+                            DropdownMenuItem(text = {
+                                Text(it.name)}, onClick = {
+                                    state = it.name
+                                    message.state = it.ordinal
+                                    expanded = false
+                            }, colors = MenuItemColors(
+                                    textColor = MaterialTheme.colorScheme.onSurface,
+                                    leadingIconColor = MaterialTheme.colorScheme.background,
+                                    trailingIconColor = MaterialTheme.colorScheme.background,
+                                    disabledTextColor = MaterialTheme.colorScheme.background,
+                                    disabledLeadingIconColor = MaterialTheme.colorScheme.background,
+                                    disabledTrailingIconColor = MaterialTheme.colorScheme.background,
+                            )
+                            )
                         }
                     }
                 }
@@ -179,7 +195,7 @@ fun AddMessageBottomSheet(messageIn: Message, onDismiss: ()->Unit, onSave: (Mess
                         if (!sheetState.isVisible) {
                             message.category = category
                             message.created = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
-                            onSave(message)
+                            onSave(message, mode)
                         }
                     }
                 }) {
@@ -200,6 +216,8 @@ fun PreviewBottomSheet(){
         message.subject = "test"
         message.content = "test"
         message.user = "curt rune"
-        AddMessageBottomSheet(messageIn = message, onDismiss = {}, onSave = {})
+        AddMessageBottomSheet(defaultMessage = DefaultMessage(Mode.CREATE, message), onDismiss = {}, onSave = { _, _->
+            println("onSave")
+        })
     }
 }

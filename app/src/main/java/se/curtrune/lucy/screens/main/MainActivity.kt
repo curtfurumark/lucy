@@ -23,7 +23,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.navigation.NavigationView
 import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.R
-import se.curtrune.lucy.activities.flying_fish.GameActivity
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.app.FirstPage
 import se.curtrune.lucy.app.Settings.PanicAction
@@ -33,7 +32,6 @@ import se.curtrune.lucy.composables.top_app_bar.FlexibleTopBar
 import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
 import se.curtrune.lucy.dialogs.PanicActionDialog
 import se.curtrune.lucy.dialogs.UpdateDialog
-import se.curtrune.lucy.fragments.SequenceFragment
 import se.curtrune.lucy.modules.MainModule
 import se.curtrune.lucy.screens.affirmations.Quote
 import se.curtrune.lucy.screens.appointments.AppointmentsFragment
@@ -42,7 +40,7 @@ import se.curtrune.lucy.screens.daycalendar.CalendarDayFragment
 import se.curtrune.lucy.screens.dev.DevActivity
 import se.curtrune.lucy.screens.duration.DurationFragment
 import se.curtrune.lucy.screens.enchilada.EnchiladaFragment
-import se.curtrune.lucy.screens.log_in.LogInActivity
+import se.curtrune.lucy.screens.log_in.OldLogInActivity
 import se.curtrune.lucy.screens.main.composables.ChoosePanicActionDialog
 import se.curtrune.lucy.screens.main.composables.QuoteDialog
 import se.curtrune.lucy.screens.medicine.MedicineFragment
@@ -147,7 +145,7 @@ class MainActivity : AppCompatActivity() {
                         Logger.log("...log out")
                         val intent = Intent(
                             this,
-                            LogInActivity::class.java
+                            OldLogInActivity::class.java
                         )
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                         startActivity(intent)
@@ -206,7 +204,8 @@ class MainActivity : AppCompatActivity() {
                         }
 
                         is MainChannelEvent.StartSequence -> {
-                            navigate(SequenceFragment(event.root))
+                            //navigate(SequenceFragment(event.root))
+                            Toast.makeText(applicationContext, "start sequence not implemented", Toast.LENGTH_LONG).show()
                         }
 
                         is MainChannelEvent.OpenNavigationDrawer -> {
@@ -356,12 +355,14 @@ class MainActivity : AppCompatActivity() {
         Logger.log("...panic(PanicAction))")
         Logger.log("....panicAction", panicAction.toString())
         when (panicAction) {
-            PanicAction.GAME -> startActivity(
-                Intent(
+            PanicAction.GAME ->{
+                Toast.makeText(applicationContext, "game not implemented", Toast.LENGTH_LONG).show()
+            }
+                //startActivity(
+/*                Intent(
                     this,
-                    GameActivity::class.java
-                )
-            )
+                    //GameActivity::class.java
+                )*/
             PanicAction.URL -> {
                 val url = UserPrefs.getRandomPanicUrl(this)
                 openWebPage(url)

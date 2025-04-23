@@ -50,18 +50,19 @@ import se.curtrune.lucy.app.Settings
 import se.curtrune.lucy.classes.Notification
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.AddItemFab
+import se.curtrune.lucy.screens.create_list.composables.CreateListScreen
 import se.curtrune.lucy.composables.CountDownTimerService
 import se.curtrune.lucy.composables.MentalMeter4
 import se.curtrune.lucy.composables.NavigationDrawer
 import se.curtrune.lucy.composables.StopWatchUsingService
 import se.curtrune.lucy.composables.add_item.AddItemBottomSheet
 import se.curtrune.lucy.composables.add_item.DefaultItemSettings
-import se.curtrune.lucy.composables.add_item.TargetTimePicker
 import se.curtrune.lucy.composables.top_app_bar.FlexibleTopBar
 import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
 import se.curtrune.lucy.dialogs.RepeatDialog
 import se.curtrune.lucy.persist.DBAdmin
 import se.curtrune.lucy.persist.SqliteLocalDB
+import se.curtrune.lucy.screens.create_list.CreateListState
 import se.curtrune.lucy.screens.dev.composables.BackupDataBase
 import se.curtrune.lucy.screens.dev.composables.CalendarWeekTest
 import se.curtrune.lucy.screens.dev.composables.DurationTest
@@ -72,7 +73,7 @@ import se.curtrune.lucy.screens.dev.composables.RepositoryTest
 import se.curtrune.lucy.screens.dev.composables.TestGoogleCalendars
 import se.curtrune.lucy.screens.dev.composables.TestScrollableYearMonth
 import se.curtrune.lucy.screens.dev.composables.TestSwipeAble
-import se.curtrune.lucy.screens.log_in.LogInActivity
+import se.curtrune.lucy.screens.log_in.OldLogInActivity
 import se.curtrune.lucy.screens.main.MainActivity
 import se.curtrune.lucy.screens.main.TopAppBarState
 import se.curtrune.lucy.screens.my_day.MyDayState
@@ -223,6 +224,7 @@ class DevActivity : AppCompatActivity() {
                                     it.stress = 0
                                     it.heading = "hello"
                                 }
+                                CreateListScreen(state = CreateListState(), onEvent = { event->{}})
                                 MentalMeter4(item = item, state = MyDayState() ) { event->
                                     println("...onEvent(event): ${event.toString()}")
                                 }
@@ -397,7 +399,7 @@ class DevActivity : AppCompatActivity() {
                 testNotification()
             }
             R.id.homeActivity_logInActivity -> {
-                startActivity(Intent(this, LogInActivity::class.java))
+                startActivity(Intent(this, OldLogInActivity::class.java))
             }
             R.id.devActivity_userSettings -> {
                 setDefaultUserSettings()

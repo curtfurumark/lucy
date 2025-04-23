@@ -2,9 +2,15 @@ package se.curtrune.lucy.statistics
 
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.State
+import se.curtrune.lucy.screens.duration.data.DateStatistics
+import se.curtrune.lucy.screens.duration.data.StatisticItem
 import java.time.LocalDate
 
 class Statistics(var items: List<Item>) {
+    val groupedByTags: List<StatisticItem.Tag>
+        get() {
+            return  emptyList()
+        }
     val averageDuration: Long
         get(){
             if(items.isEmpty()) return 0
@@ -49,20 +55,35 @@ class Statistics(var items: List<Item>) {
         get(){
             return items.map { item->item.stress }.sum()
         }
-    val groupedByCategory: HashMap<String, MutableList<Item>>
+    val groupedByCategory: List<StatisticItem.Category>
         get(){
             val map = HashMap<String,MutableList<Item>>()
+            val list = mutableListOf<StatisticItem.Category>()
             items.forEach{ item ->
                 map.getOrPut(item.category){ mutableListOf<Item>()}.add(item)
             }
-            return map
+            map.forEach{ (category, items)->
+                list.add(StatisticItem.Category(category, items))
+            }
+            return list
         }
-    val groupedByDate: HashMap<LocalDate, MutableList<Item>>
+    val groupedByDate: List<StatisticItem.Date>
         get(){
             val map = HashMap<LocalDate,MutableList<Item>>()
+            val dateItems = mutableListOf<StatisticItem.Date>()
             items.forEach{ item->
                 map.getOrPut(item.targetDate){ mutableListOf<Item>()}.add(item)
             }
-            return map
+            map.forEach{ (date, items)->
+                dateItems.add(StatisticItem.Date(date, items))
+            }
+            return dateItems
         }
+    private fun mapToDateStats(groupedByDate: HashMap<LocalDate, MutableList<Item>>): List<StatisticItem.Date> {
+        val list = mutableListOf<StatisticItem.Date>()
+        groupedByDate.forEach{ (date, items)->
+            list.add(StatisticItem.Date(date, items))
+        }
+        return list
+    }
 }

@@ -187,6 +187,7 @@ fun ItemSettingDate(item: Item){
 }
 @Composable
 fun ItemSettingDate(date: LocalDate, onEvent: ()->Unit){
+    println("ItemSettingDate(date: $date)")
     Box(modifier = Modifier.fillMaxWidth()
         .border(Dp.Hairline, color = Color.LightGray)
         .clickable { onEvent() }) {

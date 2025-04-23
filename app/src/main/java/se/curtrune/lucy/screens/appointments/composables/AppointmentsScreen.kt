@@ -16,7 +16,6 @@ fun AppointmentsScreen(state: AppointmentsState, onEvent: (AppointmentEvent)->Un
     LazyColumn(modifier = Modifier.fillMaxWidth()) {
         items(state.items){ item->
             AppointmentItem(appointment = item, onEvent = { event->
-                //println(" onEvent ${it.toString()}")
                 onEvent(event)
             })
             Spacer(modifier = Modifier.height(4.dp))

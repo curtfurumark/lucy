@@ -117,15 +117,8 @@ open class Logger {
                 log("log mental called with null mental")
                 return
             }
-            log("\tid", mental.id)
-            log("\titemID", mental.itemID)
-            log("\theading", mental.heading)
             log("\tcategory", mental.category)
-            log("\tgetInfo()", mental.info)
             log("\tisDone", mental.isDone)
-            log("\ttime", mental.time)
-            log("\tcomment", mental.comment)
-            log("\tdate", mental.date)
             log("\tcreated", Converter.epochToFormattedDateTime(mental.createdEpoch))
             log("\tanxiety", mental.anxiety)
             log("\tmood", mental.mood)

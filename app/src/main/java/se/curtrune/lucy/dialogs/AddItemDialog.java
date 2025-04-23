@@ -401,13 +401,6 @@ public class AddItemDialog extends BottomSheetDialogFragment {
 
     private void showMentalDialog(){
         if(VERBOSE) log("...showMentalDialog()");
-        MentalDialog dialog = new MentalDialog();
-        dialog.setCallback((mental, mode) -> {
-            log("...onMental(MentalType, Mode)", mode.toString());
-            log(mental);
-            //newItem.setMental( mental);
-        });
-        dialog.show(getChildFragmentManager(), "add mental");
     }
     private void showNotificationDialog(){
         if( VERBOSE) log("...showNotificationDialog()");

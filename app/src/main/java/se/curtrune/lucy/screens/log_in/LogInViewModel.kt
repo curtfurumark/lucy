@@ -1,4 +1,6 @@
 package se.curtrune.lucy.screens.log_in
 
-class LogInViewModel {
+import androidx.lifecycle.ViewModel
+
+class LogInViewModel: ViewModel() {
 }

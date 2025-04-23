@@ -38,9 +38,9 @@ object DateTImeConverter {
      */
     fun formatSeconds(secs: Long): String {
         val days = secs / (24 * 3600)
-        println("days: $days")
-        println("seconds remaining after days: ${secs % (24 * 3600)}")
-        val hours = secs % (24 * 3600) / 3600 //modden 3600 + 60 + 42  = 3702
+        //println("days: $days")
+        //println("seconds remaining after days: ${secs % (24 * 3600)}")
+        val hours = secs % (24 * 3600) / 3600
         val minutes = (secs % 3600) / 60
         val seconds = secs % 60
         val stringDays = if( days > 0 ) "$days day${if (days > 1) "s " else " "}" else ""
@@ -52,7 +52,6 @@ object DateTImeConverter {
     }
 
     fun format(dayOfWeek: DayOfWeek, textStyle: TextStyle): String{
-        //return String.format(Locale.getDefault(), "%s %d",dayOfWeek.getDisplayName(textStyle, Locale.getDefault()).cecilia())
         return dayOfWeek.getDisplayName(textStyle, Locale.getDefault()).cecilia()
     }
     fun epochMillisToLocalDate(epochMillis: Long): LocalDate{

@@ -31,21 +31,22 @@ import java.sql.SQLException
  * initializes stuff
  * and starts user defined activity, today, week or month
  */
-class LogInActivity : AppCompatActivity() {
+class OldLogInActivity : AppCompatActivity() {
     private var editTextPwd: EditText? = null
     private var buttonLogIn: Button? = null
     private var lucinda: Lucinda? = null
+    private val userPrefs = LucindaApplication.appModule.userSettings
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         log("LogInActivity.onCreate(Bundle of joy)")
         setContentView(R.layout.log_in_activity)
-        initCatchAllExceptionsHandler()
+        //initCatchAllExceptionsHandler()
         title = "lucinda"
         lucinda = Lucinda.getInstance(this)
-        if (!lucinda.isInitialized(this)) {
+        if (!lucinda!!.isInitialized(this)) {
             log("...lucinda not initialized")
             try {
-                lucinda.initialize(this)
+                lucinda!!.initialize(this)
             } catch (e: SQLException) {
                 Toast.makeText(this, "serious, failure to initialize the app", Toast.LENGTH_LONG)
                     .show()
@@ -63,17 +64,15 @@ class LogInActivity : AppCompatActivity() {
         initListeners()
         initDevMode()
         initDayNightMode()
-        checkInternetConnection()
-        //updateRepeats();
         NotificationsWorker.createNotificationChannel(this)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             checkNotificationPermission()
         }
-        /* if (UserPrefs.usesPassword(this) && !UserPrefs.isDevMode(this)) {
+        if (UserPrefs.usesPassword(this) && !UserPrefs.isDevMode(this)) {
             log("...using password");
         } else {
-*/
-        startUserActivity()
+            startUserActivity()
+        }
         //}
     }
 
@@ -135,7 +134,7 @@ class LogInActivity : AppCompatActivity() {
                         paramThrowable.message
                     )
                     Toast.makeText(
-                        this@LogInActivity,
+                        this@OldLogInActivity,
                         paramThrowable.message,
                         Toast.LENGTH_LONG
                     ).show()
@@ -204,7 +203,6 @@ class LogInActivity : AppCompatActivity() {
                     IndexActivity::class.java
                 )
             )
-
             StartActivity.TODAY_ACTIVITY -> startActivity(
                 Intent(
                     this,

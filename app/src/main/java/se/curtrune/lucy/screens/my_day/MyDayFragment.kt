@@ -19,34 +19,20 @@ class MyDayFragment(val date: LocalDate = LocalDate.now()) : Fragment() {
     private val myDayViewModel: MyDayViewModel by viewModels{
         MyDayViewModelFactory(date, this)
     }
-    private enum class Mode {
-        ESTIMATE, ACTUAL
-    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.mental_day_fragment, container, false)
-        println("MentalDateFragment.onCreateView(...)")
-        initContent(view)
-        return view
-    }
-
-    private fun initContent(view: View){
-        println("...initContent()")
-        val composeView = view.findViewById<ComposeView>(R.id.mentalDateFragment_composeView)
-        composeView!!.setContent {
-            val state = myDayViewModel.state.collectAsState()
-            LucyTheme {
-                MentalScreen(state = state.value, onEvent = { event ->
-                    myDayViewModel.onEvent(event)
-                })
+    ): View{
+        return ComposeView(requireActivity()).apply {
+            setContent {
+                val state = myDayViewModel.state.collectAsState()
+                LucyTheme {
+                    MentalScreen(state = state.value, onEvent = { event ->
+                        myDayViewModel.onEvent(event)
+                    })
+                }
             }
-       }
-    }
-
-    companion object {
-        var VERBOSE: Boolean = false
+        }
     }
 }

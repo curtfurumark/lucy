@@ -8,13 +8,18 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,10 +30,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
+import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.screens.week_calendar.WeekEvent
@@ -45,6 +52,9 @@ fun WeekDate(calendarDate: CalenderDate, onEvent: (WeekEvent)->Unit){
     var borderColor by remember {
         mutableStateOf(Color.DarkGray)
     }
+    var showFlag by remember {
+        mutableStateOf(false)
+    }
     if( calendarDate.date == LocalDate.now()){
         println("is today")
         backgroundColor = MaterialTheme.colorScheme.secondaryContainer
@@ -53,6 +63,14 @@ fun WeekDate(calendarDate: CalenderDate, onEvent: (WeekEvent)->Unit){
         borderColor = Color.Transparent
         borderColor= Color.DarkGray
     }
+    LaunchedEffect(Unit) {
+        if( calendarDate.mental.energy < 0){
+            println("show flag")
+            showFlag = true
+        }else{
+            println("hide flag really, energy: ${calendarDate.mental.energy}, date: ${calendarDate.date}")
+        }
+    }
     Box(
         modifier = Modifier
             .border(2.dp, color = borderColor)
@@ -60,7 +78,8 @@ fun WeekDate(calendarDate: CalenderDate, onEvent: (WeekEvent)->Unit){
             .clip(RoundedCornerShape(5.dp))
             .background(color = MaterialTheme.colorScheme.background)
             .combinedClickable(onClick = {
-                onEvent(WeekEvent.CalendarDateClick(calendarDate)) },
+                onEvent(WeekEvent.CalendarDateClick(calendarDate))
+            },
                 onLongClick = {
                     onEvent(WeekEvent.CalendarDateLongClick(calendarDate))
                 }),
@@ -70,15 +89,27 @@ fun WeekDate(calendarDate: CalenderDate, onEvent: (WeekEvent)->Unit){
             modifier = Modifier.padding(2.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                textAlign = TextAlign.Center,
-                text = "${DateTImeConverter.format(calendarDate.date.dayOfWeek, TextStyle.SHORT)} ${calendarDate.date.dayOfMonth}",
-                fontSize = 20.sp)
-            calendarDate.items.forEach { event->
+            Row(modifier = Modifier.fillMaxWidth(),) {
+                Text(
+                    modifier = Modifier.weight(1F),
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    textAlign = TextAlign.Center,
+                    text = "${
+                        DateTImeConverter.format(
+                            calendarDate.date.dayOfWeek,
+                            TextStyle.SHORT
+                        )
+                    } ${calendarDate.date.dayOfMonth}",
+                    fontSize = 20.sp
+                )
+                if(showFlag){
+                    Icon(imageVector = Icons.Default.Warning, contentDescription = "bad day")
+                }
+            }
+            calendarDate.events.forEach { event->
                 Box(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .border(Dp.Hairline, color = Color.Black)
                 ) {
                     Text(
@@ -94,6 +125,7 @@ fun WeekDate(calendarDate: CalenderDate, onEvent: (WeekEvent)->Unit){
 }
 
 @Composable
+@PreviewLightDark
 @Preview( uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewWeekDate(){
     LucyTheme {
@@ -102,7 +134,7 @@ fun PreviewWeekDate(){
         calendarDate.items = listOf(
             Item("dev"),
             Item("play bass")
-        )
+        ).toMutableList()
         WeekDate(calendarDate = calendarDate) {
             println("hello")
         }

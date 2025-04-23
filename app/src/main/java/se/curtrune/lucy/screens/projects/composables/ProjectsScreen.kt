@@ -33,10 +33,11 @@ import se.curtrune.lucy.screens.projects.ProjectsEvent
 import se.curtrune.lucy.screens.projects.ProjectsState
 
 @Composable
-fun ProjectsScreen(state: ProjectsState, onEvent: (ProjectsEvent) -> Unit, modifier: Modifier = Modifier) {
+fun ProjectsScreen( state: ProjectsState, onEvent: (ProjectsEvent) -> Unit, modifier: Modifier = Modifier) {
     println("ProjectsScreen()")
     Column(modifier = Modifier.fillMaxWidth()) {
         ProjectTabs(state = state, onEvent = onEvent)
+        println("after projects tab")
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
             items(state.items) { item ->
                 ProjectItem(item = item, onEvent = onEvent)
@@ -49,9 +50,6 @@ fun ProjectsScreen(state: ProjectsState, onEvent: (ProjectsEvent) -> Unit, modif
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProjectItem(item: Item, modifier: Modifier = Modifier, onEvent: (ProjectsEvent) -> Unit){
-    var isDone by remember {
-        mutableStateOf(item.isDone)
-    }
     Card(
         modifier = Modifier.fillMaxWidth()
             .combinedClickable(
@@ -66,9 +64,9 @@ fun ProjectItem(item: Item, modifier: Modifier = Modifier, onEvent: (ProjectsEve
         Row(modifier = Modifier.fillMaxWidth(),
             verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
         ) {
-            Checkbox(checked = isDone, onCheckedChange = {
-                isDone = !isDone
-                item.setIsDone(isDone)
+            Checkbox(checked = item.isDone, onCheckedChange = { checked->
+                //isDone = !isDone
+                item.setIsDone(checked)
                 onEvent(ProjectsEvent.UpdateItem(item))
             })
             Text(

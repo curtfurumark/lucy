@@ -63,7 +63,7 @@ fun PreviewMonthDate(){
     calendarDate.items = listOf(
         Item("pizza"),
         Item("tvättstuga")
-    )
+    ).toMutableList()
     LucyTheme {
         MonthDate(calendarDate = calendarDate) { }
     }

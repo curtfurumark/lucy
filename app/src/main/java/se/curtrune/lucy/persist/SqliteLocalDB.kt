@@ -505,7 +505,7 @@ class SqliteLocalDB(context: Context?) :
         private const val TABLE_ASSETS = "assets"
         private const val TABLE_REPEAT = "repeat"
         const val dbVersion: Int = 2
-        var VERBOSE: Boolean = true
+        var VERBOSE: Boolean = false
     }
 }
 

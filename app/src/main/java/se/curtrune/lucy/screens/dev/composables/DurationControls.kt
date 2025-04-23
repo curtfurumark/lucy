@@ -1,15 +1,12 @@
 package se.curtrune.lucy.screens.dev.composables
 
-import androidx.collection.mutableIntSetOf
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.SegmentedButton
@@ -25,26 +22,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import se.curtrune.lucy.R
-import se.curtrune.lucy.util.Converter
+import se.curtrune.lucy.screens.duration.DurationEvent
+import se.curtrune.lucy.screens.duration.DurationState
+import se.curtrune.lucy.screens.duration.SortedBy
 import se.curtrune.lucy.statistics.StatisticsPeriod
 import se.curtrune.lucy.util.DateTImeConverter
 import java.time.LocalDate
 
 @Composable
-fun StatisticsComposable(){
-    var fromDate by remember {
+fun DurationControls(state: DurationState, onEvent: (DurationEvent)->Unit){
+/*    var fromDate by remember {
         mutableStateOf(LocalDate.now())
-    }
-    val toDate by remember {
-        mutableStateOf(LocalDate.now())
-    }
-    val stats = StatisticsPeriod(fromDate, toDate)
+    }*/
+
+    //val stats = StatisticsPeriod(fromDate, toDate)
     var dropdownExpanded by remember {
         mutableStateOf(false)
     }
-/*    var selectedPeriod by remember {
-        mutableStateOf("DAY")
-    }*/
     var sortedByCategory by remember {
         mutableStateOf(true)
     }
@@ -54,28 +48,12 @@ fun StatisticsComposable(){
     var selectedPeriod by remember {
         mutableStateOf(StatisticsPeriod.Companion.Period.DAY)
     }
-    val periods = listOf("DAY", "WEEK", "MONTH", "YEAR")
-    fun setPeriod(period: StatisticsPeriod.Companion.Period){
-        when(period){
-            StatisticsPeriod.Companion.Period.DAY ->{ fromDate = LocalDate.now()}
-            StatisticsPeriod.Companion.Period.WEEK ->{
-                fromDate = LocalDate.now().minusDays(6)
-            }
-            StatisticsPeriod.Companion.Period.MONTH ->{
-                fromDate = LocalDate.now().minusMonths(1)
-            }
-            StatisticsPeriod.Companion.Period.YEAR ->{
-                fromDate = LocalDate.now().minusYears(1)
-            }
-        }
-
-    }
     Card(modifier = Modifier.fillMaxWidth()){
         Column(
             modifier = Modifier.fillMaxWidth()
                 .verticalScroll(rememberScrollState())){
-            Text(text = stringResource(R.string.from, fromDate.toString()))
-            Text(text = stringResource(R.string.to, toDate.toString()))
+            Text(text = stringResource(R.string.from, state.fromDate.toString()))
+            Text(text = stringResource(R.string.to, state.toDate.toString()))
 
             Text(
                 text = selectedPeriod.name,
@@ -89,7 +67,7 @@ fun StatisticsComposable(){
                     DropdownMenuItem(
                         text = { Text(text = period.name) }, onClick = {
                             selectedPeriod = period
-                            setPeriod(period)
+                            onEvent(DurationEvent.SetPeriod(period))
                             dropdownExpanded = false
                         })
                 }
@@ -98,19 +76,25 @@ fun StatisticsComposable(){
                 mutableIntStateOf(0)
             }
             Row(modifier = Modifier.fillMaxWidth()){
-                var options = listOf("category", "date", "tags")
+                val options = listOf("category", "date", "tags")
                 SingleChoiceSegmentedButtonRow {
                     options.forEachIndexed{ index, label->
                         SegmentedButton(onClick = {
                             selectedCategory = index
-                            if( index == 0){
-                                sortedByCategory = true
-                                sortedByDate = false
-                            }else if (index == 1){
-                                sortedByDate = true
-                                sortedByCategory = false
-                            }else{
-                                println("tags not implemented")
+                            when (index) {
+                                0 -> {
+                                    sortedByCategory = true
+                                    onEvent(DurationEvent.SetSortedBy(SortedBy.CATEGORY))
+                                    sortedByDate = false
+                                }
+                                1 -> {
+                                    sortedByDate = true
+                                    onEvent(DurationEvent.SetSortedBy(SortedBy.DATE))
+                                    sortedByCategory = false
+                                }
+                                else -> {
+                                    onEvent(DurationEvent.SetSortedBy(SortedBy.TAGS))
+                                }
                             }
                         },
                             shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
@@ -121,17 +105,7 @@ fun StatisticsComposable(){
                     }
                 }
             }
-            Text(text = "estimated duration: ${DateTImeConverter.formatSeconds(stats.statistics.duration)}")
-            Text(text = "actual duration: ${DateTImeConverter.formatSeconds(stats.statistics.durationActual)}")
-            if(sortedByCategory) {
-                stats.statistics.groupedByCategory.forEach{ (category, items) ->
-                    StatisticsCategory(heading = category, items = items)
-                }
-            }else {
-                stats.statistics.groupedByDate.forEach { (date, items) ->
-                    StatisticsDate(date = date, items = items)
-                }
-            }
+            Text(text = "total duration: ${DateTImeConverter.formatSeconds(state.totalDuration)}")
         }
     }
 }

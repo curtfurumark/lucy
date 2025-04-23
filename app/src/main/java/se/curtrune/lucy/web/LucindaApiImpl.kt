@@ -122,4 +122,28 @@ class LucindaApiImpl(private val client: HttpClient): LucindaApi {
             url(Urls.GET_QUOTES_URL)
         }
     }
+
+    override suspend fun updateMessage(message: Message): String {
+        return try {
+            client.post<String>{
+            url(Urls.UPDATE_MESSAGE_URL)
+            contentType(ContentType.Application.Json)
+            body = message
+        }
+        }catch (exception: RedirectResponseException){
+            //3xx
+            println(exception.response.status.description)
+            exception.response.status.description
+        }catch (exception: ClientRequestException){
+            //4xx
+            println(exception.response.status.description)
+            exception.response.status.description
+        }catch (exception: ServerResponseException){
+            //5xx
+            println(exception.response.status.description)
+            exception.response.status.description
+        }catch (e: Exception) {
+                "exception ${e.message}"
+        }
+    }
 }

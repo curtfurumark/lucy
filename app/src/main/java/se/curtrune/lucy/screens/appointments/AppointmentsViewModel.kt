@@ -1,6 +1,7 @@
 package se.curtrune.lucy.screens.appointments
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -8,21 +9,17 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import se.curtrune.lucy.modules.LucindaApplication
-import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.modules.MainModule
-import se.curtrune.lucy.util.Logger
+import se.curtrune.lucy.persist.Repository
 
-class AppointmentsViewModel : ViewModel() {
-    private val repository = LucindaApplication.appModule.repository
+class AppointmentsViewModel(private val repository: Repository) : ViewModel() {
     private val _state = MutableStateFlow(AppointmentsState())
-    private val eventChannel = Channel<UIEvent>()
+    private val _eventChannel = Channel<AppointmentChannel>()
     private var items: List<Item> = mutableListOf()
-    val eventFlow = eventChannel.receiveAsFlow()
+    val eventChannel = _eventChannel.receiveAsFlow()
     val state = _state.asStateFlow()
-    val dialogSettings = DialogSettings()
     init {
         items = repository.selectAppointments()
         _state.update {it.copy(
@@ -33,7 +30,13 @@ class AppointmentsViewModel : ViewModel() {
     }
     private fun insert(item: Item) {
         println("AppointmentsViewModel(Item, Context)")
-        val itemWithID = repository.insert(item) ?: return
+        val itemWithID = repository.insert(item)
+        if( itemWithID != null){
+            viewModelScope.launch {
+                _eventChannel.send(AppointmentChannel.ShowMessage("error saving appointment"))
+            }
+            return
+        }
         items = repository.selectAppointments()
         _state.update { it.copy(
                 items = items
@@ -46,10 +49,7 @@ class AppointmentsViewModel : ViewModel() {
             is AppointmentEvent.DeleteAppointment -> {delete(event.item)}
             is AppointmentEvent.Edit -> {editAppointment(event.item)}
             is AppointmentEvent.Update -> {update(event.item)}
-            is AppointmentEvent.ShowAddAppointmentDialog -> {
-                showAddAppointmentDialog()
-            }
-
+            is AppointmentEvent.ShowAddAppointmentDialog -> { showAddAppointmentDialog() }
             is AppointmentEvent.Filter -> {filter(event.filter)}
         }
     }
@@ -60,7 +60,7 @@ class AppointmentsViewModel : ViewModel() {
     private fun editAppointment(appointment: Item){
         println("...editAppointment(${appointment.heading})")
         viewModelScope.launch{
-            eventChannel.send(UIEvent.EditItem(appointment))
+            _eventChannel.send(AppointmentChannel.EditItem(appointment))
         }
     }
 
@@ -72,38 +72,58 @@ class AppointmentsViewModel : ViewModel() {
     }
 
     private fun delete(item: Item) {
-        Logger.log("AppointmentsViewModel.delete(Item, Context)", item.heading)
+        println("AppointmentsViewModel.delete(${item.heading})")
         val stat = repository.delete(item)
-        if (stat) {
-            _state.update { it.copy(
+        if(!stat){
+            viewModelScope.launch {
+                _eventChannel.send(AppointmentChannel.ShowMessage("error deleting appointment"))
+            }
+            return
+        }
+        _state.update {
+            it.copy(
                 items = repository.selectItems((Type.APPOINTMENT))
-            ) }
-        } else {
-            println("ERROR deleting item: ${item.heading}")
+            )
         }
     }
 
     private fun showAddAppointmentDialog(){
-        println("showAddAppointmentDialog()")
-        dialogSettings.isCalendarItem = true
-        dialogSettings.isAppointment = true
-        dialogSettings.parent = repository.getAppointmentsRoot()
+        _state.update {
+            it.copy(
+                defaultItemSettings = it.defaultItemSettings.copy(
+                    isCalendarItem = true,
+                    isAppointment = true,
+                    item = Item().also {
+                        item -> item.type = Type.APPOINTMENT
+                        item.parent = repository.getAppointmentsRoot()
+                        item.setIsCalenderItem(true)
+                    },
+                    parent = repository.getAppointmentsRoot()
+                )
+            )
+        }
         viewModelScope.launch {
-            eventChannel.send(UIEvent.ShowAddItemDialog)
+            _eventChannel.send(AppointmentChannel.ShowAddItemDialog)
         }
     }
-
-/*    private fun sort() {
-        Logger.log("...sort() not implemented")
-        items!!.sortWith(Comparator.comparingLong { obj: Item -> obj.compare() }
-            .reversed())
-    }*/
-
     private fun update(item: Item) {
         println("AppointmentsViewModel.update(${item.heading})")
         val rowsAffected = repository.update(item)
         if (rowsAffected != 1) {
-            println("ERROR updating item: ${item.heading}")
+            viewModelScope.launch {
+                _eventChannel.send(AppointmentChannel.ShowMessage("error updating appointment"))
+            }
+        }
+    }
+    class Factory(private val repository: Repository) :
+        ViewModelProvider.Factory {
+
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(AppointmentsViewModel::class.java)) {
+                @Suppress("UNCHECKED_CAST")
+                return AppointmentsViewModel(repository) as T
+            }
+            throw IllegalArgumentException("Unknown ViewModel class")
         }
     }
 }

@@ -2,10 +2,13 @@ package se.curtrune.lucy.screens.my_day.composables
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -15,21 +18,24 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.R
 import se.curtrune.lucy.classes.item.Item
+import se.curtrune.lucy.composables.Field
 import se.curtrune.lucy.screens.my_day.MyDayEvent
 import se.curtrune.lucy.screens.my_day.MyDayState
 import se.curtrune.lucy.util.DateTImeConverter
 import kotlin.math.roundToInt
 
 @Composable
-fun MentalMeter4(
+fun MentalMeter5(
     item: Item,
     state: MyDayState,
     onEvent: (MyDayEvent)->Unit) {
@@ -86,13 +92,14 @@ fun MentalMeter4(
             Field.ANXIETY -> {item.anxiety = level.toInt()}
             Field.STRESS -> {item.stress = level.toInt()}
             Field.MOOD -> {item.mood = level.toInt()}
-            Field.DURATION -> TODO()
+            Field.DURATION -> {}
         }
         mentalSliderLevel = level.toInt() -5
         onEvent(MyDayEvent.UpdateItem(item))
     }
     Box(
         modifier = Modifier.fillMaxWidth()
+            .clip(shape = RoundedCornerShape(10.dp))
             //.clickable { mentalSliderLevel++ }
             .pointerInput(true){
                 detectTapGestures {
@@ -106,16 +113,16 @@ fun MentalMeter4(
                     //onLevelChange(xToLevel(tapX))
                 }
             }
-            .pointerInput(true){
-                detectDragGestures { change, dragAmount ->
-                    println("change x ${change.position.x}")
-                    tapX = change.position.x
-                    //change.consume()
-                    //change.scrollDelta
-                    percent = tapX / size.width
-                    println("dragAmount: x  ${dragAmount.x}")
-                    setLevel(tapX)
-                    //onLevelChange(xToLevel(tapX))
+            .pointerInput(Unit){
+                detectHorizontalDragGestures { _, dragAmount ->
+                    println("dragAmount: $dragAmount")
+                    //val originalX = offsetX.value
+                    //println("originalX: $originalX")
+                    //val newValue = (originalX + dragAmount).coerceIn(0f, width - 50.dp.toPx())
+                    //val newValue = (originalX + dragAmount)
+                    //println("newValue: $newValue")
+                    //offsetX.value = newValue
+                    //println("offsetX.value: ${offsetX.value}")
                 }
             }
         .drawBehind {
@@ -163,6 +170,6 @@ fun PreviewMentalMeter() {
     val myDayState = MyDayState().also {
         it.currentField = Field.MOOD
     }
-    MentalMeter4(item = item, state = myDayState, onEvent = {})
+    MentalMeter5(item = item, state = myDayState, onEvent = {})
 }
 

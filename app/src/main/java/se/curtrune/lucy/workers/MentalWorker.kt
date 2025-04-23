@@ -31,6 +31,15 @@ object MentalWorker {
         stress = items.stream().mapToInt { obj: Item -> obj.stress }.sum()
         return Mental(anxiety, energy, mood, stress)
     }
+    fun getMental(items: List<Item>): Mental {
+        println("MentalWorker.getMental(List<Item>)")
+        val mental = Mental()
+        mental.anxiety = items.stream().mapToInt { obj: Item -> obj.anxiety }.sum()
+        mental.energy = items.stream().mapToInt { obj: Item -> obj.energy }.sum()
+        mental.mood = items.stream().mapToInt { obj: Item -> obj.mood }.sum()
+        mental.stress = items.stream().mapToInt { obj: Item -> obj.stress }.sum()
+        return mental
+    }
 
     /**
      *

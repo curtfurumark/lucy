@@ -24,7 +24,6 @@ class MentalModule(private val application: Application) {
         //currentMental.value = MentalWorker.getMental(date, application)
     }
     companion object{
-        //lateinit var mental: Mental
         val currentMental = MutableLiveData<Mental>()
     }
     fun update(){
@@ -39,10 +38,9 @@ class MentalModule(private val application: Application) {
             current = MentalWorker.getMental(date, application)
         }*/
     }
-    fun getMentalState(): Mental {
+    fun getMental(date: LocalDate): Mental {
         println("MentalModule.getMentalState")
         val mental = MentalWorker.getMental(date, application)
-        MentalWorker.getCurrentMental(date, application)
         println("mental: ${mental.toString()}")
         return mental
     }

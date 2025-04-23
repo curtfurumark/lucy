@@ -273,4 +273,7 @@
     <string name="is_template">template</string>
     <string name="all_week_heading">all week</string>
     <string name="edit_message">edit message</string>
+    <string name="show_password">show password</string>
+    <string name="title_activity_log_in">LogInActivity</string>
+    <string name="no_category"><![CDATA[<no category>]]></string>
 </resources>

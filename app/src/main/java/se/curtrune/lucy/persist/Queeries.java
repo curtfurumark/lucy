@@ -204,34 +204,20 @@ public class Queeries {
                 state.ordinal(), firstDate.toEpochDay(), lastDate.toEpochDay());
     }
 
-
-
-
     public static String selectChildren(long id) {
         return String.format(Locale.getDefault(), "SELECT * FROM items WHERE parentID = %d", id);
     }
 
-    public static String selectItems(Week week) {
-        return String.format(Locale.getDefault(), "SELECT * FROM items WHERE targetDate >= %d AND targetDate <= %d AND isCalenderItem = 1  ORDER by targetDate DESC",
-                week.getMonday().toEpochDay(), week.getLastDateOfWeek().toEpochDay());
+    public static String selectItems(Week week, boolean calendarItem) {
+        return String.format(Locale.getDefault(), "SELECT * FROM items WHERE targetDate >= %d AND targetDate <= %d AND isCalenderItem = %d  ORDER by targetDate DESC",
+                week.getMonday().toEpochDay(), week.getLastDateOfWeek().toEpochDay(), calendarItem ? 1 : 0);
     }
-
-
-
     public static String selectCalenderItems(LocalDate date) {
         return String.format(Locale.getDefault(),
                 "SELECT * FROM items WHERE targetDate = %d AND isCalenderItem = 1 ORDER BY targetTime DESC",
                 date.toEpochDay());
 
     }
-
-
-    public static String selectLucindaTodo() {
-        return String.format(Locale.getDefault(), "SELECT * FROM lucinda_todo");
-
-    }
-
-
     public static String selectTemplateChildren(Item parent) {
         return String.format(Locale.getDefault(), "SELECT * FROM items WHERE parentId = %d AND type = %d ORDER BY updated DESC",
                 parent.getID(), Type.TEMPLATE_CHILD.ordinal());

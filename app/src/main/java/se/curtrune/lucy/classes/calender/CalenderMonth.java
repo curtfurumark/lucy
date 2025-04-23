@@ -28,12 +28,12 @@ public class CalenderMonth {
         init();
     }
     public void addCalendarDate(CalenderDate calenderDate){
-        CalenderDate calenderDate1 = getCalenderDate(calenderDate.getDate());
+        CalenderDate calenderDate1 = getCalenderDate(calenderDate.date);
         calenderDate1.addItems(calenderDate.getItems());
     }
     public CalenderMonth addEvent(Item item){
         log("CalendarMonth.addEvent(Item)");
-        Optional<CalenderDate> optionalCalenderDate  = calenderDates.stream().filter(calenderDate -> calenderDate.getDate().equals(item.getTargetDate())).findFirst();
+        Optional<CalenderDate> optionalCalenderDate  = calenderDates.stream().filter(calenderDate -> calenderDate.date.equals(item.getTargetDate())).findFirst();
         if(optionalCalenderDate.isPresent()){
             optionalCalenderDate.get().add(item);
         }else{
@@ -42,7 +42,7 @@ public class CalenderMonth {
         return this;
     }
     public CalenderDate getCalenderDate(LocalDate date){
-        return calenderDates.stream().filter(calenderDate -> calenderDate.getDate().equals(date)).findAny().orElse(null);
+        return calenderDates.stream().filter(calenderDate -> calenderDate.date.equals(date)).findAny().orElse(null);
     }
     public List<CalenderDate> getCalenderDates(){
         return calenderDates;

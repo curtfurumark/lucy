@@ -1,12 +1,14 @@
 package se.curtrune.lucy.persist
 
 import android.content.Context
+import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.calender.CalendarWeek
 import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.classes.calender.Week
 import se.curtrune.lucy.util.Logger
+import se.curtrune.lucy.workers.MentalWorker
 import java.time.LocalDate
 
 object CalendarHelper {
@@ -14,27 +16,28 @@ object CalendarHelper {
     fun getCalendarWeek(week: Week): CalendarWeek {
         println("CalendarHelper.getCalendarWeek(${week.toString()})")
         val items = repository.selectItems(week)
-        items.forEach{item->
-            println(item.toString())
-        }
         val (allWeek, rest) = items.partition { item->item.itemDuration != null }
         val calendarDates = getCalendarDates(week, rest)
-        println("...number of all week ${allWeek.size}")
         val calendarWeek = CalendarWeek(week = week, calendarDates = calendarDates, allWeekItems =  allWeek)
         return calendarWeek
     }
-    fun getCalendarDates(week: Week, items: List<Item>): List<CalenderDate>{
+    private fun getCalendarDates(week: Week, items: List<Item>): List<CalenderDate>{
         val calenderDates: MutableList<CalenderDate> = ArrayList()
         var currentDate: LocalDate = week.firstDateOfWeek
         val lastDate = week.lastDateOfWeek
         while (currentDate.isBefore(lastDate) || currentDate == lastDate) {
             val calenderDate = CalenderDate(currentDate)
             val dateItems = items.filter { item: Item -> item.targetDate == currentDate }
-            calenderDate.items = dateItems
+            calenderDate.items = dateItems.toMutableList()
+            //calenderDate.mental = getMental(currentDate)
             calenderDates.add(calenderDate)
             currentDate = currentDate.plusDays(1)
         }
         return calenderDates
+    }
+    private fun getMental(date: LocalDate): Mental {
+        val items = repository.selectItems(date)
+        return MentalWorker.getMental(items)
     }
 
     /**
@@ -55,19 +58,18 @@ object CalendarHelper {
         while (currentDate.isBefore(lastDate) || currentDate == lastDate) {
             val calenderDate = CalenderDate(currentDate)
             val items = selectCalenderItems(currentDate, context)
-            calenderDate.items = items
+            calenderDate.items = items.toMutableList()
             calenderDates.add(calenderDate)
             currentDate = currentDate.plusDays(1)
         }
         return calenderDates
     }
-    private fun selectCalenderItems(currentDate: LocalDate?, context: Context?): List<Item> {
+
+    private fun selectCalenderItems(currentDate: LocalDate, context: Context?): List<Item> {
         println("CalendarHelper.selectCalenderItems(LocalDate, Context)")
         val queery = Queeries.selectCalenderItems(currentDate)
-        println("queery $queery")
-        val db = SqliteLocalDB(context)
-        val items =db.selectItems(queery)
-        db.close()
+        val items = repository.selectItems(queery)
+
         return items
     }
 }

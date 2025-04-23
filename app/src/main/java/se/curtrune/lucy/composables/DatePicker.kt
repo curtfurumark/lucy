@@ -1,5 +1,6 @@
 package se.curtrune.lucy.composables
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -24,11 +25,25 @@ import java.time.LocalDate
 
 @Composable
 fun MyDatePicker(state: MyDayState, onDate: (LocalDate)->Unit) {
+    var showDatePicker by remember {
+        mutableStateOf(false)
+    }
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         Text(
+            modifier = Modifier.clickable {
+                showDatePicker = true
+            },
             text = state.date.toString(),
             color = MaterialTheme.colorScheme.onBackground,
             fontSize = 24.sp)
+    }
+    if(showDatePicker){
+        DatePickerModal(onDismiss = {
+            showDatePicker = false
+        }, onDateSelected = { date->
+            onDate(date)
+            showDatePicker = false
+        })
     }
 }
 @Composable

@@ -110,7 +110,7 @@ fun MentalMeter4(
                 detectDragGestures { change, dragAmount ->
                     println("change x ${change.position.x}")
                     tapX = change.position.x
-                    change.consume()
+                    //change.consume()
                     //change.scrollDelta
                     percent = tapX / size.width
                     println("dragAmount: x  ${dragAmount.x}")

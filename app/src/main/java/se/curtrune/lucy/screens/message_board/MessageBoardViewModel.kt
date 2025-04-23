@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import se.curtrune.lucy.modules.LucindaApplication
+import se.curtrune.lucy.screens.message_board.composables.DefaultMessage
+import se.curtrune.lucy.screens.message_board.composables.Mode
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.web.LucindaApi
 
@@ -77,12 +79,16 @@ class MessageBoardViewModel : ViewModel() {
             is MessageBoardEvent.OnMessageClick -> {
                 onMessageClick(event.message)
             }
+
+            is MessageBoardEvent.UpdateMessage -> {
+                update(event.message)
+            }
         }
     }
     private fun onMessageClick(message: Message){
         println("onMessageClick(${message.toString()})")
         _state.update { it.copy(
-            currentMessage = message
+            defaultMessage = DefaultMessage(Mode.EDIT, message)
         ) }
         viewModelScope.launch {
             eventChannel.send(MessageChannel.ShowAddMessageBottomSheet)
@@ -107,17 +113,12 @@ class MessageBoardViewModel : ViewModel() {
         }
     }
 
-    fun update(message: Message) {
-        Logger.log("...update(Message, Context)", message.subject)
-/*        MessageWorker.update(message) { result ->
-            Logger.log("...onUpdated(DBResult)", result.toString())
-            if (!result.isOK) {
-                Logger.log("...error updating message")
-                mutableError.value = result.toString()
-                Logger.log(result)
-            } else {
-                Logger.log("...update of message ok")
-            }
+    private fun update(message: Message) {
+        println("...update(Message ${message.toString()}")
+/*        viewModelScope.launch {
+            eventChannel.send(MessageChannel.ShowProgressBar(true))
+            val strResult = lucindaApi.updateMessage(message)
+            println("strResult: $strResult")
         }*/
     }
 }

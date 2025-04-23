@@ -5,7 +5,7 @@ import java.time.LocalDate
 
 class StatisticsPeriod(var from: LocalDate, var to: LocalDate) {
     private val repository = LucindaApplication.appModule.repository
-    lateinit var statistics: Statistics
+    var statistics: Statistics
     init {
         val items = repository.selectItems(from, to)
         statistics = Statistics(items)

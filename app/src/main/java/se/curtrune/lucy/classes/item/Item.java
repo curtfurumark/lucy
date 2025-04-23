@@ -387,6 +387,9 @@ public class Item implements Serializable , Listable {
     public void setId(long id) {
         this.id = id;
     }
+    public void setIsAppointment(boolean isAppointment){
+        this.type = isAppointment ? Type.APPOINTMENT.ordinal(): Type.NODE.ordinal();
+    }
     public void setIsCalenderItem(boolean calenderItem){
         this.isCalenderItem = calenderItem;
     }
@@ -489,10 +492,10 @@ public class Item implements Serializable , Listable {
     }
 
     public void setMental(Mental mental) {
-        energy = mental.getEnergy();
-        mood = mental.getMood();
-        anxiety = mental.getAnxiety();
-        stress = mental.getStress();
+        energy = mental.energy;
+        mood = mental.mood;
+        anxiety = mental.anxiety;
+        stress = mental.stress;
     }
 
 

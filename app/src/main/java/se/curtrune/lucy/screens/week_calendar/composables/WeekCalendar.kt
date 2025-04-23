@@ -32,7 +32,6 @@ import se.curtrune.lucy.screens.week_calendar.WeekState
 @Composable
 fun WeekCalendar(modifier: Modifier = Modifier, state: WeekState, onEvent: (WeekEvent) -> Unit){
     Column(modifier = modifier){
-        //CalendarWeekHeading(week = state.currentWeek)
         LazyVerticalGrid(
             columns = GridCells.Fixed(2)
         ) {
