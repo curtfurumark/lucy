@@ -32,11 +32,6 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31" >
         <activity
-            android:name=".screens.log_in.LogInActivity"
-            android:exported="false"
-            android:label="@string/title_activity_log_in"
-            android:theme="@style/Theme.Lucy" />
-        <activity
             android:name=".screens.db_admin.DbAdminActivity"
             android:exported="false"
             android:label="@string/title_activity_db_admin"
@@ -46,16 +41,7 @@
             android:exported="false"
             android:label="@string/title_activity_item_editor"
             android:theme="@style/Theme.Lucy" />
-        <activity
-            android:name=".screens.daycalendar.DayCalendarActivity"
-            android:exported="false"
-            android:label="@string/title_activity_day_calendar"
-            android:theme="@style/Theme.Lucy" />
-        <activity
-            android:name=".screens.user_settings.UserSettingsActivity"
-            android:exported="false"
-            android:label="@string/title_activity_user_settings"
-            android:theme="@style/Theme.Lucy" />
+
         <activity
             android:name=".screens.medicine.MedicineFragment"
             android:exported="false"
@@ -75,7 +61,7 @@
             android:name=".screens.index.IndexActivity"
             android:exported="false" />
         <activity
-            android:name=".screens.log_in.OldLogInActivity"
+            android:name=".screens.log_in.LogInActivity"
             android:exported="true"
             android:noHistory="true" >
             <intent-filter>
@@ -84,9 +70,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activities.LoggerActivity"
-            android:exported="false" />
         <activity
             android:name=".screens.main.MainActivity"
             android:exported="false"
@@ -97,10 +80,7 @@
         <activity
             android:name=".screens.economy.TransactionActivity"
             android:exported="false" />
-        <activity
-            android:name=".activities.flying_fish.GameActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+
         <activity
             android:name=".screens.dev.DevActivity"
             android:exported="true"

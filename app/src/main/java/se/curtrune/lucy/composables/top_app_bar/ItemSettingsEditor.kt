@@ -142,6 +142,7 @@ fun ItemSettingCategory(item: Item, onEvent: (String) -> Unit){
                     DropdownItem(action =it) { cat ->
                         category = cat
                         categoryListExpanded = false
+                        onEvent(category)
                     }
                 }
             }
@@ -342,5 +343,8 @@ fun PreviewItemSettingsEditor(){
     ItemSettingTime(targetTime = LocalTime.now(), onEvent = {
 
     })
+    val item = Item()
+    item.category = "dev"
+    ItemSettingCategory(item = Item(), onEvent = {})
 }
 

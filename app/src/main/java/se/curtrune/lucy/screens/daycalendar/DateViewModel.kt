@@ -13,9 +13,11 @@ import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.classes.calender.Week
 import se.curtrune.lucy.composables.PostponeDetails
-import se.curtrune.lucy.modules.MainModule
+import se.curtrune.lucy.modules.TopAppbarModule
 import se.curtrune.lucy.modules.PostponeWorker
+import se.curtrune.lucy.util.Logger
 import java.time.LocalDate
+import java.time.LocalTime
 
 class DateViewModel: ViewModel(){
     private val repository = LucindaApplication.appModule.repository
@@ -35,17 +37,20 @@ class DateViewModel: ViewModel(){
         items = repository.selectItems(_state.value.date)
         _state.value.items = items
         _state.value.currentParent = todoRoot
-        MainModule.setTitle(_state.value.currentWeek)
+        TopAppbarModule.setTitle(_state.value.currentWeek)
     }
     private fun addItem(item: Item){
         println("...addItem(Item) ${item.heading}")
+        Logger.log(item)
         if( item.itemDuration != null) {
             println("...itemDuration: ${item.itemDuration.type.name}")
         }else{
             println("...itemDuration is null")
         }
         if( repository.insert(item) == null){
-            println("error inserting item")
+            viewModelScope.launch {
+                eventChannel.send(DayChannel.ShowMessage("error inserting item"))
+            }
             return
         }
         _state.update { it.copy(
@@ -97,7 +102,7 @@ class DateViewModel: ViewModel(){
             is DayEvent.DeleteItem -> {deleteItem(event.item)}
             is DayEvent.ShowActionsMenu -> {println("show action menu")}
             is DayEvent.UpdateItem -> updateItem(event.item)
-            is DayEvent.EditTime -> {updateItem(event.item)}
+            is DayEvent.EditTime -> {updateItem(event.item)}//???
             is DayEvent.EditItem -> {editItem(event.item)}
             is DayEvent.ShowPostponeDialog -> { showPostponeDialog(event.item)}
             is DayEvent.ShowStats -> {showStats(event.item)}
@@ -110,6 +115,7 @@ class DateViewModel: ViewModel(){
             is DayEvent.Search -> { search(event.filter, event.everywhere)}
             is DayEvent.Week -> {setCurrentWeek(event.page)}
             is DayEvent.RequestDelete -> {confirmDelete(event.item)}
+            is DayEvent.ShowAddItemBottomSheet -> {showAddItemBottomSheet()}
         }
     }
     private fun postpone(postponeDetails: PostponeDetails){
@@ -193,7 +199,7 @@ class DateViewModel: ViewModel(){
                 items = items
             )
         }
-        MainModule.setTitle(Week(newDate))
+        TopAppbarModule.setTitle(Week(newDate))
     }
     private fun setCurrentWeek(page: Int){
         println("setCurrentWeek(page : $page)")
@@ -208,8 +214,25 @@ class DateViewModel: ViewModel(){
             date = newDate,
             items =  repository.selectItems(newDate)
         ) }
-        MainModule.setTitle(Week(newDate))
+        TopAppbarModule.setTitle(Week(newDate))
         currentWeekPage = page
+    }
+    private fun showAddItemBottomSheet() {
+        println("showAddItemBottomSheet()")
+        viewModelScope.launch {
+            eventChannel.send(DayChannel.showAddItemBottomSheet)
+            _state.update { it.copy(
+                defaultItemSettings = it.defaultItemSettings.copy(
+                    targetTime = LocalTime.now(),
+                    parent = state.value.currentParent,
+                    item = Item().also {
+                        it.targetDate = state.value.date
+                        it.targetTime = LocalTime.now()
+                        it.parent = state.value.currentParent
+                    }
+                ),
+            ) }
+        }
     }
 
     private fun showChildren(item: Item){

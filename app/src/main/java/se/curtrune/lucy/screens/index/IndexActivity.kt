@@ -8,10 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.platform.ComposeView
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
-import se.curtrune.lucy.app.FirstPage
+import se.curtrune.lucy.app.InitialScreen
 import se.curtrune.lucy.screens.dev.DevActivity
 import se.curtrune.lucy.screens.index.composables.IndexScreen20
-import se.curtrune.lucy.screens.index20.IndexActivityKt
 import se.curtrune.lucy.screens.main.MainActivity
 import se.curtrune.lucy.util.Constants
 
@@ -46,13 +45,13 @@ class IndexActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun startActivity(firstPage: FirstPage) {
-        println("...startActivity(FirstPage: ${firstPage.name})")
+    private fun startActivity(firstPage: InitialScreen) {
+        println("...startActivity(InitialScreen: ${firstPage.name})")
         val intentTodo = Intent(
             this,
             MainActivity::class.java
         )
-        intentTodo.putExtra(Constants.MAIN_ACTIVITY_CHILD_FRAGMENT, firstPage.toString())
+        intentTodo.putExtra(Constants.INITIAL_SCREEN, firstPage.toString())
         startActivity(intentTodo)
     }
 }

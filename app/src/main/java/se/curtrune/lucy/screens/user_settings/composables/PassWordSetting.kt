@@ -47,23 +47,24 @@ fun PassWordSetting( state: UserState, onEvent: (UserEvent) -> Unit){
         if (showPassword) { VisualTransformation.None }
         else { PasswordVisualTransformation() }
     Card(modifier = Modifier.fillMaxWidth()) {
-        Column() {
+        Column(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier.padding(10.dp),
                 verticalAlignment = Alignment.CenterVertically) {
-                Checkbox(checked = usePassword, onCheckedChange = {
+                Text(text = stringResource(R.string.use_password))
+                Spacer(modifier = Modifier.weight(1f))
+                Checkbox(checked = state.usePassword, onCheckedChange = {
                     println("check")
                     usePassword = !usePassword
+                    onEvent(UserEvent.UsePassword(usePassword))
                 })
-                Spacer(modifier = Modifier.width(10.dp))
-                Text(text = stringResource(R.string.use_password))
             }
             if(usePassword){
                 Column() {
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
                         label = { Text(text = stringResource(R.string.password)) },
-                        value = passWord,
+                        value = state.password,
                         onValueChange = { passWord = it },
                         visualTransformation = visualTransformation
                     )

@@ -18,11 +18,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.modules.LucindaApplication
+import se.curtrune.lucy.screens.main.MainViewModel
 import se.curtrune.lucy.screens.message_board.composables.AddMessageBottomSheet
 import se.curtrune.lucy.screens.message_board.composables.MessageBoardScreen
 import se.curtrune.lucy.screens.message_board.composables.Mode
@@ -34,6 +37,7 @@ import se.curtrune.lucy.util.Logger
  * create an instance of this fragment.
  */
 class MessageBoardFragment : Fragment(){
+    private val messageViewModel: MessageBoardViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +53,11 @@ class MessageBoardFragment : Fragment(){
     ): View {
         return ComposeView(requireActivity()).apply {
             setContent{
-                val messageViewModel = viewModel<MessageBoardViewModel>()
+                val mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
+                val searchFilter by mainViewModel.searchFilter.collectAsState()
+                LaunchedEffect(searchFilter) {
+                    messageViewModel.onEvent(MessageBoardEvent.Search(searchFilter.filter, searchFilter.everywhere))
+                }
                 val state = messageViewModel.state.collectAsState()
                 var showAddMessageBottomSheet by remember {
                     mutableStateOf(false)

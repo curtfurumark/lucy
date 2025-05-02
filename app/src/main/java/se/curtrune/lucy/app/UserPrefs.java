@@ -5,6 +5,8 @@ import static se.curtrune.lucy.util.Logger.log;
 import android.app.Application;
 import android.content.Context;
 
+import com.google.gson.Gson;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -14,10 +16,14 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import se.curtrune.lucy.screens.user_settings.MentalFlag;
+import se.curtrune.lucy.screens.user_settings.PanicOption;
 import se.curtrune.lucy.workers.SettingsWorker;
 
 public class UserPrefs {
     private static final String KEY_GOOGLE_CALENDAR_ID = "KEY_GOOGLE_CALENDAR_ID";
+    private static final String KEY_SHOW_MENTAL_STATUS = "KEY_SHOW_MENTAL_STATUS";
+    private static final String KEY_MENTAL_FLAG = "KEY_MENTAL_FLAG";
     public static boolean VERBOSE = false;
     public static final String KEY_ICE_PHONE_NUMBER = "KEY_ICE_PHONE_NUMBER";
     public static final String USE_DARK_MODE = "USE_DARK_MODE";
@@ -31,7 +37,7 @@ public class UserPrefs {
     public static final String KEY_LANGUAGE = "KEY_LANGUAGE";
     public static final String KEY_DEV_MODE = "KEY_DEV_MODE";
     public static final String KEY_LOGGED_IN = "KEY_LOGGED_IN";
-    public static final String KEY_FIRST_PAGE = "KEY_FIRST_PAGE";
+    public static final String KEY_INITIAL_SCREEN = "KEY_INITIAL_SCREEN";
     public static final String KEY_SCROLL_POSITION_DAY_CALENDAR = "KEY_SCROLL_POSITION_DAY_CALENDAR";
 
     public static void addCategory(String category, Context context){
@@ -74,10 +80,6 @@ public class UserPrefs {
     public static int getScrollPositionDayCalendar(Context context){
         return Settings.getInt(KEY_SCROLL_POSITION_DAY_CALENDAR,0,  context);
 
-    }
-    public static Settings.StartActivity getStartActivity(Context context) {
-        int ordinal = Settings.getInt(KEY_FIRST_PAGE, Settings.StartActivity.TODAY_ACTIVITY.ordinal(), context);
-        return Settings.StartActivity.values()[ordinal];
     }
     public static boolean getSyncWithGoogleCalendar(Context context){
         return Settings.getBoolean(SYNC_WITH_GOOGLE_CALENDAR, false, context);
@@ -135,12 +137,6 @@ public class UserPrefs {
         Settings.addInt(KEY_SCROLL_POSITION_DAY_CALENDAR, position, context);
 
     }
-
-    public static void setFirstPage(Settings.StartActivity firstPage, Context context){
-        log("UserPrefs.setFirstPage(StartActivity, Context);", firstPage.toString());
-        Settings.addInt(KEY_FIRST_PAGE, firstPage.ordinal(), context);
-    }
-
     public static void setSyncWithGoogleCalendar(boolean syncWithGoogleCalendar, Context context) {
         Settings.addBoolean(SYNC_WITH_GOOGLE_CALENDAR, syncWithGoogleCalendar, context);
     }
@@ -206,5 +202,46 @@ public class UserPrefs {
 
     public static void setGoogleCalendarID(int id, @NotNull Application context) {
         Settings.addInt(KEY_GOOGLE_CALENDAR_ID, id, context);
+    }
+
+    public static InitialScreen getInitialScreen(@NotNull Application context) {
+        return InitialScreen.values()[Settings.getInt(KEY_INITIAL_SCREEN,InitialScreen.CALENDER_DATE.ordinal(), context)];
+    }
+
+    public static void setInitialScreen(InitialScreen initialScreen, @NotNull Application context) {
+        Settings.addInt(KEY_INITIAL_SCREEN, initialScreen.ordinal(), context);
+    }
+
+    public static boolean getShowMentalStatus(@NotNull Application context) {
+        return Settings.getBoolean(KEY_SHOW_MENTAL_STATUS, false, context);
+    }
+
+    public static void setShowMentalStatus(boolean value, @NotNull Application context) {
+        Settings.addBoolean(KEY_SHOW_MENTAL_STATUS, value, context);
+    }
+
+    @NotNull
+    public static MentalFlag getMentalFlag(@NotNull Application context) {
+        String json  = Settings.getString(KEY_MENTAL_FLAG, "", context);
+        if( json.isEmpty()){
+            return new MentalFlag();
+        }
+        return new Gson().fromJson(json, MentalFlag.class);
+    }
+
+    public static void setMentalFlag(@NotNull MentalFlag mentalFlag, @NotNull Application context) {
+        Settings.addString(KEY_MENTAL_FLAG, new Gson().toJson(mentalFlag), context);
+    }
+
+    public static void setPanicOption(@NotNull PanicOption panicOption, @NotNull Application context) {
+        Settings.addString(KEY_PANIC_ACTION, panicOption.name(), context);
+    }
+
+    @NotNull
+    public static PanicOption getPanicOption(@NotNull Application context) {
+        log("UserPrefs.getPanicOption(Context)");
+        String optionName = Settings.getString(KEY_PANIC_ACTION, PanicOption.URL.name(), context);
+        log("optionName", optionName);
+        return PanicOption.valueOf(optionName);
     }
 }

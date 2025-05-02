@@ -15,8 +15,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import se.curtrune.lucy.R
+import se.curtrune.lucy.app.InitialScreen
 import se.curtrune.lucy.app.Lucinda
-import se.curtrune.lucy.app.Settings.StartActivity
 import se.curtrune.lucy.app.UserPrefs
 import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.screens.index.IndexActivity
@@ -195,20 +195,13 @@ class OldLogInActivity : AppCompatActivity() {
      */
     private fun startUserActivity() {
         log("...startUserActivity()")
-        val startActivity = UserPrefs.getStartActivity(this)
-        when (startActivity) {
-            StartActivity.INDEX_ACTIVITY -> startActivity(
-                Intent(
-                    this,
-                    IndexActivity::class.java
-                )
-            )
-            StartActivity.TODAY_ACTIVITY -> startActivity(
-                Intent(
-                    this,
-                    MainActivity::class.java
-                )
-            )
+        val initialScreen = UserPrefs.getInitialScreen(application)
+        when (initialScreen) {
+            InitialScreen.TODO_FRAGMENT -> {}
+            InitialScreen.CALENDER_DATE -> TODO()
+            InitialScreen.CALENDER_WEEK -> TODO()
+            InitialScreen.CALENDER_MONTH -> TODO()
+            InitialScreen.CALENDER_APPOINTMENTS -> TODO()
         }
     }
 

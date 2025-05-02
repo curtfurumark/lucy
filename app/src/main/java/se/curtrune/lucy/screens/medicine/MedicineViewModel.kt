@@ -1,5 +1,6 @@
 package se.curtrune.lucy.screens.medicine
 
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
@@ -8,11 +9,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import se.curtrune.lucy.R
 import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.MedicineContent
 import se.curtrune.lucy.classes.Type
-import se.curtrune.lucy.modules.MainModule
+import se.curtrune.lucy.modules.TopAppbarModule
 
 class MedicineViewModel(
 ) : ViewModel(){
@@ -20,13 +22,15 @@ class MedicineViewModel(
     private val  _state = MutableStateFlow(MedicineState())
     val state = _state.asStateFlow()
     private val eventChannel = Channel<MedicineChannelEvent>()
+    private var items: List<Item> = emptyList()
     val eventFlow = eventChannel.receiveAsFlow()
     init {
         println("MedicineViewModel.init block")
+        items = repository.selectItems(Type.MEDICIN)
         _state.update { it.copy(
-            items = repository.selectItems(Type.MEDICIN)
+            items = items
         ) }
-        MainModule.setTitle("mediciner")
+        TopAppbarModule.setTitle("Mediciner")
     }
     fun addMedicine(medicine: MedicineContent){
         println("MedicineViewModel.addMedicine(medicine)")
@@ -56,6 +60,13 @@ class MedicineViewModel(
             eventChannel.send(MedicineChannelEvent.Edit(medicine))
         }
     }
+    private fun filter(filter: String){
+        val filteredItems = repository.selectItems(Type.MEDICIN).filter { item-> item.contains(filter) }
+        _state.update { it.copy(
+                items = filteredItems
+            )
+        }
+    }
 
     fun onEvent(event: MedicineEvent){
         println("...onEvent($event)")
@@ -82,6 +93,10 @@ class MedicineViewModel(
                 viewModelScope.launch {
                     eventChannel.send(MedicineChannelEvent.ShowAdverseEffectsDialog)
                 }
+            }
+
+            is MedicineEvent.Search -> {
+                filter(event.filter)
             }
         }
     }

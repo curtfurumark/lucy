@@ -69,7 +69,7 @@ open class Logger {
         fun log(item: Item?) {
             log("Logger.log(Item)")
             if (item == null) {
-                log("log(Item) called with null item")
+                log("Logger.log(Item) called with null item")
                 return
             }
             log("\tid", item.id)
@@ -90,16 +90,9 @@ open class Logger {
             log("\ttype", item.type)
             log("\tis template", item.isTemplate)
             log("\thas estimate", item.hasEstimate())
-            log("\t\tisCalenderItem", item.isCalenderItem)
-            if (item.hasEstimate()) {
-                log("\titem has estimate")
-                /*            log("\t\tduration", item.getEstimate().getDuration());
-            log("\t\tenergy", item.getEstimate().getEnergy());*/
-            }
-            log("\thas repeat", item.hasRepeat())
-            if (item.hasRepeat()) {
-                log("\t\trepeat.toString", item.repeat.toString())
-            }
+            log("\tisCalenderItem", item.isCalenderItem)
+            log("\trepeat", item.repeat?.toString() ?: "null")
+            log("\titemDuration", item.itemDuration?.toString()?:"null")
             log("\thas notification", item.hasNotification())
             log("\tcolor", item.color)
             log("\tpriority", item.priority)

@@ -1,7 +1,5 @@
 package se.curtrune.lucy.modules
 
-import androidx.compose.material3.Text
-import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -13,7 +11,7 @@ import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
 
-object MainModule{
+object TopAppbarModule{
     private val _topAppBarState: MutableStateFlow<TopAppBarState> = MutableStateFlow(TopAppBarState())
     val topAppBarState = _topAppBarState.asStateFlow()
     fun setTitle(title: String){
@@ -21,7 +19,12 @@ object MainModule{
             title = title
         ) }
     }
-
+    fun setFilter(filter: String, searchEverywhere: Boolean){
+        _topAppBarState.update { it.copy(
+            filter = filter,
+            searchEverywhere = searchEverywhere
+        ) }
+    }
     fun setTitle(yearMonth: YearMonth){
         _topAppBarState.update { it.copy(
             title =  DateTImeConverter.format(yearMonth).cecilia()
@@ -33,5 +36,12 @@ object MainModule{
         _topAppBarState.update { it.copy(
             title = title
         ) }
+    }
+    fun setShowMental(show: Boolean){
+        _topAppBarState.update {
+            it.copy(
+                showMental = show
+            )
+        }
     }
 }

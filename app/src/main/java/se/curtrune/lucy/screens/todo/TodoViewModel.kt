@@ -13,7 +13,7 @@ import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.State
 import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
-import se.curtrune.lucy.modules.MainModule
+import se.curtrune.lucy.modules.TopAppbarModule
 import se.curtrune.lucy.screens.item_editor.ItemEvent
 import se.curtrune.lucy.util.Logger
 import java.util.Comparator
@@ -57,7 +57,7 @@ class TodoViewModel : ViewModel() {
         _state.update { it.copy(
             items = items
         ) }
-        MainModule.setTitle("todo/att göra")
+        TopAppbarModule.setTitle("todo/att göra")
     }
     private fun editItem(item: Item){
         viewModelScope.launch {

@@ -67,7 +67,9 @@ class UserSettingsFragment: Fragment() {
                                         println("after requesting permissions")
                                     }
                                 }
-                                is UserChannel.ShowMessage -> TODO()
+                                is UserChannel.ShowMessage -> {
+                                    Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
+                                }
                             }
                         }
                     }

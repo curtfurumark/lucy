@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -19,12 +20,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.navigation.NavigationView
-import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
-import se.curtrune.lucy.app.FirstPage
+import se.curtrune.lucy.app.InitialScreen
 import se.curtrune.lucy.app.Settings.PanicAction
 import se.curtrune.lucy.app.UserPrefs
 import se.curtrune.lucy.classes.item.Item
@@ -32,7 +31,8 @@ import se.curtrune.lucy.composables.top_app_bar.FlexibleTopBar
 import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
 import se.curtrune.lucy.dialogs.PanicActionDialog
 import se.curtrune.lucy.dialogs.UpdateDialog
-import se.curtrune.lucy.modules.MainModule
+import se.curtrune.lucy.modules.LucindaApplication
+import se.curtrune.lucy.modules.TopAppbarModule
 import se.curtrune.lucy.screens.affirmations.Quote
 import se.curtrune.lucy.screens.appointments.AppointmentsFragment
 import se.curtrune.lucy.screens.contacts.ContactsFragment
@@ -59,8 +59,8 @@ import java.util.Objects
 
 class MainActivity : AppCompatActivity() {
     private var drawerLayout: DrawerLayout? = null
-    private var mainViewModel: MainViewModel? = null
-    //private var textViewLucindaHome: TextView? = null
+    private val mainViewModel: MainViewModel by viewModels()
+    //private var mainViewModel: MainViewModel? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
@@ -70,25 +70,20 @@ class MainActivity : AppCompatActivity() {
         initViewModel()
         initContent()
         val intent = intent
-        val fragmentName = intent.getStringExtra(Constants.MAIN_ACTIVITY_CHILD_FRAGMENT)
+        val fragmentName = intent.getStringExtra(Constants.INITIAL_SCREEN)
         if (fragmentName != null) {
             Logger.log("...fragmentName", fragmentName)
-            navigate(FirstPage.valueOf(fragmentName))
+            navigate(InitialScreen.valueOf(fragmentName))
         } else {
             navigate(CalendarDayFragment())
         }
     }
 
     private fun initComponents() {
-        if (VERBOSE) Logger.log("...initComponents()")
-        //val toolbar = findViewById<MaterialToolbar>(R.id.navigationDrawer_toolbar)
-       // setSupportActionBar(toolbar)
-
         drawerLayout = findViewById(R.id.navigationDrawer_drawerLayout)
         val navigationView =
             findViewById<NavigationView>(R.id.navigationDrawerActivity_navigationView)
-        val view = navigationView.inflateHeaderView(R.layout.navigation_header)
-        //textViewLucindaHome = view.findViewById(R.id.navigationHeader_lucindaHome)
+        //val view = navigationView.inflateHeaderView(R.layout.navigation_header)
         val onNavigationItemSelectedListener =
             NavigationView.OnNavigationItemSelectedListener { item: MenuItem ->
                 Logger.log(
@@ -117,9 +112,7 @@ class MainActivity : AppCompatActivity() {
                     R.id.navigationDrawer_durationFragment -> {
                         navigate(DurationFragment())
                     }
-                   /* R.id.navigationDrawer_estimateFragment -> {
-                        navigate(EstimateFragment())
-                    }*/
+
                     R.id.navigationDrawer_weekly -> {
                         navigate(WeekFragment())
                     }
@@ -159,10 +152,10 @@ class MainActivity : AppCompatActivity() {
     }
     @OptIn(ExperimentalMaterial3Api::class)
     private fun initContent(){
-        println("initContent()")
+        //println("initContent()")
         val composeViewMental = findViewById<ComposeView>(R.id.mainActivity_composeViewMental)
         composeViewMental.setContent {
-            val state = mainViewModel?.state?.collectAsState()
+            val state = mainViewModel.state.collectAsState()
             var showPanicDialog by remember{
                 mutableStateOf(false)
             }
@@ -176,13 +169,12 @@ class MainActivity : AppCompatActivity() {
                 mutableStateOf(Quote())
             }
             //var topAppBarState = mainViewModel?.topAppBarState?.collectAsState()
-            val topAppBarState = MainModule.topAppBarState.collectAsState()
+            val topAppBarState = TopAppbarModule.topAppBarState.collectAsState()
             LaunchedEffect(mainViewModel) {
-                mainViewModel?.eventChannel?.collect { event ->
+                mainViewModel.eventChannel?.collect { event ->
                     when (event) {
                         MainChannelEvent.ShowPanicDialog -> {
                             showPanicDialog = true
-                            //Toast.makeText(applicationContext, "panic", Toast.LENGTH_LONG).show()
                         }
                         is MainChannelEvent.ShowAffirmation -> {
                             Toast.makeText(applicationContext,
@@ -198,9 +190,7 @@ class MainActivity : AppCompatActivity() {
                         }
 
                         is MainChannelEvent.UpdateAvailable -> {
-                            if (state != null) {
-                                state.value.versionInfo?.let { showUpdateDialog(it) }
-                            }
+                            state.value.versionInfo?.let { showUpdateDialog(it) }
                         }
 
                         is MainChannelEvent.StartSequence -> {
@@ -227,26 +217,27 @@ class MainActivity : AppCompatActivity() {
             val drawerState = rememberDrawerState(DrawerValue.Closed)
             val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
             LucyTheme {
-                if( state != null){
-                    FlexibleTopBar(
-                        scrollBehavior = scrollBehavior,
-                        content = {
-                            LucindaTopAppBar(
-                                state = topAppBarState!!.value,
-                                onEvent = { appBarEvent ->
-                                    println("appBarEvent ${appBarEvent.toString()}")
-                                    mainViewModel!!.onEvent(appBarEvent)
-                                })
-                        }, onEvent = { event ->
-                            //devViewModel.onEvent(event)
-                        }
-                    )
-                }
+                FlexibleTopBar(
+                    scrollBehavior = scrollBehavior,
+                    content = {
+                        LucindaTopAppBar(
+                            state = topAppBarState.value,
+                            onEvent = { appBarEvent ->
+                                println("appBarEvent $appBarEvent")
+                                mainViewModel.onEvent(appBarEvent)
+                            })
+                    }, onEvent = { event ->
+                        //devViewModel.onEvent(event)
+                    }
+                )
             }
             if (showPanicDialog) {
-                ChoosePanicActionDialog(onDismiss = {
-                    showPanicDialog = false
-                })
+                ChoosePanicActionDialog(
+                    state = state.value,
+                    onDismiss = {
+                        showPanicDialog = false
+                    },
+                    onEvent = {})
             }
             if (showQuoteDialog) {
                 QuoteDialog(onDismiss = {
@@ -267,12 +258,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun initViewModel() {
         println("...initViewModel()")
-        mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
-        mainViewModel!!.fragment.observe(this) { fragment: Fragment? ->
+        //mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        mainViewModel.fragment.observe(this) { fragment: Fragment? ->
             Logger.log(" new fragment observed")
             navigate(fragment)
         }
-        mainViewModel!!.message.observe(
+        mainViewModel.message.observe(
             this
         ) { message: String? ->
             Toast.makeText(
@@ -297,19 +288,17 @@ class MainActivity : AppCompatActivity() {
             .commit()
     }
 
-    private fun navigate(firstPage: FirstPage) {
-        Logger.log("...navigate(FirstPage)", firstPage.toString())
-        when (firstPage) {
-            FirstPage.CALENDER_DATE -> navigate(CalendarDayFragment())
-            FirstPage.CALENDER_WEEK -> navigate(WeekFragment())
-            FirstPage.CALENDER_MONTH -> navigate(MonthFragment())
-            FirstPage.CALENDER_APPOINTMENTS -> navigate(AppointmentsFragment())
-            FirstPage.TODO_FRAGMENT -> navigate(TodoFragment())
+    private fun navigate(initialScreen: InitialScreen) {
+        Logger.log("...navigate(InitialScreen)", initialScreen.toString())
+        when (initialScreen) {
+            InitialScreen.CALENDER_DATE -> navigate(CalendarDayFragment())
+            InitialScreen.CALENDER_WEEK -> navigate(WeekFragment())
+            InitialScreen.CALENDER_MONTH -> navigate(MonthFragment())
+            InitialScreen.CALENDER_APPOINTMENTS -> navigate(AppointmentsFragment())
+            InitialScreen.TODO_FRAGMENT -> navigate(TodoFragment())
 
         }
     }
-
-
     private fun openWebPage(url: String) {
         Logger.log("...openWebPage(String url)", url)
         if (LucindaApplication.appModule.internetWorker.isConnected()) {
@@ -370,7 +359,7 @@ class MainActivity : AppCompatActivity() {
 
             PanicAction.SEQUENCE -> {
                 println("...SEQUENCE")
-                mainViewModel!!.onEvent(MainEvent.StartSequence(Item()))
+                mainViewModel.onEvent(MainEvent.StartSequence(Item()))
                 //navigate(SequenceFragment(panicRoot))
                 //}
             }

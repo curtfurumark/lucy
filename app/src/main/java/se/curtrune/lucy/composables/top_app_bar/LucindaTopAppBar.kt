@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxColors
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -50,7 +51,7 @@ fun LucindaTopAppBar(
             mutableStateOf("")
         }
         var searchEverywhere by remember {
-            mutableStateOf(false)
+            mutableStateOf(true)
         }
         var  showActionMenu by remember {
             mutableStateOf(false)
@@ -61,9 +62,10 @@ fun LucindaTopAppBar(
                 modifier = Modifier.clickable {
                     onEvent(TopAppBarEvent.DrawerMenu)
                 })
-            Spacer(modifier = Modifier.width(8.dp))
-            MentalMeter(mental = state.mental)
-            //Text(text = state.title, fontSize = MaterialTheme.typography.titleLarge.fontSize )
+            if(state.showMental) {
+                Spacer(modifier = Modifier.width(8.dp))
+                MentalMeter(mental = state.mental)
+            }
             Spacer(modifier = Modifier.weight(1f))
             Icon(imageVector = Icons.Default.Search, contentDescription = "search",
                 modifier = Modifier.clickable {
@@ -100,8 +102,11 @@ fun LucindaTopAppBar(
         }
         AnimatedVisibility(visible = showSearchField) {
             Row(modifier = Modifier.fillMaxWidth()) {
-                Checkbox(checked = searchEverywhere,
-                    onCheckedChange = {searchEverywhere = !searchEverywhere})
+                Checkbox(
+                    checked = searchEverywhere,
+                    onCheckedChange = {searchEverywhere = !searchEverywhere}
+                    //colors = CheckboxColors()
+                )
                 TextField(
                     value = searchFilter,
                     onValueChange = {

@@ -42,9 +42,9 @@ class TodoFragment : Fragment() {
                 val todoViewModel = viewModel<TodoViewModel>()
                 val mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class]
                 val state = todoViewModel.state.collectAsState()
-                var filter = mainViewModel.filter.collectAsState()
+                val filter = mainViewModel.searchFilter.collectAsState()
                 LaunchedEffect(filter.value) {
-                    todoViewModel.onEvent(TopAppBarEvent.OnSearch(filter.value, false))
+                    todoViewModel.onEvent(TopAppBarEvent.OnSearch(filter.value.filter, filter.value.everywhere))
                 }
                 var showProgressBar by remember{
                     mutableStateOf(false)

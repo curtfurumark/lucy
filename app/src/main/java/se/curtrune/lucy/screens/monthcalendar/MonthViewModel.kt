@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.modules.MainModule
+import se.curtrune.lucy.modules.TopAppbarModule
 import java.time.YearMonth
 
 class MonthViewModel: ViewModel() {
@@ -27,7 +27,7 @@ class MonthViewModel: ViewModel() {
     private var currentPage = state.value.initialPage
     init {
         _state.value.calendarMonth = repository.getCalenderMonth(state.value.yearMonth)
-        MainModule.setTitle(currentYearMonth)
+        TopAppbarModule.setTitle(currentYearMonth)
     }
     fun onPager(newPageIndex: Int){
         println("...onPager($newPageIndex)")
@@ -79,7 +79,7 @@ class MonthViewModel: ViewModel() {
                 calendarMonth = repository.getCalenderMonth(currentYearMonth)
             )
         }
-        MainModule.setTitle(currentYearMonth)
+        TopAppbarModule.setTitle(currentYearMonth)
     }
     private fun showYearMonthDialog(){
         println("show yearMonth dialog")

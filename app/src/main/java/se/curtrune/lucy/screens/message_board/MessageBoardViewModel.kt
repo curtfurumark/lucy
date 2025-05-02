@@ -23,7 +23,7 @@ class MessageBoardViewModel : ViewModel() {
     private val _state = MutableStateFlow(MessageBoardState())
     val state = _state.asStateFlow()
     private var currentCategory: String = "message"
-    private val mutableError = MutableLiveData<String>()
+    //private val mutableError = MutableLiveData<String>()
     private val eventChannel = Channel<MessageChannel>()
     val eventFlow = eventChannel.receiveAsFlow()
     init {
@@ -83,6 +83,11 @@ class MessageBoardViewModel : ViewModel() {
             is MessageBoardEvent.UpdateMessage -> {
                 update(event.message)
             }
+
+            is MessageBoardEvent.Search -> {
+                println("search filter: ${event.filter}")
+                search(event.filter, event.everywhere)
+            }
         }
     }
     private fun onMessageClick(message: Message){
@@ -92,6 +97,14 @@ class MessageBoardViewModel : ViewModel() {
         ) }
         viewModelScope.launch {
             eventChannel.send(MessageChannel.ShowAddMessageBottomSheet)
+        }
+    }
+    private fun search(filter: String, everywhere: Boolean){
+        filteredMessages = messages.filter { message-> message.contains(filter) }
+        _state.update {
+            it.copy(
+                messages = filteredMessages
+            )
         }
     }
     private fun setSelectedCategory(category: String){

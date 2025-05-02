@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
-import se.curtrune.lucy.modules.MainModule
+import se.curtrune.lucy.modules.TopAppbarModule
 import se.curtrune.lucy.screens.ItemChannel
 import se.curtrune.lucy.screens.item_editor.ItemEvent
 
@@ -29,7 +29,7 @@ class EnchiladaViewModel : ViewModel() {
         _state.update { it.copy(
             items = items
         ) }
-        MainModule.setTitle("enchilada")
+        TopAppbarModule.setTitle("enchilada")
     }
 
     fun onEvent(event: ItemEvent){
@@ -49,7 +49,7 @@ class EnchiladaViewModel : ViewModel() {
             is ItemEvent.InsertChild -> {println("insert child")}
         }
     }
-/*    fun onEvent(event: TopAppBarEvent){
+    fun onEvent(event: TopAppBarEvent){
         when(event){
             is TopAppBarEvent.DayCalendar -> {}
             is TopAppBarEvent.DrawerMenu -> {}
@@ -58,12 +58,14 @@ class EnchiladaViewModel : ViewModel() {
             is TopAppBarEvent.OnSearch -> {filter(event.filter)}
             is TopAppBarEvent.DayClicked -> {}
             is TopAppBarEvent.WeekClicked -> {}
-            is TopAppBarEvent.MedicinesClicked -> TODO()
-            is TopAppBarEvent.MonthClicked -> TODO()
-            is TopAppBarEvent.SettingsClicked -> TODO()
-            TopAppBarEvent.ActionMenu -> TODO()
+            is TopAppBarEvent.MedicinesClicked -> {}
+            is TopAppBarEvent.MonthClicked -> {}
+            is TopAppBarEvent.SettingsClicked -> {}
+            is TopAppBarEvent.ActionMenu -> {}
+            is TopAppBarEvent.CheckForUpdate -> {}
+            is TopAppBarEvent.DevActivity -> {}
         }
-    }*/
+    }
 
     private fun delete(item: Item): Boolean {
         println("EnchiladaViewModel.delete(Item)")

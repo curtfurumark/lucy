@@ -18,6 +18,7 @@ import se.curtrune.lucy.app.Settings
 import se.curtrune.lucy.app.Settings.PanicAction
 import se.curtrune.lucy.app.UserPrefs
 import se.curtrune.lucy.classes.Mental
+import se.curtrune.lucy.composables.top_app_bar.SearchFilter
 import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.web.LucindaApi
@@ -33,8 +34,10 @@ class MainViewModel : ViewModel() {
     private val _eventChannel = Channel<MainChannelEvent>()
     val eventChannel = _eventChannel.receiveAsFlow()
     private val mutableMessage = MutableLiveData<String>()
-    private val _filter = MutableStateFlow("")
-    val filter = _filter.asStateFlow()
+/*    private val _filter = MutableStateFlow("")
+    val filter = _filter.asStateFlow()*/
+    private val _searchFilter = MutableStateFlow(SearchFilter("", false))
+    val searchFilter = _searchFilter.asStateFlow()
     private val _mental = MutableLiveData<Mental>()
     var mental: LiveData<Mental> = _mental
     init {
@@ -115,8 +118,8 @@ class MainViewModel : ViewModel() {
             is TopAppBarEvent.MonthClicked -> TODO()
             is TopAppBarEvent.SettingsClicked -> TODO()
             is TopAppBarEvent.ActionMenu -> {println("action menu")}
-            TopAppBarEvent.CheckForUpdate -> {checkIfUpdateAvailable()}
-            TopAppBarEvent.DevActivity -> {navigateDevActivity()}
+            is TopAppBarEvent.CheckForUpdate -> {checkIfUpdateAvailable()}
+            is TopAppBarEvent.DevActivity -> {navigateDevActivity()}
         }
     }
 
@@ -161,10 +164,11 @@ class MainViewModel : ViewModel() {
     }
 
 
-    fun filter(query: String, everywhere: Boolean) {
-        println("MainViewModel.filter($query, everywhere $everywhere)")
+    fun filter(filter: String, everywhere: Boolean) {
+        println("MainViewModel.filter($filter, everywhere $everywhere)")
         //mutableFilter.value = query
-        _filter.update { query }
+        //_filter.update { filter }
+        _searchFilter.update { SearchFilter(filter, everywhere) }
     }
 
     fun getPanicAction(context: Context?): PanicAction {

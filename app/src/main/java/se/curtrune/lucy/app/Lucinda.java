@@ -31,28 +31,10 @@ public class Lucinda {
         return instance;
     }
 
-    /**
-     * returns info about this application
-     * @param context, context context and more context
-     * @return, PackageInfo or null if not package name found
-     */
-    public static PackageInfo getPackageInfo(Context context){
-        log("Lucinda.getPackageInfo()");
-        PackageInfo packageInfo = null;
-        try {
-            packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        return packageInfo;
-    }
-
     public static void setNightlyAlarm(Context context) {
         log("...setNightlyAlarm(Context");
         //EasyAlarm easyAlarm = new EasyAlarm();
     }
-
-
     public  void initialize(Context context) throws SQLException {
         log("Lucinda.initialize(Context)");
         initTheApp(context);
@@ -69,8 +51,6 @@ public class Lucinda {
         log("Lucinda.initTheApp(Context)");
         DBAdmin.createTables(context);
         DBAdmin.insertRootItems(context);
-        Demo.insertDemo(context);
-        setDefaultUserSettings(context);
     }
     public static boolean nightlyAlarmIsSet(Context context) {
         log("Lucinda.nightlyAlarmIsSet(Context)");
@@ -82,17 +62,9 @@ public class Lucinda {
         DBAdmin.dropTables(context);
         DBAdmin.createTables(context);
         DBAdmin.insertRootItems(context);
-        Demo.insertDemo(context);
-        setDefaultUserSettings(context);
+        //setDefaultUserSettings(context);
         settings.setLucyIsInitialized(true, context);
         settings.reload(context);
     }
-    public static void setDefaultUserSettings(Context context){
-        log("Lucinda.setDefaultUserSettings()");
-        UserPrefs.setPanicUrls(context.getResources().getStringArray(R.array.panicUrls), context);
-        UserPrefs.setCategories(context.getResources().getStringArray(R.array.categories), context);
-        UserPrefs.setUsesPassword(false, context);
-        UserPrefs.setUseDarkMode(true, context);
 
-    }
 }

@@ -7,11 +7,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,7 +35,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
+import se.curtrune.lucy.classes.calender.CalendarWeek
 import se.curtrune.lucy.classes.calender.Week
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.screens.medicine.composable.DropdownItem
 import se.curtrune.lucy.screens.week_calendar.WeekEvent
 import se.curtrune.lucy.screens.week_calendar.WeekState
@@ -60,29 +66,28 @@ fun ThisWeekView(state: WeekState, onEvent: (WeekEvent) -> Unit){
         contentAlignment = Alignment.TopStart
     ){
         Column(
-            modifier = Modifier.padding(2.dp),
+            modifier = Modifier.padding(4.dp)
+                .align(Alignment.TopEnd),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-/*            Text(
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                text = stringResource(R.string.week_with_number, state.currentWeek.weekNumber),
-                fontSize = 20.sp
-            )*/
-            state.calendarWeek.allWeekItems.forEach{ item ->
-                Box(
-                    modifier = Modifier.fillMaxWidth()
-                        .border(Dp.Hairline, color = Color.Black)
-                ) {
-                    Text(
-                        modifier = Modifier.padding(start = 2.dp),
-                        text = item.heading,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                        maxLines = 1
-                    )
+
+                Icon(
+                    //modifier = Modifier.align(Alignment.TopEnd),
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "add note")
+                state.calendarWeek.allWeekItems.forEachIndexed { index, item ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                            .border(Dp.Hairline, color = Color.Black)
+                    ) {
+                        Text(
+                            modifier = Modifier.padding(start = 8.dp),
+                            text = item.heading,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer,
+                            maxLines = 1
+                        )
+                    }
                 }
-            }
         }
     }
     if(showContextMenu){
@@ -96,13 +101,21 @@ fun ThisWeekView(state: WeekState, onEvent: (WeekEvent) -> Unit){
         }
     }
 }
+@Composable
+fun AllWeekRow(item: Item, onEvent: (WeekEvent) -> Unit){
+    Text(text = item.heading)
+}
 
 @Composable
 @Preview
 fun PreviewThisWeek(){
     LucyTheme {
+        val items = listOf(Item("påsk"), Item("barnvecka"), Item("hej då"))
+        val calendarWeek = CalendarWeek()
+        calendarWeek.allWeekItems = items
         val weekState = WeekState(
-            currentWeek = Week()
+            currentWeek = Week(),
+            calendarWeek = calendarWeek,
         )
         ThisWeekView(weekState, onEvent = {})
     }

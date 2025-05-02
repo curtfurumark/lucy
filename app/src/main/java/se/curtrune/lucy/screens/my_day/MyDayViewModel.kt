@@ -12,13 +12,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.Field
-import se.curtrune.lucy.modules.MainModule
-import se.curtrune.lucy.screens.daycalendar.DayChannel
-import se.curtrune.lucy.util.Logger
+import se.curtrune.lucy.modules.TopAppbarModule
 import se.curtrune.lucy.workers.MentalWorker
 import java.time.LocalDate
 
@@ -39,7 +36,7 @@ class MyDayViewModel(val date: LocalDate, savedStateHandle: SavedStateHandle) : 
             date = date,
             mental = MentalWorker.getMental(allItems)
         ) }
-        MainModule.setTitle("min dag")
+        TopAppbarModule.setTitle("min dag")
     }
     fun onEvent(event: MyDayEvent){
         println("MentalDateViewModel.onEvent(MentalEvent)")

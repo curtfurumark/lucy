@@ -2,6 +2,7 @@ package se.curtrune.lucy.screens.appointments.composables
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.screens.appointments.AppointmentEvent
@@ -30,32 +32,52 @@ fun AppointmentItem(appointment: Item, onEvent: (AppointmentEvent)->Unit){
     Card(modifier = Modifier.fillMaxWidth()
         .clickable {
             onEvent(AppointmentEvent.Edit(appointment))
-        }){
-        Row(Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically) {
-            Checkbox(checked = isDone, onCheckedChange = { checked->
-                appointment.setIsDone(checked)
-                onEvent(AppointmentEvent.Update(appointment))
-                isDone = !isDone
-            })
-            Text(
-                modifier = Modifier.padding(start = 4.dp),
-                text = appointment.heading,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                fontWeight = MaterialTheme.typography.titleMedium.fontWeight,
-                maxLines =  1)
-        }
-
-        Text(
-            text = "${DateTImeConverter.format(appointment.targetTime)}, ${DateTImeConverter.format(appointment.targetDate)}",
-            modifier = Modifier.padding(start = 8.dp),
-            color = MaterialTheme.colorScheme.onSurface)
-        if( appointment.comment.isNotBlank()) {
-            Text(
-                text = appointment.comment,
-                modifier = Modifier.padding(start = 8.dp))
+        }) {
+        Column() {
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(checked = isDone, onCheckedChange = { checked ->
+                    appointment.setIsDone(checked)
+                    onEvent(AppointmentEvent.Update(appointment))
+                    isDone = !isDone
+                })
+            }
+            Row() {
+                Column(Modifier.weight(1f)) {
+                    Text(
+                        modifier = Modifier.padding(start = 4.dp),
+                        text = appointment.heading,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                        fontWeight = MaterialTheme.typography.titleMedium.fontWeight,
+                        maxLines = 1
+                    )
+                }
+                Text(
+                    text = "${DateTImeConverter.format(appointment.targetTime)}, ${
+                        DateTImeConverter.format(
+                            appointment.targetDate
+                        )
+                    }",
+                    modifier = Modifier.padding(start = 8.dp),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                if (appointment.comment.isNotBlank()) {
+                    Text(
+                        text = appointment.comment,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
+            }
         }
     }
+}
+
+@Preview
+@Composable
+fun PreviewAppointment(){
+
 }

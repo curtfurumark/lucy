@@ -19,23 +19,17 @@ public class Settings {
     private static final String PREFERENCES_NAME =  "PREFERENCES_NAME";
     private static final String IS_INITIALIZED = "IS_INITIALIZED";
     public static final String DEV_EMAIL = "curt.furumark@gmail.com";
-    public static final String KEY_START_ACTIVITY ="KEY_START_ACTIVITY";
 
     public static final String USER = "USER";
-    //public static final String PWD = "PWD";
     private long todoID;
     private long dailyID;
     private long projectsID;
     private long appointmentsID;
     private long panicID;
     private long theRootID;
-    private boolean isInitialized = false;
 
     public enum PanicAction{
         GAME, URL, SEQUENCE, PENDING, ICE
-    }
-    public enum StartActivity{
-        INDEX_ACTIVITY, TODAY_ACTIVITY
     }
     public enum Root{
         TODO, DAILY, PROJECTS, APPOINTMENTS, PANIC, THE_ROOT

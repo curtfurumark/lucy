@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import io.ktor.http.cio.parseMultipart
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.item.Item
@@ -32,6 +33,7 @@ import se.curtrune.lucy.composables.DatePickerModal
 import se.curtrune.lucy.composables.RepeatDialog
 import se.curtrune.lucy.composables.TimePickerDialog
 import se.curtrune.lucy.composables.top_app_bar.ItemSettingAppointment
+import se.curtrune.lucy.composables.top_app_bar.ItemSettingCategory
 import se.curtrune.lucy.composables.top_app_bar.ItemSettingDate
 import se.curtrune.lucy.composables.top_app_bar.ItemSettingRepeat
 import se.curtrune.lucy.composables.top_app_bar.ItemSettingTime
@@ -40,14 +42,22 @@ import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddItemBottomSheet(defaultItemSettings: DefaultItemSettings, onDismiss: () -> Unit, onSave: (Item) -> Unit){
+fun AddItemBottomSheet(
+        defaultItemSettings: DefaultItemSettings,
+        onDismiss: () -> Unit,
+        onSave: (Item) -> Unit
+    ){
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scrollState = rememberScrollState()
+    if( defaultItemSettings.parent == null){
+        println("parent is null")
+    }
     var heading by remember {
         mutableStateOf("") }
     var showRepeatDialog by remember {
         mutableStateOf(false)
     }
+    //val parent = defaultItemSettings.parent
     val item by remember {
         mutableStateOf(defaultItemSettings.item)
     }
@@ -65,6 +75,10 @@ fun AddItemBottomSheet(defaultItemSettings: DefaultItemSettings, onDismiss: () -
     }
     var isEvent by remember {
         mutableStateOf(defaultItemSettings.isEvent)
+    }
+    LaunchedEffect(Unit) {
+        item.category = defaultItemSettings.parent?.category?: "<no category>"
+        println("launched effect, category: ${item.category}")
     }
 
     ModalBottomSheet(
@@ -114,6 +128,8 @@ fun AddItemBottomSheet(defaultItemSettings: DefaultItemSettings, onDismiss: () -
             ItemSettingRepeat(item.repeat, onEvent = {
                 showRepeatDialog = true
             })
+            ItemSettingCategory(item = item, onEvent = {
+                category -> item.category = category})
             ItemSettingTemplate(item = item, onEvent = { isTemplate ->
                 item.setIsTemplate(isTemplate)
             })

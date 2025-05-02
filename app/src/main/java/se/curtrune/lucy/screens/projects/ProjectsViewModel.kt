@@ -110,7 +110,12 @@ class ProjectsViewModel(private val repository: Repository) : ViewModel() {
                 targetDate = LocalDate.of(0, 1, 1),
                 targetTime = LocalTime.ofSecondOfDay(0),
                 parent = currentParent,
-                isEvent = false
+                isEvent = false,
+                item = Item().also {
+                    it.targetDate = LocalDate.of(0, 1, 1)
+                    it.targetTime = LocalTime.ofSecondOfDay(0)
+                    it.parent = currentParent
+                }
             ))}
         viewModelScope.launch {
             eventChannel.send(ProjectsChannel.ShowAddItemDialog)

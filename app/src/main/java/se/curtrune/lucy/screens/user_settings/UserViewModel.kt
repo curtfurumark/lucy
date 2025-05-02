@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.classes.google_calendar.GoogleFactory
-import se.curtrune.lucy.modules.MainModule
+import se.curtrune.lucy.modules.TopAppbarModule
 
 class UserViewModel: ViewModel(){
     private val calendarModule = LucindaApplication.appModule.googleCalendarModule
@@ -23,13 +23,26 @@ class UserViewModel: ViewModel(){
     private val userSettings = LucindaApplication.appModule.userSettings
     var categories = emptyList<String>()
     init {
+        println("UserViewModel.init()")
         _state.update { it.copy(
             isDarkMode = userSettings.darkMode,
             syncWithGoogle = userSettings.syncWithGoogleCalendar,
             googleCalendarID = userSettings.googleCalendarId,
-            language = userSettings.language
+            language = userSettings.language,
+            categories = userSettings.categories,
+            usePassword = userSettings.usesPassword,
+            password = userSettings.password,
+            showMentalStatus = userSettings.showMentalStatus,
+            mentalFlag = userSettings.mentalFlag,
+            panicOption = userSettings.panicOption
         ) }
-        MainModule.setTitle("inställningar")
+        TopAppbarModule.setTitle("inställningar")
+    }
+    private fun addCategory(category: String){
+        userSettings.addCategory(category)
+        _state.update { it.copy(
+            categories = userSettings.categories
+        ) }
     }
     @RequiresApi(Build.VERSION_CODES.O)
     private fun getEvents(calendarID: Int){
@@ -52,18 +65,92 @@ class UserViewModel: ViewModel(){
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun onEvent(event: UserEvent){
+    fun onEvent(event: UserEvent) {
         println("...onEvent($event)")
-        when(event){
-            is UserEvent.DarkMode -> {setDarkMode(event.darkMode)}
-            is UserEvent.SyncWithGoogle -> {syncWithGoogleCalendar(event.sync)}
-            is UserEvent.GoogleCalendar -> {googleCalendarId(event.id)}
-            is UserEvent.GetEvents -> { getEvents(event.calendarID)}
-            is UserEvent.Language -> { setLanguage(event.language)}
-            is UserEvent.SyncWithCalendar -> {syncWithCalendar(event.calendarID)}
-            is UserEvent.ImportEvents -> { importEvents(event.googleCalendarID)}
-            is UserEvent.SetPassword -> {setPassword(event.password)}
+        when (event) {
+            is UserEvent.DarkMode -> {
+                setDarkMode(event.darkMode)
+            }
+
+            is UserEvent.SyncWithGoogle -> {
+                syncWithGoogleCalendar(event.sync)
+            }
+
+            is UserEvent.GoogleCalendar -> {
+                googleCalendarId(event.id)
+            }
+
+            is UserEvent.GetEvents -> {
+                getEvents(event.calendarID)
+            }
+
+            is UserEvent.Language -> {
+                setLanguage(event.language)
+            }
+
+            is UserEvent.SyncWithCalendar -> {
+                syncWithCalendar(event.calendarID)
+            }
+
+            is UserEvent.ImportEvents -> {
+                importEvents(event.googleCalendarID)
+            }
+
+            is UserEvent.SetPassword -> {
+                setPassword(event.password)
+            }
+
+            is UserEvent.DeleteCategory -> {
+                deleteCategory(event.category)
+            }
+
+            is UserEvent.UsePassword -> {
+                usePassword(event.usePassword)
+            }
+
+            is UserEvent.ShowMentalStatusChanged -> {
+                setShowMentalStatus(event.showMentalStatus)
+            }
+
+            is UserEvent.AddCategory -> {
+                addCategory(event.category)
+            }
+
+            is UserEvent.UpdateMentalFlag -> {
+                updateMentalFlag(event.mentalFlag)
+            }
+
+            is UserEvent.SetPanicOption -> {setPanicOption(event.panicOption)}
         }
+    }
+    private fun setPanicOption(panicOption: PanicOption){
+        userSettings.panicOption = panicOption
+        _state.update { it.copy(
+            panicOption = panicOption
+        ) }
+    }
+    private fun setShowMentalStatus(showMentalStatus: Boolean){
+        TopAppbarModule.setShowMental(showMentalStatus)
+        userSettings.showMentalStatus = showMentalStatus
+        _state.update { it.copy(
+            showMentalStatus = showMentalStatus
+        ) }
+    }
+
+    private fun usePassword(usePassword: Boolean) {
+        println("usePassword($usePassword)")
+        userSettings.usesPassword = usePassword
+        _state.update { it.copy(
+            usePassword = usePassword
+        ) }
+    }
+
+    private fun deleteCategory(category: String){
+        println("deleteCategory($category)")
+        userSettings.deleteCategory(category)
+        _state.update { it.copy(
+            categories = userSettings.categories
+        ) }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -99,22 +186,10 @@ class UserViewModel: ViewModel(){
             }
         }
     }
-/*    fun getLanguage(): String{
-        return UserPrefs.getLanguage(context)
+    private fun updateMentalFlag(mentalFlag: MentalFlag){
+        userSettings.mentalFlag = mentalFlag
+        _state.update { it.copy(
+            mentalFlag = mentalFlag
+        ) }
     }
-    fun setLanguage(language: String){
-        UserPrefs.setLanguage(language, context)
-    }
-
-    fun getPanicUrls(): Array<String> {
-        return UserPrefs.getPanicUrls(context).toTypedArray()
-    }
-
-    fun isDarkMode(context: Context): Boolean {
-        return UserPrefs.getDarkMode(context)
-    }
-    fun setDarkMode(darkMode: Boolean){
-        UserPrefs.setUseDarkMode(darkMode, context)
-    }*/
-
 }

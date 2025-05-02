@@ -211,6 +211,7 @@
     <string name="edit_message">edit message</string>
     <string name="show_password">show password</string>
     <string name="no_category"><![CDATA[<no category>]]></string>
+    <string name="open">synka med google kalender</string>
 
 
 </resources>

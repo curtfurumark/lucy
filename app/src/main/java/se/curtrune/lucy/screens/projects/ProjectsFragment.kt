@@ -54,9 +54,9 @@ class ProjectsFragment : Fragment(){
             setContent {
                 LucyTheme {
                     val state by  projectsViewModel.state.collectAsState()
-                    val filter = mainViewModel.filter.collectAsState()
+                    val filter = mainViewModel.searchFilter.collectAsState()
                     LaunchedEffect(filter.value) {
-                        projectsViewModel.onEvent(TopAppBarEvent.OnSearch(filter.value, false))
+                        projectsViewModel.onEvent(TopAppBarEvent.OnSearch(filter.value.filter, filter.value.everywhere))
                     }
                     var showAddItemBottomSheet by  remember { mutableStateOf(false) }
                     LaunchedEffect(projectsViewModel) {

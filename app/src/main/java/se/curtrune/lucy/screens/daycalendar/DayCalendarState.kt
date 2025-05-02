@@ -2,6 +2,7 @@ package se.curtrune.lucy.screens.daycalendar
 
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.calender.Week
+import se.curtrune.lucy.composables.add_item.DefaultItemSettings
 import java.time.LocalDate
 
 data class DayCalendarState(
@@ -16,8 +17,8 @@ data class DayCalendarState(
     var showStats: Boolean = false,
     var currentParent: Item? = null,
     var tabs: List<Item> = mutableListOf(),
-    //var tabStack: T,
     var currentWeek: Week = Week(),
     val numberWeeks: Int = 10,
-    val currentWeekPage: Int = 5
+    val currentWeekPage: Int = 5,
+    val defaultItemSettings: DefaultItemSettings = DefaultItemSettings()
 )

@@ -46,13 +46,13 @@ class SqliteLocalDB(context: Context?) :
                 newVersion
             )
         )
-        sqLiteDatabase.execSQL(Queeries.CREATE_TABLE_REPEAT)
+/*        sqLiteDatabase.execSQL(Queeries.CREATE_TABLE_REPEAT)
         sqLiteDatabase.execSQL(Queeries.DROP_TABLE_MENTAL)
         sqLiteDatabase.execSQL(Queeries.ADD_COLUMN_ANXIETY_TO_ITEMS)
         sqLiteDatabase.execSQL(Queeries.ADD_COLUMN_ENERGY_TO_ITEMS)
         sqLiteDatabase.execSQL(Queeries.ADD_COLUMN_MOOD_TO_ITEMS)
         sqLiteDatabase.execSQL(Queeries.ADD_COLUMN_STRESS_TO_ITEMS)
-        sqLiteDatabase.execSQL(Queeries.ADD_COLUMN_REPEAT_ID_TO_ITEMS)
+        sqLiteDatabase.execSQL(Queeries.ADD_COLUMN_REPEAT_ID_TO_ITEMS)*/
     }
 
     override fun close() {

@@ -11,10 +11,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
+import se.curtrune.lucy.classes.ItemDuration
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.classes.calender.Week
-import se.curtrune.lucy.modules.MainModule
+import se.curtrune.lucy.modules.TopAppbarModule
 import se.curtrune.lucy.screens.my_day.MyDayFragment
 import java.time.LocalDate
 
@@ -37,7 +38,7 @@ class WeekViewModel: ViewModel() {
             calendarWeek = repository.getCalendarWeek(it.currentWeek),
             currentParent = repository.getTodoRoot(),
         ) }
-        MainModule.setTitle(state.value.currentWeek)
+        TopAppbarModule.setTitle(state.value.currentWeek)
 
     }
     private fun addItem(item: Item){
@@ -48,8 +49,8 @@ class WeekViewModel: ViewModel() {
         ) }
     }
     private fun calendarDateClick(calenderDate: CalenderDate){
-        println("calendarDateClick()")
-        if( calenderDate.items.isEmpty()){
+        println("calendarDateClick($calenderDate.date.toString())")
+        if( calenderDate.events.isEmpty()){
             println("show add item dialog")
             dialogSettings = DialogSettings().apply {
                 isCalendarItem = true
@@ -78,9 +79,26 @@ class WeekViewModel: ViewModel() {
             is WeekEvent.OnAllWeekLongClick -> {
                 onAllWeekLongClick(event.week)
             }
-
             is WeekEvent.CalendarDateLongClick -> { calendarDateLongClick(event.calendarDate) }
+            is WeekEvent.AddAllWeekItem -> {
+                addAllWeekItem(event.item)
+            }
         }
+    }
+
+    private fun addAllWeekItem(item: Item) {
+        println("WeekViewModel.addAllWeekItem(${item.heading})")
+        item.itemDuration = ItemDuration(ItemDuration.Type.WEEK)
+        item.targetDate = state.value.currentWeek.firstDateOfWeek
+        item.setIsCalenderItem(true)
+        if(repository.insert(item) == null){
+            println("failed to insert item")
+            return
+        }
+        _state.update { it.copy(
+            calendarWeek = repository.getCalendarWeek(it.currentWeek)
+        ) }
+
     }
 
     private fun calendarDateLongClick(calendarDate: CalenderDate) {
@@ -118,7 +136,7 @@ class WeekViewModel: ViewModel() {
             currentWeek = week,
             calendarWeek = repository.getCalendarWeek(week)
         ) }
-        MainModule.setTitle(week)
+        TopAppbarModule.setTitle(week)
     }
     private fun showAddItemDialog(){
         dialogSettings = DialogSettings()

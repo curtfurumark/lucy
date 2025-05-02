@@ -1,9 +1,11 @@
 package se.curtrune.lucy.modules
 
 import android.app.Application
-import android.content.Context
+import se.curtrune.lucy.app.InitialScreen
 import se.curtrune.lucy.app.Settings
 import se.curtrune.lucy.app.UserPrefs
+import se.curtrune.lucy.screens.user_settings.MentalFlag
+import se.curtrune.lucy.screens.user_settings.PanicOption
 import se.curtrune.lucy.util.Logger
 import java.util.Arrays
 
@@ -23,6 +25,41 @@ class UserSettings(val context: Application) {
         )
     }
 
+    fun deleteCategory(category: String) {
+        //Logger.log("UserSettings.deleteCategory($category)")
+        val setCategories = Settings.getSet(UserPrefs.KEY_CATEGORIES, context)
+        setCategories.remove(category)
+        Settings.saveSet(UserPrefs.KEY_CATEGORIES, setCategories, context)
+
+
+    }
+
+    fun addCategory(category: String) {
+        val setCategories = Settings.getSet(UserPrefs.KEY_CATEGORIES, context)
+        setCategories.add(category)
+        Settings.saveSet(UserPrefs.KEY_CATEGORIES, setCategories, context)
+    }
+
+    var panicOption: PanicOption
+        get() = UserPrefs.getPanicOption(context)
+        set(value){
+            UserPrefs.setPanicOption(value, context)
+        }
+    val categories: List<String>
+        get() = Settings.getList(UserPrefs.KEY_CATEGORIES, context)
+
+    var darkMode: Boolean
+        get() = UserPrefs.getDarkMode(context)
+        set(value){
+            UserPrefs.setUseDarkMode(value, context)
+            //field = value
+        }
+    var initialScreen: InitialScreen
+        get() = UserPrefs.getInitialScreen(context)
+        set(value){
+            UserPrefs.setInitialScreen(value, context)
+        }
+
     var password: String
         get() = UserPrefs.getPassword(context)
         set(value){
@@ -38,15 +75,25 @@ class UserSettings(val context: Application) {
         set(value){
             UserPrefs.setGoogleCalendarID(value, context)
         }
-    var darkMode: Boolean
-        get() = UserPrefs.getDarkMode(context)
-        set(value){
-            UserPrefs.setUseDarkMode(value, context)
-            //field = value
-        }
+
     var syncWithGoogleCalendar: Boolean
         get() = UserPrefs.getSyncWithGoogleCalendar(context)
         set(value){
             UserPrefs.setSyncWithGoogleCalendar(value, context)
+        }
+    var usesPassword: Boolean
+        get() = UserPrefs.usesPassword(context)
+        set(value){
+            UserPrefs.setUsesPassword(value, context)
+        }
+    var showMentalStatus: Boolean
+        get() = UserPrefs.getShowMentalStatus(context)
+        set(value){
+            UserPrefs.setShowMentalStatus(value, context)
+        }
+    var mentalFlag: MentalFlag
+        get() = UserPrefs.getMentalFlag(context)
+        set(value){
+            UserPrefs.setMentalFlag(value, context)
         }
 }

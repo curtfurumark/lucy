@@ -18,6 +18,7 @@ sealed interface DayEvent{
     data class ShowChildren(val item: Item): DayEvent
     data class ShowPostponeDialog(val item: Item): DayEvent
     data object HidePostponeDialog: DayEvent
+    data object ShowAddItemBottomSheet : DayEvent
     data class Search(val filter: String, val everywhere: Boolean): DayEvent
     data class ShowStats(val item: Item):DayEvent
     data class StartTimer(val item: Item):DayEvent

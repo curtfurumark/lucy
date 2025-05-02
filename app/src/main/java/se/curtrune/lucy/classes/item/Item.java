@@ -109,10 +109,6 @@ public class Item implements Serializable , Listable {
         if( type == Type.APPOINTMENT.ordinal()){return target_date;}
         return (state == State.DONE.ordinal() ? Long.MIN_VALUE + updated: updated ) * -1;
     }
-    public long compareTargetDate(){
-        return target_date * -1;
-    }
-
     public long compareTargetTime(){
         return target_time;
     }
@@ -155,9 +151,7 @@ public class Item implements Serializable , Listable {
         //return mental != null? mental.getEnergy():0;
         return energy;
     }
-/*    public MentalStats getEstimate(){
-        return estimate;
-    }*/
+
     public String getHeading() {
         return heading;
     }
@@ -172,9 +166,6 @@ public class Item implements Serializable , Listable {
         return String.format(Locale.getDefault(), "%s", getTargetDate().toString());
     }
 
-    public LocalDate getDateUpdated(){
-        return getUpdated().toLocalDate();
-    }
     public long getEstimatedDuration(){
 /*        if( hasEstimate()){
             return estimate.getDuration();
@@ -235,9 +226,7 @@ public class Item implements Serializable , Listable {
     public LocalTime getTargetTime() {
         return LocalTime.ofSecondOfDay(target_time);
     }
-    public LocalTime getTimeUpdated(){
-        return getUpdated().toLocalTime();
-    }
+
     public Type getType() {
         return Type.values()[type];
     }

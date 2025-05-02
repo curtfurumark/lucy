@@ -9,6 +9,7 @@ import io.ktor.client.request.post
 import io.ktor.client.request.url
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import se.curtrune.lucy.classes.calender.Holiday
 import se.curtrune.lucy.screens.affirmations.Affirmation
 import se.curtrune.lucy.screens.affirmations.Quote
 import se.curtrune.lucy.screens.message_board.Message
@@ -37,6 +38,10 @@ class LucindaApiImpl(private val client: HttpClient): LucindaApi {
                 Affirmation(affirmation = "don't worry")
             }
         }
+    }
+
+    override suspend fun getHolidays(): List<Holiday> {
+        return emptyList()
     }
 
     override suspend fun getMessages(): List<Message> {

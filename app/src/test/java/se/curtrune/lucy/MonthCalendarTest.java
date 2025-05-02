@@ -9,7 +9,7 @@ import java.time.YearMonth;
 
 import se.curtrune.lucy.classes.calender.CalenderMonth;
 
-public class MonthCalendarTest {
+public class  MonthCalendarTest {
     @Test
     public void testFirstDateOfMonth(){
         log("...testFirstDateOfMonth()");

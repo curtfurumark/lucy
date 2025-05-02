@@ -30,6 +30,9 @@ data class Message(
     enum class State{
         TODO, WIP, DONE
     }
+    fun contains(filter: String): Boolean{
+        return subject.contains(filter) || content.contains(filter) || user.contains(filter)
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun getCreated(): LocalDateTime {

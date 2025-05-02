@@ -39,9 +39,9 @@ class AppointmentsFragment : Fragment() {
             setContent {
                 val mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class]
                 val state = appointmentsViewModel.state.collectAsState()
-                val filter = mainViewModel.filter.collectAsState()
+                val filter = mainViewModel.searchFilter.collectAsState()
                 LaunchedEffect(filter.value) {
-                    appointmentsViewModel.onEvent(AppointmentEvent.Filter(filter.value))
+                    appointmentsViewModel.onEvent(AppointmentEvent.Filter(filter.value.filter, filter.value.everywhere))
                 }
                 var showAddAppointmentDialog by remember{
                     mutableStateOf(false)

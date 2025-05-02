@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.modules.LucindaApplication
@@ -31,6 +33,8 @@ import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.composables.add_item.AddItemDialog
 import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.composables.ConfirmDeleteDialog
+import se.curtrune.lucy.composables.add_item.AddItemBottomSheet
+import se.curtrune.lucy.composables.add_item.DefaultItemSettings
 import se.curtrune.lucy.dialogs.ItemStatisticsDialog
 import se.curtrune.lucy.screens.daycalendar.composables.DayCalendar
 import se.curtrune.lucy.screens.item_editor.ItemEditorFragment
@@ -40,6 +44,7 @@ import java.time.LocalTime
 
 
 class CalendarDayFragment() : Fragment() {
+    private val dayViewModel: DateViewModel by viewModels()
     private var calendarDate: CalenderDate? = null
     init {
         println("CalendarDayFragment init block")
@@ -57,20 +62,21 @@ class CalendarDayFragment() : Fragment() {
         return ComposeView(requireActivity()).apply {
             setContent {
                 LucyTheme {
-                    // A surface container using the 'background' color from the theme
                     var showAddItemDialog by remember{
                         mutableStateOf(false)
                     }
-                    println("before initialization of date view model")
-                    val dayViewModel: DateViewModel = viewModel()
-                    println("after initialization of date view model")
                     val mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
-                    println("after initialization of main view model")
-                    val filter = mainViewModel.filter.collectAsState()
-                    LaunchedEffect(filter.value) {
+                    //val filter = mainViewModel.filter.collectAsState()
+                    val searchFilter = mainViewModel.searchFilter.collectAsState()
+/*                    LaunchedEffect(filter.value) {
                         println("launched effect, calendar day filter: ${filter.value} ")
-                        dayViewModel.onEvent(DayEvent.Search(filter.value, true))
+                        //dayViewModel.onEvent(DayEvent.Search(filter.value, true))
+                    }*/
+                    LaunchedEffect(searchFilter.value) {
+                        println("launched effect searchFilter, calendar day filter: ${searchFilter.value} ")
+                        dayViewModel.onEvent(DayEvent.Search(searchFilter.value.filter, searchFilter.value.everywhere))
                     }
+                    val topAppBarState = mainViewModel.topAppBarState.collectAsState()
                     if( calendarDate != null){
                         println("calendarDate != null")
                         dayViewModel.setCalendarDate(calendarDate!!)
@@ -87,6 +93,14 @@ class CalendarDayFragment() : Fragment() {
                             when(event){
                                 DayChannel.ConfirmDeleteDialog -> {
                                     showConfirmDeleteDialog = true
+                                }
+
+                                DayChannel.showAddItemBottomSheet -> {
+                                    showAddItemDialog = true
+                                }
+
+                                is DayChannel.ShowMessage -> {
+                                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                                 }
                             }
                         }
@@ -105,7 +119,7 @@ class CalendarDayFragment() : Fragment() {
                     Scaffold(
                         floatingActionButton = { AddItemFab {
                             println("add item fab clicked")
-                            showAddItemDialog = true
+                            dayViewModel.onEvent(DayEvent.ShowAddItemBottomSheet)
                         }
                         }
                     ) { it ->
@@ -120,7 +134,16 @@ class CalendarDayFragment() : Fragment() {
                                 dayViewModel.onEvent(event)
                             })
                             if(showAddItemDialog){
-                                AddItemDialog(
+                                //val defaultItemSettings = DefaultItemSettings()
+                                AddItemBottomSheet(
+                                    defaultItemSettings = state.value.defaultItemSettings,
+                                    onDismiss = {showAddItemDialog = false},
+                                    onSave = {item ->
+                                        showAddItemDialog = false
+                                        dayViewModel.onEvent(DayEvent.AddItem(item))
+                                    },
+                                )
+/*                                AddItemDialog(
                                     onDismiss = {showAddItemDialog = false},
                                     onConfirm = {item ->
                                         showAddItemDialog = false
@@ -130,7 +153,7 @@ class CalendarDayFragment() : Fragment() {
                                         targetDate = state.value.date,
                                         targetTime = LocalTime.now(),
                                         parent = state.value.currentParent)
-                                )
+                                )*/
                             }
                             if( state.value.editItem){
                                 println("edit item please")
@@ -157,6 +180,11 @@ class CalendarDayFragment() : Fragment() {
                 item
             )
         )
+    }
+    @Composable
+    private fun Testing(defaultItemSettings: DefaultItemSettings){
+        println("testing")
+
     }
 
     private fun showItemStatisticsDialog(item: Item) {

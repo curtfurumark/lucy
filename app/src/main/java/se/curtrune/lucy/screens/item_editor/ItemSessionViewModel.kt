@@ -13,13 +13,11 @@ import se.curtrune.lucy.item_settings.ItemSetting
 import se.curtrune.lucy.item_settings.KeyValueSetting
 import se.curtrune.lucy.services.TimerService
 import se.curtrune.lucy.util.Converter
+import se.curtrune.lucy.util.DateTImeConverter
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.workers.NotificationsWorker
 
 class ItemSessionViewModel : ViewModel() {
-    private val mutableItem: MutableLiveData<Item>? = null
-    private val currentItemSetting: ItemSetting? = null
-    private var timerRunning = false
     private var elapsedTime = 0L
     private val repository = LucindaApplication.appModule.repository
     private val timeModule = LucindaApplication.appModule.timeModule
@@ -121,7 +119,7 @@ class ItemSessionViewModel : ViewModel() {
         )
         val durationSetting = KeyValueSetting(
             context.getString(R.string.duration),
-            Converter.formatSecondsWithHours(item.duration),
+            DateTImeConverter.formatSeconds(item.duration),
             ItemSetting.Key.DURATION
         )
         var notificationValue = ""
@@ -213,7 +211,7 @@ class ItemSessionViewModel : ViewModel() {
     }
 
     fun setElapsedDuration(secs: Long) {
-        println("ItemSessionViewModel.setElapsedDuration(${Converter.formatSecondsWithHours(secs)})")
+        println("ItemSessionViewModel.setElapsedDuration(${DateTImeConverter.formatSeconds(secs)})")
         elapsedTime = secs
     }
 

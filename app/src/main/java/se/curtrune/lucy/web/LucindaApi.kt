@@ -6,12 +6,14 @@ import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
 import io.ktor.client.features.logging.LogLevel
 import io.ktor.client.features.logging.Logging
+import se.curtrune.lucy.classes.calender.Holiday
 import se.curtrune.lucy.screens.affirmations.Affirmation
 import se.curtrune.lucy.screens.affirmations.Quote
 import se.curtrune.lucy.screens.message_board.Message
 
 interface LucindaApi {
     suspend fun getAffirmation(): Affirmation
+    suspend fun getHolidays(): List<Holiday>
     suspend fun getMessages(): List<Message>
     suspend fun getMessage(): Message
     suspend fun getUpdateAvailable(): VersionInfo

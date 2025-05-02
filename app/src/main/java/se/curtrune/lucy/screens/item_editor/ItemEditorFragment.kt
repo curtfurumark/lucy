@@ -8,6 +8,8 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.text.TextWatcher
+import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -385,6 +387,22 @@ class ItemEditorFragment : Fragment {
         itemSessionViewModel!!.timerState.observe(
             requireActivity()
         ) { value -> Logger.log("...getTimerState.onChanged(State)", value.toString()) }
+        val textWatcher = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                //Logger.log("...beforeTextChanged()")
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                //Logger.log("...onTextChanged()")
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                //Logger.log("...afterTextChanged()", s.toString())
+                currentItem.heading = s.toString()
+            }
+        }
+
+        editTextHeading!!.addTextChangedListener(textWatcher)
     }
 
     private fun navigateToCreateListFragment(item: Item) {

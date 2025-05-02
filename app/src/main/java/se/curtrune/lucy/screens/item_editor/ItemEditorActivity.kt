@@ -45,7 +45,6 @@ class ItemEditorActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    //val item = ItemsWorker.selectItem(51, applicationContext)
                     val item = repository.selectItem(10075)
                     if (item != null) {
                         ItemEditor(item =item )

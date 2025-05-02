@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.Type
-import se.curtrune.lucy.modules.MainModule
+import se.curtrune.lucy.modules.TopAppbarModule
 import se.curtrune.lucy.persist.Repository
 
 class AppointmentsViewModel(private val repository: Repository) : ViewModel() {
@@ -26,12 +26,12 @@ class AppointmentsViewModel(private val repository: Repository) : ViewModel() {
             items = items
             )
         }
-        MainModule.setTitle("möten")
+        TopAppbarModule.setTitle("möten")
     }
     private fun insert(item: Item) {
         println("AppointmentsViewModel(Item, Context)")
         val itemWithID = repository.insert(item)
-        if( itemWithID != null){
+        if( itemWithID == null){
             viewModelScope.launch {
                 _eventChannel.send(AppointmentChannel.ShowMessage("error saving appointment"))
             }

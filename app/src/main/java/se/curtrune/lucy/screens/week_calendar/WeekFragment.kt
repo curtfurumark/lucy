@@ -110,7 +110,7 @@ class WeekFragment : Fragment() {
                             showAddToAllWeekDialog = false
                         },
                             onConfirm = { item->
-                                weekViewModel.onEvent(WeekEvent.AddItem(item))
+                                weekViewModel.onEvent(WeekEvent.AddAllWeekItem(item))
                                 showAddToAllWeekDialog = false
                             })
                     }

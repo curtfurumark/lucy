@@ -6,6 +6,7 @@ import se.curtrune.lucy.classes.calender.Week
 
 sealed interface WeekEvent{
     data class AddItem(val item: Item): WeekEvent
+    data class AddAllWeekItem(val item: Item): WeekEvent
     data class CalendarDateClick(val calendarDate: CalenderDate): WeekEvent
     data object ShowAddItemDialog: WeekEvent
     data class OnAllWeekClick(val week: Week): WeekEvent
