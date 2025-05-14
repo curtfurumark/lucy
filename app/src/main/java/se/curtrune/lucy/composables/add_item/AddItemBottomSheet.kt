@@ -1,12 +1,15 @@
 package se.curtrune.lucy.composables.add_item
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -25,18 +28,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import io.ktor.http.cio.parseMultipart
+import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.composables.DatePickerModal
-import se.curtrune.lucy.composables.RepeatDialog
-import se.curtrune.lucy.composables.TimePickerDialog
-import se.curtrune.lucy.composables.top_app_bar.ItemSettingAppointment
-import se.curtrune.lucy.composables.top_app_bar.ItemSettingCategory
-import se.curtrune.lucy.composables.top_app_bar.ItemSettingDate
-import se.curtrune.lucy.composables.top_app_bar.ItemSettingRepeat
-import se.curtrune.lucy.composables.top_app_bar.ItemSettingTime
+import se.curtrune.lucy.modules.LucindaApplication
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -54,28 +50,10 @@ fun AddItemBottomSheet(
     }
     var heading by remember {
         mutableStateOf("") }
-    var showRepeatDialog by remember {
-        mutableStateOf(false)
-    }
-    //val parent = defaultItemSettings.parent
     val item by remember {
         mutableStateOf(defaultItemSettings.item)
     }
-    var targetDate by remember {
-        mutableStateOf(defaultItemSettings.targetDate)
-    }
-    var targetTime by remember {
-        mutableStateOf(defaultItemSettings.targetTime)
-    }
-    var showDateDialog by remember {
-        mutableStateOf(false)
-    }
-    var showTimeDialog by remember {
-        mutableStateOf(false)
-    }
-    var isEvent by remember {
-        mutableStateOf(defaultItemSettings.isEvent)
-    }
+
     LaunchedEffect(Unit) {
         item.category = defaultItemSettings.parent?.category?: "<no category>"
         println("launched effect, category: ${item.category}")
@@ -86,53 +64,67 @@ fun AddItemBottomSheet(
         sheetState = bottomSheetState
     ){
         Column(
-            modifier = Modifier.fillMaxWidth()
-                .verticalScroll(scrollState)) {
+            modifier = Modifier.fillMaxWidth()) {
             val parentHeading = defaultItemSettings.parent?.heading?: "parent is null"
-            Text(text = parentHeading)
-            OutlinedTextField(
-                value = heading,
-                onValueChange = {
-                    heading = it
-                    item.heading = it
-                },
-                modifier = Modifier
-                    .fillMaxWidth(),
-                label = { Text(stringResource(R.string.heading)) },
-                supportingText = {
-                    if (heading.isBlank()) {
-                        Text(
-                            text = "heading required",
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    }
-                }
-            )
-            AnimatedVisibility(visible = isEvent) {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    ItemSettingDate(date = targetDate, onEvent = {
-                        showDateDialog = true
-                    })
-                    ItemSettingTime(targetTime = targetTime, onEvent = {
-                        showTimeDialog = true
-                    })
-                }
-            }
-            ItemSettingAppointment(item = item, onEvent = {
-                item.setIsAppointment(it)
-            })
-            AnimatedVisibility(visible = item.isAppointment) {
 
+            Row(modifier = Modifier.fillMaxWidth()){
+                Text(text = parentHeading)
             }
-            ItemSettingIsEvent(isEvent = isEvent, onEvent = { isEvent = it })
-            ItemSettingRepeat(item.repeat, onEvent = {
-                showRepeatDialog = true
-            })
-            ItemSettingCategory(item = item, onEvent = {
-                category -> item.category = category})
-            ItemSettingTemplate(item = item, onEvent = { isTemplate ->
-                item.setIsTemplate(isTemplate)
-            })
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(modifier = Modifier.fillMaxWidth()) {
+                OutlinedTextField(
+                    value = heading,
+                    onValueChange = {
+                        heading = it
+                        item.heading = it
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    label = { Text(stringResource(R.string.heading)) },
+                    supportingText = {
+                        if (heading.isBlank()) {
+                            Text(
+                                text = "heading required",
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    }
+                )
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth()
+                    .horizontalScroll(scrollState),
+                horizontalArrangement = Arrangement.SpaceEvenly ,
+                verticalAlignment = Alignment.CenterVertically){
+                ItemSettingDate(item , onDateChanged = { date->
+                    item.targetDate = date
+                })
+                Spacer(modifier = Modifier.width(8.dp))
+                ItemSettingTime(item = item, onTimeChanged = {
+                    item.targetTime = it
+                })
+                Spacer(modifier = Modifier.width(8.dp))
+                ItemSettingRepeat(item = item, onRepeatEvent = {
+                    repeat->  item.repeat = repeat})
+                Spacer(modifier = Modifier.width(8.dp))
+                ItemSettingNotification(item = item, onNotication = {
+                    notification-> item.notification = notification
+                })
+                Spacer(modifier = Modifier.width(8.dp))
+                val categories = LucindaApplication.appModule.userSettings.categories
+                ItemSettingCategory(item = item, categories = categories, onEvent = {
+                    category-> item.category = category
+                } )
+                Spacer(modifier = Modifier.width(8.dp))
+                ItemSettingAppointment(item = item, onEvent = {
+                    item.setIsAppointment(it)
+                })
+                ItemSettingTemplate(item = item, onIsTemplate = { isTemplate ->
+                    item.setIsTemplate(isTemplate)
+                })
+            }
+            Spacer(modifier = Modifier.height(8.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -151,35 +143,6 @@ fun AddItemBottomSheet(
                 }
             }
         }
-        if( showRepeatDialog){
-            println("showRepeatDialog")
-            RepeatDialog(onDismiss = {
-                showRepeatDialog = false
-            }, onConfirm = {
-                item.repeat = it
-                showRepeatDialog = false
-            })
-        }
-        if( showDateDialog){
-            DatePickerModal( onDismiss = {
-                showDateDialog = false
-            }, onDateSelected = { date->
-                println("onDateSelected: $date")
-                targetDate = date
-                item.targetDate = date
-                showDateDialog = false
-            })
-        }
-        if( showTimeDialog){
-            TimePickerDialog(
-                onDismiss = {showTimeDialog = false},
-                onConfirm = {timePickerState ->
-                    targetTime = LocalTime.of(timePickerState.hour, timePickerState.minute)
-                    item.targetTime = targetTime
-                    showTimeDialog = false
-                }
-            )
-        }
     }
 }
 
@@ -191,7 +154,8 @@ data class DefaultItemSettings(
     val parent: Item? = null,
     val item: Item = Item(),
     val isAppointment: Boolean = false,
-    val isEvent: Boolean = true
+    val isEvent: Boolean = true,
+    val categories: List<String> = emptyList()
 
 )
 @Composable

@@ -199,7 +199,7 @@ fun AddMessageBottomSheet(defaultMessage: DefaultMessage, onDismiss: ()->Unit, o
                         }
                     }
                 }) {
-                    Text(text = "save")
+                    Text(text = if(mode == Mode.EDIT) stringResource(R.string.update) else stringResource(R.string.save))
                 }
             }
         }

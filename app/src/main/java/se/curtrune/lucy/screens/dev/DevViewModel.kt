@@ -74,11 +74,15 @@ class DevViewModel : ViewModel() {
         ) }
     }
     private fun getHolidays(){
+        println("...getHolidays()")
         viewModelScope.launch {
             val holidays = LucindaApi.create().getHolidays()
+            holidays.forEach { holiday->
+                println(holiday)
+            }
         }
-
     }
+
     private fun insertItemWithID(item: Item){
         println("...insertItemWithID(item ${item.heading})")
         repository.insert(item)

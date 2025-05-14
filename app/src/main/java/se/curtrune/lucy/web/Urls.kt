@@ -1,7 +1,7 @@
 package se.curtrune.lucy.web
 
 object Urls {
-    //private const val BASE_URL = "https://curtfurumark.se"
+    const val HOLIDAYS_URL =  "https://api.dagsmart.se/holidays"
     private const val BASE_URL = "http://curtfurumark.se"
     const val MESSAGES_URL = "$BASE_URL/lucinda/messages.php"
     const val MESSAGE_URL = "$BASE_URL/lucinda/message.json"

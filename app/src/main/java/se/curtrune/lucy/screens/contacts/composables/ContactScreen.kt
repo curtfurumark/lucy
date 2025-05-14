@@ -8,13 +8,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import se.curtrune.lucy.screens.contacts.ContactsEvent
 import se.curtrune.lucy.screens.contacts.ContactsState
 
 @Composable
-fun ContactsScreen(state: ContactsState, onEvent: (ContactsEvent) -> Unit) {
+fun ContactsScreen(modifier: Modifier = Modifier, state: ContactsState, onEvent: (ContactsEvent) -> Unit) {
     val context = LocalContext.current
     //val contacts by contactsViewModel.contacts.observeAsState(initial = emptyList())
     //val showDialog by contactsViewModel.showDialog.observeAsState(initial = false)

@@ -10,11 +10,14 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -26,6 +29,7 @@ import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.Contact
 import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.classes.item.Item
+import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.dialogs.ContactDialog
 import se.curtrune.lucy.screens.contacts.composables.ContactsScreen
 import se.curtrune.lucy.screens.main.MainViewModel
@@ -45,7 +49,13 @@ class ContactsFragment : Fragment() {
                     mutableStateOf(false)
                 }
                 LucyTheme {
-                    ContactsScreen(state = state.value, onEvent = contactsViewModel::onEvent)
+                    Scaffold(
+                      floatingActionButton = { AddItemFab {
+                          showAddContactDialog = true
+                      }}
+                    ) { padding ->
+                        ContactsScreen(modifier = Modifier.padding(padding), state = state.value, onEvent = contactsViewModel::onEvent)
+                    }
                 }
             }
         }

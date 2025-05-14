@@ -41,7 +41,26 @@ class LucindaApiImpl(private val client: HttpClient): LucindaApi {
     }
 
     override suspend fun getHolidays(): List<Holiday> {
-        return emptyList()
+        return client.get {
+            try {
+                url(Urls.HOLIDAYS_URL)
+            } catch (exception: RedirectResponseException) {
+                //3xx
+                println(exception.response.status.description)
+                Affirmation(affirmation = "you are the tops")
+            } catch (exception: ClientRequestException) {
+                //4xx
+                println(exception.response.status.description)
+                Affirmation(affirmation = "keep it up")
+            } catch (exception: ServerResponseException) {
+                //5xx
+                println(exception.response.status.description)
+                Affirmation(affirmation = "you're great")
+            } catch (e: Exception) {
+                println(e.message)
+                Affirmation(affirmation = "don't worry")
+            }
+        }
     }
 
     override suspend fun getMessages(): List<Message> {

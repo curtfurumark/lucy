@@ -81,8 +81,8 @@ import java.util.Objects
 
 class ItemEditorFragment : Fragment {
     private var duration = 0L
-    private var editTextHeading: EditText? = null
-    private var editTextComment: EditText? = null
+    private lateinit var editTextHeading: EditText
+    private lateinit var editTextComment: EditText
     private var textViewDuration: TextView? = null
     private var textViewAnxiety: TextView? = null
     private var textViewStress: TextView? = null
@@ -103,8 +103,8 @@ class ItemEditorFragment : Fragment {
     private lateinit var currentItem: Item
     private var targetTime: LocalTime? = null
     private var lucindaViewModel: MainViewModel? = null
-    private var itemSessionViewModel: ItemSessionViewModel? = null
-    private var itemSettingAdapter: ItemSettingAdapter? = null
+    private lateinit var itemSessionViewModel: ItemSessionViewModel
+    private lateinit var itemSettingAdapter: ItemSettingAdapter
 
     constructor()
     constructor(item: Item) {
@@ -148,7 +148,7 @@ class ItemEditorFragment : Fragment {
                 AnimatedVisibility(visible = visible) {
                     ItemEditorDev(item = currentItem, onEvent = { event->
                         println("on event: $event")
-                        itemSessionViewModel!!.onEvent(event)
+                        itemSessionViewModel.onEvent(event)
                     })
                 }
             }
@@ -158,14 +158,14 @@ class ItemEditorFragment : Fragment {
     private fun initItemSettingRecycler() {
         Logger.log("....initItemSettingRecycler")
         itemSettingAdapter = ItemSettingAdapter(
-            itemSessionViewModel!!.getItemSettings(currentItem, requireContext())
+            itemSessionViewModel.getItemSettings(currentItem, requireContext())
         ) { setting ->
             Logger.log("...onClick(ItemSetting)", setting.toString())
             currentItemSetting = setting
             when (setting.key) {
                 ItemSetting.Key.IS_CALENDAR_ITEM -> {
                     currentItem.setIsCalenderItem(setting.isChecked)
-                    itemSessionViewModel!!.onEvent(
+                    itemSessionViewModel.onEvent(
                         ItemEvent.Update(
                             currentItem
                         )
@@ -182,7 +182,7 @@ class ItemEditorFragment : Fragment {
                 ItemSetting.Key.TEMPLATE -> {
                     //itemSessionViewModel.setIsTemplate(setting.isChecked(), getContext());
                     currentItem.setIsTemplate(setting.isChecked)
-                    itemSessionViewModel!!.onEvent(
+                    itemSessionViewModel.onEvent(
                         ItemEvent.Update(
                             currentItem
                         )
@@ -191,7 +191,7 @@ class ItemEditorFragment : Fragment {
 
                 ItemSetting.Key.PRIORITIZED -> {
                     currentItem.priority = if (currentItemSetting!!.isChecked) 1 else 0
-                    itemSessionViewModel!!.onEvent(
+                    itemSessionViewModel.onEvent(
                         ItemEvent.Update(
                             currentItem
                         )
@@ -207,31 +207,31 @@ class ItemEditorFragment : Fragment {
         actionRecycler!!.layoutManager = layoutManager
         actionRecycler!!.itemAnimator = DefaultItemAnimator()
         actionRecycler!!.adapter = itemSettingAdapter
-        itemSettingAdapter!!.notifyDataSetChanged()
+        itemSettingAdapter.notifyDataSetChanged()
     }
 
     private fun initMental() {
         Logger.log("...initMental()")
-        Logger.log(itemSessionViewModel!!.mental)
+        Logger.log(itemSessionViewModel.mental)
         seekBarStress!!.progress =
-            itemSessionViewModel!!.stress + Constants.STRESS_OFFSET
-        setMentalLabel(itemSessionViewModel!!.stress, Mental.Type.STRESS)
+            itemSessionViewModel.stress + Constants.STRESS_OFFSET
+        setMentalLabel(itemSessionViewModel.stress, Mental.Type.STRESS)
         seekBarMood!!.progress =
-            itemSessionViewModel!!.mood + Constants.MOOD_OFFSET
-        setMentalLabel(itemSessionViewModel!!.mood, Mental.Type.MOOD)
+            itemSessionViewModel.mood + Constants.MOOD_OFFSET
+        setMentalLabel(itemSessionViewModel.mood, Mental.Type.MOOD)
         seekBarEnergy!!.progress =
-            itemSessionViewModel!!.energy + Constants.ENERGY_OFFSET
-        setMentalLabel(itemSessionViewModel!!.energy, Mental.Type.ENERGY)
+            itemSessionViewModel.energy + Constants.ENERGY_OFFSET
+        setMentalLabel(itemSessionViewModel.energy, Mental.Type.ENERGY)
         seekBarAnxiety!!.progress =
-            itemSessionViewModel!!.anxiety + Constants.ANXIETY_OFFSET
-        setMentalLabel(itemSessionViewModel!!.anxiety, Mental.Type.ANXIETY)
+            itemSessionViewModel.anxiety + Constants.ANXIETY_OFFSET
+        setMentalLabel(itemSessionViewModel.anxiety, Mental.Type.ANXIETY)
     }
 
     private fun initViewModel() {
         if (VERBOSE) println("...initViewModel()")
         lucindaViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
         itemSessionViewModel = ViewModelProvider(requireActivity())[ItemSessionViewModel::class.java]
-        itemSessionViewModel!!.init(currentItem, context)
+        itemSessionViewModel.init(currentItem, context)
     }
 
 
@@ -262,7 +262,7 @@ class ItemEditorFragment : Fragment {
         buttonTimer!!.setOnClickListener { view: View? -> toggleTimer() }
         buttonTimer!!.setOnLongClickListener { v: View? ->
             Logger.log("...onLongClick(View) cancel timer please")
-            itemSessionViewModel!!onEvent(ItemEvent.CancelTimer)
+            itemSessionViewModel.onEvent(ItemEvent.CancelTimer)
             buttonTimer!!.text = getString(R.string.ui_start)
             true
         }
@@ -282,7 +282,7 @@ class ItemEditorFragment : Fragment {
                 Logger.log("....seekbar onProgressChanged()", progress)
                 if (fromUser) {
                     if (currentItem.isDone) {
-                        itemSessionViewModel!!.onEvent(
+                        itemSessionViewModel.onEvent(
                             ItemEvent.Update(
                                 currentItem
                             )
@@ -299,7 +299,7 @@ class ItemEditorFragment : Fragment {
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 Logger.log("...onStopTrackingTouch(SeekBar)", seekBar.progress)
                 currentItem.energy = seekBarEnergy!!.progress - 5
-                itemSessionViewModel!!.onEvent(
+                itemSessionViewModel.onEvent(
                     ItemEvent.Update(
                         currentItem
                     )
@@ -320,7 +320,7 @@ class ItemEditorFragment : Fragment {
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 Logger.log("seekBarAnxiety.onStopTrackingTouch(SeekBar)", seekBar.progress)
                 currentItem.anxiety = seekBar.progress - 5
-                itemSessionViewModel!!.onEvent(
+                itemSessionViewModel.onEvent(
                     ItemEvent.Update(
                         currentItem
                     )
@@ -339,7 +339,7 @@ class ItemEditorFragment : Fragment {
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 currentItem.mood = seekBar.progress - 5
-                itemSessionViewModel!!.onEvent(
+                itemSessionViewModel.onEvent(
                     ItemEvent.Update(
                         currentItem
                     )
@@ -358,18 +358,18 @@ class ItemEditorFragment : Fragment {
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 currentItem.stress = seekBar.progress - 5
-                itemSessionViewModel!!.onEvent(
+                itemSessionViewModel.onEvent(
                     ItemEvent.Update(
                         currentItem
                     )
                 )
             }
         })
-        itemSessionViewModel!!.error.observe(requireActivity()) { error: String? ->
+        itemSessionViewModel.error.observe(requireActivity()) { error: String? ->
             Logger.log("ItemSessionViewModel.getError(String)", error)
             Toast.makeText(context, error, Toast.LENGTH_LONG).show()
         }
-        itemSessionViewModel!!.duration.observe(
+        itemSessionViewModel.duration.observe(
             requireActivity()
         ) { secs: Long? ->
             if (secs != null) {
@@ -382,27 +382,39 @@ class ItemEditorFragment : Fragment {
         }
         checkBoxIsDone.setOnCheckedChangeListener { buttonView, isChecked ->
             currentItem.state = if (isChecked) State.DONE else State.TODO
+            itemSessionViewModel.onEvent(ItemEvent.Update(currentItem))
         }
 
-        itemSessionViewModel!!.timerState.observe(
+        itemSessionViewModel.timerState.observe(
             requireActivity()
         ) { value -> Logger.log("...getTimerState.onChanged(State)", value.toString()) }
-        val textWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                //Logger.log("...beforeTextChanged()")
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                //Logger.log("...onTextChanged()")
-            }
-
+        val textWatcherHeader = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                //Logger.log("...afterTextChanged()", s.toString())
                 currentItem.heading = s.toString()
+                itemSessionViewModel.onEvent(
+                    ItemEvent.Update(
+                        currentItem
+                    )
+                )
+            }
+        }
+        val textWatcherComment = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                currentItem.comment = s.toString()
+                itemSessionViewModel.onEvent(
+                    ItemEvent.Update(
+                        currentItem
+                    )
+                )
             }
         }
 
-        editTextHeading!!.addTextChangedListener(textWatcher)
+        editTextHeading.addTextChangedListener(textWatcherHeader)
+        editTextComment.addTextChangedListener(textWatcherComment)
     }
 
     private fun navigateToCreateListFragment(item: Item) {
@@ -417,9 +429,9 @@ class ItemEditorFragment : Fragment {
 
     private fun setUserInterface(item: Item) {
         println("...setUserInterface(${item.heading})")
-        itemSessionViewModel!!.item
-        editTextHeading!!.setText(item.heading)
-        editTextComment!!.setText(item.comment)
+        itemSessionViewModel.item
+        editTextHeading.setText(item.heading)
+        editTextComment.setText(item.comment)
         checkBoxIsDone.isChecked = item.isDone
         textViewDuration!!.text =
             Converter.formatSecondsWithHours(item.duration)
@@ -447,9 +459,7 @@ class ItemEditorFragment : Fragment {
         Logger.log("...showAddChildItemDialog()")
         val dialog = AddItemDialog(currentItem, false)
         dialog.setCallback { item: Item? ->
-            item?.let { ItemEvent.InsertChild(it) }?.let { itemSessionViewModel!!.onEvent(it) }
-            //val itemWithId = repos.insertChild(currentItem, item, context)
-            //if (VERBOSE) Logger.log(itemWithId)
+            item?.let { ItemEvent.InsertChild(it) }?.let { itemSessionViewModel.onEvent(it) }
             returnToPreviousFragment()
         }
         dialog.show(requireActivity().supportFragmentManager, "add child")
@@ -462,12 +472,12 @@ class ItemEditorFragment : Fragment {
             Logger.log("...onSelected(String)", category)
             currentItemSetting!!.value = category
             currentItem.category = category
-            itemSessionViewModel!!.onEvent(
+            itemSessionViewModel.onEvent(
                 ItemEvent.Update(
                     currentItem
                 )
             )
-            itemSettingAdapter!!.notifyDataSetChanged()
+            itemSettingAdapter.notifyDataSetChanged()
         }
         dialog.show(childFragmentManager, "choose category")
     }
@@ -484,7 +494,8 @@ class ItemEditorFragment : Fragment {
                     //currentItemSetting.setColor(envelope.getColor());
                     currentItemSetting!!.value = envelope.color.toString()
                     currentItem.color = envelope.color
-                    itemSettingAdapter!!.notifyDataSetChanged()
+                    itemSessionViewModel.onEvent(ItemEvent.Update(currentItem))
+                    itemSettingAdapter.notifyDataSetChanged()
                 })
             .setNegativeButton(
                 getString(R.string.dismiss)
@@ -503,13 +514,12 @@ class ItemEditorFragment : Fragment {
             Logger.log("...date", targetDate.toString())
             currentItemSetting!!.value = targetDate.toString()
             currentItem.targetDate = targetDate
-            itemSessionViewModel!!.onEvent(
+            itemSessionViewModel.onEvent(
                 ItemEvent.Update(
                     currentItem
                 )
             )
-            //itemSessionViewModel.update(currentItem, getContext());
-            itemSettingAdapter!!.notifyDataSetChanged()
+            itemSettingAdapter.notifyDataSetChanged()
         }
         datePickerDialog.show()
     }
@@ -524,19 +534,19 @@ class ItemEditorFragment : Fragment {
             currentItem.duration = duration.seconds
             currentItemSetting!!.value =
                 Converter.formatSecondsWithHours(duration.seconds)
-            itemSessionViewModel!!.onEvent(
+            itemSessionViewModel.onEvent(
                 ItemEvent.Update(
                     currentItem
                 )
             )
-            itemSettingAdapter!!.notifyDataSetChanged()
+            itemSettingAdapter.notifyDataSetChanged()
         }
         dialog.show(childFragmentManager, "duration")
     }
 
     private fun showDurationDialogActual(durationEstimate: Boolean) {
         Logger.log("...showDurationDialog()")
-        val item = itemSessionViewModel!!.item
+        val item = itemSessionViewModel.item
         val dialog = DurationDialog(
             Duration.ofSeconds(item!!.duration)
         ) { duration: Duration ->
@@ -546,8 +556,8 @@ class ItemEditorFragment : Fragment {
                 Converter.formatSecondsWithHours(duration.seconds)
             buttonTimer!!.text = getString(R.string.ui_resume)
             currentItem.duration = duration.seconds
-            itemSessionViewModel!!.setElapsedDuration(duration.seconds)
-            itemSessionViewModel!!.onEvent(
+            itemSessionViewModel.setElapsedDuration(duration.seconds)
+            itemSessionViewModel.onEvent(
                 ItemEvent.Update(
                     currentItem
                 )
@@ -569,20 +579,21 @@ class ItemEditorFragment : Fragment {
                 NotificationDialog.Action.INSERT -> {
                     currentItemSetting!!.value = notification.toString()
                     currentItem.notification = notification
-                    itemSettingAdapter!!.notifyDataSetChanged()
+                    itemSettingAdapter.notifyDataSetChanged()
                     NotificationsWorker.setNotification(currentItem, context)
+                    //itemSessionViewModel.onEvent(ItemEvent.Update(currentItem))
                 }
 
                 NotificationDialog.Action.EDIT -> {
                     Toast.makeText(context, "edit not implemented", Toast.LENGTH_LONG).show()
                     NotificationsWorker.cancelNotification(currentItem, context)
                     NotificationsWorker.setNotification(currentItem, context)
-                    itemSessionViewModel!!.updateNotification(context)
+                    itemSessionViewModel.updateNotification(context)
                 }
 
                 NotificationDialog.Action.DELETE ->                         //NotificationsWorker.cancelNotification(currentItem, getContext());
                     //Toast.makeText(getContext(), "delete not implemented", Toast.LENGTH_LONG).show();
-                    itemSessionViewModel!!.cancelNotification(context)
+                    itemSessionViewModel.cancelNotification(context)
                 null ->{
                     println("notification dialog null")
                 }
@@ -593,9 +604,9 @@ class ItemEditorFragment : Fragment {
 
     private fun showRepeatDialog() {
         Logger.log("...showRepeatDialog()")
-        if (itemSessionViewModel!!.itemHasRepeat()) {
+        if (itemSessionViewModel.itemHasRepeat()) {
             val repeat = Objects.requireNonNull(
-                itemSessionViewModel!!.getCurrentItem().value
+                itemSessionViewModel.getCurrentItem().value
             )?.repeat
             Logger.log("...item has repeat")
             Logger.log(repeat.toString())
@@ -608,24 +619,24 @@ class ItemEditorFragment : Fragment {
             currentItem.setRepeat(repeat)
             currentItem.setIsTemplate(true)
             //itemSessionViewModel.update(currentItem, getContext());
-            itemSessionViewModel!!.onEvent(
+            itemSessionViewModel.onEvent(
                 ItemEvent.Update(
                     currentItem
                 )
             )
-            itemSettingAdapter!!.notifyDataSetChanged()
+            itemSettingAdapter.notifyDataSetChanged()
         }
         dialog.show(childFragmentManager, "repeat")
     }
 
     private fun showTagsDialog() {
         Logger.log("...showTagsDialog()")
-        val item = itemSessionViewModel!!.item
+        val item = itemSessionViewModel.item
         val dialog = TagsDialog(item!!.tags) { tags ->
-            Logger.log("...onTags(String)", tags)
-            itemSessionViewModel!!.addTags(tags, context)
+            currentItem.tags = tags
+            itemSessionViewModel.onEvent(ItemEvent.Update(currentItem))
             currentItemSetting!!.value = tags
-            itemSettingAdapter!!.notifyDataSetChanged()
+            itemSettingAdapter.notifyDataSetChanged()
         }
         dialog.show(childFragmentManager, "add/edit tags")
     }
@@ -640,31 +651,31 @@ class ItemEditorFragment : Fragment {
                 targetTime = LocalTime.of(hourOfDay, minute)
                 currentItemSetting!!.value = targetTime.toString()
                 currentItem.targetTime = targetTime
-                itemSessionViewModel!!.onEvent(
+                itemSessionViewModel.onEvent(
                     ItemEvent.Update(
                         currentItem
                     )
                 )
-                itemSettingAdapter!!.notifyDataSetChanged()
+                itemSettingAdapter.notifyDataSetChanged()
             }, hour, minutes, true)
         timePicker.show()
     }
 
     private fun toggleTimer() {
         println("...toggleTimer()")
-        val state = itemSessionViewModel!!.timerState.value
+        val state = itemSessionViewModel.timerState.value
         println("...current timer state ${state.toString()}")
         when (state) {
             ItemSessionViewModel.TimerState.PENDING -> {
-                itemSessionViewModel!!.onEvent(ItemEvent.StartTimer)
+                itemSessionViewModel.onEvent(ItemEvent.StartTimer)
                 buttonTimer!!.setText(R.string.ui_pause)
             }
             ItemSessionViewModel.TimerState.RUNNING -> {
-                itemSessionViewModel!!.onEvent(ItemEvent.PauseTimer)
+                itemSessionViewModel.onEvent(ItemEvent.PauseTimer)
                 buttonTimer!!.setText(R.string.ui_resume)
             }
             ItemSessionViewModel.TimerState.PAUSED -> {
-                itemSessionViewModel!!.onEvent(ItemEvent.ResumeTimer)
+                itemSessionViewModel.onEvent(ItemEvent.ResumeTimer)
                 buttonTimer!!.setText(R.string.ui_pause)
             }
             null -> {
@@ -825,18 +836,18 @@ class ItemEditorFragment : Fragment {
             Logger.log("....item did not validate, i surrender, missing heading?")
             return
         }
-        itemSessionViewModel!!.onEvent(
+        itemSessionViewModel.onEvent(
             ItemEvent.Update(
                 this.currentItem
             )
         )
-        itemSessionViewModel!!.onEvent(ItemEvent.CancelTimer)
+        itemSessionViewModel.onEvent(ItemEvent.CancelTimer)
         requireActivity().supportFragmentManager.popBackStackImmediate()
     }
 
     private fun validate(): Boolean {
         if (VERBOSE) Logger.log("...validate")
-        if (editTextHeading!!.text.toString().isEmpty()) {
+        if (editTextHeading.text.toString().isEmpty()) {
             Toast.makeText(context, getString(R.string.missing_heading), Toast.LENGTH_LONG).show()
             return false
         }

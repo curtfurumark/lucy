@@ -7,6 +7,7 @@ import se.curtrune.lucy.classes.calender.Week
 import se.curtrune.lucy.screens.main.TopAppBarState
 import se.curtrune.lucy.util.DateTImeConverter
 import se.curtrune.lucy.util.cecilia
+import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
@@ -31,8 +32,26 @@ object TopAppbarModule{
             )
         }
     }
+
+    /**
+     * Sets the title of the top app bar, like "May v20"
+     * used by daycalendar
+     */
+    fun setTitle(date: LocalDate){
+        val month = date.month.getDisplayName(TextStyle.FULL, Locale.getDefault()).cecilia()
+        val week = date.get(java.time.temporal.WeekFields.ISO.weekOfYear())
+        val title = String.format(Locale.getDefault(), "%s v%d", month, week)
+        _topAppBarState.update { it.copy(
+            title = title
+        ) }
+    }
     fun setTitle(week: Week){
-        val title = String.format(Locale.getDefault(), "%s v%d", week.month.getDisplayName(TextStyle.FULL, Locale.getDefault()).cecilia(), week.weekNumber)
+        var monthString = week.firstDateOfWeek.month.getDisplayName(TextStyle.FULL, Locale.getDefault()).cecilia()
+        if( week.firstDateOfWeek.month != week.lastDateOfWeek.month){
+            monthString = monthString.plus("/${week.lastDateOfWeek.month.getDisplayName(TextStyle.FULL, Locale.getDefault()).cecilia()}")
+        }
+        val title = String.format(Locale.getDefault(), "%s v%d", monthString, week.weekNumber)
+
         _topAppBarState.update { it.copy(
             title = title
         ) }

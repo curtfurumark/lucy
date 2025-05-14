@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
@@ -32,6 +33,9 @@ import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.R
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.item.Repeat
+import se.curtrune.lucy.composables.add_item.ItemSettingCategory
+import se.curtrune.lucy.composables.add_item.ItemSettingColor
+import se.curtrune.lucy.composables.add_item.ItemSettingRepeat
 import se.curtrune.lucy.screens.medicine.composable.DropdownItem
 import se.curtrune.lucy.util.DateTImeConverter
 import java.time.LocalDate
@@ -46,17 +50,15 @@ fun ItemSettingsEditor(item: Item, parent: Item?){
         item{ ItemSettingCalendar(item = item, onEvent = {
 
         }) }
-        item {ItemSettingRepeat(item = item)}
+        item {ItemSettingRepeat(item = item, onRepeatEvent = {})}
         item{ItemSettingCategory(item = parent)}
-        item{ItemSettingNotification(item = item, onEvent = {
-            println("notification event")
-        })}
+
         item{ItemSettingTags(item = parent, onEvent = {
             println("tags event")
         })}
-        item{ItemSettingColor(item = parent, onEvent = {
+/*        item{ItemSettingColor(item = parent, onEvent = {
             println("event color dialog")
-        })}
+        })}*/
         item{ItemSettingPrioritized(item = item, onEvent = {
             println("event prioritized")
         })}
@@ -83,91 +85,10 @@ fun ItemSettingCalendar(item: Item, onEvent: (Boolean) -> Unit){
         }
     }
 }
-@Composable
-fun ItemSettingAppointment(item: Item, onEvent: (Boolean) -> Unit){
-    println("ItemSettingAppointment()is appointment: ${item.isAppointment}")
-    var isAppointment by remember {
-        mutableStateOf(item.isAppointment)
-    }
-    Box(modifier = Modifier.fillMaxWidth()
-        .border(Dp.Hairline, color = Color.LightGray)
-        .padding(start = 8.dp)) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = "appointment")
-            Checkbox(checked = isAppointment, onCheckedChange = {
-                isAppointment = !isAppointment
-                onEvent(isAppointment)
-            })
-        }
-    }
-}
-@Composable
-fun ItemSettingCategory(item: Item?){
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Text(text = stringResource(R.string.category))
-        if (item != null) {
-            Text(text = item.category)
-        }
-    }
-}
-@Composable
-fun ItemSettingCategory(item: Item, onEvent: (String) -> Unit){
-    var category by remember {
-        mutableStateOf(item.category)
-    }
-    var categoryListExpanded by remember {
-        mutableStateOf(false)
-    }
-    val categories = LucindaApplication.appModule.userSettings.getCategories()
-    Box(modifier = Modifier.fillMaxWidth()
-        .border(Dp.Hairline,  color = Color.LightGray)
-        .clickable {categoryListExpanded = !categoryListExpanded }
-        .padding(8.dp)) {
-        Row(modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = stringResource(R.string.category))
-            //if (item != null) {
-            Text(text = category)
-            Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = "chose category")
-            DropdownMenu(expanded = categoryListExpanded, onDismissRequest = {
-                categoryListExpanded = false
-            }) {
-                categories.forEach {
-                    DropdownItem(action =it) { cat ->
-                        category = cat
-                        categoryListExpanded = false
-                        onEvent(category)
-                    }
-                }
-            }
-        }
-    }
-}
 
-@Composable
-fun ItemSettingColor(item: Item?, onEvent: () -> Unit){
-    if (item != null) {
-        Box(modifier = Modifier.fillMaxWidth()
-            .border(Dp.Hairline, color = Color.LightGray)
-            .padding(8.dp)
-            .background(color = Color(item.color))
-            .clickable {
-                onEvent()
-            }) {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                Text(text = stringResource(R.string.color))
-            }
-        }
-    }else{
-        Text(text = "item is null")
-    }
-}
+
+
+
 
 @Composable
 fun ItemSettingDate(item: Item){
@@ -186,27 +107,7 @@ fun ItemSettingDate(item: Item){
         }
     }
 }
-@Composable
-fun ItemSettingDate(date: LocalDate, onEvent: ()->Unit){
-    println("ItemSettingDate(date: $date)")
-    Box(modifier = Modifier.fillMaxWidth()
-        .border(Dp.Hairline, color = Color.LightGray)
-        .clickable { onEvent() }) {
-        Row(modifier = Modifier.fillMaxWidth()
-            .padding(8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        )
-        {
-            Text(
-                text = stringResource(R.string.date)
-            )
-            if (date.toEpochDay() > 0) {
-                Text(text = DateTImeConverter.format(date))
-            }
-        }
-    }
-}
+
 
 @Composable
 fun ItemSettingLocation(){
@@ -215,22 +116,7 @@ fun ItemSettingLocation(){
         Text(text = "location")
     }
 }
-@Composable
-fun ItemSettingNotification(item: Item, onEvent: () -> Unit){
-    if( item.hasNotification()){
 
-    }
-    Box(modifier = Modifier.fillMaxWidth()
-        .border(Dp.Hairline, color = Color.LightGray)
-        .padding(8.dp)
-        .clickable {
-            onEvent()
-        }) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Text(text = stringResource(R.string.notification))
-        }
-    }
-}
 @Composable
 fun ItemSettingPrioritized(item: Item, onEvent: (Boolean) -> Unit){
     var isPrioritized by remember {
@@ -255,32 +141,7 @@ fun ItemSettingPrioritized(item: Item, onEvent: (Boolean) -> Unit){
     }
 }
 
-@Composable
-fun ItemSettingRepeat(item: Item){
-    Column(modifier = Modifier.padding(4.dp)) {
-        Text(text = stringResource(R.string.repeat))
-        Text(text = if (item.hasRepeat()) item.repeat.toString() else "no repeat")
-    }
-}
-@Composable
-fun ItemSettingRepeat(repeat: Repeat?, onEvent: () -> Unit){
-    Box(modifier = Modifier.fillMaxWidth()
-        .border(Dp.Hairline, color = Color.LightGray)
-        .clickable {
-        onEvent()
-    }) {
-        Column(
-            modifier = Modifier.padding(8.dp).fillMaxWidth()
-                .clickable {
-                onEvent()
-            }) {
-            Text(text = stringResource(R.string.repeat))
-            if (repeat != null) {
-                Text(text = repeat.toString())
-            }
-        }
-    }
-}
+
 @Composable
 fun ItemSettingTags(item: Item?, onEvent: () -> Unit){
     Box(modifier = Modifier.fillMaxWidth()
@@ -299,9 +160,11 @@ fun ItemSettingTags(item: Item?, onEvent: () -> Unit){
 }
 
 @Composable
-fun ItemSettingTime(item: Item){
-    Box(modifier = Modifier.fillMaxWidth()
-        .border(Dp.Hairline, color = Color.LightGray)) {
+fun ItemSettingTime(item: Item) {
+    Box(
+        modifier = Modifier.fillMaxWidth()
+            .border(Dp.Hairline, color = Color.LightGray)
+    ) {
         Row(
             modifier = Modifier.padding(4.dp),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -313,38 +176,11 @@ fun ItemSettingTime(item: Item){
         }
     }
 }
-@Composable
-fun ItemSettingTime(targetTime: LocalTime, onEvent: () -> Unit){
-    Box(modifier = Modifier.fillMaxWidth()
-        .border(Dp.Hairline, color = Color.LightGray)
-        .clickable { onEvent() }) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(R.string.time)
-            )
-            if (targetTime.toSecondOfDay() > 0) {
-                Text(text = DateTImeConverter.format(targetTime))
-            }
-        }
-    }
-}
+
 
 @Composable
 @Preview(showBackground = true)
 fun PreviewItemSettingsEditor(){
-    val parent = Item("parent")
-    parent.category = "dev"
-    ItemSettingTime(targetTime = LocalTime.now(), onEvent = {
 
-    })
-    val item = Item()
-    item.category = "dev"
-    ItemSettingCategory(item = Item(), onEvent = {})
 }
 

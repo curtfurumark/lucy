@@ -92,6 +92,7 @@ class MessageBoardFragment : Fragment(){
                     if(showAddMessageBottomSheet){
                         AddMessageBottomSheet(defaultMessage = state.value.defaultMessage, onDismiss = {
                             showAddMessageBottomSheet = false
+                            messageViewModel.onEvent(MessageBoardEvent.OnAddMessageDismiss)
                         }, onSave = { message, mode->
                             showAddMessageBottomSheet = false
                             if(mode == Mode.CREATE) {

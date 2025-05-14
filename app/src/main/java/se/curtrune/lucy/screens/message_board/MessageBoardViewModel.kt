@@ -14,6 +14,8 @@ import se.curtrune.lucy.screens.message_board.composables.DefaultMessage
 import se.curtrune.lucy.screens.message_board.composables.Mode
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.web.LucindaApi
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 class MessageBoardViewModel : ViewModel() {
     private val lucindaApi = LucindaApi.create()
@@ -23,7 +25,6 @@ class MessageBoardViewModel : ViewModel() {
     private val _state = MutableStateFlow(MessageBoardState())
     val state = _state.asStateFlow()
     private var currentCategory: String = "message"
-    //private val mutableError = MutableLiveData<String>()
     private val eventChannel = Channel<MessageChannel>()
     val eventFlow = eventChannel.receiveAsFlow()
     init {
@@ -58,7 +59,8 @@ class MessageBoardViewModel : ViewModel() {
             messages.add(message)
             filteredMessages = messages.filter { message->message.category == currentCategory }.sortedByDescending { it.created }
             _state.update { it.copy(
-                messages = filteredMessages
+                messages = filteredMessages,
+                defaultMessage = DefaultMessage()
             ) }
         }
     }
@@ -87,6 +89,12 @@ class MessageBoardViewModel : ViewModel() {
             is MessageBoardEvent.Search -> {
                 println("search filter: ${event.filter}")
                 search(event.filter, event.everywhere)
+            }
+
+            is MessageBoardEvent.OnAddMessageDismiss -> {
+                _state.update { it.copy(
+                    defaultMessage = DefaultMessage()
+                ) }
             }
         }
     }
@@ -127,11 +135,19 @@ class MessageBoardViewModel : ViewModel() {
     }
 
     private fun update(message: Message) {
-        println("...update(Message ${message.toString()}")
-/*        viewModelScope.launch {
-            eventChannel.send(MessageChannel.ShowProgressBar(true))
-            val strResult = lucindaApi.updateMessage(message)
-            println("strResult: $strResult")
-        }*/
+        println("...update(Message $message")
+        _state.update { it.copy(
+            defaultMessage = DefaultMessage()
+        ) }
+        message.updated = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
+        viewModelScope.launch {
+            try {
+                val strResult = lucindaApi.updateMessage(message)
+                println("strResult: $strResult")
+            }catch (exception: Exception){
+                println(exception.message)
+                eventChannel.send(MessageChannel.ShowSnackBar(exception.message.toString()))
+            }
+        }
     }
 }

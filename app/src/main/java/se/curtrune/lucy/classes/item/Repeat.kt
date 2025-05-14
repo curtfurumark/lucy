@@ -2,6 +2,7 @@ package se.curtrune.lucy.classes.item
 
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.util.Locale
 
 data class Repeat(
     var id: Long = -1, 
@@ -16,5 +17,8 @@ data class Repeat(
 ){
     enum class Unit{
         DAY, WEEK, MONTH, YEAR
+    }
+    override fun toString(): String {
+        return String.format(Locale.getDefault(), "repeat every %d %s", qualifier, unit.name)
     }
 }

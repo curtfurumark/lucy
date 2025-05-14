@@ -40,6 +40,7 @@ import se.curtrune.lucy.screens.daycalendar.CalendarDayFragment
 import se.curtrune.lucy.screens.dev.DevActivity
 import se.curtrune.lucy.screens.duration.DurationFragment
 import se.curtrune.lucy.screens.enchilada.EnchiladaFragment
+import se.curtrune.lucy.screens.lists.ListFragment
 import se.curtrune.lucy.screens.log_in.OldLogInActivity
 import se.curtrune.lucy.screens.main.composables.ChoosePanicActionDialog
 import se.curtrune.lucy.screens.main.composables.QuoteDialog
@@ -124,6 +125,9 @@ class MainActivity : AppCompatActivity() {
                     }
                     R.id.navigationDrawer_customizeFragment -> {
                         navigate(UserSettingsFragment())
+                    }
+                    R.id.navigationDrawer_lists ->{
+                        navigate(ListFragment())
                     }
                     R.id.navigationDrawer_mentalFragment -> {
                         navigate(MyDayFragment())

@@ -37,7 +37,7 @@ class DateViewModel: ViewModel(){
         items = repository.selectItems(_state.value.date)
         _state.value.items = items
         _state.value.currentParent = todoRoot
-        TopAppbarModule.setTitle(_state.value.currentWeek)
+        TopAppbarModule.setTitle(_state.value.date)
     }
     private fun addItem(item: Item){
         println("...addItem(Item) ${item.heading}")
@@ -199,7 +199,7 @@ class DateViewModel: ViewModel(){
                 items = items
             )
         }
-        TopAppbarModule.setTitle(Week(newDate))
+        TopAppbarModule.setTitle(newDate)
     }
     private fun setCurrentWeek(page: Int){
         println("setCurrentWeek(page : $page)")
@@ -214,11 +214,11 @@ class DateViewModel: ViewModel(){
             date = newDate,
             items =  repository.selectItems(newDate)
         ) }
-        TopAppbarModule.setTitle(Week(newDate))
+        TopAppbarModule.setTitle(newDate)
         currentWeekPage = page
     }
     private fun showAddItemBottomSheet() {
-        println("showAddItemBottomSheet()")
+        println("...showAddItemBottomSheet()")
         viewModelScope.launch {
             eventChannel.send(DayChannel.showAddItemBottomSheet)
             _state.update { it.copy(
@@ -229,6 +229,7 @@ class DateViewModel: ViewModel(){
                         it.targetDate = state.value.date
                         it.targetTime = LocalTime.now()
                         it.parent = state.value.currentParent
+                        it.category = state.value.currentParent?.category
                     }
                 ),
             ) }

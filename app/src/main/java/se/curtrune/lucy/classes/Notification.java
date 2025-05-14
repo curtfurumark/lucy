@@ -65,9 +65,7 @@ public class Notification implements Serializable {
     public void setType(Type type){
         this.type = type;
     }
-    public String toJson(){
-        return new Gson().toJson(this);
-    }
+
 
     @NonNull
     @Override

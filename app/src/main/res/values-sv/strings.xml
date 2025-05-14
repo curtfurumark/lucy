@@ -212,6 +212,7 @@
     <string name="show_password">show password</string>
     <string name="no_category"><![CDATA[<no category>]]></string>
     <string name="open">synka med google kalender</string>
+    <string name="lists">lists</string>
 
 
 </resources>

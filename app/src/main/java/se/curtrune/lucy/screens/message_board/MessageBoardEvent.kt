@@ -7,4 +7,5 @@ sealed interface MessageBoardEvent {
     data class UpdateMessage(val message: Message) : MessageBoardEvent
     data class Search(val filter: String, val everywhere: Boolean) : MessageBoardEvent
     data object OnAddMessageClick: MessageBoardEvent
+    data object OnAddMessageDismiss : MessageBoardEvent
 }
