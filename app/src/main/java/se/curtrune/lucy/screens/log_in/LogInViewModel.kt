@@ -8,9 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import se.curtrune.lucy.modules.LucindaApplication
-import se.curtrune.lucy.screens.dev.DevChannel
-import se.curtrune.lucy.screens.index.IndexState
+import se.curtrune.lucy.app.LucindaApplication
 
 class LogInViewModel: ViewModel() {
     private val _state = MutableStateFlow(LogInState())

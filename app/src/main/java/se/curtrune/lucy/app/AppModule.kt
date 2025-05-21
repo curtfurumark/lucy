@@ -1,13 +1,14 @@
-package se.curtrune.lucy.modules
+package se.curtrune.lucy.app
 
 import android.app.Application
-import android.content.Context
-import se.curtrune.lucy.app.Settings
 import se.curtrune.lucy.features.TimeModule
 import se.curtrune.lucy.features.google_calendar.GoogleCalendarModule
+import se.curtrune.lucy.modules.ContactsModule
+import se.curtrune.lucy.modules.MentalModule
+import se.curtrune.lucy.modules.SystemInfoModule
+import se.curtrune.lucy.modules.UserSettings
 import se.curtrune.lucy.persist.Repository
 import se.curtrune.lucy.persist.SqliteLocalDB
-import se.curtrune.lucy.statistics.Statistics
 import se.curtrune.lucy.workers.InternetWorker
 
 interface AppModule{
@@ -16,7 +17,7 @@ interface AppModule{
     val userSettings: UserSettings
     val internetWorker: InternetWorker
     val googleCalendarModule: GoogleCalendarModule
-    val systemInfoModule:SystemInfoModule
+    val systemInfoModule: SystemInfoModule
     val settings: Settings
     val timeModule: TimeModule
     val sqliteLocalDB: SqliteLocalDB

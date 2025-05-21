@@ -1,4 +1,4 @@
-package se.curtrune.lucy.workers;
+package se.curtrune.lucy.features.notifications;
 
 import static se.curtrune.lucy.util.Logger.log;
 
@@ -10,17 +10,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 
-import java.time.LocalDate;
 import java.util.Calendar;
-import java.util.List;
 
-import se.curtrune.lucy.modules.LucindaApplication;
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.item.Item;
-import se.curtrune.lucy.classes.Notification;
 import se.curtrune.lucy.classes.item.Repeat;
-import se.curtrune.lucy.notifications.AlarmReceiver;
-import se.curtrune.lucy.persist.Repository;
 
 public class NotificationsWorker {
     public static final String CHANNEL_ONE = "CHANNEL_ONE";
@@ -51,17 +45,6 @@ public class NotificationsWorker {
             notificationManager.createNotificationChannel(notificationChannel1);
         }else{
             log("SDK_INT lower");
-        }
-    }
-
-    public static void setNotifications(LocalDate date, Context context){
-        log("NotificationsWorker.setNotifications(LocalDate)");
-        Repository repository = LucindaApplication.appModule.getRepository();
-        List<Item> items = repository.selectItems(date);
-        for( Item item: items){
-            if( item.hasNotification()){
-                setNotification(item, context);
-            }
         }
     }
     public static void setNotification(Item item, Context context){

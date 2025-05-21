@@ -3,7 +3,7 @@ package se.curtrune.lucy.services
 import android.content.Intent
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.MutableLiveData
-import se.curtrune.lucy.modules.LucindaApplication
+import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.workers.MentalWorker
 import java.time.LocalDate

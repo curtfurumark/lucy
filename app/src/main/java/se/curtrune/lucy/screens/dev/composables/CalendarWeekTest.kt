@@ -13,7 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import se.curtrune.lucy.modules.LucindaApplication
+import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.classes.calender.Week
 import se.curtrune.lucy.persist.Queeries
 

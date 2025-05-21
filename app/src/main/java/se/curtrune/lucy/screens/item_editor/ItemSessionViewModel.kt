@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import se.curtrune.lucy.modules.LucindaApplication
+import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.R
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.Mental
@@ -12,10 +12,9 @@ import se.curtrune.lucy.item_settings.CheckBoxSetting
 import se.curtrune.lucy.item_settings.ItemSetting
 import se.curtrune.lucy.item_settings.KeyValueSetting
 import se.curtrune.lucy.services.TimerService
-import se.curtrune.lucy.util.Converter
 import se.curtrune.lucy.util.DateTImeConverter
 import se.curtrune.lucy.util.Logger
-import se.curtrune.lucy.workers.NotificationsWorker
+import se.curtrune.lucy.features.notifications.NotificationsWorker
 
 class ItemSessionViewModel : ViewModel() {
     private var elapsedTime = 0L

@@ -1,7 +1,7 @@
 package se.curtrune.lucy.screens.dev
 
 import android.content.Context
-import se.curtrune.lucy.modules.LucindaApplication
+import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.util.Logger
 

@@ -1,7 +1,7 @@
 package se.curtrune.lucy.workers
 
 import android.content.Context
-import se.curtrune.lucy.modules.LucindaApplication
+import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.classes.State
 import se.curtrune.lucy.classes.item.Item

@@ -3,28 +3,18 @@ package se.curtrune.lucy.screens.dev
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.LaunchedEffect
@@ -37,46 +27,29 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.dev.ui.theme.LucyTheme
 import se.curtrune.lucy.app.InitialScreen
 import se.curtrune.lucy.app.Lucinda
 import se.curtrune.lucy.app.Settings
-import se.curtrune.lucy.classes.Notification
+import se.curtrune.lucy.features.notifications.Notification
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.AddItemFab
-import se.curtrune.lucy.composables.CountDownTimerService
 import se.curtrune.lucy.composables.NavigationDrawer
-import se.curtrune.lucy.composables.StopWatchUsingService
-import se.curtrune.lucy.composables.add_item.AddItemBottomSheet
-import se.curtrune.lucy.composables.add_item.DefaultItemSettings
 import se.curtrune.lucy.composables.top_app_bar.FlexibleTopBar
 import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
 import se.curtrune.lucy.dialogs.RepeatDialog
-import se.curtrune.lucy.modules.LucindaApplication
+import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.persist.DBAdmin
 import se.curtrune.lucy.persist.SqliteLocalDB
-import se.curtrune.lucy.screens.dev.composables.BackupDataBase
-import se.curtrune.lucy.screens.dev.composables.CalendarWeekTest
 import se.curtrune.lucy.screens.dev.composables.DevScreen
-import se.curtrune.lucy.screens.dev.composables.DurationTest
-import se.curtrune.lucy.screens.dev.composables.InsertItemWithID
-import se.curtrune.lucy.screens.dev.composables.OpenDB
-import se.curtrune.lucy.screens.dev.composables.RepeatTest
-import se.curtrune.lucy.screens.dev.composables.TestScrollableYearMonth
-import se.curtrune.lucy.screens.dev.composables.TestSwipeAble
-import se.curtrune.lucy.screens.log_in.OldLogInActivity
-import se.curtrune.lucy.screens.log_in.composables.PasswordTextField
 import se.curtrune.lucy.screens.main.MainActivity
 import se.curtrune.lucy.screens.main.TopAppBarState
-import se.curtrune.lucy.screens.repeat.RepeatActivity
 import se.curtrune.lucy.services.TimerService
 import se.curtrune.lucy.util.Constants
 import se.curtrune.lucy.util.Logger
-import se.curtrune.lucy.workers.NotificationsWorker
+import se.curtrune.lucy.features.notifications.NotificationsWorker
 import java.time.LocalDate
 import java.time.LocalTime
 import java.util.Locale
@@ -244,10 +217,6 @@ class DevActivity : AppCompatActivity() {
         }
     }
 
-    private fun setNotifications() {
-        Logger.log("...setNotifications()")
-        NotificationsWorker.setNotifications(LocalDate.now(), this)
-    }
 
     private fun showRepeatDialog() {
         Logger.log("...showRepeatDialog()")
@@ -264,11 +233,11 @@ class DevActivity : AppCompatActivity() {
         val repository = LucindaApplication.appModule.repository
         val notification = Notification()
         val targetTime = LocalTime.now().plusMinutes(5)
-        notification.time = targetTime
-        notification.date = LocalDate.now()
+        notification.setTime(targetTime)
+        notification.setDate(LocalDate.now())
         var item = Item()
         val heading =
-            String.format(Locale.getDefault(), "notify me %s", notification.time.toString())
+            String.format(Locale.getDefault(), "notify me %s", targetTime.toString())
         item.heading = heading
         item.targetDate = LocalDate.now()
         item.targetTime = targetTime

@@ -68,7 +68,7 @@ import se.curtrune.lucy.screens.main.MainViewModel
 import se.curtrune.lucy.util.Constants
 import se.curtrune.lucy.util.Converter
 import se.curtrune.lucy.util.Logger
-import se.curtrune.lucy.workers.NotificationsWorker
+import se.curtrune.lucy.features.notifications.NotificationsWorker
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat

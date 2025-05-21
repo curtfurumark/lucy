@@ -1,7 +1,6 @@
 package se.curtrune.lucy.screens.log_in
 
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -18,11 +17,9 @@ import se.curtrune.lucy.R
 import se.curtrune.lucy.app.InitialScreen
 import se.curtrune.lucy.app.Lucinda
 import se.curtrune.lucy.app.UserPrefs
-import se.curtrune.lucy.modules.LucindaApplication
-import se.curtrune.lucy.screens.index.IndexActivity
-import se.curtrune.lucy.screens.main.MainActivity
+import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.util.Logger.Companion.log
-import se.curtrune.lucy.workers.NotificationsWorker
+import se.curtrune.lucy.features.notifications.NotificationsWorker
 import se.curtrune.lucy.workers.SettingsWorker
 import java.sql.SQLException
 

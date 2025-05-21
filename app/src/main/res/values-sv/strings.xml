@@ -205,14 +205,17 @@
     <string name="choose_a_calendar">choose a calendar to sync with</string>
     <string name="type_here">skriv här</string>
     <string name="add_a_message_to_the_message_board">Lägg till i anslagstavlan</string>
-    <string name="is_template">template</string>
+    <string name="is_template">Mall</string>
     <string name="updated">Uppdaterad</string>
-    <string name="all_week_heading">hela veckan</string>
+    <string name="all_week_heading">Hela veckan</string>
     <string name="edit_message">edit message</string>
     <string name="show_password">show password</string>
     <string name="no_category"><![CDATA[<no category>]]></string>
     <string name="open">synka med google kalender</string>
-    <string name="lists">lists</string>
+    <string name="lists">Listor</string>
+    <string name="create_list">Skapa lista</string>
+    <string name="create_note">Skapa anteckning</string>
+    <string name="note">Anteckning</string>
 
 
 </resources>

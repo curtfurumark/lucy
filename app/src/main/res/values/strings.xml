@@ -268,4 +268,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="lists">lists</string>
+    <string name="create_list">create list</string>
+    <string name="create_note">create note</string>
+    <string name="note">note</string>
 </resources>

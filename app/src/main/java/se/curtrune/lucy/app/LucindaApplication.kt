@@ -1,6 +1,8 @@
-package se.curtrune.lucy.modules
+package se.curtrune.lucy.app
 
 import android.app.Application
+import se.curtrune.lucy.modules.ContextModule
+import se.curtrune.lucy.modules.TopAppbarModule
 
 class LucindaApplication: Application() {
     companion object{

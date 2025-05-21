@@ -9,7 +9,8 @@ import se.curtrune.lucy.screens.dev.DevState
 
 @Composable
 fun DevScreen(modifier: Modifier = Modifier, state: DevState = DevState(), onEvent: (DevEvent) -> Unit = {}){
-    HolidaysTest(state = state, onEvent = onEvent)
+    //HolidaysTest(state = state, onEvent = onEvent)
+    NotificationTest(onEvent = onEvent)
 }
 
 

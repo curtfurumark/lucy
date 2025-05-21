@@ -22,7 +22,6 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import se.curtrune.lucy.composables.add_item.AddItemDialog
 import se.curtrune.lucy.activities.kotlin.dev.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.screens.daycalendar.CalendarDayFragment
@@ -94,7 +93,7 @@ class MonthFragment : Fragment() {
                     }
                     if( showAddItemDialog){
                         println("should show add item dialog")
-                        AddItemDialog(
+/*                        AddItemDialog(
                             onDismiss = {
                                 showAddItemDialog = false
                             },
@@ -103,7 +102,7 @@ class MonthFragment : Fragment() {
                                 showAddItemDialog = false
                             }
                             , settings = monthViewModel.dialogSettings
-                        )
+                        )*/
                     }
                 }
             }

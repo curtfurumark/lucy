@@ -6,7 +6,7 @@ import android.content.Context;
 
 import java.util.List;
 
-import se.curtrune.lucy.modules.LucindaApplication;
+import se.curtrune.lucy.app.LucindaApplication;
 import se.curtrune.lucy.classes.item.Item;
 import se.curtrune.lucy.persist.Repository;
 

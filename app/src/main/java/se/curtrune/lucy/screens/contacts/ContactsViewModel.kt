@@ -10,11 +10,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import se.curtrune.lucy.classes.Contact
-import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.modules.LucindaApplication
+import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.util.Logger
-import java.util.stream.Collectors
 
 class ContactsViewModel : ViewModel() {
     private var items: List<Item> = emptyList()

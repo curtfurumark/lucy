@@ -1,4 +1,4 @@
-package se.curtrune.lucy.notifications;
+package se.curtrune.lucy.features.notifications;
 
 
 import static se.curtrune.lucy.util.Logger.log;
@@ -16,7 +16,6 @@ import androidx.core.app.NotificationManagerCompat;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.screens.main.MainActivity;
-import se.curtrune.lucy.workers.NotificationsWorker;
 
 
 public class AlarmReceiver extends BroadcastReceiver {

@@ -20,8 +20,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.composables.add_item.AddItemDialog
 import se.curtrune.lucy.composables.AddItemFab
+import se.curtrune.lucy.composables.add_item.AddItemBottomSheet
+import se.curtrune.lucy.composables.add_item.DefaultItemSettings
 import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
 import se.curtrune.lucy.screens.ItemChannel
 import se.curtrune.lucy.screens.enchilada.composables.EnchiladaScreen
@@ -88,12 +89,15 @@ class EnchiladaFragment : Fragment() {
                     println("show message")
                 }
                 if( showAddItemDialog){
-                    AddItemDialog(onDismiss = {
-                        showAddItemDialog = false
-                    }, onConfirm = { item->
-                        enchiladaViewModel.onEvent(ItemEvent.InsertItem(item))
-                    }
-                    , settings = DialogSettings())
+                    AddItemBottomSheet(
+                        defaultItemSettings = DefaultItemSettings(),
+                        onDismiss = {
+                            showAddItemDialog = false
+                        },
+                        onSave =  { item->
+                            enchiladaViewModel.onEvent(ItemEvent.InsertItem(item))
+                        }
+                    )
                 }
             }
         }

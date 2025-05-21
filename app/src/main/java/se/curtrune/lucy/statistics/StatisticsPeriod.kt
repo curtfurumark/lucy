@@ -1,6 +1,6 @@
 package se.curtrune.lucy.statistics
 
-import se.curtrune.lucy.modules.LucindaApplication
+import se.curtrune.lucy.app.LucindaApplication
 import java.time.LocalDate
 
 class StatisticsPeriod(var from: LocalDate, var to: LocalDate) {

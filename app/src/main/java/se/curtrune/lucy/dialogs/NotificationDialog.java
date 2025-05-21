@@ -23,7 +23,7 @@ import java.time.LocalTime;
 
 import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.item.Item;
-import se.curtrune.lucy.classes.Notification;
+import se.curtrune.lucy.features.notifications.Notification;
 import se.curtrune.lucy.util.Converter;
 
 
@@ -81,9 +81,9 @@ public class NotificationDialog extends BottomSheetDialogFragment {
         Notification notification = new Notification();
         notification.setDate(textViewDate.getText().toString());
         notification.setTime(textViewTime.getText().toString());
-        notification.setType(Notification.Type.PENDING);
-        notification.setTitle(item.getHeading());
-        notification.setContent(item.getHeading());
+        notification.type = Notification.Type.PENDING;
+        notification.title = item.getHeading();
+        notification.content = item.getHeading();
         return notification;
     }
 
@@ -104,9 +104,9 @@ public class NotificationDialog extends BottomSheetDialogFragment {
         notification = new Notification();
         notification.setDate(targetDate);
         notification.setTime(targetTime);
-        notification.setType(Notification.Type.NOTIFICATION);
-        notification.setTitle(item.getHeading());
-        notification.setContent(item.getHeading());
+        notification.type = Notification.Type.NOTIFICATION;
+        notification.title = item.getHeading();
+        notification.content = item.getHeading();
     }
     private void initListeners(){
         if( VERBOSE) log("...initListeners()");
@@ -125,7 +125,7 @@ public class NotificationDialog extends BottomSheetDialogFragment {
         textViewDate.setText(targetDate.toString());
         if( action.equals(Action.EDIT)){
             buttonSave.setText(getString(R.string.update));
-            if(notification.getType().equals(Notification.Type.NOTIFICATION)){
+            if(notification.type.equals(Notification.Type.NOTIFICATION)){
                 radioButtonNotification.setChecked(true);
             }else{
                 radioButtonAlarm.setChecked(true);

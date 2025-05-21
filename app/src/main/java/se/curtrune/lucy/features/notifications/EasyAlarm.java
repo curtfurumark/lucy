@@ -1,4 +1,4 @@
-package se.curtrune.lucy.notifications;
+package se.curtrune.lucy.features.notifications;
 
 
 
@@ -13,7 +13,6 @@ import android.os.Build;
 import java.util.Calendar;
 
 import se.curtrune.lucy.classes.item.Item;
-import se.curtrune.lucy.classes.Notification;
 
 public class EasyAlarm  {
     private static final int UNIQUE_ID = 2;

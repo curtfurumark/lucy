@@ -20,11 +20,8 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
-import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.composables.AddItemFab
-import se.curtrune.lucy.modules.LucindaApplication
 import se.curtrune.lucy.screens.main.MainViewModel
 import se.curtrune.lucy.screens.message_board.composables.AddMessageBottomSheet
 import se.curtrune.lucy.screens.message_board.composables.MessageBoardScreen

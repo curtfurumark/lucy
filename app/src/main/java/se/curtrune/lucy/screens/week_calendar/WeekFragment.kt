@@ -25,7 +25,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.classes.calender.Week
-import se.curtrune.lucy.composables.add_item.AddItemDialog
 import se.curtrune.lucy.screens.daycalendar.CalendarDayFragment
 import se.curtrune.lucy.screens.main.MainViewModel
 import se.curtrune.lucy.screens.week_calendar.composables.CalendarWeekHeading
@@ -92,7 +91,7 @@ class WeekFragment : Fragment() {
                                 })
                         }
                     }
-                    if(showAddItemDialog){
+/*                    if(showAddItemDialog){
                         //val settings = I
                         AddItemDialog(onDismiss = {
                             showAddItemDialog = false
@@ -100,7 +99,7 @@ class WeekFragment : Fragment() {
                             weekViewModel.onEvent(WeekEvent.AddItem(item))
                             showAddItemDialog = false
                         }, settings = weekViewModel.dialogSettings)
-                    }
+                    }*/
                     if(showMessageDialog){
                         println("show message dialog")
                     }

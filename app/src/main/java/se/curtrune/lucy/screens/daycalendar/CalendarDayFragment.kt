@@ -23,14 +23,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
-import se.curtrune.lucy.modules.LucindaApplication
-import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
+import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.ItemStatistics
 import se.curtrune.lucy.classes.calender.CalenderDate
-import se.curtrune.lucy.composables.add_item.AddItemDialog
 import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.composables.ConfirmDeleteDialog
 import se.curtrune.lucy.composables.add_item.AddItemBottomSheet
@@ -40,7 +37,6 @@ import se.curtrune.lucy.screens.daycalendar.composables.DayCalendar
 import se.curtrune.lucy.screens.item_editor.ItemEditorFragment
 import se.curtrune.lucy.screens.main.MainViewModel
 import se.curtrune.lucy.util.Logger
-import java.time.LocalTime
 
 
 class CalendarDayFragment() : Fragment() {
@@ -143,17 +139,6 @@ class CalendarDayFragment() : Fragment() {
                                         dayViewModel.onEvent(DayEvent.AddItem(item))
                                     },
                                 )
-/*                                AddItemDialog(
-                                    onDismiss = {showAddItemDialog = false},
-                                    onConfirm = {item ->
-                                        showAddItemDialog = false
-                                        dayViewModel.onEvent(DayEvent.AddItem(item))
-                                    },
-                                    settings = DialogSettings(
-                                        targetDate = state.value.date,
-                                        targetTime = LocalTime.now(),
-                                        parent = state.value.currentParent)
-                                )*/
                             }
                             if( state.value.editItem){
                                 println("edit item please")
@@ -162,7 +147,6 @@ class CalendarDayFragment() : Fragment() {
                             }
                             if(state.value.showStats){
                                 state.value.currentItem?.let { it1 -> showItemStatisticsDialog(it1) }
-                                //Toast.makeText(context, "statistics doncha just love em", Toast.LENGTH_SHORT).show()
                                 state.value.showStats = false
                             }
                         }

@@ -1,6 +1,6 @@
 package se.curtrune.lucy.services
 
-import se.curtrune.lucy.modules.LucindaApplication
+import se.curtrune.lucy.app.LucindaApplication
 
 object UpdaterRepeats {
     fun updateRepeats(){

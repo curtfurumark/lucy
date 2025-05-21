@@ -6,7 +6,7 @@ import se.curtrune.lucy.activities.economy.classes.Transaction
 import se.curtrune.lucy.classes.Contact
 import se.curtrune.lucy.classes.ItemStatistics
 import se.curtrune.lucy.classes.Mental
-import se.curtrune.lucy.classes.Notification
+import se.curtrune.lucy.features.notifications.Notification
 import se.curtrune.lucy.classes.State
 import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.classes.calender.Week
@@ -133,12 +133,12 @@ open class Logger {
         @JvmStatic
         fun log(notification: Notification) {
             log("log(Notification)")
-            log("\tdate", notification.date)
-            log("\ttime", notification.time)
+            log("\tdate", notification.getDate())
+            log("\ttime", notification.getTime())
             log("\ttype", notification.type.toString())
             log("\ttitle", notification.title)
             log("\tcontent", notification.content)
-            log("\ttoJson", notification.toJson())
+            //log("\ttoJson", notification.toJson())
         }
 
         @JvmStatic

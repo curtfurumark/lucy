@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
-import se.curtrune.lucy.classes.Notification
+import se.curtrune.lucy.features.notifications.Notification
 import se.curtrune.lucy.util.DateTImeConverter
 import java.time.LocalTime
 
@@ -110,7 +110,7 @@ fun NotificationDialog(onDismiss: ()->Unit, onConfirm: (Notification)->Unit){
             },
                 onConfirm = { state->
                     time = LocalTime.of(state.hour, state.minute)
-                    notification.time = time
+                    notification.setTime(time)
                     showTimeDialog = false
                 })
         }

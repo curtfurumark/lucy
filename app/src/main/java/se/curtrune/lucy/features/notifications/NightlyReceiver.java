@@ -1,4 +1,4 @@
-package se.curtrune.lucy.notifications;
+package se.curtrune.lucy.features.notifications;
 
 import static se.curtrune.lucy.util.Logger.log;
 

@@ -24,13 +24,14 @@ import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.composables.add_item.AddItemBottomSheet
-import se.curtrune.lucy.modules.LucindaApplication
+import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.screens.item_editor.ItemEditorFragment
 import se.curtrune.lucy.screens.appointments.composables.AppointmentsScreen
 import se.curtrune.lucy.screens.main.MainViewModel
 
 class AppointmentsFragment : Fragment() {
-    private val appointmentsViewModel: AppointmentsViewModel by viewModels{AppointmentsViewModel.Factory(LucindaApplication.appModule.repository)}
+    private val appointmentsViewModel: AppointmentsViewModel by viewModels{AppointmentsViewModel.Factory(
+        LucindaApplication.appModule.repository)}
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

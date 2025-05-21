@@ -1,6 +1,5 @@
 package se.curtrune.lucy.screens.message_board
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
@@ -9,10 +8,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import se.curtrune.lucy.modules.LucindaApplication
+import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.screens.message_board.composables.DefaultMessage
 import se.curtrune.lucy.screens.message_board.composables.Mode
-import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.web.LucindaApi
 import java.time.LocalDateTime
 import java.time.ZoneOffset

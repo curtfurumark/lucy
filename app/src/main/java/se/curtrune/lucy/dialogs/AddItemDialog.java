@@ -38,7 +38,7 @@ import se.curtrune.lucy.R;
 import se.curtrune.lucy.classes.Action;
 import se.curtrune.lucy.classes.item.Item;
 import se.curtrune.lucy.classes.Mental;
-import se.curtrune.lucy.classes.Notification;
+import se.curtrune.lucy.features.notifications.Notification;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.item_settings.ItemSetting;
 import se.curtrune.lucy.item_settings.ItemSettingAdapter;

@@ -16,26 +16,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
-import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.composables.add_item.AddItemBottomSheet
-import se.curtrune.lucy.composables.add_item.DefaultItemSettings
 import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
-import se.curtrune.lucy.modules.LucindaApplication
-import se.curtrune.lucy.screens.dev.DevEvent
+import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.screens.item_editor.ItemEditorFragment
 import se.curtrune.lucy.screens.main.MainViewModel
 import se.curtrune.lucy.screens.projects.composables.ProjectsScreen
-import se.curtrune.lucy.util.Logger
 
 class ProjectsFragment : Fragment(){
-    private val projectsViewModel : ProjectsViewModel by viewModels{ProjectsViewModel.Factory(LucindaApplication.appModule.repository)}
+    private val projectsViewModel : ProjectsViewModel by viewModels{ProjectsViewModel.Factory(
+        LucindaApplication.appModule.repository)}
     private lateinit var mainViewModel: MainViewModel
 
     init {

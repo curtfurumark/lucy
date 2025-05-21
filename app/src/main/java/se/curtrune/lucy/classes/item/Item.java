@@ -21,7 +21,7 @@ import se.curtrune.lucy.classes.Content;
 import se.curtrune.lucy.classes.ItemDuration;
 import se.curtrune.lucy.classes.Listable;
 import se.curtrune.lucy.classes.Mental;
-import se.curtrune.lucy.classes.Notification;
+import se.curtrune.lucy.features.notifications.Notification;
 import se.curtrune.lucy.classes.Reward;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;

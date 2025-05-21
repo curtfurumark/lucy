@@ -23,7 +23,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.composables.add_item.AddItemDialog
 import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
 import se.curtrune.lucy.screens.item_editor.ItemEditorFragment
@@ -54,14 +53,14 @@ class TodoFragment : Fragment() {
                 }
                 @Composable
                 fun ShowAddItemDialog(settings: DialogSettings) {
-                    AddItemDialog(
+/*                    AddItemDialog(
                         onDismiss = {
                             showAddItemDialog = false
                         },
                         onConfirm = { item ->
                             todoViewModel.onEvent(ItemEvent.InsertItem(item))
                             showAddItemDialog = false
-                        }, settings = settings)
+                        }, settings = settings)*/
                 }
                 LaunchedEffect(todoViewModel) {
                     todoViewModel.eventFlow.collect{ event->
@@ -98,7 +97,7 @@ class TodoFragment : Fragment() {
                         if (showProgressBar) {
                             CircularProgressIndicator()
                         }
-                        if (showAddItemDialog) {
+/*                        if (showAddItemDialog) {
                             AddItemDialog(onDismiss = {
                                 showAddItemDialog = false
                             },
@@ -106,7 +105,7 @@ class TodoFragment : Fragment() {
                                     todoViewModel.onEvent(ItemEvent.InsertItem(item))
                                     showAddItemDialog = false
                                 }, settings = state.value.newItemSettings)
-                        }
+                        }*/
 
                     }
                 }

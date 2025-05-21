@@ -2,7 +2,7 @@ package se.curtrune.lucy.persist
 
 import android.content.Context
 import se.curtrune.lucy.classes.Mental
-import se.curtrune.lucy.modules.LucindaApplication
+import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.calender.CalendarWeek
 import se.curtrune.lucy.classes.calender.CalenderDate

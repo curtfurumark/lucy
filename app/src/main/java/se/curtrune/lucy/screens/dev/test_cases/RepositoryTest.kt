@@ -1,6 +1,6 @@
 package se.curtrune.lucy.screens.dev.test_cases
 
-import se.curtrune.lucy.modules.LucindaApplication
+import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.calender.Week
 import se.curtrune.lucy.persist.Queeries

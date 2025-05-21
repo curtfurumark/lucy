@@ -13,15 +13,13 @@ import se.curtrune.lucy.app.App
 import se.curtrune.lucy.app.Settings
 import se.curtrune.lucy.classes.ItemDuration
 import se.curtrune.lucy.classes.MedicineContent
-import se.curtrune.lucy.classes.Notification
+import se.curtrune.lucy.features.notifications.Notification
 import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.item.Repeat
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.util.gson.MyGson.getMyGson
 import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
 import java.util.function.Consumer
 
 class DBAdmin {
@@ -247,7 +245,7 @@ class DBAdmin {
             cv.put("estimate", item.getEstimate().toJson());
         }*/
             if (item.hasNotification()) {
-                cv.put("notification", item.notification.toJson())
+                cv.put("notification", gson.toJson(item.notification))
             }
             cv.put("template", if (item.isTemplate) 1 else 0)
             cv.put("color", item.color)
