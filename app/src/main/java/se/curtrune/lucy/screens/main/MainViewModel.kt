@@ -19,6 +19,7 @@ import se.curtrune.lucy.app.UserPrefs
 import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.composables.top_app_bar.SearchFilter
 import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
+import se.curtrune.lucy.screens.main.navigation.NavigationDrawerState
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.web.LucindaApi
 
@@ -26,6 +27,8 @@ class MainViewModel : ViewModel() {
     private val repository = LucindaApplication.appModule.repository
     private val mentalModule = LucindaApplication.appModule.mentalModule
     private val internetWorker = LucindaApplication.appModule.internetWorker
+    private val userSettings = LucindaApplication.appModule.userSettings
+    val navigationState = MutableStateFlow(NavigationDrawerState())
     private val  _state =  MutableStateFlow(MainState())
     val state = _state.asStateFlow()
     private val _topAppBarState = MutableStateFlow(TopAppBarState())
@@ -33,8 +36,6 @@ class MainViewModel : ViewModel() {
     private val _eventChannel = Channel<MainChannelEvent>()
     val eventChannel = _eventChannel.receiveAsFlow()
     private val mutableMessage = MutableLiveData<String>()
-/*    private val _filter = MutableStateFlow("")
-    val filter = _filter.asStateFlow()*/
     private val _searchFilter = MutableStateFlow(SearchFilter("", false))
     val searchFilter = _searchFilter.asStateFlow()
     private val _mental = MutableLiveData<Mental>()
@@ -49,9 +50,8 @@ class MainViewModel : ViewModel() {
 
 
     private fun checkIfUpdateAvailable() {
-        Logger.log("MainViewModel.checkIfUpdateAvailable()")
-        //LucindaApplication.contextModule
-        if( checkInternet()){
+        println("MainViewModel.checkIfUpdateAvailable()")
+/*        if( checkInternet()){
             println("...internet is connected")
             viewModelScope.launch {
                 try {
@@ -79,8 +79,7 @@ class MainViewModel : ViewModel() {
             viewModelScope.launch {
                 _eventChannel.send(MainChannelEvent.ShowMessage("no internet connection"))
             }
-        }
-
+        }*/
     }
     fun onEvent(event: MainEvent){
         when(event){
@@ -101,6 +100,15 @@ class MainViewModel : ViewModel() {
             is MainEvent.StartSequence -> {
                 startSequence()
             }
+        }
+    }
+    fun navigate(fragment: LucindaFragment){
+        println("MainViewModel.navigate(${fragment.toString()})")
+        _state.update { it.copy(
+            currentFragment = fragment
+        ) }
+        viewModelScope.launch {
+            _eventChannel.send(MainChannelEvent.ShowNavigationDrawer(false))
         }
     }
     fun onEvent(event: TopAppBarEvent){
@@ -125,6 +133,7 @@ class MainViewModel : ViewModel() {
     private fun navigateDevActivity() {
         println("MainViewModel.navigate()")
         viewModelScope.launch {
+            _eventChannel.send(MainChannelEvent.ShowNavigationDrawer(false))
            _eventChannel.send(MainChannelEvent.NavigateDevActivity)
         }
     }
@@ -135,7 +144,7 @@ class MainViewModel : ViewModel() {
     private fun openNavigationDrawer(){
         Logger.log("LucindaViewModel.openNavigationDrawer()")
         viewModelScope.launch {
-            _eventChannel.send(MainChannelEvent.OpenNavigationDrawer)
+            _eventChannel.send(MainChannelEvent.ShowNavigationDrawer(true))
         }
     }
     fun setTitle(title: String){

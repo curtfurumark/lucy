@@ -16,14 +16,15 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import se.curtrune.lucy.screens.user_settings.MentalFlag;
-import se.curtrune.lucy.screens.user_settings.PanicOption;
+import se.curtrune.lucy.screens.settings.MentalFlag;
+import se.curtrune.lucy.screens.settings.PanicOption;
 import se.curtrune.lucy.workers.SettingsWorker;
 
 public class UserPrefs {
     private static final String KEY_GOOGLE_CALENDAR_ID = "KEY_GOOGLE_CALENDAR_ID";
     private static final String KEY_SHOW_MENTAL_STATUS = "KEY_SHOW_MENTAL_STATUS";
     private static final String KEY_MENTAL_FLAG = "KEY_MENTAL_FLAG";
+    private static final String KEY_SHOW_MEDICINE = "KEY_SHOW_MEDICINE";
     public static boolean VERBOSE = false;
     public static final String KEY_ICE_PHONE_NUMBER = "KEY_ICE_PHONE_NUMBER";
     public static final String USE_DARK_MODE = "USE_DARK_MODE";
@@ -40,6 +41,8 @@ public class UserPrefs {
     public static final String KEY_INITIAL_SCREEN = "KEY_INITIAL_SCREEN";
     public static final String KEY_SCROLL_POSITION_DAY_CALENDAR = "KEY_SCROLL_POSITION_DAY_CALENDAR";
 
+    public static final String KEY_SHOW_PROJECTS = "KEY_SHOW_PROJECTS";
+    public static final String KEY_SHOW_DURATION = "KEY_SHOW_DURATION";
     public static void addCategory(String category, Context context){
         log("UserPrefs.addCategory(String, Context)", category);
         Set<String> setCategories = Settings.getSet(KEY_CATEGORIES, context);
@@ -81,6 +84,12 @@ public class UserPrefs {
         return Settings.getInt(KEY_SCROLL_POSITION_DAY_CALENDAR,0,  context);
 
     }
+    public static boolean getShowDuration(Context context) {
+        return Settings.getBoolean(KEY_SHOW_DURATION, false, context);
+    }
+    public static boolean getShowMedicine(Context context) {
+        return Settings.getBoolean(KEY_SHOW_MEDICINE, false, context);
+    }
     public static boolean getSyncWithGoogleCalendar(Context context){
         return Settings.getBoolean(SYNC_WITH_GOOGLE_CALENDAR, false, context);
     }
@@ -108,12 +117,21 @@ public class UserPrefs {
         Random random = new Random();
         return urls.get(random.nextInt(urls.size()));
     }
+    public  static boolean getShowProjects(Context context) {
+        log("UserPrefs.getShowProjects(Context)");
+        return Settings.getBoolean(KEY_SHOW_PROJECTS, false, context);
+
+    }
     public static boolean isDevMode(Context context) {
         return Settings.getBoolean(KEY_DEV_MODE, false, context);
     }
 
     public static void setIcePhoneNumber(int phoneNumber, Context context){
         Settings.addInt(KEY_ICE_PHONE_NUMBER, phoneNumber, context);
+    }
+    public static void setShowDuration(boolean show, Context context){
+        Settings.addBoolean(KEY_SHOW_DURATION, show, context);
+
     }
 
     public static void setUsesPassword(boolean usesPassword, Context context){
@@ -136,6 +154,9 @@ public class UserPrefs {
     public static void setScrollPositionDayCalender(int position, Context context){
         Settings.addInt(KEY_SCROLL_POSITION_DAY_CALENDAR, position, context);
 
+    }
+    public static void setShowMedicine(boolean show, Context context){
+        Settings.addBoolean(KEY_SHOW_MEDICINE, show, context);
     }
     public static void setSyncWithGoogleCalendar(boolean syncWithGoogleCalendar, Context context) {
         Settings.addBoolean(SYNC_WITH_GOOGLE_CALENDAR, syncWithGoogleCalendar, context);
@@ -180,6 +201,10 @@ public class UserPrefs {
         Settings.saveSet(KEY_CATEGORIES,urlSet, context );
     }
 
+    public static void setShowProjects(boolean show, Context context){
+        log("UserPrefs.setShowProjects(boolean, Context)", show);
+        Settings.addBoolean(KEY_SHOW_PROJECTS, show, context);
+    }
     public static void deletePanicUrl(String url, Context context) {
         log("UserPrefs.deletePanicUrl(String)", url);
         Set<String> urls = UserPrefs.getPanicUrls(context);

@@ -5,7 +5,6 @@ import se.curtrune.lucy.classes.calender.CalendarWeek
 import se.curtrune.lucy.classes.calender.Week
 
 data class WeekState(
-    //val calendarDates: List<CalenderDate> = emptyList(),
     val calendarWeek: CalendarWeek = CalendarWeek(),
     val showContextMenu: Boolean = false,
     val currentWeek: Week = Week(),

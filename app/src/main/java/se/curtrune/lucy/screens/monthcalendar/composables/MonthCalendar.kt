@@ -22,10 +22,10 @@ import se.curtrune.lucy.util.DateTImeConverter
 import se.curtrune.lucy.util.cecilia
 
 @Composable
-fun MonthCalendar(state: MonthCalendarState, onEvent: (MonthCalendarEvent)->Unit){
+fun MonthCalendar(modifier: Modifier = Modifier, state: MonthCalendarState, onEvent: (MonthCalendarEvent)->Unit){
     val ym = state.yearMonth
     println("MonthCalendar()year: ${ym.year} month: ${ym.month} ")
-    Column() {
+    Column(modifier = modifier) {
         //MonthHeader(state = state, onEvent = onEvent)
         Spacer(modifier = Modifier.height(4.dp))
         WeekDaysHeader()

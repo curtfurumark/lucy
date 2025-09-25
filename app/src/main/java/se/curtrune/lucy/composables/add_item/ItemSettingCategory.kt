@@ -28,36 +28,50 @@ import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.screens.medicine.composable.DropdownItem
 
 @Composable
-fun ItemSettingCategory(item: Item?){
-    Column(modifier = Modifier.fillMaxWidth()) {
+fun ItemSettingCategory(item: Item, onCategoryChanged: (String) -> Unit){
+    var category by remember {
+        mutableStateOf(item.category)
+    }
+    var expandCategoryList by remember {
+        mutableStateOf(false)
+    }
+    Card(
+        modifier = Modifier.fillMaxWidth()
+            .clickable{
+                println("click")
+                //onCategoryChanged(category)
+            }
+    ) {
         Text(text = stringResource(R.string.category))
-        if (item != null) {
+        if (category.isNotBlank()) {
             Text(text = item.category)
+        }else{
+            Text(text = "click to set category")
+
         }
+
     }
 }
 @Composable
-fun ItemSettingCategory(item: Item, categories: List<String>, onEvent: (String) -> Unit){
+fun ItemSettingCategory(item: Item, categories: List<String>, onCategoryChanged: (String) -> Unit){
     var category by remember {
         mutableStateOf(item.category)
     }
     var categoryListExpanded by remember {
         mutableStateOf(false)
     }
-    val hasCategory = item.category.isNotBlank()
     Card(modifier = Modifier.fillMaxWidth()
-        .clickable {categoryListExpanded = !categoryListExpanded }
-        .padding(8.dp)) {
+        .clickable {categoryListExpanded = !categoryListExpanded })
+    {
         Row(modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if( hasCategory){
+            if( category.isNotBlank()){
                 Text(text = category)
             }else {
                 Text(text = stringResource(R.string.category))
             }
-            //Text(text = category)
             Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = "chose category")
             DropdownMenu(expanded = categoryListExpanded, onDismissRequest = {
                 categoryListExpanded = false
@@ -66,7 +80,7 @@ fun ItemSettingCategory(item: Item, categories: List<String>, onEvent: (String) 
                     DropdownItem(action =it) { cat ->
                         category = cat
                         categoryListExpanded = false
-                        onEvent(category)
+                        onCategoryChanged(category)
                     }
                 }
             }
@@ -81,6 +95,6 @@ fun PreviewItemSettingCategory(){
         val item = Item()
         item.category = "dev"
         val categories = listOf("dev", "bass", "health")
-        ItemSettingCategory(item = item, categories = categories,onEvent = {})
+        ItemSettingCategory(item = item, categories = categories,onCategoryChanged = {})
     }
 }

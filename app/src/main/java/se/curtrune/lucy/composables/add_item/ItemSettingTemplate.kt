@@ -28,15 +28,15 @@ fun ItemSettingTemplate(item: Item, onIsTemplate: (Boolean) -> Unit){
     }
     Card(
         modifier = Modifier.fillMaxWidth()
-            .padding(2.dp)
-        //.border(Dp.Hairline, color = Color.LightGray)
-        .padding(start = 8.dp)) {
+            .padding(2.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = stringResource(R.string.is_template))
+            Text(
+                text = stringResource(R.string.is_template),
+                modifier = Modifier.padding(start= 8.dp))
             Checkbox(checked = isTemplate, onCheckedChange = {
                 isTemplate = !isTemplate
                 onIsTemplate(isTemplate)

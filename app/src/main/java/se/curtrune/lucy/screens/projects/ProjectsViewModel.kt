@@ -107,8 +107,6 @@ class ProjectsViewModel(private val repository: Repository) : ViewModel() {
     private fun showAddItemDialog() {
         _state.update {it.copy(
             defaultItemSettings = it.defaultItemSettings.copy(
-                targetDate = LocalDate.of(0, 1, 1),
-                targetTime = LocalTime.ofSecondOfDay(0),
                 parent = currentParent,
                 isEvent = false,
                 item = Item().also {
@@ -172,7 +170,6 @@ class ProjectsViewModel(private val repository: Repository) : ViewModel() {
 
     class Factory(private val repository: Repository) :
         ViewModelProvider.Factory {
-
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(ProjectsViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")

@@ -29,15 +29,15 @@ fun ItemSettingAppointment(item: Item, onEvent: (Boolean) -> Unit){
     var isAppointment by remember {
         mutableStateOf(item.isAppointment)
     }
-    Card(modifier = Modifier.fillMaxWidth()
-        //.border(Dp.Hairline, color = Color.LightGray
-        .padding(start = 8.dp)) {
+    Card(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "appointment")
+            Text(
+                text = "appointment",
+                modifier = Modifier.padding(4.dp))
             Checkbox(checked = isAppointment, onCheckedChange = {
                 isAppointment = !isAppointment
                 onEvent(isAppointment)

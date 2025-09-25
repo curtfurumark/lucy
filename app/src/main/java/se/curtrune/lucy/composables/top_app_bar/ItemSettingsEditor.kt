@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,7 +40,7 @@ fun ItemSettingsEditor(item: Item, parent: Item?){
 
         }) }
         item {ItemSettingRepeat(item = item, onRepeatEvent = {})}
-        item{ItemSettingCategory(item = parent)}
+        //item{ItemSettingCategory(item = parent)}
 
         item{ItemSettingTags(item = parent, onEvent = {
             println("tags event")
@@ -57,8 +58,7 @@ fun ItemSettingCalendar(item: Item, onEvent: (Boolean) -> Unit){
     var isCalendarItem by remember {
         mutableStateOf(item.isCalenderItem)
     }
-    Box(modifier = Modifier.fillMaxWidth()
-        .border(Dp.Hairline, color = Color.LightGray)
+    Card(modifier = Modifier.fillMaxWidth()
         .padding(start = 8.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),

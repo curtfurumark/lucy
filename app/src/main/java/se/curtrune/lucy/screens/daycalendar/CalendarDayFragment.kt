@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
@@ -34,8 +35,9 @@ import se.curtrune.lucy.composables.add_item.AddItemBottomSheet
 import se.curtrune.lucy.composables.add_item.DefaultItemSettings
 import se.curtrune.lucy.dialogs.ItemStatisticsDialog
 import se.curtrune.lucy.screens.daycalendar.composables.DayCalendar
-import se.curtrune.lucy.screens.item_editor.ItemEditorFragment
+import se.curtrune.lucy.screens.main.LucindaFragment
 import se.curtrune.lucy.screens.main.MainViewModel
+import se.curtrune.lucy.util.Constants
 import se.curtrune.lucy.util.Logger
 
 
@@ -62,12 +64,7 @@ class CalendarDayFragment() : Fragment() {
                         mutableStateOf(false)
                     }
                     val mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
-                    //val filter = mainViewModel.filter.collectAsState()
                     val searchFilter = mainViewModel.searchFilter.collectAsState()
-/*                    LaunchedEffect(filter.value) {
-                        println("launched effect, calendar day filter: ${filter.value} ")
-                        //dayViewModel.onEvent(DayEvent.Search(filter.value, true))
-                    }*/
                     LaunchedEffect(searchFilter.value) {
                         println("launched effect searchFilter, calendar day filter: ${searchFilter.value} ")
                         dayViewModel.onEvent(DayEvent.Search(searchFilter.value.filter, searchFilter.value.everywhere))
@@ -97,6 +94,14 @@ class CalendarDayFragment() : Fragment() {
 
                                 is DayChannel.ShowMessage -> {
                                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                                }
+
+                                is DayChannel.EditItem -> {
+                                    Toast.makeText(context, "edit item", Toast.LENGTH_SHORT).show()
+                                }
+
+                                is DayChannel.ShowNavigationDrawer -> {
+                                    println("show navigation drawer")
                                 }
                             }
                         }
@@ -159,17 +164,17 @@ class CalendarDayFragment() : Fragment() {
     private fun navigate(item: Item){
         println("navigate")
         val mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
-        mainViewModel.updateFragment(
+        throw Exception("not implemented, deprecated")
+/*        mainViewModel.updateFragment(
             ItemEditorFragment(
                 item
             )
-        )
-    }
-    @Composable
-    private fun Testing(defaultItemSettings: DefaultItemSettings){
-        println("testing")
 
+        )*/
+//        mainViewModel.navigate(LucindaFragment.ItemEditor(bundleOf(Constants.BUNDLED_ITEM to item)))
+        //val bundle = bundleOf("item" to item)
     }
+
 
     private fun showItemStatisticsDialog(item: Item) {
         Logger.log("...showItemStatisticsDialog()")

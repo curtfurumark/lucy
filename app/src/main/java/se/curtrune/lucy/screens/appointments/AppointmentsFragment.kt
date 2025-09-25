@@ -21,12 +21,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
+import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.composables.add_item.AddItemBottomSheet
-import se.curtrune.lucy.app.LucindaApplication
-import se.curtrune.lucy.screens.item_editor.ItemEditorFragment
-import se.curtrune.lucy.screens.appointments.composables.AppointmentsScreen
 import se.curtrune.lucy.screens.main.MainViewModel
 
 class AppointmentsFragment : Fragment() {
@@ -69,9 +67,9 @@ class AppointmentsFragment : Fragment() {
                         }
                     ) { padding->
                         Surface(modifier = Modifier.padding(padding)) {
-                            AppointmentsScreen(state = state.value, onEvent = { event ->
+/*                            AppointmentsList state = state.value, onEvent = { event ->
                                 appointmentsViewModel.onEvent(event)
-                            })
+                            })*/
                         }
                     }
                     if( showAddAppointmentDialog){
@@ -98,11 +96,7 @@ class AppointmentsFragment : Fragment() {
     private fun navigateToEditor(item: Item) {
         println("...editAppointment(${item.heading})")
         val mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
-        mainViewModel.updateFragment(
-            ItemEditorFragment(
-                item
-            )
-        )
+        throw Exception("not implemented, deprecated")
     }
     private fun showMessage(message: String){
         Toast.makeText(requireContext(),message, Toast.LENGTH_LONG ).show()

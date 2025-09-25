@@ -91,9 +91,12 @@ fun RepositoryTest() {
 
         }
         AnimatedVisibility(visible = editorVisible) {
-            ItemEditor(item = item, onEvent = {
-                repository.delete(item)
-            })
+            ItemEditor(
+                item = item,
+                onEvent = {
+                    repository.delete(item)
+                },
+                onSave = {})
         }
     }
 }

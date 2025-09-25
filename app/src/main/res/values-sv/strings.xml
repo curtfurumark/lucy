@@ -216,6 +216,8 @@
     <string name="create_list">Skapa lista</string>
     <string name="create_note">Skapa anteckning</string>
     <string name="note">Anteckning</string>
+    <string name="day_calendar">Dag\t\t</string>
+    <string name="health">Hälsa</string>
 
 
 </resources>

@@ -1,6 +1,8 @@
 package se.curtrune.lucy.util
 
 object Constants {
+    const val BUNDLED_ITEM: String = "BUNDLED_ITEM"
+    const val ITEM_KEY: String = "ITEM_KEY"
     const val INTENT_SERIALIZED_ITEM: String = "INTENT_SERIALIZED_ITEM"
     const val INITIAL_SCREEN: String = "INITIAL_SCREEN"
 

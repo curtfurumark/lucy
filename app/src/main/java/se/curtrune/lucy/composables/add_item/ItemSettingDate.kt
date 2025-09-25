@@ -66,7 +66,10 @@ fun ItemSettingDate(item: Item, onDateChanged: (LocalDate)->Unit){
     Card(modifier = Modifier.fillMaxWidth())
     {
         Row(modifier = Modifier.fillMaxWidth()
-            .padding(8.dp),
+            .padding(8.dp)
+            .clickable{
+                showDateDialog = true
+            },
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically)
         {

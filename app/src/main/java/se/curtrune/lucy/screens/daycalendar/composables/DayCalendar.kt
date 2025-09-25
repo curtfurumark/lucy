@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -30,12 +31,16 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
+import se.curtrune.lucy.activities.ui.theme.LucyTheme
 import se.curtrune.lucy.app.UserPrefs
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.PostponeDialog
 import se.curtrune.lucy.screens.daycalendar.DayEvent
 import se.curtrune.lucy.screens.daycalendar.DayCalendarState
@@ -45,10 +50,14 @@ import java.time.LocalDate
 
 @OptIn(FlowPreview::class)
 @Composable
-fun DayCalendar(state: DayCalendarState, onEvent: (DayEvent)->Unit){
+fun DayCalendar(
+    modifier: Modifier =  Modifier,
+    state: DayCalendarState,
+    onEvent: (DayEvent)->Unit){
+    println("DayCalendar()")
     val context = LocalContext.current
     val scrollPosition = UserPrefs.getScrollPositionDayCalendar(context)
-    Column() {
+    Column(modifier = modifier ) {
 /*        Search(onSearch = { filter, everywhere ->
             onEvent(DateEvent.Search(filter, everywhere))
         })*/
@@ -142,5 +151,16 @@ fun SwipeBackground(state: SwipeToDismissBoxState){
     ){
         Icon(imageVector = Icons.Default.Delete, contentDescription = "delete", tint = Color.Black)
         Icon(imageVector = Icons.Default.PlayArrow, contentDescription = "postpone", tint = Color.Black)
+    }
+}
+
+@Composable
+@Preview
+fun PreviewDayCalendar(){
+    LucyTheme {
+        val state = DayCalendarState().also {
+            it.items = listOf(Item("hello"), Item("pass"))
+        }
+        DayCalendar(state = state, onEvent = {})
     }
 }

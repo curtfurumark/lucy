@@ -42,6 +42,7 @@ fun AddItemBottomSheet(
         onDismiss: () -> Unit,
         onSave: (Item) -> Unit
     ){
+    println("AddItemBottomSheet()")
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scrollState = rememberScrollState()
     if( defaultItemSettings.parent == null){
@@ -112,7 +113,7 @@ fun AddItemBottomSheet(
                 })
                 Spacer(modifier = Modifier.width(8.dp))
                 val categories = LucindaApplication.appModule.userSettings.categories
-                ItemSettingCategory(item = item, categories = categories, onEvent = {
+                ItemSettingCategory(item = item, categories = categories, onCategoryChanged = {
                     category-> item.category = category
                 } )
                 Spacer(modifier = Modifier.width(8.dp))
@@ -146,12 +147,12 @@ fun AddItemBottomSheet(
 }
 
 data class DefaultItemSettings(
-    val targetDate: LocalDate = LocalDate.now(),
-    val targetTime: LocalTime =  LocalTime.of(0, 0, 0),
-    val isTemplate: Boolean = false,
-    val isCalendarItem: Boolean = false,
+    //var targetDate: LocalDate = LocalDate.now(),
+    //val targetTime: LocalTime =  LocalTime.of(0, 0, 0),
+    //val isTemplate: Boolean = false,
+    //var isCalendarItem: Boolean = false,
     val parent: Item? = null,
-    val item: Item = Item(),
+    var item: Item = Item(),
     val isAppointment: Boolean = false,
     val isEvent: Boolean = true,
     val categories: List<String> = emptyList()

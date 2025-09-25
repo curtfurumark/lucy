@@ -47,6 +47,13 @@ fun IndexScreen20(onEvent: (InitialScreen)->Unit){
             modifier = Modifier.clickable {
                 onEvent(InitialScreen.CALENDER_MONTH)
         })
+        Text(
+            text =  "new daycalendar",
+            fontSize = 24.sp,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.clickable {
+                onEvent(InitialScreen.CALENDER_MONTH)
+            })
     }
 }
 

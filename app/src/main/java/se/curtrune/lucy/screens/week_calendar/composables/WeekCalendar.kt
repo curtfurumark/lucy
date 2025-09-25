@@ -33,6 +33,7 @@ import se.curtrune.lucy.screens.week_calendar.WeekState
 fun WeekCalendar(modifier: Modifier = Modifier, state: WeekState, onEvent: (WeekEvent) -> Unit){
     Column(modifier = modifier){
         LazyVerticalGrid(
+            modifier = modifier,
             columns = GridCells.Fixed(2)
         ) {
             item{ ThisWeekView(state = state, onEvent = onEvent) }

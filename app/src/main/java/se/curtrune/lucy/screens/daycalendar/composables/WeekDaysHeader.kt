@@ -55,6 +55,7 @@ fun DayOfWeek(date: LocalDate, state: DayCalendarState, onEvent: (DayEvent) -> U
 
 @Composable
 fun DaysOfWeek(state: DayCalendarState, onEvent: (DayEvent)->Unit){
+    println("DaysOfWeek()")
     Column(modifier = Modifier.fillMaxWidth()) {
 /*        val header = "${state.date.month.getDisplayName(TextStyle.FULL_STANDALONE, Locale.getDefault()).cecilia()} v ${state.currentWeek.weekNumber}"
         Row(modifier = Modifier.fillMaxWidth(),

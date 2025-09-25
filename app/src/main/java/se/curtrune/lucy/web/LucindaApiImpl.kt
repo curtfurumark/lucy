@@ -66,21 +66,23 @@ class LucindaApiImpl(private val client: HttpClient): LucindaApi {
     override suspend fun getMessages(): List<Message> {
         return client.get{
             try {
-
                 url(Urls.MESSAGES_URL)
             }catch (exception: RedirectResponseException){
                 //3xx
-                println(exception.response.status.description)
+                println("RedirectResponseException ${exception.response.status.description}")
                 emptyList<Message>()
             }catch (exception: ClientRequestException){
                 //4xx
+                println("client request exception ${exception.response.status.description}")
                 println(exception.response.status.description)
                 emptyList<Message>()
             }catch (exception: ServerResponseException){
-                //5xx
+                //5xx'
+                println("server response exception ${exception.response.status.description}")
                 println(exception.response.status.description)
                 emptyList<Message>()
             }catch (e: Exception){
+                println("Exception ")
                 println(e.message)
                 emptyList<Message>()
             }

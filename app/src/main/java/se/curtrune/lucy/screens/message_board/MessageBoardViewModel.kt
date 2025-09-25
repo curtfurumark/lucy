@@ -40,7 +40,7 @@ class MessageBoardViewModel : ViewModel() {
         viewModelScope.launch {
             eventChannel.send(MessageChannel.ShowProgressBar(true))
             messages  = lucindaApi.getMessages().reversed().toMutableList()
-            filteredMessages = messages.filter { message->message.category != "todo" }
+            filteredMessages = messages.filter { message->message.category == "todo" }
             _state.update { it.copy(
                 messages = filteredMessages
             ) }

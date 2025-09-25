@@ -25,7 +25,6 @@ import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
-import se.curtrune.lucy.screens.item_editor.ItemEditorFragment
 import se.curtrune.lucy.screens.item_editor.ItemEvent
 import se.curtrune.lucy.screens.main.MainViewModel
 import se.curtrune.lucy.screens.todo.composables.TodoScreen
@@ -117,11 +116,12 @@ class TodoFragment : Fragment() {
     private fun navigateToEditor(item: Item) {
         println("...navigateToEditor(${item.heading})")
         val mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
-        mainViewModel.updateFragment(
+        throw Exception("not implemented, deprecated")
+/*        mainViewModel.updateFragment(
             ItemEditorFragment(
                 item
             )
-        )
+        )*/
     }
 
 

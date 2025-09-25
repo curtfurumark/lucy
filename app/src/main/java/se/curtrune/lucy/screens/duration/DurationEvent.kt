@@ -5,6 +5,7 @@ import se.curtrune.lucy.statistics.StatisticsPeriod
 sealed interface DurationEvent {
     data class SetPeriod(val period: StatisticsPeriod.Companion.Period) : DurationEvent
     data class SetSortedBy(val sortedBy: SortedBy) : DurationEvent
+    data object Refresh : DurationEvent
 }
 enum class DurationPeriod{
     DATE, WEEK, MONTH, YEAR

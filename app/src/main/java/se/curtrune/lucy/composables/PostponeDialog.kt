@@ -1,20 +1,25 @@
 package se.curtrune.lucy.composables
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -42,6 +47,9 @@ fun PostponeDialog(onDismiss: ()->Unit, onConfirm: (PostponeDetails)->Unit, item
     var postponeInfo by remember {
         mutableStateOf(PostponeDetails(item = item))
     }
+    var advanced by remember {
+        mutableStateOf(false)
+    }
     Dialog(onDismissRequest = onDismiss){
         Surface(
             modifier = Modifier.background(MaterialTheme.colorScheme.background)
@@ -62,41 +70,84 @@ fun PostponeDialog(onDismiss: ()->Unit, onConfirm: (PostponeDetails)->Unit, item
                             })
                         Text(text = "postpone all")
                     }
-                    Row(
-                        horizontalArrangement = Arrangement.Start,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        RadioButton(
-                            selected = postponeInfo.amount == PostponeAmount.ONE_HOUR,
-                            onClick = {
-                                postponeInfo = postponeInfo.copy(amount = PostponeAmount.ONE_HOUR)
-                            })
-                        Text(text = stringResource(R.string.one_hour))
+                    AnimatedVisibility(visible = advanced) {
+                        var days by remember {
+                            mutableIntStateOf(0)
+                        }
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            Text(text = "custom")
+                            Spacer(modifier = Modifier.padding(8.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically)
+                            {
+                                OutlinedTextField(
+                                    modifier = Modifier.weight(1f),
+                                    value = "$days",
+                                    onValueChange = {
+                                        days = it.toIntOrNull() ?: 1
+                                    })
+                                OutlinedTextField(
+                                    modifier = Modifier.weight(1f),
+                                    value = "h",
+                                    onValueChange = {})
+                                OutlinedTextField(
+                                    modifier = Modifier.weight(1f),
+                                    value = "m",
+                                    onValueChange = {})
+                            }
+                        }
                     }
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        RadioButton(
-                            selected = postponeInfo.amount == PostponeAmount.ONE_DAY,
-                            onClick = {
-                                postponeInfo = postponeInfo.copy(amount = PostponeAmount.ONE_DAY)
-                            })
-                        Text(text = stringResource(R.string.one_day))
+                    AnimatedVisibility(visible = !advanced) {
+                        Column() {
+                            Row(
+                                horizontalArrangement = Arrangement.Start,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                RadioButton(
+                                    selected = postponeInfo.amount == PostponeAmount.ONE_HOUR,
+                                    onClick = {
+                                        postponeInfo =
+                                            postponeInfo.copy(amount = PostponeAmount.ONE_HOUR)
+                                    })
+                                Text(text = stringResource(R.string.one_hour))
+                            }
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                RadioButton(
+                                    selected = postponeInfo.amount == PostponeAmount.ONE_DAY,
+                                    onClick = {
+                                        postponeInfo =
+                                            postponeInfo.copy(amount = PostponeAmount.ONE_DAY)
+                                    })
+                                Text(text = stringResource(R.string.one_day))
+                            }
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                RadioButton(
+                                    selected = postponeInfo.amount == PostponeAmount.ONE_WEEK,
+                                    onClick = {
+                                        postponeInfo =
+                                            postponeInfo.copy(amount = PostponeAmount.ONE_WEEK)
+                                    })
+                                Text(text = stringResource(R.string.one_week))
+                            }
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                RadioButton(
+                                    selected = postponeInfo.amount == PostponeAmount.ONE_MONTH,
+                                    onClick = {
+                                        postponeInfo =
+                                            postponeInfo.copy(amount = PostponeAmount.ONE_MONTH)
+                                    })
+                                Text(text = stringResource(R.string.one_month))
+                            }
+                        }
                     }
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        RadioButton(
-                            selected = postponeInfo.amount == PostponeAmount.ONE_WEEK,
-                            onClick = {
-                                postponeInfo = postponeInfo.copy(amount = PostponeAmount.ONE_WEEK)
-                            })
-                        Text(text = stringResource(R.string.one_day))
-                    }
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        RadioButton(
-                            selected = postponeInfo.amount == PostponeAmount.ONE_MONTH,
-                            onClick = {
-                                postponeInfo = postponeInfo.copy(amount = PostponeAmount.ONE_MONTH)
-                            })
-                        Text(text = stringResource(R.string.one_month))
-                    }
+                    Text(
+                        text = if(advanced) "simple" else "advanced",
+                        modifier = Modifier.clickable{
+                            println("advanced")
+                            advanced = !advanced
+                        })
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween

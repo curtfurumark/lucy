@@ -10,14 +10,13 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import se.curtrune.lucy.app.LucindaApplication
-import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
 import se.curtrune.lucy.classes.ItemDuration
-import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.classes.calender.Week
+import se.curtrune.lucy.classes.item.Item
+import se.curtrune.lucy.composables.add_item.DefaultItemSettings
 import se.curtrune.lucy.modules.TopAppbarModule
 import se.curtrune.lucy.screens.my_day.MyDayFragment
-import java.time.LocalDate
 
 class WeekViewModel: ViewModel() {
     private val eventChannel = Channel<WeekChannel>()
@@ -29,7 +28,7 @@ class WeekViewModel: ViewModel() {
     val pagerState = PagerState()
     var mutableWeek: MutableLiveData<Week> = MutableLiveData()
     var currentPage = pagerState.initialPage
-    var dialogSettings = DialogSettings()
+    var defaultItemSettings = DefaultItemSettings()
     init{
         println("WeekViewModel.init")
         mutableWeek.value = week
@@ -52,13 +51,16 @@ class WeekViewModel: ViewModel() {
         println("calendarDateClick($calenderDate.date.toString())")
         if( calenderDate.events.isEmpty()){
             println("show add item dialog")
-            dialogSettings = DialogSettings().apply {
-                isCalendarItem = true
-                targetDate = calenderDate.date
-                parent = repository.getTodoRoot()
-            }
+            defaultItemSettings = defaultItemSettings.copy(
+                item = Item().also { item->
+                    item.targetDate = calenderDate.date
+                    item.parent = state.value.currentParent
+                    item.setIsCalenderItem(true)
+                }
+            )
             viewModelScope.launch {
                 eventChannel.send(WeekChannel.ShowAddItemDialog(calenderDate.date))
+
             }
         }else{
             println("go to day calendar")
@@ -74,7 +76,10 @@ class WeekViewModel: ViewModel() {
             is WeekEvent.CalendarDateClick -> {calendarDateClick(event.calendarDate)}
             is WeekEvent.OnAllWeekClick -> {onAllWeekClick(event.week)}
             is WeekEvent.OnPage -> {onPage(event.page)}
-            is WeekEvent.ShowAddItemDialog -> showAddItemDialog()
+            is WeekEvent.ShowAddItemDialog -> {
+                //showAddItemDialog()
+                println("showAddItemDialog, probably redundant")
+            }
             is WeekEvent.AddItem -> {addItem(event.item)}
             is WeekEvent.OnAllWeekLongClick -> {
                 onAllWeekLongClick(event.week)
@@ -138,12 +143,12 @@ class WeekViewModel: ViewModel() {
         ) }
         TopAppbarModule.setTitle(week)
     }
-    private fun showAddItemDialog(){
+/*    private fun showAddItemDialog(){
         dialogSettings = DialogSettings()
         dialogSettings.isCalendarItem = true
         dialogSettings.parent = repository.getTodoRoot()
         viewModelScope.launch {
             eventChannel.send(WeekChannel.ShowAddItemDialog(LocalDate.now()))
         }
-    }
+    }*/
 }

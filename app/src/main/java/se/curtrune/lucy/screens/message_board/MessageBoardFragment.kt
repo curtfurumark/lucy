@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -81,10 +82,7 @@ class MessageBoardFragment : Fragment(){
                     Scaffold(floatingActionButton = { AddItemFab {
                         messageViewModel.onEvent(MessageBoardEvent.OnAddMessageClick)
                     }}) { padding->
-                        MessageBoardScreen(
-                            modifier = Modifier.padding(padding),state = state.value, onEvent = { event ->
-                            messageViewModel.onEvent(event)
-                        })
+                        Text(text = "dummy message board", modifier = Modifier.padding(padding))
                     }
                     if(showAddMessageBottomSheet){
                         AddMessageBottomSheet(defaultMessage = state.value.defaultMessage, onDismiss = {

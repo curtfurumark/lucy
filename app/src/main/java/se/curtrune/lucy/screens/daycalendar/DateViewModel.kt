@@ -1,6 +1,7 @@
 package se.curtrune.lucy.screens.daycalendar
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,13 +14,15 @@ import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.classes.calender.Week
 import se.curtrune.lucy.composables.PostponeDetails
+import se.curtrune.lucy.composables.add_item.DefaultItemSettings
+import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
 import se.curtrune.lucy.modules.TopAppbarModule
 import se.curtrune.lucy.modules.PostponeWorker
 import se.curtrune.lucy.util.Logger
 import java.time.LocalDate
 import java.time.LocalTime
 
-class DateViewModel: ViewModel(){
+class DateViewModel(val date: LocalDate): ViewModel(){
     private val repository = LucindaApplication.appModule.repository
     private val timeModule = LucindaApplication.appModule.timeModule
     private var currentWeekPage = 5
@@ -30,15 +33,30 @@ class DateViewModel: ViewModel(){
     private var latestDeletedItem: Item? = null
     private val todoRoot: Item? = repository.getTodoRoot()
     val state = _state.asStateFlow()
-    //private lateinit var _tabStack: TabStack
+    val defaultItemSettings = DefaultItemSettings()
 
     init{
-        println("DateViewModel.init")
-        items = repository.selectItems(_state.value.date)
-        _state.value.items = items
-        _state.value.currentParent = todoRoot
+        println("DateViewModel.init date = $date")
+        items = repository.selectItems(date)
+        _state.update { it.copy(
+            items = items,
+            date = date,
+            tabs = mutableListOf(),
+            currentParent = todoRoot
+        ) }
         TopAppbarModule.setTitle(_state.value.date)
     }
+
+    companion object {
+        fun factory(date: LocalDate): ViewModelProvider.Factory {
+            return object : ViewModelProvider.Factory {
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return DateViewModel(date) as T
+                }
+            }
+        }
+    }
+
     private fun addItem(item: Item){
         println("...addItem(Item) ${item.heading}")
         Logger.log(item)
@@ -82,10 +100,13 @@ class DateViewModel: ViewModel(){
 
     private fun editItem(item: Item){
         println("...editItem(Item)")
-        _state.update { it.copy(
+/*        _state.update { it.copy(
             editItem =  true,
             currentItem = item
-        ) }
+        ) }*/
+        viewModelScope.launch{
+            eventChannel.send(DayChannel.EditItem(item))
+        }
     }
     private fun hidePostponeDialog(){
         println("hidePostponeDialog()")
@@ -116,6 +137,26 @@ class DateViewModel: ViewModel(){
             is DayEvent.Week -> {setCurrentWeek(event.page)}
             is DayEvent.RequestDelete -> {confirmDelete(event.item)}
             is DayEvent.ShowAddItemBottomSheet -> {showAddItemBottomSheet()}
+        }
+    }
+    fun onEvent(topAppBarEvent: TopAppBarEvent) {
+        when(topAppBarEvent){
+            TopAppBarEvent.ActionMenu -> TODO()
+            TopAppBarEvent.CheckForUpdate -> TODO()
+            TopAppBarEvent.DayCalendar -> TODO()
+            TopAppBarEvent.DayClicked -> TODO()
+            TopAppBarEvent.DevActivity -> TODO()
+            TopAppBarEvent.DrawerMenu -> {
+                println("drawer menu clicked")
+                showNavigationDrawer()
+            }
+            TopAppBarEvent.MedicinesClicked -> TODO()
+            TopAppBarEvent.MonthClicked -> TODO()
+            TopAppBarEvent.OnBoost -> TODO()
+            TopAppBarEvent.OnPanic -> TODO()
+            is TopAppBarEvent.OnSearch -> TODO()
+            TopAppBarEvent.SettingsClicked -> TODO()
+            TopAppBarEvent.WeekClicked -> TODO()
         }
     }
     private fun postpone(postponeDetails: PostponeDetails){
@@ -190,9 +231,9 @@ class DateViewModel: ViewModel(){
     private fun setCurrentDate(newDate: LocalDate){
         println("DateViewModel.setCurrentDate(${newDate.toString()})")
         items = repository.selectItems(newDate)
-        items.forEach{item->
+/*        items.forEach{item->
             println(item)
-        }
+        }*/
         _state.update {it.copy(
                 currentWeek = Week(newDate),
                 date = newDate,
@@ -219,21 +260,30 @@ class DateViewModel: ViewModel(){
     }
     private fun showAddItemBottomSheet() {
         println("...showAddItemBottomSheet()")
-        viewModelScope.launch {
-            eventChannel.send(DayChannel.showAddItemBottomSheet)
-            _state.update { it.copy(
+        //viewModelScope.launch {
+/*            _state.update { it.copy(
                 defaultItemSettings = it.defaultItemSettings.copy(
                     targetTime = LocalTime.now(),
                     parent = state.value.currentParent,
-                    item = Item().also {
-                        it.targetDate = state.value.date
-                        it.targetTime = LocalTime.now()
-                        it.parent = state.value.currentParent
-                        it.category = state.value.currentParent?.category
+                    item = Item().also { item->
+                        item.targetDate = state.value.date
+                        item.targetTime = LocalTime.now()
+                        item.parent = state.value.currentParent
+                        item.category = state.value.currentParent?.category
                     }
                 ),
-            ) }
-        }
+            ) }*/
+            defaultItemSettings.item = Item().also { item->
+                item.targetDate = state.value.date
+                item.targetTime = LocalTime.now()
+                item.parent = state.value.currentParent
+                item.category = state.value.currentParent?.category
+            }
+            viewModelScope.launch {
+                eventChannel.send(DayChannel.showAddItemBottomSheet)
+            }
+
+        //}
     }
 
     private fun showChildren(item: Item){
@@ -251,6 +301,12 @@ class DateViewModel: ViewModel(){
             showTabs = true,
             tabs = it.tabs + item,
             ) }
+    }
+    private fun showNavigationDrawer(){
+        println("showNavigationDrawer()")
+        viewModelScope.launch {
+            eventChannel.send(DayChannel.ShowNavigationDrawer)
+        }
     }
     private fun showPostponeDialog(item: Item){
         _state.update { it.copy(
@@ -309,6 +365,4 @@ class DateViewModel: ViewModel(){
     private fun sortItems(items: List<Item>): List<Item>{
         return items.sortedBy { it.targetTime }
     }
-
-
 }

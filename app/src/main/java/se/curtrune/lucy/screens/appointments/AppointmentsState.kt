@@ -8,5 +8,11 @@ data class AppointmentsState(
     var editAppointment: Boolean = false,
     val currentAppointment: Item? = null,
     var showAddAppointmentDialog: Boolean = false,
-    val defaultItemSettings: DefaultItemSettings = DefaultItemSettings()
+    val defaultItemSettings: DefaultItemSettings = DefaultItemSettings(
+        item = Item().also {
+            it.setIsAppointment(true)
+            it.setIsCalenderItem(true)
+            //it.setIsCalendarItem(true)
+        }
+    )
 )

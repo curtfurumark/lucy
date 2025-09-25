@@ -24,9 +24,8 @@ import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.composables.add_item.AddItemBottomSheet
 import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
 import se.curtrune.lucy.app.LucindaApplication
-import se.curtrune.lucy.screens.item_editor.ItemEditorFragment
 import se.curtrune.lucy.screens.main.MainViewModel
-import se.curtrune.lucy.screens.projects.composables.ProjectsScreen
+import se.curtrune.lucy.screens.projects.composables.ProjectsList
 
 class ProjectsFragment : Fragment(){
     private val projectsViewModel : ProjectsViewModel by viewModels{ProjectsViewModel.Factory(
@@ -77,7 +76,7 @@ class ProjectsFragment : Fragment(){
                             }
                         }
                     ) { padding ->
-                        ProjectsScreen(state = state, onEvent = { event ->
+                        ProjectsList(state = state, onEvent = { event ->
                             projectsViewModel.onEvent(event)
                         }, modifier = Modifier.padding(padding))
                     }
@@ -101,7 +100,8 @@ class ProjectsFragment : Fragment(){
 
     private fun editItem(item: Item) {
         println("...editItem(Item: ${item.heading})")
-        mainViewModel.updateFragment(ItemEditorFragment(item))
+        //mainViewModel.updateFragment(ItemEditorFragment(item))
+        throw Exception("not implemented, deprecated")
     }
 
     private fun showDeleteDialog(item: Item) {

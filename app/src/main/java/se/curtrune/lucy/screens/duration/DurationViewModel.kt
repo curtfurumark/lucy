@@ -27,10 +27,27 @@ class DurationViewModel : ViewModel() {
         }
     }
     fun onEvent(event: DurationEvent) {
+        println("onEvent: ${event.javaClass.name}")
         when(event) {
             is DurationEvent.SetPeriod -> {setPeriod(event.period)}
-            is DurationEvent.SetSortedBy -> {setSortedBy(event.sortedBy)}}
+            is DurationEvent.SetSortedBy -> {setSortedBy(event.sortedBy)}
+            DurationEvent.Refresh -> {refresh()}
         }
+    }
+    private fun refresh() {
+        println("refresh")
+        stats = StatisticsPeriod(fromDate, toDate)
+        _state.update{
+            it.copy(
+                totalDuration = stats.statistics.duration,
+                items = when(it.sortedBy){
+                    SortedBy.DATE -> stats.statistics.groupedByDate
+                    SortedBy.CATEGORY -> stats.statistics.groupedByCategory
+                    SortedBy.TAGS -> stats.statistics.groupedByTags
+                }
+            )
+        }
+    }
 
     private fun setSortedBy(sortedBy: SortedBy) {
         println("setSortedBy: ${sortedBy.name}")

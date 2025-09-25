@@ -11,7 +11,9 @@ import kotlinx.coroutines.launch
 import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
 import se.curtrune.lucy.classes.item.Item
+import se.curtrune.lucy.composables.add_item.DefaultItemSettings
 import se.curtrune.lucy.modules.TopAppbarModule
+import se.curtrune.lucy.screens.week_calendar.PagerState
 import java.time.YearMonth
 
 class MonthViewModel: ViewModel() {
@@ -21,12 +23,13 @@ class MonthViewModel: ViewModel() {
     val eventChannel = _eventChannel.receiveAsFlow()
     private val _state = MutableStateFlow(MonthCalendarState())
     val state = _state.asStateFlow()
-    val dialogSettings = DialogSettings()
+    val defaultItemSettings = DefaultItemSettings()
         //private set
-
+    val pagerState = PagerState()
     private var currentPage = state.value.initialPage
     init {
         _state.value.calendarMonth = repository.getCalenderMonth(state.value.yearMonth)
+        println("MonthViewModel.init")
         TopAppbarModule.setTitle(currentYearMonth)
     }
     fun onPager(newPageIndex: Int){
@@ -52,11 +55,13 @@ class MonthViewModel: ViewModel() {
                         currentCalendarDate = event.calendarDate,
                     ) }
                     viewModelScope.launch {
-                        _eventChannel.send(MonthChannel.NavigateToDayCalendar)
+                        _eventChannel.send(MonthChannel.NavigateToDayCalendar(event.calendarDate.date.toString()))
                     }
                 }else{
-                    dialogSettings.targetDate = event.calendarDate.date
-                    dialogSettings.isCalendarItem = true
+                    defaultItemSettings.item = Item().also {
+                        it.targetDate = event.calendarDate.date
+                        it.setIsCalenderItem(true)
+                    }
                     viewModelScope.launch {
                         _eventChannel.send(MonthChannel.ShowAddItemDialog)
                     }

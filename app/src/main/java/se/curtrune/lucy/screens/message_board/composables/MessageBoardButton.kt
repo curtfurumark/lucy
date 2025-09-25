@@ -9,14 +9,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.screens.message_board.MessageBoardEvent
 import se.curtrune.lucy.screens.message_board.MessageBoardState
 
 @Composable
-fun MessageBoardButton(state: MessageBoardState, onEvent: (MessageBoardEvent)->Unit){
-    val options = listOf("message", "todo")
+fun MessageBoardButton(
+        modifier: Modifier = Modifier,
+        state: MessageBoardState,
+        onEvent: (MessageBoardEvent)->Unit){
+            val options = listOf("message", "todo")
     var selectedIndex by remember {
         mutableIntStateOf(0)
     }

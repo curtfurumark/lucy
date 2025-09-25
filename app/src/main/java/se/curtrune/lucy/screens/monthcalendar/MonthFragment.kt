@@ -65,7 +65,7 @@ class MonthFragment : Fragment() {
                                     showMessage = true
                                 }
 
-                                MonthChannel.NavigateToDayCalendar -> {
+                                is MonthChannel.NavigateToDayCalendar -> {
                                     state.value.currentCalendarDate?.let { navigate(it) }
                                 }
                             }

@@ -26,7 +26,6 @@ import se.curtrune.lucy.composables.add_item.DefaultItemSettings
 import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
 import se.curtrune.lucy.screens.ItemChannel
 import se.curtrune.lucy.screens.enchilada.composables.EnchiladaScreen
-import se.curtrune.lucy.screens.item_editor.ItemEditorFragment
 import se.curtrune.lucy.screens.item_editor.ItemEvent
 import se.curtrune.lucy.screens.main.MainViewModel
 import se.curtrune.lucy.util.Logger
@@ -120,10 +119,11 @@ class EnchiladaFragment : Fragment() {
     private fun navigate(item: Item){
         println("navigate(${item.heading}) to editor")
         val mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
-        mainViewModel.updateFragment(
+        throw Exception("not implemented, deprecated")
+/*        mainViewModel.updateFragment(
             ItemEditorFragment(
                 item
             )
-        )
+        )*/
     }
 }

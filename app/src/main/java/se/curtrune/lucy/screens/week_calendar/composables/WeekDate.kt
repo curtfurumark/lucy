@@ -92,7 +92,7 @@ fun WeekDate(calendarDate: CalenderDate, onEvent: (WeekEvent)->Unit){
             Row(modifier = Modifier.fillMaxWidth(),) {
                 Text(
                     modifier = Modifier.weight(1F),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    color = MaterialTheme.colorScheme.primary,
                     textAlign = TextAlign.Center,
                     text = "${
                         DateTImeConverter.format(
@@ -102,9 +102,6 @@ fun WeekDate(calendarDate: CalenderDate, onEvent: (WeekEvent)->Unit){
                     } ${calendarDate.date.dayOfMonth}",
                     fontSize = 20.sp
                 )
-                if(showFlag){
-                    Icon(imageVector = Icons.Default.Warning, contentDescription = "bad day")
-                }
             }
             calendarDate.events.forEach { event->
                 Box(
@@ -113,13 +110,20 @@ fun WeekDate(calendarDate: CalenderDate, onEvent: (WeekEvent)->Unit){
                         .border(Dp.Hairline, color = Color.Black)
                 ) {
                     Text(
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(start = 2.dp),
                         text = "${DateTImeConverter.format(event.targetTime)} ${event.heading}",
                         maxLines = 1
                     )
                 }
             }
+        }
+        if(showFlag){
+            Icon(
+                modifier = Modifier.align(Alignment.BottomEnd)
+                    .padding(2.dp),
+                imageVector = Icons.Default.Warning,
+                contentDescription = "bad day")
         }
     }
 }
@@ -131,8 +135,9 @@ fun PreviewWeekDate(){
     LucyTheme {
         val calendarDate = CalenderDate()
         calendarDate.date = LocalDate.now()
+        calendarDate.mental.energy = -1
         calendarDate.items = listOf(
-            Item("dev"),
+            Item("dev").also{it.energy = -5},
             Item("play bass")
         ).toMutableList()
         WeekDate(calendarDate = calendarDate) {

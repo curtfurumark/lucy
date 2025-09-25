@@ -4,10 +4,19 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.R
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.Mental
+import se.curtrune.lucy.composables.add_item.DefaultItemSettings
 import se.curtrune.lucy.item_settings.CheckBoxSetting
 import se.curtrune.lucy.item_settings.ItemSetting
 import se.curtrune.lucy.item_settings.KeyValueSetting
@@ -15,9 +24,18 @@ import se.curtrune.lucy.services.TimerService
 import se.curtrune.lucy.util.DateTImeConverter
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.features.notifications.NotificationsWorker
+import se.curtrune.lucy.screens.daycalendar.DateViewModel
+import se.curtrune.lucy.screens.daycalendar.DayChannel
+import java.time.LocalDate
 
-class ItemSessionViewModel : ViewModel() {
+@Suppress("UNCHECKED_CAST")
+class ItemSessionViewModel(val item: Item) : ViewModel() {
     private var elapsedTime = 0L
+    private var _state = MutableStateFlow(ItemEditorState())
+    val state = _state.asStateFlow()
+    //private var _childItems = MutableLiveData<List<Item>>()
+    private val _channel = Channel<ItemEditorChannel>()
+    val channel = _channel.receiveAsFlow()
     private val repository = LucindaApplication.appModule.repository
     private val timeModule = LucindaApplication.appModule.timeModule
     private val mutableTimerState = MutableLiveData<TimerState>()
@@ -25,14 +43,29 @@ class ItemSessionViewModel : ViewModel() {
     private val mutableError = MutableLiveData<String>()
     private val mutableCurrentItem = MutableLiveData<Item?>()
     private var currentItem: Item? = null
+    private val userSettings = LucindaApplication.appModule.userSettings
+    var defaultItem: DefaultItemSettings = DefaultItemSettings()
 
     init{
         mutableTimerState.value = TimerState.PENDING
+        _state.update { it.copy(
+            categories = userSettings.categories,
+            item = item
+        ) }
+        currentItem = item
     }
-    fun addTags(tags: String?, context: Context?) {
-        currentItem!!.tags = tags
-        //update(currentItem!!, context)
+    companion object {
+        fun factory(item: Item): ViewModelProvider.Factory {
+            return object : ViewModelProvider.Factory {
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return ItemSessionViewModel(item) as T
+                }
+            }
+        }
+        private const val MENTAL_OFFSET = 5
+        var VERBOSE: Boolean = false
     }
+
 
     fun cancelNotification(context: Context?) {
         Logger.log("ItemSessionViewModel.cancelNotification(Context)")
@@ -48,7 +81,7 @@ class ItemSessionViewModel : ViewModel() {
         mutableTimerState.value = TimerState.PENDING
     }
 
-    fun init(item: Item, context: Context?) {
+/*    fun init(item: Item, context: Context?) {
         Logger.log("ItemSessionViewModel.init(Item)")
         this.currentItem = item
         if (currentItem!!.repeatID > 0) {
@@ -57,7 +90,7 @@ class ItemSessionViewModel : ViewModel() {
         }
         mutableCurrentItem.value = currentItem
         mutableDuration.value = currentItem!!.duration
-    }
+    }*/
 
     fun getCurrentItem(): MutableLiveData<Item?> {
         return mutableCurrentItem
@@ -154,11 +187,11 @@ class ItemSessionViewModel : ViewModel() {
         settings.add(colourSetting)
         return settings
     }
-    val item: Item?
+/*    val item: Item?
         get() {
             Logger.log("ItemSessionViewModel.getItem()")
             return currentItem
-        }
+        }*/
 
     fun itemHasRepeat(): Boolean {
         Logger.log("ItemSessionViewModel.itemHasRepeat(Context)")
@@ -183,7 +216,17 @@ class ItemSessionViewModel : ViewModel() {
             is ItemEvent.GetChildrenType -> {}
             is ItemEvent.Edit -> {}
             is ItemEvent.InsertItem -> {}
-            is ItemEvent.ShowAddItemDialog -> {}
+            is ItemEvent.ShowAddItemDialog -> {
+                println("ItemSessionViewModel.ShowAddItemDialog")
+                viewModelScope.launch {
+                    defaultItem = defaultItem.copy(
+                        item = _state.value.item
+
+                    )
+                    _channel.send(ItemEditorChannel.ShowAddChildDialog)
+
+                }
+            }
             is ItemEvent.InsertChild -> {
                 insertChild(event.item)
             }
@@ -237,6 +280,9 @@ class ItemSessionViewModel : ViewModel() {
         val rowsAffected = repository.update(item)
         if (rowsAffected != 1) {
             mutableError.setValue("ERROR, updating item")
+            viewModelScope.launch {
+                _channel.send(ItemEditorChannel.ShowMessage("error updating item"))
+            }
         } else {
             //ItemsWorker.touchParents(item, context)
             repository.touchParents(item)
@@ -302,8 +348,5 @@ class ItemSessionViewModel : ViewModel() {
         Logger.log("ItemSessionViewModel.updateNotification(Context)")
     }
 
-    companion object {
-        private const val MENTAL_OFFSET = 5
-        var VERBOSE: Boolean = false
-    }
+
 }

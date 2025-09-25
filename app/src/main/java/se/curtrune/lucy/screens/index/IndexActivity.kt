@@ -12,6 +12,7 @@ import se.curtrune.lucy.app.InitialScreen
 import se.curtrune.lucy.screens.dev.DevActivity
 import se.curtrune.lucy.screens.index.composables.IndexScreen20
 import se.curtrune.lucy.screens.main.MainActivity
+import se.curtrune.lucy.screens.main.MainActivity2
 import se.curtrune.lucy.util.Constants
 
 class IndexActivity : AppCompatActivity() {
@@ -47,11 +48,19 @@ class IndexActivity : AppCompatActivity() {
 
     private fun startActivity(firstPage: InitialScreen) {
         println("...startActivity(InitialScreen: ${firstPage.name})")
-        val intentTodo = Intent(
-            this,
-            MainActivity::class.java
-        )
-        intentTodo.putExtra(Constants.INITIAL_SCREEN, firstPage.toString())
-        startActivity(intentTodo)
+        if(firstPage == InitialScreen.NEW_DAY_CALENDER){
+            Intent(this, MainActivity2::class.java).also {
+                intent ->
+                intent.putExtra(Constants.INITIAL_SCREEN, firstPage.toString())
+                startActivity(intent)
+            }
+        }else {
+            val intent = Intent(
+                this,
+                MainActivity::class.java
+            )
+            intent.putExtra(Constants.INITIAL_SCREEN, firstPage.toString())
+            startActivity(intent)
+        }
     }
 }

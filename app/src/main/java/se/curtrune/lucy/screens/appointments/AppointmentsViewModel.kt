@@ -21,12 +21,13 @@ class AppointmentsViewModel(private val repository: Repository) : ViewModel() {
     val eventChannel = _eventChannel.receiveAsFlow()
     val state = _state.asStateFlow()
     init {
+        println("AppointmentsViewModel.init{}")
         items = repository.selectAppointments()
         _state.update {it.copy(
             items = items
             )
         }
-        TopAppbarModule.setTitle("möten")
+        TopAppbarModule.setTitle("Möten")
     }
     private fun insert(item: Item) {
         println("AppointmentsViewModel(Item, Context)")
@@ -91,12 +92,12 @@ class AppointmentsViewModel(private val repository: Repository) : ViewModel() {
         _state.update {
             it.copy(
                 defaultItemSettings = it.defaultItemSettings.copy(
-                    isCalendarItem = true,
-                    isAppointment = true,
                     item = Item().also {
                         item -> item.type = Type.APPOINTMENT
                         item.parent = repository.getAppointmentsRoot()
                         item.setIsCalenderItem(true)
+                        item.setIsCalenderItem(true)
+                        item.setIsAppointment(true)
                     },
                     parent = repository.getAppointmentsRoot()
                 )
@@ -117,7 +118,6 @@ class AppointmentsViewModel(private val repository: Repository) : ViewModel() {
     }
     class Factory(private val repository: Repository) :
         ViewModelProvider.Factory {
-
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(AppointmentsViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")

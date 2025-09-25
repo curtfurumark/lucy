@@ -38,7 +38,7 @@ class DurationFragment : Fragment() {
     }
 
     private fun initContent(view: View) {
-        val composeView = view.findViewById<ComposeView>(R.id.durationFragment_composeView)
+/*        val composeView = view.findViewById<ComposeView>(R.id.durationFragment_composeView)
         composeView!!.setContent {
             LucyTheme {
                 val durationViewModel = viewModel<DurationViewModel>()
@@ -52,7 +52,7 @@ class DurationFragment : Fragment() {
                     CircularProgressIndicator()
                 }
             }
-        }
+        }*/
     }
 }
 

@@ -49,6 +49,9 @@ fun ItemSettingTime(item: Item, onTimeChanged: (LocalTime) -> Unit){
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .clickable{
+                    showTimeDialog = true
+                }
                 .padding(8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
@@ -56,9 +59,6 @@ fun ItemSettingTime(item: Item, onTimeChanged: (LocalTime) -> Unit){
             if( hasTime){
                 Text(
                     text = DateTImeConverter.format(targetTime),
-                    modifier = Modifier.clickable {
-                        showTimeDialog = true
-                    }
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Icon(

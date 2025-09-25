@@ -1,15 +1,22 @@
 package se.curtrune.lucy.modules
 
 import android.app.Application
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import se.curtrune.lucy.app.InitialScreen
 import se.curtrune.lucy.app.Settings
 import se.curtrune.lucy.app.UserPrefs
-import se.curtrune.lucy.screens.user_settings.MentalFlag
-import se.curtrune.lucy.screens.user_settings.PanicOption
+import se.curtrune.lucy.screens.main.navigation.NavigationDrawerState
+import se.curtrune.lucy.screens.settings.MentalFlag
+import se.curtrune.lucy.screens.settings.PanicOption
 import se.curtrune.lucy.util.Logger
 import java.util.Arrays
 
 class UserSettings(val context: Application) {
+    val navigationDrawerState = MutableStateFlow(NavigationDrawerState().also {
+        it.showProjectsLink = showProjects
+
+    })
 
     /**
      * list of categories, stored in sharedPreferences, settings whatever you want to call it
@@ -81,6 +88,33 @@ class UserSettings(val context: Application) {
         set(value){
             UserPrefs.setSyncWithGoogleCalendar(value, context)
         }
+/*    var showDuration: Boolean
+        get() = UserPrefs.getShowDuration(context)
+        set(value){
+            UserPrefs.setShowDuration(value, context)
+        }*/
+    var showMedicine: Boolean
+        get() = UserPrefs.getShowMedicine(context)
+        set(value){
+            UserPrefs.setShowMedicine(value, context)
+        }
+    var showProjects: Boolean
+        get() = UserPrefs.getShowProjects(context)
+        set(value){
+            UserPrefs.setShowProjects(value, context)
+            navigationDrawerState.update {
+                it.copy(showProjectsLink = value)
+            }
+        }
+    var showDuration: Boolean
+    get() = UserPrefs.getShowDuration(context)
+        set(value){
+            UserPrefs.setShowDuration(value, context)
+        }
+/*    var showAppointments: Boolean
+        get() = UserPrefs.getShowAppointments(context)
+        set(value){
+        }*/
     var usesPassword: Boolean
         get() = UserPrefs.usesPassword(context)
         set(value){

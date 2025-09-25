@@ -3,7 +3,6 @@ package se.curtrune.lucy.screens.main
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -20,10 +19,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import com.google.android.material.navigation.NavigationView
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.app.InitialScreen
+import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.app.Settings.PanicAction
 import se.curtrune.lucy.app.UserPrefs
 import se.curtrune.lucy.classes.item.Item
@@ -31,42 +30,28 @@ import se.curtrune.lucy.composables.top_app_bar.FlexibleTopBar
 import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
 import se.curtrune.lucy.dialogs.PanicActionDialog
 import se.curtrune.lucy.dialogs.UpdateDialog
-import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.modules.TopAppbarModule
 import se.curtrune.lucy.screens.affirmations.Quote
 import se.curtrune.lucy.screens.appointments.AppointmentsFragment
-import se.curtrune.lucy.screens.contacts.ContactsFragment
 import se.curtrune.lucy.screens.daycalendar.CalendarDayFragment
 import se.curtrune.lucy.screens.dev.DevActivity
-import se.curtrune.lucy.screens.duration.DurationFragment
-import se.curtrune.lucy.screens.enchilada.EnchiladaFragment
-import se.curtrune.lucy.screens.lists.ListFragment
-import se.curtrune.lucy.screens.log_in.OldLogInActivity
 import se.curtrune.lucy.screens.main.composables.ChoosePanicActionDialog
 import se.curtrune.lucy.screens.main.composables.QuoteDialog
-import se.curtrune.lucy.screens.medicine.MedicineFragment
-import se.curtrune.lucy.screens.mental_stats.MentalStatsFragment
-import se.curtrune.lucy.screens.message_board.MessageBoardFragment
 import se.curtrune.lucy.screens.monthcalendar.MonthFragment
-import se.curtrune.lucy.screens.my_day.MyDayFragment
-import se.curtrune.lucy.screens.projects.ProjectsFragment
 import se.curtrune.lucy.screens.todo.TodoFragment
-import se.curtrune.lucy.screens.user_settings.UserSettingsFragment
 import se.curtrune.lucy.screens.week_calendar.WeekFragment
 import se.curtrune.lucy.util.Constants
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.web.VersionInfo
-import java.util.Objects
 
 class MainActivity : AppCompatActivity() {
     private var drawerLayout: DrawerLayout? = null
     private val mainViewModel: MainViewModel by viewModels()
-    //private var mainViewModel: MainViewModel? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
         println("MainActivity.onCreate(Bundle of joy)")
-        initComponents()
+        //initComponents()
         initListeners()
         initViewModel()
         initContent()
@@ -80,80 +65,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun initComponents() {
-        drawerLayout = findViewById(R.id.navigationDrawer_drawerLayout)
-        val navigationView =
-            findViewById<NavigationView>(R.id.navigationDrawerActivity_navigationView)
-        //val view = navigationView.inflateHeaderView(R.layout.navigation_header)
-        val onNavigationItemSelectedListener =
-            NavigationView.OnNavigationItemSelectedListener { item: MenuItem ->
-                Logger.log(
-                    "...onNavigationItemSelected(MenuItem) ",
-                    Objects.requireNonNull(item.title).toString()
-                )
-                when (item.itemId) {
-                    R.id.navigationDrawer_monthCalender -> {
-                        navigate(MonthFragment())
-                    }
-                    R.id.bottomNavigation_today -> {
-                        navigate(CalendarDayFragment())
-                    }
-                    R.id.bottomNavigation_todo -> {
-                        navigate(TodoFragment())
-                    }
-                    R.id.bottomNavigation_appointments -> {
-                        navigate(AppointmentsFragment())
-                    }
-                    R.id.bottomNavigation_enchilada -> {
-                        navigate(EnchiladaFragment())
-                    }
-                    R.id.bottomNavigation_projects -> {
-                        navigate(ProjectsFragment())
-                    }
-                    R.id.navigationDrawer_durationFragment -> {
-                        navigate(DurationFragment())
-                    }
-
-                    R.id.navigationDrawer_weekly -> {
-                        navigate(WeekFragment())
-                    }
-                    R.id.navigationDrawer_messageBoardFragment -> {
-                        navigate(MessageBoardFragment())
-                    }
-                    R.id.navigationDrawer_medicines  ->{
-                        navigate(MedicineFragment())
-                    }
-                    R.id.navigationDrawer_customizeFragment -> {
-                        navigate(UserSettingsFragment())
-                    }
-                    R.id.navigationDrawer_lists ->{
-                        navigate(ListFragment())
-                    }
-                    R.id.navigationDrawer_mentalFragment -> {
-                        navigate(MyDayFragment())
-                    }
-                    R.id.navigationDrawer_mentalStatsFragment -> {
-                        navigate(MentalStatsFragment())
-                    }
-                    R.id.navigationDrawer_contactsFragment -> {
-                        navigate(ContactsFragment())
-                    }
-                    R.id.navigationDrawer_logOut -> {
-                        Logger.log("...log out")
-                        val intent = Intent(
-                            this,
-                            OldLogInActivity::class.java
-                        )
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                        startActivity(intent)
-                        //finish();
-                    }
-                }
-                drawerLayout!!.close()
-                true
-            }
-        navigationView.setNavigationItemSelectedListener(onNavigationItemSelectedListener)
-    }
     @OptIn(ExperimentalMaterial3Api::class)
     private fun initContent(){
         //println("initContent()")
@@ -172,18 +83,19 @@ class MainActivity : AppCompatActivity() {
             var quote by remember {
                 mutableStateOf(Quote())
             }
-            //var topAppBarState = mainViewModel?.topAppBarState?.collectAsState()
             val topAppBarState = TopAppbarModule.topAppBarState.collectAsState()
             LaunchedEffect(mainViewModel) {
-                mainViewModel.eventChannel?.collect { event ->
+                mainViewModel.eventChannel.collect { event ->
                     when (event) {
                         MainChannelEvent.ShowPanicDialog -> {
                             showPanicDialog = true
                         }
+
                         is MainChannelEvent.ShowAffirmation -> {
                             Toast.makeText(applicationContext,
                                 event.affirmation?.affirmation ?: "you're the greatest", Toast.LENGTH_LONG).show()
                         }
+
                         is MainChannelEvent.ShowBoostDialog -> {
                             Toast.makeText(applicationContext, "boost me", Toast.LENGTH_LONG).show()
                         }
@@ -202,9 +114,12 @@ class MainActivity : AppCompatActivity() {
                             Toast.makeText(applicationContext, "start sequence not implemented", Toast.LENGTH_LONG).show()
                         }
 
-                        is MainChannelEvent.OpenNavigationDrawer -> {
-                            println("open navigation drawer")
-                            drawerLayout!!.open()
+                        is MainChannelEvent.ShowNavigationDrawer -> {
+                            if( event.show){
+                                drawerLayout!!.open()
+                            }else{
+                                drawerLayout!!.close()
+                            }
                         }
 
                         is MainChannelEvent.ShowDayCalendar -> { navigate(CalendarDayFragment()) }
@@ -300,7 +215,9 @@ class MainActivity : AppCompatActivity() {
             InitialScreen.CALENDER_MONTH -> navigate(MonthFragment())
             InitialScreen.CALENDER_APPOINTMENTS -> navigate(AppointmentsFragment())
             InitialScreen.TODO_FRAGMENT -> navigate(TodoFragment())
-
+            InitialScreen.NEW_DAY_CALENDER -> {
+                println("...NEW_DAY_CALENDER")
+            }
         }
     }
     private fun openWebPage(url: String) {
