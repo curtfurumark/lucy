@@ -55,6 +55,7 @@ class AppointmentsFragment : Fragment() {
                             is AppointmentChannel.EditItem -> {navigateToEditor(event.item)}
                             is AppointmentChannel.ShowMessage -> { showMessage(event.message)}
                             is AppointmentChannel.ShowAddItemDialog -> {showAddAppointmentDialog = true}
+                            is AppointmentChannel.NavigateDetails -> {}
                         }
                     }
                 }

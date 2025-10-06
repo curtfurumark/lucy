@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation3.runtime.NavKey
 import se.curtrune.lucy.app.Lucinda
 import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
@@ -34,6 +35,8 @@ import se.curtrune.lucy.screens.appointments.AppointmentChannel
 import se.curtrune.lucy.screens.appointments.AppointmentEvent
 import se.curtrune.lucy.screens.appointments.AppointmentsState
 import se.curtrune.lucy.screens.appointments.AppointmentsViewModel
+import se.curtrune.lucy.screens.navigation.AppointmentDetailsScreenNavKey
+import se.curtrune.lucy.screens.navigation.AppointmentsScreenNavKey
 
 @Composable
 fun AppointmentsList(
@@ -53,7 +56,7 @@ fun AppointmentsList(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppointmentsScreen(onEdit: (Item)->Unit){
+fun AppointmentsScreen(onEdit: (Item)->Unit, navigate: (NavKey)-> Unit){
     println("AppointmentsScreen(onEdit: (Item)->Unit)")
     val viewModel: AppointmentsViewModel = viewModel{
         AppointmentsViewModel.Factory(LucindaApplication.appModule.repository).create(AppointmentsViewModel::class.java)
@@ -110,6 +113,10 @@ fun AppointmentsScreen(onEdit: (Item)->Unit){
                 }
                 is AppointmentChannel.ShowMessage -> {
                     showMessage(event.message)
+                }
+
+                is AppointmentChannel.NavigateDetails -> {
+                    navigate(AppointmentDetailsScreenNavKey(event.appointment.id))
                 }
             }
         }

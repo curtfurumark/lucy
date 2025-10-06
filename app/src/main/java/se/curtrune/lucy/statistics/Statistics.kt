@@ -33,27 +33,28 @@ class Statistics(var items: List<Item>) {
         }
     val duration: Long
         get(){
-            return  items.map { item->item.duration }.sum()
+            return items.sumOf { item -> item.duration }
         }
     val durationActual: Long
         get(){
-            return items.filter { item->item.state.equals(State.DONE) }.map { item->item.duration }.sum()
+            return items.filter { item -> item.state.equals(State.DONE) }
+                .sumOf { item -> item.duration }
         }
     val anxiety: Int
         get(){
-            return items.map { item -> item.anxiety }.sum()
+            return items.sumOf { item -> item.anxiety }
         }
     val energy: Int
         get() {
-            return items.map { item -> item.energy }.sum()
+            return items.sumOf { item -> item.energy }
         }
     val mood: Int
         get(){
-            return items.map { item -> item.mood }.sum()
+            return items.sumOf { item -> item.mood }
         }
     val stress: Int
         get(){
-            return items.map { item->item.stress }.sum()
+            return items.sumOf { item -> item.stress }
         }
     val groupedByCategory: List<StatisticItem.Category>
         get(){

@@ -16,13 +16,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
-import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.composables.add_item.AddItemBottomSheet
 import se.curtrune.lucy.composables.top_app_bar.FlexibleTopBar
 import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
 import se.curtrune.lucy.modules.TopAppbarModule
-import se.curtrune.lucy.modules.TopAppbarModule.topAppBarState
-import se.curtrune.lucy.screens.main.navigation.DayCalendarNavKey
+import se.curtrune.lucy.screens.navigation.DayCalendarNavKey
 import se.curtrune.lucy.screens.week_calendar.WeekChannel
 import se.curtrune.lucy.screens.week_calendar.WeekEvent
 import se.curtrune.lucy.screens.week_calendar.WeekViewModel

@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.update
 import se.curtrune.lucy.app.InitialScreen
 import se.curtrune.lucy.app.Settings
 import se.curtrune.lucy.app.UserPrefs
-import se.curtrune.lucy.screens.main.navigation.NavigationDrawerState
+import se.curtrune.lucy.screens.navigation.NavigationDrawerState
 import se.curtrune.lucy.screens.settings.MentalFlag
 import se.curtrune.lucy.screens.settings.PanicOption
 import se.curtrune.lucy.util.Logger
@@ -15,7 +15,7 @@ import java.util.Arrays
 class UserSettings(val context: Application) {
     val navigationDrawerState = MutableStateFlow(NavigationDrawerState().also {
         it.showProjectsLink = showProjects
-
+        it.showDurationLink = showDuration
     })
 
     /**

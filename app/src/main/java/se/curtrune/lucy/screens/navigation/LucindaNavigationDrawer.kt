@@ -1,7 +1,6 @@
-package se.curtrune.lucy.screens.main.composables
+package se.curtrune.lucy.screens.navigation
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,10 +11,10 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.CalendarViewWeek
 import androidx.compose.material.icons.filled.Event
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Medication
 import androidx.compose.material.icons.filled.MeetingRoom
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.NavigationDrawerItem
@@ -26,7 +25,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -34,17 +32,6 @@ import androidx.navigation3.runtime.NavKey
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.ui.theme.LucyTheme
 import se.curtrune.lucy.app.LucindaApplication
-import se.curtrune.lucy.screens.main.navigation.AppointmentsScreenNavKey
-import se.curtrune.lucy.screens.main.navigation.DayCalendarNavKey
-import se.curtrune.lucy.screens.main.navigation.DurationNavKey
-import se.curtrune.lucy.screens.main.navigation.MedicineNavKey
-import se.curtrune.lucy.screens.main.navigation.MessageBoardNavKey
-import se.curtrune.lucy.screens.main.navigation.MonthCalendarNavKey
-import se.curtrune.lucy.screens.main.navigation.NavigationDrawerState
-import se.curtrune.lucy.screens.main.navigation.ProjectsScreenNavKey
-import se.curtrune.lucy.screens.main.navigation.SettingsScreenNavKey
-import se.curtrune.lucy.screens.main.navigation.WebScreenNavKey
-import se.curtrune.lucy.screens.main.navigation.WeekCalendarNavKey
 import java.time.LocalDate
 
 
@@ -65,12 +52,7 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
     ModalDrawerSheet {
         //Text(text = "new navigation drawer")
         Spacer(modifier = Modifier.height(32.dp))
-        //Icon()
-/*        Text(
-            text = "Kalendrar",
-            modifier = Modifier.clickable{
-                calendarsVisible = !calendarsVisible
-            })*/
+
         AnimatedVisibility(visible = calendarsVisible) {
             Column(modifier = Modifier.fillMaxWidth()) {
                 NavigationDrawerItem(
@@ -114,21 +96,27 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                         onClick(MonthCalendarNavKey(LocalDate.now().toString()))
                     }
                 )
-
-/*                NavigationDrawerItem(
-                    label = { Text(text = stringResource(R.string.appointments)) },
-                    selected = false,
-                    icon = { Icon(imageVector = Icons.Default.Event, contentDescription = "home") },
-                    onClick = {
-                        println("appointments")
-                        onClick(AppointmentsScreenNavKey)
-                    }
-                )*/
+                if( state.showAppointmentsLink) {
+                    NavigationDrawerItem(
+                        label = { Text(text = stringResource(R.string.appointments)) },
+                        selected = false,
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.Event,
+                                contentDescription = "home"
+                            )
+                        },
+                        onClick = {
+                            println("appointments")
+                            onClick(AppointmentsScreenNavKey)
+                        }
+                    )
+                }
             }
         }
 
 
-        if( true) {
+        if( state.showProjectsLink) {
             NavigationDrawerItem(
                 label = { Text(text = stringResource(R.string.projects)) },
                 selected = false,
@@ -143,19 +131,37 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                     onClick(ProjectsScreenNavKey)
                 }
             )
+            NavigationDrawerItem(
+                label = { Text(text = stringResource(R.string.lists))},
+                selected = false,
+                icon = {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Default.List,
+                        contentDescription = "listor")
+                       },
+                onClick = {
+                    onClick(TabbedProjectsScreenNavKey)
+                }
+            )
         }
         Spacer(modifier = Modifier.height(32.dp))
-        NavigationDrawerItem(
-            label = { Text(text = "matisse") },
-            selected = false,
-            onClick = {
-                println("settings on click")
-                onClick(WebScreenNavKey)
+        if( false) {
+            NavigationDrawerItem(
+                label = { Text(text = "matisse") },
+                selected = false,
+                onClick = {
+                    println("settings on click")
+                    onClick(WebScreenNavKey)
 
-            },
-            icon = {Icon(imageVector = Icons.Default.Settings, contentDescription = "settings")},
-
-        )
+                },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "settings"
+                    )
+                },
+            )
+        }
 /*        Text(
             text = stringResource(R.string.health),
             modifier = Modifier.clickable{
@@ -179,6 +185,19 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                 )
             }
         }
+        NavigationDrawerItem(
+            label = { Text(text = "dev screen") },
+            selected = false,
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Star,
+                    contentDescription = "settings"
+                )
+            },
+            onClick = {
+                onClick(DevScreenNavKey)
+            }
+        )
         Spacer(modifier = Modifier.height(32.dp))
         NavigationDrawerItem(
             label = { Text(text = stringResource(R.string.settings)) },
@@ -189,7 +208,7 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                 onClick(SettingsScreenNavKey)
             }
         )
-        if( showDuration) {
+        if( state.showDurationLink) {
             Spacer(modifier = Modifier.height(32.dp))
             NavigationDrawerItem(
                 label = { Text(text = stringResource(R.string.duration)) },

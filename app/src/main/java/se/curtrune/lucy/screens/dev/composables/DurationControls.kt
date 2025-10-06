@@ -56,6 +56,7 @@ fun DurationControls(state: DurationState, onEvent: (DurationEvent)->Unit){
         Column(
             modifier = Modifier.fillMaxWidth()
                 .verticalScroll(rememberScrollState())){
+            //Spacer(modifier = Modifier.height(40.dp))
             Text(text = stringResource(R.string.from, state.fromDate.toString()))
             Text(text = stringResource(R.string.to, state.toDate.toString()))
 

@@ -140,6 +140,7 @@ class DateViewModel(val date: LocalDate): ViewModel(){
         }
     }
     fun onEvent(topAppBarEvent: TopAppBarEvent) {
+        println("DateViewModel.onEvent(${topAppBarEvent.toString()})")
         when(topAppBarEvent){
             TopAppBarEvent.ActionMenu -> TODO()
             TopAppBarEvent.CheckForUpdate -> TODO()

@@ -28,34 +28,20 @@ import se.curtrune.lucy.screens.projects.ProjectsEvent
 import se.curtrune.lucy.screens.projects.ProjectsViewModel
 
 
+/**
+ * same as ProjectsScreen but without top app bar
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProjectsScreen(onNavigate: (NavKey)->Unit){
+fun ProjectsTab(onNavigate: (NavKey)->Unit){
     val viewModel: ProjectsViewModel = viewModel{
         ProjectsViewModel(LucindaApplication.appModule.repository)
     }
     val state = viewModel.state.collectAsState()
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-    val topAppBarState = TopAppbarModule.topAppBarState.collectAsState()
     var showAddItemBottomSheet by remember { mutableStateOf(false) }
     val context = LocalContext.current
     Scaffold(
-        topBar = {
-            FlexibleTopBar(
-                scrollBehavior = scrollBehavior,
-                content = {
-                    LucindaTopAppBar(
-                        state = topAppBarState.value,
-                        onEvent = { appBarEvent ->
-                            println("appBarEvent $appBarEvent")
-                            //mainViewModel.onEvent(appBarEvent)
-                        })
-                }, onEvent = { event ->
-                    println("onEvent $event")
-                    //devViewModel.onEvent(event)
-                }
-            )
-        }, floatingActionButton = {
+        floatingActionButton = {
             AddItemFab(onAddClick = {
                 viewModel.onEvent(ProjectsEvent.ShowAddItemDialog)
             })

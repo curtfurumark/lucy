@@ -1,4 +1,4 @@
-package se.curtrune.lucy.screens.main.navigation
+package se.curtrune.lucy.screens.navigation
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -13,19 +13,23 @@ import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberSavedStateNavEntryDecorator
+import androidx.navigation3.scene.rememberSceneSetupNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
-import androidx.navigation3.ui.rememberSceneSetupNavEntryDecorator
+//import androidx.navigation3.ui.rememberSceneSetupNavEntryDecorator
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import se.curtrune.lucy.classes.item.Item
+import se.curtrune.lucy.screens.appointments.composables.AppointmentDetailsScreen
 import se.curtrune.lucy.screens.appointments.composables.AppointmentsScreen
 import se.curtrune.lucy.screens.daycalendar.composables.DayCalendarScreen
+import se.curtrune.lucy.screens.dev.composables.DevScreen
 import se.curtrune.lucy.screens.duration.composables.DurationScreen
 import se.curtrune.lucy.screens.item_editor.composables.ItemEditorScreen
 import se.curtrune.lucy.screens.medicine.composable.MedicineScreen
 import se.curtrune.lucy.screens.message_board.composables.MessageBoardScreen
 import se.curtrune.lucy.screens.monthcalendar.composables.MonthCalendarScreen
 import se.curtrune.lucy.screens.projects.composables.ProjectsScreen
+import se.curtrune.lucy.screens.projects.composables.TabbedProjectsScreen
 import se.curtrune.lucy.screens.settings.composables.SettingsScreen
 import se.curtrune.lucy.screens.webscreen.WebScreen
 import se.curtrune.lucy.screens.week_calendar.composables.WeekCalendarScreen
@@ -33,6 +37,8 @@ import se.curtrune.lucy.screens.week_calendar.composables.WeekCalendarScreen
 @Serializable
 data class DayCalendarNavKey(val date: String): NavKey
 
+@Serializable
+data object DevScreenNavKey: NavKey
 @Serializable
 data object DurationNavKey: NavKey
 
@@ -57,10 +63,15 @@ data object SettingsScreenNavKey: NavKey
 data object ProjectsScreenNavKey: NavKey
 
 @Serializable
+data class AppointmentDetailsScreenNavKey(val appointmentID: Long): NavKey
+
+@Serializable
 data object AppointmentsScreenNavKey: NavKey
 
 @Serializable
 data object WebScreenNavKey: NavKey
+@Serializable
+data object TabbedProjectsScreenNavKey: NavKey
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -75,12 +86,20 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
         ),
         entryProvider = { navKey->
             when(navKey) {
+                is AppointmentDetailsScreenNavKey -> {
+                    NavEntry(
+                        key = navKey) { AppointmentDetailsScreen(navKey.appointmentID)
+                    }
+                }
                 is AppointmentsScreenNavKey -> {
                     NavEntry(
                         key = navKey) {
                         AppointmentsScreen(
                             onEdit = {item->
                                 backStack.add(ItemEditorNavKey(item))
+                            }
+                            ,navigate = {
+                                backStack.add(it)
                             }
                         )
                     }
@@ -94,6 +113,12 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                             onEdit = {
                                 backStack.add(ItemEditorNavKey(it))
                         })
+                    }
+                }
+                is DevScreenNavKey -> {
+                    NavEntry(
+                        key = navKey) {
+                        DevScreen()
                     }
                 }
                 is DurationNavKey -> {
@@ -120,6 +145,12 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                         ProjectsScreen(onNavigate = {
                             backStack.add(it)
                         })
+                    }
+                }
+                is TabbedProjectsScreenNavKey -> {
+                    NavEntry(
+                        key = navKey) {
+                        TabbedProjectsScreen()
                     }
                 }
                 is WebScreenNavKey -> {

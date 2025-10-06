@@ -45,10 +45,10 @@ import se.curtrune.lucy.screens.appointments.AppointmentsFragment
 import se.curtrune.lucy.screens.daycalendar.CalendarDayFragment
 import se.curtrune.lucy.screens.dev.DevActivity
 import se.curtrune.lucy.screens.main.composables.ChoosePanicActionDialog
-import se.curtrune.lucy.screens.main.composables.LucindaNavigationDrawer
+import se.curtrune.lucy.screens.navigation.LucindaNavigationDrawer
 import se.curtrune.lucy.screens.main.composables.QuoteDialog
-import se.curtrune.lucy.screens.main.navigation.DayCalendarNavKey
-import se.curtrune.lucy.screens.main.navigation.NavigationRoot
+import se.curtrune.lucy.screens.navigation.DayCalendarNavKey
+import se.curtrune.lucy.screens.navigation.NavigationRoot
 import se.curtrune.lucy.screens.monthcalendar.MonthFragment
 import se.curtrune.lucy.screens.todo.TodoFragment
 import se.curtrune.lucy.screens.week_calendar.WeekFragment

@@ -24,7 +24,6 @@ fun EditableBulletList2() {
     var items by remember {
         mutableStateOf(listOf(TextFieldValue("")))
     }
-
     LazyColumn {
         itemsIndexed(items) { index, textFieldValue ->
             BulletTextField2(

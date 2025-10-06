@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import se.curtrune.lucy.app.LucindaApplication
+import se.curtrune.lucy.modules.TopAppbarModule
 import se.curtrune.lucy.screens.message_board.composables.DefaultMessage
 import se.curtrune.lucy.screens.message_board.composables.Mode
 import se.curtrune.lucy.web.LucindaApi
@@ -27,6 +28,7 @@ class MessageBoardViewModel : ViewModel() {
     val eventFlow = eventChannel.receiveAsFlow()
     init {
         println("init MessageBoardViewModel")
+        TopAppbarModule.setTitle( "Message Board")
         if(internetWorker.isConnected()){
             getMessages()
         }else{

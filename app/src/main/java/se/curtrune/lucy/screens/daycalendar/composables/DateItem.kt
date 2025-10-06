@@ -147,5 +147,5 @@ fun DateItem(
     }
 }
 enum class ContextActions{
-    VIEW_STATS, EDIT
+    VIEW_STATS, EDIT, DETAILS
 }

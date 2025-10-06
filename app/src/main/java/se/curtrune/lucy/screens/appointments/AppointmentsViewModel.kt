@@ -52,6 +52,7 @@ class AppointmentsViewModel(private val repository: Repository) : ViewModel() {
             is AppointmentEvent.Update -> {update(event.item)}
             is AppointmentEvent.ShowAddAppointmentDialog -> { showAddAppointmentDialog() }
             is AppointmentEvent.Filter -> {filter(event.filter)}
+            is AppointmentEvent.ShowDetails -> {showDetails(event.appointment)}
         }
     }
 
@@ -105,6 +106,12 @@ class AppointmentsViewModel(private val repository: Repository) : ViewModel() {
         }
         viewModelScope.launch {
             _eventChannel.send(AppointmentChannel.ShowAddItemDialog)
+        }
+    }
+    private fun showDetails(appointment: Item){
+        println("AppointmentsViewModel.showDetails(${appointment.heading})")
+        viewModelScope.launch {
+            _eventChannel.send(AppointmentChannel.NavigateDetails(appointment))
         }
     }
     private fun update(item: Item) {
