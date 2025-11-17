@@ -25,7 +25,7 @@ import se.curtrune.lucy.statistics.StatisticsPeriod
 @Composable
 fun MentalControls(state: MentalStatsState, onEvent: (MentalStatsEvent)->Unit){
     var selectedPeriod by remember {
-        mutableStateOf(StatisticsPeriod.Companion.Period.DAY)
+        mutableStateOf(state.period)
     }
     var dropdownExpanded by remember {
         mutableStateOf(false)

@@ -15,7 +15,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.screens.main.MainActivity;
+import se.curtrune.lucy.screens.main.MainActivity2;
 
 
 public class AlarmReceiver extends BroadcastReceiver {
@@ -29,7 +29,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         log("onReceive() message: ", message);
         log("onReceive() title" , title);
         log("...itemID", itemID);
-        Intent destinationIntent = new Intent(context, MainActivity.class);
+        Intent destinationIntent = new Intent(context, MainActivity2.class);
         destinationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, destinationIntent, PendingIntent.FLAG_IMMUTABLE);

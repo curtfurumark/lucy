@@ -44,6 +44,7 @@ class DateViewModel(val date: LocalDate): ViewModel(){
             tabs = mutableListOf(),
             currentParent = todoRoot
         ) }
+        println("currentParent = ${state.value.currentParent?.heading}")
         TopAppbarModule.setTitle(_state.value.date)
     }
 
@@ -121,6 +122,7 @@ class DateViewModel(val date: LocalDate): ViewModel(){
             is DayEvent.AddItem -> {addItem(event.item)}
             is DayEvent.CurrentDate ->{setCurrentDate(event.date)}
             is DayEvent.DeleteItem -> {deleteItem(event.item)}
+            is DayEvent.Duplicate -> duplicateItem(event.item)
             is DayEvent.ShowActionsMenu -> {println("show action menu")}
             is DayEvent.UpdateItem -> updateItem(event.item)
             is DayEvent.EditTime -> {updateItem(event.item)}//???
@@ -160,8 +162,30 @@ class DateViewModel(val date: LocalDate): ViewModel(){
             TopAppBarEvent.WeekClicked -> TODO()
         }
     }
+    private fun duplicateItem(item: Item){
+        println("duplicateItem(${item.heading})")
+        val newItem = Item().also {
+            it.heading = item.heading
+            it.description = item.description
+            it.targetDate = item.targetDate
+            it.targetTime = item.targetTime
+            if( item.parent != null) {
+                it.parent = item.parent
+            }
+            it.category = item.category
+        }
+        repository.insert(newItem)
+        val items = repository.selectItems(date)
+        _state.update { it.copy(
+            items = items
+        ) }
+
+    }
     private fun postpone(postponeDetails: PostponeDetails){
         println("postpone(${postponeDetails.toString()})")
+        _state.update { it.copy(
+            previousPostponeAmount = postponeDetails.amount
+        ) }
         if( postponeDetails.postPoneAll){
             val postponeItem = postponeDetails.item ?: return
             val postponeAmount = postponeDetails.amount

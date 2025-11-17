@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import kotlinx.coroutines.launch
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
+import se.curtrune.lucy.composables.ItemChooser
 import se.curtrune.lucy.screens.dev.DevEvent
 import se.curtrune.lucy.screens.dev.DevState
 import se.curtrune.lucy.web.LucindaApi
@@ -28,6 +29,8 @@ fun DevScreen(modifier: Modifier = Modifier, state: DevState = DevState(), onEve
     println("DevScreen")
     var message by remember { mutableStateOf("...") }
     val scope = rememberCoroutineScope()
+    var showItemChooser by remember { mutableStateOf(false) }
+
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -37,6 +40,9 @@ fun DevScreen(modifier: Modifier = Modifier, state: DevState = DevState(), onEve
             text = "dev screen",
             fontSize = MaterialTheme.typography.headlineLarge.fontSize)
         Text(text = message)
+        Button(onClick = { showItemChooser = true }) {
+            Text(text = "show item chooser")
+        }
         Button(onClick = {
             println("onClick()")
             try {
@@ -51,7 +57,15 @@ fun DevScreen(modifier: Modifier = Modifier, state: DevState = DevState(), onEve
         }) {
             Text(text = "create api")
         }
-
+    }
+    if( showItemChooser ){
+        ItemChooser(
+            onDismiss = {showItemChooser = false},
+            {
+                println("selected $it")
+                showItemChooser = false
+            }
+        )
     }
 }
 

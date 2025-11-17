@@ -7,6 +7,7 @@ import java.time.LocalDate
 sealed interface DayEvent{
     data class AddItem(val item: Item): DayEvent
     data class DeleteItem(val item: Item): DayEvent
+    data class Duplicate(val item: Item): DayEvent
     data class EditItem(val item: Item): DayEvent
     data class EditTime(val item: Item): DayEvent
     data class CurrentDate(val date: LocalDate): DayEvent

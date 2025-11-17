@@ -74,17 +74,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".screens.main.MainActivity"
-            android:exported="false"
-            android:theme="@style/Theme.Lucy.NoActionBar" />
+
         <activity
             android:name=".screens.main.MainActivity2"
             android:exported="false"
             android:theme="@style/Theme.Lucy.NoActionBar" />
-        <activity
-            android:name=".screens.economy.EconomyActivity"
-            android:exported="false" />
         <activity
             android:name=".screens.economy.TransactionActivity"
             android:exported="false" />

@@ -11,7 +11,6 @@ import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.app.InitialScreen
 import se.curtrune.lucy.screens.dev.DevActivity
 import se.curtrune.lucy.screens.index.composables.IndexScreen20
-import se.curtrune.lucy.screens.main.MainActivity
 import se.curtrune.lucy.screens.main.MainActivity2
 import se.curtrune.lucy.util.Constants
 
@@ -55,12 +54,13 @@ class IndexActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         }else {
-            val intent = Intent(
+            throw RuntimeException("deprecated")
+/*            val intent = Intent(
                 this,
                 MainActivity::class.java
             )
             intent.putExtra(Constants.INITIAL_SCREEN, firstPage.toString())
-            startActivity(intent)
+            startActivity(intent)*/
         }
     }
 }

@@ -39,15 +39,12 @@ import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.composables.NavigationDrawer
 import se.curtrune.lucy.composables.top_app_bar.FlexibleTopBar
 import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
-import se.curtrune.lucy.dialogs.RepeatDialog
 import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.persist.DBAdmin
 import se.curtrune.lucy.persist.SqliteLocalDB
 import se.curtrune.lucy.screens.dev.composables.DevScreen
-import se.curtrune.lucy.screens.main.MainActivity
 import se.curtrune.lucy.screens.main.TopAppBarState
 import se.curtrune.lucy.services.TimerService
-import se.curtrune.lucy.util.Constants
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.features.notifications.NotificationsWorker
 import java.time.LocalDate
@@ -196,16 +193,16 @@ class DevActivity : AppCompatActivity() {
 
 
     private fun navigateToDayCalendar() {
-        startActivity(Intent(this, MainActivity::class.java))
+        //startActivity(Intent(this, MainActivity::class.java))
     }
     private fun navigate(firstPage: InitialScreen){
         println("DevActivity.navigate(firstPage: ${firstPage.name})")
-        val intentTodo = Intent(
+/*        val intentTodo = Intent(
             this,
             MainActivity::class.java
         )
         intentTodo.putExtra(Constants.INITIAL_SCREEN, firstPage.toString())
-        startActivity(intentTodo)
+        startActivity(intentTodo)*/
     }
 
 
@@ -215,17 +212,6 @@ class DevActivity : AppCompatActivity() {
             it.action = command
             startService(it)
         }
-    }
-
-
-    private fun showRepeatDialog() {
-        Logger.log("...showRepeatDialog()")
-        val dialog = RepeatDialog()
-        dialog.setCallback { repeat ->
-            Logger.log("...onRepeat(Repeat)", repeat.toString())
-            Logger.log(repeat.toString())
-        }
-        dialog.show(supportFragmentManager, "repeat dialog")
     }
 
     private fun testNotification() {

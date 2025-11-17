@@ -38,7 +38,11 @@ class SettingsViewModel: ViewModel(){
             panicOption = userSettings.panicOption,
             initialScreen = userSettings.initialScreen,
             showProjects = userSettings.showProjects,
-            showMedicine = userSettings.showDuration
+            showMedicine = userSettings.showMedicine,
+            showDuration = userSettings.showDuration,
+            showDevScreen = userSettings.showDevScreen,
+            showMentalStats = userSettings.showMentalStatsScreen,
+            isDevMode = userSettings.devMode
         ) }
         TopAppbarModule.setTitle("Inställningar")
     }
@@ -103,6 +107,10 @@ class SettingsViewModel: ViewModel(){
             is UserEvent.SetPassword -> {
                 setPassword(event.password)
             }
+            is UserEvent.ShowToDo ->{
+                println("show to do")
+                setShowToDo(event.visible)
+            }
 
             is UserEvent.DeleteCategory -> {
                 deleteCategory(event.category)
@@ -145,7 +153,25 @@ class SettingsViewModel: ViewModel(){
                 setShowDuration(event.visible)
 
             }
+
+            is UserEvent.ShowDevScreen -> {
+                setShowDevScreen(event.visible)
+
+            }
+
+            is UserEvent.ShowMentalStats -> {
+                setShowMentalStats(event.visible)
+
+            }
         }
+    }
+
+    private fun setShowMentalStats(visible: Boolean) {
+        userSettings.showMentalStatsScreen = visible
+    }
+
+    private fun setShowDevScreen(show: Boolean) {
+        userSettings.showDevScreen = show
     }
     private fun setShowDuration(show: Boolean) {
         userSettings.showDuration = show
@@ -153,6 +179,9 @@ class SettingsViewModel: ViewModel(){
 
     private fun setShowMedicine(show: Boolean) {
         userSettings.showMedicine = show
+    }
+    private fun setShowToDo(show: Boolean) {
+        userSettings.showToDo = show
     }
 
     private fun setInitialScreen(initialScreen: InitialScreen){

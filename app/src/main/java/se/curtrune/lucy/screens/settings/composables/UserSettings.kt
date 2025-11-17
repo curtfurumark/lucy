@@ -86,6 +86,15 @@ fun ScreensSettings(state: UserState, onEvent: (UserEvent) -> Unit) {
     var showDuration by remember {
         mutableStateOf(state.showDuration)
     }
+    var showDevScreen by remember {
+        mutableStateOf(state.showDevScreen)
+    }
+    var showToDoScreen by remember {
+        mutableStateOf(state.showToDo)
+    }
+    var showMentalStatsScreen by remember {
+        mutableStateOf(state.showMentalStats)
+    }
     Card(modifier = Modifier.fillMaxWidth()) {
         Text("Screens")
         Row(
@@ -124,8 +133,46 @@ fun ScreensSettings(state: UserState, onEvent: (UserEvent) -> Unit) {
                 onEvent(UserEvent.ShowDuration(it))
             })
         }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Text(text = "dev screen")
+            Spacer(modifier = Modifier.weight(1f))
+            Checkbox(checked = showDevScreen, onCheckedChange = {
+                showDevScreen = it
+                onEvent(UserEvent.ShowDevScreen(it))
+            })
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Text(text = "todo screen")
+            Checkbox(checked = showToDoScreen,
+                onCheckedChange = {
+                    showToDoScreen = it
+                    onEvent(UserEvent.ShowToDo(it))
+                }
+            )
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = "mental stats screen")
+            Checkbox(checked = showMentalStatsScreen,
+                onCheckedChange = {
+                    showMentalStatsScreen = it
+                    onEvent(UserEvent.ShowMentalStats(it))
+                }
+            )
+        }
+        DevModeSetting(state = state, onEvent = onEvent)
     }
-
 }
 
 

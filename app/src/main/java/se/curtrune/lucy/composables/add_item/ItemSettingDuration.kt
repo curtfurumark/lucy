@@ -30,6 +30,7 @@ import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.ItemDuration
 import se.curtrune.lucy.classes.item.Item
+import se.curtrune.lucy.screens.item_editor.composables.HoursMinuteSeconds
 import se.curtrune.lucy.screens.medicine.composable.DropdownItem
 
 @Composable
@@ -68,77 +69,7 @@ fun ItemSettingDuration(item: Item, onEvent: (ItemDuration)->Unit){
     }
 }
 
-@Composable
-fun HoursMinuteSeconds(duration: Long, onDurationChange: (Long)->Unit){
-    var totalDuration by remember {
-        mutableStateOf(duration)
-    }
-    var hours by remember {
-        mutableLongStateOf(duration / 3600)
-    }
-    var minutes by remember {
-        mutableStateOf((duration % 3600) / 60)
-    }
-    var seconds by remember {
-        //mutableLongStateOf(duration % 60)
-        mutableStateOf((duration % 60).toString())
-    }
-    fun updateDuration(){
-        totalDuration = hours * 3600 + minutes * 60 + seconds.toLong()
-        onDurationChange(totalDuration)
-    }
-    Row(modifier = Modifier.fillMaxWidth()){
-        OutlinedTextField(
-            modifier = Modifier.weight(1f),
-            value = hours.toString(),
-            onValueChange = {
-                hours = it.toLong()
-                updateDuration()
-            },
-            label = {
-                Text(text = "hours")
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-        )
-        OutlinedTextField(
-            modifier = Modifier.weight(1f),
-            value = minutes.toString(),
-            onValueChange = {
-                println("on value change $it")
-                if( it.isNotBlank()){
-                    minutes = it.toLong()
-                    updateDuration()
-                }else{
-                    minutes = 0
-                    //updateDuration()
-                }
-                updateDuration()
-            },
-            label = {
-                Text(text = "minutes")
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-        )
-        OutlinedTextField(
-            modifier = Modifier.weight(1f),
-            value = seconds.toString(),
-            onValueChange = {
-                if( it.isNotBlank()){
-                    seconds = it
-                    updateDuration()
-                }else{
-                    seconds = ""
-                    println("on seconds is blank")
-                    //updateDuration()
-                }
-            },
-            label = {
-                Text(text = "seconds")
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-        )
-    }
-}
+
 
 
 @Composable

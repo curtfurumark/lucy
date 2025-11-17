@@ -1,5 +1,6 @@
 package se.curtrune.lucy.screens.todo
 
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
@@ -22,6 +23,7 @@ class TodoViewModel : ViewModel() {
     private val _state = MutableStateFlow(TodoState())
     val state = _state.asStateFlow()
     private val repository = LucindaApplication.appModule.repository
+    private val topAppbarModule = TopAppbarModule
     private var items: MutableList<Item> = mutableListOf()
     private val eventChannel = Channel<ChannelEvent>()
     val eventFlow = eventChannel.receiveAsFlow()
@@ -58,6 +60,7 @@ class TodoViewModel : ViewModel() {
             items = items
         ) }
         TopAppbarModule.setTitle("todo/att göra")
+        //val state = topAppbarModule.topAppBarState.collectAsState()
     }
     private fun editItem(item: Item){
         viewModelScope.launch {
@@ -74,6 +77,7 @@ class TodoViewModel : ViewModel() {
             return
         }
         items.add(itemWithID)
+        //TODO, sort items, is that necessary?
         items.sortWith(Comparator.comparingLong() { it.compare() })
         _state.update { it.copy(
             items = items

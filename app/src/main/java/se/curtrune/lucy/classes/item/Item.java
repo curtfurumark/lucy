@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 
-import java.io.Serializable;
+//import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -26,8 +26,10 @@ import se.curtrune.lucy.classes.Reward;
 import se.curtrune.lucy.classes.State;
 import se.curtrune.lucy.classes.Type;
 import se.curtrune.lucy.util.Converter;
+import kotlinx.serialization.Serializable;
 
-public class Item implements Serializable , Listable {
+@Serializable
+public class Item implements java.io.Serializable , Listable {
 
     protected long id;
     protected long parent_id;
@@ -121,6 +123,9 @@ public class Item implements Serializable , Listable {
     }
     public String getCategory() {
         return category;
+    }
+    public List<Item> getChildren() {
+        return children;
     }
     public int getColor(){
         return color;
@@ -313,6 +318,9 @@ public class Item implements Serializable , Listable {
 
     public void setAnxiety(int anxiety){
         this.anxiety = anxiety;
+    }
+    public void setChildren(List<Item> children){
+        this.children = children;
     }
     public void setCategory(String category) {
         //log("Item.setCategory(String)", category);

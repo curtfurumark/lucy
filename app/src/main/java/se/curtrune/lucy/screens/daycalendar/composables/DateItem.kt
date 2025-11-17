@@ -139,6 +139,9 @@ fun DateItem(
                         ContextActions.EDIT.name ->{
                             onEvent(DayEvent.EditItem(item))
                         }
+                        ContextActions.DUPLICATE.name ->{
+                            onEvent(DayEvent.Duplicate(item))
+                        }
                     }
                     showContextMenu = false
                 })
@@ -147,5 +150,5 @@ fun DateItem(
     }
 }
 enum class ContextActions{
-    VIEW_STATS, EDIT, DETAILS
+    VIEW_STATS, EDIT, DETAILS, DUPLICATE
 }

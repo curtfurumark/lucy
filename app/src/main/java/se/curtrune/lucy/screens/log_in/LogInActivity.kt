@@ -16,8 +16,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import se.curtrune.lucy.app.InitialScreen
+import se.curtrune.lucy.app.Lucinda
 import se.curtrune.lucy.screens.log_in.ui.theme.LucyTheme
-import se.curtrune.lucy.screens.main.MainActivity
 import se.curtrune.lucy.screens.main.MainActivity2
 import se.curtrune.lucy.util.Constants
 import se.curtrune.lucy.util.Logger.Companion.log
@@ -30,6 +30,13 @@ class LogInActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val lucindaAdmin = Lucinda.getInstance(this)
+        if( !lucindaAdmin.isInitialized(this)){
+            println("installing the app will initialize")
+            lucindaAdmin.initTheApp(this)
+        }else{
+            println("app already initialized")
+        }
         setContent {
             val state =  logInViewModel.state.collectAsState()
             LaunchedEffect(logInViewModel) {
@@ -56,7 +63,7 @@ class LogInActivity : ComponentActivity() {
     }
     private fun startUserActivity(initialScreen: InitialScreen) {
         println("LogInActivity.startUserActivity()")
-        var intent=Intent(applicationContext, MainActivity::class.java)
+        var intent=Intent(applicationContext, MainActivity2::class.java)
         when(initialScreen){
             InitialScreen.TODO_FRAGMENT-> {intent.putExtra(Constants.INITIAL_SCREEN, initialScreen.name)}
             InitialScreen.CALENDER_DATE -> {intent.putExtra(Constants.INITIAL_SCREEN,initialScreen.name)}

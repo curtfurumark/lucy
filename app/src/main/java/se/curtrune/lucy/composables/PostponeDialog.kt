@@ -43,9 +43,9 @@ data class PostponeDetails(
 )
 
 @Composable
-fun PostponeDialog(onDismiss: ()->Unit, onConfirm: (PostponeDetails)->Unit, item: Item){
+fun PostponeDialog(defaultPostponeAmount: PostponeAmount = PostponeAmount.ONE_HOUR, onDismiss: ()->Unit, onConfirm: (PostponeDetails)->Unit, item: Item){
     var postponeInfo by remember {
-        mutableStateOf(PostponeDetails(item = item))
+        mutableStateOf(PostponeDetails(amount = defaultPostponeAmount, item = item))
     }
     var advanced by remember {
         mutableStateOf(false)
@@ -171,8 +171,9 @@ fun PostponeDialog(onDismiss: ()->Unit, onConfirm: (PostponeDetails)->Unit, item
 @Composable
 fun PreviewDialog(){
     LucyTheme {
-        PostponeDialog(onDismiss = {}, onConfirm = {},
-            Item("i am an item")
+        PostponeDialog(
+            onDismiss = {}, onConfirm = {},
+            item = Item("i am an item")
         )
     }
 }

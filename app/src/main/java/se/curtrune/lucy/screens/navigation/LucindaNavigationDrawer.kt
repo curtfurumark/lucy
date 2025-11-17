@@ -7,14 +7,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Album
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.CalendarViewWeek
 import androidx.compose.material.icons.filled.Event
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Medication
 import androidx.compose.material.icons.filled.MeetingRoom
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.NavigationDrawerItem
@@ -42,12 +46,11 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
     var calendarsVisible by remember{
         mutableStateOf(true)
     }
-    var showDuration by remember {
-        mutableStateOf(true)
+
+    var devMode by remember {
+        mutableStateOf(false)
     }
-    var showMedicine by remember {
-        mutableStateOf(true)
-    }
+
     val settings = LucindaApplication.appModule.userSettings
     ModalDrawerSheet {
         //Text(text = "new navigation drawer")
@@ -144,7 +147,7 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                 }
             )
         }
-        Spacer(modifier = Modifier.height(32.dp))
+        //Spacer(modifier = Modifier.height(32.dp))
         if( false) {
             NavigationDrawerItem(
                 label = { Text(text = "matisse") },
@@ -162,12 +165,6 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                 },
             )
         }
-/*        Text(
-            text = stringResource(R.string.health),
-            modifier = Modifier.clickable{
-                healthVisible = !healthVisible
-            })*/
-        //AnimatedVisibility(visible = healthVisible) {
         if( state.showMedicineLink) {
             Column(modifier = Modifier.fillMaxWidth()) {
                 NavigationDrawerItem(
@@ -185,20 +182,22 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                 )
             }
         }
-        NavigationDrawerItem(
-            label = { Text(text = "dev screen") },
-            selected = false,
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Star,
-                    contentDescription = "settings"
-                )
-            },
-            onClick = {
-                onClick(DevScreenNavKey)
-            }
-        )
-        Spacer(modifier = Modifier.height(32.dp))
+        if (state.showDevScreenLink) {
+            NavigationDrawerItem(
+                label = { Text(text = "dev screen") },
+                selected = false,
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = "settings"
+                    )
+                },
+                onClick = {
+                    onClick(DevScreenNavKey)
+                }
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
         NavigationDrawerItem(
             label = { Text(text = stringResource(R.string.settings)) },
             selected = false,
@@ -208,11 +207,51 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                 onClick(SettingsScreenNavKey)
             }
         )
+        if( state.showMentalStats){
+            Spacer(modifier = Modifier.height(16.dp))
+            NavigationDrawerItem(
+                label = { Text(text = "mental stats")},
+                icon = {Icon(imageVector = Icons.Default.Album, contentDescription = "mental stats")},
+                selected = false,
+                onClick = {
+                    onClick(MentalStatsScreenNavKey)
+                }
+            )
+        }
+        if( devMode){
+            NavigationDrawerItem(
+                label = { Text(text = "dev screen") },
+                selected = false,
+                onClick = {
+                    onClick(DevScreenNavKey)
+                }
+            )
+            NavigationDrawerItem(
+                label = { Text(text = "templates") },
+                selected = false,
+                onClick = {
+                    onClick(TemplatesScreenNavKey)
+                }
+            )
+        }
+        if(state.showTodoScreen){
+            Spacer(modifier = Modifier.height(16.dp))
+            NavigationDrawerItem(
+                label = { Text(text = stringResource(R.string.todo)) },
+                selected = false,
+                icon = {Icon(imageVector = Icons.Default.AutoAwesome, contentDescription = "todo")},
+                onClick = {
+                    onClick(TodoScreenNavKey)
+
+                })
+
+        }
         if( state.showDurationLink) {
             Spacer(modifier = Modifier.height(32.dp))
             NavigationDrawerItem(
                 label = { Text(text = stringResource(R.string.duration)) },
                 selected = false,
+                icon = {Icon(imageVector = Icons.Default.Timer, contentDescription = "duration")},
                 onClick = {
                     onClick(DurationNavKey)
                 }

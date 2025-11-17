@@ -7,18 +7,23 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.composables.Field
 import se.curtrune.lucy.screens.my_day.MyDayEvent
 import se.curtrune.lucy.screens.my_day.MyDayState
+import se.curtrune.lucy.screens.my_day.MyDayViewModel
 
 @Composable
-fun MentalScreen(state: MyDayState, onEvent: (MyDayEvent)->Unit){
+fun MentalScreen(){
+    val viewModel: MyDayViewModel = viewModel()
+    val state by viewModel.state.collectAsState()
     var currentField by remember{
         mutableStateOf(Field.ENERGY)
     }
@@ -27,8 +32,8 @@ fun MentalScreen(state: MyDayState, onEvent: (MyDayEvent)->Unit){
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             MentalViewer(mental = state.mental)
-            MyDayHeader(state = state, onEvent = onEvent)
-            MyDayItemList(state = state, onEvent = onEvent)
+            MyDayHeader(state = state, onEvent = viewModel::onEvent)
+            MyDayItemList(state = state, onEvent = viewModel::onEvent)
         }
     }
 }

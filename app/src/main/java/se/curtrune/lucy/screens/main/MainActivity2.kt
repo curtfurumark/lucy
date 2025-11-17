@@ -29,30 +29,21 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import kotlinx.coroutines.launch
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
-import se.curtrune.lucy.app.InitialScreen
 import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.app.Settings.PanicAction
 import se.curtrune.lucy.app.UserPrefs
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.top_app_bar.FlexibleTopBar
 import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
-import se.curtrune.lucy.dialogs.PanicActionDialog
 import se.curtrune.lucy.dialogs.UpdateDialog
 import se.curtrune.lucy.modules.TopAppbarModule
-import se.curtrune.lucy.modules.UserSettings
 import se.curtrune.lucy.screens.affirmations.Quote
-import se.curtrune.lucy.screens.appointments.AppointmentsFragment
-import se.curtrune.lucy.screens.daycalendar.CalendarDayFragment
-import se.curtrune.lucy.screens.dev.DevActivity
 import se.curtrune.lucy.screens.main.composables.ChoosePanicActionDialog
-import se.curtrune.lucy.screens.navigation.LucindaNavigationDrawer
 import se.curtrune.lucy.screens.main.composables.QuoteDialog
 import se.curtrune.lucy.screens.navigation.DayCalendarNavKey
+import se.curtrune.lucy.screens.navigation.DevScreenNavKey
+import se.curtrune.lucy.screens.navigation.LucindaNavigationDrawer
 import se.curtrune.lucy.screens.navigation.NavigationRoot
-import se.curtrune.lucy.screens.monthcalendar.MonthFragment
-import se.curtrune.lucy.screens.todo.TodoFragment
-import se.curtrune.lucy.screens.week_calendar.WeekFragment
-import se.curtrune.lucy.util.Constants
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.web.VersionInfo
 import java.time.LocalDate
@@ -68,14 +59,6 @@ class MainActivity2 : AppCompatActivity() {
         //initListeners()
         initViewModel()
         initContent()
-        val intent = intent
-        val fragmentName = intent.getStringExtra(Constants.INITIAL_SCREEN)
-        if (fragmentName != null) {
-            Logger.log("...fragmentName", fragmentName)
-            loadFragment(InitialScreen.valueOf(fragmentName))
-        } else {
-            loadFragment(CalendarDayFragment())
-        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -100,7 +83,8 @@ class MainActivity2 : AppCompatActivity() {
             val scope = rememberCoroutineScope()
             val drawerState = rememberDrawerState(DrawerValue.Closed)
             val topAppBarState = TopAppbarModule.topAppBarState.collectAsState()
-            val navigationDrawerState = UserSettings(application).navigationDrawerState.collectAsState()
+            //val navigationDrawerState = UserSettings(application).navigationDrawerState.collectAsState()
+            val backStack = rememberNavBackStack(DayCalendarNavKey(LocalDate.now().toString()))
 
             LaunchedEffect(mainViewModel) {
                 mainViewModel.eventChannel.collect { event ->
@@ -133,13 +117,16 @@ class MainActivity2 : AppCompatActivity() {
                         }
 
 
-                        is MainChannelEvent.ShowDayCalendar -> { loadFragment(CalendarDayFragment()) }
+                        is MainChannelEvent.ShowDayCalendar -> {
+                            backStack.add(DayCalendarNavKey(LocalDate.now().toString()))
+                        }
                         is MainChannelEvent.ShowMessage -> {
                             Toast.makeText(applicationContext, event.message, Toast.LENGTH_LONG).show()
                         }
 
-                        MainChannelEvent.NavigateDevActivity -> {
-                            startActivity(Intent(applicationContext, DevActivity::class.java))
+                        is MainChannelEvent.NavigateDevActivity -> {
+                            //startActivity(Intent(applicationContext, DevActivity::class.java))
+                            backStack.add(DevScreenNavKey)
                         }
 
                         is MainChannelEvent.ShowNavigationDrawer -> {
@@ -154,8 +141,8 @@ class MainActivity2 : AppCompatActivity() {
             }
 
             val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+            val navigationDrawerState by mainViewModel.navigationState.collectAsState()
             LucyTheme {
-                val backStack = rememberNavBackStack(DayCalendarNavKey(LocalDate.now().toString()))
                 //val backStack = remember { mutableStateListOf<NavKey>(DayCalendarNavKey(LocalDate.now().toString())) }
                 //val backStack = NavBackStack<NavKey>(DayCalendarNavKey(LocalDate.now().toString()))
                 ModalNavigationDrawer(
@@ -167,7 +154,7 @@ class MainActivity2 : AppCompatActivity() {
                                 backStack.add(navKey)
                                 drawerState.close()
                             }
-                        }, state = navigationDrawerState.value)
+                        }, state = navigationDrawerState)
                     }
                 ) {
                     Scaffold(topBar = {
@@ -244,7 +231,7 @@ class MainActivity2 : AppCompatActivity() {
             .commit()
     }
 
-    private fun loadFragment(initialScreen: InitialScreen) {
+/*    private fun loadFragment(initialScreen: InitialScreen) {
         println("...loadFragment(InitialScreen:  $initialScreen.toString()}")
         when (initialScreen) {
             InitialScreen.CALENDER_DATE -> loadFragment(CalendarDayFragment())
@@ -256,7 +243,7 @@ class MainActivity2 : AppCompatActivity() {
                 println("NEW DAY CALENDAR")
             }
         }
-    }
+    }*/
     private fun openWebPage(url: String) {
         Logger.log("...openWebPage(String url)", url)
         if (LucindaApplication.appModule.internetWorker.isConnected()) {
@@ -291,12 +278,6 @@ class MainActivity2 : AppCompatActivity() {
 
     private fun panicActionPending() {
         Logger.log("...panicActionPending()")
-        val dialog = PanicActionDialog()
-        dialog.setListener { panicAction: PanicAction ->
-            Logger.log("onPanicAction(PanicAction)")
-            panic(panicAction)
-        }
-        dialog.show(supportFragmentManager, "panic action")
     }
 
     private fun panic(panicAction: PanicAction) {

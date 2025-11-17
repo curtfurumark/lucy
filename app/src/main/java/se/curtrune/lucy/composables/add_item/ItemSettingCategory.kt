@@ -53,25 +53,25 @@ fun ItemSettingCategory(item: Item, onCategoryChanged: (String) -> Unit){
     }
 }
 @Composable
-fun ItemSettingCategory(item: Item, categories: List<String>, onCategoryChanged: (String) -> Unit){
+fun ItemSettingCategory(modifier: Modifier = Modifier,item: Item, categories: List<String>, onCategoryChanged: (String) -> Unit){
     var category by remember {
         mutableStateOf(item.category)
     }
     var categoryListExpanded by remember {
         mutableStateOf(false)
     }
-    Card(modifier = Modifier.fillMaxWidth()
+    Card(
+        modifier = modifier.fillMaxWidth()
         .clickable {categoryListExpanded = !categoryListExpanded })
     {
         Row(modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if( category.isNotBlank()){
-                Text(text = category)
-            }else {
-                Text(text = stringResource(R.string.category))
-            }
+            //Text(text = stringResource(R.string.category))
+            Text(
+                modifier =  Modifier.padding(8.dp),
+                text = if(category.isNotBlank()) "$category" else "click to set category")
             Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = "chose category")
             DropdownMenu(expanded = categoryListExpanded, onDismissRequest = {
                 categoryListExpanded = false

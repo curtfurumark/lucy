@@ -41,8 +41,12 @@ public class UserPrefs {
     public static final String KEY_INITIAL_SCREEN = "KEY_INITIAL_SCREEN";
     public static final String KEY_SCROLL_POSITION_DAY_CALENDAR = "KEY_SCROLL_POSITION_DAY_CALENDAR";
 
+    public static final String KEY_SHOW_APPOINTMENTS = "KEY_SHOW_APPOINTMENTS";
+    public static final String KEY_SHOW_DEV_SCREEN = "KEY_SHOW_DEV_SCREEN";
     public static final String KEY_SHOW_PROJECTS = "KEY_SHOW_PROJECTS";
     public static final String KEY_SHOW_DURATION = "KEY_SHOW_DURATION";
+    public static final String KEY_SHOW_MENTAL_STATS_SCREEN = "KEY_SHOW_MENTAL_STATS_SCREEN";
+    public static final String KEY_SHOW_TODO = "KEY_SHOW_TODO";
     public static void addCategory(String category, Context context){
         log("UserPrefs.addCategory(String, Context)", category);
         Set<String> setCategories = Settings.getSet(KEY_CATEGORIES, context);
@@ -84,11 +88,23 @@ public class UserPrefs {
         return Settings.getInt(KEY_SCROLL_POSITION_DAY_CALENDAR,0,  context);
 
     }
+    public static boolean getShowAppointments(Context context) {
+        return Settings.getBoolean(KEY_SHOW_APPOINTMENTS, false, context);
+    }
+    public static boolean getShowDevScreen(Context context) {
+        return Settings.getBoolean(KEY_SHOW_DEV_SCREEN, false, context);
+    }
     public static boolean getShowDuration(Context context) {
         return Settings.getBoolean(KEY_SHOW_DURATION, false, context);
     }
     public static boolean getShowMedicine(Context context) {
         return Settings.getBoolean(KEY_SHOW_MEDICINE, false, context);
+    }
+    public static boolean getShowMentalStatsScreen(Context context){
+        return Settings.getBoolean(KEY_SHOW_MENTAL_STATS_SCREEN, false, context);
+    }
+    public static boolean getShowToDo(Context context) {
+        return Settings.getBoolean(KEY_SHOW_TODO, false, context);
     }
     public static boolean getSyncWithGoogleCalendar(Context context){
         return Settings.getBoolean(SYNC_WITH_GOOGLE_CALENDAR, false, context);
@@ -125,15 +141,20 @@ public class UserPrefs {
     public static boolean isDevMode(Context context) {
         return Settings.getBoolean(KEY_DEV_MODE, false, context);
     }
+    public static void  setShowDevScreen(boolean show, Context context) {
+        Settings.addBoolean(KEY_DEV_MODE, show, context);
+
+    }
 
     public static void setIcePhoneNumber(int phoneNumber, Context context){
         Settings.addInt(KEY_ICE_PHONE_NUMBER, phoneNumber, context);
     }
+    public static void setShowAppointments(boolean show, Context context){
+        Settings.addBoolean(KEY_SHOW_APPOINTMENTS, show, context);
+    }
     public static void setShowDuration(boolean show, Context context){
         Settings.addBoolean(KEY_SHOW_DURATION, show, context);
-
     }
-
     public static void setUsesPassword(boolean usesPassword, Context context){
         log("UserPrefs.setUsesPassword(boolean, Context)", usesPassword);
         Settings.addBoolean(USES_PASSWORD, usesPassword, context);
@@ -204,6 +225,13 @@ public class UserPrefs {
     public static void setShowProjects(boolean show, Context context){
         log("UserPrefs.setShowProjects(boolean, Context)", show);
         Settings.addBoolean(KEY_SHOW_PROJECTS, show, context);
+    }
+    public static void setShowToDo(boolean show, Context context){
+        Settings.addBoolean(KEY_SHOW_TODO, show, context);
+
+    }
+    public static void setShowMentalStatsScreen(boolean show, Context context){
+        Settings.addBoolean(KEY_SHOW_MENTAL_STATS_SCREEN, show, context);
     }
     public static void deletePanicUrl(String url, Context context) {
         log("UserPrefs.deletePanicUrl(String)", url);

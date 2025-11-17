@@ -21,22 +21,24 @@ import se.curtrune.lucy.classes.item.Item
 @Composable
 fun ItemSettingsRow(item: Item, onEdit:(Item)->Unit){
     val scrollState = rememberScrollState()
-    Column(
+    Row(
         modifier = Modifier.fillMaxWidth()
         .horizontalScroll(scrollState),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceEvenly){
+        horizontalArrangement = Arrangement.SpaceBetween ,
+        verticalAlignment = Alignment.CenterVertically){
         ItemSettingDate(item , onDateChanged = { date->
             item.targetDate = date
+            onEdit(item)
         })
         Spacer(modifier = Modifier.width(8.dp))
         ItemSettingTime(item = item, onTimeChanged = {
             item.targetTime = it
+            onEdit
         })
         Spacer(modifier = Modifier.width(8.dp))
-        ItemSettingRepeat(item = item, onRepeatEvent = {
-                repeat->  item.repeat = repeat})
-        Spacer(modifier = Modifier.width(8.dp))
+/*        ItemSettingRepeat(item = item, onRepeatEvent = {
+                repeat->  item.repeat = repeat})*/
+       // Spacer(modifier = Modifier.width(8.dp))
         ItemSettingNotification(item = item, onNotication = {
                 notification-> item.notification = notification
         })

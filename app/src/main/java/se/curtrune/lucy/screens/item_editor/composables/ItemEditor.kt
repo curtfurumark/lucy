@@ -7,7 +7,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,16 +22,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.activities.ui.theme.LucyTheme
+import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.classes.State
+import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.composables.add_item.HoursMinuteSeconds
 import se.curtrune.lucy.composables.add_item.ItemSettingAppointment
+import se.curtrune.lucy.composables.add_item.ItemSettingCalendar
 import se.curtrune.lucy.composables.add_item.ItemSettingCategory
 import se.curtrune.lucy.composables.add_item.ItemSettingDate
 import se.curtrune.lucy.composables.add_item.ItemSettingState
 import se.curtrune.lucy.composables.add_item.ItemSettingTemplate
 import se.curtrune.lucy.composables.add_item.ItemSettingTime
-import se.curtrune.lucy.composables.top_app_bar.ItemSettingCalendar
 import se.curtrune.lucy.screens.item_editor.ItemEvent
 
 @Composable
@@ -53,6 +57,11 @@ fun ItemEditor(
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
+        IconButton (onClick = {
+            onSave(item)
+        }){
+            Icon(imageVector = androidx.compose.material.icons.Icons.Default.Check, contentDescription = "save")
+        }
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = heading,
@@ -73,31 +82,41 @@ fun ItemEditor(
             },
             label = {Text(text = "comment")})
         Spacer(modifier = Modifier.height(8.dp))
+
         ItemSettingDate(item = item, onDateChanged = {
             item.targetDate = it
             onEvent(ItemEvent.Update(item))
         })
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(4.dp))
         ItemSettingTime(item = item, onTimeChanged = {
             item.targetTime = it
             onEvent(ItemEvent.Update(item))
         })
-        Spacer(modifier = Modifier.height(8.dp))
-        ItemSettingTemplate(item = item, onIsTemplate = {
-            item.setIsTemplate(it)
+        Spacer(modifier = Modifier.height(4.dp))
+        ItemSettingTemplate(item = item, onIsTemplate = {isTemplate->
+            item.setIsTemplate(isTemplate)
+            if( isTemplate) {
+                item.setType(Type.TEMPLATE)
+            }
+            //item.type = if (it) Type.Template else "item"
             onEvent(ItemEvent.Update(item))
         })
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(4.dp))
         ItemSettingState(item = item, onChange = { done->
             item.state = if (done) State.DONE else State.TODO
             onEvent(ItemEvent.Update(item))
         })
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(4.dp))
         ItemSettingCalendar(item = item, onEvent = {
             item.setIsCalenderItem(it)
             onEvent(ItemEvent.Update(item))
         })
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(4.dp))
+        ItemSettingAppointment(item = item, onEvent = {
+            item.setIsAppointment(it)
+            onEvent(ItemEvent.Update(item))
+        })
+        Spacer(modifier = Modifier.height(4.dp))
         ItemSettingCategory(
             item = item,
             categories = categories,
@@ -107,28 +126,17 @@ fun ItemEditor(
             }
         )
         Spacer(modifier = Modifier.height(4.dp))
-        HoursMinuteSeconds(duration = item.duration, onDurationChange = {
+        DurationCard(duration = item.duration, onDurationChanged = {
             item.duration = it
             onEvent(ItemEvent.Update(item))
         })
-        Spacer(modifier = Modifier.height(8.dp))
-        DurationTimer(
-            item = item,
-            onDurationChanged = {
-                onEvent(ItemEvent.Update(it))
-            }
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        ItemSettingAppointment(item = item, onEvent = {
-            item.setIsAppointment(it)
+        Spacer(modifier = Modifier.height(4.dp))
+        MentalCard(item = item, onMentalChanged = {
+            item.mental = it
             onEvent(ItemEvent.Update(item))
         })
-        Spacer(modifier = Modifier.height(8.dp))
-        Button(onClick = {
-            onSave(item)
-        }){
-            Text(text = "save")
-        }
+        Spacer(modifier = Modifier.height(4.dp))
+        ParentCard(item = item)
     }
 }
 

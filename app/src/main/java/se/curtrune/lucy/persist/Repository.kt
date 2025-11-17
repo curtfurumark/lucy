@@ -139,7 +139,7 @@ class Repository (val context: Application){
      * @return the inserted item, with its id field set to whatever db decided, autoincrement
      */
     fun insert(item: Item): Item? {
-        println("Repository.insert(Item) ${item.heading}")
+        println("Repository.insert(Item) ${item}")
         if (item.hasNotification()) {
             NotificationsWorker.setNotification(item, context)
         }
@@ -349,12 +349,13 @@ class Repository (val context: Application){
     }
 
     /**
-     * not in use right now, but i suspect it will be need some time in the not so distant future
      * @param type the type to be selected,
      * @return a list of item of said type
      */
     fun selectItems(type: Type): List<Item> {
+        println("Repository.selectItems(type: $type)")
         val query = Queeries.selectItems(type)
+        println(query)
         val db = SqliteLocalDB(context)
         val items = db.selectItems(query)
         db.close()
@@ -392,6 +393,23 @@ class Repository (val context: Application){
         db.close()
         return children
     }
+    fun selectTree(parentID: Long): Item?{
+        val db = SqliteLocalDB(context)
+        val item = db.selectItem(parentID)
+        if(  item != null && item.hasChild()){
+            val children = selectChildren(item)
+            item.children = children
+        }
+        db.close()
+        return item
+    }
+    private fun selectTree(): List<Item> {
+        val db = SqliteLocalDB(context)
+        //val items = db.selectItems()
+        db.close()
+        return emptyList()
+    }
+
     private fun setHasChild(item: Item, hasChild: Boolean) {
         println("Repository.setHasChild(Item: $item.heading, hasChild: $hasChild)")
         val db = SqliteLocalDB(context)

@@ -147,10 +147,6 @@ fun AddItemBottomSheet(
 }
 
 data class DefaultItemSettings(
-    //var targetDate: LocalDate = LocalDate.now(),
-    //val targetTime: LocalTime =  LocalTime.of(0, 0, 0),
-    //val isTemplate: Boolean = false,
-    //var isCalendarItem: Boolean = false,
     val parent: Item? = null,
     var item: Item = Item(),
     val isAppointment: Boolean = false,

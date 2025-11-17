@@ -59,7 +59,11 @@ class UserSettings(val context: Application) {
         get() = UserPrefs.getDarkMode(context)
         set(value){
             UserPrefs.setUseDarkMode(value, context)
-            //field = value
+        }
+    var devMode: Boolean
+        get() = UserPrefs.isDevMode(context)
+        set(value){
+            UserPrefs.setDevMode(value, context)
         }
     var initialScreen: InitialScreen
         get() = UserPrefs.getInitialScreen(context)
@@ -92,12 +96,30 @@ class UserSettings(val context: Application) {
         get() = UserPrefs.getShowDuration(context)
         set(value){
             UserPrefs.setShowDuration(value, context)
+
         }*/
+    var showAppointmentsLink: Boolean
+        get() = UserPrefs.getShowAppointments(context)
+        set(value){
+            UserPrefs.setShowAppointments(value, context)
+        }
+
+    var showDevScreen: Boolean
+        get() = UserPrefs.getShowDevScreen(context)
+        set(value){
+            UserPrefs.setShowDevScreen(value, context)
+        }
     var showMedicine: Boolean
         get() = UserPrefs.getShowMedicine(context)
         set(value){
             UserPrefs.setShowMedicine(value, context)
         }
+    var showMentalStatsScreen: Boolean
+        get() = UserPrefs.getShowMentalStatsScreen(context)
+        set(value){
+            UserPrefs.setShowMentalStatsScreen(value, context)
+    }
+
     var showProjects: Boolean
         get() = UserPrefs.getShowProjects(context)
         set(value){
@@ -115,6 +137,11 @@ class UserSettings(val context: Application) {
         get() = UserPrefs.getShowAppointments(context)
         set(value){
         }*/
+    var showToDo: Boolean
+        get() = UserPrefs.getShowToDo(context)
+        set(value){
+            UserPrefs.setShowToDo(value, context)
+        }
     var usesPassword: Boolean
         get() = UserPrefs.usesPassword(context)
         set(value){

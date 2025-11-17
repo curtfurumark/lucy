@@ -124,8 +124,10 @@ fun DayCalendar(
     }
     if(state.showPostponeDialog){
         state.currentItem?.let {
-            PostponeDialog(onDismiss = {
-                onEvent(DayEvent.HidePostponeDialog)
+            PostponeDialog(
+                defaultPostponeAmount = state.previousPostponeAmount,
+                onDismiss = {
+                    onEvent(DayEvent.HidePostponeDialog)
             }, onConfirm = { postponeInfo->
                 println("onConfirm postpone item ")
                 onEvent(DayEvent.HidePostponeDialog)

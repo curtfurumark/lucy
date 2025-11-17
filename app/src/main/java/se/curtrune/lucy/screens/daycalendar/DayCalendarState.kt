@@ -2,6 +2,7 @@ package se.curtrune.lucy.screens.daycalendar
 
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.calender.Week
+import se.curtrune.lucy.composables.PostponeAmount
 import se.curtrune.lucy.composables.add_item.DefaultItemSettings
 import java.time.LocalDate
 
@@ -20,5 +21,6 @@ data class DayCalendarState(
     var currentWeek: Week = Week(),
     val numberWeeks: Int = 10,
     val currentWeekPage: Int = 5,
-    val defaultItemSettings: DefaultItemSettings = DefaultItemSettings()
+    val defaultItemSettings: DefaultItemSettings = DefaultItemSettings(),
+    val previousPostponeAmount: PostponeAmount = PostponeAmount.ONE_HOUR
 )

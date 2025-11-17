@@ -16,7 +16,6 @@ import se.curtrune.lucy.classes.calender.Week
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.add_item.DefaultItemSettings
 import se.curtrune.lucy.modules.TopAppbarModule
-import se.curtrune.lucy.screens.my_day.MyDayFragment
 
 class WeekViewModel: ViewModel() {
     private val eventChannel = Channel<WeekChannel>()
@@ -109,7 +108,8 @@ class WeekViewModel: ViewModel() {
     private fun calendarDateLongClick(calendarDate: CalenderDate) {
         println("WeekViewModel.calendarDateLongClick(${calendarDate.date.toString()})")
         viewModelScope.launch {
-            eventChannel.send(WeekChannel.Navigate(MyDayFragment(date = calendarDate.date)))
+            //TODO use jetpack compose navigation 3
+            //eventChannel.send(WeekChannel.Navigate(MyDayFragment(date = calendarDate.date)))
         }
     }
 

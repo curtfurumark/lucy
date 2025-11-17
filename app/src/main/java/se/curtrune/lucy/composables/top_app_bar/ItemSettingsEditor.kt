@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.R
 import se.curtrune.lucy.classes.item.Item
+import se.curtrune.lucy.composables.add_item.ItemSettingCalendar
 import se.curtrune.lucy.composables.add_item.ItemSettingCategory
 import se.curtrune.lucy.composables.add_item.ItemSettingRepeat
 import se.curtrune.lucy.util.DateTImeConverter
@@ -53,26 +54,7 @@ fun ItemSettingsEditor(item: Item, parent: Item?){
         })}
     }
 }
-@Composable
-fun ItemSettingCalendar(item: Item, onEvent: (Boolean) -> Unit){
-    var isCalendarItem by remember {
-        mutableStateOf(item.isCalenderItem)
-    }
-    Card(modifier = Modifier.fillMaxWidth()
-        .padding(start = 8.dp)) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = stringResource(R.string.is_calender))
-            Checkbox(checked = isCalendarItem, onCheckedChange = {
-                isCalendarItem = !isCalendarItem
-                onEvent(isCalendarItem)
-            })
-        }
-    }
-}
+
 
 
 

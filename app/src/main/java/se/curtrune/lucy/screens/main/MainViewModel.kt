@@ -24,6 +24,7 @@ import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.web.LucindaApi
 
 class MainViewModel : ViewModel() {
+    //val navigationDrawerState = NavigationDrawerState()
     private val repository = LucindaApplication.appModule.repository
     private val mentalModule = LucindaApplication.appModule.mentalModule
     private val internetWorker = LucindaApplication.appModule.internetWorker
@@ -48,10 +49,9 @@ class MainViewModel : ViewModel() {
         checkIfUpdateAvailable()
     }
 
-
     private fun checkIfUpdateAvailable() {
         println("MainViewModel.checkIfUpdateAvailable()")
-/*        if( checkInternet()){
+        if( checkInternet()){
             println("...internet is connected")
             viewModelScope.launch {
                 try {
@@ -68,6 +68,7 @@ class MainViewModel : ViewModel() {
                         _eventChannel.send(MainChannelEvent.UpdateAvailable)
                     } else {
                         println("...lucinda is up to date")
+                        _eventChannel.send(MainChannelEvent.ShowMessage("lucinda is up to date"))
                     }
                 }catch (e: Exception){
                     println("an exception occurred while checking for updates")
@@ -79,7 +80,7 @@ class MainViewModel : ViewModel() {
             viewModelScope.launch {
                 _eventChannel.send(MainChannelEvent.ShowMessage("no internet connection"))
             }
-        }*/
+        }
     }
     fun onEvent(event: MainEvent){
         when(event){
@@ -144,6 +145,16 @@ class MainViewModel : ViewModel() {
     private fun openNavigationDrawer(){
         Logger.log("LucindaViewModel.openNavigationDrawer()")
         viewModelScope.launch {
+            navigationState.update { it.copy(
+                showMedicineLink = userSettings.showMedicine,
+                showDurationLink = userSettings.showDuration,
+                showProjectsLink = true,
+                showAppointmentsLink = userSettings.showAppointmentsLink,
+                showDevScreenLink = userSettings.showDevScreen,
+                showTodoScreen =  userSettings.showToDo,
+                showMentalStats = userSettings.showMentalStatsScreen
+            ) }
+            println("navigation state: ${navigationState.value}")
             _eventChannel.send(MainChannelEvent.ShowNavigationDrawer(true))
         }
     }
@@ -174,8 +185,6 @@ class MainViewModel : ViewModel() {
 
     fun filter(filter: String, everywhere: Boolean) {
         println("MainViewModel.filter($filter, everywhere $everywhere)")
-        //mutableFilter.value = query
-        //_filter.update { filter }
         _searchFilter.update { SearchFilter(filter, everywhere) }
     }
 
