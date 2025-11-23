@@ -5,7 +5,7 @@ import se.curtrune.lucy.classes.item.Item
 
 sealed interface TemplateEvent {
     data object CreateTemplate:  TemplateEvent
-    data class DeleteTemplate(val name: String):  TemplateEvent
+    data class DeleteTemplate(val template: Item):  TemplateEvent
     data class EditTemplate(val template: Item): TemplateEvent
     data class OnClick(val template: Item):  TemplateEvent
     data class OnDone(val heading: String):  TemplateEvent

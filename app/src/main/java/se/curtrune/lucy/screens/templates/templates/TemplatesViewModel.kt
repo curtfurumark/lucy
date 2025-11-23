@@ -29,11 +29,7 @@ class TemplatesViewModel: ViewModel() {
     private val db = LucindaApplication.Companion.appModule.repository
     init {
         println("TemplatesViewModel.init")
-        val templates = db.selectItems(Type.TEMPLATE)
-        println("templates: ${templates.size}")
-        templates.forEach {
-            it.setChildren(db.selectChildren(it))
-        }
+        val templates = selectTemplates()
         _state.update { it.copy(
             templates = templates
         ) }
@@ -45,14 +41,12 @@ class TemplatesViewModel: ViewModel() {
                 createTemplate()
             }
             is TemplateEvent.DeleteTemplate -> {
-                deleteTemplate()
+                deleteTemplate(event.template)
             }
             is TemplateEvent.EditTemplate ->{
                 println("editTemplate")
                 editTemplate(event.template)
             }
-
-
             is TemplateEvent.OnClick -> {
                 println("clicked item ${event.template.heading}")
                 onClickTemplate(event.template)
@@ -84,8 +78,17 @@ class TemplatesViewModel: ViewModel() {
         }
 
     }
-    private fun deleteTemplate(){
-        println("deleteTemplate")
+    private fun deleteTemplate(template: Item){
+        println("deleteTemplate ${template.heading}")
+        val stat = db.delete(template)
+        if( template.hasChild()){
+            template.children.forEach {
+                db.delete(it)
+            }
+        }
+        _state.update { it.copy(
+            templates = selectTemplates()
+        ) }
     }
     private fun editTemplate(template: Item){
         viewModelScope.launch {
@@ -98,6 +101,17 @@ class TemplatesViewModel: ViewModel() {
         println("items: ${items.size}")
         template.setChildren(items)
     }
+    private fun selectTemplates(): List<Item>{
+        println("selectTemplates")
+        val templates = db.selectItems(Type.TEMPLATE)
+        templates.forEach {
+            //println("template: ${it.heading}")'
+            it.children = db.selectChildren(it)
+        }
+        return templates
+
+    }
+
     private fun showUseTemplateDialog(template: Item){
         println("showUseTemplateDialog")
         viewModelScope.launch {

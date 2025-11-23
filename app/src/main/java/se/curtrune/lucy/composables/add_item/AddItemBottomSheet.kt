@@ -147,7 +147,7 @@ fun AddItemBottomSheet(
 }
 
 data class DefaultItemSettings(
-    val parent: Item? = null,
+    var parent: Item? = null,
     var item: Item = Item(),
     val isAppointment: Boolean = false,
     val isEvent: Boolean = true,

@@ -43,11 +43,7 @@ import se.curtrune.lucy.screens.templates.composables.TemplateCard
 fun TemplatesScreen(navigate: (NavKey)->Unit){
     val viewModel: TemplatesViewModel = viewModel()
     val state by viewModel.state.collectAsState()
-    //var showDialog by remember { mutableStateOf(false) }
-    var createNewTemplate by remember { mutableStateOf(false) }
-    var showDialog by remember { mutableStateOf(false) }
     var useTemplateDialog by remember { mutableStateOf(false) }
-
     val context = LocalContext.current
     Scaffold(floatingActionButton = {
         FloatingActionButton(onClick = {

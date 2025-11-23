@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import io.ktor.websocket.WebSocketWriter
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -41,7 +42,7 @@ class ItemSessionViewModel(val item: Item) : ViewModel() {
     private val mutableTimerState = MutableLiveData<TimerState>()
     private val mutableDuration = MutableLiveData<Long>()
     private val mutableError = MutableLiveData<String>()
-    private val mutableCurrentItem = MutableLiveData<Item?>()
+
     private var currentItem: Item? = null
     private val userSettings = LucindaApplication.appModule.userSettings
     var defaultItem: DefaultItemSettings = DefaultItemSettings()
@@ -81,20 +82,7 @@ class ItemSessionViewModel(val item: Item) : ViewModel() {
         mutableTimerState.value = TimerState.PENDING
     }
 
-/*    fun init(item: Item, context: Context?) {
-        Logger.log("ItemSessionViewModel.init(Item)")
-        this.currentItem = item
-        if (currentItem!!.repeatID > 0) {
-            val repeat =    repository.selectRepeat(currentItem!!.repeatID)
-            currentItem!!.setRepeat(repeat)
-        }
-        mutableCurrentItem.value = currentItem
-        mutableDuration.value = currentItem!!.duration
-    }*/
 
-    fun getCurrentItem(): MutableLiveData<Item?> {
-        return mutableCurrentItem
-    }
 
     val duration: LiveData<Long>
         get() = mutableDuration
@@ -218,23 +206,20 @@ class ItemSessionViewModel(val item: Item) : ViewModel() {
             is ItemEvent.InsertItem -> {}
             is ItemEvent.ShowAddItemDialog -> {
                 println("ItemSessionViewModel.ShowAddItemDialog")
-                viewModelScope.launch {
-                    defaultItem = defaultItem.copy(
-                        item = _state.value.item
+                showAddItemDialog()
 
-                    )
-                    _channel.send(ItemEditorChannel.ShowAddChildDialog)
-
-                }
             }
             is ItemEvent.InsertChild -> {
                 insertChild(event.item)
             }
         }
     }
-    private fun insertChild(item: Item){
+    private fun insertChild(child: Item){
         println("ItemSessionViewModel.insertChild(${item.heading})")
-        currentItem?.let { repository.insertChild(it, item) }
+        currentItem?.let { repository.insertChild(it, child) }
+        _state.update { it.copy(
+            item = child
+        ) }
 
     }
 
@@ -255,6 +240,18 @@ class ItemSessionViewModel(val item: Item) : ViewModel() {
     fun setElapsedDuration(secs: Long) {
         println("ItemSessionViewModel.setElapsedDuration(${DateTImeConverter.formatSeconds(secs)})")
         elapsedTime = secs
+    }
+    private fun showAddItemDialog(){
+        println("ItemSessionViewModel.showAddItemDialog()")
+        val xxx = Item().also {
+            it.category = currentItem!!.category
+            it.parent = currentItem
+        }
+        defaultItem.item = xxx
+        defaultItem.parent = currentItem
+        viewModelScope.launch {
+            _channel.send(ItemEditorChannel.ShowAddChildDialog)
+        }
     }
 
     private fun startTimer() {

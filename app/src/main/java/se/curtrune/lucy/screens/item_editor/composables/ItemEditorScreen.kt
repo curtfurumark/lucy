@@ -91,7 +91,8 @@ fun ItemEditorScreen(item: Item, onSave:(Item)->Unit ){
                 showAddChildDialog = false
             },
             onSave = {
-                viewModel.onEvent(ItemEvent.Update(it))
+                viewModel.onEvent(ItemEvent.InsertChild(it))
+                showAddChildDialog = false
             }
         )
     }

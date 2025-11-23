@@ -77,6 +77,12 @@ fun TemplateCard(template: Item, onEvent: (TemplateEvent) -> Unit){
                     showContextMenu = false
                 }
             )
+            DropdownMenuItem(text = {Text(text = "delete this template")},
+                onClick = {
+                    showContextMenu = false
+                    onEvent(TemplateEvent.DeleteTemplate(template))
+                }
+            )
         }
         if( showDataDialog){
             println("showDateDialog")

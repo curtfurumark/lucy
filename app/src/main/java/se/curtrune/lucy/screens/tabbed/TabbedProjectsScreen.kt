@@ -125,52 +125,6 @@ data class BulletItem(
     var text:String,
     var index:Int = 0
 )
-@Composable
-fun BulletList(){
-    var heading by remember { mutableStateOf("heading") }
-    var currentFocus by remember {
-        mutableIntStateOf(0) }
-    val items = remember { mutableStateListOf(BulletItem("", index = 0), BulletItem("", index = 1)) }
-    val focusRequester = remember { FocusRequester() }
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .imePadding()) {
-        Text(text = "bullet list with ${items.size} items")
-        Text(text = "current focus $currentFocus")
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = {
-            //items.add(BulletItem(""))
-            //println("onClick change focus")
-            currentFocus = ++currentFocus % items.size
-            println("current focus $currentFocus")
-        }){
-            Text(text = "change focus")
-        }
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = heading,
-            onValueChange = { heading = it }
-        )
-        items.forEachIndexed { index, item ->
-            UnOrderedBulletItemComposable(
-                //var color by remember { mutableStateOf(Color.Transparent) }
-                modifier = Modifier
-                    .padding(start = 8.dp),
-                item = item,
-                onEdit = {
-                    println("onEdit $it")
-                    if(it.text.endsWith("\n")){
-                        println("add new item after ${it.index}")
-                        items[index] = item.copy(text = item.text.removeSuffix("\n"))
-                        items.add(BulletItem("", index = index+1 ))
-                        // Request focus for the new item if it's the last one
-                        // This requires a bit more complex logic to associate FocusRequesters with items
-                    }
-                }
-            )
-        }
-    }
-}
 
 @Composable
 fun UnOrderedBulletItemComposable(modifier: Modifier = Modifier, item: BulletItem, onEdit: (BulletItem)->Unit){
