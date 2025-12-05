@@ -57,10 +57,14 @@ fun TemplateSettingsRow(item: Item, onEvent:(EditTemplateEvent)->Unit){
                 item.category = it
                 onEvent(EditTemplateEvent.Update(item))
 
-            } )
+            },
+            onAddNewCategory = { category ->
+                LucindaApplication.appModule.userSettings.addCategory(category)
+            }
+        )
         Spacer(modifier = Modifier.width(8.dp))
         ItemSettingAppointment(item = item, onEvent = {
-            item.setIsAppointment(it)
+            item.isAppointment = it
             onEvent(EditTemplateEvent.Update(item))
         })
         Spacer(modifier = Modifier.width(8.dp))

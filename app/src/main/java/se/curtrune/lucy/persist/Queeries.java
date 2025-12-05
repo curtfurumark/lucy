@@ -143,6 +143,11 @@ public class Queeries {
                 parent != null ? parent.getID() : 0, Type.TEMPLATE_CHILD.ordinal());
     }
 
+    /**
+     * for some reason this excludes items with child
+     * @param state, state of items to be selected
+     * @return a valid sql queery
+     */
     public static String selectItems(State state) {
         if (VERBOSE) log("Queeries.selectItems(State)", state.toString());
         return String.format(Locale.getDefault(), "SELECT * FROM items WHERE state = %d  AND type != %d AND hasChild = 0 ORDER BY targetDate DESC", state.ordinal(), Type.ROOT.ordinal());

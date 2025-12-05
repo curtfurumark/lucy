@@ -21,17 +21,21 @@ class EditTemplateViewModel(val templateID: Long): ViewModel() {
     val channel = _channel.receiveAsFlow()
 
     init {
-        val template = db.selectTree(templateID)
+        println("EditTemplateViewModel.init")
+        val template = db.selectItem(templateID)
         if( template == null) {
             error("no template with id $templateID")
         }else {
+            val children = db.selectChildren(template)
             _state.update {
                 it.copy(
                     template = template,
+                    children = children
                 )
             }
         }
     }
+
     fun onEvent(event: EditTemplateEvent){
         when(event){
             is EditTemplateEvent.Update->{
@@ -45,23 +49,41 @@ class EditTemplateViewModel(val templateID: Long): ViewModel() {
             }
         }
     }
+    private fun selectTree(templateID: Long): Item?{
+        println("...selecting tree for id $templateID")
+        val template = db.selectItem(templateID)
+        if( template == null) {
+            //error("no template with id $templateID")
+            return null
+        }
+        println("...selected template")
+        val children = db.selectChildren(template)
+        println("...number of children ${children.size}")
+        template.children = children as MutableList<Item>?
+        return template
+    }
     private fun addChild(parent: Item){
-        println("adding child to parent ${parent.heading}")
+        println("EditTemplateViewMode.addChild ${parent.heading}")
         val child = Item().also {
             it.parent = parent
         }
         db.insertChild(parent = parent, child = child)
-        val template =db.selectTree(templateID)
+        val template =db.selectItem(templateID)
         if( template == null) {
             error("no template with id $templateID")
             return
         }
+        val children = db.selectChildren(template)
+        //template.children = children as MutableList<Item>?
         //val children = template.children.sortedBy { it.targetTime }
-        template.children.sortWith { o1, o2 -> o1.targetTime.compareTo(o2.targetTime) }
-
-
+        children.sortedWith { o1, o2 -> o1.targetTime.compareTo(o2.targetTime) }
+        println("...children sorted")
+        children.forEach {
+            println("...child ${it.heading} id: ${it.id}")
+        }
         _state.update { it.copy(
-            template = template
+            template = template,
+            children = children
         ) }
     }
     private fun delete(item: Item){
@@ -91,8 +113,8 @@ class EditTemplateViewModel(val templateID: Long): ViewModel() {
     }
     private fun printTree(item: Item){
         println("printTree heading: ${item.heading}")
-        println("...number of children ${item.children.size}")
-        item.children.forEach {
+        println("...number of children ${item.children?.size}")
+        item.children?.forEach {
             println("...child heading: ${it.heading}, id: ${it.id}")
         }
     }

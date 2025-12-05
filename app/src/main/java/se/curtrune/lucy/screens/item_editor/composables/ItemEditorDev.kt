@@ -45,8 +45,8 @@ fun ItemEditorDev(item: Item, onEvent: (ItemEvent)->Unit) {
         Spacer(modifier = Modifier.height(4.dp))
         EditType(item, onEvent = onEvent)
         Spacer(modifier = Modifier.height(4.dp))
-        Text(text = "created: ${DateTImeConverter.format(item.created)}", color = Color.White)
-        Text(text = "updated: ${DateTImeConverter.format(item.updated)}", color = Color.White)
+        Text(text = "created: ${DateTImeConverter.format(item.getCreated())}", color = Color.White)
+        Text(text = "updated: ${DateTImeConverter.format(item.getUpdated())}", color = Color.White)
     }
 }
 
@@ -136,7 +136,7 @@ fun EditType(item: Item, onEvent: (ItemEvent)->Unit){
         mutableStateOf(false)
     }
     var currentType by remember {
-        mutableStateOf(item.type)
+        mutableStateOf(item.getType())
     }
     Card(modifier = Modifier.fillMaxWidth()){
         Column() {
@@ -154,7 +154,7 @@ fun EditType(item: Item, onEvent: (ItemEvent)->Unit){
                         , onClick = {
                            println("type chosen: $type")
                             currentType = type
-                            item.type = type
+                            item.setType(type)
                             onEvent(ItemEvent.Update(item))
                             dropdownExpanded = false
                     })

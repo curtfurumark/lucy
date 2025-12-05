@@ -267,7 +267,7 @@ class GoogleCalendarModule(private val application: Application) {
         item.description = googleCalendarEvent.description
         item.targetDate = DateTImeConverter.epochMillisToLocalDate(googleCalendarEvent.dtStart)
         item.targetTime =DateTImeConverter.epochMillisToLocalTime(googleCalendarEvent.dtStart)
-        item.setIsCalenderItem(true)
+        item.isCalenderItem = true
         if( googleCalendarEvent.isAllDay){
             item.itemDuration = ItemDuration(type = ItemDuration.Type.DAY)
         }

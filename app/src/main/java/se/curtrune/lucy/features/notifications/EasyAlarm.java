@@ -35,7 +35,7 @@ public class EasyAlarm  {
             log("ERROR item without notification");
             return;
         }
-        Notification notification = item.getNotification();
+        Notification notification = item.notification;
         calendar.set(Calendar.YEAR, notification.getDate().getYear());
         calendar.set(Calendar.MONTH, notification.getDate().getMonthValue() -1);
         calendar.set(Calendar.DATE, notification.getDate().getDayOfMonth() );

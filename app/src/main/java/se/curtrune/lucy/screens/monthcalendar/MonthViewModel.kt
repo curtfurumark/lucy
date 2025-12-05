@@ -60,7 +60,7 @@ class MonthViewModel: ViewModel() {
                 }else{
                     defaultItemSettings.item = Item().also {
                         it.targetDate = event.calendarDate.date
-                        it.setIsCalenderItem(true)
+                        it.isCalenderItem = true
                     }
                     viewModelScope.launch {
                         _eventChannel.send(MonthChannel.ShowAddItemDialog)

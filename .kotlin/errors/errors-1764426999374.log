@@ -1,0 +1,331 @@
+kotlin version: 2.2.21
+error message: org.jetbrains.kotlin.backend.common.CompilationException: Back-end: Please report this problem https://kotl.in/issue
+E:/dev/android_studio/lucy/app/src/main/java/se/curtrune/lucy/classes/item/Repeat.kt:8:1
+Problem with `@Serializable
+@StabilityInferred(parameters = 0)
+data class Repeat {
+  constructor(id: Long = -1L, templateID: Long = 0L, qualifier: Int = 1, unit: Unit = Unit.DAY, weekDays: List<DayOfWeek> = emptyList<DayOfWeek>(), firstDate: LocalDate = now() /*!! LocalDate */, lastDate: LocalDate? = null, lastActualDate: LocalDate? = null, isInfinite: Boolean = true) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  var id: Long
+    field = id
+    get
+    set
+
+  var templateID: Long
+    field = templateID
+    get
+    set
+
+  var qualifier: Int
+    field = qualifier
+    get
+    set
+
+  var unit: Unit
+    field = unit
+    get
+    set
+
+  val weekDays: List<DayOfWeek>
+    field = weekDays
+    get
+
+  @Contextual
+  var firstDate: LocalDate
+    field = firstDate
+    get
+    set
+
+  var lastDate: LocalDate?
+    field = lastDate
+    get
+    set
+
+  var lastActualDate: LocalDate?
+    field = lastActualDate
+    get
+    set
+
+  var isInfinite: Boolean
+    field = isInfinite
+    get
+    set
+
+  enum class Unit : Enum<Unit> {
+    private constructor() /* primary */ {
+      super/*Enum*/<Unit>()
+      /* <init>() */
+
+    }
+
+    DAY = Unit()
+
+    WEEK = Unit()
+
+    MONTH = Unit()
+
+    YEAR = Unit()
+
+    /* static */ fun values(): Array<Unit> /* Synthetic body for ENUM_VALUES */
+
+    /* static */ fun valueOf(value: String): Unit /* Synthetic body for ENUM_VALUEOF */
+
+    /* static */ val entries: EnumEntries<Unit>
+      get(): EnumEntries<Unit> /* Synthetic body for ENUM_ENTRIES */
+
+    /* fake */ override operator fun compareTo(other: Unit): Int
+
+    protected /* fake */ override fun clone(): Any
+
+    /* fake */ override operator fun equals(other: Any?): Boolean
+
+    /* fake */ override fun hashCode(): Int
+
+    /* fake */ override fun toString(): String
+
+    @IntrinsicConstEvaluation
+    /* fake */ override val name: String
+      /* fake */ override get(): String
+
+    /* fake */ override val ordinal: Int
+      /* fake */ override get(): Int
+
+    protected_and_package /* fake */ override fun finalize()
+
+    @RecentlyNonNull
+    /* fake */ override fun getDeclaringClass(): @FlexibleNullability Class<@FlexibleNullability Unit?>?
+
+  }
+
+  override fun toString(): String {
+    return format(/* <this> = Companion, */ locale = getDefault(), format = "repeat every %d %s", args = [<this>.<get-qualifier>(), <this>.<get-unit>().<get-name>()])
+  }
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    fun serializer(): KSerializer<Repeat>
+
+    /* fake */ override operator fun equals(other: Any?): Boolean
+
+    /* fake */ override fun hashCode(): Int
+
+    /* fake */ override fun toString(): String
+
+  }
+
+  @Deprecated(message = "This synthesized declaration should not be used directly", level = DeprecationLevel.HIDDEN)
+  @StabilityInferred(parameters = 0)
+  object $serializer : GeneratedSerializer<Repeat> {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    override fun serialize(encoder: Encoder, value: Repeat)
+
+    override fun deserialize(decoder: Decoder): Repeat
+
+    override val descriptor: SerialDescriptor
+      override get
+
+    override fun childSerializers(): Array<KSerializer<*>>
+
+    /* fake */ override fun typeParametersSerializers(): Array<KSerializer<*>>
+
+    /* fake */ override operator fun equals(other: Any?): Boolean
+
+    /* fake */ override fun hashCode(): Int
+
+    /* fake */ override fun toString(): String
+
+    /* static final field */ val $stable: Int = 8
+  }
+
+  operator fun component1(): Long {
+    return <this>.#id
+  }
+
+  operator fun component2(): Long {
+    return <this>.#templateID
+  }
+
+  operator fun component3(): Int {
+    return <this>.#qualifier
+  }
+
+  operator fun component4(): Unit {
+    return <this>.#unit
+  }
+
+  operator fun component5(): List<DayOfWeek> {
+    return <this>.#weekDays
+  }
+
+  operator fun component6(): LocalDate {
+    return <this>.#firstDate
+  }
+
+  operator fun component7(): LocalDate? {
+    return <this>.#lastDate
+  }
+
+  operator fun component8(): LocalDate? {
+    return <this>.#lastActualDate
+  }
+
+  operator fun component9(): Boolean {
+    return <this>.#isInfinite
+  }
+
+  fun copy(id: Long = <this>.#id, templateID: Long = <this>.#templateID, qualifier: Int = <this>.#qualifier, unit: Unit = <this>.#unit, weekDays: List<DayOfWeek> = <this>.#weekDays, firstDate: LocalDate = <this>.#firstDate, lastDate: LocalDate? = <this>.#lastDate, lastActualDate: LocalDate? = <this>.#lastActualDate, isInfinite: Boolean = <this>.#isInfinite): Repeat {
+    return Repeat(id = id, templateID = templateID, qualifier = qualifier, unit = unit, weekDays = weekDays, firstDate = firstDate, lastDate = lastDate, lastActualDate = lastActualDate, isInfinite = isInfinite)
+  }
+
+  override fun hashCode(): Int {
+    var result: Int = <this>.#id.hashCode()
+    result = result.times(other = 31).plus(other = <this>.#templateID.hashCode())
+    result = result.times(other = 31).plus(other = <this>.#qualifier.hashCode())
+    result = result.times(other = 31).plus(other = <this>.#unit.hashCode())
+    result = result.times(other = 31).plus(other = <this>.#weekDays.hashCode())
+    result = result.times(other = 31).plus(other = <this>.#firstDate.hashCode())
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#lastDate, arg1 = null) -> 0
+      else -> <this>.#lastDate.hashCode()
+    })
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#lastActualDate, arg1 = null) -> 0
+      else -> <this>.#lastActualDate.hashCode()
+    })
+    result = result.times(other = 31).plus(other = <this>.#isInfinite.hashCode())
+    return result
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Repeat -> return false
+    }
+    val tmp0_other_with_cast: Repeat = other /*as Repeat */
+    when {
+      EQEQ(arg0 = <this>.#id, arg1 = tmp0_other_with_cast.#id).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#templateID, arg1 = tmp0_other_with_cast.#templateID).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#qualifier, arg1 = tmp0_other_with_cast.#qualifier).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#unit, arg1 = tmp0_other_with_cast.#unit).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#weekDays, arg1 = tmp0_other_with_cast.#weekDays).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#firstDate, arg1 = tmp0_other_with_cast.#firstDate).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#lastDate, arg1 = tmp0_other_with_cast.#lastDate).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#lastActualDate, arg1 = tmp0_other_with_cast.#lastActualDate).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#isInfinite, arg1 = tmp0_other_with_cast.#isInfinite).not() -> return false
+    }
+    return true
+  }
+
+  /* static final field */ val $stable: Int = 8
+  @JvmStatic
+  internal /* static */ fun write$Self(self: Repeat, output: CompositeEncoder, serialDesc: SerialDescriptor)
+
+  internal constructor(seen0: Int, id: Long, templateID: Long, qualifier: Int, unit: Unit?, weekDays: List<DayOfWeek>?, firstDate: LocalDate?, lastDate: LocalDate?, lastActualDate: LocalDate?, isInfinite: Boolean, serializationConstructorMarker: SerializationConstructorMarker?)
+
+}
+
+`
+Details: kotlinx.serialization compiler plugin internal error: unable to transform declaration, see cause
+	at org.jetbrains.kotlinx.serialization.compiler.extensions.SerializerClassLowering.lower(SerializationLoweringExtension.kt:233)
+	at org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationLoweringExtensionKt$runOnFileInOrder$1.visitClass(SerializationLoweringExtension.kt:46)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorVoid.visitClass(IrVisitorVoid.kt:44)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorVoid.visitClass(IrVisitorVoid.kt:18)
+	at org.jetbrains.kotlin.ir.declarations.IrClass.accept(IrClass.kt:72)
+	at org.jetbrains.kotlin.ir.declarations.IrPackageFragment.acceptChildren(IrPackageFragment.kt:27)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorsKt.acceptChildrenVoid(IrVisitors.kt:23)
+	at org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationLoweringExtensionKt$runOnFileInOrder$1.visitElement(SerializationLoweringExtension.kt:42)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorVoid.visitPackageFragment(IrVisitorVoid.kt:168)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorVoid.visitFile(IrVisitorVoid.kt:184)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorVoid.visitFile(IrVisitorVoid.kt:180)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorVoid.visitFile(IrVisitorVoid.kt:18)
+	at org.jetbrains.kotlin.ir.declarations.IrFile.accept(IrFile.kt:27)
+	at org.jetbrains.kotlin.ir.visitors.IrVisitorsKt.acceptVoid(IrVisitors.kt:11)
+	at org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationLoweringExtensionKt.runOnFileInOrder(SerializationLoweringExtension.kt:40)
+	at org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationLoweringExtension.generate(SerializationLoweringExtension.kt:197)
+	at org.jetbrains.kotlin.fir.pipeline.ConvertToIrKt.applyIrGenerationExtensions(convertToIr.kt:498)
+	at org.jetbrains.kotlin.fir.pipeline.Fir2IrPipeline.runActualizationPipeline(convertToIr.kt:253)
+	at org.jetbrains.kotlin.fir.pipeline.Fir2IrPipeline.convertToIrAndActualize(convertToIr.kt:134)
+	at org.jetbrains.kotlin.fir.pipeline.ConvertToIrKt.convertToIrAndActualize(convertToIr.kt:100)
+	at org.jetbrains.kotlin.fir.pipeline.ConvertToIrKt.convertToIrAndActualize$default(convertToIr.kt:73)
+	at org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.JvmCompilerPipelineKt.convertToIrAndActualizeForJvm(jvmCompilerPipeline.kt:101)
+	at org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelinePhase.executePhase(JvmFir2IrPipelinePhase.kt:30)
+	at org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelinePhase.executePhase(JvmFir2IrPipelinePhase.kt:25)
+	at org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelinePhase.executePhase(JvmFir2IrPipelinePhase.kt:19)
+	at org.jetbrains.kotlin.cli.pipeline.PipelinePhase.phaseBody(PipelinePhase.kt:68)
+	at org.jetbrains.kotlin.cli.pipeline.PipelinePhase.phaseBody(PipelinePhase.kt:58)
+	at org.jetbrains.kotlin.config.phaser.NamedCompilerPhase.invoke(CompilerPhase.kt:102)
+	at org.jetbrains.kotlin.backend.common.phaser.CompositePhase.invoke(PhaseBuilders.kt:22)
+	at org.jetbrains.kotlin.config.phaser.CompilerPhaseKt.invokeToplevel(CompilerPhase.kt:53)
+	at org.jetbrains.kotlin.cli.pipeline.AbstractCliPipeline.runPhasedPipeline(AbstractCliPipeline.kt:109)
+	at org.jetbrains.kotlin.cli.pipeline.AbstractCliPipeline.execute(AbstractCliPipeline.kt:68)
+	at org.jetbrains.kotlin.cli.jvm.K2JVMCompiler.doExecutePhased(K2JVMCompiler.kt:79)
+	at org.jetbrains.kotlin.cli.jvm.K2JVMCompiler.doExecutePhased(K2JVMCompiler.kt:45)
+	at org.jetbrains.kotlin.cli.common.CLICompiler.execImpl(CLICompiler.kt:90)
+	at org.jetbrains.kotlin.cli.common.CLICompiler.exec(CLICompiler.kt:352)
+	at org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunnerBase.runCompiler(IncrementalJvmCompilerRunnerBase.kt:176)
+	at org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunnerBase.runCompiler(IncrementalJvmCompilerRunnerBase.kt:39)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.doCompile(IncrementalCompilerRunner.kt:499)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.compileImpl(IncrementalCompilerRunner.kt:416)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.compileNonIncrementally(IncrementalCompilerRunner.kt:301)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.compile(IncrementalCompilerRunner.kt:128)
+	at org.jetbrains.kotlin.daemon.CompileServiceImplBase.execIncrementalCompiler(CompileServiceImpl.kt:684)
+	at org.jetbrains.kotlin.daemon.CompileServiceImplBase.access$execIncrementalCompiler(CompileServiceImpl.kt:94)
+	at org.jetbrains.kotlin.daemon.CompileServiceImpl.compile(CompileServiceImpl.kt:1810)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source)
+	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(Unknown Source)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Unknown Source)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Unknown Source)
+	at java.base/java.security.AccessController.doPrivileged(Unknown Source)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Unknown Source)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(Unknown Source)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(Unknown Source)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(Unknown Source)
+	at java.base/java.security.AccessController.doPrivileged(Unknown Source)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(Unknown Source)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.base/java.lang.Thread.run(Unknown Source)
+Caused by: java.lang.IllegalStateException: Serializer for element of type java.time.LocalDate? has not been found
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializerSearchUtilKt.findTypeSerializerOrContext(SerializerSearchUtil.kt:85)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializerSearchUtilKt.getIrSerialTypeInfo(SerializerSearchUtil.kt:64)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.BaseIrGenerator.cacheableChildSerializerInstance(BaseIrGenerator.kt:473)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.BaseIrGenerator.createCachedChildSerializers(BaseIrGenerator.kt:465)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializableIrGenerator.<init>(SerializableIrGenerator.kt:62)
+	at org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializableIrGenerator$Companion.generate(SerializableIrGenerator.kt:407)
+	at org.jetbrains.kotlinx.serialization.compiler.extensions.SerializerClassLowering.lower(SerializationLoweringExtension.kt:149)
+	... 59 more
+
+

@@ -7,7 +7,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import se.curtrune.lucy.classes.Contact
 import se.curtrune.lucy.screens.contacts.ContactsEvent
 import se.curtrune.lucy.screens.contacts.ContactsState
 
@@ -19,7 +18,8 @@ fun ContactList(state: ContactsState, onEvent: (ContactsEvent) -> Unit, innerPad
             .padding(innerPadding)
     ) {
         items(state.contacts) { item ->
-            ContactItem(contact = item.contact)
+            ContactCard(contact = item.contact!!)
+            //TODO, null assertion
         }
     }
 }

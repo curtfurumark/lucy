@@ -36,7 +36,7 @@ fun AddAllWeekItemDialog(onDismiss: () -> Unit, onConfirm: (Item) -> Unit) {
     }
     item.itemDuration = ItemDuration(ItemDuration.Type.WEEK)
     item.targetDate = LocalDate.now()
-    item.setIsCalenderItem(true)
+    item.isCalenderItem = true
     var heading by remember {
         mutableStateOf("")
     }

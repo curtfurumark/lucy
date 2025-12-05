@@ -186,7 +186,7 @@ class SqliteLocalDB(context: Context?) :
             if (VERBOSE) Logger.log("...item inserted with id ", id)
             Logger.log(item)
         }
-        item.setId(id.toInt().toLong())
+        item.id = id.toLong()
         db!!.close()
         return item
     }
@@ -199,7 +199,7 @@ class SqliteLocalDB(context: Context?) :
             if (id == -1L) {
                 Logger.log("ERROR inserting item", item.heading)
             } else {
-                item.setId(id)
+                item.id = id
             }
         }
     }
@@ -505,7 +505,7 @@ class SqliteLocalDB(context: Context?) :
         private const val TABLE_ASSETS = "assets"
         private const val TABLE_REPEAT = "repeat"
         const val dbVersion: Int = 2
-        var VERBOSE: Boolean = true
+        var VERBOSE: Boolean = false
     }
 }
 

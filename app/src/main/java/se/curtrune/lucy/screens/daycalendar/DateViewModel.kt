@@ -38,6 +38,7 @@ class DateViewModel(val date: LocalDate): ViewModel(){
     init{
         println("DateViewModel.init date = $date")
         items = repository.selectItems(date)
+        println("...number of items ${items.size}")
         _state.update { it.copy(
             items = items,
             date = date,
@@ -62,7 +63,7 @@ class DateViewModel(val date: LocalDate): ViewModel(){
         println("...addItem(Item) ${item.heading}")
         Logger.log(item)
         if( item.itemDuration != null) {
-            println("...itemDuration: ${item.itemDuration.type.name}")
+            println("...itemDuration: ${item.itemDuration!!.type.name}")
         }else{
             println("...itemDuration is null")
         }
@@ -302,7 +303,7 @@ class DateViewModel(val date: LocalDate): ViewModel(){
                 item.targetDate = state.value.date
                 item.targetTime = LocalTime.now()
                 item.parent = state.value.currentParent
-                item.category = state.value.currentParent?.category
+                item.category = state.value.currentParent?.category.toString()
             }
             viewModelScope.launch {
                 eventChannel.send(DayChannel.showAddItemBottomSheet)

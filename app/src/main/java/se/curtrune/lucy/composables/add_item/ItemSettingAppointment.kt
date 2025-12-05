@@ -52,7 +52,7 @@ fun ItemSettingAppointment(item: Item, onEvent: (Boolean) -> Unit){
 fun PreviewItemSettingAppointment(){
     LucyTheme {
         val item = Item("doktorn")
-        item.setIsAppointment(true)
+        item.isAppointment = true
         ItemSettingAppointment(item = item, onEvent = {})
     }
 }

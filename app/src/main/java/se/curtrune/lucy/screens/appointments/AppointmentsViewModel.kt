@@ -93,12 +93,11 @@ class AppointmentsViewModel(private val repository: Repository) : ViewModel() {
         _state.update {
             it.copy(
                 defaultItemSettings = it.defaultItemSettings.copy(
-                    item = Item().also {
-                        item -> item.type = Type.APPOINTMENT
-                        item.parent = repository.getAppointmentsRoot()
-                        item.setIsCalenderItem(true)
-                        item.setIsCalenderItem(true)
-                        item.setIsAppointment(true)
+                    item = Item().also {it->
+                        it.parent = repository.getAppointmentsRoot()
+                        it.isCalenderItem = true
+                        it.isCalenderItem = true
+                        it.setType( Type.APPOINTMENT)
                     },
                     parent = repository.getAppointmentsRoot()
                 )

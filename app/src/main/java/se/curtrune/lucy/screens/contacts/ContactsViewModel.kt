@@ -38,8 +38,8 @@ class ContactsViewModel : ViewModel() {
         get() = mutableError
 
     fun insertContact(contact: Contact, context: Context) {
-        Logger.log("...insertContact(Contact, Context)")
-        if (contact.displayName.isEmpty()) {
+        println("...insertContact(Contact, Context)")
+/*        if (contact.displayName.isEmpty()) {
             mutableError.value = "contact name is required"
             return
         }
@@ -53,7 +53,7 @@ class ContactsViewModel : ViewModel() {
         if (contact.hasPhoneNumber()) {
             intent.putExtra(ContactsContract.Intents.Insert.PHONE, contact.phoneNumber)
         }
-        context.startActivity(intent)
+        context.startActivity(intent)*/
     }
     fun onEvent(event: ContactsEvent) {
         when (event) {

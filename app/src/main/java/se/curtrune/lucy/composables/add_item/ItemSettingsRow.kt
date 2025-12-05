@@ -44,15 +44,18 @@ fun ItemSettingsRow(item: Item, onEdit:(Item)->Unit){
         })
         Spacer(modifier = Modifier.width(8.dp))
         val categories = LucindaApplication.appModule.userSettings.categories
-        ItemSettingCategory(item = item, categories = categories, onCategoryChanged = {
+        ItemSettingCategory(
+            item = item, categories = categories,
+            onCategoryChanged = {
                 category-> item.category = category
-        } )
+            },
+            onAddNewCategory = {})
         Spacer(modifier = Modifier.width(8.dp))
         ItemSettingAppointment(item = item, onEvent = {
-            item.setIsAppointment(it)
+            item.isAppointment = it
         })
         ItemSettingTemplate(item = item, onIsTemplate = { isTemplate ->
-            item.setIsTemplate(isTemplate)
+            item.isTemplate
         })
     }
 }

@@ -1,5 +1,8 @@
 package se.curtrune.lucy.classes
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class ItemDuration(
     var type:  Type = Type.SECONDS
 ){

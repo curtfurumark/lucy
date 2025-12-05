@@ -82,7 +82,7 @@ class TemplatesViewModel: ViewModel() {
         println("deleteTemplate ${template.heading}")
         val stat = db.delete(template)
         if( template.hasChild()){
-            template.children.forEach {
+            template.children?.forEach {
                 db.delete(it)
             }
         }
@@ -99,14 +99,14 @@ class TemplatesViewModel: ViewModel() {
         println("onClickTemplate")
         val items = db.selectChildren(template)
         println("items: ${items.size}")
-        template.setChildren(items)
+        template.children = items.toMutableList()
     }
     private fun selectTemplates(): List<Item>{
         println("selectTemplates")
         val templates = db.selectItems(Type.TEMPLATE)
         templates.forEach {
             //println("template: ${it.heading}")'
-            it.children = db.selectChildren(it)
+            it.children = db.selectChildren(it) as MutableList<Item>?
         }
         return templates
 
@@ -128,7 +128,7 @@ class TemplatesViewModel: ViewModel() {
         val date = Instant.ofEpochMilli(epochMillis).atZone(ZoneId.systemDefault()).toLocalDate()
         actual.targetDate = date
         if( template.hasChild()){
-            template.children.forEach {
+            template.children?.forEach {
                 val item = copy(template = it)
                 item.targetDate = date
                 println("actual item ${item}")

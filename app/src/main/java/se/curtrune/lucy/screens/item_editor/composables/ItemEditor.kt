@@ -94,7 +94,7 @@ fun ItemEditor(
         })
         Spacer(modifier = Modifier.height(4.dp))
         ItemSettingTemplate(item = item, onIsTemplate = {isTemplate->
-            item.setIsTemplate(isTemplate)
+            item.isTemplate = isTemplate
             if( isTemplate) {
                 item.setType(Type.TEMPLATE)
             }
@@ -103,17 +103,17 @@ fun ItemEditor(
         })
         Spacer(modifier = Modifier.height(4.dp))
         ItemSettingState(item = item, onChange = { done->
-            item.state = if (done) State.DONE else State.TODO
+            item.setIsDone(done)
             onEvent(ItemEvent.Update(item))
         })
         Spacer(modifier = Modifier.height(4.dp))
         ItemSettingCalendar(item = item, onEvent = {
-            item.setIsCalenderItem(it)
+            item.isCalenderItem = it
             onEvent(ItemEvent.Update(item))
         })
         Spacer(modifier = Modifier.height(4.dp))
         ItemSettingAppointment(item = item, onEvent = {
-            item.setIsAppointment(it)
+            item.isAppointment = it
             onEvent(ItemEvent.Update(item))
         })
         Spacer(modifier = Modifier.height(4.dp))
@@ -123,7 +123,12 @@ fun ItemEditor(
             onCategoryChanged = {
                 item.category = it
                 onEvent(ItemEvent.Update(item))
+            },
+            onAddNewCategory = { category ->
+                item.category = category
+                onEvent(ItemEvent.AddCategory(category))
             }
+
         )
         Spacer(modifier = Modifier.height(4.dp))
         DurationCard(duration = item.duration, onDurationChanged = {

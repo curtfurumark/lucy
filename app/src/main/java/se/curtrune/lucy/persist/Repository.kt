@@ -31,7 +31,7 @@ class Repository (val context: Application){
     private fun createActualItem(template: Item): Item {
         println("createActual(Item: ${template.heading})")
         val item = Item()
-        item.setType(item.type.ordinal)
+        item.setType(item.getType())
         item.heading = template.heading
         item.comment = template.comment
         item.duration = template.duration
@@ -39,11 +39,11 @@ class Repository (val context: Application){
         item.tags = template.tags
         item.targetTime = template.targetTime
         item.targetDate = LocalDate.now()
-        item.setIsCalenderItem(template.isCalenderItem)
+        item.isCalenderItem = template.isCalenderItem
         //item.setEstimate(template.getEstimate());
         item.color = template.color
-        item.state = State.DONE
-        item.type = Type.TEMPLATE_CHILD
+        item.setState(State.DONE)
+        item.setType(Type.TEMPLATE_CHILD)
         item.anxiety = template.anxiety
         item.energy = template.energy
         item.mood = template.mood
@@ -186,6 +186,12 @@ class Repository (val context: Application){
 
     private fun createInstances(template: Item):  Item{
         println("createInstances($template)")
+        val repeat = template.repeat
+
+        if( repeat == null) {
+            println("should not happen, createInstances should only be called if item has repeat")
+            return template
+        }
         val items = Repeater.createInstances(template)
         insert(items)
         return template
@@ -222,11 +228,12 @@ class Repository (val context: Application){
             return templateWithID
         }*/
         val db = SqliteLocalDB(context)
-        template.type = Type.REPEAT_TEMPLATE
+        template.setType( Type.REPEAT_TEMPLATE)
         val templateWithID = db.insert(template)
         val repeat = template.repeat
-        repeat.templateID = templateWithID.id
-        val repeatWithID = db.insert(template.repeat)
+        repeat?.templateID = templateWithID.id
+        //TODO: fix this
+        val repeatWithID = db.insert(template.repeat!!)
         templateWithID.repeatID = repeatWithID!!.id
         db.update(templateWithID)
         val items = Repeater.createInstances(templateWithID)
@@ -394,12 +401,16 @@ class Repository (val context: Application){
         return children
     }
     fun selectTree(parentID: Long): Item?{
+        println("Repository.selectTree(parentID: $parentID)")
         val db = SqliteLocalDB(context)
         val item = db.selectItem(parentID)
+        println("...selected item hasChild: ${item?.hasChild()}")
         if(  item != null && item.hasChild()){
             val children = selectChildren(item)
-            item.children = children
+            item.children = children as MutableList<Item>?
+            println("...number of children selected ${children.size}")
         }
+        println("...returning item: ${item?.heading}, children size ${item?.children?.size}")
         db.close()
         return item
     }
@@ -424,7 +435,7 @@ class Repository (val context: Application){
             return updateTemplate(item)
         }
         val db = SqliteLocalDB(context)
-        item.updated = LocalDateTime.now()
+        item.setUpdated(LocalDateTime.now())// = LocalDateTime.now()
         val rowsAffected = db.update(item)
         db.close()
         return rowsAffected
@@ -444,9 +455,9 @@ class Repository (val context: Application){
         println("Repository.updateTemplate(Item: ${template.heading})")
         val db = SqliteLocalDB(context)
         if (template.isDone) {
-            template.state = State.TODO
+            template.setState(State.TODO)
             var child = createActualItem(template)
-            child.type = Type.TEMPLATE_CHILD
+            child.setType( Type.TEMPLATE_CHILD)
             child = db.insertChild(
                 template,
                 child

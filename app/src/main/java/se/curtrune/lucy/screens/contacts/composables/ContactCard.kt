@@ -15,7 +15,7 @@ import se.curtrune.lucy.classes.Contact
 import se.curtrune.lucy.util.Logger
 
 @Composable
-fun ContactItem(contact: Contact) {
+fun ContactCard(contact: Contact) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -26,15 +26,19 @@ fun ContactItem(contact: Contact) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row {
-                Text(
-                    text = contact.displayName,
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(end = 8.dp)
-                )
-                Text(
-                    text = contact.phoneNumber,
-                    style = MaterialTheme.typography.bodyMedium
-                )
+                contact.displayName?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                }
+                contact.phoneNumber?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
             }
         }
     }

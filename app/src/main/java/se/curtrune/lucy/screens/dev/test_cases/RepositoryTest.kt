@@ -32,7 +32,7 @@ class RepositoryTest {
         println("testGetWeekCalendar")
         val items = repository.selectItems(Queeries.selectAllWeekItems(Week()))
         items.forEach{ item ->
-            println("${item.heading} ${item.itemDuration.type.name}")
+            println("${item.heading} ${item.itemDuration?.type?.name}")
         }
 
     }

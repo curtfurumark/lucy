@@ -43,7 +43,7 @@ class TodoViewModel : ViewModel() {
         showProgressBar(false)
     }
 
-    fun filter(filter: String?, everywhere: Boolean) {
+    fun filter(filter: String, everywhere: Boolean) {
         val filteredItems = items.filter { item: Item -> item.contains(filter)  }
         _state.update { it.copy(
             items = filteredItems
@@ -105,6 +105,8 @@ class TodoViewModel : ViewModel() {
                 //TODO, implement this
                 println("insert child TODO")
             }
+
+            is ItemEvent.AddCategory -> TODO()
         }
     }
     fun onEvent(event: TopAppBarEvent){

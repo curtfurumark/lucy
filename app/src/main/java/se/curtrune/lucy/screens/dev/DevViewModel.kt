@@ -121,6 +121,7 @@ class DevViewModel : ViewModel() {
 
     fun onEvent(event: ItemEvent){
         when(event){
+            is ItemEvent.AddCategory -> {addCategory(event.category)}
             is ItemEvent.CancelTimer -> {}
             is ItemEvent.Delete -> {}
             is ItemEvent.PauseTimer -> {}
@@ -157,6 +158,10 @@ class DevViewModel : ViewModel() {
             TopAppBarEvent.CheckForUpdate -> TODO()
             TopAppBarEvent.DevActivity -> TODO()
         }
+    }
+    private fun addCategory(category: String){
+        println("addCategory($category)")
+        LucindaApplication.appModule.userSettings.addCategory(category)
     }
     private fun insertItem(item: Item){
         println("insertItem(${item.heading})")
@@ -204,7 +209,7 @@ class DevViewModel : ViewModel() {
             println("error updating item")
         }
         _state.update { it.copy(
-            items = it.items.filter { item-> item.type ==  Type.NODE }
+            items = it.items.filter { item-> item.getType() ==  Type.NODE }
         ) }
     }
     private fun filterList(){

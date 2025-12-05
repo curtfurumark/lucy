@@ -65,6 +65,6 @@ fun EditTemplateCard(item: Item, onEvent: (EditTemplateEvent) -> Unit){
 fun PreviewEditTemplateCard(){
     val item = Item("test item")
     val children = listOf(Item("item1"), Item("item2"), Item("item3"))
-    item.children.addAll(children)
+    item.children?.addAll(children)
     EditTemplateCard(item, onEvent = {})
 }

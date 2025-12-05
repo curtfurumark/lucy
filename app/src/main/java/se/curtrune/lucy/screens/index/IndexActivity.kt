@@ -9,7 +9,6 @@ import androidx.compose.ui.platform.ComposeView
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.app.InitialScreen
-import se.curtrune.lucy.screens.dev.DevActivity
 import se.curtrune.lucy.screens.index.composables.IndexScreen20
 import se.curtrune.lucy.screens.main.MainActivity2
 import se.curtrune.lucy.util.Constants
@@ -40,7 +39,8 @@ class IndexActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.indexActivity_jetpackCompose) {
-            startActivity(Intent(this, DevActivity::class.java))
+            //startActivity(Intent(this, DevActivity::class.java))
+            throw RuntimeException("deprecated")
         }
         return super.onOptionsItemSelected(item)
     }

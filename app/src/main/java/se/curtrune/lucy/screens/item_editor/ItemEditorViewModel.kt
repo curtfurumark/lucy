@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import io.ktor.websocket.WebSocketWriter
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,23 +13,16 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import se.curtrune.lucy.app.LucindaApplication
-import se.curtrune.lucy.R
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.composables.add_item.DefaultItemSettings
-import se.curtrune.lucy.item_settings.CheckBoxSetting
-import se.curtrune.lucy.item_settings.ItemSetting
-import se.curtrune.lucy.item_settings.KeyValueSetting
 import se.curtrune.lucy.services.TimerService
 import se.curtrune.lucy.util.DateTImeConverter
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.features.notifications.NotificationsWorker
-import se.curtrune.lucy.screens.daycalendar.DateViewModel
-import se.curtrune.lucy.screens.daycalendar.DayChannel
-import java.time.LocalDate
 
 @Suppress("UNCHECKED_CAST")
-class ItemSessionViewModel(val item: Item) : ViewModel() {
+class ItemEditorViewModel(val item: Item) : ViewModel() {
     private var elapsedTime = 0L
     private var _state = MutableStateFlow(ItemEditorState())
     val state = _state.asStateFlow()
@@ -59,7 +51,7 @@ class ItemSessionViewModel(val item: Item) : ViewModel() {
         fun factory(item: Item): ViewModelProvider.Factory {
             return object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return ItemSessionViewModel(item) as T
+                    return ItemEditorViewModel(item) as T
                 }
             }
         }
@@ -102,89 +94,7 @@ class ItemSessionViewModel(val item: Item) : ViewModel() {
         PENDING, RUNNING, PAUSED,
     }
 
-    fun getItemSettings(item: Item, context: Context): List<ItemSetting> {
-        checkNotNull(item)
-        Logger.log("ItemEditorViewModel.getItemSettings(Item)")
-        val settings: MutableList<ItemSetting> = ArrayList()
-        val dateSetting = KeyValueSetting(
-            context.getString(R.string.date),
-            item.targetDate.toString(),
-            ItemSetting.Key.DATE
-        )
-        val timeSetting = KeyValueSetting(
-            context.getString(R.string.time),
-            item.targetTime.toString(),
-            ItemSetting.Key.TIME
-        )
-        var repeatValue = ""
-        if (item.hasRepeat()) {
-            repeatValue = item.repeat.toString()
-        }
-        val repeatSetting =
-            KeyValueSetting(context.getString(R.string.repeat), repeatValue, ItemSetting.Key.REPEAT)
-        val colourSetting = KeyValueSetting(
-            context.getString(R.string.color),
-            item.color.toString(),
-            ItemSetting.Key.COLOR
-        )
-        val templateSetting = CheckBoxSetting(
-            context.getString(R.string.is_template),
-            item.isTemplate,
-            ItemSetting.Key.TEMPLATE
-        )
-        val prioritizedSetting = CheckBoxSetting(
-            context.getString(R.string.is_prioritized),
-            item.isPrioritized,
-            ItemSetting.Key.PRIORITIZED
-        )
-        val durationSetting = KeyValueSetting(
-            context.getString(R.string.duration),
-            DateTImeConverter.formatSeconds(item.duration),
-            ItemSetting.Key.DURATION
-        )
-        var notificationValue = ""
 
-        if (item.hasNotification()) {
-            notificationValue = item.notification.toString()
-        }
-        val notificationSetting =
-            KeyValueSetting("notification", notificationValue, ItemSetting.Key.NOTIFICATION)
-        val tagsSetting =
-            KeyValueSetting(context.getString(R.string.tags), item.tags, ItemSetting.Key.TAGS)
-        val calenderSetting = CheckBoxSetting(
-            context.getString(R.string.is_calender),
-            item.isCalenderItem,
-            ItemSetting.Key.IS_CALENDAR_ITEM
-        )
-        val categorySetting = KeyValueSetting(
-            context.getString(R.string.category),
-            item.category,
-            ItemSetting.Key.CATEGORY
-        )
-
-        settings.add(dateSetting)
-        settings.add(timeSetting)
-        settings.add(repeatSetting)
-        settings.add(categorySetting)
-        settings.add(calenderSetting)
-        settings.add(notificationSetting)
-        settings.add(durationSetting)
-        settings.add(prioritizedSetting)
-        settings.add(templateSetting)
-        settings.add(tagsSetting)
-        settings.add(colourSetting)
-        return settings
-    }
-/*    val item: Item?
-        get() {
-            Logger.log("ItemSessionViewModel.getItem()")
-            return currentItem
-        }*/
-
-    fun itemHasRepeat(): Boolean {
-        Logger.log("ItemSessionViewModel.itemHasRepeat(Context)")
-        return currentItem!!.repeatID > 0
-    }
 
     val mental: Mental
         get() {
@@ -212,7 +122,18 @@ class ItemSessionViewModel(val item: Item) : ViewModel() {
             is ItemEvent.InsertChild -> {
                 insertChild(event.item)
             }
+
+            is ItemEvent.AddCategory -> {
+                addCategory(event.category)
+            }
         }
+    }
+    private fun addCategory(category: String) {
+        println("ItemSessionViewModel.addCategory($category)")
+        userSettings.addCategory(category)
+        _state.update { it.copy(
+            categories = userSettings.categories
+        ) }
     }
     private fun insertChild(child: Item){
         println("ItemSessionViewModel.insertChild(${item.heading})")
@@ -286,64 +207,4 @@ class ItemSessionViewModel(val item: Item) : ViewModel() {
         }
         return rowsAffected == 1
     }
-
-    fun update(itemSetting: ItemSetting, item: Item, context: Context?) = when (itemSetting.key) {
-        ItemSetting.Key.DATE -> {
-            itemSetting.value =
-                item.targetDate.toString()
-        }
-
-        ItemSetting.Key.TIME -> {
-            TODO()
-        }
-        ItemSetting.Key.DURATION -> {
-            TODO()
-        }
-        ItemSetting.Key.COLOR -> {
-            TODO()
-        }
-        ItemSetting.Key.REPEAT -> {
-            TODO()
-        }
-        ItemSetting.Key.NOTIFICATION -> {
-            TODO()
-        }
-        ItemSetting.Key.CATEGORY -> {
-            TODO()
-        }
-        ItemSetting.Key.TAGS -> {
-            TODO()
-        }
-        ItemSetting.Key.APPOINTMENT -> {
-            TODO()
-        }
-        ItemSetting.Key.DONE -> {
-            TODO()
-        }
-        ItemSetting.Key.TEMPLATE -> {
-            TODO()
-        }
-        ItemSetting.Key.PRIORITIZED -> {
-            TODO()
-        }
-        ItemSetting.Key.IS_CALENDAR_ITEM -> {
-            TODO()
-        }
-        else ->{
-            println("ELSE ERROR, itemSessionViewModel")
-        }
-    }
-
-    val timerState: LiveData<TimerState>
-        get() {
-            println("ItemSessionViewModel.getTimerState()")
-            return mutableTimerState
-        }
-
-
-    fun updateNotification(context: Context?) {
-        Logger.log("ItemSessionViewModel.updateNotification(Context)")
-    }
-
-
 }

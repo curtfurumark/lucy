@@ -51,6 +51,7 @@ public class Lucinda {
         log("Lucinda.initTheApp(Context)");
         DBAdmin.createTables(context);
         DBAdmin.insertRootItems(context);
+        settings.setLucyIsInitialized(true, context);
     }
     public static boolean nightlyAlarmIsSet(Context context) {
         log("Lucinda.nightlyAlarmIsSet(Context)");

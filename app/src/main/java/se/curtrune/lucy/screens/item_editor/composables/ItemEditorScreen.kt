@@ -23,13 +23,13 @@ import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
 import se.curtrune.lucy.modules.TopAppbarModule
 import se.curtrune.lucy.screens.item_editor.ItemEditorChannel
 import se.curtrune.lucy.screens.item_editor.ItemEvent
-import se.curtrune.lucy.screens.item_editor.ItemSessionViewModel
+import se.curtrune.lucy.screens.item_editor.ItemEditorViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ItemEditorScreen(item: Item, onSave:(Item)->Unit ){
-    val viewModel: ItemSessionViewModel = viewModel(){
-        ItemSessionViewModel.factory(item).create(ItemSessionViewModel::class.java)
+    val viewModel: ItemEditorViewModel = viewModel(){
+        ItemEditorViewModel.factory(item).create(ItemEditorViewModel::class.java)
     }
     val state by viewModel.state.collectAsState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()

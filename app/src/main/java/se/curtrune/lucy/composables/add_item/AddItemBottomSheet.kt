@@ -113,15 +113,23 @@ fun AddItemBottomSheet(
                 })
                 Spacer(modifier = Modifier.width(8.dp))
                 val categories = LucindaApplication.appModule.userSettings.categories
-                ItemSettingCategory(item = item, categories = categories, onCategoryChanged = {
-                    category-> item.category = category
-                } )
+                ItemSettingCategory(
+                    item = item,
+                    categories = categories,
+                    onCategoryChanged = {
+                        category-> item.category = category
+                    },
+                    onAddNewCategory = {
+                        category->
+                        LucindaApplication.appModule.userSettings.addCategory(category)
+                    })
                 Spacer(modifier = Modifier.width(8.dp))
                 ItemSettingAppointment(item = item, onEvent = {
-                    item.setIsAppointment(it)
+                    //item.setIsAppointment(it)
+                    item.isAppointment = it
                 })
                 ItemSettingTemplate(item = item, onIsTemplate = { isTemplate ->
-                    item.setIsTemplate(isTemplate)
+                    item.isTemplate = isTemplate
                 })
             }
             Spacer(modifier = Modifier.height(8.dp))

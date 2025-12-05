@@ -1,5 +1,6 @@
 package se.curtrune.lucy.screens.appointments
 
+import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.add_item.DefaultItemSettings
 
@@ -10,9 +11,8 @@ data class AppointmentsState(
     var showAddAppointmentDialog: Boolean = false,
     val defaultItemSettings: DefaultItemSettings = DefaultItemSettings(
         item = Item().also {
-            it.setIsAppointment(true)
-            it.setIsCalenderItem(true)
-            //it.setIsCalendarItem(true)
+            it.setType(Type.APPOINTMENT)
+            it.isCalenderItem = true
         }
     )
 )

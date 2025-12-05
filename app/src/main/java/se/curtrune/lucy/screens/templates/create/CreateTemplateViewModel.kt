@@ -1,9 +1,13 @@
 package se.curtrune.lucy.screens.templates.create
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.classes.item.Item
@@ -13,11 +17,13 @@ import kotlin.collections.plus
 class CreateTemplateViewModel: ViewModel() {
     private val _state = MutableStateFlow(CreateTemplateState())
     val state = _state.asStateFlow()
+    private val _channel = Channel<CreateTemplateChannel>()
+    val channel = _channel.receiveAsFlow()
     private val db = LucindaApplication.Companion.appModule.repository
     init {
         println("CreateTemplateViewModel.init")
         val template = Item().also {
-            it.type = Type.TEMPLATE
+            it.setType(Type.TEMPLATE)
         }
         _state.update { it.copy(
             template = template,
@@ -37,7 +43,7 @@ class CreateTemplateViewModel: ViewModel() {
                 createItem(event.index)
             }
             is CreateTemplateEvent.OnSave -> {
-                onDone(event.heading)
+                onSave(event.heading)
             }
             is CreateTemplateEvent.OnUpdate -> {
                 updateItem(event.item)
@@ -62,17 +68,17 @@ class CreateTemplateViewModel: ViewModel() {
     private fun createTemplate(name: String){
         val item = Item().also {
             it.heading = name
-            it.type = Type.TEMPLATE
+            it.setType(Type.TEMPLATE)
         }
     }
     private fun deleteTemplate(){
         println("deleteTemplate")
     }
-    private fun onDone(heading:String){
+    private fun onSave(heading:String){
         println("...onDone($heading)")
         val template = Item().also {
             it.heading = heading
-            it.type = Type.TEMPLATE
+            it.setType(Type.TEMPLATE)
         }
         val  tmp = db.insert(template)
         if( tmp == null){
@@ -86,6 +92,14 @@ class CreateTemplateViewModel: ViewModel() {
             db.insert(it)
             println("template item: $it.heading")
         }
+        _state.update { it.copy(
+            template = template,
+            items = emptyList()
+        ) }
+        viewModelScope.launch {
+            _channel.send(CreateTemplateChannel.ShowMessage("template created"))
+        }
+
     }
     private fun updateItem(item: Item){
         println("...updateItem(${item.heading})")

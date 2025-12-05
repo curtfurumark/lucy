@@ -17,7 +17,7 @@ object GoogleFactory {
         item.targetTime = startDateTime.toLocalTime()
         item.targetDate = startDateTime.toLocalDate()
         item.comment = googleEvent.description
-        item.setIsCalenderItem(true)
+        item.isCalenderItem = true
         return item
 
     }

@@ -42,7 +42,7 @@ class ContactsModule(private val context: Context) {
     private fun createContactItem(displayName: String, phoneNumber: String, id: Long): Item {
         Logger.log("ContactsViewModel.createContactItem")
         val item = Item()
-        item.type = Type.CONTACT
+        item.setType(Type.CONTACT)
         val contact = Contact()
         contact.displayName = displayName
         contact.phoneNumber = phoneNumber

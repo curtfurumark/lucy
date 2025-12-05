@@ -7,6 +7,8 @@ import java.time.LocalDate
 
 object Repeater{
     val lastInfiniteDate: LocalDate = LocalDate.now().plusMonths(1)
+    private lateinit var repeat: Repeat
+
     enum class Unit{
         DAY, WEEK, MONTH, YEAR
     }
@@ -20,20 +22,24 @@ object Repeater{
      */
     fun createInstances(item: Item):List<Item>{
         println("Repeater.getInstances($item)")
-        if( !item.hasRepeat()){
+        if( item.repeat == null){
             println("WARNING, trying to get instances from item with no repeat")
             return emptyList()
         }
-        println(item.repeat.toString())
-        if( item.repeat.weekDays.isNotEmpty()){
+        repeat = item.repeat!!
+
+/*        if( item.repeat == null){
+            println("WARNING, trying to get instances from item with null repeat")
+            return emptyList()
+        }*/
+        println(repeat.toString())
+        if(repeat.weekDays.isNotEmpty() ){
             return createInstancesWeekDays(item)
         }
-        val repeat = item.repeat
         val items: MutableList<Item> = mutableListOf()
-        var currentDate = repeat.firstDate?: return emptyList()
-
-        val lastDate = if( repeat.isInfinite) repeat.firstDate.plusMonths(1) else repeat.lastDate
-        while(currentDate.isBefore(lastDate) || currentDate == lastDate){
+        var currentDate = repeat.firstDate
+        val lastDate = getLastDate(repeat = repeat)
+        while(currentDate.isBefore(lastDate)  || currentDate == lastDate){
             val instance = Item(item)
             instance.targetDate = currentDate
             items.add(instance)
@@ -46,14 +52,27 @@ object Repeater{
         }
         return items
     }
+    private fun getLastDate(repeat: Repeat): LocalDate{
+/*        if( repeat.lastDate != null){
+            return repeat.lastDate!!
+        }*/
+        return repeat.firstDate.plusMonths(1)
+    }
 
     private fun createInstancesWeekDays(item: Item): List<Item>{
         println("createInstancesWeekDays(${item.heading})")
         val items: MutableList<Item> = mutableListOf<Item>()
-        var currentDate = item.repeat.firstDate
-        val lastDate = if( item.repeat.isInfinite) item.repeat.firstDate.plusMonths(1) else item.repeat.lastDate
+        //var currentDate = item.repeat?.firstDate
+        if(item.repeat == null){
+            println("WARNING, trying to get instances from item with null repeat")
+            return emptyList()
+        }
+
+        var currentDate = repeat.firstDate
+        println("currentDate: $currentDate")
+        val lastDate = getLastDate(item.repeat!!)
         while (currentDate.isBefore(lastDate)){
-            item.repeat.weekDays.forEach{ dayOfWeek ->
+            item.repeat?.weekDays?.forEach{ dayOfWeek ->
                 if( currentDate.dayOfWeek.equals(dayOfWeek)){
                     val instance = Item(item)
                     instance.targetDate = currentDate

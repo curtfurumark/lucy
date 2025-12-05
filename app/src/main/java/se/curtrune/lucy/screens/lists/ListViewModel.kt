@@ -122,7 +122,7 @@ class ListViewModel: ViewModel() {
         println("saving note: $text")
         val item = Item("anteckning")
         item.comment = text
-        item.type =Type.NOTE
+        item.setType(Type.NOTE)
         item.parent = repository.getTodoRoot()
         val itemWithID = repository.insert(item)
         if(itemWithID == null){

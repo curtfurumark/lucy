@@ -24,6 +24,7 @@ import kotlinx.serialization.Serializable
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.screens.appointments.composables.AppointmentDetailsScreen
 import se.curtrune.lucy.screens.appointments.composables.AppointmentsScreen
+import se.curtrune.lucy.screens.bullet_list.BulletListScreen
 import se.curtrune.lucy.screens.daycalendar.composables.DayCalendarScreen
 import se.curtrune.lucy.screens.dev.composables.DevScreen
 import se.curtrune.lucy.screens.duration.composables.DurationScreen
@@ -41,6 +42,9 @@ import se.curtrune.lucy.screens.templates.templates.TemplatesScreen
 import se.curtrune.lucy.screens.todo.composables.TodoScreen
 import se.curtrune.lucy.screens.webscreen.WebScreen
 import se.curtrune.lucy.screens.week_calendar.composables.WeekCalendarScreen
+
+@Serializable
+data object BulletListScreenNavKey: NavKey
 
 @Serializable
 data object CreateTemplateScreenNavKey: NavKey
@@ -125,6 +129,12 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                                 backStack.add(it)
                             }
                         )
+                    }
+                }
+                is BulletListScreenNavKey -> {
+                    NavEntry(
+                        key = navKey) {
+                            BulletListScreen()
                     }
                 }
                 is CreateTemplateScreenNavKey ->{

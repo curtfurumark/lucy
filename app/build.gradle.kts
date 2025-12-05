@@ -55,9 +55,9 @@ android {
 
 dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.10.0")
-    implementation("androidx.activity:activity-compose:1.12.0")
+    implementation("androidx.activity:activity-compose:1.12.1")
     implementation("androidx.core:core-ktx:1.17.0")
-    implementation(platform("androidx.compose:compose-bom:2025.11.01"))
+    implementation(platform("androidx.compose:compose-bom:2025.12.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -65,13 +65,13 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.7.0")
     implementation("androidx.lifecycle:lifecycle-service:2.10.0")
     implementation("androidx.room:room-ktx:2.8.4")
-    implementation("androidx.compose.ui:ui-android:1.9.5")
+    implementation("androidx.compose.ui:ui-android:1.10.0")
     implementation("androidx.test.espresso:espresso-core:3.7.0")
     implementation("androidx.fragment:fragment-compose:1.8.9")
     implementation("com.google.firebase:firebase-dataconnect:17.1.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-navigation3-android:2.10.0")
-    implementation("androidx.compose.runtime:runtime:1.9.5")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2025.11.01"))
+    implementation("androidx.compose.runtime:runtime:1.10.0")
+    androidTestImplementation(platform("androidx.compose:compose-bom:2025.12.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
     implementation("androidx.appcompat:appcompat:1.7.1")
@@ -83,12 +83,13 @@ dependencies {
     implementation("com.google.code.gson:gson:2.13.2")
 
     //ktor
-    implementation("io.ktor:ktor-client-android:3.3.2")
-    implementation("io.ktor:ktor-client-core:3.3.2")
-    implementation("io.ktor:ktor-client-serialization:3.3.2")
-    implementation("io.ktor:ktor-client-logging:3.3.2")
-    implementation("io.ktor:ktor-client-content-negotiation:3.3.2")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:3.3.2")
+    implementation("io.ktor:ktor-client-android:3.3.3")
+    implementation("io.ktor:ktor-client-core:3.3.3")
+    implementation("io.ktor:ktor-client-serialization:3.3.3")
+    implementation("io.ktor:ktor-client-logging:3.3.3")
+    implementation("io.ktor:ktor-client-content-negotiation:3.3.3")
+    //install json
+    implementation("io.ktor:ktor-serialization-kotlinx-json:3.3.3")
 
     //kotlin serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
@@ -104,10 +105,6 @@ dependencies {
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation ("com.github.skydoves:colorpickerview:2.3.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose-android:2.10.0")
-    //retrofit
-    //implementation("com.squareup.retrofit2:retrofit:3.0.0")
-    //implementation("com.squareup.retrofit2:converter-gson:3.0.0")
-    //implementation ("com.squareup.okhttp3:logging-interceptor:5.3.1")
 
     implementation("androidx.annotation:annotation:1.9.1")
     testImplementation("junit:junit:4.13.2")

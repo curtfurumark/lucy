@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.classes.item.Item
+import se.curtrune.lucy.util.Converter
 import kotlin.time.Duration
 
 @Composable
@@ -44,7 +45,7 @@ fun DurationCard(modifier: Modifier = Modifier, duration: Long, onDurationChange
 
             Text(
                 modifier = modifier.padding(8.dp),
-                text = "duration: ${duration}")
+                text = "duration: ${Converter.formatSecondsWithHours(duration)}")
             Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null)
         }
         AnimatedVisibility(visible = visible) {
@@ -82,7 +83,12 @@ fun HoursMinuteSeconds(duration: Long, onDurationChange: (Long) -> Unit) {
             modifier = Modifier.weight(1f),
             value = hours.toString(),
             onValueChange = {
-                hours = it.toLong()
+                println("on value hours change $it")
+                if( it.isNotBlank()) {
+                    hours = it.toLong()
+                }else{
+                    hours = 0
+                }
                 updateDuration()
             },
             label = {
@@ -97,7 +103,7 @@ fun HoursMinuteSeconds(duration: Long, onDurationChange: (Long) -> Unit) {
                 println("on value change $it")
                 if (it.isNotBlank()) {
                     minutes = it.toLong()
-                    updateDuration()
+                    //updateDuration()
                 } else {
                     minutes = 0
                     //updateDuration()

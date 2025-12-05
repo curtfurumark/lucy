@@ -145,21 +145,22 @@ class DBAdmin {
             val item = Item()
             //Gson gson = new Gson();
             val gson = getMyGson()
-            item.setId(cursor.getLong(0))
+            item.id= cursor.getLong(0)
             item.heading = cursor.getString(1)
             item.comment = cursor.getString(2)
             item.tags = cursor.getString(3)
             item.setCreated(cursor.getLong(4))
             item.setUpdated(cursor.getLong(5))
             item.setTargetDate(cursor.getLong(6))
-            item.setTargetTime(cursor.getInt(7))
+            //item.setTargetTime(cursor.getInt(7))
+            item.targetTimeSecondOfDay = cursor.getInt(7)
             item.category = cursor.getString(8)
-            item.setType(cursor.getInt(9))
-            item.setState(cursor.getInt(10))
+            item.type = cursor.getInt(9)
+            item.state = cursor.getInt(10)
             item.setHasChild(cursor.getInt(11) == 1)
             item.duration = cursor.getLong(12)
             item.parentId = cursor.getInt(13).toLong()
-            item.setIsCalenderItem(cursor.getInt(14) == 1)
+            item.isCalenderItem = cursor.getInt(14) == 1
             /*        String jsonRepeat = cursor.getString(15);
         if( jsonRepeat != null){
             Repeat repeat = gson.fromJson(jsonRepeat, Repeat.class);
@@ -183,7 +184,7 @@ class DBAdmin {
                 Notification::class.java
             )
             item.notification = notification
-            item.setIsTemplate(cursor.getInt(18) != 0)
+            item.isTemplate = cursor.getInt(18) != 0
             val jsonContent = cursor.getString(19)
             if (jsonContent != null && !jsonContent.isEmpty()) {
                 val ordinal = cursor.getInt(9)
@@ -225,8 +226,8 @@ class DBAdmin {
             cv.put("updated", item.updatedEpoch)
             cv.put("targetDate", item.targetDateEpochDay)
             cv.put("targetTime", item.targetTimeSecondOfDay)
-            cv.put("type", item.type.ordinal)
-            cv.put("state", item.state.ordinal)
+            cv.put("type", item.getType().ordinal)
+            cv.put("state", item.getState().ordinal)
             cv.put("hasChild", if (item.hasChild()) 1 else 0)
             cv.put("duration", item.duration)
             cv.put("isCalenderItem", if (item.isCalenderItem) 1 else 0)
@@ -309,7 +310,7 @@ class DBAdmin {
             val db = SqliteLocalDB(context)
             //create the root item
             var root = Item("root")
-            root.type = Type.ROOT
+            root.setType(Type.ROOT)
             root = db.insert(root)
             settings.addRootID(Settings.Root.THE_ROOT, root.id, context)
 

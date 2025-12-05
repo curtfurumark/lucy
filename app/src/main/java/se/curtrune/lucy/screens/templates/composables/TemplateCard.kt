@@ -53,7 +53,7 @@ fun TemplateCard(template: Item, onEvent: (TemplateEvent) -> Unit){
         }
         AnimatedVisibility(visible = showTemplate) {
             Column(modifier = Modifier.fillMaxWidth()) {
-                template.children.forEach { child ->
+                template.children?.forEach { child ->
                     Text(
                         text = child.heading,
                         modifier = Modifier.padding(start = 16.dp)

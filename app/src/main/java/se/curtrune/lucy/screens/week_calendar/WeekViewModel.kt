@@ -54,7 +54,7 @@ class WeekViewModel: ViewModel() {
                 item = Item().also { item->
                     item.targetDate = calenderDate.date
                     item.parent = state.value.currentParent
-                    item.setIsCalenderItem(true)
+                    item.isCalenderItem = true
                 }
             )
             viewModelScope.launch {
@@ -94,7 +94,7 @@ class WeekViewModel: ViewModel() {
         println("WeekViewModel.addAllWeekItem(${item.heading})")
         item.itemDuration = ItemDuration(ItemDuration.Type.WEEK)
         item.targetDate = state.value.currentWeek.firstDateOfWeek
-        item.setIsCalenderItem(true)
+        item.isCalenderItem = true
         if(repository.insert(item) == null){
             println("failed to insert item")
             return

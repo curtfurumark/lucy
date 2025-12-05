@@ -7,7 +7,8 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.util.Locale
 
-class Notification : Serializable {
+@kotlinx.serialization.Serializable
+class Notification {
     enum class Type {
         PENDING, ALARM, NOTIFICATION
     }
