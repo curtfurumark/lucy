@@ -25,7 +25,7 @@ import se.curtrune.lucy.classes.item.Item
 
 @Composable
 fun ItemSettingAppointment(item: Item, onEvent: (Boolean) -> Unit){
-    println("ItemSettingAppointment()is appointment: ${item.isAppointment}")
+    //println("ItemSettingAppointment()is appointment: ${item.isAppointment}")
     var isAppointment by remember {
         mutableStateOf(item.isAppointment)
     }

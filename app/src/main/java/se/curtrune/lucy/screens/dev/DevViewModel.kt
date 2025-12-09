@@ -122,6 +122,7 @@ class DevViewModel : ViewModel() {
     fun onEvent(event: ItemEvent){
         when(event){
             is ItemEvent.AddCategory -> {addCategory(event.category)}
+            is ItemEvent.AddChildren -> {}
             is ItemEvent.CancelTimer -> {}
             is ItemEvent.Delete -> {}
             is ItemEvent.PauseTimer -> {}
@@ -135,6 +136,9 @@ class DevViewModel : ViewModel() {
             is ItemEvent.InsertItem -> {}
             is ItemEvent.ShowAddItemDialog -> {}
             is ItemEvent.InsertChild -> {insertItem(event.item)}
+            is ItemEvent.ShowChildren ->{
+
+            }
         }
     }
     fun onEvent(event: TopAppBarEvent){

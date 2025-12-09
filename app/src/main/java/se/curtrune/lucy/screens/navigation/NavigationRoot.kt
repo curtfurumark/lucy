@@ -29,6 +29,7 @@ import se.curtrune.lucy.screens.daycalendar.composables.DayCalendarScreen
 import se.curtrune.lucy.screens.dev.composables.DevScreen
 import se.curtrune.lucy.screens.duration.composables.DurationScreen
 import se.curtrune.lucy.screens.item_editor.composables.ItemEditorScreen
+import se.curtrune.lucy.screens.lists.composables.EditableBulletListScreen
 import se.curtrune.lucy.screens.medicine.composable.MedicineScreen
 import se.curtrune.lucy.screens.mental_stats.composables.MentalStatsScreen
 import se.curtrune.lucy.screens.message_board.composables.MessageBoardScreen
@@ -56,6 +57,8 @@ data class DayCalendarNavKey(val date: String): NavKey
 data object DevScreenNavKey: NavKey
 @Serializable
 data object DurationNavKey: NavKey
+@Serializable
+data class  EditListNavKey(val parent: Item): NavKey
 
 @Serializable
 data class EditTemplateScreenNavKey(val templateID: Long): NavKey
@@ -146,12 +149,14 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                 is DayCalendarNavKey -> {
                     NavEntry(
                         key = navKey) {
-                        println("DayCalendarNavKey.date = ${navKey.date}")
+                        //println("DayCalendarNavKey.date = ${navKey.date}")
                         DayCalendarScreen(
                             date = navKey.date,
                             onEdit = {
                                 backStack.add(ItemEditorNavKey(it))
-                        })
+                            },
+                            modifier = modifier
+                        )
                     }
                 }
                 is DevScreenNavKey -> {
@@ -164,6 +169,12 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                     NavEntry(
                         key = navKey) {
                         DurationScreen(onEvent = {})
+                    }
+                }
+                is EditListNavKey -> {
+                    NavEntry(
+                        key = navKey) {
+                        EditableBulletListScreen(item = navKey.parent, modifier = modifier)
                     }
                 }
                 is EditTemplateScreenNavKey -> {

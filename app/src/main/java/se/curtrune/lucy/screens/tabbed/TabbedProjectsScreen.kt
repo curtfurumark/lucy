@@ -34,7 +34,7 @@ import androidx.navigation3.runtime.NavKey
 import se.curtrune.lucy.composables.top_app_bar.FlexibleTopBar
 import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
 import se.curtrune.lucy.modules.TopAppbarModule
-import se.curtrune.lucy.screens.lists.editable.EditableBulletList
+import se.curtrune.lucy.screens.lists.composables.EditableBulletListScreen
 import se.curtrune.lucy.screens.notes.NoteScreen
 import se.curtrune.lucy.screens.templates.templates.TemplatesScreen
 
@@ -81,7 +81,7 @@ fun TabbedProjectsScreen(navigate: (NavKey)->Unit){
             }
             when (currentIndex) {
                 0 -> NoteScreen()
-                1 -> EditableBulletList()
+                1 -> EditableBulletListScreen()
                 2 -> TemplatesScreen(navigate = {
                     println("onEdit $it")
                     navigate(it)

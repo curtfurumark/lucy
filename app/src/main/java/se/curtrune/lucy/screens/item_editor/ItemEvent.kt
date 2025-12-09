@@ -5,6 +5,7 @@ import se.curtrune.lucy.classes.Type
 
 sealed interface ItemEvent {
     data class AddCategory(val category: String): ItemEvent
+    data class AddChildren(val parent: Item): ItemEvent
     data object CancelTimer: ItemEvent
 
     data class Delete(val item: Item): ItemEvent
@@ -19,4 +20,5 @@ sealed interface ItemEvent {
     data object PauseTimer: ItemEvent
     data object ResumeTimer: ItemEvent
     data object ShowAddItemDialog: ItemEvent
+    data class ShowChildren(val parent: Item): ItemEvent
 }

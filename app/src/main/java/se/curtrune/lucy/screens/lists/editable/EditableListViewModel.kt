@@ -13,7 +13,7 @@ import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.screens.lists.editable.EditableListEvent
 import se.curtrune.lucy.screens.lists.editable.EditableListState
 
-class EditableListViewModel: ViewModel() {
+class EditableListViewModel(private val listRoot: Item): ViewModel() {
     private val db = LucindaApplication.Companion.appModule.repository
     private val _state = MutableStateFlow(EditableListState())
     val state = _state.asStateFlow()
@@ -23,7 +23,7 @@ class EditableListViewModel: ViewModel() {
     init {
         _state.update {
             it.copy(
-                item = Item(heading = "my list"),
+                item = listRoot,
                 listItems = listOf(getItem(0)))
         }
     }
@@ -64,6 +64,10 @@ class EditableListViewModel: ViewModel() {
             is EditableListEvent.UpdateListRoot -> {
                 updateListRoot(event.root)
             }
+            is EditableListEvent.RemoveItem -> {
+                remove(event.index)
+
+            }
         }
     }
     fun addItem(index: Int){
@@ -102,6 +106,17 @@ class EditableListViewModel: ViewModel() {
             _channel.send(EditableListChannel.Message(message))
         }
     }
+    private fun remove(index: Int){
+        println("...remove $index")
+        _state.update {it.copy(
+            listItems = it.listItems.toMutableList().apply {
+                removeAt(index)
+            },
+            focusIndex = if(index == 0) 0 else index - 1
+        )
+        }
+    }
+
     private fun saveList(){
         println("...saveList")
         val root = db.insert(_state.value.item)

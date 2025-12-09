@@ -5,11 +5,11 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import se.curtrune.lucy.activities.share.composables.ShareEvent
 import se.curtrune.lucy.app.LucindaApplication
-import se.curtrune.lucy.screens.daycalendar.DayChannel
+import se.curtrune.lucy.screens.daycalendar.DayCalendarChannel
 
 class ShareViewModel: ViewModel() {
     val repository = LucindaApplication.Companion.appModule.repository
-    private val eventChannel = Channel<DayChannel>()
+    private val eventChannel = Channel<DayCalendarChannel>()
     val eventFlow = eventChannel.receiveAsFlow()
 
     fun onEvent(event: ShareEvent){

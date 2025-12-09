@@ -15,19 +15,18 @@ import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.classes.calender.Week
 import se.curtrune.lucy.composables.PostponeDetails
 import se.curtrune.lucy.composables.add_item.DefaultItemSettings
-import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
 import se.curtrune.lucy.modules.TopAppbarModule
 import se.curtrune.lucy.modules.PostponeWorker
 import se.curtrune.lucy.util.Logger
 import java.time.LocalDate
 import java.time.LocalTime
 
-class DateViewModel(val date: LocalDate): ViewModel(){
+class DayCalendarViewModel(val date: LocalDate): ViewModel(){
     private val repository = LucindaApplication.appModule.repository
     private val timeModule = LucindaApplication.appModule.timeModule
     private var currentWeekPage = 5
     private var items: List<Item> = emptyList()
-    private val eventChannel = Channel<DayChannel>()
+    private val eventChannel = Channel<DayCalendarChannel>()
     val eventFlow = eventChannel.receiveAsFlow()
     private val _state = MutableStateFlow(DayCalendarState())
     private var latestDeletedItem: Item? = null
@@ -53,7 +52,7 @@ class DateViewModel(val date: LocalDate): ViewModel(){
         fun factory(date: LocalDate): ViewModelProvider.Factory {
             return object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return DateViewModel(date) as T
+                    return DayCalendarViewModel(date) as T
                 }
             }
         }
@@ -69,7 +68,7 @@ class DateViewModel(val date: LocalDate): ViewModel(){
         }
         if( repository.insert(item) == null){
             viewModelScope.launch {
-                eventChannel.send(DayChannel.ShowMessage("error inserting item"))
+                eventChannel.send(DayCalendarChannel.ShowMessage("error inserting item"))
             }
             return
         }
@@ -83,7 +82,7 @@ class DateViewModel(val date: LocalDate): ViewModel(){
             currentItem =  item
         ) }
         viewModelScope.launch{
-            eventChannel.send(DayChannel.ConfirmDeleteDialog)
+            eventChannel.send(DayCalendarChannel.ConfirmDeleteDialog)
         }
     }
     private fun deleteItem(item: Item){
@@ -107,7 +106,7 @@ class DateViewModel(val date: LocalDate): ViewModel(){
             currentItem = item
         ) }*/
         viewModelScope.launch{
-            eventChannel.send(DayChannel.EditItem(item))
+            eventChannel.send(DayCalendarChannel.EditItem(item))
         }
     }
     private fun hidePostponeDialog(){
@@ -117,50 +116,29 @@ class DateViewModel(val date: LocalDate): ViewModel(){
         )
         }
     }
-    fun onEvent(event: DayEvent){
+    fun onEvent(event: DayCalendarEvent){
         println("DateViewModel.onEvent(${event.toString()})")
         when(event){
-            is DayEvent.AddItem -> {addItem(event.item)}
-            is DayEvent.CurrentDate ->{setCurrentDate(event.date)}
-            is DayEvent.DeleteItem -> {deleteItem(event.item)}
-            is DayEvent.Duplicate -> duplicateItem(event.item)
-            is DayEvent.ShowActionsMenu -> {println("show action menu")}
-            is DayEvent.UpdateItem -> updateItem(event.item)
-            is DayEvent.EditTime -> {updateItem(event.item)}//???
-            is DayEvent.EditItem -> {editItem(event.item)}
-            is DayEvent.ShowPostponeDialog -> { showPostponeDialog(event.item)}
-            is DayEvent.ShowStats -> {showStats(event.item)}
-            is DayEvent.StartTimer -> {startTimer(event.item)}
-            is DayEvent.ShowChildren -> {showChildren(event.item)}
-            is DayEvent.TabSelected -> { tabSelected(event.index, event.item) }
-            is DayEvent.Postpone -> { postpone(event.postponeInfo)}
-            is DayEvent.HidePostponeDialog -> { hidePostponeDialog()}
-            is DayEvent.RestoreDeletedItem -> {restoreDeletedItem()}
-            is DayEvent.Search -> { search(event.filter, event.everywhere)}
-            is DayEvent.Week -> {setCurrentWeek(event.page)}
-            is DayEvent.RequestDelete -> {confirmDelete(event.item)}
-            is DayEvent.ShowAddItemBottomSheet -> {showAddItemBottomSheet()}
-        }
-    }
-    fun onEvent(topAppBarEvent: TopAppBarEvent) {
-        println("DateViewModel.onEvent(${topAppBarEvent.toString()})")
-        when(topAppBarEvent){
-            TopAppBarEvent.ActionMenu -> TODO()
-            TopAppBarEvent.CheckForUpdate -> TODO()
-            TopAppBarEvent.DayCalendar -> TODO()
-            TopAppBarEvent.DayClicked -> TODO()
-            TopAppBarEvent.DevActivity -> TODO()
-            TopAppBarEvent.DrawerMenu -> {
-                println("drawer menu clicked")
-                showNavigationDrawer()
-            }
-            TopAppBarEvent.MedicinesClicked -> TODO()
-            TopAppBarEvent.MonthClicked -> TODO()
-            TopAppBarEvent.OnBoost -> TODO()
-            TopAppBarEvent.OnPanic -> TODO()
-            is TopAppBarEvent.OnSearch -> TODO()
-            TopAppBarEvent.SettingsClicked -> TODO()
-            TopAppBarEvent.WeekClicked -> TODO()
+            is DayCalendarEvent.AddItem -> {addItem(event.item)}
+            is DayCalendarEvent.CurrentDate ->{setCurrentDate(event.date)}
+            is DayCalendarEvent.DeleteItem -> {deleteItem(event.item)}
+            is DayCalendarEvent.Duplicate -> duplicateItem(event.item)
+            is DayCalendarEvent.ShowActionsMenu -> {println("show action menu")}
+            is DayCalendarEvent.UpdateItem -> updateItem(event.item)
+            is DayCalendarEvent.EditTime -> {updateItem(event.item)}//???
+            is DayCalendarEvent.EditItem -> {editItem(event.item)}
+            is DayCalendarEvent.ShowPostponeDialog -> { showPostponeDialog(event.item)}
+            is DayCalendarEvent.ShowStats -> {showStats(event.item)}
+            is DayCalendarEvent.StartTimer -> {startTimer(event.item)}
+            is DayCalendarEvent.ShowChildren -> {showChildren(event.item)}
+            is DayCalendarEvent.TabSelected -> { tabSelected(event.index, event.item) }
+            is DayCalendarEvent.Postpone -> { postpone(event.postponeInfo)}
+            is DayCalendarEvent.HidePostponeDialog -> { hidePostponeDialog()}
+            is DayCalendarEvent.RestoreDeletedItem -> {restoreDeletedItem()}
+            is DayCalendarEvent.Search -> { search(event.filter, event.everywhere)}
+            is DayCalendarEvent.Week -> {setCurrentWeek(event.page)}
+            is DayCalendarEvent.RequestDelete -> {confirmDelete(event.item)}
+            is DayCalendarEvent.ShowAddItemBottomSheet -> {showAddItemBottomSheet()}
         }
     }
     private fun duplicateItem(item: Item){
@@ -221,7 +199,7 @@ class DateViewModel(val date: LocalDate): ViewModel(){
     private fun restoreDeletedItem(){
         println("restoreDeletedItem")
         //repository.restore()
-        repository
+        //repository
 
     }
     private fun search(filter: String, everywhere: Boolean){
@@ -257,9 +235,6 @@ class DateViewModel(val date: LocalDate): ViewModel(){
     private fun setCurrentDate(newDate: LocalDate){
         println("DateViewModel.setCurrentDate(${newDate.toString()})")
         items = repository.selectItems(newDate)
-/*        items.forEach{item->
-            println(item)
-        }*/
         _state.update {it.copy(
                 currentWeek = Week(newDate),
                 date = newDate,
@@ -285,31 +260,15 @@ class DateViewModel(val date: LocalDate): ViewModel(){
         currentWeekPage = page
     }
     private fun showAddItemBottomSheet() {
-        println("...showAddItemBottomSheet()")
-        //viewModelScope.launch {
-/*            _state.update { it.copy(
-                defaultItemSettings = it.defaultItemSettings.copy(
-                    targetTime = LocalTime.now(),
-                    parent = state.value.currentParent,
-                    item = Item().also { item->
-                        item.targetDate = state.value.date
-                        item.targetTime = LocalTime.now()
-                        item.parent = state.value.currentParent
-                        item.category = state.value.currentParent?.category
-                    }
-                ),
-            ) }*/
-            defaultItemSettings.item = Item().also { item->
-                item.targetDate = state.value.date
-                item.targetTime = LocalTime.now()
-                item.parent = state.value.currentParent
-                item.category = state.value.currentParent?.category.toString()
-            }
-            viewModelScope.launch {
-                eventChannel.send(DayChannel.showAddItemBottomSheet)
-            }
-
-        //}
+        defaultItemSettings.item = Item().also { item->
+            item.targetDate = state.value.date
+            item.targetTime = LocalTime.now()
+            item.parent = state.value.currentParent
+            item.category = state.value.currentParent?.category.toString()
+        }
+        viewModelScope.launch {
+            eventChannel.send(DayCalendarChannel.ShowAddItemBottomSheet)
+        }
     }
 
     private fun showChildren(item: Item){
@@ -327,12 +286,6 @@ class DateViewModel(val date: LocalDate): ViewModel(){
             showTabs = true,
             tabs = it.tabs + item,
             ) }
-    }
-    private fun showNavigationDrawer(){
-        println("showNavigationDrawer()")
-        viewModelScope.launch {
-            eventChannel.send(DayChannel.ShowNavigationDrawer)
-        }
     }
     private fun showPostponeDialog(item: Item){
         _state.update { it.copy(

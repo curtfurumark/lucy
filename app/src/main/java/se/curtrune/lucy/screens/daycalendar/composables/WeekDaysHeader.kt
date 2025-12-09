@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,7 +19,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
-import se.curtrune.lucy.screens.daycalendar.DayEvent
+import se.curtrune.lucy.screens.daycalendar.DayCalendarEvent
 import se.curtrune.lucy.screens.daycalendar.DayCalendarState
 import se.curtrune.lucy.util.cecilia
 import java.time.LocalDate
@@ -28,10 +27,10 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 @Composable
-fun DayOfWeek(date: LocalDate, state: DayCalendarState, onEvent: (DayEvent) -> Unit) {
+fun DayOfWeek(date: LocalDate, state: DayCalendarState, onEvent: (DayCalendarEvent) -> Unit) {
     Column(
         modifier = Modifier
-            .clickable { onEvent(DayEvent.CurrentDate(date)) },
+            .clickable { onEvent(DayCalendarEvent.CurrentDate(date)) },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         //isSystemInDarkTheme()
@@ -54,7 +53,7 @@ fun DayOfWeek(date: LocalDate, state: DayCalendarState, onEvent: (DayEvent) -> U
 }
 
 @Composable
-fun DaysOfWeek(state: DayCalendarState, onEvent: (DayEvent)->Unit){
+fun DaysOfWeek(state: DayCalendarState, onEvent: (DayCalendarEvent)->Unit){
     println("DaysOfWeek()")
     Column(modifier = Modifier.fillMaxWidth()) {
 /*        val header = "${state.date.month.getDisplayName(TextStyle.FULL_STANDALONE, Locale.getDefault()).cecilia()} v ${state.currentWeek.weekNumber}"

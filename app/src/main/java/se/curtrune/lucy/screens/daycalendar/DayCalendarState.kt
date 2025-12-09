@@ -10,6 +10,7 @@ data class DayCalendarState(
     var currentItem: Item? = null,
     var editItem: Boolean = false,
     var items: List<Item> = mutableListOf(),
+    //val categoryItems: List<ItemCategory> = mutableListOf()
     val date: LocalDate = LocalDate.now(),
     var errorMessage: String = "",
     var selectedTabIndex: Int = 1,

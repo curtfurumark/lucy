@@ -34,7 +34,6 @@ import se.curtrune.lucy.modules.TopAppbarModule
 import se.curtrune.lucy.screens.item_editor.ItemEvent
 import se.curtrune.lucy.screens.navigation.ItemEditorNavKey
 import se.curtrune.lucy.screens.todo.ChannelEvent
-import se.curtrune.lucy.screens.todo.TodoEvent
 import se.curtrune.lucy.screens.todo.TodoState
 import se.curtrune.lucy.screens.todo.TodoViewModel
 
@@ -43,15 +42,22 @@ import se.curtrune.lucy.screens.todo.TodoViewModel
 fun TodoScreen(navigate: (NavKey) -> Unit) {
     val viewModel: TodoViewModel = viewModel()
     val state by viewModel.state.collectAsState()
-    val eventFlow = viewModel.eventFlow
+    val eventFlow = viewModel.channel
     val context = LocalContext.current
     var showAddItemDialog by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         eventFlow.collect { event ->
             when (event) {
+                is ChannelEvent.AddList->{
+                    //navigate(EditListNavKey(it.id))
+
+                }
                 //is TodoEvent.Navigate -> navigate(event.navKey)
                 is ChannelEvent.Edit -> {
                     navigate(ItemEditorNavKey(event.item))
+                }
+                is ChannelEvent.Navigate ->{
+                    navigate(event.navKey)
                 }
 
                 is ChannelEvent.ShowAddItemDialog -> {
@@ -66,6 +72,7 @@ fun TodoScreen(navigate: (NavKey) -> Unit) {
                 is ChannelEvent.ShowProgressBar -> {
                     println("show progress bar")
                 }
+
             }
         }
     }
@@ -117,7 +124,7 @@ fun TodoScreen(navigate: (NavKey) -> Unit) {
 fun ItemList(modifier: Modifier = Modifier, state: TodoState, onEvent: (ItemEvent) -> Unit){
     LazyColumn(modifier = modifier.fillMaxWidth()){
         items(state.items){item->
-            BasicItem(item, onEvent = onEvent)
+            CheckedItemCard(item, onEvent = onEvent)
             Spacer(modifier = Modifier.height(2.dp))
         }
     }

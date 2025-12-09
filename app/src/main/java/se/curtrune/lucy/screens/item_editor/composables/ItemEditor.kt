@@ -30,6 +30,7 @@ import se.curtrune.lucy.composables.add_item.ItemSettingAppointment
 import se.curtrune.lucy.composables.add_item.ItemSettingCalendar
 import se.curtrune.lucy.composables.add_item.ItemSettingCategory
 import se.curtrune.lucy.composables.add_item.ItemSettingDate
+import se.curtrune.lucy.composables.add_item.ItemSettingPriority
 import se.curtrune.lucy.composables.add_item.ItemSettingState
 import se.curtrune.lucy.composables.add_item.ItemSettingTemplate
 import se.curtrune.lucy.composables.add_item.ItemSettingTime
@@ -114,6 +115,11 @@ fun ItemEditor(
         Spacer(modifier = Modifier.height(4.dp))
         ItemSettingAppointment(item = item, onEvent = {
             item.isAppointment = it
+            onEvent(ItemEvent.Update(item))
+        })
+        Spacer(modifier = Modifier.height(4.dp))
+        ItemSettingPriority(priority = item.priority, onPriorityChanged= {
+            item.priority = it
             onEvent(ItemEvent.Update(item))
         })
         Spacer(modifier = Modifier.height(4.dp))

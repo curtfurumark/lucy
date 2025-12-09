@@ -103,6 +103,9 @@ class ItemEditorViewModel(val item: Item) : ViewModel() {
         }
     infix fun onEvent(event: ItemEvent){
         when(event){
+            is ItemEvent.AddChildren ->{
+                println("ItemSessionViewModel.AddChildren")
+            }
             is ItemEvent.Update -> { update(event.item) }
             is ItemEvent.CancelTimer -> {cancelTimer()}
             is ItemEvent.PauseTimer -> {pauseTimer()}
@@ -117,7 +120,6 @@ class ItemEditorViewModel(val item: Item) : ViewModel() {
             is ItemEvent.ShowAddItemDialog -> {
                 println("ItemSessionViewModel.ShowAddItemDialog")
                 showAddItemDialog()
-
             }
             is ItemEvent.InsertChild -> {
                 insertChild(event.item)
@@ -125,6 +127,9 @@ class ItemEditorViewModel(val item: Item) : ViewModel() {
 
             is ItemEvent.AddCategory -> {
                 addCategory(event.category)
+            }
+            is ItemEvent.ShowChildren ->{
+                println("ItemSessionViewModel.ShowChildren")
             }
         }
     }

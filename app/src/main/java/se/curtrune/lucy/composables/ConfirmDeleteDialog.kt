@@ -24,12 +24,12 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import se.curtrune.lucy.R
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.screens.daycalendar.DayEvent
+import se.curtrune.lucy.screens.daycalendar.DayCalendarEvent
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ConfirmDeleteDialog(item: Item, onDismiss: ()->Unit, onEvent: (DayEvent)->Unit){
+fun ConfirmDeleteDialog(item: Item, onDismiss: ()->Unit, onEvent: (DayCalendarEvent)->Unit){
     Surface(modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp)
     ) {
@@ -52,7 +52,7 @@ fun ConfirmDeleteDialog(item: Item, onDismiss: ()->Unit, onEvent: (DayEvent)->Un
                     ))
                 }
                 Button(onClick = {
-                    onEvent(DayEvent.DeleteItem(item))
+                    onEvent(DayCalendarEvent.DeleteItem(item))
                 }) {
                     Text(stringResource(R.string.delete))
                 }

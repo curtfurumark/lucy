@@ -32,6 +32,7 @@ import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.app.LucindaApplication
+import se.curtrune.lucy.screens.item_editor.composables.DurationCard
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -112,6 +113,10 @@ fun AddItemBottomSheet(
                     notification-> item.notification = notification
                 })
                 Spacer(modifier = Modifier.width(8.dp))
+                DurationCard(duration = item.duration, onDurationChanged = {
+                    item.duration = it
+                })
+                Spacer(modifier = Modifier.width(8.dp))
                 val categories = LucindaApplication.appModule.userSettings.categories
                 ItemSettingCategory(
                     item = item,
@@ -140,6 +145,7 @@ fun AddItemBottomSheet(
             ) {
                 Button(
                     onClick = {
+                        println("AddItemBottomSheet: dismiss")
                         onDismiss()
                     }
                 ){

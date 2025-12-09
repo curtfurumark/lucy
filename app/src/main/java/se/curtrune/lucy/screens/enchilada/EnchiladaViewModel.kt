@@ -34,6 +34,7 @@ class EnchiladaViewModel : ViewModel() {
 
     fun onEvent(event: ItemEvent){
         when(event){
+            is ItemEvent.AddChildren -> {}
             is ItemEvent.CancelTimer -> {}
             is ItemEvent.Delete -> {delete(event.item)}
             is ItemEvent.GetChildren -> {}
@@ -48,6 +49,7 @@ class EnchiladaViewModel : ViewModel() {
             is ItemEvent.ShowAddItemDialog -> {showAddItemDialog()}
             is ItemEvent.InsertChild -> {println("insert child")}
             is ItemEvent.AddCategory -> TODO()
+            is ItemEvent.ShowChildren-> TODO()
         }
     }
     fun onEvent(event: TopAppBarEvent){

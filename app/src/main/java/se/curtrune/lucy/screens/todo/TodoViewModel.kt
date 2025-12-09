@@ -1,8 +1,8 @@
 package se.curtrune.lucy.screens.todo
 
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation3.runtime.NavKey
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,6 +16,7 @@ import se.curtrune.lucy.classes.State
 import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
 import se.curtrune.lucy.modules.TopAppbarModule
 import se.curtrune.lucy.screens.item_editor.ItemEvent
+import se.curtrune.lucy.screens.navigation.EditListNavKey
 import se.curtrune.lucy.util.Logger
 import java.util.Comparator
 
@@ -25,8 +26,8 @@ class TodoViewModel : ViewModel() {
     private val repository = LucindaApplication.appModule.repository
     private val topAppbarModule = TopAppbarModule
     private var items: MutableList<Item> = mutableListOf()
-    private val eventChannel = Channel<ChannelEvent>()
-    val eventFlow = eventChannel.receiveAsFlow()
+    private val _channel = Channel<ChannelEvent>()
+    val channel = _channel.receiveAsFlow()
 
     fun delete(item: Item) {
         println("TodoViewModel.delete(${item.heading})")
@@ -64,7 +65,7 @@ class TodoViewModel : ViewModel() {
     }
     private fun editItem(item: Item){
         viewModelScope.launch {
-            eventChannel.send(ChannelEvent.Edit(item))
+            _channel.send(ChannelEvent.Edit(item))
         }
     }
 
@@ -83,12 +84,19 @@ class TodoViewModel : ViewModel() {
             items = items
         ) }
     }
+    private fun navigate(navKey: NavKey){
+        viewModelScope.launch {
+            _channel.send(ChannelEvent.Navigate(navKey))
+
+        }
+    }
 
     private fun sort() {
         //mutableItems.value!!.sortWith(Comparator.comparingLong { obj: Item -> obj.compare() })
     }
     fun onEvent(event: ItemEvent){
         when(event){
+            is ItemEvent.AddChildren->{ addChildren(event.parent)}
             is ItemEvent.Delete -> {delete(event.item)}
             is ItemEvent.Edit -> { editItem(event.item)}
             is ItemEvent.Update -> {update(event.item)}
@@ -102,11 +110,13 @@ class TodoViewModel : ViewModel() {
             is ItemEvent.InsertItem -> { insert(event.item)}
             is ItemEvent.ShowAddItemDialog -> {showAddItemDialog()}
             is ItemEvent.InsertChild -> {
-                //TODO, implement this
                 println("insert child TODO")
             }
 
             is ItemEvent.AddCategory -> TODO()
+            is ItemEvent.ShowChildren -> {
+                showChildren(event.parent)
+            }
         }
     }
     fun onEvent(event: TopAppBarEvent){
@@ -127,6 +137,12 @@ class TodoViewModel : ViewModel() {
         }
 
     }
+    private fun addChildren(parent: Item){
+        println("TodoViewModel.addChildren(Item)")
+        viewModelScope.launch {
+            _channel.send(ChannelEvent.Navigate(EditListNavKey(parent)))
+        }
+    }
     fun postpone(item: Item){
 
     }
@@ -136,20 +152,24 @@ class TodoViewModel : ViewModel() {
             newItemSettings = DialogSettings(isCalendarItem = false, parent = parent)
         ) }
         viewModelScope.launch {
-            eventChannel.send(ChannelEvent.ShowAddItemDialog)
+            _channel.send(ChannelEvent.ShowAddItemDialog)
         }
 
     }
     private fun showMessage(message: String){
         viewModelScope.launch{
-            eventChannel.send(ChannelEvent.ShowMessage(message))
+            _channel.send(ChannelEvent.ShowMessage(message))
         }
     }
     private fun showProgressBar(show: Boolean){
         viewModelScope.launch{
-            eventChannel.send(ChannelEvent.ShowProgressBar(show))
+            _channel.send(ChannelEvent.ShowProgressBar(show))
         }
     }
+    private fun showChildren(parent: Item) {
+        showMessage("show children not implemented")
+    }
+
 
     fun update(item: Item): Boolean {
         Logger.log("CalendarDateViewModel.update(Item)", item.heading)

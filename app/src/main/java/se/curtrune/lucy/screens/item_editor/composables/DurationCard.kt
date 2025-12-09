@@ -19,6 +19,7 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -31,7 +32,7 @@ fun DurationCard(modifier: Modifier = Modifier, duration: Long, onDurationChange
     var visible by remember {
         mutableStateOf(false)
     }
-    var duration by remember {
+    var durationLocal by remember {
         mutableLongStateOf(duration)
     }
     Card(modifier = modifier.clickable {
@@ -39,18 +40,20 @@ fun DurationCard(modifier: Modifier = Modifier, duration: Long, onDurationChange
     }) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween)
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        )
 
         {
 
             Text(
                 modifier = modifier.padding(8.dp),
-                text = "duration: ${Converter.formatSecondsWithHours(duration)}")
+                text = "duration: ${Converter.formatSecondsWithHours(durationLocal)}")
             Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null)
         }
         AnimatedVisibility(visible = visible) {
             HoursMinuteSeconds(duration = duration, onDurationChange = {
-                duration = it
+                durationLocal = it
                 onDurationChanged(it)
             })
 

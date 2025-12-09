@@ -9,6 +9,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
@@ -41,52 +44,68 @@ fun CreateTemplateScreen(){
     val viewModel: CreateTemplateViewModel = viewModel()
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
-    Column(modifier = Modifier.fillMaxSize()) {
-        Spacer(modifier = Modifier.height(70.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = "skapa mall",
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        item {
+            Spacer(modifier = Modifier.height(70.dp))
+        }
+        item {
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
-            Icon(
-                modifier = Modifier.clickable {
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "skapa mall",
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+                Icon(
+                    modifier = Modifier.clickable {
+                        viewModel.onEvent(CreateTemplateEvent.OnSave(templateName))
+                    },
+                    imageVector = Icons.Default.Check, contentDescription = "done"
+                )
+            }
+        }
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Button(onClick = {
+                    println("add item")
+                    viewModel.onEvent(CreateTemplateEvent.AddNewItem(0))
+                }) {
+                    Text(text = "add item")
+                }
+                Button(onClick = {
                     viewModel.onEvent(CreateTemplateEvent.OnSave(templateName))
+                }) {
+                    Text(text = "save")
+                }
+            }
+        }
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+        item {
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = templateName,
+                onValueChange = {
+                    templateName = it
+                    viewModel.onEvent(CreateTemplateEvent.OnTemplateNameChanged(it))
                 },
-                imageVector = Icons.Default.Check, contentDescription = "done")
+                label = { Text(text = "mall namn") },
+            )
         }
-        Row(modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween) {
-            Button(onClick = {
-                println("add item")
-                viewModel.onEvent(CreateTemplateEvent.AddNewItem(0))
-            }) {
-                Text(text = "add item")
-            }
-            Button(onClick = {
-                viewModel.onEvent(CreateTemplateEvent.OnSave(templateName))
-            }) {
-                Text(text = "save")
-            }
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
+            EditTemplateCard(item = state.template, onEvent = {
+                viewModel.onEvent(it)
+            })
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = templateName,
-            onValueChange = {
-                templateName = it
-                viewModel.onEvent(CreateTemplateEvent.OnTemplateNameChanged(it))
-            },
-            label = { Text(text = "mall namn") },
-        )
-        EditTemplateCard(item = state.template, onEvent = {
-            viewModel.onEvent(it)
-        })
-        state.items.forEachIndexed { index, item -> //TemplateTextField(item, onEvent = {
-            EditTemplateCard(item = item, onEvent = {})
+        items(state.items) {
+            EditTemplateCard(item = it, onEvent = {})
         }
     }
     LaunchedEffect(viewModel) {

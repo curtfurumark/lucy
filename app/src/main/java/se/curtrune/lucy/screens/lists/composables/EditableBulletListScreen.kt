@@ -1,9 +1,10 @@
-package se.curtrune.lucy.screens.lists.editable
+package se.curtrune.lucy.screens.lists.composables
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -35,16 +36,26 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.item.Item
+import se.curtrune.lucy.screens.lists.editable.EditableListChannel
+import se.curtrune.lucy.screens.lists.editable.EditableListEvent
+import se.curtrune.lucy.screens.lists.editable.EditableListViewModel
 
 @Composable
-fun EditableBulletList() {
-    val viewModel: EditableListViewModel = viewModel()
+fun EditableBulletListScreen(
+    item: Item = Item(),
+    modifier: Modifier = Modifier
+) {
+    val viewModel: EditableListViewModel = viewModel{
+        EditableListViewModel(item)
+    }
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
     //var items by remember { mutableStateOf(listOf("")) }
     var heading by remember { mutableStateOf(state.item.heading) }
     var listRoot by remember { mutableStateOf(state.item) }
-    LazyColumn {
+    LazyColumn(
+        modifier = modifier
+    ) {
         item {
             Text(text = "${state.focusIndex}")
         }
@@ -150,23 +161,28 @@ fun BulletTextField(
     }
     Row(modifier = Modifier
         .fillMaxWidth()
-        .padding(vertical = 4.dp, horizontal = 8.dp)) {
+        .padding( horizontal = 8.dp)) {
 
         TextField(
-            leadingIcon = {Icon(imageVector = Icons.Default.Circle, contentDescription = "list item")},
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Circle,
+                    contentDescription = "list item",
+                    modifier = Modifier.height(8.dp))},
             value = heading,
             onValueChange = {
                 if( it.endsWith("\n")){
                     //onEnter(index)
                     onEvent(EditableListEvent.AddItem(index))
+                }else if(it.isEmpty()) {
+                    onEvent(EditableListEvent.RemoveItem(index))
                 }else{
                     heading = it
                     item.heading = it
                     onEvent(EditableListEvent.Update(item))
                 } },
             textStyle = LocalTextStyle.current.copy(
-                color = Color.White,
-                fontSize = 24.sp),
+                color = Color.White),
             modifier = Modifier
                 .fillMaxWidth()
                 .focusRequester(focusRequester)
@@ -184,9 +200,9 @@ fun BulletTextField(
 
 @Composable
 @PreviewLightDark
-fun PreviewEditableBulletList(){
+fun PreviewEditableBulletListScreen(){
     LucyTheme {
-        EditableBulletList()
+        EditableBulletListScreen()
 
     }
 }

@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
@@ -29,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.composables.TimePickerDialog
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.screens.daycalendar.DayEvent
+import se.curtrune.lucy.screens.daycalendar.DayCalendarEvent
 import se.curtrune.lucy.screens.medicine.composable.DropdownItem
 import se.curtrune.lucy.util.DateTImeConverter
 import java.time.LocalTime
@@ -39,7 +38,7 @@ import java.time.LocalTime
 fun DateItem(
     modifier: Modifier,
     item: Item,
-    onEvent: (DayEvent)->Unit){
+    onEvent: (DayCalendarEvent)->Unit){
     var isDone by remember {
         mutableStateOf(item.isDone)
     }
@@ -67,12 +66,12 @@ fun DateItem(
             onConfirm ={ timePickerState ->
                 targetTime = LocalTime.of(timePickerState.hour , timePickerState.minute)
                 item.targetTime = targetTime
-                onEvent(DayEvent.UpdateItem(item))
+                onEvent(DayCalendarEvent.UpdateItem(item))
                 showTimePicker = false
             } )
     }
     Card(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxWidth()
             .pointerInput(true) {
                 detectTapGestures(
                     onLongPress = {
@@ -82,9 +81,9 @@ fun DateItem(
                     onTap = {
                         println("on tap, i am item ${item.heading}")
                         if( item.hasChild()) {
-                            onEvent(DayEvent.ShowChildren(item))
+                            onEvent(DayCalendarEvent.ShowChildren(item))
                         }else{
-                            onEvent(DayEvent.EditItem(item))
+                            onEvent(DayCalendarEvent.EditItem(item))
                         }
                     }
                 )
@@ -101,7 +100,7 @@ fun DateItem(
             Checkbox(checked = isDone, onCheckedChange = {
                 isDone = !isDone
                 item.setIsDone(isDone)
-                onEvent(DayEvent.UpdateItem(item))
+                onEvent(DayCalendarEvent.UpdateItem(item))
             })
             Text(
                 text = DateTImeConverter.format(item.targetTime),
@@ -134,13 +133,13 @@ fun DateItem(
                     println("action: $action")
                     when(action){
                         ContextActions.VIEW_STATS.name ->{
-                            onEvent(DayEvent.ShowStats(item))
+                            onEvent(DayCalendarEvent.ShowStats(item))
                         }
                         ContextActions.EDIT.name ->{
-                            onEvent(DayEvent.EditItem(item))
+                            onEvent(DayCalendarEvent.EditItem(item))
                         }
                         ContextActions.DUPLICATE.name ->{
-                            onEvent(DayEvent.Duplicate(item))
+                            onEvent(DayCalendarEvent.Duplicate(item))
                         }
                     }
                     showContextMenu = false
@@ -150,5 +149,5 @@ fun DateItem(
     }
 }
 enum class ContextActions{
-    VIEW_STATS, EDIT, DETAILS, DUPLICATE
+    VIEW_STATS, EDIT, DETAILS, DUPLICATE, ADD_LIST
 }
