@@ -1,7 +1,7 @@
 package se.curtrune.lucy.modules
 
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.composables.PostponeAmount
+import se.curtrune.lucy.composables.dialogs.PostponeAmount
 
 object PostponeWorker {
     fun postponeItem(item: Item, amount: PostponeAmount): Item {

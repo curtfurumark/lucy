@@ -38,7 +38,8 @@ import kotlinx.coroutines.flow.debounce
 import se.curtrune.lucy.activities.ui.theme.LucyTheme
 import se.curtrune.lucy.app.UserPrefs
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.composables.PostponeDialog
+import se.curtrune.lucy.composables.dialogs.PostponeDialog
+import se.curtrune.lucy.composables.item.DateItemCard
 import se.curtrune.lucy.screens.daycalendar.DayCalendarEvent
 import se.curtrune.lucy.screens.daycalendar.DayCalendarState
 
@@ -106,12 +107,12 @@ fun DayCalendar(
                         SwipeBackground(state = swipeState)
                     }
                 ) {
-                    DateItem(
+                    DateItemCard(
                         modifier = Modifier.fillMaxWidth()
                             .animateItem(),
                         item, onEvent = {
-                        onEvent(it)
-                    })
+                            onEvent(it)
+                        })
                 }
                 Spacer(modifier = Modifier.height(4.dp))
             }
@@ -142,7 +143,7 @@ fun SwipeBackground(state: SwipeToDismissBoxState){
     }
     Row(
         modifier = Modifier.fillMaxSize()
-        .background(color),
+            .background(color),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ){

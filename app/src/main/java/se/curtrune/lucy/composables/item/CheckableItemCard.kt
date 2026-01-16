@@ -1,4 +1,4 @@
-package se.curtrune.lucy.screens.todo.composables
+package se.curtrune.lucy.composables.item
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -25,24 +25,29 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.screens.daycalendar.composables.ContextActions
+import se.curtrune.lucy.composables.dialogs.PostponeDialog
 import se.curtrune.lucy.screens.daycalendar.composables.SwipeBackground
 import se.curtrune.lucy.screens.item_editor.ItemEvent
 import se.curtrune.lucy.screens.medicine.composable.DropdownItem
 
 
 @Composable
-fun CheckedItemCard(item: Item, onEvent: (ItemEvent)->Unit){
+fun CheckableItemCard(
+    item: Item,
+    onEvent: (ItemEvent)->Unit,
+    onCheckValueChanged: (Boolean)->Unit,
+    modifier: Modifier = Modifier){
     val context = LocalContext.current
     var showContextMenu by remember { mutableStateOf(false) }
+    var showPostPoneDialog by remember { mutableStateOf(false) }
     val swipeState = rememberSwipeToDismissBoxState(
         confirmValueChange = {
             if( it == SwipeToDismissBoxValue.EndToStart){
-                onEvent(ItemEvent.Delete(item))
-                //Toast.makeText(context, "delete: ${item.heading}", Toast.LENGTH_LONG).show()
+                onEvent(ItemEvent.RequestDelete(item))
                 true
             }else if (it == SwipeToDismissBoxValue.StartToEnd){
                 //onEvent(TodoEvent.Postpone(item))
+                onEvent(ItemEvent.ShowPostponeDialog(item))
                 //onEvent(DateEvent.ShowPostponeDialog(true))
                 //Toast.makeText(context, "postpone: ${item.heading}", Toast.LENGTH_LONG).show()
                 true
@@ -54,7 +59,7 @@ fun CheckedItemCard(item: Item, onEvent: (ItemEvent)->Unit){
         state = swipeState,
         backgroundContent = {SwipeBackground(state = swipeState)}
     ) {
-        Card(modifier = Modifier.fillMaxWidth()
+        Card(modifier = modifier.fillMaxWidth()
             .background(color = Color.DarkGray)
             .pointerInput(true) {
                 detectTapGestures(
@@ -63,7 +68,7 @@ fun CheckedItemCard(item: Item, onEvent: (ItemEvent)->Unit){
                         //pressOffset = DpOffset(it.x.toDp(), it.y.toDp())
                     },
                     onTap = {
-                        println("on tap, i am item ${item.heading}")
+                        //ding}")
                         if( item.hasChild()) {
                             onEvent(ItemEvent.ShowChildren(item))
                         }else{
@@ -81,6 +86,7 @@ fun CheckedItemCard(item: Item, onEvent: (ItemEvent)->Unit){
                     println("on checkbox checked $it")
                     item.setIsDone(it)
                     onEvent(ItemEvent.Update(item))
+                    onCheckValueChanged(it)
                 })
                 Text(
                     modifier = Modifier.padding(2.dp),
@@ -112,5 +118,19 @@ fun CheckedItemCard(item: Item, onEvent: (ItemEvent)->Unit){
                 }
             }
         }
+    }
+    if(showPostPoneDialog){
+        PostponeDialog(
+            onDismiss = {
+                showPostPoneDialog = false
+                //onEvent(DayCalendarEvent.HidePostponeDialog)
+            }, onConfirm = { postponeInfo->
+                println("onConfirm postpone item ")
+                showPostPoneDialog = false
+                //onEvent(DayCalendarEvent.HidePostponeDialog)
+                //onEvent(DayCalendarEvent.Postpone(postponeInfo))
+            },
+            item = item
+        )
     }
 }

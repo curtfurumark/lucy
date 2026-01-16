@@ -1,4 +1,4 @@
-package se.curtrune.lucy.composables
+package se.curtrune.lucy.composables.dialogs
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,7 +21,6 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.skydoves.colorpickerview.ColorPickerView
 import se.curtrune.lucy.R
 
 @OptIn(ExperimentalLayoutApi::class)

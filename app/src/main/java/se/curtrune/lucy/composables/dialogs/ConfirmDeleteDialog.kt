@@ -1,4 +1,4 @@
-package se.curtrune.lucy.composables
+package se.curtrune.lucy.composables.dialogs
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

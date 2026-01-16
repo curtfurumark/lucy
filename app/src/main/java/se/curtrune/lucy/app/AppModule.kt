@@ -8,6 +8,7 @@ import se.curtrune.lucy.modules.MentalModule
 import se.curtrune.lucy.modules.SystemInfoModule
 import se.curtrune.lucy.modules.UserSettings
 import se.curtrune.lucy.persist.Repository
+import se.curtrune.lucy.persist.SettingsStore
 import se.curtrune.lucy.persist.SqliteLocalDB
 import se.curtrune.lucy.workers.InternetWorker
 
@@ -18,7 +19,7 @@ interface AppModule{
     val internetWorker: InternetWorker
     val googleCalendarModule: GoogleCalendarModule
     val systemInfoModule: SystemInfoModule
-    val settings: Settings
+    val settings: SettingsStore
     val timeModule: TimeModule
     val sqliteLocalDB: SqliteLocalDB
     val contactsModule: ContactsModule
@@ -42,8 +43,8 @@ class AppModuleImpl(private val context: Application): AppModule {
     override val systemInfoModule: SystemInfoModule by lazy {
         SystemInfoModule(context)
     }
-    override val settings: Settings by lazy {
-        Settings.getInstance(context)
+    override val settings: SettingsStore by lazy {
+        SettingsStore.getInstance(context)
     }
     override val timeModule: TimeModule by lazy {
         TimeModule(context)

@@ -15,7 +15,7 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 
 import se.curtrune.lucy.R;
-import se.curtrune.lucy.app.Settings;
+import se.curtrune.lucy.persist.SettingsStore;
 import se.curtrune.lucy.screens.message_board.Message;
 
 /**
@@ -114,7 +114,7 @@ public class ContactFragment extends Fragment {
     }*/
     private void setUserInterface(){
         log("...setUserInterface()");
-        editTextMailAddress.setText(Settings.DEV_EMAIL);
+        editTextMailAddress.setText(SettingsStore.DEV_EMAIL);
 
     }
     private boolean validateInput(){

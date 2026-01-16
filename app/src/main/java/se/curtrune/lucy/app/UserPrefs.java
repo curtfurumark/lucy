@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import se.curtrune.lucy.persist.SettingsStore;
 import se.curtrune.lucy.screens.settings.MentalFlag;
 import se.curtrune.lucy.screens.settings.PanicOption;
 import se.curtrune.lucy.workers.SettingsWorker;
@@ -42,6 +43,7 @@ public class UserPrefs {
     public static final String KEY_SCROLL_POSITION_DAY_CALENDAR = "KEY_SCROLL_POSITION_DAY_CALENDAR";
 
     public static final String KEY_SHOW_APPOINTMENTS = "KEY_SHOW_APPOINTMENTS";
+    public static final String KEY_SHOW_TIMELINE = "KEY_SHOW_TIMELINE";
     public static final String KEY_SHOW_DEV_SCREEN = "KEY_SHOW_DEV_SCREEN";
     public static final String KEY_SHOW_PROJECTS = "KEY_SHOW_PROJECTS";
     public static final String KEY_SHOW_DURATION = "KEY_SHOW_DURATION";
@@ -49,25 +51,25 @@ public class UserPrefs {
     public static final String KEY_SHOW_TODO = "KEY_SHOW_TODO";
     public static void addCategory(String category, Context context){
         log("UserPrefs.addCategory(String, Context)", category);
-        Set<String> setCategories = Settings.getSet(KEY_CATEGORIES, context);
+        Set<String> setCategories = SettingsStore.getSet(KEY_CATEGORIES, context);
         setCategories.add(category);
-        Settings.saveSet( KEY_CATEGORIES, setCategories, context);
+        SettingsStore.saveSet( KEY_CATEGORIES, setCategories, context);
     }
     public static void addPanicUrl(String url, Context context) {
         log("UserPrefs.addPanicUrl(String, Context)", url);
-        Set<String> panicUrls = Settings.getSet(KEY_PANIC_URLS, context);
+        Set<String> panicUrls = SettingsStore.getSet(KEY_PANIC_URLS, context);
         panicUrls.add(url);
-        Settings.saveSet(KEY_PANIC_URLS, panicUrls, context);
+        SettingsStore.saveSet(KEY_PANIC_URLS, panicUrls, context);
     }
     public static void deleteCategory(String category, Context context) {
         log("...deleteCategory(String)", category);
-        List<String> categories = Settings.getList(KEY_CATEGORIES, context);
+        List<String> categories = SettingsStore.getList(KEY_CATEGORIES, context);
         boolean stat = categories.remove(category);
         if( !stat){
             log("ERROR removing category");
             return;
         }
-        Settings.saveList(KEY_CATEGORIES, categories, context);
+        SettingsStore.saveList(KEY_CATEGORIES, categories, context);
 
     }
     /**
@@ -77,52 +79,55 @@ public class UserPrefs {
      */
     public static String[] getCategories(Context context){
         log("UserPrefs.getCategories()");
-        Set<String> setCategories = Settings.getSet(KEY_CATEGORIES, context);
+        Set<String> setCategories = SettingsStore.getSet(KEY_CATEGORIES, context);
         return Arrays.copyOf(setCategories.toArray(), setCategories.size(), String[].class);
     }
     public static boolean getDarkMode(Context context) {
         log("UserPrefs.getDarkMode(Context)");
-        return Settings.getBoolean(USE_DARK_MODE, false, context);
+        return SettingsStore.getBoolean(USE_DARK_MODE, false, context);
     }
     public static int getScrollPositionDayCalendar(Context context){
-        return Settings.getInt(KEY_SCROLL_POSITION_DAY_CALENDAR,0,  context);
+        return SettingsStore.getInt(KEY_SCROLL_POSITION_DAY_CALENDAR,0,  context);
 
     }
     public static boolean getShowAppointments(Context context) {
-        return Settings.getBoolean(KEY_SHOW_APPOINTMENTS, false, context);
+        return SettingsStore.getBoolean(KEY_SHOW_APPOINTMENTS, false, context);
     }
     public static boolean getShowDevScreen(Context context) {
-        return Settings.getBoolean(KEY_SHOW_DEV_SCREEN, false, context);
+        return SettingsStore.getBoolean(KEY_SHOW_DEV_SCREEN, false, context);
     }
     public static boolean getShowDuration(Context context) {
-        return Settings.getBoolean(KEY_SHOW_DURATION, false, context);
+        return SettingsStore.getBoolean(KEY_SHOW_DURATION, false, context);
     }
     public static boolean getShowMedicine(Context context) {
-        return Settings.getBoolean(KEY_SHOW_MEDICINE, false, context);
+        return SettingsStore.getBoolean(KEY_SHOW_MEDICINE, false, context);
     }
     public static boolean getShowMentalStatsScreen(Context context){
-        return Settings.getBoolean(KEY_SHOW_MENTAL_STATS_SCREEN, false, context);
+        return SettingsStore.getBoolean(KEY_SHOW_MENTAL_STATS_SCREEN, false, context);
+    }
+    public static boolean getShowTimeline(Context context) {
+        return SettingsStore.getBoolean(KEY_SHOW_TIMELINE, false, context);
     }
     public static boolean getShowToDo(Context context) {
-        return Settings.getBoolean(KEY_SHOW_TODO, false, context);
+        return SettingsStore.getBoolean(KEY_SHOW_TODO, false, context);
     }
     public static boolean getSyncWithGoogleCalendar(Context context){
-        return Settings.getBoolean(SYNC_WITH_GOOGLE_CALENDAR, false, context);
+        return SettingsStore.getBoolean(SYNC_WITH_GOOGLE_CALENDAR, false, context);
     }
 
     public static String getLanguage(Context context) {
-        return Settings.getString(KEY_LANGUAGE, "sv", context);
+        return SettingsStore.getString(KEY_LANGUAGE, "sv", context);
     }
-    public static Settings.PanicAction getPanicAction(Context context) {
-        return Settings.PanicAction.valueOf(Settings.getString(KEY_PANIC_ACTION, Settings.PanicAction.SEQUENCE.toString(), context));
+    public static SettingsStore.PanicAction getPanicAction(Context context) {
+        return SettingsStore.PanicAction.valueOf(SettingsStore.getString(KEY_PANIC_ACTION, SettingsStore.PanicAction.SEQUENCE.toString(), context));
     }
 
     public static Set<String> getPanicUrls(Context context){
-        return Settings.getSet(KEY_PANIC_URLS, context);
+        return SettingsStore.getSet(KEY_PANIC_URLS, context);
     }
     public static String getPassword(Context context) {
         log("UserPrefs.getPassword()");
-        return Settings.getString(KEY_PASSWORD, "", context);
+        return SettingsStore.getString(KEY_PASSWORD, "", context);
     }
 
     public static String getRandomPanicUrl(Context context){
@@ -135,56 +140,59 @@ public class UserPrefs {
     }
     public  static boolean getShowProjects(Context context) {
         log("UserPrefs.getShowProjects(Context)");
-        return Settings.getBoolean(KEY_SHOW_PROJECTS, false, context);
+        return SettingsStore.getBoolean(KEY_SHOW_PROJECTS, false, context);
 
     }
     public static boolean isDevMode(Context context) {
-        return Settings.getBoolean(KEY_DEV_MODE, false, context);
+        return SettingsStore.getBoolean(KEY_DEV_MODE, false, context);
     }
     public static void  setShowDevScreen(boolean show, Context context) {
-        Settings.addBoolean(KEY_DEV_MODE, show, context);
+        SettingsStore.addBoolean(KEY_DEV_MODE, show, context);
 
     }
 
     public static void setIcePhoneNumber(int phoneNumber, Context context){
-        Settings.addInt(KEY_ICE_PHONE_NUMBER, phoneNumber, context);
+        SettingsStore.addInt(KEY_ICE_PHONE_NUMBER, phoneNumber, context);
     }
     public static void setShowAppointments(boolean show, Context context){
-        Settings.addBoolean(KEY_SHOW_APPOINTMENTS, show, context);
+        SettingsStore.addBoolean(KEY_SHOW_APPOINTMENTS, show, context);
     }
     public static void setShowDuration(boolean show, Context context){
-        Settings.addBoolean(KEY_SHOW_DURATION, show, context);
+        SettingsStore.addBoolean(KEY_SHOW_DURATION, show, context);
     }
     public static void setUsesPassword(boolean usesPassword, Context context){
         log("UserPrefs.setUsesPassword(boolean, Context)", usesPassword);
-        Settings.addBoolean(USES_PASSWORD, usesPassword, context);
+        SettingsStore.addBoolean(USES_PASSWORD, usesPassword, context);
     }
     public static boolean usesPassword(Context context) {
         if( VERBOSE) log("UserPrefs.usesPassword(Context)");
-        return Settings.getBoolean( USES_PASSWORD, false, context);
+        return SettingsStore.getBoolean( USES_PASSWORD, false, context);
     }
     public static boolean validatePassword(String user, String pwd, Context context){
         log("...validatePassword(String, String)");
-        String password = Settings.getString(KEY_PASSWORD, "", context);
+        String password = SettingsStore.getString(KEY_PASSWORD, "", context);
         return password.equals(pwd);
     }
     public static void savePassword(String pwd, Context context) {
         log("UserPrefs.savePassword(String, Context)");
-        Settings.addString(KEY_PASSWORD, pwd, context);
+        SettingsStore.addString(KEY_PASSWORD, pwd, context);
     }
     public static void setScrollPositionDayCalender(int position, Context context){
-        Settings.addInt(KEY_SCROLL_POSITION_DAY_CALENDAR, position, context);
+        SettingsStore.addInt(KEY_SCROLL_POSITION_DAY_CALENDAR, position, context);
 
     }
     public static void setShowMedicine(boolean show, Context context){
-        Settings.addBoolean(KEY_SHOW_MEDICINE, show, context);
+        SettingsStore.addBoolean(KEY_SHOW_MEDICINE, show, context);
+    }
+    public static void setShowTimeline(boolean show, Context context) {
+        SettingsStore.addBoolean(KEY_SHOW_TIMELINE, show, context);
     }
     public static void setSyncWithGoogleCalendar(boolean syncWithGoogleCalendar, Context context) {
-        Settings.addBoolean(SYNC_WITH_GOOGLE_CALENDAR, syncWithGoogleCalendar, context);
+        SettingsStore.addBoolean(SYNC_WITH_GOOGLE_CALENDAR, syncWithGoogleCalendar, context);
     }
     public static void setUseDarkMode(boolean darkMode, Context context) {
         log("UserPrefs.setUseDarkMode(boolean, Context)");
-        Settings.addBoolean(USE_DARK_MODE, darkMode, context);
+        SettingsStore.addBoolean(USE_DARK_MODE, darkMode, context);
         if( darkMode){
             SettingsWorker.setDarkMode();
         }else{
@@ -195,43 +203,43 @@ public class UserPrefs {
     public static void setPanicUrls(String[] urlArray, Context context) {
         log("UserPrefs.setPanicUrls()");
         Set<String> urlSet = new HashSet<>(Arrays.asList(urlArray));
-        Settings.saveSet(KEY_PANIC_URLS,urlSet, context );
+        SettingsStore.saveSet(KEY_PANIC_URLS,urlSet, context );
     }
 
     public static void setDevMode(boolean devMode, Context context){
-        Settings.addBoolean(KEY_DEV_MODE, devMode, context);
+        SettingsStore.addBoolean(KEY_DEV_MODE, devMode, context);
     }
 
-    public static void setPanicAction(Settings.PanicAction panicAction, Context context) {
-        Settings.addString(KEY_PANIC_ACTION, panicAction.toString(), context);
+    public static void setPanicAction(SettingsStore.PanicAction panicAction, Context context) {
+        SettingsStore.addString(KEY_PANIC_ACTION, panicAction.toString(), context);
     }
 
     public static void setLanguage(String language, Context context) {
         log("UserPrefs.setLanguage(String, Context)");
-        Settings.addString(KEY_LANGUAGE, language , context);
+        SettingsStore.addString(KEY_LANGUAGE, language , context);
         SettingsWorker.setLanguage(language);
     }
 
     public static void setPassword(String password, Context context) {
         log("UserPrefs.setPassword(String, Context)");
-        Settings.addString(KEY_PASSWORD, password, context);
+        SettingsStore.addString(KEY_PASSWORD, password, context);
     }
 
     public static void setCategories(String[] categories, Context context) {
         Set<String> urlSet = new HashSet<>(Arrays.asList(categories));
-        Settings.saveSet(KEY_CATEGORIES,urlSet, context );
+        SettingsStore.saveSet(KEY_CATEGORIES,urlSet, context );
     }
 
     public static void setShowProjects(boolean show, Context context){
         log("UserPrefs.setShowProjects(boolean, Context)", show);
-        Settings.addBoolean(KEY_SHOW_PROJECTS, show, context);
+        SettingsStore.addBoolean(KEY_SHOW_PROJECTS, show, context);
     }
     public static void setShowToDo(boolean show, Context context){
-        Settings.addBoolean(KEY_SHOW_TODO, show, context);
+        SettingsStore.addBoolean(KEY_SHOW_TODO, show, context);
 
     }
     public static void setShowMentalStatsScreen(boolean show, Context context){
-        Settings.addBoolean(KEY_SHOW_MENTAL_STATS_SCREEN, show, context);
+        SettingsStore.addBoolean(KEY_SHOW_MENTAL_STATS_SCREEN, show, context);
     }
     public static void deletePanicUrl(String url, Context context) {
         log("UserPrefs.deletePanicUrl(String)", url);
@@ -245,37 +253,37 @@ public class UserPrefs {
     }
 
     public static int getICE(Context context) {
-        return  Settings.getInt(KEY_ICE_PHONE_NUMBER, -1, context);
+        return  SettingsStore.getInt(KEY_ICE_PHONE_NUMBER, -1, context);
     }
 
 
     public static int getGoogleCalendarID(@NotNull Application context) {
-        return Settings.getInt(KEY_GOOGLE_CALENDAR_ID, -1, context);
+        return SettingsStore.getInt(KEY_GOOGLE_CALENDAR_ID, -1, context);
     }
 
     public static void setGoogleCalendarID(int id, @NotNull Application context) {
-        Settings.addInt(KEY_GOOGLE_CALENDAR_ID, id, context);
+        SettingsStore.addInt(KEY_GOOGLE_CALENDAR_ID, id, context);
     }
 
     public static InitialScreen getInitialScreen(@NotNull Application context) {
-        return InitialScreen.values()[Settings.getInt(KEY_INITIAL_SCREEN,InitialScreen.CALENDER_DATE.ordinal(), context)];
+        return InitialScreen.values()[SettingsStore.getInt(KEY_INITIAL_SCREEN,InitialScreen.CALENDER_DATE.ordinal(), context)];
     }
 
     public static void setInitialScreen(InitialScreen initialScreen, @NotNull Application context) {
-        Settings.addInt(KEY_INITIAL_SCREEN, initialScreen.ordinal(), context);
+        SettingsStore.addInt(KEY_INITIAL_SCREEN, initialScreen.ordinal(), context);
     }
 
     public static boolean getShowMentalStatus(@NotNull Application context) {
-        return Settings.getBoolean(KEY_SHOW_MENTAL_STATUS, false, context);
+        return SettingsStore.getBoolean(KEY_SHOW_MENTAL_STATUS, false, context);
     }
 
     public static void setShowMentalStatus(boolean value, @NotNull Application context) {
-        Settings.addBoolean(KEY_SHOW_MENTAL_STATUS, value, context);
+        SettingsStore.addBoolean(KEY_SHOW_MENTAL_STATUS, value, context);
     }
 
     @NotNull
     public static MentalFlag getMentalFlag(@NotNull Application context) {
-        String json  = Settings.getString(KEY_MENTAL_FLAG, "", context);
+        String json  = SettingsStore.getString(KEY_MENTAL_FLAG, "", context);
         if( json.isEmpty()){
             return new MentalFlag();
         }
@@ -283,17 +291,17 @@ public class UserPrefs {
     }
 
     public static void setMentalFlag(@NotNull MentalFlag mentalFlag, @NotNull Application context) {
-        Settings.addString(KEY_MENTAL_FLAG, new Gson().toJson(mentalFlag), context);
+        SettingsStore.addString(KEY_MENTAL_FLAG, new Gson().toJson(mentalFlag), context);
     }
 
     public static void setPanicOption(@NotNull PanicOption panicOption, @NotNull Application context) {
-        Settings.addString(KEY_PANIC_ACTION, panicOption.name(), context);
+        SettingsStore.addString(KEY_PANIC_ACTION, panicOption.name(), context);
     }
 
     @NotNull
     public static PanicOption getPanicOption(@NotNull Application context) {
         log("UserPrefs.getPanicOption(Context)");
-        String optionName = Settings.getString(KEY_PANIC_ACTION, PanicOption.URL.name(), context);
+        String optionName = SettingsStore.getString(KEY_PANIC_ACTION, PanicOption.URL.name(), context);
         log("optionName", optionName);
         return PanicOption.valueOf(optionName);
     }

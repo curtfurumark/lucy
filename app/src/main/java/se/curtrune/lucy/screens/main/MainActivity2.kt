@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.app.LucindaApplication
-import se.curtrune.lucy.app.Settings.PanicAction
+import se.curtrune.lucy.persist.SettingsStore.PanicAction
 import se.curtrune.lucy.app.UserPrefs
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.top_app_bar.FlexibleTopBar
@@ -139,12 +139,9 @@ class MainActivity2 : AppCompatActivity() {
                     }
                 }
             }
-
             val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
             val navigationDrawerState by mainViewModel.navigationState.collectAsState()
             LucyTheme {
-                //val backStack = remember { mutableStateListOf<NavKey>(DayCalendarNavKey(LocalDate.now().toString())) }
-                //val backStack = NavBackStack<NavKey>(DayCalendarNavKey(LocalDate.now().toString()))
                 ModalNavigationDrawer(
                     drawerState = drawerState,
                     drawerContent = {
@@ -231,19 +228,6 @@ class MainActivity2 : AppCompatActivity() {
             .commit()
     }
 
-/*    private fun loadFragment(initialScreen: InitialScreen) {
-        println("...loadFragment(InitialScreen:  $initialScreen.toString()}")
-        when (initialScreen) {
-            InitialScreen.CALENDER_DATE -> loadFragment(CalendarDayFragment())
-            InitialScreen.CALENDER_WEEK -> loadFragment(WeekFragment())
-            InitialScreen.CALENDER_MONTH -> loadFragment(MonthFragment())
-            InitialScreen.CALENDER_APPOINTMENTS -> loadFragment(AppointmentsFragment())
-            InitialScreen.TODO_FRAGMENT -> loadFragment(TodoFragment())
-            InitialScreen.NEW_DAY_CALENDER -> {
-                println("NEW DAY CALENDAR")
-            }
-        }
-    }*/
     private fun openWebPage(url: String) {
         Logger.log("...openWebPage(String url)", url)
         if (LucindaApplication.appModule.internetWorker.isConnected()) {

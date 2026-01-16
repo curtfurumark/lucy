@@ -1,5 +1,6 @@
 package se.curtrune.lucy.screens.week_calendar.composables
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -14,8 +15,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
+import se.curtrune.lucy.classes.calender.Week
 import se.curtrune.lucy.composables.add_item.AddItemBottomSheet
 import se.curtrune.lucy.composables.top_app_bar.FlexibleTopBar
 import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
@@ -27,47 +30,20 @@ import se.curtrune.lucy.screens.week_calendar.WeekViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WeekCalendarScreen(onPagerChange: (Int) -> Unit, navigate: (NavKey) -> Unit){
+fun WeekCalendarScreen(onPagerChange: (Int) -> Unit, navigate: (NavKey) -> Unit, modifier: Modifier = Modifier){
     //enableEdgeToEdge()
     val weekViewModel: WeekViewModel = viewModel()
     val state = weekViewModel.state.collectAsState()
     var showAddItemDialog by remember {
         mutableStateOf(false)
     }
+    val context = LocalContext.current
     var showMessageDialog by remember {
         mutableStateOf(false)
     }
     var showAddToAllWeekDialog by remember {
         mutableStateOf(false)
     }
-    LaunchedEffect(weekViewModel) {
-        weekViewModel.eventFlow.collect{ event->
-            when(event){
-                is WeekChannel.ShowAddItemDialog -> {
-                    showAddItemDialog = true
-                }
-                is WeekChannel.ShowMessage -> {
-                    showMessageDialog = true
-                }
-                is WeekChannel.ViewDay -> {
-                    navigate(DayCalendarNavKey(event.calendarDate.date.toString()))
-                }
-                is WeekChannel.ShowAddAllWeekNote -> {
-                    println("show add to all week dialog")
-                    showAddToAllWeekDialog = true
-                }
-                is WeekChannel.Navigate -> {
-                    println("navigate to ${event.fragment.javaClass.name}")
-                }
-/*                    navigate(event.fragment)}
-                WeekChannel.NavigateMyDay ->{}*/
-                WeekChannel.NavigateMyDay -> {
-                    println("navigate to my day")
-                }
-            }
-        }
-    }
-
     val pagerState = rememberPagerState(pageCount = {
         weekViewModel.pagerState.numPages //pagerstate is a bad name, change it
     }, initialPage = weekViewModel.pagerState.initialPage
@@ -75,7 +51,7 @@ fun WeekCalendarScreen(onPagerChange: (Int) -> Unit, navigate: (NavKey) -> Unit)
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val topAppBarState = TopAppbarModule.topAppBarState.collectAsState()
     Scaffold(
-        topBar = {
+ /*       topBar = {
             FlexibleTopBar(
                 scrollBehavior = scrollBehavior,
                 content = {
@@ -89,7 +65,7 @@ fun WeekCalendarScreen(onPagerChange: (Int) -> Unit, navigate: (NavKey) -> Unit)
                     //devViewModel.onEvent(event)
                 }
             )
-        }
+        }*/
 
     ) { innerPadding ->
         HorizontalPager(state = pagerState ) {
@@ -98,14 +74,55 @@ fun WeekCalendarScreen(onPagerChange: (Int) -> Unit, navigate: (NavKey) -> Unit)
                 weekViewModel.onEvent(WeekEvent.OnPage(pagerState.currentPage))
             }
             WeekCalendar(
-                modifier = Modifier.padding(innerPadding),
+                modifier = modifier.padding(innerPadding),
                 state = state.value,
                 onEvent = weekViewModel::onEvent
             )
         }
+
+        LaunchedEffect(weekViewModel) {
+            weekViewModel.eventFlow.collect{ event->
+                when(event){
+                    is WeekChannel.ShowAddItemDialog -> {
+                        showAddItemDialog = true
+                    }
+                    is WeekChannel.ShowMessage -> {
+                        showMessageDialog = true
+                    }
+                    is WeekChannel.ViewDay -> {
+                        navigate(DayCalendarNavKey(event.calendarDate.date.toString()))
+                    }
+                    is WeekChannel.ShowAddAllWeekNote -> {
+                        println("show add to all week dialog")
+                        showAddToAllWeekDialog = true
+                    }
+                    is WeekChannel.Navigate -> {
+                        println("navigate to ${event.fragment.javaClass.name}")
+                    }
+                    is WeekChannel.NavigateMyDay -> {
+                        println("navigate to my day")
+                    }
+                }
+            }
+        }
+
+    }
+    if ( showAddToAllWeekDialog){
+        //Toast.makeText(context, "showAddToAllWeekDialog", Toast.LENGTH_SHORT).show()
+        println("showAddToAllWeekDialog ${state.value.currentWeek}")
+        AddAllWeekItemDialog(
+            onDismiss = {
+                showAddToAllWeekDialog = false
+            },
+            onConfirm = {
+                showAddToAllWeekDialog = false
+            }
+        )
     }
     if( showAddItemDialog){
-        AddItemBottomSheet(defaultItemSettings = weekViewModel.defaultItemSettings, onDismiss = {}) {
+        AddItemBottomSheet(defaultItemSettings = weekViewModel.defaultItemSettings, onDismiss = {
+            showAddItemDialog = false
+        }) {
             showAddItemDialog = false
             weekViewModel.onEvent(WeekEvent.AddItem(it))
         }

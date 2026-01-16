@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import se.curtrune.lucy.app.LucindaApplication
-import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
+import se.curtrune.lucy.classes.calender.CalendarDate
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.add_item.DefaultItemSettings
 import se.curtrune.lucy.modules.TopAppbarModule
@@ -28,9 +28,29 @@ class MonthViewModel: ViewModel() {
     val pagerState = PagerState()
     private var currentPage = state.value.initialPage
     init {
+        println("MonthViewModel.init yearMonth: ${state.value.yearMonth}")
         _state.value.calendarMonth = repository.getCalenderMonth(state.value.yearMonth)
-        println("MonthViewModel.init")
         TopAppbarModule.setTitle(currentYearMonth)
+    }
+    private fun onCalendarDateClick(calendarDate: CalendarDate){
+        println("on calendar date click ")
+        if( calendarDate.hasEvents()){
+            println("go to day calendar")
+            _state.update { it.copy(
+                currentCalendarDate = calendarDate,
+            ) }
+            viewModelScope.launch {
+                _eventChannel.send(MonthChannel.NavigateToDayCalendar(calendarDate.date.toString()))
+            }
+        }else{
+            defaultItemSettings.item = Item().also {
+                it.targetDate = calendarDate.date
+                it.isCalenderItem = true
+            }
+            viewModelScope.launch {
+                _eventChannel.send(MonthChannel.ShowAddItemDialog)
+            }
+        }
     }
     fun onPager(newPageIndex: Int){
         println("...onPager($newPageIndex)")
@@ -45,33 +65,15 @@ class MonthViewModel: ViewModel() {
     fun onEvent(event : MonthCalendarEvent){
         println("...onEvent ${event.toString()}")
         when(event){
-            is MonthCalendarEvent.MonthYear -> {println("yearmonth changed")}
+            is MonthCalendarEvent.MonthYear -> {println("yearMonth changed")}
             is MonthCalendarEvent.Pager -> {onPager(event.page)}
             is MonthCalendarEvent.CalendarDateClick -> {
-                println("on calendar date click ")
-                if( event.calendarDate.hasEvents()){
-                    println("go to day calendar")
-                    _state.update { it.copy(
-                        currentCalendarDate = event.calendarDate,
-                    ) }
-                    viewModelScope.launch {
-                        _eventChannel.send(MonthChannel.NavigateToDayCalendar(event.calendarDate.date.toString()))
-                    }
-                }else{
-                    defaultItemSettings.item = Item().also {
-                        it.targetDate = event.calendarDate.date
-                        it.isCalenderItem = true
-                    }
-                    viewModelScope.launch {
-                        _eventChannel.send(MonthChannel.ShowAddItemDialog)
-                    }
-                }
+                onCalendarDateClick(event.calendarDate)
             }
             is MonthCalendarEvent.InsertItem ->  {
                 insertItem(event.item)
             }
-
-            MonthCalendarEvent.ShowYearMonthDialog -> {
+            is MonthCalendarEvent.ShowYearMonthDialog -> {
                 showYearMonthDialog()
             }
         }

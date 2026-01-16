@@ -4,7 +4,6 @@ import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,9 +34,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
-import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.classes.calender.CalenderDate
+import se.curtrune.lucy.classes.calender.CalendarDate
 import se.curtrune.lucy.screens.week_calendar.WeekEvent
 import se.curtrune.lucy.util.DateTImeConverter
 import java.time.LocalDate
@@ -45,7 +43,7 @@ import java.time.format.TextStyle
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun WeekDate(calendarDate: CalenderDate, onEvent: (WeekEvent)->Unit){
+fun WeekDate(calendarDate: CalendarDate, onEvent: (WeekEvent)->Unit){
     var backgroundColor by remember {
         mutableStateOf(Color.Transparent)
     }
@@ -133,7 +131,7 @@ fun WeekDate(calendarDate: CalenderDate, onEvent: (WeekEvent)->Unit){
 @Preview( uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun PreviewWeekDate(){
     LucyTheme {
-        val calendarDate = CalenderDate()
+        val calendarDate = CalendarDate()
         calendarDate.date = LocalDate.now()
         calendarDate.mental.energy = -1
         calendarDate.items = listOf(

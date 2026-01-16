@@ -123,6 +123,11 @@ fun ItemEditor(
             onEvent(ItemEvent.Update(item))
         })
         Spacer(modifier = Modifier.height(4.dp))
+        TypeCard(type = item.getType(), onTypeChanged = {
+            item.setType(it)
+            onEvent(ItemEvent.Update(item))
+        })
+        Spacer(modifier = Modifier.height(4.dp))
         ItemSettingCategory(
             item = item,
             categories = categories,

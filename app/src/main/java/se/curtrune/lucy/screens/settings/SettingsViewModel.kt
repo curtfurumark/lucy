@@ -107,6 +107,10 @@ class SettingsViewModel: ViewModel(){
             is UserEvent.SetPassword -> {
                 setPassword(event.password)
             }
+            is UserEvent.ShowTimeLine ->{
+                println("show timeline")
+                setShowTimeLine(event.visible)
+            }
             is UserEvent.ShowToDo ->{
                 println("show to do")
                 setShowToDo(event.visible)
@@ -161,7 +165,6 @@ class SettingsViewModel: ViewModel(){
 
             is UserEvent.ShowMentalStats -> {
                 setShowMentalStats(event.visible)
-
             }
         }
     }
@@ -179,6 +182,10 @@ class SettingsViewModel: ViewModel(){
 
     private fun setShowMedicine(show: Boolean) {
         userSettings.showMedicine = show
+    }
+    private fun setShowTimeLine(show: Boolean)  {
+        userSettings.showTimeLine = show
+
     }
     private fun setShowToDo(show: Boolean) {
         userSettings.showToDo = show

@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import se.curtrune.lucy.app.Settings
+import se.curtrune.lucy.persist.SettingsStore
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
 import se.curtrune.lucy.persist.Repository
@@ -27,7 +27,7 @@ class ProjectsViewModel(private val repository: Repository) : ViewModel() {
     private var numberTabs = 0
     init {
         println("ProjectsViewModel() init{}")
-        currentParent = repository.getRootItem(Settings.Root.PROJECTS)
+        currentParent = repository.getRootItem(SettingsStore.Root.PROJECTS)
         items = repository.selectChildren(currentParent)
         _state.update{
             it.copy(

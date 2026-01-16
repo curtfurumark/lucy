@@ -10,7 +10,6 @@ import se.curtrune.lucy.activities.economy.classes.Transaction
 import se.curtrune.lucy.activities.economy.persist.ECDBAdmin
 import se.curtrune.lucy.activities.economy.persist.EcQueeries
 import se.curtrune.lucy.app.App
-import se.curtrune.lucy.app.Settings
 import se.curtrune.lucy.classes.ItemDuration
 import se.curtrune.lucy.classes.MedicineContent
 import se.curtrune.lucy.features.notifications.Notification
@@ -32,7 +31,7 @@ class DBAdmin {
 
     companion object {
         var VERBOSE: Boolean = false
-        var settings: Settings? = null
+        var settings: SettingsStore? = null
 
         @Deprecated("")
         fun addColumnRepeatIdToTableItems(context: Context?) {
@@ -261,8 +260,9 @@ class DBAdmin {
             /*        if( item.getType().equals(Type.MEDIA)){
             cv.put("content",gson.toJson(item.getContent()) );
         }*/
+            //update id if item is deleted
             if (item.id > 0) { // for restoring deleted item,to ensure they don't get a new id
-                Logger.log("inserting deleted item, trying to restore")
+                //Logger.log("inserting deleted item, trying to restore")
                 cv.put("id", item.id)
             }
             cv.put("repeat_id", item.repeatID)
@@ -306,13 +306,13 @@ class DBAdmin {
         @JvmStatic
         fun insertRootItems(context: Context?) {
             Logger.log("...insertRootItems(Context)")
-            val settings = Settings.getInstance(context)
+            val settings = SettingsStore.getInstance(context)
             val db = SqliteLocalDB(context)
             //create the root item
             var root = Item("root")
             root.setType(Type.ROOT)
             root = db.insert(root)
-            settings.addRootID(Settings.Root.THE_ROOT, root.id, context)
+            settings.addRootID(SettingsStore.Root.THE_ROOT, root.id, context)
 
             var todayRoot = App.getRootItem("today")
             var todoRoot = App.getRootItem("todo")
@@ -320,15 +320,15 @@ class DBAdmin {
             var appointmentsRoot = App.getRootItem("appointments")
             var panicRoot = App.getRootItem("panicList")
             appointmentsRoot = db.insertChild(root, appointmentsRoot)
-            settings.addRootID(Settings.Root.APPOINTMENTS, appointmentsRoot.id, context)
+            settings.addRootID(SettingsStore.Root.APPOINTMENTS, appointmentsRoot.id, context)
             todayRoot = db.insertChild(root, todayRoot)
-            settings.addRootID(Settings.Root.DAILY, todayRoot.id, context)
+            settings.addRootID(SettingsStore.Root.DAILY, todayRoot.id, context)
             projectsRoot = db.insertChild(root, projectsRoot)
-            settings.addRootID(Settings.Root.PROJECTS, projectsRoot.id, context)
+            settings.addRootID(SettingsStore.Root.PROJECTS, projectsRoot.id, context)
             todoRoot = db.insertChild(root, todoRoot)
-            settings.addRootID(Settings.Root.TODO, todoRoot.id, context)
+            settings.addRootID(SettingsStore.Root.TODO, todoRoot.id, context)
             panicRoot = db.insertChild(root, panicRoot)
-            settings.addRootID(Settings.Root.PANIC, panicRoot.id, context)
+            settings.addRootID(SettingsStore.Root.PANIC, panicRoot.id, context)
             db.close()
         }
 

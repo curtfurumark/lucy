@@ -5,7 +5,7 @@ import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.calender.CalendarWeek
-import se.curtrune.lucy.classes.calender.CalenderDate
+import se.curtrune.lucy.classes.calender.CalendarDate
 import se.curtrune.lucy.classes.calender.Week
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.workers.MentalWorker
@@ -21,12 +21,12 @@ object CalendarHelper {
         val calendarWeek = CalendarWeek(week = week, calendarDates = calendarDates, allWeekItems =  allWeek)
         return calendarWeek
     }
-    private fun getCalendarDates(week: Week, items: List<Item>): List<CalenderDate>{
-        val calenderDates: MutableList<CalenderDate> = ArrayList()
+    private fun getCalendarDates(week: Week, items: List<Item>): List<CalendarDate>{
+        val calenderDates: MutableList<CalendarDate> = ArrayList()
         var currentDate: LocalDate = week.firstDateOfWeek
         val lastDate = week.lastDateOfWeek
         while (currentDate.isBefore(lastDate) || currentDate == lastDate) {
-            val calenderDate = CalenderDate(currentDate)
+            val calenderDate = CalendarDate(currentDate)
             val dateItems = items.filter { item: Item -> item.targetDate == currentDate }
             calenderDate.items = dateItems.toMutableList()
             //calenderDate.mental = getMental(currentDate)
@@ -51,12 +51,12 @@ object CalendarHelper {
         firstDate: LocalDate,
         lastDate: LocalDate,
         context: Context?
-    ): List<CalenderDate> {
+    ): List<CalendarDate> {
         Logger.log("CalendarWorker.getCalenderDates(LocalDate, LocalDate, Context)")
-        val calenderDates: MutableList<CalenderDate> = java.util.ArrayList()
+        val calenderDates: MutableList<CalendarDate> = java.util.ArrayList()
         var currentDate = firstDate
         while (currentDate.isBefore(lastDate) || currentDate == lastDate) {
-            val calenderDate = CalenderDate(currentDate)
+            val calenderDate = CalendarDate(currentDate)
             val items = selectCalenderItems(currentDate, context)
             calenderDate.items = items.toMutableList()
             calenderDates.add(calenderDate)

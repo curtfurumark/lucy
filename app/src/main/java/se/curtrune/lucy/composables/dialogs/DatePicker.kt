@@ -1,4 +1,4 @@
-package se.curtrune.lucy.composables
+package se.curtrune.lucy.composables.dialogs
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -40,7 +40,7 @@ fun MyDatePicker(state: MyDayState, onDate: (LocalDate)->Unit) {
     if(showDatePicker){
         DatePickerModal(onDismiss = {
             showDatePicker = false
-        }, onDateSelected = { date->
+        }, onDateSelected = { date ->
             onDate(date)
             showDatePicker = false
         })

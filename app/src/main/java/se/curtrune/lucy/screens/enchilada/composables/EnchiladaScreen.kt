@@ -10,13 +10,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.screens.enchilada.EnchiladaState
 import se.curtrune.lucy.screens.item_editor.ItemEvent
-import se.curtrune.lucy.screens.todo.composables.CheckedItemCard
+import se.curtrune.lucy.composables.item.CheckableItemCard
 
 @Composable
 fun EnchiladaScreen(modifier: Modifier = Modifier, state: EnchiladaState, onEvent: (ItemEvent)->Unit){
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         items(state.items){ item ->
-            CheckedItemCard(item = item, onEvent = onEvent)
+            CheckableItemCard(item = item, onEvent = onEvent, onCheckValueChanged = {})
             Spacer(modifier = Modifier.height(4.dp))
         }
 

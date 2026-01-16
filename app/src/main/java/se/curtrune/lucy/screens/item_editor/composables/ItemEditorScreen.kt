@@ -28,6 +28,7 @@ import se.curtrune.lucy.screens.item_editor.ItemEditorViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ItemEditorScreen(item: Item, onSave:(Item)->Unit ){
+    println("ItemEditorScreen($item)")
     val viewModel: ItemEditorViewModel = viewModel(){
         ItemEditorViewModel.factory(item).create(ItemEditorViewModel::class.java)
     }

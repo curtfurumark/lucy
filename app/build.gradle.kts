@@ -55,9 +55,9 @@ android {
 
 dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.10.0")
-    implementation("androidx.activity:activity-compose:1.12.1")
+    implementation("androidx.activity:activity-compose:1.12.2")
     implementation("androidx.core:core-ktx:1.17.0")
-    implementation(platform("androidx.compose:compose-bom:2025.12.00"))
+    implementation(platform("androidx.compose:compose-bom:2025.12.01"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -71,7 +71,7 @@ dependencies {
     implementation("com.google.firebase:firebase-dataconnect:17.1.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-navigation3-android:2.10.0")
     implementation("androidx.compose.runtime:runtime:1.10.0")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2025.12.00"))
+    androidTestImplementation(platform("androidx.compose:compose-bom:2025.12.01"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
     implementation("androidx.appcompat:appcompat:1.7.1")

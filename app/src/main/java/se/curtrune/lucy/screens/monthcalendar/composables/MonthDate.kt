@@ -10,9 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,12 +19,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.activities.kotlin.dev.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.classes.calender.CalenderDate
+import se.curtrune.lucy.classes.calender.CalendarDate
 import se.curtrune.lucy.screens.monthcalendar.MonthCalendarEvent
 import java.time.LocalDate
 
 @Composable
-fun MonthDate(calendarDate:CalenderDate, onEvent: (MonthCalendarEvent)->Unit){
+fun MonthDate(calendarDate:CalendarDate, onEvent: (MonthCalendarEvent)->Unit){
     val borderColor  = if( calendarDate.date == LocalDate.now() )Color.Yellow else Color.Gray
     Box(
         modifier = Modifier
@@ -58,7 +55,7 @@ fun MonthDate(calendarDate:CalenderDate, onEvent: (MonthCalendarEvent)->Unit){
 @Composable
 @Preview(showBackground = true)
 fun PreviewMonthDate(){
-    val calendarDate = CalenderDate()
+    val calendarDate = CalendarDate()
     calendarDate.date = LocalDate.now()
     calendarDate.items = listOf(
         Item("pizza"),

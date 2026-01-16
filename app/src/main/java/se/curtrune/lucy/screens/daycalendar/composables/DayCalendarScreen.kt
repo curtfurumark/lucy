@@ -14,8 +14,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
-import se.curtrune.lucy.classes.item.Item
+import androidx.navigation3.runtime.NavKey
 import se.curtrune.lucy.composables.AddItemFab
+import se.curtrune.lucy.composables.dialogs.ConfirmDeleteDialog
 import se.curtrune.lucy.composables.add_item.AddItemBottomSheet
 import se.curtrune.lucy.screens.daycalendar.DayCalendarViewModel
 import se.curtrune.lucy.screens.daycalendar.DayCalendarChannel
@@ -24,25 +25,31 @@ import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DayCalendarScreen(date: String , onEdit: (Item) -> Unit, modifier: Modifier = Modifier){
+fun DayCalendarScreen(date: String, navigate: (NavKey) -> Unit, modifier: Modifier = Modifier){
     println("DayCalendarScreen(date: $date, onEdit(Item))")
     val viewModel: DayCalendarViewModel = viewModel(){
         DayCalendarViewModel.factory(LocalDate.parse(date)).create(DayCalendarViewModel::class.java)
     }
+    viewModel.onEvent(DayCalendarEvent.CurrentDate(LocalDate.parse(date)))
+
     val state by viewModel.state.collectAsState()
     var showAddItemDialog by remember{
+        mutableStateOf(false)
+    }
+    var showConfirmDeleteDialog by remember{
         mutableStateOf(false)
     }
     val context = LocalContext.current
     Scaffold(
         floatingActionButton = {
             AddItemFab {
-                println("add item fab clicked")
                 viewModel.onEvent(DayCalendarEvent.ShowAddItemBottomSheet)
             }
         }
     ) { padding->
-        DayCalendar(modifier = modifier.padding(padding), state = state, onEvent = {
+        CategorizedDayCalendar(modifier = modifier.padding(padding), state = state, onEvent = {
+            viewModel.onEvent(it)
+        }, onItemEvent = {
             viewModel.onEvent(it)
         })
     }
@@ -64,7 +71,7 @@ fun DayCalendarScreen(date: String , onEdit: (Item) -> Unit, modifier: Modifier 
         viewModel.eventFlow.collect{ event->
             when(event){
                 is DayCalendarChannel.ConfirmDeleteDialog -> {
-                    //showConfirmDeleteDialog = true
+                    showConfirmDeleteDialog = true
                 }
 
                 is DayCalendarChannel.ShowAddItemBottomSheet -> {
@@ -76,11 +83,18 @@ fun DayCalendarScreen(date: String , onEdit: (Item) -> Unit, modifier: Modifier 
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
 
-                is DayCalendarChannel.EditItem -> {
-                    //Toast.makeText(context, "edit item", Toast.LENGTH_SHORT).show()
-                    onEdit(event.item)
+                is DayCalendarChannel.Navigate -> {
+                    navigate(event.navKey)
                 }
             }
         }
+    }
+    if( showConfirmDeleteDialog) {
+        ConfirmDeleteDialog(item = state.currentItem!!, onDismiss = {
+            showConfirmDeleteDialog = false
+        }, onEvent = {
+            showConfirmDeleteDialog = false
+            viewModel.onEvent(it)
+        })
     }
 }

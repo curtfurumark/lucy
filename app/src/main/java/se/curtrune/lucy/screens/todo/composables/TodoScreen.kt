@@ -28,6 +28,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
 import se.curtrune.lucy.composables.add_item.AddItemBottomSheet
 import se.curtrune.lucy.composables.add_item.DefaultItemSettings
+import se.curtrune.lucy.composables.item.CheckableItemCard
 import se.curtrune.lucy.composables.top_app_bar.FlexibleTopBar
 import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
 import se.curtrune.lucy.modules.TopAppbarModule
@@ -45,6 +46,7 @@ fun TodoScreen(navigate: (NavKey) -> Unit) {
     val eventFlow = viewModel.channel
     val context = LocalContext.current
     var showAddItemDialog by remember { mutableStateOf(false) }
+    val topAppbarModule = TopAppbarModule.topAppBarState.collectAsState()
     LaunchedEffect(Unit) {
         eventFlow.collect { event ->
             when (event) {
@@ -124,7 +126,10 @@ fun TodoScreen(navigate: (NavKey) -> Unit) {
 fun ItemList(modifier: Modifier = Modifier, state: TodoState, onEvent: (ItemEvent) -> Unit){
     LazyColumn(modifier = modifier.fillMaxWidth()){
         items(state.items){item->
-            CheckedItemCard(item, onEvent = onEvent)
+            CheckableItemCard(
+                item,
+                onEvent = onEvent,
+                onCheckValueChanged = {})
             Spacer(modifier = Modifier.height(2.dp))
         }
     }

@@ -1,11 +1,14 @@
 package se.curtrune.lucy.screens.todo
 
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation3.runtime.NavKey
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -23,6 +26,7 @@ import java.util.Comparator
 class TodoViewModel : ViewModel() {
     private val _state = MutableStateFlow(TodoState())
     val state = _state.asStateFlow()
+    private val appBarState = TopAppbarModule.topAppBarState
     private val repository = LucindaApplication.appModule.repository
     private val topAppbarModule = TopAppbarModule
     private var items: MutableList<Item> = mutableListOf()
@@ -117,6 +121,9 @@ class TodoViewModel : ViewModel() {
             is ItemEvent.ShowChildren -> {
                 showChildren(event.parent)
             }
+
+            is ItemEvent.ShowPostponeDialog -> TODO()
+            is ItemEvent.RequestDelete -> TODO()
         }
     }
     fun onEvent(event: TopAppBarEvent){

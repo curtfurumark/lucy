@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.composables.DatePickerModal
+import se.curtrune.lucy.composables.dialogs.DatePickerModal
 import se.curtrune.lucy.util.DateTImeConverter
 import java.time.LocalDate
 

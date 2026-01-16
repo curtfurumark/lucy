@@ -1,7 +1,7 @@
 package se.curtrune.lucy.screens.daycalendar
 
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.composables.PostponeDetails
+import se.curtrune.lucy.composables.dialogs.PostponeDetails
 import java.time.LocalDate
 
 sealed interface DayCalendarEvent{
@@ -15,14 +15,16 @@ sealed interface DayCalendarEvent{
     data class ShowActionsMenu(val item: Item): DayCalendarEvent
     data class Postpone(val postponeInfo: PostponeDetails): DayCalendarEvent
     data class RequestDelete(val item: Item): DayCalendarEvent
-    data class ShowChildren(val item: Item): DayCalendarEvent
     data class ShowPostponeDialog(val item: Item): DayCalendarEvent
     data object HidePostponeDialog: DayCalendarEvent
-    data object ShowAddItemBottomSheet : DayCalendarEvent
     data class Search(val filter: String, val everywhere: Boolean): DayCalendarEvent
+    data object ShowAddItemBottomSheet : DayCalendarEvent
+    data class ShowChildren(val item: Item): DayCalendarEvent
     data class ShowStats(val item: Item):DayCalendarEvent
     data class StartTimer(val item: Item):DayCalendarEvent
+    data class ShowTodoItems(val show: Boolean =  false):DayCalendarEvent
     data class TabSelected(val index: Int, val item: Item?): DayCalendarEvent
     data class UpdateItem(val item: Item): DayCalendarEvent
     data class Week(val page: Int):DayCalendarEvent
+    data class AddList(val item: Item): DayCalendarEvent
 }

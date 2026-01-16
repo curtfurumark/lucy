@@ -14,6 +14,7 @@ import java.util.Locale
 
 object TopAppbarModule{
     private val _topAppBarState: MutableStateFlow<TopAppBarState> = MutableStateFlow(TopAppBarState())
+    //private val _state = kotlinx.coroutines.flow.Flow<TopAppBarState>()
     val topAppBarState = _topAppBarState.asStateFlow()
     fun setTitle(title: String){
         _topAppBarState.update { it.copy(

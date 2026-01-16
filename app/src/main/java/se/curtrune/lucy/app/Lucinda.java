@@ -3,18 +3,16 @@ package se.curtrune.lucy.app;
 import static se.curtrune.lucy.util.Logger.log;
 
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 
 import java.sql.SQLException;
 
-import se.curtrune.lucy.R;
 import se.curtrune.lucy.persist.DBAdmin;
+import se.curtrune.lucy.persist.SettingsStore;
 
 public class Lucinda {
 
     private static Lucinda instance;
-    private final Settings settings;
+    private final SettingsStore settings;
     //public static Item currentParent;
     public static boolean VERBOSE = false;
     public static boolean Dev = false;
@@ -22,7 +20,7 @@ public class Lucinda {
 
     private Lucinda(Context context){
         if( VERBOSE) log("Lucinda(Context)");
-        settings = Settings.getInstance(context);
+        settings = SettingsStore.getInstance(context);
     }
     public static Lucinda getInstance(Context context){
         if( instance == null){
@@ -55,7 +53,7 @@ public class Lucinda {
     }
     public static boolean nightlyAlarmIsSet(Context context) {
         log("Lucinda.nightlyAlarmIsSet(Context)");
-        return Settings.getBoolean(KEY_NIGHTLY_ALARM, false, context);
+        return SettingsStore.getBoolean(KEY_NIGHTLY_ALARM, false, context);
     }
 
     public void reset(Context context) throws SQLException {

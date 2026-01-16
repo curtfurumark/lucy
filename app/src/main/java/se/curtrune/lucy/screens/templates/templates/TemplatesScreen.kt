@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
@@ -15,7 +17,6 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
@@ -40,7 +41,7 @@ import se.curtrune.lucy.screens.templates.TemplateEvent
 import se.curtrune.lucy.screens.templates.composables.TemplateCard
 
 @Composable
-fun TemplatesScreen(navigate: (NavKey)->Unit){
+fun TemplatesScreen(navigate: (NavKey)->Unit, modifier: Modifier = Modifier){
     val viewModel: TemplatesViewModel = viewModel()
     val state by viewModel.state.collectAsState()
     var useTemplateDialog by remember { mutableStateOf(false) }
@@ -53,22 +54,25 @@ fun TemplatesScreen(navigate: (NavKey)->Unit){
         }
 
     }) {paddingValues ->
-        Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
-            Spacer(modifier = Modifier.height(70.dp))
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = "dina mallar",
-                textAlign = TextAlign.Center,
-                fontSize = MaterialTheme.typography.titleLarge.fontSize)
-            Spacer(modifier = Modifier.height(16.dp))
-            state.templates.forEach {template ->
-                Spacer(modifier = Modifier.height(4.dp) )
-                TemplateCard(template = template) { event ->
-                    viewModel.onEvent(event)
+        LazyColumn(modifier = modifier.fillMaxSize().padding(paddingValues)) {
+            //Spacer(modifier = Modifier.height(70.dp))
+            item {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = "dina mallar",
+                    textAlign = TextAlign.Center,
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+            items(items= state.templates){template ->
+                    Spacer(modifier = Modifier.height(4.dp))
+                    TemplateCard(template = template) { event ->
+                        viewModel.onEvent(event)
+                    }
                 }
             }
         }
-    }
 
     LaunchedEffect(Unit) {
         viewModel.channel.collect { event ->

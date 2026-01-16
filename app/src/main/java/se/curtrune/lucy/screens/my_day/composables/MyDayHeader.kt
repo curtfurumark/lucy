@@ -9,7 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.composables.ItemFieldChooser
-import se.curtrune.lucy.composables.MyDatePicker
+import se.curtrune.lucy.composables.dialogs.MyDatePicker
 import se.curtrune.lucy.screens.my_day.MyDayEvent
 import se.curtrune.lucy.screens.my_day.MyDayState
 

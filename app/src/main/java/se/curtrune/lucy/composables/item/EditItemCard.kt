@@ -1,4 +1,4 @@
-package se.curtrune.lucy.composables
+package se.curtrune.lucy.composables.item
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -11,6 +11,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
+import se.curtrune.lucy.composables.DurationDialog
+import se.curtrune.lucy.composables.TimeText
 
 
 @Composable
@@ -27,9 +29,9 @@ fun DurationEdit(duration: Long, onDurationEdit: (Long)->Unit){
         TimeText(seconds, 20.sp)
     }
     if(showDurationDialog){
-        DurationDialog(initialDuration = seconds, onDismiss ={
+        DurationDialog(initialDuration = seconds, onDismiss = {
             showDurationDialog = false
-        } , onConfirm = {
+        }, onConfirm = {
             println("seconds $it")
             seconds = it
             onDurationEdit(seconds)

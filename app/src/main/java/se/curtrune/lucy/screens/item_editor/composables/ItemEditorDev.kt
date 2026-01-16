@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import se.curtrune.lucy.app.LucindaApplication
-import se.curtrune.lucy.app.Settings
+import se.curtrune.lucy.persist.SettingsStore
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.screens.item_editor.ItemEvent
@@ -84,7 +84,7 @@ fun EditViewParent(item: Item, onEvent: (ItemEvent) -> Unit){
             )
             Button( onClick = {
                 if(todoList) {
-                    item.parentId = LucindaApplication.appModule.settings.getRootID(Settings.Root.TODO)
+                    item.parentId = LucindaApplication.appModule.settings.getRootID(SettingsStore.Root.TODO)
                 }else{
                     item.parentId = newParentID.toLong()
                 }

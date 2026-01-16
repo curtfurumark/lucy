@@ -50,6 +50,8 @@ class EnchiladaViewModel : ViewModel() {
             is ItemEvent.InsertChild -> {println("insert child")}
             is ItemEvent.AddCategory -> TODO()
             is ItemEvent.ShowChildren-> TODO()
+            is ItemEvent.ShowPostponeDialog -> TODO()
+            is ItemEvent.RequestDelete -> TODO()
         }
     }
     fun onEvent(event: TopAppBarEvent){

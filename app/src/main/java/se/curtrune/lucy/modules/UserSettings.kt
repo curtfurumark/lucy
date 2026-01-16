@@ -4,7 +4,7 @@ import android.app.Application
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import se.curtrune.lucy.app.InitialScreen
-import se.curtrune.lucy.app.Settings
+import se.curtrune.lucy.persist.SettingsStore
 import se.curtrune.lucy.app.UserPrefs
 import se.curtrune.lucy.screens.navigation.NavigationDrawerState
 import se.curtrune.lucy.screens.settings.MentalFlag
@@ -25,7 +25,7 @@ class UserSettings(val context: Application) {
      */
     fun getCategories(): Array<String> {
         Logger.log("UserSettings.getCategories()")
-        val setCategories = Settings.getSet(UserPrefs.KEY_CATEGORIES, context)
+        val setCategories = SettingsStore.getSet(UserPrefs.KEY_CATEGORIES, context)
         return Arrays.copyOf<String, Any>(
             setCategories.toTypedArray(), setCategories.size,
             Array<String>::class.java
@@ -34,17 +34,17 @@ class UserSettings(val context: Application) {
 
     fun deleteCategory(category: String) {
         //Logger.log("UserSettings.deleteCategory($category)")
-        val setCategories = Settings.getSet(UserPrefs.KEY_CATEGORIES, context)
+        val setCategories = SettingsStore.getSet(UserPrefs.KEY_CATEGORIES, context)
         setCategories.remove(category)
-        Settings.saveSet(UserPrefs.KEY_CATEGORIES, setCategories, context)
+        SettingsStore.saveSet(UserPrefs.KEY_CATEGORIES, setCategories, context)
 
 
     }
 
     fun addCategory(category: String) {
-        val setCategories = Settings.getSet(UserPrefs.KEY_CATEGORIES, context)
+        val setCategories = SettingsStore.getSet(UserPrefs.KEY_CATEGORIES, context)
         setCategories.add(category)
-        Settings.saveSet(UserPrefs.KEY_CATEGORIES, setCategories, context)
+        SettingsStore.saveSet(UserPrefs.KEY_CATEGORIES, setCategories, context)
     }
 
     var panicOption: PanicOption
@@ -53,7 +53,7 @@ class UserSettings(val context: Application) {
             UserPrefs.setPanicOption(value, context)
         }
     val categories: List<String>
-        get() = Settings.getList(UserPrefs.KEY_CATEGORIES, context)
+        get() = SettingsStore.getList(UserPrefs.KEY_CATEGORIES, context)
 
     var darkMode: Boolean
         get() = UserPrefs.getDarkMode(context)
@@ -137,6 +137,11 @@ class UserSettings(val context: Application) {
         get() = UserPrefs.getShowAppointments(context)
         set(value){
         }*/
+    var showTimeLine: Boolean
+        get() = UserPrefs.getShowTimeline(context)
+        set(value){
+            UserPrefs.setShowTimeline(value, context)
+        }
     var showToDo: Boolean
         get() = UserPrefs.getShowToDo(context)
         set(value){

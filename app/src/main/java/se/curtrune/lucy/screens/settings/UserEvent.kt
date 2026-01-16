@@ -24,5 +24,6 @@ sealed interface UserEvent {
     data class ShowMentalStats(val visible: Boolean): UserEvent
     data class ShowProjects(val visible : Boolean) : UserEvent
     data class ShowDuration(val visible : Boolean) : UserEvent
+    data class ShowTimeLine(val visible : Boolean) : UserEvent
     data class  ShowToDo(val visible : Boolean) : UserEvent
 }

@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Album
@@ -51,8 +53,11 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
         mutableStateOf(false)
     }
 
+    val scrollState = rememberScrollState()
     val settings = LucindaApplication.appModule.userSettings
-    ModalDrawerSheet {
+    ModalDrawerSheet(
+        modifier = Modifier.verticalScroll(scrollState)
+    ) {
         //Text(text = "new navigation drawer")
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -111,7 +116,7 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                         },
                         onClick = {
                             println("appointments")
-                            onClick(AppointmentsScreenNavKey)
+                            onClick(Route.AppointmentsScreenNavKey)
                         }
                     )
                 }
@@ -165,6 +170,17 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                 },
             )
         }
+        NavigationDrawerItem(
+            label = { Text(text ="my templates")} ,
+            selected = false,
+            onClick = {
+                onClick(TemplatesScreenNavKey)
+            },
+            icon = { Icon(
+                imageVector = Icons.Default.Album,
+                contentDescription = "settings")
+            }
+        )
         if( state.showMedicineLink) {
             Column(modifier = Modifier.fillMaxWidth()) {
                 NavigationDrawerItem(
@@ -182,6 +198,22 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                 )
             }
         }
+        if( state.showAppointmentsLink){
+            //Column(modifier = Modifier.fillMaxWidth()) {
+                NavigationDrawerItem(
+                    label = { Text(stringResource(R.string.appointments)) },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.Medication,
+                            contentDescription = "appointments"
+                        )
+                    },
+                    selected = false,
+                    onClick = {
+                        onClick(Route.AppointmentsScreenNavKey)
+                    }
+                )
+        }
         if (state.showDevScreenLink) {
             NavigationDrawerItem(
                 label = { Text(text = "dev screen") },
@@ -197,7 +229,15 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                 }
             )
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        NavigationDrawerItem(
+            label = { Text(text = "timeline") },
+            selected = false,
+            icon = {Icon(imageVector = Icons.Default.Star, contentDescription = "timeline")},
+            onClick = {
+                onClick(Route.TimeLineScreen)
+            }
+        )
+        //Spacer(modifier = Modifier.height(16.dp))
         NavigationDrawerItem(
             label = { Text(text = stringResource(R.string.settings)) },
             selected = false,
@@ -235,19 +275,18 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
             )
         }
         if(state.showTodoScreen){
-            Spacer(modifier = Modifier.height(16.dp))
+            //Spacer(modifier = Modifier.height(16.dp))
             NavigationDrawerItem(
                 label = { Text(text = stringResource(R.string.todo)) },
                 selected = false,
                 icon = {Icon(imageVector = Icons.Default.AutoAwesome, contentDescription = "todo")},
                 onClick = {
                     onClick(TodoScreenNavKey)
-
-                })
-
+                }
+            )
         }
         if( state.showDurationLink) {
-            Spacer(modifier = Modifier.height(32.dp))
+            //Spacer(modifier = Modifier.height(32.dp))
             NavigationDrawerItem(
                 label = { Text(text = stringResource(R.string.duration)) },
                 selected = false,
@@ -257,7 +296,7 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                 }
             )
         }
-        Spacer(modifier = Modifier.height(32.dp))
+        //Spacer(modifier = Modifier.height(32.dp))
         NavigationDrawerItem(
             label = { Text(text = stringResource(R.string.message_board)) },
             selected = false,

@@ -21,19 +21,19 @@ public class CalenderMonth {
     private LocalDate firstDateOfMonth;
     private LocalDate lastDateOfMonth;
     private LocalDate lastDate;
-    private List<CalenderDate> calenderDates;
+    private List<CalendarDate> calenderDates;
 
     public CalenderMonth(YearMonth yearMonth) {
         this.yearMonth = yearMonth;
         init();
     }
-    public void addCalendarDate(CalenderDate calenderDate){
-        CalenderDate calenderDate1 = getCalenderDate(calenderDate.date);
+    public void addCalendarDate(CalendarDate calenderDate){
+        CalendarDate calenderDate1 = getCalenderDate(calenderDate.date);
         calenderDate1.addItems(calenderDate.getItems());
     }
     public CalenderMonth addEvent(Item item){
         log("CalendarMonth.addEvent(Item)");
-        Optional<CalenderDate> optionalCalenderDate  = calenderDates.stream().filter(calenderDate -> calenderDate.date.equals(item.getTargetDate())).findFirst();
+        Optional<CalendarDate> optionalCalenderDate  = calenderDates.stream().filter(calenderDate -> calenderDate.date.equals(item.getTargetDate())).findFirst();
         if(optionalCalenderDate.isPresent()){
             optionalCalenderDate.get().add(item);
         }else{
@@ -41,10 +41,10 @@ public class CalenderMonth {
         }
         return this;
     }
-    public CalenderDate getCalenderDate(LocalDate date){
+    public CalendarDate getCalenderDate(LocalDate date){
         return calenderDates.stream().filter(calenderDate -> calenderDate.date.equals(date)).findAny().orElse(null);
     }
-    public List<CalenderDate> getCalenderDates(){
+    public List<CalendarDate> getCalenderDates(){
         return calenderDates;
     }
     public List<Item> getEvents(LocalDate date){
@@ -71,7 +71,7 @@ public class CalenderMonth {
         lastDate = firstDate.plusDays(41);
     }
 
-    public void setCalenderDates(List<CalenderDate> calenderDates) {
+    public void setCalenderDates(List<CalendarDate> calenderDates) {
         this.calenderDates = calenderDates;
     }
 }

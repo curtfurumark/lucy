@@ -21,9 +21,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.composables.TimePickerDialog
+import se.curtrune.lucy.composables.dialogs.TimePickerDialog
 import se.curtrune.lucy.screens.templates.create.CreateTemplateEvent
 import java.time.LocalTime
 

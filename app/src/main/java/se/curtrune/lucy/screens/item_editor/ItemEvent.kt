@@ -8,6 +8,7 @@ sealed interface ItemEvent {
     data class AddChildren(val parent: Item): ItemEvent
     data object CancelTimer: ItemEvent
 
+
     data class Delete(val item: Item): ItemEvent
     data class Edit(val item: Item): ItemEvent
     data class GetChildren(val item: Item): ItemEvent
@@ -15,10 +16,14 @@ sealed interface ItemEvent {
     data class GetItem(val id: Long): ItemEvent
     data class InsertItem(val item: Item): ItemEvent
     data class InsertChild(val item: Item): ItemEvent
+    //data class OnClick(val item: Item)
     data class Update(val item: Item): ItemEvent
     data object StartTimer: ItemEvent
     data object PauseTimer: ItemEvent
+    data class RequestDelete(val item: Item): ItemEvent
     data object ResumeTimer: ItemEvent
     data object ShowAddItemDialog: ItemEvent
     data class ShowChildren(val parent: Item): ItemEvent
+    data class ShowPostponeDialog(val item: Item): ItemEvent
 }
+

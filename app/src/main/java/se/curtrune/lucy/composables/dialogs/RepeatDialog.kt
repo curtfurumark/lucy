@@ -1,4 +1,4 @@
-package se.curtrune.lucy.composables
+package se.curtrune.lucy.composables.dialogs
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -36,7 +36,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import se.curtrune.lucy.R
 import se.curtrune.lucy.classes.item.Repeat
-import se.curtrune.lucy.persist.Repeater
 import se.curtrune.lucy.screens.medicine.composable.DropdownItem
 import java.time.LocalDate
 
@@ -237,10 +236,10 @@ fun RepeatDialog(
         DatePickerModal(onDismiss = {
             showDatePicker = false
         }, onDateSelected = { date ->
-            if( setFirstDate){
+            if (setFirstDate) {
                 repeat.firstDate = date
                 firstDate = date
-            }else{
+            } else {
                 repeat.lastDate = date
                 lastDate = date
             }
@@ -254,5 +253,5 @@ fun RepeatDialog(
 @Preview
 @Composable
 fun Preview(){
-    se.curtrune.lucy.composables.RepeatDialog(onConfirm = {}, onDismiss = {})
+    RepeatDialog(onConfirm = {}, onDismiss = {})
 }

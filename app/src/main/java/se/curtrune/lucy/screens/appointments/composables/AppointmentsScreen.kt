@@ -36,7 +36,7 @@ import se.curtrune.lucy.screens.appointments.AppointmentEvent
 import se.curtrune.lucy.screens.appointments.AppointmentsState
 import se.curtrune.lucy.screens.appointments.AppointmentsViewModel
 import se.curtrune.lucy.screens.navigation.AppointmentDetailsScreenNavKey
-import se.curtrune.lucy.screens.navigation.AppointmentsScreenNavKey
+import se.curtrune.lucy.screens.navigation.Route.AppointmentsScreenNavKey
 
 @Composable
 fun AppointmentsList(

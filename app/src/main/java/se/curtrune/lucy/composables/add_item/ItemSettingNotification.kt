@@ -24,7 +24,7 @@ import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.features.notifications.Notification
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.composables.NotificationDialog
+import se.curtrune.lucy.composables.dialogs.NotificationDialog
 import java.time.LocalTime
 
 @Composable

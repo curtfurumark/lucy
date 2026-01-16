@@ -1,4 +1,4 @@
-package se.curtrune.lucy.composables
+package se.curtrune.lucy.composables.dialogs
 
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog

@@ -414,12 +414,11 @@ class SqliteLocalDB(context: Context?) :
      * @return returns 1 if successful
      */
     fun update(item: Item): Int {
-        if (VERBOSE) Logger.log("SqliteLocalDB.update(Item)", item.heading)
-        if (VERBOSE) Logger.log(item)
+        if (VERBOSE) println("SqliteLocalDB.update($item)")
         db = this.writableDatabase
         val whereClause = String.format(Locale.getDefault(), "id = %d", item.id)
         val rowsAffected = db!!.update(ITEMS_TABLE, DBAdmin.getContentValues(item), whereClause, null)
-        Logger.log("...update item ok: ", rowsAffected == 1)
+        if(VERBOSE )("... rowsAffected: $rowsAffected")
         db!!.close()
         return rowsAffected
     }

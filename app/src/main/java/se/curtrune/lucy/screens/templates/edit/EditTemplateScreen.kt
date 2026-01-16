@@ -24,11 +24,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation3.runtime.NavKey
+import se.curtrune.lucy.screens.navigation.TemplatesScreenNavKey
 
 @Composable
-fun EditTemplateScreen(templateID: Long,onDone: () -> Unit){
+fun EditTemplateScreen(templateID: Long, navigate: (NavKey) -> Unit){
     val context = LocalContext.current
-    val viewModel: EditTemplateViewModel = viewModel(){
+    val viewModel: EditTemplateViewModel = viewModel{
         EditTemplateViewModel.factory(templateID).create(EditTemplateViewModel::class.java)
     }
 
@@ -57,14 +59,14 @@ fun EditTemplateScreen(templateID: Long,onDone: () -> Unit){
                 })
             Icon(
                 modifier = Modifier.clickable {
-                    onDone()
+                    navigate(TemplatesScreenNavKey)
                 },
                 imageVector = Icons.Default.Check,
                 contentDescription = "done")
         }
         state.children.forEach{
             println("...child ${it.heading} ID ${it.id}")
-            EditTemplateCard(it, { event ->
+            EditTemplateCard(it, onEvent = { event ->
                 viewModel.onEvent(event)
             })
             Spacer(Modifier.height(4.dp))
@@ -79,7 +81,7 @@ fun EditTemplateScreen(templateID: Long,onDone: () -> Unit){
                 }
 
                 EditTemplateChannel.NavigateBack -> {
-                    onDone()
+                    navigate(TemplatesScreenNavKey)
                 }
 
                 is EditTemplateChannel.Error -> {

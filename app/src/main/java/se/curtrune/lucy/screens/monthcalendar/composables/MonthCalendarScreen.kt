@@ -28,14 +28,13 @@ import se.curtrune.lucy.screens.monthcalendar.MonthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MonthCalendarScreen(navigate: (NavKey) -> Unit){
+fun MonthCalendarScreen(navigate: (NavKey) -> Unit, modifier: Modifier = Modifier){
     val viewModel  = viewModel<MonthViewModel>()
     val state = viewModel.state.collectAsState()
     var showAddItemDialog by remember{
         mutableStateOf(false)
     }
     val context = LocalContext.current
-    //val pagerState =
     val pagerState = rememberPagerState(
         pageCount = {
             viewModel.pagerState.numPages //pagerstate is a bad name, change it
@@ -59,7 +58,6 @@ fun MonthCalendarScreen(navigate: (NavKey) -> Unit){
                     println("onEvent $it")
                 }
             )
-            //
         }
     ) {padding->
         HorizontalPager(state = pagerState) {

@@ -40,15 +40,27 @@ import se.curtrune.lucy.screens.settings.composables.SettingsScreen
 import se.curtrune.lucy.screens.templates.create.CreateTemplateScreen
 import se.curtrune.lucy.screens.templates.edit.EditTemplateScreen
 import se.curtrune.lucy.screens.templates.templates.TemplatesScreen
+import se.curtrune.lucy.screens.timeline.TimeLineScreen
 import se.curtrune.lucy.screens.todo.composables.TodoScreen
 import se.curtrune.lucy.screens.webscreen.WebScreen
 import se.curtrune.lucy.screens.week_calendar.composables.WeekCalendarScreen
 
-@Serializable
-data object BulletListScreenNavKey: NavKey
 
-@Serializable
-data object CreateTemplateScreenNavKey: NavKey
+sealed interface Route: NavKey{
+    @Serializable
+    data object AppointmentsScreenNavKey: Route
+    @Serializable
+    data object BulletListScreenNavKey: Route
+    @Serializable
+    data object CreateTemplateScreenNavKey: Route
+    @Serializable
+    data object TimeLineScreen: Route
+
+}
+
+
+
+
 
 @Serializable
 data class DayCalendarNavKey(val date: String): NavKey
@@ -84,8 +96,7 @@ data object ProjectsScreenNavKey: NavKey
 @Serializable
 data class AppointmentDetailsScreenNavKey(val appointmentID: Long): NavKey
 
-@Serializable
-data object AppointmentsScreenNavKey: NavKey
+
 @Serializable
 data object MentalStatsScreenNavKey: NavKey
 @Serializable
@@ -121,7 +132,7 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                         key = navKey) { AppointmentDetailsScreen(navKey.appointmentID)
                     }
                 }
-                is AppointmentsScreenNavKey -> {
+                is Route.AppointmentsScreenNavKey -> {
                     NavEntry(
                         key = navKey) {
                         AppointmentsScreen(
@@ -134,13 +145,13 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                         )
                     }
                 }
-                is BulletListScreenNavKey -> {
+                is Route.BulletListScreenNavKey -> {
                     NavEntry(
                         key = navKey) {
                             BulletListScreen()
                     }
                 }
-                is CreateTemplateScreenNavKey ->{
+                is Route.CreateTemplateScreenNavKey ->{
                     NavEntry(
                         key = navKey) { CreateTemplateScreen()
                     }
@@ -152,8 +163,8 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                         //println("DayCalendarNavKey.date = ${navKey.date}")
                         DayCalendarScreen(
                             date = navKey.date,
-                            onEdit = {
-                                backStack.add(ItemEditorNavKey(it))
+                            navigate = {
+                                backStack.add(it)
                             },
                             modifier = modifier
                         )
@@ -180,7 +191,7 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                 is EditTemplateScreenNavKey -> {
                     NavEntry(key = navKey)
                     {
-                            EditTemplateScreen(navKey.templateID, onDone = {
+                            EditTemplateScreen(navKey.templateID, navigate = {
                                 backStack.removeLastOrNull()
                             })
                     }
@@ -219,6 +230,14 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                         })
                     }
                 }
+                is Route.TimeLineScreen -> {
+                    NavEntry(
+                        key = navKey) {
+                        TimeLineScreen(modifier = modifier, navigate = {
+                            backStack.add(it)
+                        })
+                    }
+                }
                 is TabbedProjectsScreenNavKey -> {
                     NavEntry(
                         key = navKey) {
@@ -232,7 +251,7 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                         TemplatesScreen(
                             navigate ={
                                 backStack.add(it)
-                            }
+                            }, modifier = modifier
                         )
                     }
                 }
@@ -255,10 +274,14 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                 is WeekCalendarNavKey -> {
                     NavEntry(
                         key = navKey) {
-                        WeekCalendarScreen(onPagerChange = {}, navigate = {
-                            println("navigate to $it")
-                            backStack.add(it)
-                        })
+                        WeekCalendarScreen(
+                            onPagerChange = {},
+                            navigate = {
+                                println("navigate to $it")
+                                backStack.add(it)
+                            },
+                            modifier = modifier
+                        )
                     }
                 }
 

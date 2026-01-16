@@ -1,4 +1,4 @@
-package se.curtrune.lucy.composables
+package se.curtrune.lucy.composables.dialogs
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -105,10 +105,11 @@ fun NotificationDialog(onDismiss: ()->Unit, onConfirm: (Notification)->Unit){
             }
         }
         if(showTimeDialog){
-            TimePickerDialog(onDismiss={
-                showTimeDialog = false
-            },
-                onConfirm = { state->
+            TimePickerDialog(
+                onDismiss = {
+                    showTimeDialog = false
+                },
+                onConfirm = { state ->
                     time = LocalTime.of(state.hour, state.minute)
                     notification.setTime(time)
                     showTimeDialog = false

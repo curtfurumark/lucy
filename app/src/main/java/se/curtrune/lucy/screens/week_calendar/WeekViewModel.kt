@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.classes.ItemDuration
-import se.curtrune.lucy.classes.calender.CalenderDate
+import se.curtrune.lucy.classes.calender.CalendarDate
 import se.curtrune.lucy.classes.calender.Week
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.add_item.DefaultItemSettings
@@ -46,7 +46,7 @@ class WeekViewModel: ViewModel() {
             calendarWeek = repository.getCalendarWeek(it.currentWeek)
         ) }
     }
-    private fun calendarDateClick(calenderDate: CalenderDate){
+    private fun calendarDateClick(calenderDate: CalendarDate){
         println("calendarDateClick($calenderDate.date.toString())")
         if( calenderDate.events.isEmpty()){
             println("show add item dialog")
@@ -105,7 +105,7 @@ class WeekViewModel: ViewModel() {
 
     }
 
-    private fun calendarDateLongClick(calendarDate: CalenderDate) {
+    private fun calendarDateLongClick(calendarDate: CalendarDate) {
         println("WeekViewModel.calendarDateLongClick(${calendarDate.date.toString()})")
         viewModelScope.launch {
             //TODO use jetpack compose navigation 3

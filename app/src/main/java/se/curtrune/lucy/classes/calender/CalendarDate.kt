@@ -7,7 +7,7 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.util.Locale
 
-class CalenderDate {
+class CalendarDate {
     @JvmField
     var date: LocalDate = LocalDate.now()
     //var mental: Mental = Mental()

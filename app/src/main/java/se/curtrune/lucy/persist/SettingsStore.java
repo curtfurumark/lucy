@@ -1,4 +1,4 @@
-package se.curtrune.lucy.app;
+package se.curtrune.lucy.persist;
 
 import static se.curtrune.lucy.util.Logger.log;
 
@@ -15,7 +15,7 @@ import java.util.Set;
 
 import se.curtrune.lucy.classes.Mental;
 
-public class Settings {
+public class SettingsStore {
     private static final String PREFERENCES_NAME =  "PREFERENCES_NAME";
     private static final String IS_INITIALIZED = "IS_INITIALIZED";
     public static final String DEV_EMAIL = "curt.furumark@gmail.com";
@@ -35,8 +35,8 @@ public class Settings {
         TODO, DAILY, PROJECTS, APPOINTMENTS, PANIC, THE_ROOT
     }
     private SharedPreferences.Editor editor;
-    private static Settings instance;
-    private Settings(Context context){
+    private static SettingsStore instance;
+    private SettingsStore(Context context){
         init(context);
     }
 
@@ -93,21 +93,21 @@ public class Settings {
         init(context);
     }
 
-    public static Settings getInstance(Context context){
+    public static SettingsStore getInstance(Context context){
         if( instance == null){
-            instance = new Settings(context);
+            instance = new SettingsStore(context);
         }
         return instance;
     }
 
     public static void removeAll(Context context){
-        log("Settings.removeAll(Context)");
+        log("SettingsStore.removeAll(Context)");
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
         sharedPreferences.edit().clear().commit();
     }
 
     /**
-     * reads values from sharedpreferences  and initializes the Settings instance using those values
+     * reads values from sharedpreferences  and initializes the SettingsStore instance using those values
      * @param context, forever context
      */
     private void init(Context context){
@@ -122,12 +122,12 @@ public class Settings {
     }
 
     private void addToPrefs(String key, String value, Context context){
-        log("Settings.addToPrefs(String, String)");
+        log("SettingsStore.addToPrefs(String, String)");
         editor.putString(key, value);
         editor.commit();
     }
     private void addToPrefs(String key, long  value, Context context){
-        log("Settings.addToPrefs(String, long)");
+        log("SettingsStore.addToPrefs(String, long)");
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
         editor.putLong(key, value);
@@ -165,7 +165,7 @@ public class Settings {
         }
     }
 
-    public void addRootID(Settings.Root root, long id, Context context){
+    public void addRootID(SettingsStore.Root root, long id, Context context){
         addToPrefs(root.toString(), id, context);
     }
 
@@ -174,7 +174,7 @@ public class Settings {
         return sharedPreferences.edit();
     }
     public static void printAll(Context context){
-        log("Settings.printAll()");
+        log("SettingsStore.printAll()");
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
         Map<String, ?> prefMap = sharedPreferences.getAll();
         log("...prefMap size", prefMap.size());
@@ -188,7 +188,7 @@ public class Settings {
         preferences.edit().remove(key).commit();
     }
     public static void saveList(String key, List<String> list, Context context) {
-        log("Settings.saveList(String, List<String>, Context)");
+        log("SettingsStore.saveList(String, List<String>, Context)");
         Set<String> stringSet = new HashSet<>(list);
         saveSet(key, stringSet, context);
     }

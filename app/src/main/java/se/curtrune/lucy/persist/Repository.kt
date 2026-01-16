@@ -1,7 +1,6 @@
 package se.curtrune.lucy.persist
 
 import android.app.Application
-import se.curtrune.lucy.app.Settings
 import se.curtrune.lucy.classes.State
 import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.classes.calender.CalendarWeek
@@ -113,17 +112,17 @@ class Repository (val context: Application){
         db.close()
         return parent
     }
-    fun getRootItem(root: Settings.Root): Item? {
-        println("Repository.getRootItem(Settings.Root ${root.name})")
-        val settings = Settings.getInstance(context)
+    fun getRootItem(root: SettingsStore.Root): Item? {
+        println("Repository.getRootItem(SettingsStore.Root ${root.name})")
+        val settings = SettingsStore.getInstance(context)
         var rootID: Long = -1
         when (root) {
-            Settings.Root.APPOINTMENTS -> rootID = settings.getRootID(Settings.Root.APPOINTMENTS)
-            Settings.Root.TODO -> rootID = settings.getRootID(Settings.Root.TODO)
-            Settings.Root.DAILY -> rootID = settings.getRootID(Settings.Root.DAILY)
-            Settings.Root.PROJECTS -> rootID = settings.getRootID(Settings.Root.PROJECTS)
-            Settings.Root.PANIC -> rootID = settings.getRootID(Settings.Root.PANIC)
-            Settings.Root.THE_ROOT -> rootID = settings.getRootID(Settings.Root.THE_ROOT)
+            SettingsStore.Root.APPOINTMENTS -> rootID = settings.getRootID(SettingsStore.Root.APPOINTMENTS)
+            SettingsStore.Root.TODO -> rootID = settings.getRootID(SettingsStore.Root.TODO)
+            SettingsStore.Root.DAILY -> rootID = settings.getRootID(SettingsStore.Root.DAILY)
+            SettingsStore.Root.PROJECTS -> rootID = settings.getRootID(SettingsStore.Root.PROJECTS)
+            SettingsStore.Root.PANIC -> rootID = settings.getRootID(SettingsStore.Root.PANIC)
+            SettingsStore.Root.THE_ROOT -> rootID = settings.getRootID(SettingsStore.Root.THE_ROOT)
         }
         println("root id:$root ")
         val db = SqliteLocalDB(context)
@@ -197,8 +196,8 @@ class Repository (val context: Application){
         return template
     }
     fun getAppointmentsRoot(): Item? {
-        val settings = Settings.getInstance(context)
-        val id = settings.getRootID(Settings.Root.APPOINTMENTS)
+        val settings = SettingsStore.getInstance(context)
+        val id = settings.getRootID(SettingsStore.Root.APPOINTMENTS)
         val db = SqliteLocalDB(context)
         val item = db.selectItem(id)
         db.close()
@@ -481,8 +480,8 @@ class Repository (val context: Application){
     }
 
     fun getTodoRoot(): Item? {
-        val settings = Settings.getInstance(context)
-        val id = settings.getRootID(Settings.Root.TODO)
+        val settings = SettingsStore.getInstance(context)
+        val id = settings.getRootID(SettingsStore.Root.TODO)
         val db = SqliteLocalDB(context)
         val item = db.selectItem(id)
         db.close()

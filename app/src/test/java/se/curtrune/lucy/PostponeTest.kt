@@ -2,7 +2,7 @@ package se.curtrune.lucy
 
 import org.junit.Test
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.composables.PostponeAmount
+import se.curtrune.lucy.composables.dialogs.PostponeAmount
 import se.curtrune.lucy.modules.PostponeWorker
 import se.curtrune.lucy.util.Converter
 import java.time.LocalDate

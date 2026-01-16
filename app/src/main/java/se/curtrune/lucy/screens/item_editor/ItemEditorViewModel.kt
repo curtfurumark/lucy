@@ -131,6 +131,9 @@ class ItemEditorViewModel(val item: Item) : ViewModel() {
             is ItemEvent.ShowChildren ->{
                 println("ItemSessionViewModel.ShowChildren")
             }
+
+            is ItemEvent.ShowPostponeDialog -> TODO()
+            is ItemEvent.RequestDelete -> TODO()
         }
     }
     private fun addCategory(category: String) {

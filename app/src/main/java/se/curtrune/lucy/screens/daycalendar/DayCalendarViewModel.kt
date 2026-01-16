@@ -10,18 +10,20 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import se.curtrune.lucy.app.LucindaApplication
-import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.classes.calender.CalenderDate
 import se.curtrune.lucy.classes.calender.Week
-import se.curtrune.lucy.composables.PostponeDetails
+import se.curtrune.lucy.classes.item.Item
+import se.curtrune.lucy.composables.dialogs.PostponeDetails
 import se.curtrune.lucy.composables.add_item.DefaultItemSettings
-import se.curtrune.lucy.modules.TopAppbarModule
 import se.curtrune.lucy.modules.PostponeWorker
+import se.curtrune.lucy.modules.TopAppbarModule
+import se.curtrune.lucy.screens.item_editor.ItemEvent
+import se.curtrune.lucy.screens.navigation.EditListNavKey
+import se.curtrune.lucy.screens.navigation.ItemEditorNavKey
 import se.curtrune.lucy.util.Logger
 import java.time.LocalDate
 import java.time.LocalTime
 
-class DayCalendarViewModel(val date: LocalDate): ViewModel(){
+class DayCalendarViewModel(private val date: LocalDate): ViewModel(){
     private val repository = LucindaApplication.appModule.repository
     private val timeModule = LucindaApplication.appModule.timeModule
     private var currentWeekPage = 5
@@ -29,6 +31,7 @@ class DayCalendarViewModel(val date: LocalDate): ViewModel(){
     private val eventChannel = Channel<DayCalendarChannel>()
     val eventFlow = eventChannel.receiveAsFlow()
     private val _state = MutableStateFlow(DayCalendarState())
+    private var itemToDelete: Item? = null
     private var latestDeletedItem: Item? = null
     private val todoRoot: Item? = repository.getTodoRoot()
     val state = _state.asStateFlow()
@@ -37,13 +40,7 @@ class DayCalendarViewModel(val date: LocalDate): ViewModel(){
     init{
         println("DateViewModel.init date = $date")
         items = repository.selectItems(date)
-        println("...number of items ${items.size}")
-        _state.update { it.copy(
-            items = items,
-            date = date,
-            tabs = mutableListOf(),
-            currentParent = todoRoot
-        ) }
+        refreshState(date)
         println("currentParent = ${state.value.currentParent?.heading}")
         TopAppbarModule.setTitle(_state.value.date)
     }
@@ -72,9 +69,7 @@ class DayCalendarViewModel(val date: LocalDate): ViewModel(){
             }
             return
         }
-        _state.update { it.copy(
-            items = repository.selectItems(state.value.date)
-        ) }
+        refreshState(_state.value.date)
     }
     private fun confirmDelete(item: Item){
         println("...confirmDelete(${item.heading})")
@@ -93,33 +88,29 @@ class DayCalendarViewModel(val date: LocalDate): ViewModel(){
             _state.value.errorMessage = "error deleting ${item.heading}"
         }else{
             println("item deleted ok")
-            _state.update { it.copy(
-                items = it.items.minus(item)
-            ) }
+            refreshState(state.value.date)
         }
     }
 
     private fun editItem(item: Item){
         println("...editItem(Item)")
-/*        _state.update { it.copy(
-            editItem =  true,
-            currentItem = item
-        ) }*/
         viewModelScope.launch{
-            eventChannel.send(DayCalendarChannel.EditItem(item))
+            eventChannel.send(DayCalendarChannel.Navigate(ItemEditorNavKey(item)))
         }
     }
     private fun hidePostponeDialog(){
         println("hidePostponeDialog()")
-        _state.update { it.copy(
-            showPostponeDialog = false
-        )
+        _state.update {
+            it.copy(
+                showPostponeDialog = false
+            )
         }
     }
     fun onEvent(event: DayCalendarEvent){
-        println("DateViewModel.onEvent(${event.toString()})")
+        println("DateViewModel.onEvent(DayCalendarEvent $event)")
         when(event){
             is DayCalendarEvent.AddItem -> {addItem(event.item)}
+            is DayCalendarEvent.AddList ->{ addList(event.item)}
             is DayCalendarEvent.CurrentDate ->{setCurrentDate(event.date)}
             is DayCalendarEvent.DeleteItem -> {deleteItem(event.item)}
             is DayCalendarEvent.Duplicate -> duplicateItem(event.item)
@@ -139,6 +130,46 @@ class DayCalendarViewModel(val date: LocalDate): ViewModel(){
             is DayCalendarEvent.Week -> {setCurrentWeek(event.page)}
             is DayCalendarEvent.RequestDelete -> {confirmDelete(event.item)}
             is DayCalendarEvent.ShowAddItemBottomSheet -> {showAddItemBottomSheet()}
+            is DayCalendarEvent.ShowTodoItems -> {
+                showTodoItems(event.show)
+            }
+        }
+    }
+    fun onEvent(event: ItemEvent){
+        println("DayCalendarViewModel.onEvent(ItemEvent $event)")
+        when(event){
+            is ItemEvent.AddCategory -> TODO()
+            is ItemEvent.AddChildren -> {
+
+            }
+            ItemEvent.CancelTimer -> TODO()
+            is ItemEvent.Delete -> { deleteItem(event.item)}
+            is ItemEvent.Edit -> {editItem(event.item)}
+            is ItemEvent.GetChildren -> TODO()
+            is ItemEvent.GetChildrenType -> TODO()
+            is ItemEvent.GetItem -> TODO()
+            is ItemEvent.InsertChild -> TODO()
+            is ItemEvent.InsertItem -> TODO()
+            ItemEvent.PauseTimer -> TODO()
+            ItemEvent.ResumeTimer -> TODO()
+            ItemEvent.ShowAddItemDialog -> TODO()
+            is ItemEvent.ShowChildren -> { showChildren(event.parent)}
+            is ItemEvent.StartTimer -> TODO()
+            is ItemEvent.Update -> { updateItem(event.item)}
+            is ItemEvent.ShowPostponeDialog -> {
+                showPostponeDialog(event.item)
+            }
+
+            is ItemEvent.RequestDelete -> {
+                requestDelete(event.item)
+            }
+        }
+
+    }
+    private fun addList(item: Item){
+        println("addList(${item.heading})")
+        viewModelScope.launch {
+            eventChannel.send(DayCalendarChannel.Navigate(EditListNavKey(item)))
         }
     }
     private fun duplicateItem(item: Item){
@@ -154,14 +185,10 @@ class DayCalendarViewModel(val date: LocalDate): ViewModel(){
             it.category = item.category
         }
         repository.insert(newItem)
-        val items = repository.selectItems(date)
-        _state.update { it.copy(
-            items = items
-        ) }
-
+        refreshState(date= date)
     }
     private fun postpone(postponeDetails: PostponeDetails){
-        println("postpone(${postponeDetails.toString()})")
+        println("postpone($postponeDetails)")
         _state.update { it.copy(
             previousPostponeAmount = postponeDetails.amount
         ) }
@@ -186,14 +213,17 @@ class DayCalendarViewModel(val date: LocalDate): ViewModel(){
             println(" postpone single item")
             val postponeItem = postponeDetails.item?:return
             repository.update(PostponeWorker.postponeItem(postponeItem, postponeDetails.amount))
-            //if item has been postponed out of current date
-            if(postponeItem.targetDate != state.value.date){
-                _state.update { it.copy(
-                    items = it.items.minus(postponeItem)
-                ) }
-            }else{
-                sortItems()
-            }
+            refreshState(date = state.value.date)
+        }
+    }
+    private fun requestDelete(item: Item) {
+        println("requestDelete(${item.heading})")
+        itemToDelete = item
+        _state.update { it.copy(
+            currentItem = item
+        ) }
+        viewModelScope.launch {
+            eventChannel.send(DayCalendarChannel.ConfirmDeleteDialog)
         }
     }
     private fun restoreDeletedItem(){
@@ -227,20 +257,9 @@ class DayCalendarViewModel(val date: LocalDate): ViewModel(){
             }
         }
     }
-    fun setCalendarDate(calendarDate: CalenderDate) {
-        println("DateViewModel.setCalendarDate(${calendarDate.date.toString()})")
-        setCurrentDate(calendarDate.date)
-
-    }
     private fun setCurrentDate(newDate: LocalDate){
-        println("DateViewModel.setCurrentDate(${newDate.toString()})")
-        items = repository.selectItems(newDate)
-        _state.update {it.copy(
-                currentWeek = Week(newDate),
-                date = newDate,
-                items = items
-            )
-        }
+        println("DateViewModel.setCurrentDate($newDate)")
+        refreshState(date =newDate)
         TopAppbarModule.setTitle(newDate)
     }
     private fun setCurrentWeek(page: Int){
@@ -299,11 +318,14 @@ class DayCalendarViewModel(val date: LocalDate): ViewModel(){
             showStats =  true
         ) }
     }
-    private fun sortItems(){
+    private fun showTodoItems(show: Boolean){
+        println("...showTodoItems($show)")
         _state.update { it.copy(
-            items = it.items.sortedBy { it.targetTime }
+            todoItems = if(show) CalendarHelper.getTodoToday(items) else emptyList(),
+            showTodoItems = show
         ) }
     }
+
     private fun startTimer(item: Item){
         println("startTimer(${item.heading})")
         timeModule.startTimer(item.id)
@@ -314,7 +336,7 @@ class DayCalendarViewModel(val date: LocalDate): ViewModel(){
             _state.update {  it.copy(
                 items = repository.selectItems(state.value.date),
                 showTabs = false,
-                tabs = mutableListOf<Item>(),
+                tabs = mutableListOf(),
                 currentParent = todoRoot
             )}
         }else{
@@ -330,18 +352,30 @@ class DayCalendarViewModel(val date: LocalDate): ViewModel(){
             ) }
         }
     }
+    private fun refreshState(date: LocalDate){
+        println("...refreshState $date")
+        items = repository.selectItems(date)
+        _state.update {it.copy(
+            currentWeek = Week(date),
+            date = date,
+            items = CalendarHelper.getTimedItems(items),
+            todoItems = if( it.showTodoItems) CalendarHelper.getTodoToday(items) else emptyList()
+        )
+        }
+    }
     private fun updateItem(item: Item){
         println("...updateItem(${item.heading})")
         val rowsAffected = repository.update(item)
         if( rowsAffected != 1){
             println("error updating item")
         }
+        refreshState(state.value.date)
+    }
+    private fun sortItems(){
         _state.update { state ->
             state.copy(
+                todoItems = state.todoItems.sortedBy { it.targetTime },
                 items = state.items.sortedBy { it.targetTime }
-        ) }
-    }
-    private fun sortItems(items: List<Item>): List<Item>{
-        return items.sortedBy { it.targetTime }
+            ) }
     }
 }

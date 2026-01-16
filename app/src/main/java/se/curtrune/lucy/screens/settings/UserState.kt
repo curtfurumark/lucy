@@ -17,10 +17,12 @@ data class UserState(
     var mentalFlag: MentalFlag = MentalFlag(),
     var panicOption: PanicOption = PanicOption.URL,
     var initialScreen: InitialScreen = InitialScreen.CALENDER_DATE,
+    var showAppointments: Boolean = true,
     var showDevScreen: Boolean = false,
     var showProjects: Boolean = false,
     var showMedicine: Boolean = false,
     var showDuration: Boolean = false,
+    var showTimeLine: Boolean = true,
     var showToDo: Boolean = false,
     var showMentalStats: Boolean = false
 )

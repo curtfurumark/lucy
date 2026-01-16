@@ -13,8 +13,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import se.curtrune.lucy.app.LucindaApplication
-import se.curtrune.lucy.app.Settings
-import se.curtrune.lucy.app.Settings.PanicAction
+import se.curtrune.lucy.persist.SettingsStore
+import se.curtrune.lucy.persist.SettingsStore.PanicAction
 import se.curtrune.lucy.app.UserPrefs
 import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.composables.top_app_bar.SearchFilter
@@ -149,7 +149,8 @@ class MainViewModel : ViewModel() {
                 showMedicineLink = userSettings.showMedicine,
                 showDurationLink = userSettings.showDuration,
                 showProjectsLink = true,
-                showAppointmentsLink = userSettings.showAppointmentsLink,
+                //showAppointmentsLink = userSettings.showAppointmentsLink,
+                showAppointmentsLink = true,
                 showDevScreenLink = userSettings.showDevScreen,
                 showTodoScreen =  userSettings.showToDo,
                 showMentalStats = userSettings.showMentalStatsScreen
@@ -172,7 +173,7 @@ class MainViewModel : ViewModel() {
     }
     private fun startSequence(){
         Logger.log("LucindaViewModel.startSequence()")
-        val panicRoot = repository.getRootItem(Settings.Root.PANIC)
+        val panicRoot = repository.getRootItem(SettingsStore.Root.PANIC)
         if( panicRoot == null){
             Logger.log("panic root is null")
             return
