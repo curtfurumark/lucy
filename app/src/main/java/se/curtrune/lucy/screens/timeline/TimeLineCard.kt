@@ -4,13 +4,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.text.font.FontVariation.width
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.classes.item.Item
 import java.time.LocalDate
 
@@ -21,16 +24,21 @@ fun TimeLineCard(item: Item, onClick: (Item)-> Unit){
         onClick = { onClick(item) }
     ){
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            //horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth()
+                .padding(start = 4.dp, top= 2.dp),
         ) {
             Text(
+                modifier= Modifier.padding(start = 4.dp),
+                text = item.targetDate.toString())
+        }
+        Row(modifier = Modifier.fillMaxWidth()
+            .padding(start= 4.dp , bottom = 2.dp)){
+            Text(
+                modifier = Modifier.padding(start = 4.dp),
                 text = item.heading,
-                maxLines = 2,
+                maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-            Spacer(modifier = Modifier.weight(1f))
-            Text(text = item.targetDate.toString())
         }
     }
 }

@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.classes.item.Item
+import se.curtrune.lucy.modules.TopAppbarModule
 import se.curtrune.lucy.screens.navigation.ItemEditorNavKey
 
 class TimeLineViewModel: ViewModel() {
@@ -18,6 +19,7 @@ class TimeLineViewModel: ViewModel() {
     val state = _state.asStateFlow()
     private val repository = LucindaApplication.appModule.repository
     init {
+        TopAppbarModule.setTitle("tidslinje")
         getItems()
     }
 
@@ -27,20 +29,28 @@ class TimeLineViewModel: ViewModel() {
                 insertItem(event.item)
             }
 
-            is TimeLineEvent.DeleteItem -> TODO()
+            is TimeLineEvent.DeleteItem -> {
+                deleteItem(event.item)
+            }
             is TimeLineEvent.OnClick -> {
                 onClick(event.item)
             }
+
+            is TimeLineEvent.EditItem -> TODO()
         }
     }
 
     private fun deleteItem(item: Item){
         repository.delete(item)
     }
+    private fun editItem(item: Item){
+        println("edit item")
+    }
     private fun getItems(){
         val items = repository.selectItems(Type.TIME_LINE)
+        //items.sortedBy { it.targetDate }
         _state.value = _state.value.copy(
-            items = items
+            items = items.sortedBy { it.targetDate }
         )
     }
     private fun insertItem(item: Item){

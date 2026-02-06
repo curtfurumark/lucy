@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
@@ -46,13 +48,10 @@ fun TimeLineScreen(modifier: Modifier = Modifier, navigate: (NavKey)-> Unit){
         }
 
     ) {
-        Column(
-            modifier = modifier.fillMaxSize().padding(),
-            //horizontalAlignment = Alignment.CenterHorizontally,
-            //verticalArrangement = Arrangement.Center
+        LazyColumn(
+            modifier = modifier.fillMaxSize().padding(it),
         ) {
-            Text(text = "time line with ${state.items.size} items")
-            state.items.forEach {
+            items(state.items){
                 TimeLineCard(item = it, onClick = {
                     viewModel.onEvent(TimeLineEvent.OnClick(it))
                 })

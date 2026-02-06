@@ -54,16 +54,15 @@ sealed interface Route: NavKey{
     @Serializable
     data object CreateTemplateScreenNavKey: Route
     @Serializable
+    data class DayCalendarNavKey(val date: String): Route
+    @Serializable
+    data object MedicineNavKey: Route
+    @Serializable
     data object TimeLineScreen: Route
+    @Serializable
+    data object TodoScreenNavKey: Route
 
 }
-
-
-
-
-
-@Serializable
-data class DayCalendarNavKey(val date: String): NavKey
 
 @Serializable
 data object DevScreenNavKey: NavKey
@@ -76,8 +75,7 @@ data class  EditListNavKey(val parent: Item): NavKey
 data class EditTemplateScreenNavKey(val templateID: Long): NavKey
 
 
-@Serializable
-data object MedicineNavKey: NavKey
+
 
 @Serializable
 data object MessageBoardNavKey: NavKey
@@ -105,8 +103,7 @@ data object TabbedProjectsScreenNavKey: NavKey
 @Serializable
 data object TemplatesScreenNavKey: NavKey
 
-@Serializable
-data object TodoScreenNavKey: NavKey
+
 @Serializable
 data class WeekCalendarNavKey(val date: String): NavKey
 @Serializable
@@ -157,7 +154,7 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                     }
                 }
 
-                is DayCalendarNavKey -> {
+                is Route.DayCalendarNavKey -> {
                     NavEntry(
                         key = navKey) {
                         //println("DayCalendarNavKey.date = ${navKey.date}")
@@ -204,10 +201,13 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                         })
                     }
                 }
-                is MedicineNavKey -> {
+                is Route.MedicineNavKey -> {
                     NavEntry(
                         key = navKey) {
-                        MedicineScreen()
+                        MedicineScreen(modifier = modifier,
+                            navigate = {
+                                backStack.add(it)
+                            })
                     }
                 }
                 is MentalStatsScreenNavKey -> {
@@ -256,7 +256,7 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                     }
                 }
 
-                is TodoScreenNavKey -> {
+                is Route.TodoScreenNavKey -> {
                     NavEntry(
                         key = navKey) {
                         TodoScreen(navigate = {

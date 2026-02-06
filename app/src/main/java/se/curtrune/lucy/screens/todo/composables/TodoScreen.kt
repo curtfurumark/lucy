@@ -13,6 +13,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,7 +47,8 @@ fun TodoScreen(navigate: (NavKey) -> Unit) {
     val eventFlow = viewModel.channel
     val context = LocalContext.current
     var showAddItemDialog by remember { mutableStateOf(false) }
-    val topAppbarModule = TopAppbarModule.topAppBarState.collectAsState()
+    val topAppbarModuleState = TopAppbarModule.topAppBarState.collectAsState()
+    //TopAppbarModule.search()
     LaunchedEffect(Unit) {
         eventFlow.collect { event ->
             when (event) {
@@ -95,7 +97,7 @@ fun TodoScreen(navigate: (NavKey) -> Unit) {
                     LucindaTopAppBar(
                         state = topAppBarState.value,
                         onEvent = { appBarEvent ->
-                            println("appBarEvent $appBarEvent")
+                            println("appBarEvent todo $appBarEvent")
                             //mainViewModel.onEvent(appBarEvent)
                         })
                 }, onEvent = { event ->

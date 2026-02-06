@@ -37,7 +37,7 @@ import se.curtrune.lucy.screens.medicine.MedicineEvent
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MedicineItem(item: Item, onEvent: (MedicineEvent) -> Unit){
+fun MedicineCard(item: Item, onEvent: (MedicineEvent) -> Unit){
     val medicine = item.content as MedicineContent
     var showContextMenu by remember {
         mutableStateOf(false)

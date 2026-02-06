@@ -24,10 +24,7 @@ class MedicineViewModel(
     val eventFlow = eventChannel.receiveAsFlow()
     init {
         println("MedicineViewModel.init block")
-        items = repository.selectItems(Type.MEDICIN)
-        _state.update { it.copy(
-            items = items
-        ) }
+        selectMedicines()
         TopAppbarModule.setTitle("Mediciner")
     }
     fun addMedicine(medicine: MedicineContent){
@@ -37,7 +34,8 @@ class MedicineViewModel(
         item.setType(Type.MEDICIN)
         item.content = medicine
         item = repository.insert(item)!!
-        println("item inserted with id ${item.id}");
+        println("item inserted with id ${item.id}")
+        selectMedicines()
     }
     private fun deleteItem(item: Item){
         val deleted = repository.delete(item)
@@ -85,6 +83,7 @@ class MedicineViewModel(
             }
             is MedicineEvent.Insert -> {
                 println("....insert item ")
+                addMedicine(event.item.content as MedicineContent)
             }
             is MedicineEvent.ContextMenu -> {
                 println("context menu: ${event.action}")
@@ -97,6 +96,12 @@ class MedicineViewModel(
                 filter(event.filter)
             }
         }
+    }
+    private fun selectMedicines(){
+        items = repository.selectItems(Type.MEDICIN)
+        _state.update { it.copy(
+            items = items.filter { item -> !item.isDone }
+        ) }
     }
     private fun showAddMedicineDialog(action: String){
         when(action){

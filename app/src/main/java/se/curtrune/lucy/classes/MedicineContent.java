@@ -2,6 +2,7 @@ package se.curtrune.lucy.classes;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MedicineContent implements Content{
@@ -10,6 +11,7 @@ public class MedicineContent implements Content{
     private String doctor;
     private String dosage;
     private String bipacksedel;
+    private int remainingWithdrawals;
     private List<LocalTime> takeYourMedicineTimes = new ArrayList<>();
 
     public String getName() {
@@ -52,10 +54,14 @@ public class MedicineContent implements Content{
         this.dosage = dosage;
     }
 
+    public int getRemainingWithdrawals() {
+        return remainingWithdrawals;
+    }
+    public void setRemainingWithdrawals(int remainingWithdrawals) {
+        this.remainingWithdrawals = remainingWithdrawals;
+    }
     public void setTimes(LocalTime ... times) {
-        for(LocalTime time: times){
-            takeYourMedicineTimes.add(time);
-        }
+        Collections.addAll(takeYourMedicineTimes, times);
     }
 
     public int getNumTimes() {

@@ -16,10 +16,10 @@ import se.curtrune.lucy.screens.medicine.MedicineEvent
 import se.curtrune.lucy.screens.medicine.MedicineState
 
 @Composable
-fun MedicineList(state: MedicineState, onEvent:(MedicineEvent)->Unit){
-    LazyColumn(modifier = Modifier.fillMaxSize()){
+fun MedicineList(state: MedicineState, onEvent:(MedicineEvent)->Unit, modifier: Modifier = Modifier){
+    LazyColumn(modifier = modifier.fillMaxSize()){
         items(state.items) {
-            MedicineItem(it, onEvent = onEvent)
+            MedicineCard(it, onEvent = onEvent)
             Spacer(modifier = Modifier.height(4.dp))
         }
     }

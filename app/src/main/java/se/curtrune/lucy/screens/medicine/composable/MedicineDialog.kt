@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -57,7 +58,7 @@ fun MedicineDialog(onDismiss: () -> Unit, onConfirm: (Item)-> Unit){
         //mutableStateOf(emptyArray())
         mutableStateListOf<LocalTime>()
     }
-    var bipacksedel by remember {
+    var issued by remember {
         mutableStateOf("")
     }
     var showTimePicker by remember {
@@ -124,16 +125,16 @@ fun MedicineDialog(onDismiss: () -> Unit, onConfirm: (Item)-> Unit){
                         Text(text = stringResource(R.string.doctor))
                     }
                 )
-/*                OutlinedTextField(
-                    value = bipacksedel  ,
-                    onValueChange = { bipacksedel = it },
+                OutlinedTextField(
+                    value = issued ,
+                    onValueChange = { issued = it },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp),
                     placeholder ={
-                        Text(text = "bipacksedel")
+                        Text(text = "utfärdat")
                     }
-                )*/
+                )
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween){
                     Text("times whatever", fontSize = 24.sp)
                     Icon(imageVector = Icons.Default.Add, contentDescription = "add time", modifier = Modifier.clickable {
@@ -157,7 +158,7 @@ fun MedicineDialog(onDismiss: () -> Unit, onConfirm: (Item)-> Unit){
                         medicineContent.name = name
                         medicineContent.dosage = dosage
                         medicineContent.doctor = doctor
-                        medicineContent.bipacksedel = bipacksedel
+                        medicineContent.bipacksedel = issued
                         item.heading = name
                         item.content = medicineContent
                         onConfirm(item)
@@ -168,4 +169,10 @@ fun MedicineDialog(onDismiss: () -> Unit, onConfirm: (Item)-> Unit){
             }
         }
     }
+}
+
+@Composable
+@PreviewLightDark
+fun PreviewMedicineDialog(){
+    MedicineDialog(onDismiss = {}) { }
 }

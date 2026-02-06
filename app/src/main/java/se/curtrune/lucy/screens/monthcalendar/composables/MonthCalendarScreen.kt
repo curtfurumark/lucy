@@ -21,7 +21,7 @@ import se.curtrune.lucy.composables.add_item.AddItemBottomSheet
 import se.curtrune.lucy.composables.top_app_bar.FlexibleTopBar
 import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
 import se.curtrune.lucy.modules.TopAppbarModule.topAppBarState
-import se.curtrune.lucy.screens.navigation.DayCalendarNavKey
+import se.curtrune.lucy.screens.navigation.Route.DayCalendarNavKey
 import se.curtrune.lucy.screens.monthcalendar.MonthCalendarEvent
 import se.curtrune.lucy.screens.monthcalendar.MonthChannel
 import se.curtrune.lucy.screens.monthcalendar.MonthViewModel

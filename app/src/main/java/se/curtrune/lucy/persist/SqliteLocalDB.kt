@@ -17,6 +17,21 @@ import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.util.Locale
 
+/**
+ * Manages the local SQLite database for the Lucy application.
+ *
+ * This class extends [SQLiteOpenHelper] to handle the creation, version management,
+ * and basic CRUD (Create, Read, Update, Delete) operations for the application's data.
+ * It provides methods to interact with various data models like [Item], [Repeat],
+ * [Transaction], and [Asset].
+ *
+ * The database schema is defined and managed within this class, including tables for
+ * items, repeating tasks, and financial records.
+ *
+ * @param context The context used to open or create the database.
+ * @property dbName The name of the database file.
+ * @property dbVersion The version of the database schema.
+ */
 class SqliteLocalDB(context: Context?) :
     SQLiteOpenHelper(context, dbName, null, dbVersion) {
     private var db: SQLiteDatabase? = null

@@ -9,6 +9,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -22,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.activities.ui.theme.LucyTheme
+import se.curtrune.lucy.classes.MedicineContent
 import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.classes.State
 import se.curtrune.lucy.classes.Type
@@ -153,14 +155,44 @@ fun ItemEditor(
         })
         Spacer(modifier = Modifier.height(4.dp))
         ParentCard(item = item)
+        if( item.getType() == Type.MEDICIN) {
+            val content = item.content as MedicineContent
+            Text(text = "edit medicine")
+            DosageCard(
+                dosage = content.dosage,
+                onDosageChanged = {
+                    content.dosage = it
+                    onEvent(ItemEvent.Update(item))
+                }
+            )
+            DoctorCard(name = content.doctor) {
+                content.doctor = it
+                onEvent(ItemEvent.Update(item))
+            }
+            MedicineRemainingWithdrawalsCard(
+                remainingWithdrawals = content.numTimes.toString(),
+                onRemainingWithdrawalsChanged = {
+                    println("onRemainingWithdrawalsChanged")
+                    //content.numTimes = it.toInt()
+                    //onEvent(ItemEvent
+                }
+            )
+        }
     }
 }
+
+
 
 @Composable
 @PreviewLightDark
 fun PreviewItemEditorScreen(){
+    val item = Item("trombyl")
+    item.setType(Type.MEDICIN)
+    item.content = MedicineContent().also {
+        it.dosage = "1 tablett/morgon"
+    }
     LucyTheme {
-        ItemEditor(item = Item("hello"),
+        ItemEditor(item = item,
             onEvent = {},
             onSave = {
             println("on event")

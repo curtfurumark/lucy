@@ -149,7 +149,6 @@ class MainViewModel : ViewModel() {
                 showMedicineLink = userSettings.showMedicine,
                 showDurationLink = userSettings.showDuration,
                 showProjectsLink = true,
-                //showAppointmentsLink = userSettings.showAppointmentsLink,
                 showAppointmentsLink = true,
                 showDevScreenLink = userSettings.showDevScreen,
                 showTodoScreen =  userSettings.showToDo,

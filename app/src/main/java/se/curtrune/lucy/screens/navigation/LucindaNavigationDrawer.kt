@@ -74,7 +74,7 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                     selected = false,
                     onClick = {
                         println("day calendar on click")
-                        onClick(DayCalendarNavKey(LocalDate.now().toString()))
+                        onClick(Route.DayCalendarNavKey(LocalDate.now().toString()))
                     }
                 )
                 NavigationDrawerItem(
@@ -193,7 +193,7 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                     },
                     selected = false,
                     onClick = {
-                        onClick(MedicineNavKey)
+                        onClick(Route.MedicineNavKey)
                     }
                 )
             }
@@ -281,7 +281,7 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                 selected = false,
                 icon = {Icon(imageVector = Icons.Default.AutoAwesome, contentDescription = "todo")},
                 onClick = {
-                    onClick(TodoScreenNavKey)
+                    onClick(Route.TodoScreenNavKey)
                 }
             )
         }

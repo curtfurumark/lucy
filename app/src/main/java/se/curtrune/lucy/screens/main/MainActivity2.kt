@@ -40,7 +40,7 @@ import se.curtrune.lucy.modules.TopAppbarModule
 import se.curtrune.lucy.screens.affirmations.Quote
 import se.curtrune.lucy.screens.main.composables.ChoosePanicActionDialog
 import se.curtrune.lucy.screens.main.composables.QuoteDialog
-import se.curtrune.lucy.screens.navigation.DayCalendarNavKey
+import se.curtrune.lucy.screens.navigation.Route.DayCalendarNavKey
 import se.curtrune.lucy.screens.navigation.DevScreenNavKey
 import se.curtrune.lucy.screens.navigation.LucindaNavigationDrawer
 import se.curtrune.lucy.screens.navigation.NavigationRoot
@@ -56,7 +56,6 @@ class MainActivity2 : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
         println("MainActivity2.onCreate(Bundle of joy)")
-        //initListeners()
         initViewModel()
         initContent()
     }
