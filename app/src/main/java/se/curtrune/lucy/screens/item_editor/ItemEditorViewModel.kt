@@ -26,7 +26,6 @@ class ItemEditorViewModel(val item: Item) : ViewModel() {
     private var elapsedTime = 0L
     private var _state = MutableStateFlow(ItemEditorState())
     val state = _state.asStateFlow()
-    //private var _childItems = MutableLiveData<List<Item>>()
     private val _channel = Channel<ItemEditorChannel>()
     val channel = _channel.receiveAsFlow()
     private val repository = LucindaApplication.appModule.repository
@@ -40,6 +39,7 @@ class ItemEditorViewModel(val item: Item) : ViewModel() {
     var defaultItem: DefaultItemSettings = DefaultItemSettings()
 
     init{
+        println("ItemEditorViewModel.init()")
         mutableTimerState.value = TimerState.PENDING
         _state.update { it.copy(
             categories = userSettings.categories,
@@ -145,11 +145,11 @@ class ItemEditorViewModel(val item: Item) : ViewModel() {
     }
     private fun insertChild(child: Item){
         println("ItemSessionViewModel.insertChild(${item.heading})")
+
         currentItem?.let { repository.insertChild(it, child) }
         _state.update { it.copy(
             item = child
         ) }
-
     }
 
     private fun pauseTimer() {
@@ -172,6 +172,7 @@ class ItemEditorViewModel(val item: Item) : ViewModel() {
     }
     private fun showAddItemDialog(){
         println("ItemSessionViewModel.showAddItemDialog()")
+        println("currentItem $currentItem")
         val xxx = Item().also {
             it.category = currentItem!!.category
             it.parent = currentItem

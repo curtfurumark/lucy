@@ -154,6 +154,12 @@ fun ItemEditor(
             onEvent(ItemEvent.Update(item))
         })
         Spacer(modifier = Modifier.height(4.dp))
+        TimeLineCard(isTimeLineItem = item.getType().equals(Type.TIME_LINE)){
+            item.setType(if( it) Type.TIME_LINE else Type.NODE)
+            onEvent(ItemEvent.Update(item))
+            onEvent(ItemEvent.Update(item))
+        }
+        Spacer(modifier = Modifier.height(4.dp))
         ParentCard(item = item)
         if( item.getType() == Type.MEDICIN) {
             val content = item.content as MedicineContent

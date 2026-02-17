@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
 import se.curtrune.lucy.app.LucindaApplication
@@ -31,12 +32,13 @@ import se.curtrune.lucy.screens.projects.ProjectsViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProjectsScreen(onNavigate: (NavKey)->Unit){
+    println("ProjectsScreen()")
     val viewModel: ProjectsViewModel = viewModel{
         ProjectsViewModel(LucindaApplication.appModule.repository)
     }
     val state = viewModel.state.collectAsState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-    val topAppBarState = TopAppbarModule.topAppBarState.collectAsState()
+    val topAppBarState = TopAppbarModule.topAppBarState.collectAsStateWithLifecycle()
     var showAddItemBottomSheet by remember { mutableStateOf(false) }
     val context = LocalContext.current
     Scaffold(

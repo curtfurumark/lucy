@@ -14,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import se.curtrune.lucy.classes.item.Item
 import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.composables.AddItemFab
@@ -32,7 +33,7 @@ fun ItemEditorScreen(item: Item, onSave:(Item)->Unit ){
     val viewModel: ItemEditorViewModel = viewModel(){
         ItemEditorViewModel.factory(item).create(ItemEditorViewModel::class.java)
     }
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val topAppBarState = TopAppbarModule.topAppBarState.collectAsState()
     var showAddChildDialog by remember { mutableStateOf(false) }
