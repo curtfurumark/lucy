@@ -61,7 +61,10 @@ fun AddItemBottomSheet(
     }
 
     ModalBottomSheet(
-        onDismissRequest = { /* Handle dismissal */ },
+        onDismissRequest = {
+            println("onDismissRequest")
+            onDismiss()
+        },
         sheetState = bottomSheetState
     ){
         Column(

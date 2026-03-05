@@ -37,11 +37,13 @@ class SettingsViewModel: ViewModel(){
             mentalFlag = userSettings.mentalFlag,
             panicOption = userSettings.panicOption,
             initialScreen = userSettings.initialScreen,
+            //showAppointments = userSettings.showAppointments,
             showProjects = userSettings.showProjects,
             showMedicine = userSettings.showMedicine,
             showDuration = userSettings.showDuration,
             showDevScreen = userSettings.showDevScreen,
             showMentalStats = userSettings.showMentalStatsScreen,
+            showTimeLine = userSettings.showTimeLine,
             isDevMode = userSettings.devMode
         ) }
         TopAppbarModule.setTitle("Inställningar")

@@ -3,7 +3,9 @@ package se.curtrune.lucy.screens.duration
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
+import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
+import se.curtrune.lucy.modules.TopAppbarModule
 import se.curtrune.lucy.statistics.StatisticsPeriod
 import java.time.LocalDate
 
@@ -12,6 +14,7 @@ enum class SortedBy{
 }
 
 class DurationViewModel : ViewModel() {
+    private val topAppBar = TopAppbarModule
     private var fromDate: LocalDate = LocalDate.now()
     private var toDate: LocalDate = LocalDate.now()
     private var stats = StatisticsPeriod(fromDate, toDate)
@@ -19,6 +22,8 @@ class DurationViewModel : ViewModel() {
     val state = _state
 
     init {
+        TopAppbarModule.setTitle("duration")
+        //TopAppbarModule.f
         _state.update {
             it.copy(
                 totalDuration = stats.statistics.duration,

@@ -16,7 +16,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
-import se.curtrune.lucy.classes.mental_fragment.EditItemsScreen
 import se.curtrune.lucy.screens.medicine.MedicineChannelEvent
 import se.curtrune.lucy.screens.medicine.MedicineEvent
 import se.curtrune.lucy.screens.medicine.MedicineViewModel

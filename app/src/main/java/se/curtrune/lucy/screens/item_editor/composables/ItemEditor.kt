@@ -1,6 +1,10 @@
 package se.curtrune.lucy.screens.item_editor.composables
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -8,8 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -19,13 +22,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.activities.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.MedicineContent
-import se.curtrune.lucy.classes.Mental
-import se.curtrune.lucy.classes.State
 import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.add_item.ItemSettingAppointment
@@ -51,8 +53,8 @@ fun ItemEditor(
     var comment by remember {
         mutableStateOf(item.comment)
     }
-    var energy by remember {
-        mutableStateOf(5f)
+    var showAdvanced by remember {
+        mutableStateOf(false)
     }
     Column(
         modifier = modifier
@@ -60,11 +62,22 @@ fun ItemEditor(
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        IconButton (onClick = {
-            onSave(item)
-        }){
-            Icon(imageVector = androidx.compose.material.icons.Icons.Default.Check, contentDescription = "save")
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            IconButton (onClick = {
+                onSave(item)
+            }){
+                Icon(imageVector = androidx.compose.material.icons.Icons.Default.Check, contentDescription = "save")
+            }
+            Checkbox(checked = item.isDone, onCheckedChange = {
+                item.setIsDone(it)
+                onEvent(ItemEvent.Update(item))
+            })
         }
+
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = heading,
@@ -74,7 +87,7 @@ fun ItemEditor(
                 item.heading = it
                 onEvent(ItemEvent.Update(item))
             })
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(4.dp))
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = comment,
@@ -96,39 +109,15 @@ fun ItemEditor(
             onEvent(ItemEvent.Update(item))
         })
         Spacer(modifier = Modifier.height(4.dp))
-        ItemSettingTemplate(item = item, onIsTemplate = {isTemplate->
-            item.isTemplate = isTemplate
-            if( isTemplate) {
-                item.setType(Type.TEMPLATE)
-            }
-            //item.type = if (it) Type.Template else "item"
+        DurationCard(duration = item.duration, onDurationChanged = {
+            item.duration = it
             onEvent(ItemEvent.Update(item))
         })
         Spacer(modifier = Modifier.height(4.dp))
-        ItemSettingState(item = item, onChange = { done->
+        /*ItemSettingState(item = item, onChange = { done->
             item.setIsDone(done)
             onEvent(ItemEvent.Update(item))
-        })
-        Spacer(modifier = Modifier.height(4.dp))
-        ItemSettingCalendar(item = item, onEvent = {
-            item.isCalenderItem = it
-            onEvent(ItemEvent.Update(item))
-        })
-        Spacer(modifier = Modifier.height(4.dp))
-        ItemSettingAppointment(item = item, onEvent = {
-            item.isAppointment = it
-            onEvent(ItemEvent.Update(item))
-        })
-        Spacer(modifier = Modifier.height(4.dp))
-        ItemSettingPriority(priority = item.priority, onPriorityChanged= {
-            item.priority = it
-            onEvent(ItemEvent.Update(item))
-        })
-        Spacer(modifier = Modifier.height(4.dp))
-        TypeCard(type = item.getType(), onTypeChanged = {
-            item.setType(it)
-            onEvent(ItemEvent.Update(item))
-        })
+        })*/
         Spacer(modifier = Modifier.height(4.dp))
         ItemSettingCategory(
             item = item,
@@ -141,26 +130,62 @@ fun ItemEditor(
                 item.category = category
                 onEvent(ItemEvent.AddCategory(category))
             }
-
         )
-        Spacer(modifier = Modifier.height(4.dp))
-        DurationCard(duration = item.duration, onDurationChanged = {
-            item.duration = it
-            onEvent(ItemEvent.Update(item))
-        })
         Spacer(modifier = Modifier.height(4.dp))
         MentalCard(item = item, onMentalChanged = {
             item.mental = it
             onEvent(ItemEvent.Update(item))
         })
         Spacer(modifier = Modifier.height(4.dp))
-        TimeLineCard(isTimeLineItem = item.getType().equals(Type.TIME_LINE)){
-            item.setType(if( it) Type.TIME_LINE else Type.NODE)
-            onEvent(ItemEvent.Update(item))
-            onEvent(ItemEvent.Update(item))
+        Text(
+            modifier = Modifier.padding(4.dp)
+                .clickable(onClick = {
+                    showAdvanced = !showAdvanced
+                }),
+            text = "advanced")
+        AnimatedVisibility(visible = showAdvanced) {
+            Column(modifier = Modifier.fillMaxWidth())  {
+                ItemSettingCalendar(item = item, onEvent = {
+                    item.isCalenderItem = it
+                    onEvent(ItemEvent.Update(item))
+                })
+                Spacer(modifier = Modifier.height(4.dp))
+                TimeLineCard(isTimeLineItem = item.getType().equals(Type.TIME_LINE)){
+                    item.setType(if( it) Type.TIME_LINE else Type.NODE)
+                    onEvent(ItemEvent.Update(item))
+                    //onEvent(ItemEvent.Update(item))
+                }
+                Spacer(modifier = Modifier.height(4.dp))
+                ItemSettingAppointment(item = item, onEvent = {
+                    item.isAppointment = it
+                    onEvent(ItemEvent.Update(item))
+                })
+                Spacer(modifier = Modifier.height(4.dp))
+                ItemSettingTemplate(item = item, onIsTemplate = {isTemplate->
+                    item.isTemplate = isTemplate
+                    if( isTemplate) {
+                        item.setType(Type.TEMPLATE)
+                    }
+                    onEvent(ItemEvent.Update(item))
+                })
+
+                Spacer(modifier = Modifier.height(4.dp))
+                ItemSettingPriority(priority = item.priority, onPriorityChanged= {
+                    item.priority = it
+                    onEvent(ItemEvent.Update(item))
+                })
+                Spacer(modifier = Modifier.height(4.dp))
+                TypeCard(type = item.getType(), onTypeChanged = {
+                    item.setType(it)
+                    onEvent(ItemEvent.Update(item))
+                })
+                Spacer(modifier = Modifier.height(4.dp))
+                ParentCard(item = item)
+                Spacer(modifier = Modifier.height(4.dp))
+                IdCard(item.id)
+            }
         }
         Spacer(modifier = Modifier.height(4.dp))
-        ParentCard(item = item)
         if( item.getType() == Type.MEDICIN) {
             val content = item.content as MedicineContent
             Text(text = "edit medicine")

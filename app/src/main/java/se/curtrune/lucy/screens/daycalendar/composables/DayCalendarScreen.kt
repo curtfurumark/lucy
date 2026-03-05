@@ -10,27 +10,31 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
+import kotlinx.coroutines.launch
 import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.composables.dialogs.ConfirmDeleteDialog
 import se.curtrune.lucy.composables.add_item.AddItemBottomSheet
 import se.curtrune.lucy.screens.daycalendar.DayCalendarViewModel
 import se.curtrune.lucy.screens.daycalendar.DayCalendarChannel
 import se.curtrune.lucy.screens.daycalendar.DayCalendarEvent
+import se.curtrune.lucy.screens.tabbed.UnOrderedBulletItemComposable
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DayCalendarScreen(date: String, navigate: (NavKey) -> Unit, modifier: Modifier = Modifier){
-    println("DayCalendarScreen(date: $date, onEdit(Item))")
+    println("DayCalendarScreen(date: $date)")
     val viewModel: DayCalendarViewModel = viewModel(){
         DayCalendarViewModel.factory(LocalDate.parse(date)).create(DayCalendarViewModel::class.java)
     }
-    viewModel.onEvent(DayCalendarEvent.CurrentDate(LocalDate.parse(date)))
+    //commented 20260302
+    //viewModel.onEvent(DayCalendarEvent.CurrentDate(LocalDate.parse(date)))
 
     val state by viewModel.state.collectAsState()
     var showAddItemDialog by remember{
@@ -53,21 +57,10 @@ fun DayCalendarScreen(date: String, navigate: (NavKey) -> Unit, modifier: Modifi
             viewModel.onEvent(it)
         })
     }
-    if( showAddItemDialog){
-        AddItemBottomSheet(
-            viewModel.defaultItemSettings,
-            onSave = {
-                println("onSave $it (DayCalendarScreen)")
-                showAddItemDialog = false
-                viewModel.onEvent(DayCalendarEvent.AddItem(it))
-            },
-            onDismiss = {
-                println("onDismiss (DayCalendarScreen)")
-                showAddItemDialog = false
-            }
-        )
-    }
-    LaunchedEffect(viewModel) {
+
+    val scope = rememberCoroutineScope()
+    //scope.launch {
+    LaunchedEffect(Unit ) {
         viewModel.eventFlow.collect{ event->
             when(event){
                 is DayCalendarChannel.ConfirmDeleteDialog -> {
@@ -88,6 +81,20 @@ fun DayCalendarScreen(date: String, navigate: (NavKey) -> Unit, modifier: Modifi
                 }
             }
         }
+    }
+    if( showAddItemDialog){
+        AddItemBottomSheet(
+            viewModel.defaultItemSettings,
+            onSave = {
+                println("onSave $it (DayCalendarScreen)")
+                showAddItemDialog = false
+                viewModel.onEvent(DayCalendarEvent.AddItem(it))
+            },
+            onDismiss = {
+                println("onDismiss (DayCalendarScreen)")
+                showAddItemDialog = false
+            }
+        )
     }
     if( showConfirmDeleteDialog) {
         ConfirmDeleteDialog(item = state.currentItem!!, onDismiss = {

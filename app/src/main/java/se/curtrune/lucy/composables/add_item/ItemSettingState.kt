@@ -25,8 +25,7 @@ fun ItemSettingState(item: Item, onChange: (Boolean)->Unit){
         mutableStateOf(item.isDone)
     }
     Card(
-        modifier = Modifier.fillMaxWidth()
-            .padding(2.dp)) {
+        modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,

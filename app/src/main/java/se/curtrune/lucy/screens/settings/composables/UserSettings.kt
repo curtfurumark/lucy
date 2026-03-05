@@ -35,7 +35,6 @@ fun UserSettings(modifier: Modifier = Modifier,state: UserState, onEvent: (UserE
         mutableStateOf(false)
     }
     Column (modifier = modifier.fillMaxWidth()
-        //.verticalScroll(state = scrollState)
         .padding(8.dp))
     {
         DarkModeSetting(state = state, onEvent = onEvent)

@@ -279,6 +279,7 @@ class DayCalendarViewModel(private val date: LocalDate): ViewModel(){
         currentWeekPage = page
     }
     private fun showAddItemBottomSheet() {
+        println("...showAddItemBottomSheet()")
         defaultItemSettings.item = Item().also { item->
             item.targetDate = state.value.date
             item.targetTime = LocalTime.now()
@@ -288,6 +289,10 @@ class DayCalendarViewModel(private val date: LocalDate): ViewModel(){
         viewModelScope.launch {
             eventChannel.send(DayCalendarChannel.ShowAddItemBottomSheet)
         }
+    }
+    fun refresh(){
+        println("refresh()")
+        refreshState(state.value.date)
     }
 
     private fun showChildren(item: Item){

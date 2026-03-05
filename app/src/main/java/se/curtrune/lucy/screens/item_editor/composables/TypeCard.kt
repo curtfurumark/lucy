@@ -24,7 +24,7 @@ fun TypeCard(type: Type, onTypeChanged: (Type)->Unit){
         modifier = Modifier.fillMaxWidth(),
         onClick = {showDropDown = !showDropDown}) {
         Text(text = "type: $typeName"
-        ,modifier = Modifier.fillMaxWidth().padding(4.dp))
+        ,modifier = Modifier.fillMaxWidth().padding(start = 8.dp))
     }
     if( showDropDown) {
         DropdownMenu(expanded = showDropDown, onDismissRequest = { showDropDown = false }) {

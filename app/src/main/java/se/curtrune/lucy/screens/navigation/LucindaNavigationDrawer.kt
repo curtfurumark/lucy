@@ -3,6 +3,8 @@ package se.curtrune.lucy.screens.navigation
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
@@ -57,8 +59,9 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
     val settings = LucindaApplication.appModule.userSettings
     ModalDrawerSheet(
         modifier = Modifier.verticalScroll(scrollState)
+            .fillMaxSize()
+            .fillMaxHeight()
     ) {
-        //Text(text = "new navigation drawer")
         Spacer(modifier = Modifier.height(32.dp))
 
         AnimatedVisibility(visible = calendarsVisible) {
