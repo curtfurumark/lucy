@@ -1,6 +1,5 @@
 package se.curtrune.lucy.screens.week_calendar.composables
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -18,11 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
-import se.curtrune.lucy.classes.calender.Week
 import se.curtrune.lucy.composables.add_item.AddItemBottomSheet
-import se.curtrune.lucy.composables.top_app_bar.FlexibleTopBar
-import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
-import se.curtrune.lucy.modules.TopAppbarModule
+import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
 import se.curtrune.lucy.screens.navigation.Route.DayCalendarNavKey
 import se.curtrune.lucy.screens.week_calendar.WeekChannel
 import se.curtrune.lucy.screens.week_calendar.WeekEvent

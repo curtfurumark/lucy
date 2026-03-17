@@ -19,9 +19,9 @@ import se.curtrune.lucy.classes.item.Item
 import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.composables.add_item.AddItemBottomSheet
-import se.curtrune.lucy.composables.top_app_bar.FlexibleTopBar
-import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
-import se.curtrune.lucy.modules.TopAppbarModule
+import se.curtrune.lucy.screens.top_appbar.FlexibleTopBar
+import se.curtrune.lucy.screens.top_appbar.LucindaTopAppBar
+import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
 import se.curtrune.lucy.screens.item_editor.ItemEditorChannel
 import se.curtrune.lucy.screens.item_editor.ItemEvent
 import se.curtrune.lucy.screens.item_editor.ItemEditorViewModel

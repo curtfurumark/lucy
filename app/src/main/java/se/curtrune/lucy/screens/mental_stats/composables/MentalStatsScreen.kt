@@ -12,11 +12,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
-import se.curtrune.lucy.composables.top_app_bar.FlexibleTopBar
-import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
-import se.curtrune.lucy.modules.TopAppbarModule.topAppBarState
-import se.curtrune.lucy.screens.mental_stats.MentalStatsEvent
-import se.curtrune.lucy.screens.mental_stats.MentalStatsState
+import se.curtrune.lucy.screens.top_appbar.FlexibleTopBar
+import se.curtrune.lucy.screens.top_appbar.LucindaTopAppBar
+import se.curtrune.lucy.screens.top_appbar.TopAppbarModule.topAppBarState
 import se.curtrune.lucy.screens.mental_stats.MentalStatsViewModel
 
 

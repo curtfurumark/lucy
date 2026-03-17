@@ -1,7 +1,6 @@
 package se.curtrune.lucy.screens.message_board.composables
 
 import android.os.Build
-import android.telephony.TelephonyCallback.MessageWaitingIndicatorListener
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
@@ -19,14 +18,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.composables.AddItemFab
-import se.curtrune.lucy.composables.top_app_bar.FlexibleTopBar
-import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
-import se.curtrune.lucy.modules.TopAppbarModule.topAppBarState
+import se.curtrune.lucy.screens.top_appbar.FlexibleTopBar
+import se.curtrune.lucy.screens.top_appbar.LucindaTopAppBar
+import se.curtrune.lucy.screens.top_appbar.TopAppbarModule.topAppBarState
 import se.curtrune.lucy.screens.message_board.MessageBoardEvent
-import se.curtrune.lucy.screens.message_board.MessageBoardState
 import se.curtrune.lucy.screens.message_board.MessageBoardViewModel
 import se.curtrune.lucy.screens.message_board.MessageChannel
 

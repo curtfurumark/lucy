@@ -32,10 +32,10 @@ class LogInActivity : ComponentActivity() {
         enableEdgeToEdge()
         val lucindaAdmin = Lucinda.getInstance(this)
         if( !lucindaAdmin.isInitialized(this)){
-            println("installing the app will initialize")
+            println("...installing the app will initialize")
             lucindaAdmin.initTheApp(this)
         }else{
-            println("app already initialized")
+            println("...app already initialized")
         }
         setContent {
             val state =  logInViewModel.state.collectAsState()

@@ -4,7 +4,6 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -19,9 +18,6 @@ import androidx.navigation3.runtime.NavKey
 import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.composables.add_item.AddItemBottomSheet
-import se.curtrune.lucy.composables.top_app_bar.FlexibleTopBar
-import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
-import se.curtrune.lucy.modules.TopAppbarModule
 import se.curtrune.lucy.screens.navigation.ItemEditorNavKey
 import se.curtrune.lucy.screens.projects.ProjectsChannel
 import se.curtrune.lucy.screens.projects.ProjectsEvent

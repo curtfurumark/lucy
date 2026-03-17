@@ -40,7 +40,7 @@ import se.curtrune.lucy.screens.settings.composables.SettingsScreen
 import se.curtrune.lucy.screens.templates.create.CreateTemplateScreen
 import se.curtrune.lucy.screens.templates.edit.EditTemplateScreen
 import se.curtrune.lucy.screens.templates.templates.TemplatesScreen
-import se.curtrune.lucy.screens.timeline.TimeLineScreen
+import se.curtrune.lucy.screens.timeline.composables.TimeLineScreen
 import se.curtrune.lucy.screens.todo.composables.TodoScreen
 import se.curtrune.lucy.screens.webscreen.WebScreen
 import se.curtrune.lucy.screens.week_calendar.composables.WeekCalendarScreen

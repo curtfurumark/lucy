@@ -31,9 +31,9 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation3.runtime.NavKey
-import se.curtrune.lucy.composables.top_app_bar.FlexibleTopBar
-import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
-import se.curtrune.lucy.modules.TopAppbarModule
+import se.curtrune.lucy.screens.top_appbar.FlexibleTopBar
+import se.curtrune.lucy.screens.top_appbar.LucindaTopAppBar
+import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
 import se.curtrune.lucy.screens.lists.composables.EditableBulletListScreen
 import se.curtrune.lucy.screens.notes.NoteScreen
 import se.curtrune.lucy.screens.templates.templates.TemplatesScreen

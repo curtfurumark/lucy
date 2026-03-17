@@ -15,7 +15,7 @@ import se.curtrune.lucy.classes.calender.CalendarDate
 import se.curtrune.lucy.classes.calender.Week
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.add_item.DefaultItemSettings
-import se.curtrune.lucy.modules.TopAppbarModule
+import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
 
 class WeekViewModel: ViewModel() {
     private val eventChannel = Channel<WeekChannel>()

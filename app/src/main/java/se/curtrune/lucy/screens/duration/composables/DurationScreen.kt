@@ -1,6 +1,5 @@
 package se.curtrune.lucy.screens.duration.composables
 
-import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,12 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import se.curtrune.lucy.composables.top_app_bar.FlexibleTopBar
-import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
-import se.curtrune.lucy.modules.TopAppbarModule
+import se.curtrune.lucy.screens.top_appbar.FlexibleTopBar
+import se.curtrune.lucy.screens.top_appbar.LucindaTopAppBar
+import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
 import se.curtrune.lucy.screens.dev.composables.DurationControls
 import se.curtrune.lucy.screens.duration.DurationEvent
-import se.curtrune.lucy.screens.duration.DurationState
 import se.curtrune.lucy.screens.duration.DurationViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)

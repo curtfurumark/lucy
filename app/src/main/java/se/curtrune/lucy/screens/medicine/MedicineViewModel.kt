@@ -12,7 +12,7 @@ import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.MedicineContent
 import se.curtrune.lucy.classes.Type
-import se.curtrune.lucy.modules.TopAppbarModule
+import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
 
 class MedicineViewModel(
 ) : ViewModel(){

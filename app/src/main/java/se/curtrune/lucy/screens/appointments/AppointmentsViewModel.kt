@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.Type
-import se.curtrune.lucy.modules.TopAppbarModule
+import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
 import se.curtrune.lucy.persist.Repository
 
 class AppointmentsViewModel(private val repository: Repository) : ViewModel() {

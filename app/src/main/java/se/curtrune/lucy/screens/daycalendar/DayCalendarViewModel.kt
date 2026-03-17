@@ -15,7 +15,7 @@ import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.dialogs.PostponeDetails
 import se.curtrune.lucy.composables.add_item.DefaultItemSettings
 import se.curtrune.lucy.modules.PostponeWorker
-import se.curtrune.lucy.modules.TopAppbarModule
+import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
 import se.curtrune.lucy.screens.item_editor.ItemEvent
 import se.curtrune.lucy.screens.navigation.EditListNavKey
 import se.curtrune.lucy.screens.navigation.ItemEditorNavKey

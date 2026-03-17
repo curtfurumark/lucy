@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
-import se.curtrune.lucy.modules.TopAppbarModule
+import se.curtrune.lucy.screens.top_appbar.TopAppBarEvent
+import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
 import se.curtrune.lucy.screens.ItemChannel
 import se.curtrune.lucy.screens.item_editor.ItemEvent
 

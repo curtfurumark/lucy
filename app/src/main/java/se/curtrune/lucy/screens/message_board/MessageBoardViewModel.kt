@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import se.curtrune.lucy.app.LucindaApplication
-import se.curtrune.lucy.modules.TopAppbarModule
+import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
 import se.curtrune.lucy.screens.message_board.composables.DefaultMessage
 import se.curtrune.lucy.screens.message_board.composables.Mode
 import se.curtrune.lucy.web.LucindaApi

@@ -1,4 +1,4 @@
-package se.curtrune.lucy.composables.top_app_bar
+package se.curtrune.lucy.screens.top_appbar
 
 sealed interface TopAppBarEvent {
     data object DayCalendar: TopAppBarEvent

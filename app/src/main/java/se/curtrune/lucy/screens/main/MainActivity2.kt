@@ -33,10 +33,10 @@ import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.persist.SettingsStore.PanicAction
 import se.curtrune.lucy.app.UserPrefs
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.composables.top_app_bar.FlexibleTopBar
-import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
+import se.curtrune.lucy.screens.top_appbar.FlexibleTopBar
+import se.curtrune.lucy.screens.top_appbar.LucindaTopAppBar
 import se.curtrune.lucy.dialogs.UpdateDialog
-import se.curtrune.lucy.modules.TopAppbarModule
+import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
 import se.curtrune.lucy.screens.affirmations.Quote
 import se.curtrune.lucy.screens.main.composables.ChoosePanicActionDialog
 import se.curtrune.lucy.screens.main.composables.QuoteDialog

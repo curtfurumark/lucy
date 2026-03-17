@@ -2,7 +2,7 @@ package se.curtrune.lucy.app
 
 import android.app.Application
 import se.curtrune.lucy.modules.ContextModule
-import se.curtrune.lucy.modules.TopAppbarModule
+import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
 
 class LucindaApplication: Application() {
     companion object{

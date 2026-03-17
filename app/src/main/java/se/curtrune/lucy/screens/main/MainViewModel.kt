@@ -18,7 +18,7 @@ import se.curtrune.lucy.persist.SettingsStore.PanicAction
 import se.curtrune.lucy.app.UserPrefs
 import se.curtrune.lucy.classes.Mental
 import se.curtrune.lucy.composables.top_app_bar.SearchFilter
-import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
+import se.curtrune.lucy.screens.top_appbar.TopAppBarEvent
 import se.curtrune.lucy.screens.navigation.NavigationDrawerState
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.web.LucindaApi

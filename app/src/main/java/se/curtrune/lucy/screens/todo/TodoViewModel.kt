@@ -1,6 +1,7 @@
 package se.curtrune.lucy.screens.todo
 
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.unit.IntRect
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation3.runtime.NavKey
@@ -16,8 +17,8 @@ import se.curtrune.lucy.activities.kotlin.composables.DialogSettings
 import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.State
-import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
-import se.curtrune.lucy.modules.TopAppbarModule
+import se.curtrune.lucy.screens.top_appbar.TopAppBarEvent
+import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
 import se.curtrune.lucy.screens.item_editor.ItemEvent
 import se.curtrune.lucy.screens.navigation.EditListNavKey
 import se.curtrune.lucy.util.Logger
@@ -26,9 +27,9 @@ import java.util.Comparator
 class TodoViewModel : ViewModel() {
     private val _state = MutableStateFlow(TodoState())
     val state = _state.asStateFlow()
-    private val appBarState = TopAppbarModule.topAppBarState
+    //private val appBarState = TopAppbarModule.topAppBarState
     private val repository = LucindaApplication.appModule.repository
-    private val topAppbarModule = TopAppbarModule
+    //private val topAppbarModule = TopAppbarModule
     private var items: MutableList<Item> = mutableListOf()
     private val _channel = Channel<ChannelEvent>()
     val channel = _channel.receiveAsFlow()
@@ -48,16 +49,13 @@ class TodoViewModel : ViewModel() {
         showProgressBar(false)
     }
 
-    fun filter(filter: String, everywhere: Boolean) {
+    fun filter(filter: String) {
         val filteredItems = items.filter { item: Item -> item.contains(filter)  }
         _state.update { it.copy(
             items = filteredItems
         ) }
     }
 
-/*    fun getItem(index: Int): Item {
-        return mutableItems.value!![index]
-    }*/
     init {
         items = repository.selectItems(State.TODO).toMutableList()
         items.sortWith(Comparator.comparingLong() { it.compare() })
@@ -65,7 +63,13 @@ class TodoViewModel : ViewModel() {
             items = items
         ) }
         TopAppbarModule.setTitle("todo/att göra")
-        //val state = topAppbarModule.topAppBarState.collectAsState()
+        TopAppbarModule.filterCallback = { filter ->
+            filter(filter)
+        }
+        TopAppbarModule.searchScopeCallback = { everywhere ->
+            setSearchScope(everywhere)
+
+        }
     }
     private fun editItem(item: Item){
         viewModelScope.launch {
@@ -93,6 +97,17 @@ class TodoViewModel : ViewModel() {
             _channel.send(ChannelEvent.Navigate(navKey))
 
         }
+    }
+    private fun setSearchScope(everywhere: Boolean){
+        if(everywhere){
+            items = repository.selectItems().toMutableList()
+        }else{
+            items = repository.selectItems(State.TODO).toMutableList()
+        }
+        _state.update { it.copy(
+            items = items
+        ) }
+
     }
 
     private fun sort() {
@@ -132,7 +147,7 @@ class TodoViewModel : ViewModel() {
             TopAppBarEvent.DrawerMenu -> TODO()
             TopAppBarEvent.OnBoost -> TODO()
             TopAppBarEvent.OnPanic -> TODO()
-            is TopAppBarEvent.OnSearch -> {filter(event.filter, event.everywhere)}
+            is TopAppBarEvent.OnSearch -> {}
             TopAppBarEvent.DayClicked -> TODO()
             TopAppBarEvent.WeekClicked -> TODO()
             TopAppBarEvent.MedicinesClicked -> TODO()

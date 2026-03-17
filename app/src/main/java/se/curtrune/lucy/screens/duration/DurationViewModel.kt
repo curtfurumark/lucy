@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.modules.TopAppbarModule
+import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
 import se.curtrune.lucy.statistics.StatisticsPeriod
 import java.time.LocalDate
 

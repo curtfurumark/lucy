@@ -18,25 +18,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
-import se.curtrune.lucy.app.Lucinda
 import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.composables.add_item.AddItemBottomSheet
-import se.curtrune.lucy.composables.top_app_bar.FlexibleTopBar
-import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
-import se.curtrune.lucy.modules.TopAppbarModule
+import se.curtrune.lucy.screens.top_appbar.FlexibleTopBar
+import se.curtrune.lucy.screens.top_appbar.LucindaTopAppBar
+import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
 import se.curtrune.lucy.screens.appointments.AppointmentChannel
 import se.curtrune.lucy.screens.appointments.AppointmentEvent
 import se.curtrune.lucy.screens.appointments.AppointmentsState
 import se.curtrune.lucy.screens.appointments.AppointmentsViewModel
 import se.curtrune.lucy.screens.navigation.AppointmentDetailsScreenNavKey
-import se.curtrune.lucy.screens.navigation.Route.AppointmentsScreenNavKey
 
 @Composable
 fun AppointmentsList(

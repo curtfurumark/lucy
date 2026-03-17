@@ -13,7 +13,7 @@ import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.app.InitialScreen
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.Type
-import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
+import se.curtrune.lucy.screens.top_appbar.TopAppBarEvent
 import se.curtrune.lucy.persist.SqliteLocalDB
 import se.curtrune.lucy.screens.dev.composables.MyTab
 import se.curtrune.lucy.screens.dev.test_cases.LocalDBTest

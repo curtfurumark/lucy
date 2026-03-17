@@ -18,9 +18,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
 import se.curtrune.lucy.composables.add_item.AddItemBottomSheet
-import se.curtrune.lucy.composables.top_app_bar.FlexibleTopBar
-import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
-import se.curtrune.lucy.modules.TopAppbarModule.topAppBarState
+import se.curtrune.lucy.screens.top_appbar.FlexibleTopBar
+import se.curtrune.lucy.screens.top_appbar.LucindaTopAppBar
+import se.curtrune.lucy.screens.top_appbar.TopAppbarModule.topAppBarState
 import se.curtrune.lucy.screens.navigation.Route.DayCalendarNavKey
 import se.curtrune.lucy.screens.monthcalendar.MonthCalendarEvent
 import se.curtrune.lucy.screens.monthcalendar.MonthChannel

@@ -12,7 +12,7 @@ import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.classes.calender.CalendarDate
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.add_item.DefaultItemSettings
-import se.curtrune.lucy.modules.TopAppbarModule
+import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
 import se.curtrune.lucy.screens.week_calendar.PagerState
 import java.time.YearMonth
 

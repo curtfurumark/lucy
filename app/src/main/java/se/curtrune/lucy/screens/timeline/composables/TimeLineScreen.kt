@@ -1,4 +1,4 @@
-package se.curtrune.lucy.screens.timeline
+package se.curtrune.lucy.screens.timeline.composables
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,7 +24,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
 import se.curtrune.lucy.composables.add_item.AddItemBottomSheet
 import se.curtrune.lucy.composables.add_item.DefaultItemSettings
-import se.curtrune.lucy.screens.timeline.composables.TimeLineCard
+import se.curtrune.lucy.screens.timeline.TimeLineChannel
+import se.curtrune.lucy.screens.timeline.TimeLineEvent
+import se.curtrune.lucy.screens.timeline.TimeLineViewModel
 
 @Composable
 fun TimeLineScreen(modifier: Modifier = Modifier, navigate: (NavKey)-> Unit){
@@ -48,6 +50,11 @@ fun TimeLineScreen(modifier: Modifier = Modifier, navigate: (NavKey)-> Unit){
         LazyColumn(
             modifier = modifier.fillMaxSize().padding(it),
         ) {
+            item {
+                SortBar(onEvent = {
+                    viewModel.onEvent(it)
+                })
+            }
             items(state.items){
                 TimeLineCard(item = it, onClick = {
                     viewModel.onEvent(TimeLineEvent.OnClick(it))

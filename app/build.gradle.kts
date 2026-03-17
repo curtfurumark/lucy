@@ -1,8 +1,11 @@
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
+
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android")
+    //id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
     id("org.jetbrains.kotlin.plugin.serialization")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -40,9 +43,10 @@ android {
         viewBinding = true
         compose = true
     }
+    /*
     kotlinOptions {
         jvmTarget = "11"
-    }
+    }*/
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
     }
@@ -55,9 +59,9 @@ android {
 
 dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.10.0")
-    implementation("androidx.activity:activity-compose:1.12.3")
+    implementation("androidx.activity:activity-compose:1.12.4")
     implementation("androidx.core:core-ktx:1.17.0")
-    implementation(platform("androidx.compose:compose-bom:2026.01.01"))
+    implementation(platform("androidx.compose:compose-bom:2026.02.01"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -65,13 +69,13 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.7.0")
     implementation("androidx.lifecycle:lifecycle-service:2.10.0")
     implementation("androidx.room:room-ktx:2.8.4")
-    implementation("androidx.compose.ui:ui-android:1.10.2")
+    implementation("androidx.compose.ui:ui-android:1.10.4")
     implementation("androidx.test.espresso:espresso-core:3.7.0")
     implementation("androidx.fragment:fragment-compose:1.8.9")
-    implementation("com.google.firebase:firebase-dataconnect:17.1.3")
+    implementation("com.google.firebase:firebase-dataconnect:17.1.4")
     implementation("androidx.lifecycle:lifecycle-viewmodel-navigation3-android:2.10.0")
-    implementation("androidx.compose.runtime:runtime:1.10.2")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2026.01.01"))
+    implementation("androidx.compose.runtime:runtime:1.10.4")
+    androidTestImplementation(platform("androidx.compose:compose-bom:2026.02.01"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
     implementation("androidx.appcompat:appcompat:1.7.1")
@@ -81,24 +85,31 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:2.9.7")
     implementation ("androidx.compose.material:material-icons-extended")
     implementation("com.google.code.gson:gson:2.13.2")
+    //implementation("org.jetbrains.kotlin.plugin.compose:2.1.0")
 
     //ktor
-    implementation("io.ktor:ktor-client-android:3.4.0")
-    implementation("io.ktor:ktor-client-core:3.4.0")
-    implementation("io.ktor:ktor-client-serialization:3.4.0")
-    implementation("io.ktor:ktor-client-logging:3.4.0")
-    implementation("io.ktor:ktor-client-content-negotiation:3.4.0")
+    implementation("io.ktor:ktor-client-android:3.4.1")
+    implementation("io.ktor:ktor-client-core:3.4.1")
+    implementation("io.ktor:ktor-client-serialization:3.4.1")
+    implementation("io.ktor:ktor-client-logging:3.4.1")
+    implementation("io.ktor:ktor-client-content-negotiation:3.4.1")
     //install json
-    implementation("io.ktor:ktor-serialization-kotlinx-json:3.4.0")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:3.4.1")
 
     //kotlin serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.10.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.10.0")
 
+    //room
+    implementation("androidx.room:room-runtime:2.8.4")
+    //implementation("androidx.room:room-ktx:2.8.4")
+    ksp ("androidx.room:room-compiler:2.8.4")
+
+
 
     //navigation 3
-    implementation("androidx.navigation3:navigation3-ui:1.0.0")
-    implementation("androidx.navigation3:navigation3-runtime:1.0.0")
+    implementation("androidx.navigation3:navigation3-ui:1.0.1")
+    implementation("androidx.navigation3:navigation3-runtime:1.0.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-navigation3")
     //whatever
     //implementation("ch.qos.logback:logback-classic:1.5.19")

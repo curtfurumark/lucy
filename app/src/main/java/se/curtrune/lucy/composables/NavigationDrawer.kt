@@ -15,7 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.unit.dp
-import se.curtrune.lucy.composables.top_app_bar.TopAppBarEvent
+import se.curtrune.lucy.screens.top_appbar.TopAppBarEvent
 
 @Composable
 fun NavigationDrawer(onEvent: (TopAppBarEvent)->Unit){

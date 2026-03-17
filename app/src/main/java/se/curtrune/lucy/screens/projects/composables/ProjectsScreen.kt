@@ -20,9 +20,9 @@ import androidx.navigation3.runtime.NavKey
 import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.composables.add_item.AddItemBottomSheet
-import se.curtrune.lucy.composables.top_app_bar.FlexibleTopBar
-import se.curtrune.lucy.composables.top_app_bar.LucindaTopAppBar
-import se.curtrune.lucy.modules.TopAppbarModule
+import se.curtrune.lucy.screens.top_appbar.FlexibleTopBar
+import se.curtrune.lucy.screens.top_appbar.LucindaTopAppBar
+import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
 import se.curtrune.lucy.screens.navigation.ItemEditorNavKey
 import se.curtrune.lucy.screens.projects.ProjectsChannel
 import se.curtrune.lucy.screens.projects.ProjectsEvent

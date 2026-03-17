@@ -1,4 +1,4 @@
-package se.curtrune.lucy.composables.top_app_bar
+package se.curtrune.lucy.screens.top_appbar
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
@@ -15,10 +15,8 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxColors
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -35,8 +33,8 @@ import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.composables.MentalMeter
+import se.curtrune.lucy.composables.top_app_bar.LucindaControls
 //import se.curtrune.lucy.screens.common.MentalMeter
-import se.curtrune.lucy.screens.main.MainState
 import se.curtrune.lucy.screens.main.TopAppBarState
 import se.curtrune.lucy.screens.medicine.composable.DropdownItem
 
@@ -53,7 +51,7 @@ fun LucindaTopAppBar(
             mutableStateOf("")
         }
         var searchEverywhere by remember {
-            mutableStateOf(true)
+            mutableStateOf(false)
         }
         var  showActionMenu by remember {
             mutableStateOf(false)
@@ -106,14 +104,18 @@ fun LucindaTopAppBar(
             Row(modifier = Modifier.fillMaxWidth()) {
                 Checkbox(
                     checked = searchEverywhere,
-                    onCheckedChange = {searchEverywhere = !searchEverywhere}
-                    //colors = CheckboxColors()
+                    onCheckedChange = {
+                        searchEverywhere = !searchEverywhere
+                        TopAppbarModule.setSearchScope(searchEverywhere)
+                    }
                 )
                 TextField(
                     value = searchFilter,
                     onValueChange = {
                         searchFilter = it
-                        onEvent(TopAppBarEvent.OnSearch(searchFilter, searchEverywhere))},
+                        TopAppbarModule.setFilter(searchFilter, searchEverywhere)
+                        //onEvent(TopAppBarEvent.OnSearch(searchFilter, searchEverywhere))
+                                    },
                     label = { Text(stringResource(R.string.search)) },
                     modifier = Modifier.height(56.dp)
                 )

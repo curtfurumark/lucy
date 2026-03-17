@@ -56,6 +56,9 @@ fun ItemEditor(
     var showAdvanced by remember {
         mutableStateOf(false)
     }
+    var isDone by remember {
+        mutableStateOf(item.isDone)
+    }
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -72,7 +75,8 @@ fun ItemEditor(
             }){
                 Icon(imageVector = androidx.compose.material.icons.Icons.Default.Check, contentDescription = "save")
             }
-            Checkbox(checked = item.isDone, onCheckedChange = {
+            Checkbox(checked = isDone, onCheckedChange = {
+                isDone = it
                 item.setIsDone(it)
                 onEvent(ItemEvent.Update(item))
             })
@@ -142,7 +146,7 @@ fun ItemEditor(
                 .clickable(onClick = {
                     showAdvanced = !showAdvanced
                 }),
-            text = "advanced")
+            text = "fler inställningar...")
         AnimatedVisibility(visible = showAdvanced) {
             Column(modifier = Modifier.fillMaxWidth())  {
                 ItemSettingCalendar(item = item, onEvent = {
@@ -175,10 +179,10 @@ fun ItemEditor(
                     onEvent(ItemEvent.Update(item))
                 })
                 Spacer(modifier = Modifier.height(4.dp))
-                TypeCard(type = item.getType(), onTypeChanged = {
+                /*TypeCard(type = item.getType(), onTypeChanged = {
                     item.setType(it)
                     onEvent(ItemEvent.Update(item))
-                })
+                })*/
                 Spacer(modifier = Modifier.height(4.dp))
                 ParentCard(item = item)
                 Spacer(modifier = Modifier.height(4.dp))

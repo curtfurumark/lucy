@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.Field
-import se.curtrune.lucy.modules.TopAppbarModule
+import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
 import se.curtrune.lucy.workers.MentalWorker
 import java.time.LocalDate
 

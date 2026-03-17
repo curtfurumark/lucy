@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import se.curtrune.lucy.app.InitialScreen
 import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.classes.google_calendar.GoogleFactory
-import se.curtrune.lucy.modules.TopAppbarModule
+import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
 
 class SettingsViewModel: ViewModel(){
     private val calendarModule = LucindaApplication.appModule.googleCalendarModule

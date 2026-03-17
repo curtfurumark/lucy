@@ -19,6 +19,7 @@ import se.curtrune.lucy.composables.MentalMeter
 import se.curtrune.lucy.screens.main.MainEvent
 import se.curtrune.lucy.screens.main.MainState
 import se.curtrune.lucy.screens.main.TopAppBarState
+import se.curtrune.lucy.screens.top_appbar.TopAppBarEvent
 
 @Composable
 fun LucindaControls(state: TopAppBarState, onEvent: (TopAppBarEvent)->Unit) {
