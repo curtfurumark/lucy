@@ -20,7 +20,9 @@ import se.curtrune.lucy.classes.State
 import se.curtrune.lucy.screens.top_appbar.TopAppBarEvent
 import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
 import se.curtrune.lucy.screens.item_editor.ItemEvent
+import se.curtrune.lucy.screens.medicine.MedicineEvent
 import se.curtrune.lucy.screens.navigation.EditListNavKey
+import se.curtrune.lucy.screens.timeline.composables.SortEvent
 import se.curtrune.lucy.util.Logger
 import java.util.Comparator
 
@@ -141,21 +143,12 @@ class TodoViewModel : ViewModel() {
             is ItemEvent.RequestDelete -> TODO()
         }
     }
-    fun onEvent(event: TopAppBarEvent){
+    fun onEvent(event: SortEvent){
         when(event){
-            TopAppBarEvent.DayCalendar -> TODO()
-            TopAppBarEvent.DrawerMenu -> TODO()
-            TopAppBarEvent.OnBoost -> TODO()
-            TopAppBarEvent.OnPanic -> TODO()
-            is TopAppBarEvent.OnSearch -> {}
-            TopAppBarEvent.DayClicked -> TODO()
-            TopAppBarEvent.WeekClicked -> TODO()
-            TopAppBarEvent.MedicinesClicked -> TODO()
-            TopAppBarEvent.MonthClicked -> TODO()
-            TopAppBarEvent.SettingsClicked -> TODO()
-            TopAppBarEvent.ActionMenu -> TODO()
-            TopAppBarEvent.CheckForUpdate -> TODO()
-            TopAppBarEvent.DevActivity -> TODO()
+            SortEvent.SortAlphabetically -> sortAlphabetically()
+            SortEvent.SortDateAscending -> sortDate(true)
+            SortEvent.SortDateDescending -> sortDate(false)
+            SortEvent.SortPriority -> sortPriority()
         }
 
     }
@@ -190,6 +183,35 @@ class TodoViewModel : ViewModel() {
     }
     private fun showChildren(parent: Item) {
         showMessage("show children not implemented")
+    }
+    private fun sortAlphabetically(){
+        println("TodoViewModel.sortAlphabetically()")
+        _state.update {
+            it.copy(
+                items = items.sortedBy { it.heading }
+            )
+        }
+    }
+    private fun sortDate(ascending: Boolean){
+        if( ascending){
+            items = items.sortedBy { it.compare() }.toMutableList()
+        }else{
+            items = items.sortedByDescending { it.compare() }.toMutableList()
+        }
+        _state.update {
+            it.copy(
+                items = items
+            )
+        }
+    }
+    private fun sortPriority(){
+        println("TodoViewModel.sortPriority()")
+        _state.update {
+            it.copy(
+                items = items.filter { it -> it.priority > 0 }.sortedBy { it.priority }
+            )
+        }
+
     }
 
 

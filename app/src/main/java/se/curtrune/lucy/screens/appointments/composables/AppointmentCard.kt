@@ -31,7 +31,7 @@ import se.curtrune.lucy.util.DateTImeConverter
 
 
 @Composable
-fun AppointmentItem(appointment: Item, onEvent: (AppointmentEvent)->Unit){
+fun AppointmentCard(appointment: Item, onEvent: (AppointmentEvent)->Unit){
     var isDone by remember {
         mutableStateOf(appointment.isDone)
     }
@@ -124,29 +124,12 @@ fun AppointmentItem(appointment: Item, onEvent: (AppointmentEvent)->Unit){
         }
     }
 }
-@Composable
-fun TestAppointment(){
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Row(modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,){
-            Text(text = "row")
-            Column(){
-                Row() {
-                    Text(text = "heading")
-                }
-                Row() {
-                    Text(text = "description")
-                }
-            }
-        }
-    }
-}
+
 
 @PreviewLightDark
 @Composable
 fun PreviewAppointment(){
     LucyTheme {
-        //TestAppointment()
-        AppointmentItem(appointment = Item("hello"), onEvent = {})
+        AppointmentCard(appointment = Item("hello"), onEvent = {})
     }
 }

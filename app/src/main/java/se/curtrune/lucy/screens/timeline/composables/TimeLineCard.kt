@@ -24,14 +24,14 @@ fun TimeLineCard(item: Item, onClick: (Item)-> Unit){
                 .padding(start = 4.dp, top= 2.dp),
         ) {
             Text(
-                modifier= Modifier.padding(start = 4.dp),
-                text = item.targetDate.toString())
+                modifier= Modifier.padding(start =  4.dp),
+                text = item.heading,)
         }
         Row(modifier = Modifier.fillMaxWidth()
             .padding(start= 4.dp , bottom = 2.dp)){
             Text(
                 modifier = Modifier.padding(start = 4.dp),
-                text = item.heading,
+                text = item.targetDate.toString(),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )

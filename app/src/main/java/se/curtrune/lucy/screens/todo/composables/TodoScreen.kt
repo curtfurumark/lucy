@@ -34,20 +34,22 @@ import se.curtrune.lucy.screens.top_appbar.LucindaTopAppBar
 import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
 import se.curtrune.lucy.screens.item_editor.ItemEvent
 import se.curtrune.lucy.screens.navigation.ItemEditorNavKey
+import se.curtrune.lucy.screens.timeline.composables.SortBar
+import se.curtrune.lucy.screens.timeline.composables.SortEvent
 import se.curtrune.lucy.screens.todo.ChannelEvent
 import se.curtrune.lucy.screens.todo.TodoState
 import se.curtrune.lucy.screens.todo.TodoViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodoScreen(navigate: (NavKey) -> Unit) {
+fun TodoScreen(
+    navigate: (NavKey) -> Unit,
+    modifier: Modifier = Modifier) {
     val viewModel: TodoViewModel = viewModel()
     val state by viewModel.state.collectAsState()
     val eventFlow = viewModel.channel
     val context = LocalContext.current
     var showAddItemDialog by remember { mutableStateOf(false) }
-    val topAppbarModuleState = TopAppbarModule.topAppBarState.collectAsState()
-    //TopAppbarModule.search()
     LaunchedEffect(Unit) {
         eventFlow.collect { event ->
             when (event) {
@@ -79,36 +81,21 @@ fun TodoScreen(navigate: (NavKey) -> Unit) {
             }
         }
     }
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-    val topAppBarState = TopAppbarModule.topAppBarState.collectAsState()
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = {}){
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
             }
 
-        },
-
-        topBar = {
-            FlexibleTopBar(
-                scrollBehavior = scrollBehavior,
-                content = {
-                    LucindaTopAppBar(
-                        state = topAppBarState.value,
-                        onEvent = { appBarEvent ->
-                            println("appBarEvent todo $appBarEvent")
-                            //mainViewModel.onEvent(appBarEvent)
-                        })
-                }, onEvent = { event ->
-                    println("onEvent $event")
-                }
-            )
         }
-
     ) { padding ->
-        ItemList(modifier = Modifier.padding(padding), state = state, onEvent = {
-            viewModel.onEvent(it)
-        })
+        ItemList(modifier = modifier.padding(padding), state = state,
+            onEvent = {
+                viewModel.onEvent(it)
+            },
+            sortEvent = {
+                viewModel.onEvent(it)
+            })
     }
     if (showAddItemDialog) {
         println("show add item dialog")
@@ -124,8 +111,15 @@ fun TodoScreen(navigate: (NavKey) -> Unit) {
     }
 }
 @Composable
-fun ItemList(modifier: Modifier = Modifier, state: TodoState, onEvent: (ItemEvent) -> Unit){
+fun ItemList(
+    modifier: Modifier = Modifier,
+    state: TodoState,
+    onEvent: (ItemEvent) -> Unit,
+    sortEvent: (SortEvent) -> Unit) {
     LazyColumn(modifier = modifier.fillMaxWidth()){
+        item{
+            SortBar(onEvent = sortEvent)
+        }
         items(state.items){item->
             CheckableItemCard(
                 item,

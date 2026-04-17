@@ -34,6 +34,7 @@ import se.curtrune.lucy.screens.medicine.composable.MedicineScreen
 import se.curtrune.lucy.screens.mental_stats.composables.MentalStatsScreen
 import se.curtrune.lucy.screens.message_board.composables.MessageBoardScreen
 import se.curtrune.lucy.screens.monthcalendar.composables.MonthCalendarScreen
+import se.curtrune.lucy.screens.my_manual.MyManualScreen
 import se.curtrune.lucy.screens.projects.composables.ProjectsScreen
 import se.curtrune.lucy.screens.tabbed.TabbedProjectsScreen
 import se.curtrune.lucy.screens.settings.composables.SettingsScreen
@@ -57,6 +58,8 @@ sealed interface Route: NavKey{
     data class DayCalendarNavKey(val date: String): Route
     @Serializable
     data object MedicineNavKey: Route
+    @Serializable
+    data object MyManualScreenNavKey: Route
     @Serializable
     data object TimeLineScreen: Route
     @Serializable
@@ -97,6 +100,9 @@ data class AppointmentDetailsScreenNavKey(val appointmentID: Long): NavKey
 
 @Serializable
 data object MentalStatsScreenNavKey: NavKey
+
+
+
 @Serializable
 data object TabbedProjectsScreenNavKey: NavKey
 
@@ -126,7 +132,8 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
             when(navKey) {
                 is AppointmentDetailsScreenNavKey -> {
                     NavEntry(
-                        key = navKey) { AppointmentDetailsScreen(navKey.appointmentID)
+                        key = navKey) {
+                        AppointmentDetailsScreen(navKey.appointmentID, modifier = modifier)
                     }
                 }
                 is Route.AppointmentsScreenNavKey -> {
@@ -138,7 +145,8 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                             }
                             ,navigate = {
                                 backStack.add(it)
-                            }
+                            },
+                            modifier = modifier
                         )
                     }
                 }
@@ -157,7 +165,6 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                 is Route.DayCalendarNavKey -> {
                     NavEntry(
                         key = navKey) {
-                        //println("DayCalendarNavKey.date = ${navKey.date}")
                         DayCalendarScreen(
                             date = navKey.date,
                             navigate = {
@@ -165,6 +172,12 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                             },
                             modifier = modifier
                         )
+                    }
+                }
+                is Route.MyManualScreenNavKey -> {
+                    NavEntry(
+                        key = navKey) {
+                        MyManualScreen(modifier = modifier)
                     }
                 }
                 is DevScreenNavKey -> {
@@ -260,8 +273,8 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                     NavEntry(
                         key = navKey) {
                         TodoScreen(navigate = {
-                            backStack.add(it)
-                        })
+                            backStack.add(it)},
+                            modifier = modifier)
                     }
                 }
 

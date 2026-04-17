@@ -13,6 +13,7 @@ import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
 import se.curtrune.lucy.persist.Repository
+import se.curtrune.lucy.screens.timeline.composables.SortEvent
 
 class AppointmentsViewModel(private val repository: Repository) : ViewModel() {
     private val _state = MutableStateFlow(AppointmentsState())
@@ -28,6 +29,9 @@ class AppointmentsViewModel(private val repository: Repository) : ViewModel() {
             )
         }
         TopAppbarModule.setTitle("Möten")
+        TopAppbarModule.filterCallback = {
+            filter(it)
+        }
     }
     private fun insert(item: Item) {
         println("AppointmentsViewModel(Item, Context)")
@@ -55,6 +59,15 @@ class AppointmentsViewModel(private val repository: Repository) : ViewModel() {
             is AppointmentEvent.ShowDetails -> {showDetails(event.appointment)}
         }
     }
+    fun onEvent(event: SortEvent){
+        when(event){
+            SortEvent.SortAlphabetically -> sortAlphabetically()
+            SortEvent.SortDateAscending -> sortDate(true)
+            SortEvent.SortDateDescending -> sortDate(false)
+            SortEvent.SortPriority -> sortPriority()
+
+        }
+    }
 
     /**
      * navigate to item editor
@@ -67,9 +80,8 @@ class AppointmentsViewModel(private val repository: Repository) : ViewModel() {
     }
 
     fun filter(filter: String) {
-        val filteredItems = items.filter { item->item.contains(filter) }
         _state.update { it.copy(
-            items = filteredItems
+            items = items.filter { item->item.contains(filter) }
         ) }
     }
 
@@ -96,7 +108,7 @@ class AppointmentsViewModel(private val repository: Repository) : ViewModel() {
                     item = Item().also {it->
                         it.parent = repository.getAppointmentsRoot()
                         it.isCalenderItem = true
-                        it.isCalenderItem = true
+                        it.priority = 5
                         it.setType( Type.APPOINTMENT)
                     },
                     parent = repository.getAppointmentsRoot()
@@ -112,6 +124,35 @@ class AppointmentsViewModel(private val repository: Repository) : ViewModel() {
         viewModelScope.launch {
             _eventChannel.send(AppointmentChannel.NavigateDetails(appointment))
         }
+    }
+    private fun sortAlphabetically(){
+        println("AppointmentsViewModel.sortAlphabetically()")
+        items = items.sortedBy { it.heading }
+        _state.update {
+            it.copy(
+                items = items
+            )
+        }
+    }
+    private fun sortDate(ascending: Boolean){
+        println("AppointmentsViewModel.sortDate($ascending)")
+        if( ascending){
+            items = items.sortedBy { it.compare() }
+        }else{
+            items  = items.sortedByDescending { it.compare() }
+        }
+        _state.update {
+            it.copy(
+                items = items
+            )
+        }
+    }
+    /*
+    do we need this? sort by priority
+    an appointment is by its nature prioritized
+    */
+    private fun sortPriority() {
+        println("AppointmentsViewModel.sortPriority()")
     }
     private fun update(item: Item) {
         println("AppointmentsViewModel.update(${item.heading})")

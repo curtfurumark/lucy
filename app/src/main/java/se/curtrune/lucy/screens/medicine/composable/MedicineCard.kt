@@ -53,7 +53,7 @@ fun MedicineCard(item: Item, onEvent: (MedicineEvent) -> Unit){
         mutableStateOf(false)
     }
     Card(modifier = Modifier
-        .fillMaxSize()
+        .fillMaxWidth()
         .background(color = MaterialTheme.colorScheme.background)
         .pointerInput(true) {
             detectTapGestures(
@@ -73,7 +73,7 @@ fun MedicineCard(item: Item, onEvent: (MedicineEvent) -> Unit){
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .padding(8.dp)
         ) {
             Row(modifier =  Modifier.fillMaxWidth(),

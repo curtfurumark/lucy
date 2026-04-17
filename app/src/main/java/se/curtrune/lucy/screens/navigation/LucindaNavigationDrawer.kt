@@ -308,6 +308,15 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                 onClick(MessageBoardNavKey)
             }
         )
+        NavigationDrawerItem(
+            label = { Text(text = "min manual") },
+            selected = false,
+            icon = {Icon(imageVector = Icons.Default.List, contentDescription = "min manual")},
+            onClick = {
+                onClick(Route.MyManualScreenNavKey)
+            }
+
+        )
     }
 }
 

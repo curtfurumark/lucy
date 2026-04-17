@@ -67,7 +67,7 @@ class TimeLineViewModel: ViewModel() {
     private fun filter(filter: String){
         println("filter($filter)")
         _state.value = _state.value.copy(
-            items = items.filter { it.contains(filter) }
+            items = items.filter { it.contains(filter) }.sortedBy { it.targetDate }
         )
     }
     private fun getItems(){

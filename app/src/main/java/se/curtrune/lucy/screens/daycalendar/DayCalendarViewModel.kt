@@ -24,6 +24,8 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 class DayCalendarViewModel(private val date: LocalDate): ViewModel(){
+    private var currentFilter = ""
+
     private val repository = LucindaApplication.appModule.repository
     private val timeModule = LucindaApplication.appModule.timeModule
     private var currentWeekPage = 5
@@ -43,6 +45,12 @@ class DayCalendarViewModel(private val date: LocalDate): ViewModel(){
         refreshState(date)
         println("currentParent = ${state.value.currentParent?.heading}")
         TopAppbarModule.setTitle(_state.value.date)
+        TopAppbarModule.filterCallback = {
+            search(it)
+        }
+        TopAppbarModule.searchScopeCallback = { it->
+            setSearchScope(it)
+        }
     }
 
     companion object {
@@ -126,7 +134,7 @@ class DayCalendarViewModel(private val date: LocalDate): ViewModel(){
             is DayCalendarEvent.Postpone -> { postpone(event.postponeInfo)}
             is DayCalendarEvent.HidePostponeDialog -> { hidePostponeDialog()}
             is DayCalendarEvent.RestoreDeletedItem -> {restoreDeletedItem()}
-            is DayCalendarEvent.Search -> { search(event.filter, event.everywhere)}
+            is DayCalendarEvent.Search -> { search(event.filter)}
             is DayCalendarEvent.Week -> {setCurrentWeek(event.page)}
             is DayCalendarEvent.RequestDelete -> {confirmDelete(event.item)}
             is DayCalendarEvent.ShowAddItemBottomSheet -> {showAddItemBottomSheet()}
@@ -232,30 +240,12 @@ class DayCalendarViewModel(private val date: LocalDate): ViewModel(){
         //repository
 
     }
-    private fun search(filter: String, everywhere: Boolean){
-        println("DateViewModel.search($filter, everywhere: $everywhere)")
-        if( everywhere){
-            if( filter.isEmpty()){
-                _state.update {it.copy(
-                        items = items
-                    )
-                }
-            }else {
-                val filteredItems = repository.search(filter)
-                _state.update {
-                    it.copy(
-                        items = filteredItems
-                    )
-                }
-            }
-        }else {
-            val filteredItems: List<Item> = items.filter { item -> item.contains(filter) }
-            _state.update {
-                it.copy(
-                    items = filteredItems
-                )
-            }
-        }
+    private fun search(filter: String){
+        println("DateViewModel.search($filter")
+        currentFilter = filter
+        _state.update { it.copy(
+            items = items.filter { item->item.contains(filter) }
+        ) }
     }
     private fun setCurrentDate(newDate: LocalDate){
         println("DateViewModel.setCurrentDate($newDate)")
@@ -277,6 +267,19 @@ class DayCalendarViewModel(private val date: LocalDate): ViewModel(){
         ) }
         TopAppbarModule.setTitle(newDate)
         currentWeekPage = page
+    }
+    private fun setSearchScope(everywhere: Boolean){
+        if( everywhere){
+            items = repository.selectItems()
+            if( currentFilter.isNotEmpty()){
+                items = items.filter { item->item.contains(currentFilter) }
+            }
+            _state.update { it.copy(
+                items = items
+            ) }
+        }else{
+            refresh()
+        }
     }
     private fun showAddItemBottomSheet() {
         println("...showAddItemBottomSheet()")

@@ -44,7 +44,7 @@ fun SortBar(onEvent: (SortEvent)->Unit){
         ))
         Text(text = "priority", modifier = Modifier.clickable(
             onClick = {
-                onEvent(SortEvent.SortAlphabetically)
+                onEvent(SortEvent.SortPriority)
             }
         ))
     }

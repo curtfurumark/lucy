@@ -183,6 +183,10 @@ fun ItemEditor(
                     item.setType(it)
                     onEvent(ItemEvent.Update(item))
                 })*/
+                TagsCard(item = item, onTagsChanged = {
+                    item.tags = it
+                    onEvent(ItemEvent.Update(item))
+                })
                 Spacer(modifier = Modifier.height(4.dp))
                 ParentCard(item = item)
                 Spacer(modifier = Modifier.height(4.dp))

@@ -18,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -35,26 +36,15 @@ import se.curtrune.lucy.screens.appointments.AppointmentsState
 import se.curtrune.lucy.screens.appointments.AppointmentsViewModel
 import se.curtrune.lucy.screens.navigation.AppointmentDetailsScreenNavKey
 
-@Composable
-fun AppointmentsList(
-    modifier: Modifier = Modifier,
-    state: AppointmentsState,
-    onEvent: (AppointmentEvent)->Unit){
-    LazyColumn(modifier = modifier.fillMaxWidth().fillMaxWidth()) {
-        items(state.items){ item->
-            AppointmentItem(appointment = item, onEvent = { event->
-                onEvent(event)
-            })
-            Spacer(modifier = Modifier.height(4.dp))
-        }
-    }
 
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppointmentsScreen(onEdit: (Item)->Unit, navigate: (NavKey)-> Unit){
-    println("AppointmentsScreen(onEdit: (Item)->Unit)")
+fun AppointmentsScreen(
+    onEdit: (Item)->Unit,
+    navigate: (NavKey)-> Unit,
+    modifier: Modifier = Modifier
+){
     val viewModel: AppointmentsViewModel = viewModel{
         AppointmentsViewModel.Factory(LucindaApplication.appModule.repository).create(AppointmentsViewModel::class.java)
     }
@@ -78,26 +68,18 @@ fun AppointmentsScreen(onEdit: (Item)->Unit, navigate: (NavKey)-> Unit){
                 showAddAppointmentDialog = true
             })
         },
-        topBar = {
-            FlexibleTopBar(
-                scrollBehavior = scrollBehavior,
-                content = {
-                    LucindaTopAppBar(
-                        state = topAppBarState.value,
-                        onEvent = { appBarEvent ->
-                            println("appBarEvent $appBarEvent")
-                        })
-                }, onEvent = { event ->
-                    println("onEvent $event")
-                    //devViewModel.onEvent(event)
-                }
-            )
-        }
 
     ) {padding->
-        AppointmentsList(modifier = Modifier.padding(padding), state = state, onEvent = {
-            viewModel.onEvent(it)
-        })
+        AppointmentsList(
+            modifier = modifier.padding(padding),
+            state = state,
+            onEvent = {
+                viewModel.onEvent(it)
+            },
+            sortEvent = {
+                viewModel.onEvent(it)
+            }
+        )
     }
     LaunchedEffect(viewModel) {
         viewModel.eventChannel.collect{ event->
