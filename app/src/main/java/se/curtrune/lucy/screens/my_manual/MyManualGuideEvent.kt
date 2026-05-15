@@ -14,5 +14,7 @@ sealed interface MyManualGuideEvent{
     data class OnAddMedicine(val medicine: Item): MyManualGuideEvent
     data class OnAddSensitivity(val sensitivity: Item): MyManualGuideEvent
     data class OnAddTrigger(val trigger: Item): MyManualGuideEvent
+    data object OnAddSensoryPressed: MyManualGuideEvent
+    data object OnAddTriggerPressed: MyManualGuideEvent
 
 }

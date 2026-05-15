@@ -19,7 +19,7 @@ fun MyManualScreen(modifier: Modifier = Modifier){
     Column(
         modifier = modifier.fillMaxSize(),
     ){
-        Text(text = "my manual", style = MaterialTheme.typography.headlineLarge)
+        Text(text = "min manual", style = MaterialTheme.typography.headlineLarge)
         MyManualGuide(state = state, onEvent = viewModel::onEvent)
     }
 }

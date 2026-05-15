@@ -8,6 +8,7 @@ sealed interface DevEvent{
     data class InsertItemWithID(val item: Item): DevEvent
     data object ResetApp: DevEvent
     data object OpenDB : DevEvent
+    data object ShowCamera: DevEvent
     data class RunQuery(val query: String): DevEvent
     data class Search(val query: String, val everywhere: Boolean): DevEvent
     data class InsertItem(val item: Item): DevEvent

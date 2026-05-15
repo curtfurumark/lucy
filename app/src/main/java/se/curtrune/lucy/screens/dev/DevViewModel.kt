@@ -110,6 +110,7 @@ class DevViewModel : ViewModel() {
             is DevEvent.InsertItem -> {insertItem(event.item)}
             is DevEvent.OpenDB -> { openDB()}
             is DevEvent.GetHolidays -> {getHolidays() }
+            DevEvent.ShowCamera -> println("ShowCamera")
         }
     }
 

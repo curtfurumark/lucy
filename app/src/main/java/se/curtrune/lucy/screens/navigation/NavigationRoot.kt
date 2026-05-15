@@ -57,28 +57,26 @@ sealed interface Route: NavKey{
     @Serializable
     data class DayCalendarNavKey(val date: String): Route
     @Serializable
+    data object DurationNavKey: Route
+    @Serializable
+    data object DevScreenNavKey: Route
+    @Serializable
     data object MedicineNavKey: Route
+    @Serializable
+    data object MentalStatsScreenNavKey: Route
     @Serializable
     data object MyManualScreenNavKey: Route
     @Serializable
     data object TimeLineScreen: Route
     @Serializable
     data object TodoScreenNavKey: Route
-
 }
 
-@Serializable
-data object DevScreenNavKey: NavKey
-@Serializable
-data object DurationNavKey: NavKey
 @Serializable
 data class  EditListNavKey(val parent: Item): NavKey
 
 @Serializable
 data class EditTemplateScreenNavKey(val templateID: Long): NavKey
-
-
-
 
 @Serializable
 data object MessageBoardNavKey: NavKey
@@ -96,13 +94,8 @@ data object ProjectsScreenNavKey: NavKey
 
 @Serializable
 data class AppointmentDetailsScreenNavKey(val appointmentID: Long): NavKey
-
-
 @Serializable
 data object MentalStatsScreenNavKey: NavKey
-
-
-
 @Serializable
 data object TabbedProjectsScreenNavKey: NavKey
 
@@ -174,19 +167,25 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                         )
                     }
                 }
+                is Route.MentalStatsScreenNavKey -> {
+                    NavEntry(
+                        key = navKey) {
+                        MentalStatsScreen()
+                    }
+                }
                 is Route.MyManualScreenNavKey -> {
                     NavEntry(
                         key = navKey) {
                         MyManualScreen(modifier = modifier)
                     }
                 }
-                is DevScreenNavKey -> {
+                is Route.DevScreenNavKey -> {
                     NavEntry(
                         key = navKey) {
                         DevScreen()
                     }
                 }
-                is DurationNavKey -> {
+                is Route.DurationNavKey -> {
                     NavEntry(
                         key = navKey) {
                         DurationScreen(onEvent = {})

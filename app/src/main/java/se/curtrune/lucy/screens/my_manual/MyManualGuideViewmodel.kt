@@ -30,7 +30,8 @@ class MyManualGuideViewmodel : ViewModel() {
             is MyManualGuideEvent.OnAddSensitivity -> TODO()
             is MyManualGuideEvent.OnBackPressed -> { onBackPressed()}
             is MyManualGuideEvent.OnNameChanged -> onNameChanged(event.name)
-
+            is MyManualGuideEvent.OnAddTriggerPressed -> onAddTriggerPressed()
+            is MyManualGuideEvent.OnAddSensoryPressed -> onAddSensoryPressed()
         }
     }
     private fun onAddMedicine(medicine: Item){
@@ -41,9 +42,22 @@ class MyManualGuideViewmodel : ViewModel() {
             medicines = repository.selectItems(Type.MEDICIN)
         )
     }
+    private fun onAddSensoryPressed(){
+        println("...onAddSensoryPressed")
+        _state.value = _state.value.copy(
+            sensories = _state.value.sensories + Item()
+        )
+    }
     private fun onAddTrigger(trigger: Item){
         println("...onAddTrigger")
     }
+    private fun onAddTriggerPressed(){
+        println("...onAddTriggerPressed")
+        _state.value = _state.value.copy(
+            triggers = _state.value.triggers + Item()
+        )
+    }
+
     private fun onBackPressed(){
         println("...onBackPressed")
         _state.value = _state.value.copy(

@@ -228,7 +228,7 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                     )
                 },
                 onClick = {
-                    onClick(DevScreenNavKey)
+                    onClick(Route.DevScreenNavKey)
                 }
             )
         }
@@ -266,7 +266,7 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                 label = { Text(text = "dev screen") },
                 selected = false,
                 onClick = {
-                    onClick(DevScreenNavKey)
+                    onClick(Route.DevScreenNavKey)
                 }
             )
             NavigationDrawerItem(
@@ -295,7 +295,7 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                 selected = false,
                 icon = {Icon(imageVector = Icons.Default.Timer, contentDescription = "duration")},
                 onClick = {
-                    onClick(DurationNavKey)
+                    onClick(Route.DurationNavKey)
                 }
             )
         }
@@ -315,7 +315,14 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
             onClick = {
                 onClick(Route.MyManualScreenNavKey)
             }
-
+        )
+        NavigationDrawerItem(
+            label = { Text(text = "mental stats") },
+            selected = false,
+            icon = {Icon(imageVector = Icons.Default.Star, contentDescription = "bullet list")},
+            onClick = {
+                onClick(Route.MentalStatsScreenNavKey)
+            }
         )
     }
 }

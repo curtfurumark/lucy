@@ -41,7 +41,7 @@ import se.curtrune.lucy.screens.affirmations.Quote
 import se.curtrune.lucy.screens.main.composables.ChoosePanicActionDialog
 import se.curtrune.lucy.screens.main.composables.QuoteDialog
 import se.curtrune.lucy.screens.navigation.Route.DayCalendarNavKey
-import se.curtrune.lucy.screens.navigation.DevScreenNavKey
+import se.curtrune.lucy.screens.navigation.Route.DevScreenNavKey
 import se.curtrune.lucy.screens.navigation.LucindaNavigationDrawer
 import se.curtrune.lucy.screens.navigation.NavigationRoot
 import se.curtrune.lucy.util.Logger

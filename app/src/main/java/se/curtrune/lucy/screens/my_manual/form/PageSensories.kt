@@ -3,10 +3,18 @@ package se.curtrune.lucy.screens.my_manual.form
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,42 +24,54 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.screens.my_manual.MyManualGuideEvent
 import se.curtrune.lucy.screens.my_manual.MyManualGuideState
 
 @Composable
-fun PageSensories(state: MyManualGuideState, onEvent: (MyManualGuideEvent)->Unit){
+fun PageSensories(state: MyManualGuideState, onEvent: (MyManualGuideEvent)->Unit) {
     var soundChecked by remember { mutableStateOf(false) }
     var touchChecked by remember { mutableStateOf(false) }
     var lightChecked by remember { mutableStateOf(false) }
-    Column(){
-        Text(text = "page four, sensories")
-        CheckableCard("sound", soundChecked){
-            println("sound checked")
-            soundChecked = !soundChecked
-        }
-        CheckableCard("touch",  touchChecked){
-            println("vibration checked")
-            touchChecked = !touchChecked
-        }
-        CheckableCard("light", lightChecked){
-            println("light checked ")
-            lightChecked = !lightChecked
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        Row() {
-            Button(onClick = {
-                onEvent(MyManualGuideEvent.OnBackPressed)
-            }) {
-                Text(text = "back")
 
-            }
-            /*Button(onClick = {
-                onEvent(MyManualGuideEvent.OnPageFourCompleted)
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                onEvent(MyManualGuideEvent.OnAddSensoryPressed)
             }) {
-                Text(text = "next")
+                Icon(imageVector = Icons.Default.Add, contentDescription = "add")
             }
-           */
+        }
+
+    ) { innerPadding ->
+        Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+            Text(text = "page four, sensories")
+            CheckableCard("sound", soundChecked) {
+                println("sound checked")
+                soundChecked = !soundChecked
+            }
+            Spacer(modifier = Modifier.height(2.dp))
+            CheckableCard("touch", touchChecked) {
+                println("vibration checked")
+                touchChecked = !touchChecked
+            }
+            Spacer(modifier = Modifier.height(2.dp))
+            CheckableCard("light", lightChecked) {
+                println("light checked ")
+                lightChecked = !lightChecked
+            }
+            state.sensories.forEach {
+                TriggerCard()
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            Row() {
+                Button(onClick = {
+                    onEvent(MyManualGuideEvent.OnBackPressed)
+                }) {
+                    Text(text = "back")
+
+                }
+            }
         }
     }
 }

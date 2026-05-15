@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -19,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.screens.my_manual.MyManualGuideEvent
 import se.curtrune.lucy.screens.my_manual.MyManualGuideState
 
@@ -26,7 +28,9 @@ import se.curtrune.lucy.screens.my_manual.MyManualGuideState
 fun PageThree(state: MyManualGuideState, onEvent: (MyManualGuideEvent)->Unit){
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = {}) {
+            FloatingActionButton(onClick = {
+                onEvent(MyManualGuideEvent.OnAddTriggerPressed)
+            }) {
                 Text(text = "add")
             }
         }
@@ -36,7 +40,10 @@ fun PageThree(state: MyManualGuideState, onEvent: (MyManualGuideEvent)->Unit){
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = "page three, ta hänsyn till")
-            TriggerCard()
+            state.triggers.forEach {
+                TriggerCard()
+                Spacer(modifier = Modifier.height(2.dp))
+            }
             Spacer(modifier = Modifier.weight(1f))
             Row() {
                 Button(onClick = {
