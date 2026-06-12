@@ -22,7 +22,7 @@ import androidx.navigation3.ui.NavDisplay
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.screens.appointments.composables.AppointmentDetailsScreen
+import se.curtrune.lucy.screens.appoinment.composables.AppointmentScreen
 import se.curtrune.lucy.screens.appointments.composables.AppointmentsScreen
 import se.curtrune.lucy.screens.bullet_list.BulletListScreen
 import se.curtrune.lucy.screens.daycalendar.composables.DayCalendarScreen
@@ -34,6 +34,7 @@ import se.curtrune.lucy.screens.medicine.composable.MedicineScreen
 import se.curtrune.lucy.screens.mental_stats.composables.MentalStatsScreen
 import se.curtrune.lucy.screens.message_board.composables.MessageBoardScreen
 import se.curtrune.lucy.screens.monthcalendar.composables.MonthCalendarScreen
+import se.curtrune.lucy.screens.my_day.composables.MyDayScreen
 import se.curtrune.lucy.screens.my_manual.MyManualScreen
 import se.curtrune.lucy.screens.projects.composables.ProjectsScreen
 import se.curtrune.lucy.screens.tabbed.TabbedProjectsScreen
@@ -43,11 +44,14 @@ import se.curtrune.lucy.screens.templates.edit.EditTemplateScreen
 import se.curtrune.lucy.screens.templates.templates.TemplatesScreen
 import se.curtrune.lucy.screens.timeline.composables.TimeLineScreen
 import se.curtrune.lucy.screens.todo.composables.TodoScreen
+import se.curtrune.lucy.screens.voice_recording_screen.VoiceRecordingScreen
 import se.curtrune.lucy.screens.webscreen.WebScreen
 import se.curtrune.lucy.screens.week_calendar.composables.WeekCalendarScreen
 
 
 sealed interface Route: NavKey{
+    @Serializable
+    data class AppointmentScreenNavKey(val appointment: Item): Route
     @Serializable
     data object AppointmentsScreenNavKey: Route
     @Serializable
@@ -65,11 +69,21 @@ sealed interface Route: NavKey{
     @Serializable
     data object MentalStatsScreenNavKey: Route
     @Serializable
+    data object MessageBoardNavKey: Route
+
+   @Serializable
+   data object MyDayScreenNavKey: Route
+    @Serializable
     data object MyManualScreenNavKey: Route
     @Serializable
     data object TimeLineScreen: Route
     @Serializable
     data object TodoScreenNavKey: Route
+
+    @Serializable
+    data object VoiceRecordingScreenNavKey: Route
+    @Serializable
+    data class WeekCalendarNavKey(val date: String): Route
 }
 
 @Serializable
@@ -78,8 +92,6 @@ data class  EditListNavKey(val parent: Item): NavKey
 @Serializable
 data class EditTemplateScreenNavKey(val templateID: Long): NavKey
 
-@Serializable
-data object MessageBoardNavKey: NavKey
 @Serializable
 data class MonthCalendarNavKey(val date: String): NavKey
 
@@ -93,8 +105,6 @@ data object SettingsScreenNavKey: NavKey
 data object ProjectsScreenNavKey: NavKey
 
 @Serializable
-data class AppointmentDetailsScreenNavKey(val appointmentID: Long): NavKey
-@Serializable
 data object MentalStatsScreenNavKey: NavKey
 @Serializable
 data object TabbedProjectsScreenNavKey: NavKey
@@ -102,9 +112,6 @@ data object TabbedProjectsScreenNavKey: NavKey
 @Serializable
 data object TemplatesScreenNavKey: NavKey
 
-
-@Serializable
-data class WeekCalendarNavKey(val date: String): NavKey
 @Serializable
 data object WebScreenNavKey: NavKey
 
@@ -123,10 +130,15 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
         ),*/
         entryProvider = { navKey->
             when(navKey) {
-                is AppointmentDetailsScreenNavKey -> {
+
+                is Route.AppointmentScreenNavKey -> {
                     NavEntry(
                         key = navKey) {
-                        AppointmentDetailsScreen(navKey.appointmentID, modifier = modifier)
+                        AppointmentScreen(navKey.appointment, modifier = modifier, {
+                            backStack.removeLastOrNull()
+                        }, navigate = {
+                            backStack.add(it)
+                        })
                     }
                 }
                 is Route.AppointmentsScreenNavKey -> {
@@ -173,6 +185,14 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                         MentalStatsScreen()
                     }
                 }
+                is Route.MyDayScreenNavKey->{
+                    NavEntry(
+                        key = navKey
+                    ){
+                        MyDayScreen()
+                    }
+
+                }
                 is Route.MyManualScreenNavKey -> {
                     NavEntry(
                         key = navKey) {
@@ -189,6 +209,12 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                     NavEntry(
                         key = navKey) {
                         DurationScreen(onEvent = {})
+                    }
+                }
+                is Route.VoiceRecordingScreenNavKey -> {
+                    NavEntry(
+                        key = navKey) {
+                        VoiceRecordingScreen(modifier = modifier)
                     }
                 }
                 is EditListNavKey -> {
@@ -228,7 +254,7 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                         MentalStatsScreen()
                     }
                 }
-                is MessageBoardNavKey->{
+                is Route.MessageBoardNavKey->{
                     NavEntry(
                         key = navKey) {
                         MessageBoardScreen()
@@ -283,7 +309,7 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                         WebScreen()
                     }
                 }
-                is WeekCalendarNavKey -> {
+                is Route.WeekCalendarNavKey -> {
                     NavEntry(
                         key = navKey) {
                         WeekCalendarScreen(

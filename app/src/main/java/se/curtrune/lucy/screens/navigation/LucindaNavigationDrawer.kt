@@ -91,7 +91,7 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                     selected = false,
                     onClick = {
                         println("day calendar on click")
-                        onClick(WeekCalendarNavKey(LocalDate.now().toString()))
+                        onClick(Route.WeekCalendarNavKey(LocalDate.now().toString()))
                     }
                 )
                 NavigationDrawerItem(
@@ -305,7 +305,7 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
             selected = false,
             icon = {Icon(imageVector = Icons.Default.MeetingRoom, contentDescription = "message board")},
             onClick = {
-                onClick(MessageBoardNavKey)
+                onClick(Route.MessageBoardNavKey)
             }
         )
         NavigationDrawerItem(

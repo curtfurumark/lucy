@@ -1,12 +1,7 @@
 package se.curtrune.lucy.screens.appointments.composables
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
@@ -18,24 +13,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
 import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.composables.add_item.AddItemBottomSheet
-import se.curtrune.lucy.screens.top_appbar.FlexibleTopBar
-import se.curtrune.lucy.screens.top_appbar.LucindaTopAppBar
 import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
 import se.curtrune.lucy.screens.appointments.AppointmentChannel
 import se.curtrune.lucy.screens.appointments.AppointmentEvent
-import se.curtrune.lucy.screens.appointments.AppointmentsState
 import se.curtrune.lucy.screens.appointments.AppointmentsViewModel
-import se.curtrune.lucy.screens.navigation.AppointmentDetailsScreenNavKey
-
+import se.curtrune.lucy.screens.navigation.Route
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -84,18 +73,15 @@ fun AppointmentsScreen(
     LaunchedEffect(viewModel) {
         viewModel.eventChannel.collect{ event->
             when(event){
-                is AppointmentChannel.EditItem -> {
-                    onEdit(event.item)
+                is AppointmentChannel.Navigate -> {
+                    navigate(Route.AppointmentScreenNavKey(event.appointment))
+
                 }
                 is AppointmentChannel.ShowAddItemDialog -> {
                     showAddAppointmentDialog = true
                 }
                 is AppointmentChannel.ShowMessage -> {
                     showMessage(event.message)
-                }
-
-                is AppointmentChannel.NavigateDetails -> {
-                    navigate(AppointmentDetailsScreenNavKey(event.appointment.id))
                 }
             }
         }

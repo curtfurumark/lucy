@@ -56,7 +56,7 @@ class AppointmentsViewModel(private val repository: Repository) : ViewModel() {
             is AppointmentEvent.Update -> {update(event.item)}
             is AppointmentEvent.ShowAddAppointmentDialog -> { showAddAppointmentDialog() }
             is AppointmentEvent.Filter -> {filter(event.filter)}
-            is AppointmentEvent.ShowDetails -> {showDetails(event.appointment)}
+            is AppointmentEvent.ShowDetails -> {editAppointment(event.appointment)}
         }
     }
     fun onEvent(event: SortEvent){
@@ -75,7 +75,7 @@ class AppointmentsViewModel(private val repository: Repository) : ViewModel() {
     private fun editAppointment(appointment: Item){
         println("...editAppointment(${appointment.heading})")
         viewModelScope.launch{
-            _eventChannel.send(AppointmentChannel.EditItem(appointment))
+            _eventChannel.send(AppointmentChannel.Navigate(appointment))
         }
     }
 
@@ -119,12 +119,7 @@ class AppointmentsViewModel(private val repository: Repository) : ViewModel() {
             _eventChannel.send(AppointmentChannel.ShowAddItemDialog)
         }
     }
-    private fun showDetails(appointment: Item){
-        println("AppointmentsViewModel.showDetails(${appointment.heading})")
-        viewModelScope.launch {
-            _eventChannel.send(AppointmentChannel.NavigateDetails(appointment))
-        }
-    }
+
     private fun sortAlphabetically(){
         println("AppointmentsViewModel.sortAlphabetically()")
         items = items.sortedBy { it.heading }

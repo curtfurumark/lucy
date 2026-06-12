@@ -21,7 +21,7 @@ import se.curtrune.lucy.screens.my_day.MyDayState
 import se.curtrune.lucy.screens.my_day.MyDayViewModel
 
 @Composable
-fun MentalScreen(){
+fun MyDayScreen(){
     val viewModel: MyDayViewModel = viewModel()
     val state by viewModel.state.collectAsState()
     var currentField by remember{

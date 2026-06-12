@@ -1,5 +1,6 @@
 package se.curtrune.lucy.composables
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -43,7 +44,10 @@ fun ItemChooser(onDismiss: () -> Unit, onItemChosen: (Item) -> Unit){
             )
             Text(text = "${items.size} items found}")
             items.forEach { item ->
-                Text(text = item.heading)
+                Text(text = item.heading,
+                    modifier = Modifier.clickable(
+                        onClick = {onItemChosen(item)}
+                    ))
             }
             Row(
                 modifier = Modifier.fillMaxWidth(),

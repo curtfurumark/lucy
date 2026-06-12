@@ -60,6 +60,17 @@ fun DevScreen(modifier: Modifier = Modifier, state: DevState = DevState(), onEve
             message = "Camera permission denied"
         }
     }
+
+    val filePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        message = if (uri != null) {
+            "Selected file: ${uri.path}"
+        } else {
+            "No file selected"
+        }
+    }
+
     fun testing(){
         println("testing database")
         val dao = Room.databaseBuilder(context, ItemDatabase::class.java, "item_database").build().itemDao()
@@ -68,6 +79,7 @@ fun DevScreen(modifier: Modifier = Modifier, state: DevState = DevState(), onEve
             dao.insert(item)
             val items = dao.getAll()
             println("number of items: $items.size")
+            message = "number of items ${items.size}"
 
         }
     }
@@ -122,6 +134,12 @@ fun DevScreen(modifier: Modifier = Modifier, state: DevState = DevState(), onEve
         }){
             Text(text = "test itemEntity")
         }
+        Button(onClick = {
+            filePickerLauncher.launch("*/*")
+        }){
+            Text("add file")
+
+        }
 
     }
     if( showItemChooser ){
@@ -129,6 +147,7 @@ fun DevScreen(modifier: Modifier = Modifier, state: DevState = DevState(), onEve
             onDismiss = {showItemChooser = false},
             {
                 println("selected $it")
+                message = it.heading
                 showItemChooser = false
             }
         )
