@@ -179,6 +179,7 @@ class Repository (val context: Application){
         }
         val db = SqliteLocalDB(context)
         val itemWithID = db.insert(child)
+        db.touch(parent)
         db.close()
         return itemWithID
     }

@@ -28,10 +28,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
 import se.curtrune.lucy.classes.item.Item
+import se.curtrune.lucy.composables.add_item.ItemSettingDate
+import se.curtrune.lucy.composables.add_item.ItemSettingTime
 import se.curtrune.lucy.composables.dialogs.AddChildDialog
+//import se.curtrune.lucy.composables.top_app_bar.ItemSettingTime
+//import se.curtrune.lucy.composables.top_app_bar.ItemSettingDate
 import se.curtrune.lucy.screens.appoinment.AppointmentChannel
 import se.curtrune.lucy.screens.appoinment.AppointmentEvent
 import se.curtrune.lucy.screens.appoinment.AppointmentViewModel
+import se.curtrune.lucy.screens.item_editor.ItemEditorViewModel
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -42,12 +47,23 @@ fun AppointmentScreen(
     onBack: ()->Unit = {} ,
     navigate: (NavKey)->Unit
 ) {
-    val viewModel = viewModel<AppointmentViewModel>() {
-        AppointmentViewModel(appointment)
+    println("AppointmentScreen() appointment: ${appointment.heading}")
+    //val viewModel = viewModel<AppointmentViewModel>() {
+     //   AppointmentViewModel(appointment)
+    //}
+    val viewModel: AppointmentViewModel = viewModel(){
+        AppointmentViewModel.factory(appointment).create(AppointmentViewModel::class.java)
     }
+    //val viewModel = AppointmentViewModel(appointment)
+    //LaunchedEffect(Unit) {
+    viewModel.onEvent(AppointmentEvent.Refresh(appointment))
+    //}
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
     var showAddChildDialog by remember {
+        mutableStateOf(false)
+    }
+    var showAddToTimelineDialog by remember {
         mutableStateOf(false)
     }
     Scaffold(
@@ -60,12 +76,14 @@ fun AppointmentScreen(
         }
     ) { innerPadding ->
         Column(modifier = modifier.fillMaxSize().padding(innerPadding)) {
+            Spacer(modifier = Modifier.height(8.dp))
             Icon(
                 modifier = Modifier.clickable(
                     onClick = { onBack() }
                 ),
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = "back to previous")
+            Spacer(modifier = Modifier.height(8.dp))
             HeadingCard(
                 item = appointment,
                 onHeadingChange = {
@@ -73,7 +91,22 @@ fun AppointmentScreen(
                     viewModel.onEvent(AppointmentEvent.Update(appointment))
                 })
             Spacer(modifier = Modifier.height(4.dp))
-            DateTimeCard(item = appointment)
+            EditDescription(item = appointment, onDescriptionChange = {
+                appointment.description = it
+                viewModel.onEvent(AppointmentEvent.Update(appointment))
+            })
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(text ="item id: ${appointment.id}")
+            Spacer(modifier = Modifier.height(4.dp))
+            ItemSettingDate(item = appointment, onDateChanged = {
+                appointment.targetDate = it
+                viewModel.onEvent(AppointmentEvent.Update(appointment))
+            })
+            Spacer(modifier = Modifier.height(4.dp))
+            ItemSettingTime(item = appointment, onTimeChanged = {
+                appointment.targetTime = it
+                viewModel.onEvent(AppointmentEvent.Update(appointment))
+            })
             Spacer(modifier = Modifier.height(4.dp))
             CheckableItemsCard(
                 items = state.children,
@@ -81,14 +114,14 @@ fun AppointmentScreen(
                     viewModel.onEvent(AppointmentEvent.Update(it))
                 })
             Spacer(modifier = Modifier.height(4.dp))
-            //AddToTimeLineCard()
+            MediaListCard(
+                items = state.media,
+                onItemClicked = {
+                    viewModel.onEvent(AppointmentEvent.ViewFileItem(it))
+                },
+                onEvent = {viewModel.onEvent(it)})
             //ContactCard(contact = appointment)
             Spacer(modifier = Modifier.height(4.dp))
-
-            EditDescription(item = appointment, onDescriptionChange = {
-                appointment.description = it
-                viewModel.onEvent(AppointmentEvent.Update(appointment))
-            })
             SummaryCard(
                 item = appointment,
                 onSummaryChange = {
@@ -106,13 +139,18 @@ fun AppointmentScreen(
                     Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
                 }
 
-                AppointmentChannel.ShowAddChildDialog -> {
+                is AppointmentChannel.ShowAddChildDialog -> {
                     showAddChildDialog = true
                 }
 
                 is AppointmentChannel.Navigate -> {
                     println("navigate to ${it.navKey}")
                     navigate(it.navKey)
+                }
+
+                AppointmentChannel.ShowAddToTimeLineDialog -> {
+
+
                 }
             }
         }
@@ -127,13 +165,6 @@ fun AppointmentScreen(
             showAddChildDialog = false
             viewModel.onEvent(AppointmentEvent.AddChild(it))
         }
-    }
-}
-
-@Composable
-fun DateTimeCard(item: Item){
-    Card(modifier = Modifier.fillMaxWidth()){
-        Text(text = "date ${item.targetDate.toString()} and time")
     }
 }
 

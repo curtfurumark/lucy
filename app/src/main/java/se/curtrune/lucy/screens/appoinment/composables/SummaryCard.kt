@@ -17,14 +17,12 @@ fun SummaryCard(item: Item, onSummaryChange: (String)->Unit){
     var summary by remember {
         mutableStateOf(item.comment)
     }
-    Card(modifier = Modifier.fillMaxWidth()){
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            label = {Text("summary")},
-            minLines = 5,
-            value = summary,
-            onValueChange = {
-                summary = it
-                onSummaryChange(it)})
-    }
+    OutlinedTextField(
+        modifier = Modifier.fillMaxWidth(),
+        label = {Text("summary")},
+        minLines = 5,
+        value = summary,
+        onValueChange = {
+            summary = it
+            onSummaryChange(it)})
 }

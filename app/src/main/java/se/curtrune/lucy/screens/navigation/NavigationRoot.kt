@@ -24,10 +24,13 @@ import kotlinx.serialization.Serializable
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.screens.appoinment.composables.AppointmentScreen
 import se.curtrune.lucy.screens.appointments.composables.AppointmentsScreen
+import se.curtrune.lucy.screens.attach_image.AttachImageScreen
 import se.curtrune.lucy.screens.bullet_list.BulletListScreen
 import se.curtrune.lucy.screens.daycalendar.composables.DayCalendarScreen
 import se.curtrune.lucy.screens.dev.composables.DevScreen
 import se.curtrune.lucy.screens.duration.composables.DurationScreen
+import se.curtrune.lucy.screens.file_attach_screen.FileAttachScreen
+import se.curtrune.lucy.screens.file_viewer.FileViewerScreen
 import se.curtrune.lucy.screens.item_editor.composables.ItemEditorScreen
 import se.curtrune.lucy.screens.lists.composables.EditableBulletListScreen
 import se.curtrune.lucy.screens.medicine.composable.MedicineScreen
@@ -52,6 +55,13 @@ import se.curtrune.lucy.screens.week_calendar.composables.WeekCalendarScreen
 sealed interface Route: NavKey{
     @Serializable
     data class AppointmentScreenNavKey(val appointment: Item): Route
+
+    @Serializable
+    data class AttachFileScreenNavKey(val item: Item): Route{
+    }
+    @Serializable
+    data class AttachImageScreenNavKey(val item: Item): Route
+
     @Serializable
     data object AppointmentsScreenNavKey: Route
     @Serializable
@@ -64,6 +74,9 @@ sealed interface Route: NavKey{
     data object DurationNavKey: Route
     @Serializable
     data object DevScreenNavKey: Route
+    @Serializable
+    data class FileViewerScreenNavKey(val item: Item): Route
+
     @Serializable
     data object MedicineNavKey: Route
     @Serializable
@@ -134,6 +147,7 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                 is Route.AppointmentScreenNavKey -> {
                     NavEntry(
                         key = navKey) {
+                        println("AppointmentScreenNavKey ${navKey.appointment.heading}")
                         AppointmentScreen(navKey.appointment, modifier = modifier, {
                             backStack.removeLastOrNull()
                         }, navigate = {
@@ -145,13 +159,40 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                     NavEntry(
                         key = navKey) {
                         AppointmentsScreen(
-                            onEdit = {item->
+                             onEdit = {item->
                                 backStack.add(ItemEditorNavKey(item))
                             }
                             ,navigate = {
                                 backStack.add(it)
                             },
                             modifier = modifier
+                        )
+                    }
+                }
+                is Route.AttachFileScreenNavKey -> {
+                    NavEntry(
+                        key = navKey) {
+                        FileAttachScreen(
+                            modifier = modifier,
+                            item = navKey.item,
+                            navigate = {
+                                backStack.add(it)
+                            },
+                            onBack = {
+                                backStack.removeLastOrNull()
+                            }
+                        )
+                    }
+                }
+                is Route.AttachImageScreenNavKey -> {
+                    NavEntry(
+                        key = navKey) {
+                        AttachImageScreen(
+                            modifier = modifier,
+                            item = navKey.item,
+                            navigate = {
+                                backStack.add(it)
+                            }
                         )
                     }
                 }
@@ -179,6 +220,15 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                         )
                     }
                 }
+                is Route.FileViewerScreenNavKey -> {
+                    NavEntry(
+                        key = navKey) {
+                        FileViewerScreen(navKey.item, onBack = {
+                            backStack.removeLastOrNull()
+                        })
+                    }
+                }
+
                 is Route.MentalStatsScreenNavKey -> {
                     NavEntry(
                         key = navKey) {

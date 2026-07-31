@@ -55,35 +55,31 @@ fun TodoScreen(
             when (event) {
                 is ChannelEvent.AddList->{
                     //navigate(EditListNavKey(it.id))
-
                 }
-                //is TodoEvent.Navigate -> navigate(event.navKey)
                 is ChannelEvent.Edit -> {
                     navigate(ItemEditorNavKey(event.item))
                 }
                 is ChannelEvent.Navigate ->{
                     navigate(event.navKey)
                 }
-
                 is ChannelEvent.ShowAddItemDialog -> {
                     showAddItemDialog = true
                 }
-
                 is ChannelEvent.ShowMessage -> {
                     println("show message")
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
-
                 is ChannelEvent.ShowProgressBar -> {
                     println("show progress bar")
                 }
-
             }
         }
     }
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = {}){
+            FloatingActionButton(onClick = {
+                showAddItemDialog = true
+            }){
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
             }
 
@@ -98,7 +94,6 @@ fun TodoScreen(
             })
     }
     if (showAddItemDialog) {
-        println("show add item dialog")
         AddItemBottomSheet(
             defaultItemSettings = DefaultItemSettings(),
             onDismiss = {
@@ -117,7 +112,7 @@ fun ItemList(
     onEvent: (ItemEvent) -> Unit,
     sortEvent: (SortEvent) -> Unit) {
     LazyColumn(modifier = modifier.fillMaxWidth()){
-        item{
+       item{
             SortBar(onEvent = sortEvent)
         }
         items(state.items){item->

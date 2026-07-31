@@ -36,7 +36,7 @@ fun ProjectsScreen(onNavigate: (NavKey)->Unit){
     val viewModel: ProjectsViewModel = viewModel{
         ProjectsViewModel(LucindaApplication.appModule.repository)
     }
-    val state = viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val topAppBarState = TopAppbarModule.topAppBarState.collectAsStateWithLifecycle()
     var showAddItemBottomSheet by remember { mutableStateOf(false) }
@@ -50,11 +50,9 @@ fun ProjectsScreen(onNavigate: (NavKey)->Unit){
                         state = topAppBarState.value,
                         onEvent = { appBarEvent ->
                             println("appBarEvent $appBarEvent")
-                            //mainViewModel.onEvent(appBarEvent)
                         })
                 }, onEvent = { event ->
                     println("onEvent $event")
-                    //devViewModel.onEvent(event)
                 }
             )
         }, floatingActionButton = {
@@ -64,15 +62,13 @@ fun ProjectsScreen(onNavigate: (NavKey)->Unit){
         }
 
     ) {padding->
-        ProjectsList(state = state.value, onEvent = viewModel::onEvent, modifier = Modifier.padding(padding))
+        ProjectsList(state = state, onEvent = viewModel::onEvent, modifier = Modifier.padding(padding))
     }
     LaunchedEffect(viewModel) {
         viewModel.eventFlow.collect { event ->
             when (event) {
                 is ProjectsChannel.Edit -> {
-                    //editItem(event.item)
                     onNavigate(ItemEditorNavKey(event.item))
-                    //println("editItem(Item: ${event.item.heading})")
                 }
 
                 ProjectsChannel.ShowAddItemDialog -> {
@@ -86,7 +82,7 @@ fun ProjectsScreen(onNavigate: (NavKey)->Unit){
     }
     if( showAddItemBottomSheet){
         AddItemBottomSheet(
-            defaultItemSettings = state.value.defaultItemSettings,
+            defaultItemSettings = state.defaultItemSettings,
             onDismiss = {
                 showAddItemBottomSheet = false
             },

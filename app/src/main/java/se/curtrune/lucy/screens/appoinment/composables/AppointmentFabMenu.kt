@@ -53,12 +53,13 @@ fun AppointmentFabMenu(onEvent: (AppointmentFabMenuEvent)->Unit){
 }
 
 val items = listOf(
+    FabMenuItem("add image", event = AppointmentFabMenuEvent.AddImage),
     FabMenuItem("attach file", event = AppointmentFabMenuEvent.AttachFile),
     FabMenuItem("add contact", event = AppointmentFabMenuEvent.AddContact),
     FabMenuItem("add voice recording", event = AppointmentFabMenuEvent.AddVoiceRecording),
     FabMenuItem("add to timeline", event = AppointmentFabMenuEvent.AddToTimeLine),
     FabMenuItem("add checkable note", event = AppointmentFabMenuEvent.AddCheckableNote),
-    //FabMenuItem("add description", event = AppointmentEvent.AddDescription),
+    FabMenuItem("add script", event = AppointmentFabMenuEvent.AddScript),
 )
 
 
@@ -71,13 +72,11 @@ data class FabMenuItem(
 
 sealed interface AppointmentFabMenuEvent{
     data object AddContact: AppointmentFabMenuEvent
+    data object AddImage: AppointmentFabMenuEvent
+    data object AddScript: AppointmentFabMenuEvent
     data object AddVoiceRecording: AppointmentFabMenuEvent
     data object AddToTimeLine: AppointmentFabMenuEvent
     data object AttachFile: AppointmentFabMenuEvent
     data object AddCheckableNote: AppointmentFabMenuEvent
     data object Pending: AppointmentFabMenuEvent
-}
-
-enum class MenuAction{
-    ATTACH_FILE, ADD_CONTACT, ADD_VOICE_RECORDING, ADD_SUMMARY, ADD_DESCRIPTION, PENDING
 }

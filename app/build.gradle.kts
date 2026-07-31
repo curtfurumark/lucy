@@ -120,6 +120,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose-android:2.10.0")
 
     implementation("androidx.annotation:annotation:1.9.1")
+    implementation("com.google.accompanist:accompanist-permissions:0.37.3")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")

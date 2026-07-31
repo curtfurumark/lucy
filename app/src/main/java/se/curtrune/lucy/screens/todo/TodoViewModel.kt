@@ -29,13 +29,32 @@ import java.util.Comparator
 class TodoViewModel : ViewModel() {
     private val _state = MutableStateFlow(TodoState())
     val state = _state.asStateFlow()
-    //private val appBarState = TopAppbarModule.topAppBarState
     private val repository = LucindaApplication.appModule.repository
-    //private val topAppbarModule = TopAppbarModule
     private var items: MutableList<Item> = mutableListOf()
+    //private var items: List<Item> =emptyList()
     private val _channel = Channel<ChannelEvent>()
     val channel = _channel.receiveAsFlow()
 
+
+
+
+
+    init {
+        //items = repository.selectItems(State.TODO).toMutableList()
+        //items.sortedBy { it->it.targetDate }
+        //items.sortWith(Comparator.comparingLong() { it.compare() })
+        _state.update { it.copy(
+            items = selectItems()
+        ) }
+        TopAppbarModule.setTitle("todo/att göra")
+        TopAppbarModule.filterCallback = { filter ->
+            filter(filter)
+        }
+        TopAppbarModule.searchScopeCallback = { everywhere ->
+            setSearchScope(everywhere)
+
+        }
+    }
     fun delete(item: Item) {
         println("TodoViewModel.delete(${item.heading})")
         val stat = repository.delete(item)
@@ -50,35 +69,17 @@ class TodoViewModel : ViewModel() {
         ) }
         showProgressBar(false)
     }
-
+    private fun editItem(item: Item){
+        viewModelScope.launch {
+            _channel.send(ChannelEvent.Edit(item))
+        }
+    }
     fun filter(filter: String) {
         val filteredItems = items.filter { item: Item -> item.contains(filter)  }
         _state.update { it.copy(
             items = filteredItems
         ) }
     }
-
-    init {
-        items = repository.selectItems(State.TODO).toMutableList()
-        items.sortWith(Comparator.comparingLong() { it.compare() })
-        _state.update { it.copy(
-            items = items
-        ) }
-        TopAppbarModule.setTitle("todo/att göra")
-        TopAppbarModule.filterCallback = { filter ->
-            filter(filter)
-        }
-        TopAppbarModule.searchScopeCallback = { everywhere ->
-            setSearchScope(everywhere)
-
-        }
-    }
-    private fun editItem(item: Item){
-        viewModelScope.launch {
-            _channel.send(ChannelEvent.Edit(item))
-        }
-    }
-
     private fun insert(item: Item) {
         println("TodoViewModel.insert(Item)")
         val itemWithID = repository.insert(item)
@@ -88,10 +89,11 @@ class TodoViewModel : ViewModel() {
             return
         }
         items.add(itemWithID)
-        //TODO, sort items, is that necessary?
         items.sortWith(Comparator.comparingLong() { it.compare() })
+        println("first item ${items.first()}")
+        //showMessage()
         _state.update { it.copy(
-            items = items
+            items = selectItems()
         ) }
     }
     private fun navigate(navKey: NavKey){
@@ -99,6 +101,12 @@ class TodoViewModel : ViewModel() {
             _channel.send(ChannelEvent.Navigate(navKey))
 
         }
+    }
+    private fun selectItems(): List<Item>{
+        items = repository.selectItems(State.TODO).toMutableList()
+        items.sortWith(Comparator.comparingLong() { it.compare() })
+        return items
+
     }
     private fun setSearchScope(everywhere: Boolean){
         if(everywhere){

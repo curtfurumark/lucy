@@ -21,13 +21,15 @@ class ProjectsViewModel(private val repository: Repository) : ViewModel() {
     private val eventChannel = Channel<ProjectsChannel>()
     val eventFlow = eventChannel.receiveAsFlow()
     val state = _state.asStateFlow()
-    var items: List<Item> = emptyList()
-    @JvmField
-    var currentParent: Item? = null
+    private var items: List<Item> = emptyList()
+    private var currentParent: Item? = null
     private var numberTabs = 0
     init {
         println("ProjectsViewModel() init{}")
         currentParent = repository.getRootItem(SettingsStore.Root.PROJECTS)
+        if(currentParent== null){
+            message("projects root not found")
+        }
         items = repository.selectChildren(currentParent)
         _state.update{
             it.copy(
@@ -88,20 +90,29 @@ class ProjectsViewModel(private val repository: Repository) : ViewModel() {
     }
 
     private fun insertItem(item: Item) {
-        println("...insertItem(${item.heading})")
-        val itemWithID = repository.insert(item)
-        if (itemWithID == null) {
-            println("error inserting item")
-            viewModelScope.launch {
-                eventChannel.send(ProjectsChannel.ShowMessage("error insert item"))
-            }
+        if(currentParent == null){
+            message("current parent is null...")
             return
         }
+        item.parentId = currentParent!!.id
+        println("...insertItem(${item.heading})")
+        println(" parent id: ${item.parentId}")
+        val itemWithID = repository.insertChild(currentParent!!, item)
+        message("inserted ${item.heading}, parentID ${item.parentId}")
         _state.update {
             it.copy(
-                items = it.items + itemWithID,
+                items = selectChildren(currentParent!!)
             )
         }
+    }
+    private fun message(message: String){
+        println("...message:(${message})")
+        viewModelScope.launch {
+            eventChannel.send(ProjectsChannel.ShowMessage(message))
+        }
+    }
+    private fun selectChildren(parent: Item): List<Item>{
+        return repository.selectChildren(parent)
     }
 
     private fun showAddItemDialog() {
@@ -153,6 +164,7 @@ class ProjectsViewModel(private val repository: Repository) : ViewModel() {
         println("...onItemClick(${item.heading})")
         if(item.hasChild()){
             currentParent = item
+            //println("...currentParent: ${currentParent.heading}")
             items = repository.selectChildren(item)
             _state.update{
                 it.copy(
