@@ -32,8 +32,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.screens.navigation.EditTemplateScreenNavKey
-import se.curtrune.lucy.screens.templates.TemplateEvent
 import se.curtrune.lucy.screens.templates.composables.TemplateTextField
 import se.curtrune.lucy.screens.templates.edit.EditTemplateCard
 import java.time.LocalTime

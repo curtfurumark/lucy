@@ -37,16 +37,18 @@ class SettingsViewModel: ViewModel(){
             mentalFlag = userSettings.mentalFlag,
             panicOption = userSettings.panicOption,
             initialScreen = userSettings.initialScreen,
-            //showAppointments = userSettings.showAppointments,
+            showAppointments = userSettings.showAppointmentsLink,
             showProjects = userSettings.showProjects,
             showMedicine = userSettings.showMedicine,
             showDuration = userSettings.showDuration,
             showDevScreen = userSettings.showDevScreen,
             showMentalStats = userSettings.showMentalStatsScreen,
             showTimeLine = userSettings.showTimeLine,
+            showToDo = userSettings.showToDo,
             isDevMode = userSettings.devMode
         ) }
         TopAppbarModule.setTitle("Inställningar")
+        println("show projects: ${userSettings.showProjects}")
     }
     private fun addCategory(category: String){
         userSettings.addCategory(category)
@@ -168,7 +170,12 @@ class SettingsViewModel: ViewModel(){
             is UserEvent.ShowMentalStats -> {
                 setShowMentalStats(event.visible)
             }
+
+            is UserEvent.ShowAppointments -> setShowAppointments(event.show)
         }
+    }
+    private fun setShowAppointments(show: Boolean){
+        userSettings.showAppointmentsLink = show
     }
 
     private fun setShowMentalStats(visible: Boolean) {

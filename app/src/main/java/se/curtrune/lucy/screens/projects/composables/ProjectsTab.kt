@@ -18,7 +18,7 @@ import androidx.navigation3.runtime.NavKey
 import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.composables.add_item.AddItemBottomSheet
-import se.curtrune.lucy.screens.navigation.ItemEditorNavKey
+import se.curtrune.lucy.screens.navigation.Route.ItemEditorNavKey
 import se.curtrune.lucy.screens.projects.ProjectsChannel
 import se.curtrune.lucy.screens.projects.ProjectsEvent
 import se.curtrune.lucy.screens.projects.ProjectsViewModel

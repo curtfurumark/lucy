@@ -19,6 +19,7 @@ sealed interface UserEvent {
     data class SetInitialScreen(val initialScreen: InitialScreen) : UserEvent
     data class SetPanicOption(val panicOption: PanicOption) : UserEvent
     data class DevMode(val devMode: Boolean) : UserEvent
+    data class ShowAppointments(val show: Boolean): UserEvent
     data class ShowDevScreen(val visible : Boolean) : UserEvent
     data class ShowMedicine(val visible : Boolean) : UserEvent
     data class ShowMentalStats(val visible: Boolean): UserEvent

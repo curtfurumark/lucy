@@ -46,7 +46,7 @@ fun SettingsScreen(){
         }
 
     ) {padding->
-        UserSettings(modifier = Modifier.padding(padding),state = state, onEvent = viewModel::onEvent)
+        UserSettingsComposable(modifier = Modifier.padding(padding),state = state, onEvent = viewModel::onEvent)
     }
 }
 

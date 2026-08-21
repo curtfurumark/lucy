@@ -57,6 +57,7 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
 
     val scrollState = rememberScrollState()
     val settings = LucindaApplication.appModule.userSettings
+    println("settings. ${settings.showProjects}")
     ModalDrawerSheet(
         modifier = Modifier.verticalScroll(scrollState)
             .fillMaxSize()
@@ -104,7 +105,7 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                     },
                     selected = false,
                     onClick = {
-                        onClick(MonthCalendarNavKey(LocalDate.now().toString()))
+                        onClick(Route.MonthCalendarNavKey(LocalDate.now().toString()))
                     }
                 )
                 if( state.showAppointmentsLink) {
@@ -139,9 +140,11 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                 },
                 onClick = {
                     println("projects on click")
-                    onClick(ProjectsScreenNavKey)
+                    onClick(Route.ProjectsScreenNavKey)
                 }
             )
+        }
+        if(state.showListLink){
             NavigationDrawerItem(
                 label = { Text(text = stringResource(R.string.lists))},
                 selected = false,
@@ -151,39 +154,26 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                         contentDescription = "listor")
                        },
                 onClick = {
-                    onClick(TabbedProjectsScreenNavKey)
+                    onClick(Route.TabbedProjectsScreenNavKey)
                 }
             )
         }
-        //Spacer(modifier = Modifier.height(32.dp))
-        if( false) {
+
+        if(false) {
             NavigationDrawerItem(
-                label = { Text(text = "matisse") },
+                label = { Text(text = "my templates") },
                 selected = false,
                 onClick = {
-                    println("settings on click")
-                    onClick(WebScreenNavKey)
-
+                    onClick(Route.TemplatesScreenNavKey)
                 },
                 icon = {
                     Icon(
-                        imageVector = Icons.Default.Settings,
+                        imageVector = Icons.Default.Album,
                         contentDescription = "settings"
                     )
-                },
+                }
             )
         }
-        NavigationDrawerItem(
-            label = { Text(text ="my templates")} ,
-            selected = false,
-            onClick = {
-                onClick(TemplatesScreenNavKey)
-            },
-            icon = { Icon(
-                imageVector = Icons.Default.Album,
-                contentDescription = "settings")
-            }
-        )
         if( state.showMedicineLink) {
             Column(modifier = Modifier.fillMaxWidth()) {
                 NavigationDrawerItem(
@@ -201,22 +191,7 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                 )
             }
         }
-        if( state.showAppointmentsLink){
-            //Column(modifier = Modifier.fillMaxWidth()) {
-                NavigationDrawerItem(
-                    label = { Text(stringResource(R.string.appointments)) },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.Medication,
-                            contentDescription = "appointments"
-                        )
-                    },
-                    selected = false,
-                    onClick = {
-                        onClick(Route.AppointmentsScreenNavKey)
-                    }
-                )
-        }
+
         if (state.showDevScreenLink) {
             NavigationDrawerItem(
                 label = { Text(text = "dev screen") },
@@ -232,14 +207,16 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                 }
             )
         }
-        NavigationDrawerItem(
-            label = { Text(text = "timeline") },
-            selected = false,
-            icon = {Icon(imageVector = Icons.Default.Star, contentDescription = "timeline")},
-            onClick = {
-                onClick(Route.TimeLineScreen)
-            }
-        )
+        if(state.showTimeLine) {
+            NavigationDrawerItem(
+                label = { Text(text = "timeline") },
+                selected = false,
+                icon = { Icon(imageVector = Icons.Default.Star, contentDescription = "timeline") },
+                onClick = {
+                    onClick(Route.TimeLineScreen)
+                }
+            )
+        }
         //Spacer(modifier = Modifier.height(16.dp))
         NavigationDrawerItem(
             label = { Text(text = stringResource(R.string.settings)) },
@@ -247,7 +224,7 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
             icon = {Icon(imageVector = Icons.Default.Settings, contentDescription = "settings")},
             onClick = {
                 println("settings on click")
-                onClick(SettingsScreenNavKey)
+                onClick(Route.SettingsScreenNavKey)
             }
         )
         if( state.showMentalStats){
@@ -257,7 +234,7 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                 icon = {Icon(imageVector = Icons.Default.Album, contentDescription = "mental stats")},
                 selected = false,
                 onClick = {
-                    onClick(MentalStatsScreenNavKey)
+                    onClick(Route.MentalStatsScreenNavKey)
                 }
             )
         }
@@ -273,7 +250,7 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                 label = { Text(text = "templates") },
                 selected = false,
                 onClick = {
-                    onClick(TemplatesScreenNavKey)
+                    onClick(Route.TemplatesScreenNavKey)
                 }
             )
         }
@@ -308,22 +285,37 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                 onClick(Route.MessageBoardNavKey)
             }
         )
-        NavigationDrawerItem(
-            label = { Text(text = "min manual") },
-            selected = false,
-            icon = {Icon(imageVector = Icons.Default.List, contentDescription = "min manual")},
-            onClick = {
-                onClick(Route.MyManualScreenNavKey)
-            }
-        )
-        NavigationDrawerItem(
-            label = { Text(text = "mental stats") },
-            selected = false,
-            icon = {Icon(imageVector = Icons.Default.Star, contentDescription = "bullet list")},
-            onClick = {
-                onClick(Route.MentalStatsScreenNavKey)
-            }
-        )
+        if(state.showMyManual) {
+            NavigationDrawerItem(
+                label = { Text(text = "min manual") },
+                selected = false,
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.List,
+                        contentDescription = "min manual"
+                    )
+                },
+                onClick = {
+                    onClick(Route.MyManualScreenNavKey)
+                }
+            )
+        }
+        if(state.showMentalStats) {
+            NavigationDrawerItem(
+                label = { Text(text = "mental stats") },
+                selected = false,
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = "bullet list"
+                    )
+                },
+                onClick = {
+                    onClick(Route.MentalStatsScreenNavKey)
+                }
+            )
+        }
+        Spacer(modifier = Modifier.height(400.dp))
     }
 }
 

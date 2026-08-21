@@ -1,19 +1,13 @@
 package se.curtrune.lucy.screens.todo.composables
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -23,21 +17,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
 import se.curtrune.lucy.composables.add_item.AddItemBottomSheet
 import se.curtrune.lucy.composables.add_item.DefaultItemSettings
-import se.curtrune.lucy.composables.item.CheckableItemCard
-import se.curtrune.lucy.screens.top_appbar.FlexibleTopBar
-import se.curtrune.lucy.screens.top_appbar.LucindaTopAppBar
-import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
 import se.curtrune.lucy.screens.item_editor.ItemEvent
-import se.curtrune.lucy.screens.navigation.ItemEditorNavKey
-import se.curtrune.lucy.screens.timeline.composables.SortBar
-import se.curtrune.lucy.screens.timeline.composables.SortEvent
-import se.curtrune.lucy.screens.todo.ChannelEvent
-import se.curtrune.lucy.screens.todo.TodoState
+import se.curtrune.lucy.screens.navigation.Route.ItemEditorNavKey
+import se.curtrune.lucy.screens.todo.TodoChannel
 import se.curtrune.lucy.screens.todo.TodoViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,27 +36,29 @@ fun TodoScreen(
     val eventFlow = viewModel.channel
     val context = LocalContext.current
     var showAddItemDialog by remember { mutableStateOf(false) }
+    var showProgressBar by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         eventFlow.collect { event ->
             when (event) {
-                is ChannelEvent.AddList->{
+                is TodoChannel.AddList->{
                     //navigate(EditListNavKey(it.id))
                 }
-                is ChannelEvent.Edit -> {
+                is TodoChannel.Edit -> {
                     navigate(ItemEditorNavKey(event.item))
                 }
-                is ChannelEvent.Navigate ->{
+                is TodoChannel.Navigate ->{
                     navigate(event.navKey)
                 }
-                is ChannelEvent.ShowAddItemDialog -> {
+                is TodoChannel.ShowAddItemDialog -> {
                     showAddItemDialog = true
                 }
-                is ChannelEvent.ShowMessage -> {
+                is TodoChannel.ShowMessage -> {
                     println("show message")
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
-                is ChannelEvent.ShowProgressBar -> {
+                is TodoChannel.ShowProgressBar -> {
                     println("show progress bar")
+                    showProgressBar = event.show
                 }
             }
         }
@@ -104,24 +92,9 @@ fun TodoScreen(
                 showAddItemDialog = false
             })
     }
-}
-@Composable
-fun ItemList(
-    modifier: Modifier = Modifier,
-    state: TodoState,
-    onEvent: (ItemEvent) -> Unit,
-    sortEvent: (SortEvent) -> Unit) {
-    LazyColumn(modifier = modifier.fillMaxWidth()){
-       item{
-            SortBar(onEvent = sortEvent)
-        }
-        items(state.items){item->
-            CheckableItemCard(
-                item,
-                onEvent = onEvent,
-                onCheckValueChanged = {})
-            Spacer(modifier = Modifier.height(2.dp))
-        }
+    if(showProgressBar){
+        println("show progressbar")
     }
 }
+
 

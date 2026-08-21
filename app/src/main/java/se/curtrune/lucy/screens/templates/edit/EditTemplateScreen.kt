@@ -25,7 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
-import se.curtrune.lucy.screens.navigation.TemplatesScreenNavKey
+import se.curtrune.lucy.screens.navigation.Route.TemplatesScreenNavKey
 
 @Composable
 fun EditTemplateScreen(templateID: Long, navigate: (NavKey) -> Unit){

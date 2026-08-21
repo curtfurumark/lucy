@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.screens.navigation.ItemEditorNavKey
+import se.curtrune.lucy.screens.navigation.Route.ItemEditorNavKey
 import se.curtrune.lucy.screens.timeline.composables.SortEvent
 import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
 

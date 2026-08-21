@@ -14,7 +14,7 @@ import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.screens.navigation.Route.CreateTemplateScreenNavKey
-import se.curtrune.lucy.screens.navigation.EditTemplateScreenNavKey
+import se.curtrune.lucy.screens.navigation.Route.EditTemplateScreenNavKey
 import se.curtrune.lucy.screens.templates.TemplateChannel
 import se.curtrune.lucy.screens.templates.TemplateEvent
 import se.curtrune.lucy.screens.templates.templates.TemplatesState

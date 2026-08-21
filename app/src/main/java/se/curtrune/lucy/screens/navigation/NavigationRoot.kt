@@ -19,9 +19,7 @@ import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.ui.NavDisplay
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
-import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.screens.appoinment.composables.AppointmentScreen
 import se.curtrune.lucy.screens.appointments.composables.AppointmentsScreen
 import se.curtrune.lucy.screens.attach_image.AttachImageScreen
@@ -40,8 +38,8 @@ import se.curtrune.lucy.screens.monthcalendar.composables.MonthCalendarScreen
 import se.curtrune.lucy.screens.my_day.composables.MyDayScreen
 import se.curtrune.lucy.screens.my_manual.MyManualScreen
 import se.curtrune.lucy.screens.projects.composables.ProjectsScreen
-import se.curtrune.lucy.screens.tabbed.TabbedProjectsScreen
 import se.curtrune.lucy.screens.settings.composables.SettingsScreen
+import se.curtrune.lucy.screens.tabbed.TabbedProjectsScreen
 import se.curtrune.lucy.screens.templates.create.CreateTemplateScreen
 import se.curtrune.lucy.screens.templates.edit.EditTemplateScreen
 import se.curtrune.lucy.screens.templates.templates.TemplatesScreen
@@ -50,84 +48,6 @@ import se.curtrune.lucy.screens.todo.composables.TodoScreen
 import se.curtrune.lucy.screens.voice_recording_screen.VoiceRecordingScreen
 import se.curtrune.lucy.screens.webscreen.WebScreen
 import se.curtrune.lucy.screens.week_calendar.composables.WeekCalendarScreen
-
-
-sealed interface Route: NavKey{
-    @Serializable
-    data class AppointmentScreenNavKey(val appointment: Item): Route
-
-    @Serializable
-    data class AttachFileScreenNavKey(val item: Item): Route{
-    }
-    @Serializable
-    data class AttachImageScreenNavKey(val item: Item): Route
-
-    @Serializable
-    data object AppointmentsScreenNavKey: Route
-    @Serializable
-    data object BulletListScreenNavKey: Route
-    @Serializable
-    data object CreateTemplateScreenNavKey: Route
-    @Serializable
-    data class DayCalendarNavKey(val date: String): Route
-    @Serializable
-    data object DurationNavKey: Route
-    @Serializable
-    data object DevScreenNavKey: Route
-    @Serializable
-    data class FileViewerScreenNavKey(val item: Item): Route
-
-    @Serializable
-    data object MedicineNavKey: Route
-    @Serializable
-    data object MentalStatsScreenNavKey: Route
-    @Serializable
-    data object MessageBoardNavKey: Route
-
-   @Serializable
-   data object MyDayScreenNavKey: Route
-    @Serializable
-    data object MyManualScreenNavKey: Route
-    @Serializable
-    data object TimeLineScreen: Route
-    @Serializable
-    data object TodoScreenNavKey: Route
-
-    @Serializable
-    data object VoiceRecordingScreenNavKey: Route
-    @Serializable
-    data class WeekCalendarNavKey(val date: String): Route
-}
-
-@Serializable
-data class  EditListNavKey(val parent: Item): NavKey
-
-@Serializable
-data class EditTemplateScreenNavKey(val templateID: Long): NavKey
-
-@Serializable
-data class MonthCalendarNavKey(val date: String): NavKey
-
-@Serializable
-data class ItemEditorNavKey(val item: @Contextual Item): NavKey
-
-@Serializable
-data object SettingsScreenNavKey: NavKey
-
-@Serializable
-data object ProjectsScreenNavKey: NavKey
-
-@Serializable
-data object MentalStatsScreenNavKey: NavKey
-@Serializable
-data object TabbedProjectsScreenNavKey: NavKey
-
-@Serializable
-data object TemplatesScreenNavKey: NavKey
-
-@Serializable
-data object WebScreenNavKey: NavKey
-
 
 @OptIn(ExperimentalAnimationApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
@@ -160,7 +80,7 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                         key = navKey) {
                         AppointmentsScreen(
                              onEdit = {item->
-                                backStack.add(ItemEditorNavKey(item))
+                                backStack.add(Route.ItemEditorNavKey(item))
                             }
                             ,navigate = {
                                 backStack.add(it)
@@ -267,13 +187,13 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                         VoiceRecordingScreen(modifier = modifier)
                     }
                 }
-                is EditListNavKey -> {
+                is Route.EditListNavKey -> {
                     NavEntry(
                         key = navKey) {
                         EditableBulletListScreen(item = navKey.parent, modifier = modifier)
                     }
                 }
-                is EditTemplateScreenNavKey -> {
+                is Route.EditTemplateScreenNavKey -> {
                     NavEntry(key = navKey)
                     {
                             EditTemplateScreen(navKey.templateID, navigate = {
@@ -281,7 +201,7 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                             })
                     }
                 }
-                is ItemEditorNavKey -> {
+                is Route.ItemEditorNavKey -> {
                     NavEntry(
                         key = navKey) {
                         ItemEditorScreen(navKey.item, onSave = {
@@ -298,19 +218,14 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                             })
                     }
                 }
-                is MentalStatsScreenNavKey -> {
-                    NavEntry(
-                        key = navKey) {
-                        MentalStatsScreen()
-                    }
-                }
+
                 is Route.MessageBoardNavKey->{
                     NavEntry(
                         key = navKey) {
                         MessageBoardScreen()
                     }
                 }
-                is ProjectsScreenNavKey -> {
+                is Route.ProjectsScreenNavKey -> {
                     NavEntry(
                         key = navKey) {
                         ProjectsScreen(onNavigate = {
@@ -326,7 +241,7 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                         })
                     }
                 }
-                is TabbedProjectsScreenNavKey -> {
+                is Route.TabbedProjectsScreenNavKey -> {
                     NavEntry(
                         key = navKey) {
                         TabbedProjectsScreen(navigate = {
@@ -334,7 +249,7 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                         })
                     }
                 }
-                is TemplatesScreenNavKey -> {
+                is Route.TemplatesScreenNavKey -> {
                     NavEntry(key = navKey){
                         TemplatesScreen(
                             navigate ={
@@ -353,10 +268,10 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                     }
                 }
 
-                is WebScreenNavKey -> {
+                is Route.WebScreenNavKey -> {
                     NavEntry(
                         key = navKey) {
-                        WebScreen()
+                        WebScreen(url = navKey.url)
                     }
                 }
                 is Route.WeekCalendarNavKey -> {
@@ -373,7 +288,7 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                     }
                 }
 
-                is MonthCalendarNavKey -> {
+                is Route.MonthCalendarNavKey -> {
                     NavEntry(
                         key = navKey
                     ) {
@@ -382,7 +297,7 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                         })
                     }
                 }
-                is SettingsScreenNavKey -> {
+                is Route.SettingsScreenNavKey -> {
                     NavEntry(
                         key = navKey) {
                             SettingsScreen()

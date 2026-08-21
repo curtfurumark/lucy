@@ -17,8 +17,8 @@ import se.curtrune.lucy.composables.add_item.DefaultItemSettings
 import se.curtrune.lucy.modules.PostponeWorker
 import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
 import se.curtrune.lucy.screens.item_editor.ItemEvent
-import se.curtrune.lucy.screens.navigation.EditListNavKey
-import se.curtrune.lucy.screens.navigation.ItemEditorNavKey
+import se.curtrune.lucy.screens.navigation.Route.EditListNavKey
+import se.curtrune.lucy.screens.navigation.Route.ItemEditorNavKey
 import se.curtrune.lucy.util.Logger
 import java.time.LocalDate
 import java.time.LocalTime

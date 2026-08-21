@@ -19,7 +19,7 @@ import androidx.navigation3.runtime.NavKey
 import se.curtrune.lucy.screens.medicine.MedicineChannelEvent
 import se.curtrune.lucy.screens.medicine.MedicineEvent
 import se.curtrune.lucy.screens.medicine.MedicineViewModel
-import se.curtrune.lucy.screens.navigation.ItemEditorNavKey
+import se.curtrune.lucy.screens.navigation.Route.ItemEditorNavKey
 
 
 @Composable

@@ -103,7 +103,7 @@ fun ScreensSettings(state: UserState, onEvent: (UserEvent) -> Unit) {
             Spacer(modifier = Modifier.weight(1f))
             Checkbox(checked = showAppointments, onCheckedChange = {
                 showAppointments = it
-                //onEvent(UserEvent.ShowDevScreen(it))
+                onEvent(UserEvent.ShowAppointments(it))
             })
         }
         Row(

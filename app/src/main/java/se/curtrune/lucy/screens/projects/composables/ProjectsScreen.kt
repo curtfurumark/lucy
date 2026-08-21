@@ -23,7 +23,7 @@ import se.curtrune.lucy.composables.add_item.AddItemBottomSheet
 import se.curtrune.lucy.screens.top_appbar.FlexibleTopBar
 import se.curtrune.lucy.screens.top_appbar.LucindaTopAppBar
 import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
-import se.curtrune.lucy.screens.navigation.ItemEditorNavKey
+import se.curtrune.lucy.screens.navigation.Route.ItemEditorNavKey
 import se.curtrune.lucy.screens.projects.ProjectsChannel
 import se.curtrune.lucy.screens.projects.ProjectsEvent
 import se.curtrune.lucy.screens.projects.ProjectsViewModel

@@ -19,9 +19,10 @@ data class UserState(
     var initialScreen: InitialScreen = InitialScreen.CALENDER_DATE,
     var showAppointments: Boolean = true,
     var showDevScreen: Boolean = false,
+    var showDuration: Boolean = false,
     var showProjects: Boolean = false,
     var showMedicine: Boolean = false,
-    var showDuration: Boolean = false,
+    var showMyManual: Boolean= false,
     var showTimeLine: Boolean = true,
     var showToDo: Boolean = false,
     var showMentalStats: Boolean = false

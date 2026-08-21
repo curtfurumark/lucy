@@ -143,13 +143,13 @@ class MainViewModel : ViewModel() {
         return internetWorker.isConnected()
     }
     private fun openNavigationDrawer(){
-        Logger.log("LucindaViewModel.openNavigationDrawer()")
+        Logger.log("MainViewModel.openNavigationDrawer()")
         viewModelScope.launch {
             navigationState.update { it.copy(
                 showMedicineLink = userSettings.showMedicine,
                 showDurationLink = userSettings.showDuration,
-                showProjectsLink = true,
-                showAppointmentsLink = true,
+                showProjectsLink = userSettings.showProjects,
+                showAppointmentsLink = userSettings.showAppointmentsLink,
                 showDevScreenLink = userSettings.showDevScreen,
                 showTodoScreen =  userSettings.showToDo,
                 showMentalStats = userSettings.showMentalStatsScreen
