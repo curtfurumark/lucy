@@ -1,4 +1,4 @@
-package se.curtrune.lucy.screens.item_editor.composables
+package se.curtrune.lucy.screens.edit.composables
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Card

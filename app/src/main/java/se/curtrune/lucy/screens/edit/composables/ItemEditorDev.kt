@@ -1,4 +1,4 @@
-package se.curtrune.lucy.screens.item_editor.composables
+package se.curtrune.lucy.screens.edit.composables
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -29,7 +29,7 @@ import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.persist.SettingsStore
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.classes.Type
-import se.curtrune.lucy.screens.item_editor.ItemEvent
+import se.curtrune.lucy.screens.edit.ItemEvent
 import se.curtrune.lucy.util.DateTImeConverter
 
 

@@ -1,6 +1,4 @@
-package se.curtrune.lucy.screens.item_editor
-
-import se.curtrune.lucy.classes.item.Item
+package se.curtrune.lucy.screens.edit
 
 interface ItemEditorChannel {
     data object ShowAddChildDialog: ItemEditorChannel

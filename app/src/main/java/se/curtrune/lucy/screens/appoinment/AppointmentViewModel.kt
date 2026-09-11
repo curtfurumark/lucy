@@ -11,11 +11,8 @@ import kotlinx.coroutines.launch
 import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.classes.Type
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.screens.appoinment.AppointmentState
 import se.curtrune.lucy.screens.appoinment.composables.AppointmentFabMenuEvent
-import se.curtrune.lucy.screens.item_editor.ItemEditorViewModel
 import se.curtrune.lucy.screens.navigation.Route
-import java.nio.file.Files.delete
 
 class AppointmentViewModel(private val appointment: Item): ViewModel() {
     val _state = MutableStateFlow(AppointmentState(appointment))

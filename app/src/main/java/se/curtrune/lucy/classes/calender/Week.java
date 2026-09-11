@@ -7,6 +7,7 @@ import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+//import kotlinx.datetime.LocalDate;
 
 import static se.curtrune.lucy.util.Logger.log;
 
@@ -21,6 +22,7 @@ public class Week {
         currentDate = LocalDate.now();
         firstDate = calculateFirstDateOfTheWeek(currentDate);
         lastDate = firstDate.plusDays(6);
+        //firstDate.
     }
     public Week(LocalDate date){
         if( VERBOSE) log("Week(LocalDate)", date.toString());

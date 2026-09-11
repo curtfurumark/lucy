@@ -16,8 +16,8 @@ android {
         applicationId = "se.curtrune.lucy"
         minSdk = 24
         targetSdk = 34
-        versionCode = 20
-        versionName = "the immortal story"
+        versionCode = 22
+        versionName = "flaming torch"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -62,31 +62,32 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.11.0")
     implementation("androidx.activity:activity-compose:1.13.0")
     implementation("androidx.core:core-ktx:1.19.0")
-    implementation(platform("androidx.compose:compose-bom:2026.08.00"))
+    implementation(platform("androidx.compose:compose-bom:2026.09.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3:1.5.0-alpha26")
+    implementation("androidx.compose.material3:material3:1.5.0-alpha28")
     implementation("io.coil-kt:coil-compose:2.7.0")
     implementation("androidx.lifecycle:lifecycle-service:2.11.0")
-    implementation("androidx.room:room-ktx:2.8.4")
-    implementation("androidx.compose.ui:ui-android:1.12.0")
+    implementation("androidx.room:room-ktx:2.8.5")
+    implementation("androidx.compose.ui:ui-android:1.12.1")
     implementation("androidx.test.espresso:espresso-core:3.7.0")
     implementation("androidx.fragment:fragment-compose:1.9.0")
     implementation("com.google.firebase:firebase-dataconnect:17.4.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-navigation3-android:2.11.0")
-    implementation("androidx.compose.runtime:runtime:1.12.0")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2026.08.00"))
+    implementation("androidx.compose.runtime:runtime:1.12.1")
+    androidTestImplementation(platform("androidx.compose:compose-bom:2026.09.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
     implementation("androidx.appcompat:appcompat:1.8.0")
     implementation("com.google.android.material:material:1.14.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.2")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.9.8")
-    implementation("androidx.navigation:navigation-ui-ktx:2.9.8")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.10.1")
+    implementation("androidx.navigation:navigation-ui-ktx:2.10.1")
     implementation ("androidx.compose.material:material-icons-extended")
     implementation("com.google.code.gson:gson:2.14.0")
     //implementation("org.jetbrains.kotlin.plugin.compose:2.1.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.8.0")
 
     //ktor
     implementation("io.ktor:ktor-client-android:3.5.2")
@@ -102,15 +103,15 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.11.0")
 
     //room
-    implementation("androidx.room:room-runtime:2.8.4")
+    implementation("androidx.room:room-runtime:2.8.5")
     //implementation("androidx.room:room-ktx:2.8.4")
-    ksp ("androidx.room:room-compiler:2.8.4")
+    ksp ("androidx.room:room-compiler:2.8.5")
 
 
 
     //navigation 3
-    implementation("androidx.navigation3:navigation3-ui:1.1.6")
-    implementation("androidx.navigation3:navigation3-runtime:1.1.6")
+    implementation("androidx.navigation3:navigation3-ui:1.1.7")
+    implementation("androidx.navigation3:navigation3-runtime:1.1.7")
     implementation("androidx.lifecycle:lifecycle-viewmodel-navigation3")
     //whatever
     //implementation("ch.qos.logback:logback-classic:1.5.19")

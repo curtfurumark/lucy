@@ -12,7 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.screens.daycalendar.composables.SwipeBackground
-import se.curtrune.lucy.screens.item_editor.ItemEvent
+import se.curtrune.lucy.screens.edit.ItemEvent
 
 @Composable
 fun SwipeAbleItem(item: Item, onEvent: (ItemEvent)->Unit, content: @Composable()()->Unit){

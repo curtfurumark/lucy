@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.screens.enchilada.EnchiladaState
-import se.curtrune.lucy.screens.item_editor.ItemEvent
+import se.curtrune.lucy.screens.edit.ItemEvent
 import se.curtrune.lucy.composables.item.CheckableItemCard
 
 @Composable

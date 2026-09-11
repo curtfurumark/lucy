@@ -1,6 +1,5 @@
 package se.curtrune.lucy.composables.top_app_bar
 
-import androidx.compose.foundation.content.MediaType.Companion.Text
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,9 +14,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import se.curtrune.lucy.composables.ColorCircle
-import se.curtrune.lucy.composables.MentalMeter
-import se.curtrune.lucy.screens.main.MainEvent
-import se.curtrune.lucy.screens.main.MainState
 import se.curtrune.lucy.screens.main.TopAppBarState
 import se.curtrune.lucy.screens.top_appbar.TopAppBarEvent
 

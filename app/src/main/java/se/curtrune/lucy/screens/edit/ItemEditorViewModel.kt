@@ -1,4 +1,4 @@
-package se.curtrune.lucy.screens.item_editor
+package se.curtrune.lucy.screens.edit
 
 import android.content.Context
 import androidx.lifecycle.LiveData

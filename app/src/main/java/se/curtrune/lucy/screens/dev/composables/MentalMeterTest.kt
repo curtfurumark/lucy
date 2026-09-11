@@ -7,9 +7,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import kotlinx.coroutines.flow.StateFlow
-import se.curtrune.lucy.classes.Mental
-import se.curtrune.lucy.composables.MentalMeter
 import se.curtrune.lucy.screens.dev.DevState
 
 @Composable

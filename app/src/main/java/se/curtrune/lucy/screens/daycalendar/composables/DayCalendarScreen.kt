@@ -30,11 +30,12 @@ import java.time.LocalDate
 @Composable
 fun DayCalendarScreen(date: String, navigate: (NavKey) -> Unit, modifier: Modifier = Modifier){
     println("DayCalendarScreen(date: $date)")
-    val viewModel: DayCalendarViewModel = viewModel(){
+    val viewModel2: DayCalendarViewModel = viewModel(){
         DayCalendarViewModel.factory(LocalDate.parse(date)).create(DayCalendarViewModel::class.java)
     }
-    //commented 20260302
-    //viewModel.onEvent(DayCalendarEvent.CurrentDate(LocalDate.parse(date)))
+    val viewModel = viewModel{
+        DayCalendarViewModel(date = LocalDate.parse(date))
+    }
 
     val state by viewModel.state.collectAsState()
     var showAddItemDialog by remember{
@@ -58,8 +59,6 @@ fun DayCalendarScreen(date: String, navigate: (NavKey) -> Unit, modifier: Modifi
         })
     }
 
-    val scope = rememberCoroutineScope()
-    //scope.launch {
     LaunchedEffect(Unit ) {
         viewModel.eventFlow.collect{ event->
             when(event){
@@ -68,7 +67,6 @@ fun DayCalendarScreen(date: String, navigate: (NavKey) -> Unit, modifier: Modifi
                 }
 
                 is DayCalendarChannel.ShowAddItemBottomSheet -> {
-                    println("channel setting showAddItemDialog to true")
                     showAddItemDialog = true
                 }
 
@@ -86,12 +84,10 @@ fun DayCalendarScreen(date: String, navigate: (NavKey) -> Unit, modifier: Modifi
         AddItemBottomSheet(
             viewModel.defaultItemSettings,
             onSave = {
-                println("onSave $it (DayCalendarScreen)")
                 showAddItemDialog = false
                 viewModel.onEvent(DayCalendarEvent.AddItem(it))
             },
             onDismiss = {
-                println("onDismiss (DayCalendarScreen)")
                 showAddItemDialog = false
             }
         )

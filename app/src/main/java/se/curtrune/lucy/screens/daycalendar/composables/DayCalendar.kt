@@ -42,6 +42,7 @@ import se.curtrune.lucy.composables.dialogs.PostponeDialog
 import se.curtrune.lucy.composables.item.DateItemCard
 import se.curtrune.lucy.screens.daycalendar.DayCalendarEvent
 import se.curtrune.lucy.screens.daycalendar.DayCalendarState
+import kotlin.time.Duration.Companion.milliseconds
 
 
 @OptIn(FlowPreview::class)
@@ -69,18 +70,17 @@ fun DayCalendar(
             LazyRow() {
                 itemsIndexed(state.tabs){index,  item->
                     MyTab(heading = item.heading, index = index, onEvent = onEvent)
-                    //Text(text = item.heading)
                 }
             }
         }
         val lazyListState = rememberLazyListState(
-            //initialFirstVisibleItemIndex = scrollPosition
+            initialFirstVisibleItemIndex = scrollPosition
         )
         LaunchedEffect(lazyListState) {
             snapshotFlow {
                 lazyListState.firstVisibleItemIndex
             }
-                .debounce(500L)
+                .debounce(500L.milliseconds)
                 .collectLatest { index ->
                     println("index of first visible item: $index")
                     UserPrefs.setScrollPositionDayCalender(index, context)

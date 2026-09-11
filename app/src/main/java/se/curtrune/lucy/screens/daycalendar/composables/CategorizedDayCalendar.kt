@@ -31,7 +31,7 @@ import se.curtrune.lucy.composables.dialogs.PostponeDialog
 import se.curtrune.lucy.composables.item.DateItemCard
 import se.curtrune.lucy.screens.daycalendar.DayCalendarEvent
 import se.curtrune.lucy.screens.daycalendar.DayCalendarState
-import se.curtrune.lucy.screens.item_editor.ItemEvent
+import se.curtrune.lucy.screens.edit.ItemEvent
 import se.curtrune.lucy.composables.item.CheckableItemCard
 
 

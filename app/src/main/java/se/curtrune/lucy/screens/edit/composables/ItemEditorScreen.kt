@@ -1,4 +1,4 @@
-package se.curtrune.lucy.screens.item_editor.composables
+package se.curtrune.lucy.screens.edit.composables
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.padding
@@ -22,9 +22,9 @@ import se.curtrune.lucy.composables.add_item.AddItemBottomSheet
 import se.curtrune.lucy.screens.top_appbar.FlexibleTopBar
 import se.curtrune.lucy.screens.top_appbar.LucindaTopAppBar
 import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
-import se.curtrune.lucy.screens.item_editor.ItemEditorChannel
-import se.curtrune.lucy.screens.item_editor.ItemEvent
-import se.curtrune.lucy.screens.item_editor.ItemEditorViewModel
+import se.curtrune.lucy.screens.edit.ItemEditorChannel
+import se.curtrune.lucy.screens.edit.ItemEvent
+import se.curtrune.lucy.screens.edit.ItemEditorViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,7 +41,6 @@ fun ItemEditorScreen(item: Item, onSave:(Item)->Unit ){
     Scaffold(
         floatingActionButton = {
             AddItemFab(onAddClick = {
-                println("on add click")
                 viewModel.onEvent(ItemEvent.ShowAddItemDialog)
             })
         },
@@ -53,7 +52,6 @@ fun ItemEditorScreen(item: Item, onSave:(Item)->Unit ){
                         state = topAppBarState.value,
                         onEvent = { appBarEvent ->
                             println("appBarEvent $appBarEvent")
-                            //mainViewModel.onEvent(appBarEvent)
                         })
                 }, onEvent = { event ->
                     println("onEvent $event")

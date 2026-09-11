@@ -1,4 +1,4 @@
-package se.curtrune.lucy.screens.item_editor.composables
+package se.curtrune.lucy.screens.edit.composables
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Card
@@ -12,19 +12,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 
 @Composable
-fun MedicineRemainingWithdrawalsCard(remainingWithdrawals: String, onRemainingWithdrawalsChanged: (String)-> Unit){
-    var remWithdrawals by remember{
-        mutableStateOf(remainingWithdrawals)
+fun DosageCard(dosage: String, onDosageChanged: (String) -> Unit){
+    var dosage by remember {
+        mutableStateOf(dosage)
     }
-    Card(modifier = Modifier.fillMaxWidth()){
+    Card(modifier = Modifier.fillMaxWidth()) {
         OutlinedTextField(
-            value = remWithdrawals,
+            modifier = Modifier.fillMaxWidth(),
+            value = dosage,
             onValueChange = {
-                remWithdrawals = it
-                onRemainingWithdrawalsChanged(it)
+                dosage = it
+                onDosageChanged(it)
             },
             label = {
-                Text(text = "remaining withdrawals")
+                Text(text = "dosage")
             }
         )
     }

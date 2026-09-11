@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.app.LucindaApplication
-import se.curtrune.lucy.composables.MentalMeter
+import se.curtrune.lucy.composables.mental.MentalMeter
 import se.curtrune.lucy.composables.top_app_bar.LucindaControls
 //import se.curtrune.lucy.screens.common.MentalMeter
 import se.curtrune.lucy.screens.main.TopAppBarState

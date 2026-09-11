@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.dialogs.PostponeDialog
 import se.curtrune.lucy.screens.daycalendar.composables.SwipeBackground
-import se.curtrune.lucy.screens.item_editor.ItemEvent
+import se.curtrune.lucy.screens.edit.ItemEvent
 import se.curtrune.lucy.screens.medicine.composable.DropdownItem
 
 
@@ -100,9 +100,9 @@ fun CheckableItemCard(
                     DropdownItem(it.name, onClick = { action->
                         println("action: $action")
                         when(action){
-                            ContextActions.VIEW_STATS.name ->{
+                            /*ContextActions.VIEW_STATS.name ->{
                                 //onEvent(DayEvent.ShowStats(item))
-                            }
+                            }*/
                             ContextActions.EDIT.name ->{
                                 onEvent(ItemEvent.Edit(item))
                             }

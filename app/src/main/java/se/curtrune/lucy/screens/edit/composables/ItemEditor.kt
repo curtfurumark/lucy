@@ -1,4 +1,4 @@
-package se.curtrune.lucy.screens.item_editor.composables
+package se.curtrune.lucy.screens.edit.composables
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
@@ -35,10 +35,10 @@ import se.curtrune.lucy.composables.add_item.ItemSettingCalendar
 import se.curtrune.lucy.composables.add_item.ItemSettingCategory
 import se.curtrune.lucy.composables.add_item.ItemSettingDate
 import se.curtrune.lucy.composables.add_item.ItemSettingPriority
-import se.curtrune.lucy.composables.add_item.ItemSettingState
 import se.curtrune.lucy.composables.add_item.ItemSettingTemplate
 import se.curtrune.lucy.composables.add_item.ItemSettingTime
-import se.curtrune.lucy.screens.item_editor.ItemEvent
+import se.curtrune.lucy.composables.mental.MentalEmoji
+import se.curtrune.lucy.screens.edit.ItemEvent
 
 @Composable
 fun ItemEditor(
@@ -113,33 +113,15 @@ fun ItemEditor(
             onEvent(ItemEvent.Update(item))
         })
         Spacer(modifier = Modifier.height(4.dp))
-        DurationCard(duration = item.duration, onDurationChanged = {
-            item.duration = it
-            onEvent(ItemEvent.Update(item))
-        })
-        Spacer(modifier = Modifier.height(4.dp))
-        /*ItemSettingState(item = item, onChange = { done->
-            item.setIsDone(done)
-            onEvent(ItemEvent.Update(item))
-        })*/
-        Spacer(modifier = Modifier.height(4.dp))
-        ItemSettingCategory(
-            item = item,
-            categories = categories,
-            onCategoryChanged = {
-                item.category = it
-                onEvent(ItemEvent.Update(item))
-            },
-            onAddNewCategory = { category ->
-                item.category = category
-                onEvent(ItemEvent.AddCategory(category))
-            }
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        MentalCard(item = item, onMentalChanged = {
+
+        /*MentalCard(item = item, onMentalChanged = {
             item.mental = it
             onEvent(ItemEvent.Update(item))
-        })
+        })*/
+        MentalEmoji(item = item) {
+            item.energy = it
+            onEvent(ItemEvent.Update(item))
+        }
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             modifier = Modifier.padding(4.dp)
@@ -157,22 +139,39 @@ fun ItemEditor(
                 TimeLineCard(isTimeLineItem = item.getType().equals(Type.TIME_LINE)){
                     item.setType(if( it) Type.TIME_LINE else Type.NODE)
                     onEvent(ItemEvent.Update(item))
-                    //onEvent(ItemEvent.Update(item))
                 }
                 Spacer(modifier = Modifier.height(4.dp))
                 ItemSettingAppointment(item = item, onEvent = {
                     item.isAppointment = it
                     onEvent(ItemEvent.Update(item))
                 })
-                Spacer(modifier = Modifier.height(4.dp))
+              /*  Spacer(modifier = Modifier.height(4.dp))
                 ItemSettingTemplate(item = item, onIsTemplate = {isTemplate->
                     item.isTemplate = isTemplate
                     if( isTemplate) {
                         item.setType(Type.TEMPLATE)
                     }
                     onEvent(ItemEvent.Update(item))
-                })
+                })*/
 
+                Spacer(modifier = Modifier.height(4.dp))
+                DurationCard(duration = item.duration, onDurationChanged = {
+                    item.duration = it
+                    onEvent(ItemEvent.Update(item))
+                })
+                Spacer(modifier = Modifier.height(4.dp))
+                ItemSettingCategory(
+                    item = item,
+                    categories = categories,
+                    onCategoryChanged = {
+                        item.category = it
+                        onEvent(ItemEvent.Update(item))
+                    },
+                    onAddNewCategory = { category ->
+                        item.category = category
+                        onEvent(ItemEvent.AddCategory(category))
+                    }
+                )
                 Spacer(modifier = Modifier.height(4.dp))
                 ItemSettingPriority(priority = item.priority, onPriorityChanged= {
                     item.priority = it

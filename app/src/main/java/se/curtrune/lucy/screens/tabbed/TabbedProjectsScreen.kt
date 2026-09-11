@@ -31,6 +31,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation3.runtime.NavKey
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.screens.top_appbar.FlexibleTopBar
 import se.curtrune.lucy.screens.top_appbar.LucindaTopAppBar
 import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
@@ -81,7 +82,11 @@ fun TabbedProjectsScreen(navigate: (NavKey)->Unit){
             }
             when (currentIndex) {
                 0 -> NoteScreen()
-                1 -> EditableBulletListScreen()
+                1 -> EditableBulletListScreen(
+                    modifier = Modifier,
+                    parent = Item(),
+                    onBack = {}
+                )
                 2 -> TemplatesScreen(navigate = {
                     println("onEdit $it")
                     navigate(it)

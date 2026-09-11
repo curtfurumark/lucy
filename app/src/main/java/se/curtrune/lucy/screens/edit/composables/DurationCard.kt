@@ -1,4 +1,4 @@
-package se.curtrune.lucy.screens.item_editor.composables
+package se.curtrune.lucy.screens.edit.composables
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
@@ -23,9 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.util.Converter
-import kotlin.time.Duration
 
 @Composable
 fun DurationCard(modifier: Modifier = Modifier, duration: Long, onDurationChanged: (Long) -> Unit) {

@@ -5,12 +5,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -36,7 +34,6 @@ import se.curtrune.lucy.composables.dialogs.AddChildDialog
 import se.curtrune.lucy.screens.appoinment.AppointmentChannel
 import se.curtrune.lucy.screens.appoinment.AppointmentEvent
 import se.curtrune.lucy.screens.appoinment.AppointmentViewModel
-import se.curtrune.lucy.screens.item_editor.ItemEditorViewModel
 import java.time.LocalDate
 import java.time.LocalTime
 

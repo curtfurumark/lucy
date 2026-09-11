@@ -17,7 +17,7 @@ import se.curtrune.lucy.screens.top_appbar.TopAppBarEvent
 import se.curtrune.lucy.persist.SqliteLocalDB
 import se.curtrune.lucy.screens.dev.composables.MyTab
 import se.curtrune.lucy.screens.dev.test_cases.LocalDBTest
-import se.curtrune.lucy.screens.item_editor.ItemEvent
+import se.curtrune.lucy.screens.edit.ItemEvent
 import se.curtrune.lucy.screens.main.TopAppBarState
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.web.LucindaApi

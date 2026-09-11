@@ -1,22 +1,21 @@
-package se.curtrune.lucy.screens.item_editor.composables
+package se.curtrune.lucy.screens.edit.composables
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.dp
+
 
 @Composable
-fun RepeatCard(){
+fun IdCard(id: Long){
     Card(modifier = Modifier.fillMaxWidth()){
-        Text(text = "repeat")
+        Text(
+            modifier = Modifier.padding(8.dp),
+            text = "id: $id")
     }
-}
 
 
-@Composable
-@PreviewLightDark
-fun PreviewRepeatCard(){
-    RepeatCard()
 }

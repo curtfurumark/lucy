@@ -32,9 +32,7 @@ import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.app.LucindaApplication
-import se.curtrune.lucy.screens.item_editor.composables.DurationCard
-import java.time.LocalDate
-import java.time.LocalTime
+import se.curtrune.lucy.screens.edit.composables.DurationCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -23,6 +23,7 @@ class ListViewModel: ViewModel() {
 
 
     init {
+        println("ListViewModel init")
         items.add("item 0")
         _state.update { it.copy(
             //items = items

@@ -16,7 +16,7 @@ import se.curtrune.lucy.composables.dialogs.PostponeDetails
 import se.curtrune.lucy.composables.add_item.DefaultItemSettings
 import se.curtrune.lucy.modules.PostponeWorker
 import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
-import se.curtrune.lucy.screens.item_editor.ItemEvent
+import se.curtrune.lucy.screens.edit.ItemEvent
 import se.curtrune.lucy.screens.navigation.Route.EditListNavKey
 import se.curtrune.lucy.screens.navigation.Route.ItemEditorNavKey
 import se.curtrune.lucy.util.Logger
@@ -40,7 +40,7 @@ class DayCalendarViewModel(private val date: LocalDate): ViewModel(){
     val defaultItemSettings = DefaultItemSettings()
 
     init{
-        println("DateViewModel.init date = $date")
+        println("DayCalendarViewModel.init date = $date")
         items = repository.selectItems(date)
         refreshState(date)
         println("currentParent = ${state.value.currentParent?.heading}")
@@ -113,6 +113,9 @@ class DayCalendarViewModel(private val date: LocalDate): ViewModel(){
                 showPostponeDialog = false
             )
         }
+    }
+    override fun onCleared() {
+        println("DayCalendarScreen.onCleared()")
     }
     fun onEvent(event: DayCalendarEvent){
         println("DateViewModel.onEvent(DayCalendarEvent $event)")

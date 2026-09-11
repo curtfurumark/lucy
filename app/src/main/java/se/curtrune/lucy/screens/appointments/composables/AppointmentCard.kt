@@ -108,14 +108,9 @@ fun AppointmentCard(appointment: Item, onEvent: (AppointmentEvent)->Unit){
                 DropdownItem(it.name, onClick = { action->
                     println("action: $action")
                     when(action){
-                        ContextActions.VIEW_STATS.name ->{
-                            //onEvent(DayEvent.ShowStats(item))
-                        }
+
                         ContextActions.EDIT.name ->{
                             //onEvent(DayEvent.EditItem(item))
-                        }
-                        ContextActions.DETAILS.name ->{
-                            onEvent(AppointmentEvent.ShowDetails(appointment))
                         }
                     }
                     showContextMenu = false

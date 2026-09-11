@@ -15,11 +15,12 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
-import kotlinx.serialization.Serializable
 import se.curtrune.lucy.screens.appoinment.composables.AppointmentScreen
 import se.curtrune.lucy.screens.appointments.composables.AppointmentsScreen
 import se.curtrune.lucy.screens.attach_image.AttachImageScreen
@@ -29,7 +30,7 @@ import se.curtrune.lucy.screens.dev.composables.DevScreen
 import se.curtrune.lucy.screens.duration.composables.DurationScreen
 import se.curtrune.lucy.screens.file_attach_screen.FileAttachScreen
 import se.curtrune.lucy.screens.file_viewer.FileViewerScreen
-import se.curtrune.lucy.screens.item_editor.composables.ItemEditorScreen
+import se.curtrune.lucy.screens.edit.composables.ItemEditorScreen
 import se.curtrune.lucy.screens.lists.composables.EditableBulletListScreen
 import se.curtrune.lucy.screens.medicine.composable.MedicineScreen
 import se.curtrune.lucy.screens.mental_stats.composables.MentalStatsScreen
@@ -56,11 +57,11 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
     println("NavigationRoot()")
     NavDisplay(
         backStack = backStack,
-/*        entryDecorators = listOf(
-            //rememberSavedStateNavEntryDecorator(),
+        entryDecorators = listOf(
+            rememberSaveableStateHolderNavEntryDecorator(),
             rememberViewModelStoreNavEntryDecorator()
             //rememberSceneSetupNavEntryDecorator()
-        ),*/
+        ),
         entryProvider = { navKey->
             when(navKey) {
 
@@ -190,7 +191,13 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                 is Route.EditListNavKey -> {
                     NavEntry(
                         key = navKey) {
-                        EditableBulletListScreen(item = navKey.parent, modifier = modifier)
+                        EditableBulletListScreen(
+                            parent = navKey.parent,
+                            modifier = modifier,
+                            onBack = {
+                                backStack.removeLastOrNull()
+                            }
+                        )
                     }
                 }
                 is Route.EditTemplateScreenNavKey -> {

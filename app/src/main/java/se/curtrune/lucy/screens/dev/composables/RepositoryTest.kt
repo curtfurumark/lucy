@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.screens.item_editor.composables.ItemEditor
+import se.curtrune.lucy.screens.edit.composables.ItemEditor
 import java.time.LocalDate
 
 @Composable

@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.item.DurationEdit
 import se.curtrune.lucy.composables.Field
-import se.curtrune.lucy.composables.MentalSlider
+import se.curtrune.lucy.composables.mental.MentalSlider
 
 
 @Composable

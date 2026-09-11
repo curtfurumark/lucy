@@ -34,5 +34,4 @@ fun PreviewShowMentalStatusSetting(){
     LucyTheme {
         ShowMentalStatusSetting(state = UserState(), onEvent = {})
     }
-
 }

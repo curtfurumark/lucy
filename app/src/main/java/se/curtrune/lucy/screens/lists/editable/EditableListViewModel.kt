@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.classes.item.Item
+import se.curtrune.lucy.screens.lists.ListChannel
 import se.curtrune.lucy.screens.lists.editable.EditableListEvent
 import se.curtrune.lucy.screens.lists.editable.EditableListState
 
@@ -21,6 +22,7 @@ class EditableListViewModel(private val listRoot: Item): ViewModel() {
     val channel = _channel.receiveAsFlow()
     private var currentId: Long = 0
     init {
+        println("init EditableListVIEWMODEL")
         _state.update {
             it.copy(
                 item = listRoot,
@@ -95,7 +97,7 @@ class EditableListViewModel(private val listRoot: Item): ViewModel() {
         ) }
     }
     private fun message(message: String){
-        println("...error $message")
+        println("...message $message")
         viewModelScope.launch {
             _channel.send(EditableListChannel.Message(message))
         }
@@ -108,28 +110,33 @@ class EditableListViewModel(private val listRoot: Item): ViewModel() {
     }
     private fun remove(index: Int){
         println("...remove $index")
-        _state.update {it.copy(
-            listItems = it.listItems.toMutableList().apply {
-                removeAt(index)
-            },
-            focusIndex = if(index == 0) 0 else index - 1
-        )
+        _state.update {
+            it.copy(
+                listItems = it.listItems.toMutableList().apply {
+                    removeAt(index)
+                },
+                focusIndex = if(index == 0) 0 else index - 1
+            )
         }
     }
 
     private fun saveList(){
-        println("...saveList")
-        val root = db.insert(_state.value.item)
-        if( root == null){
-            error("error inserting item ${_state.value.item.heading}")
-            return
-        }
-        println("root inserted with id: ${root.id}")
+        println("...saveList()")
+        //val root = db.insert(_state.value.item)
+        //if( root == null){
+        //    error("error inserting item ${_state.value.item.heading}")
+        //    return
+        //}
+        //println("root inserted with id: ${root.id}")
         for(item in _state.value.listItems) {
             item.id = 0
-            db.insertChild(root, item)
+            db.insertChild(listRoot, item)
         }
+        message("items saved")
         clearState()
+        viewModelScope.launch {
+            _channel.send(EditableListChannel.NavigateBack)
+        }
     }
     private fun update(item: Item){
         println("...update ${item.heading}")

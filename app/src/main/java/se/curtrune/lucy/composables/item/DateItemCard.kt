@@ -157,12 +157,12 @@ fun DateItemCard(
                             ContextActions.ADD_LIST.name -> {
                                 onEvent(DayCalendarEvent.AddList(item))
                             }
-                            ContextActions.DETAILS.name -> {
+                            /*ContextActions.DETAILS.name -> {
 
                             }
                             ContextActions.VIEW_STATS.name -> {
                                 onEvent(DayCalendarEvent.ShowStats(item))
-                            }
+                            }*/
 
                             ContextActions.EDIT.name -> {
                                 onEvent(DayCalendarEvent.EditItem(item))
@@ -180,5 +180,5 @@ fun DateItemCard(
     }
 }
 enum class ContextActions{
-    VIEW_STATS, EDIT, DETAILS, DUPLICATE, ADD_LIST
+    EDIT, DUPLICATE, ADD_LIST
 }

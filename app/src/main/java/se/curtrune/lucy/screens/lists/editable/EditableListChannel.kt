@@ -6,4 +6,5 @@ import se.curtrune.lucy.screens.log_in.LogInChannel
 sealed interface EditableListChannel {
     data class Message(val message: String): EditableListChannel
     data class Navigate(val navKey: NavKey): EditableListChannel
+    data object NavigateBack: EditableListChannel
 }

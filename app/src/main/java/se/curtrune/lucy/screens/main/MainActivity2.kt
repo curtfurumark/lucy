@@ -63,7 +63,6 @@ class MainActivity2 : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     @OptIn(ExperimentalMaterial3Api::class)
     private fun initContent(){
-        //println("initContent()")
         val composeViewMental = findViewById<ComposeView>(R.id.mainActivity_composeViewMental)
         composeViewMental.setContent {
             val state by  mainViewModel.state.collectAsState()

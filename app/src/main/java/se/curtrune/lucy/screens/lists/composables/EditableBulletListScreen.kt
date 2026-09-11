@@ -42,22 +42,22 @@ import se.curtrune.lucy.screens.lists.editable.EditableListViewModel
 
 @Composable
 fun EditableBulletListScreen(
-    item: Item = Item(),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    parent: Item,
+    onBack: () -> Unit
 ) {
     val viewModel: EditableListViewModel = viewModel{
-        EditableListViewModel(item)
+        EditableListViewModel(parent)
     }
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
-    //var items by remember { mutableStateOf(listOf("")) }
     var heading by remember { mutableStateOf(state.item.heading) }
     var listRoot by remember { mutableStateOf(state.item) }
     LazyColumn(
         modifier = modifier
     ) {
         item {
-            Text(text = "${state.focusIndex}")
+            Text(text = "focus index ${state.focusIndex}")
         }
         item{
             Row(
@@ -109,6 +109,10 @@ fun EditableBulletListScreen(
 
                 is EditableListChannel.Navigate -> {
                     println("...navigate ${it.navKey}")
+                    onBack()
+                }
+                EditableListChannel.NavigateBack -> {
+                    onBack()
                 }
             }
         }
@@ -202,7 +206,7 @@ fun BulletTextField(
 @PreviewLightDark
 fun PreviewEditableBulletListScreen(){
     LucyTheme {
-        EditableBulletListScreen()
+        EditableBulletListScreen(onBack = {}, parent = Item("parent"))
 
     }
 }
