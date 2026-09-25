@@ -43,6 +43,9 @@ fun ScreensSettings(state: UserState, onEvent: (UserEvent) -> Unit) {
     var showTimeLine by remember {
         mutableStateOf(state.showTimeLine)
     }
+    var showMentalStatus by remember {
+        mutableStateOf(true)
+    }
 
     Card(modifier = Modifier.fillMaxWidth()) {
         Text("Screens")
@@ -144,6 +147,7 @@ fun ScreensSettings(state: UserState, onEvent: (UserEvent) -> Unit) {
                 }
             )
         }
-        DevModeSetting(state = state, onEvent = onEvent)
+        //DevModeSetting(state = state, onEvent = onEvent)
+        //ShowMentalStatusSetting(state = state, onEvent = onEvent)
     }
 }

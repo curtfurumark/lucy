@@ -43,8 +43,8 @@ fun UserSettingsComposable(modifier: Modifier = Modifier, state: UserState, onEv
         //MentalFlagSetting(state = state, onEvent = onEvent)
         //Spacer(modifier = Modifier.height(8.dp))
         //PanicButton(state = state, onEvent = onEvent)
-        //Spacer(modifier = Modifier.height(8.dp))
-        //ShowMentalStatusSetting(state = state,  onEvent = onEvent)
+        Spacer(modifier = Modifier.height(8.dp))
+        ShowMentalStatusSetting(state = state,  onEvent = onEvent)
         //Spacer(modifier = Modifier.height(8.dp))
         //PassWordSetting(state = state, onEvent = onEvent)
         //Spacer(modifier = Modifier.height(8.dp))
@@ -65,7 +65,8 @@ fun UserSettingsComposable(modifier: Modifier = Modifier, state: UserState, onEv
             onCategory = {
                 onEvent(UserEvent.AddCategory(it))
                 showCategoryDialog = false
-            })
+            }
+        )
     }
 }
 

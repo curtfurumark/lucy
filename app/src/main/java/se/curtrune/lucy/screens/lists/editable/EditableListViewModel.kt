@@ -21,12 +21,27 @@ class EditableListViewModel(private val listRoot: Item): ViewModel() {
     private val _channel = Channel<EditableListChannel>()
     val channel = _channel.receiveAsFlow()
     private var currentId: Long = 0
+    private var currentIndex = 0
     init {
-        println("init EditableListVIEWMODEL")
-        _state.update {
-            it.copy(
-                item = listRoot,
-                listItems = listOf(getItem(0)))
+        println("init EditableListViewModel")
+        if( listRoot.hasChild()){
+            println("root has children")
+            val children = db.selectChildren(listRoot)
+            _state.update {
+                it.copy(
+                    item = listRoot,
+                    listItems = children,
+                    focusIndex = 0
+                )
+            }
+        }else {
+            _state.update {
+                it.copy(
+                    item = listRoot,
+                    listItems = listOf(Item()),
+                    focusIndex = 0
+                )
+            }
         }
     }
     private fun clearState() {
@@ -41,6 +56,7 @@ class EditableListViewModel(private val listRoot: Item): ViewModel() {
     private fun getItem(id: Long): Item {
         println("...getItem $id")
         currentId++
+        //currentIndex = id + 1
         println("...currentId $currentId")
         return Item().apply {
             this.id = currentId    }
@@ -75,11 +91,13 @@ class EditableListViewModel(private val listRoot: Item): ViewModel() {
     fun addItem(index: Int){
         println("...addItem $index")
         //currentId++
+        currentIndex = index +1
         _state.update {
             it.copy(
                 focusIndex = index + 1,
                 listItems = it.listItems.toMutableList().apply {
-                    add(index+1,getItem(currentId))
+                    //add(index+1,getItem(currentId))
+                    add(currentIndex,Item())
                 }
             )
         }
@@ -95,6 +113,9 @@ class EditableListViewModel(private val listRoot: Item): ViewModel() {
             listItems = emptyList(),
             focusIndex = 0
         ) }
+        viewModelScope.launch {
+            _channel.send(EditableListChannel.NavigateBack)
+        }
     }
     private fun message(message: String){
         println("...message $message")
@@ -129,8 +150,11 @@ class EditableListViewModel(private val listRoot: Item): ViewModel() {
         //}
         //println("root inserted with id: ${root.id}")
         for(item in _state.value.listItems) {
-            item.id = 0
-            db.insertChild(listRoot, item)
+            if(item.id < 1L) {
+                db.insertChild(listRoot, item)
+            }else{
+                db.update(item)
+            }
         }
         message("items saved")
         clearState()

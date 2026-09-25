@@ -207,7 +207,7 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                 }
             )
         }
-        if(state.showTimeLine) {
+        if(true) {
             NavigationDrawerItem(
                 label = { Text(text = "timeline") },
                 selected = false,
@@ -227,7 +227,7 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                 onClick(Route.SettingsScreenNavKey)
             }
         )
-        if( state.showMentalStats){
+        if( true){
             Spacer(modifier = Modifier.height(16.dp))
             NavigationDrawerItem(
                 label = { Text(text = "mental stats")},
@@ -285,7 +285,7 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                 onClick(Route.MessageBoardNavKey)
             }
         )
-        if(state.showMyManual) {
+        if(true) {
             NavigationDrawerItem(
                 label = { Text(text = "min manual") },
                 selected = false,
@@ -297,21 +297,6 @@ fun LucindaNavigationDrawer(onClick: (NavKey)->Unit, state: NavigationDrawerStat
                 },
                 onClick = {
                     onClick(Route.MyManualScreenNavKey)
-                }
-            )
-        }
-        if(state.showMentalStats) {
-            NavigationDrawerItem(
-                label = { Text(text = "mental stats") },
-                selected = false,
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.Star,
-                        contentDescription = "bullet list"
-                    )
-                },
-                onClick = {
-                    onClick(Route.MentalStatsScreenNavKey)
                 }
             )
         }

@@ -142,65 +142,7 @@ fun BulletBasicTextField(
         )
     }
 }
-@Composable
-fun BulletTextField(
-    item: Item,
-    index: Int,
-    hasFocus: Boolean = false,
-    onEvent: (EditableListEvent) -> Unit,
-) {
-    val item by remember {
-        mutableStateOf(item)
-    }
-    var focusRequester by remember {
-        mutableStateOf(FocusRequester())
-    }
-    var heading by remember {
-        mutableStateOf(item.heading)
-    }
-    LaunchedEffect(hasFocus) {
-        if (hasFocus) {
-            focusRequester.requestFocus()
-        }
-    }
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .padding( horizontal = 8.dp)) {
 
-        TextField(
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Circle,
-                    contentDescription = "list item",
-                    modifier = Modifier.height(8.dp))},
-            value = heading,
-            onValueChange = {
-                if( it.endsWith("\n")){
-                    //onEnter(index)
-                    onEvent(EditableListEvent.AddItem(index))
-                }else if(it.isEmpty()) {
-                    onEvent(EditableListEvent.RemoveItem(index))
-                }else{
-                    heading = it
-                    item.heading = it
-                    onEvent(EditableListEvent.Update(item))
-                } },
-            textStyle = LocalTextStyle.current.copy(
-                color = Color.White),
-            modifier = Modifier
-                .fillMaxWidth()
-                .focusRequester(focusRequester)
-            ,
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                disabledContainerColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-            )
-        )
-    }
-}
 
 @Composable
 @PreviewLightDark

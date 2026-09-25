@@ -33,6 +33,7 @@ import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.screens.edit.composables.DurationCard
+import se.curtrune.lucy.util.Logger
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,9 +43,10 @@ fun AddItemBottomSheet(
         onSave: (Item) -> Unit
     ){
     println("AddItemBottomSheet()")
+    Logger.log(defaultItemSettings.item)
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scrollState = rememberScrollState()
-    if( defaultItemSettings.parent == null){
+    if( defaultItemSettings.item.parent == null){
         println("parent is null")
     }
     var heading by remember {
@@ -55,6 +57,7 @@ fun AddItemBottomSheet(
 
     LaunchedEffect(Unit) {
         item.category = defaultItemSettings.parent?.category?: "<no category>"
+        item.parent = defaultItemSettings.parent
         println("launched effect, category: ${item.category}")
     }
 
@@ -67,10 +70,11 @@ fun AddItemBottomSheet(
     ){
         Column(
             modifier = Modifier.fillMaxWidth()) {
-            val parentHeading = defaultItemSettings.parent?.heading?: "parent is null"
-
+            val parentHeading = defaultItemSettings.item.parent?.heading?: "parent is null"
+            val parentId = defaultItemSettings.item.parent?.id
             Row(modifier = Modifier.fillMaxWidth()){
                 Text(text = parentHeading)
+                Text(text = "parent id: $parentId")
             }
             Spacer(modifier = Modifier.height(8.dp))
             Row(modifier = Modifier.fillMaxWidth()) {
@@ -131,7 +135,6 @@ fun AddItemBottomSheet(
                     })
                 Spacer(modifier = Modifier.width(8.dp))
                 ItemSettingAppointment(item = item, onEvent = {
-                    //item.setIsAppointment(it)
                     item.isAppointment = it
                 })
                 ItemSettingTemplate(item = item, onIsTemplate = { isTemplate ->
@@ -153,7 +156,10 @@ fun AddItemBottomSheet(
                     Text(text = stringResource(R.string.dismiss))
                 }
                 Button(
-                    onClick = { onSave(item) }){
+                    onClick = {
+                        println("on save parent id ${item.parentId}")
+                        onSave(item)
+                    }){
                     Text(text = stringResource(R.string.add))
                 }
             }

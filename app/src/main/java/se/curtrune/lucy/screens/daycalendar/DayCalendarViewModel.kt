@@ -29,6 +29,7 @@ class DayCalendarViewModel(private val date: LocalDate): ViewModel(){
     private val repository = LucindaApplication.appModule.repository
     private val timeModule = LucindaApplication.appModule.timeModule
     private var currentWeekPage = 5
+    private var currentParent: Item? = null
     private var items: List<Item> = emptyList()
     private val eventChannel = Channel<DayCalendarChannel>()
     val eventFlow = eventChannel.receiveAsFlow()
@@ -51,6 +52,7 @@ class DayCalendarViewModel(private val date: LocalDate): ViewModel(){
         TopAppbarModule.searchScopeCallback = { it->
             setSearchScope(it)
         }
+
     }
 
     companion object {
@@ -64,7 +66,7 @@ class DayCalendarViewModel(private val date: LocalDate): ViewModel(){
     }
 
     private fun addItem(item: Item){
-        println("...addItem(Item) ${item.heading}")
+        println("...addItem(Item) ${item.heading}, parent: ${item.parentId}")
         Logger.log(item)
         if( item.itemDuration != null) {
             println("...itemDuration: ${item.itemDuration!!.type.name}")
@@ -289,9 +291,10 @@ class DayCalendarViewModel(private val date: LocalDate): ViewModel(){
         defaultItemSettings.item = Item().also { item->
             item.targetDate = state.value.date
             item.targetTime = LocalTime.now()
-            item.parent = state.value.currentParent
+            item.parent = currentParent
             item.category = state.value.currentParent?.category.toString()
         }
+        println("......parent ${defaultItemSettings.item.parentId}")
         viewModelScope.launch {
             eventChannel.send(DayCalendarChannel.ShowAddItemBottomSheet)
         }
@@ -303,6 +306,7 @@ class DayCalendarViewModel(private val date: LocalDate): ViewModel(){
 
     private fun showChildren(item: Item){
         println("...showChildren(${item.heading})")
+        currentParent = item
         if( !state.value.showTabs){
             _state.update { it.copy(
                 tabs = it.tabs + Item(
@@ -315,7 +319,13 @@ class DayCalendarViewModel(private val date: LocalDate): ViewModel(){
             currentParent = item,
             showTabs = true,
             tabs = it.tabs + item,
-            ) }
+            defaultItemSettings = DefaultItemSettings().also {
+                it.parent = item
+            }
+            )
+        }
+        println(_state)
+        println("current parent: $currentParent")
     }
     private fun showPostponeDialog(item: Item){
         _state.update { it.copy(
