@@ -12,7 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import se.curtrune.lucy.screens.log_in.ui.theme.LucyTheme
+import se.curtrune.lucy.screens.first.ui.theme.LucyTheme
 
 @Composable
 fun MentalSlider(level: Int, label: String, onLevelChanged: (Int)->Unit) {

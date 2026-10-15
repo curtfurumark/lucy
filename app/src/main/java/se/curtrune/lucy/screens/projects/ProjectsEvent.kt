@@ -9,5 +9,6 @@ sealed interface ProjectsEvent{
     data class OnLongItemClick(val item: Item) : ProjectsEvent
     data class OnTabClick(val tab: ProjectTab) : ProjectsEvent
     data class InsertItem(val item: Item) : ProjectsEvent
+    data class RequestDelete(val item: Item): ProjectsEvent
     data object ShowAddItemDialog: ProjectsEvent
 }

@@ -1,4 +1,4 @@
-package se.curtrune.lucy.screens.log_in
+package se.curtrune.lucy.screens.first
 
 import se.curtrune.lucy.app.InitialScreen
 

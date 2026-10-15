@@ -9,7 +9,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
@@ -21,6 +24,8 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.item.Item
+import se.curtrune.lucy.screens.daycalendar.DayCalendarEvent
+import se.curtrune.lucy.screens.daycalendar.composables.SwipeBackground
 import se.curtrune.lucy.screens.projects.ProjectsEvent
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -29,32 +34,54 @@ fun ProjectItem(item: Item, modifier: Modifier = Modifier, onEvent: (ProjectsEve
     var isDone by remember {
         mutableStateOf(item.isDone)
     }
-    Card(
-        modifier = Modifier.fillMaxWidth()
-            .combinedClickable(
-                onClick = {
-                    onEvent(ProjectsEvent.OnItemClick(item))
-                },
-                onLongClick = {
-                    onEvent(ProjectsEvent.OnLongItemClick(item))
+    val swipeState = rememberSwipeToDismissBoxState(
+        confirmValueChange = {
+            if( it == SwipeToDismissBoxValue.EndToStart){
+                onEvent(ProjectsEvent.RequestDelete(item))
+                true
+            }else if (it == SwipeToDismissBoxValue.StartToEnd){
+                //onEvent(DayCalendarEvent.ShowPostponeDialog(item))
+                true
+            }
+            false
+        }, positionalThreshold = {it * 0.5f}
+    )
+    SwipeToDismissBox(
+        //modifier = Modifier.animateItem(),
+        state = swipeState,
+        backgroundContent = {
+            SwipeBackground(state = swipeState)
+        }
+    ) {
+        Card(
+            modifier = Modifier.fillMaxWidth()
+                .combinedClickable(
+                    onClick = {
+                        onEvent(ProjectsEvent.OnItemClick(item))
+                    },
+                    onLongClick = {
+                        onEvent(ProjectsEvent.OnLongItemClick(item))
+                    }
+                )
+                .padding(4.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+            ) {
+                Checkbox(checked = isDone, onCheckedChange = { checked ->
+                    item.setIsDone(checked)
+                    isDone = checked
+                    onEvent(ProjectsEvent.UpdateItem(item))
+                })
+                Text(
+                    text = item.heading,
+                    fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                if (item.hasChild()) {
+                    Text(text = ">", modifier = Modifier.padding(end = 4.dp))
                 }
-            )
-            .padding(4.dp)){
-        Row(modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
-        ) {
-            Checkbox(checked = isDone, onCheckedChange = { checked->
-                item.setIsDone(checked)
-                isDone = checked
-                onEvent(ProjectsEvent.UpdateItem(item))
-            })
-            Text(
-                text = item.heading,
-                fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                color = MaterialTheme.colorScheme.onSurface)
-            Spacer(modifier = Modifier.weight(1f))
-            if( item.hasChild()) {
-                Text(text = ">", modifier = Modifier.padding(end = 4.dp))
             }
         }
     }

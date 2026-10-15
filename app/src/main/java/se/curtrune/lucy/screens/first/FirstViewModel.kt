@@ -1,4 +1,4 @@
-package se.curtrune.lucy.screens.log_in
+package se.curtrune.lucy.screens.first
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import se.curtrune.lucy.app.LucindaApplication
 
-class LogInViewModel: ViewModel() {
+class FirstViewModel: ViewModel() {
     private val _state = MutableStateFlow(LogInState())
     val state = _state.asStateFlow()
     private val userSettings = LucindaApplication.appModule.userSettings

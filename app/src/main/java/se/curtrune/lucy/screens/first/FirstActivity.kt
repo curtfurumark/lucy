@@ -1,4 +1,4 @@
-package se.curtrune.lucy.screens.log_in
+package se.curtrune.lucy.screens.first
 
 import android.content.Intent
 import android.os.Bundle
@@ -12,18 +12,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import se.curtrune.lucy.app.InitialScreen
 import se.curtrune.lucy.app.Lucinda
-import se.curtrune.lucy.screens.log_in.ui.theme.LucyTheme
+import se.curtrune.lucy.screens.first.composables.LogInScreen
+import se.curtrune.lucy.screens.first.composables.SplashScreen
+import se.curtrune.lucy.screens.first.ui.theme.LucyTheme
 import se.curtrune.lucy.screens.main.MainActivity2
 import se.curtrune.lucy.util.Constants
-import se.curtrune.lucy.util.Logger.Companion.log
 
-class LogInActivity : ComponentActivity() {
-    private val logInViewModel: LogInViewModel by viewModels()
+class FirstActivity : ComponentActivity() {
+    private val logInViewModel: FirstViewModel by viewModels()
     init {
         println("LogInActivity.init")
     }
@@ -38,7 +38,6 @@ class LogInActivity : ComponentActivity() {
             println("...app already initialized")
         }
         setContent {
-            val state =  logInViewModel.state.collectAsState()
             LaunchedEffect(logInViewModel) {
                 logInViewModel.eventChannel.collect(){ event->
                     when(event){
@@ -54,9 +53,9 @@ class LogInActivity : ComponentActivity() {
             }
             LucyTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    LogInScreen(state = state.value, modifier = Modifier.padding(innerPadding), onEvent = {event->
-                        logInViewModel.onEvent(event)
-                    })
+                    SplashScreen(
+                        modifier = Modifier.padding(innerPadding)
+                    )
                 }
             }
         }
@@ -85,6 +84,6 @@ class LogInActivity : ComponentActivity() {
 @Composable
 fun GreetingPreview() {
     LucyTheme {
-        LogInScreen(state = LogInState()) {  }
+        LogInScreen(state = LogInState()) { }
     }
 }

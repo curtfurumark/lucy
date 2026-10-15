@@ -1,4 +1,4 @@
-package se.curtrune.lucy.screens.log_in.ui.theme
+package se.curtrune.lucy.screens.first.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

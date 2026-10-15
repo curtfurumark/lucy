@@ -81,7 +81,6 @@ class MainActivity2 : AppCompatActivity() {
             val scope = rememberCoroutineScope()
             val drawerState = rememberDrawerState(DrawerValue.Closed)
             val topAppBarState = TopAppbarModule.topAppBarState.collectAsState()
-            //val navigationDrawerState = UserSettings(application).navigationDrawerState.collectAsState()
             val backStack = rememberNavBackStack(DayCalendarNavKey(LocalDate.now().toString()))
 
             LaunchedEffect(mainViewModel) {

@@ -134,21 +134,8 @@ class Item()  {
     }
 
     fun getInfo(): String {
-        val temp = Type.APPOINTMENT.ordinal
-        if (type == temp) {
-            return String.format(
-                "%s %s", Converter.format(
-                    Converter.epochToDate(
-                        this.targetDateEpochDay
-                    )
-                ), Converter.epochTimeToFormattedString(this.targetTimeSecondOfDay)
-            )
-        }
         return String.format(Locale.getDefault(), "%s", this.targetDate.toString())
     }
-
-
-
     var mental: Mental
         get() = Mental(anxiety, energy, mood, stress)
         set(mental) {

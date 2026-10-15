@@ -10,7 +10,7 @@ class DateTimeFormatterTest {
         println("testOneDay()")
         var seconds = 24 * 3600 // one day
         seconds += 3600          //plus one hour
-        seconds += 60            //plus one minuter
+        seconds += 60            //plus one minute
         seconds += 42            //plus 42 seconds
         //expect 1 day 01:01:42
         val formattedString = DateTImeConverter.formatSeconds(seconds.toLong())
@@ -33,4 +33,21 @@ class DateTimeFormatterTest {
         println("formattedString $formattedString")
         assert(formattedString == "00:00:42")
     }
+    @Test
+    fun edgeSeconds(){
+        testSeconds(42, "00:00:42")
+        testSeconds(0, "00:00:00")
+        testSeconds(1, "00:00:01")
+        testSeconds(-1, "00:00:-1")
+        testSeconds(61, "00:01:01")
+    }
+
+    fun testSeconds(secs: Long, result: String){
+        println("testSeconds($secs, $result")
+        val formattedString = DateTImeConverter.formatSeconds(secs)
+        println("formattedString $formattedString")
+        assert(formattedString == result)
+
+    }
+
 }

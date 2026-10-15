@@ -430,6 +430,7 @@ class SqliteLocalDB(context: Context?) :
      */
     fun update(item: Item): Int {
         if (VERBOSE) println("SqliteLocalDB.update($item)")
+        //update mental
         db = this.writableDatabase
         val whereClause = String.format(Locale.getDefault(), "id = %d", item.id)
         val rowsAffected = db!!.update(ITEMS_TABLE, DBAdmin.getContentValues(item), whereClause, null)

@@ -119,7 +119,7 @@ fun ItemEditor(
             onEvent(ItemEvent.Update(item))
         })*/
         MentalEmoji(item = item) {
-            item.energy = it
+            item.mental = it
             onEvent(ItemEvent.Update(item))
         }
         Spacer(modifier = Modifier.height(4.dp))

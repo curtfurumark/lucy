@@ -66,7 +66,7 @@
             android:name=".screens.index.IndexActivity"
             android:exported="false" />
         <activity
-            android:name=".screens.log_in.LogInActivity"
+            android:name=".screens.first.FirstActivity"
             android:exported="true"
             android:noHistory="true">
             <intent-filter>

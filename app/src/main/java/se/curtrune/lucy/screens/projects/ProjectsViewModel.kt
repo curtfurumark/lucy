@@ -59,6 +59,7 @@ class ProjectsViewModel(private val repository: Repository) : ViewModel() {
             is ProjectsEvent.OnLongItemClick -> { onLongItemClick(event.item)}
             is ProjectsEvent.OnTabClick -> { onTabClick(event.tab) }
             is ProjectsEvent.InsertItem -> {insertItem(event.item)}
+            is ProjectsEvent.RequestDelete -> requestDelete(event.item)
         }
     }
     fun onEvent(event: TopAppBarEvent){
@@ -111,11 +112,19 @@ class ProjectsViewModel(private val repository: Repository) : ViewModel() {
             eventChannel.send(ProjectsChannel.ShowMessage(message))
         }
     }
+    private fun requestDelete(item: Item){
+        println("...requestDelete(${item.heading})")
+        viewModelScope.launch {
+            eventChannel.send(ProjectsChannel.ShowMessage("delete item"))
+        }
+
+    }
     private fun selectChildren(parent: Item): List<Item>{
         return repository.selectChildren(parent)
     }
 
     private fun showAddItemDialog() {
+        println("...showAddItemDialog() pannkakor")
         _state.update {it.copy(
             defaultItemSettings = it.defaultItemSettings.copy(
                 parent = currentParent,
@@ -164,7 +173,6 @@ class ProjectsViewModel(private val repository: Repository) : ViewModel() {
         println("...onItemClick(${item.heading})")
         if(item.hasChild()){
             currentParent = item
-            //println("...currentParent: ${currentParent.heading}")
             items = repository.selectChildren(item)
             _state.update{
                 it.copy(
