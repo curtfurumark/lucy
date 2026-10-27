@@ -1,9 +1,10 @@
-package se.curtrune.lucy.screens.settings
+package se.curtrune.lucy.screens.settings.screens.main
 
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation3.runtime.NavKey
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,12 +14,14 @@ import kotlinx.coroutines.launch
 import se.curtrune.lucy.app.InitialScreen
 import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.classes.google_calendar.GoogleFactory
+import se.curtrune.lucy.screens.settings.screens.panic.PanicOption
+import se.curtrune.lucy.screens.settings.UserChannel
 import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
 
 class SettingsViewModel: ViewModel(){
     private val calendarModule = LucindaApplication.appModule.googleCalendarModule
-    private val eventChannel = Channel<UserChannel>()
-    val eventFlow = eventChannel.receiveAsFlow()
+    private val _channel = Channel<UserChannel>()
+    val channel = _channel.receiveAsFlow()
     private val _state = MutableStateFlow(UserState())
     val state = _state.asStateFlow()
     private val userSettings = LucindaApplication.appModule.userSettings
@@ -37,18 +40,9 @@ class SettingsViewModel: ViewModel(){
             mentalFlag = userSettings.mentalFlag,
             panicOption = userSettings.panicOption,
             initialScreen = userSettings.initialScreen,
-            showAppointments = userSettings.showAppointmentsLink,
-            showProjects = userSettings.showProjects,
-            showMedicine = userSettings.showMedicine,
-            showDuration = userSettings.showDuration,
-            showDevScreen = userSettings.showDevScreen,
-            showMentalStats = userSettings.showMentalStatsScreen,
-            showTimeLine = userSettings.showTimeLine,
-            showToDo = userSettings.showToDo,
             isDevMode = userSettings.devMode
         ) }
         TopAppbarModule.setTitle("Inställningar")
-        println("show projects: ${userSettings.showProjects}")
     }
     private fun addCategory(category: String){
         userSettings.addCategory(category)
@@ -111,14 +105,7 @@ class SettingsViewModel: ViewModel(){
             is UserEvent.SetPassword -> {
                 setPassword(event.password)
             }
-            is UserEvent.ShowTimeLine ->{
-                println("show timeline")
-                setShowTimeLine(event.visible)
-            }
-            is UserEvent.ShowToDo ->{
-                println("show to do")
-                setShowToDo(event.visible)
-            }
+
 
             is UserEvent.DeleteCategory -> {
                 deleteCategory(event.category)
@@ -148,57 +135,18 @@ class SettingsViewModel: ViewModel(){
             is UserEvent.DevMode -> {
                 println("dev mode")
             }
-            is UserEvent.ShowProjects -> {
-                println("show projects ${event.visible}")
-                setShowProjects(event.visible)
-            }
 
-            is UserEvent.ShowMedicine -> {
-                setShowMedicine(event.visible)
-            }
-
-            is UserEvent.ShowDuration -> {
-                setShowDuration(event.visible)
-
-            }
-
-            is UserEvent.ShowDevScreen -> {
-                setShowDevScreen(event.visible)
-
-            }
-
-            is UserEvent.ShowMentalStats -> {
-                setShowMentalStats(event.visible)
-            }
-
-            is UserEvent.ShowAppointments -> setShowAppointments(event.show)
+            is UserEvent.Navigate -> navigate(event.navKey)
         }
     }
-    private fun setShowAppointments(show: Boolean){
-        userSettings.showAppointmentsLink = show
-    }
-
-    private fun setShowMentalStats(visible: Boolean) {
-        userSettings.showMentalStatsScreen = visible
-    }
-
-    private fun setShowDevScreen(show: Boolean) {
-        userSettings.showDevScreen = show
-    }
-    private fun setShowDuration(show: Boolean) {
-        userSettings.showDuration = show
-    }
-
-    private fun setShowMedicine(show: Boolean) {
-        userSettings.showMedicine = show
-    }
-    private fun setShowTimeLine(show: Boolean)  {
-        userSettings.showTimeLine = show
+    private fun navigate(navKey: NavKey){
+        println("navigate")
+        viewModelScope.launch {
+            _channel.send(UserChannel.Navigate(navKey))
+        }
 
     }
-    private fun setShowToDo(show: Boolean) {
-        userSettings.showToDo = show
-    }
+
 
     private fun setInitialScreen(initialScreen: InitialScreen){
         println("UserViewModel.setInitialScreen()")
@@ -223,13 +171,6 @@ class SettingsViewModel: ViewModel(){
         userSettings.usesPassword = usePassword
         _state.update { it.copy(
             usePassword = usePassword
-        ) }
-    }
-    private fun setShowProjects(visible: Boolean){
-        println("setShowProjects($visible)")
-        userSettings.showProjects = visible
-        _state.update { it.copy(
-            showProjects = visible
         ) }
     }
 
@@ -271,7 +212,7 @@ class SettingsViewModel: ViewModel(){
         userSettings.syncWithGoogleCalendar = sync
         if( sync){
             viewModelScope.launch {
-                eventChannel.send(UserChannel.ReadWriteCalendarPermissions)
+                _channel.send(UserChannel.ReadWriteCalendarPermissions)
             }
         }
     }

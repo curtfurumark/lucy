@@ -17,8 +17,8 @@ import java.util.Random;
 import java.util.Set;
 
 import se.curtrune.lucy.persist.SettingsStore;
-import se.curtrune.lucy.screens.settings.MentalFlag;
-import se.curtrune.lucy.screens.settings.PanicOption;
+import se.curtrune.lucy.screens.settings.screens.main.MentalFlag;
+import se.curtrune.lucy.screens.settings.screens.panic.PanicOption;
 import se.curtrune.lucy.workers.SettingsWorker;
 
 public class UserPrefs {

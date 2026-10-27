@@ -1,8 +1,11 @@
-package se.curtrune.lucy.screens.settings
+package se.curtrune.lucy.screens.settings.screens.main
 
+import androidx.navigation3.runtime.NavKey
 import se.curtrune.lucy.app.InitialScreen
+import se.curtrune.lucy.screens.settings.screens.panic.PanicOption
 
 sealed interface UserEvent {
+    data class Navigate(val navKey: NavKey): UserEvent
     data class UsePassword(val usePassword: Boolean) : UserEvent
     data class DarkMode(val darkMode: Boolean): UserEvent
     data class GetEvents(val calendarID: Int): UserEvent
@@ -19,12 +22,5 @@ sealed interface UserEvent {
     data class SetInitialScreen(val initialScreen: InitialScreen) : UserEvent
     data class SetPanicOption(val panicOption: PanicOption) : UserEvent
     data class DevMode(val devMode: Boolean) : UserEvent
-    data class ShowAppointments(val show: Boolean): UserEvent
-    data class ShowDevScreen(val visible : Boolean) : UserEvent
-    data class ShowMedicine(val visible : Boolean) : UserEvent
-    data class ShowMentalStats(val visible: Boolean): UserEvent
-    data class ShowProjects(val visible : Boolean) : UserEvent
-    data class ShowDuration(val visible : Boolean) : UserEvent
-    data class ShowTimeLine(val visible : Boolean) : UserEvent
-    data class  ShowToDo(val visible : Boolean) : UserEvent
+
 }

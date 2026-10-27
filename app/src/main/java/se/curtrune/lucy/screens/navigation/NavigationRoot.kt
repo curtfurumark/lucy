@@ -6,7 +6,6 @@ package se.curtrune.lucy.screens.navigation
 //import androidx.navigation3.ui.rememberSceneSetupNavEntryDecorator
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -24,6 +23,7 @@ import androidx.navigation3.ui.NavDisplay
 import se.curtrune.lucy.screens.appoinment.composables.AppointmentScreen
 import se.curtrune.lucy.screens.appointments.composables.AppointmentsScreen
 import se.curtrune.lucy.screens.attach_image.AttachImageScreen
+import se.curtrune.lucy.screens.breathe.BreatheScreen
 import se.curtrune.lucy.screens.bullet_list.BulletListScreen
 import se.curtrune.lucy.screens.daycalendar.composables.DayCalendarScreen
 import se.curtrune.lucy.screens.dev.composables.DevScreen
@@ -39,7 +39,9 @@ import se.curtrune.lucy.screens.monthcalendar.composables.MonthCalendarScreen
 import se.curtrune.lucy.screens.my_day.composables.MyDayScreen
 import se.curtrune.lucy.screens.my_manual.MyManualScreen
 import se.curtrune.lucy.screens.projects.composables.ProjectsScreen
+import se.curtrune.lucy.screens.settings.composables.PanicSettingScreen
 import se.curtrune.lucy.screens.settings.composables.SettingsScreen
+import se.curtrune.lucy.screens.settings.screens.screens.ScreensScreen
 import se.curtrune.lucy.screens.tabbed.TabbedProjectsScreen
 import se.curtrune.lucy.screens.templates.create.CreateTemplateScreen
 import se.curtrune.lucy.screens.templates.edit.EditTemplateScreen
@@ -50,7 +52,6 @@ import se.curtrune.lucy.screens.voice_recording_screen.VoiceRecordingScreen
 import se.curtrune.lucy.screens.webscreen.WebScreen
 import se.curtrune.lucy.screens.week_calendar.composables.WeekCalendarScreen
 
-@OptIn(ExperimentalAnimationApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey>) {
@@ -117,6 +118,14 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                         )
                     }
                 }
+                is Route.BreatheScreenNavKey ->{
+                    NavEntry(
+                        key = navKey
+                    ){
+                        BreatheScreen(modifier = modifier)
+                    }
+
+                }
                 is Route.BulletListScreenNavKey -> {
                     NavEntry(
                         key = navKey) {
@@ -168,6 +177,12 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                     NavEntry(
                         key = navKey) {
                         MyManualScreen(modifier = modifier)
+                    }
+                }
+                is Route.PanicSettingsScreenNavKey -> {
+                    NavEntry(
+                        key = navKey) {
+                        PanicSettingScreen(modifier = modifier)
                     }
                 }
                 is Route.DevScreenNavKey -> {
@@ -232,12 +247,19 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                         MessageBoardScreen()
                     }
                 }
+
                 is Route.ProjectsScreenNavKey -> {
                     NavEntry(
                         key = navKey) {
                         ProjectsScreen(onNavigate = {
                             backStack.add(it)
                         })
+                    }
+                }
+                is Route.ScreensScreenNavKey -> {
+                    NavEntry(
+                        key = navKey) {
+                        ScreensScreen()
                     }
                 }
                 is Route.TimeLineScreen -> {
@@ -307,7 +329,11 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                 is Route.SettingsScreenNavKey -> {
                     NavEntry(
                         key = navKey) {
-                            SettingsScreen()
+                            SettingsScreen(
+                                navigate = {
+                                    backStack.add(it)
+                                }
+                            )
                     }
                 }
                 else -> {

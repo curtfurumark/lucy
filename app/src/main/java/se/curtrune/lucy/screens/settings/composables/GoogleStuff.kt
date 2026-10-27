@@ -13,7 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.classes.google_calendar.GoogleCalendarEvent
-import se.curtrune.lucy.screens.settings.UserState
+import se.curtrune.lucy.screens.settings.screens.main.UserState
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId

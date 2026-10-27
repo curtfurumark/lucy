@@ -28,8 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
-import se.curtrune.lucy.screens.settings.UserEvent
-import se.curtrune.lucy.screens.settings.UserState
+import se.curtrune.lucy.screens.settings.screens.main.UserEvent
+import se.curtrune.lucy.screens.settings.screens.main.UserState
 
 @Composable
 fun LanguageSetting(state: UserState, onEvent: (UserEvent) -> Unit){

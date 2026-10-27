@@ -6,11 +6,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import se.curtrune.lucy.screens.daycalendar.composables.SwipeBackground
 import se.curtrune.lucy.screens.projects.ProjectsEvent
 import se.curtrune.lucy.screens.projects.ProjectsState
 
@@ -20,7 +18,7 @@ fun ProjectsList(state: ProjectsState, onEvent: (ProjectsEvent) -> Unit, modifie
         ProjectTabs(state = state, onEvent = onEvent)
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
             items(state.items) { item ->
-                ProjectItem(item = item, onEvent = onEvent)
+                ProjectCard(item = item, onEvent = onEvent)
                 Spacer(modifier = Modifier.height(1.dp))
             }
         }

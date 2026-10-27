@@ -14,8 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
-import se.curtrune.lucy.screens.settings.UserEvent
-import se.curtrune.lucy.screens.settings.UserState
+import se.curtrune.lucy.screens.settings.screens.main.UserEvent
+import se.curtrune.lucy.screens.settings.screens.main.UserState
 
 @Composable
 fun ShowMentalStatusSetting(state: UserState, onEvent: (UserEvent) -> Unit){

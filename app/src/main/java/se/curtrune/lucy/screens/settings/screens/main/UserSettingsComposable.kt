@@ -1,4 +1,4 @@
-package se.curtrune.lucy.screens.settings.composables
+package se.curtrune.lucy.screens.settings.screens.main
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -11,6 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,8 +21,11 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.composables.dialogs.CategoryDialog
-import se.curtrune.lucy.screens.settings.UserEvent
-import se.curtrune.lucy.screens.settings.UserState
+import se.curtrune.lucy.screens.settings.composables.DarkModeSetting
+import se.curtrune.lucy.screens.settings.composables.LanguageSetting
+import se.curtrune.lucy.screens.settings.composables.PanicLinkCard
+import se.curtrune.lucy.screens.settings.composables.ScreensSettings
+import se.curtrune.lucy.screens.settings.composables.ShowMentalStatusSetting
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -38,14 +42,16 @@ fun UserSettingsComposable(modifier: Modifier = Modifier, state: UserState, onEv
         LanguageSetting(state = state, onEvent = onEvent)
         Spacer(modifier = Modifier.height(8.dp))
         ScreensSettings(state = state, onEvent = onEvent)
+        ScreensSettingsLink(onEvent = onEvent)
         //InitialScreenSetting(state = state, onEvent = onEvent)
         //Spacer(modifier = Modifier.height(8.dp))
         //MentalFlagSetting(state = state, onEvent = onEvent)
         //Spacer(modifier = Modifier.height(8.dp))
         //PanicButton(state = state, onEvent = onEvent)
         Spacer(modifier = Modifier.height(8.dp))
-        ShowMentalStatusSetting(state = state,  onEvent = onEvent)
-        //Spacer(modifier = Modifier.height(8.dp))
+        ShowMentalStatusSetting(state = state, onEvent = onEvent)
+        Spacer(modifier = Modifier.height(8.dp))
+        PanicLinkCard(onEvent = onEvent)
         //PassWordSetting(state = state, onEvent = onEvent)
         //Spacer(modifier = Modifier.height(8.dp))
         //Categories(state = state, onEvent = onEvent)
@@ -67,6 +73,9 @@ fun UserSettingsComposable(modifier: Modifier = Modifier, state: UserState, onEv
                 showCategoryDialog = false
             }
         )
+    }
+    LaunchedEffect(Unit) {
+        
     }
 }
 

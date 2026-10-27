@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
@@ -24,15 +26,19 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.item.Item
-import se.curtrune.lucy.screens.daycalendar.DayCalendarEvent
 import se.curtrune.lucy.screens.daycalendar.composables.SwipeBackground
 import se.curtrune.lucy.screens.projects.ProjectsEvent
 
-@OptIn(ExperimentalFoundationApi::class)
+enum class DropDownItems{
+    ADD_CHILD, ADD_LIST
+}
 @Composable
-fun ProjectItem(item: Item, modifier: Modifier = Modifier, onEvent: (ProjectsEvent) -> Unit){
+fun ProjectCard(item: Item, modifier: Modifier = Modifier, onEvent: (ProjectsEvent) -> Unit){
     var isDone by remember {
         mutableStateOf(item.isDone)
+    }
+    var dropDownExpanded by remember {
+        mutableStateOf(false)
     }
     val swipeState = rememberSwipeToDismissBoxState(
         confirmValueChange = {
@@ -60,7 +66,8 @@ fun ProjectItem(item: Item, modifier: Modifier = Modifier, onEvent: (ProjectsEve
                         onEvent(ProjectsEvent.OnItemClick(item))
                     },
                     onLongClick = {
-                        onEvent(ProjectsEvent.OnLongItemClick(item))
+                        //onEvent(ProjectsEvent.OnLongItemClick(item))
+                        dropDownExpanded = true
                     }
                 )
                 .padding(4.dp)) {
@@ -83,6 +90,19 @@ fun ProjectItem(item: Item, modifier: Modifier = Modifier, onEvent: (ProjectsEve
                     Text(text = ">", modifier = Modifier.padding(end = 4.dp))
                 }
             }
+            DropdownMenu(expanded = dropDownExpanded, onDismissRequest = {
+                dropDownExpanded = false
+            }) {
+                for(action in DropDownItems.entries){
+                    DropdownMenuItem(
+                        text = {Text(text = action.name)},
+                        onClick = {
+                            onEvent(ProjectsEvent.OnDropDownItemClicked(item, action))
+                            dropDownExpanded = false
+                        }
+                    )
+                }
+            }
         }
     }
 }
@@ -90,9 +110,9 @@ fun ProjectItem(item: Item, modifier: Modifier = Modifier, onEvent: (ProjectsEve
 @Composable
 @Preview
 @PreviewLightDark
-fun PreviewProjectItem(){
+fun PreviewProjectCard(){
     LucyTheme {
-        ProjectItem(item = Item("test"), onEvent = {})
+        ProjectCard(item = Item("test"), onEvent = {})
     }
 
 }

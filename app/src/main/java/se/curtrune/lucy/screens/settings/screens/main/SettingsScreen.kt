@@ -7,21 +7,25 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation3.runtime.NavKey
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.screens.top_appbar.FlexibleTopBar
 import se.curtrune.lucy.screens.top_appbar.LucindaTopAppBar
 import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
-import se.curtrune.lucy.screens.settings.SettingsViewModel
+import se.curtrune.lucy.screens.settings.screens.main.SettingsViewModel
+import se.curtrune.lucy.screens.settings.UserChannel
+import se.curtrune.lucy.screens.settings.screens.main.UserSettingsComposable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun SettingsScreen(){
+fun SettingsScreen(navigate: (NavKey)->Unit){
     val viewModel: SettingsViewModel = viewModel()
     val state by viewModel.state.collectAsState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -46,7 +50,23 @@ fun SettingsScreen(){
         }
 
     ) {padding->
-        UserSettingsComposable(modifier = Modifier.padding(padding),state = state, onEvent = viewModel::onEvent)
+        UserSettingsComposable(
+            modifier = Modifier.padding(padding),
+            state = state,
+            onEvent = viewModel::onEvent
+        )
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.channel.collect {event->
+            when(event){
+                is UserChannel.Navigate -> {
+                    navigate(event.navKey)
+                }
+                is UserChannel.ReadWriteCalendarPermissions -> TODO()
+                is UserChannel.ShowMessage -> TODO()
+            }
+        }
     }
 }
 
@@ -56,6 +76,6 @@ fun SettingsScreen(){
 @PreviewLightDark
 fun PreviewSettingsScreen(){
     LucyTheme {
-        SettingsScreen()
+        SettingsScreen(navigate = {})
     }
 }

@@ -1,5 +1,6 @@
 package se.curtrune.lucy.screens.navigation
 
+import androidx.compose.runtime.Composable
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
@@ -17,6 +18,10 @@ sealed interface Route: NavKey{
 
     @Serializable
     data object AppointmentsScreenNavKey: Route
+    @Serializable
+    data object BreatheScreenNavKey: Route{
+    }
+
     @Serializable
     data object BulletListScreenNavKey: Route
     @Serializable
@@ -54,10 +59,17 @@ sealed interface Route: NavKey{
     data object MyDayScreenNavKey: Route
     @Serializable
     data object MyManualScreenNavKey: Route
+
+    @Serializable
+    data object PanicSettingsScreenNavKey: Route
     @Serializable
     data object ProjectsScreenNavKey: Route
 
 
+    @Serializable
+    data object ScreensScreenNavKey: Route{
+
+    }
     @Serializable
     data object SettingsScreenNavKey: Route
 

@@ -1,4 +1,4 @@
-package se.curtrune.lucy.screens.settings
+package se.curtrune.lucy.screens.settings.screens.panic
 
 enum class PanicOption {
     URL, ICE, GAME, MEDITATION, POSTPONE, PENDING

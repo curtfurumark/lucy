@@ -29,7 +29,7 @@ import se.curtrune.lucy.screens.daycalendar.DayCalendarEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ConfirmDeleteDialog(item: Item, onDismiss: ()->Unit, onEvent: (DayCalendarEvent)->Unit){
+fun ConfirmDeleteDialog(item: Item, onDismiss: ()->Unit, onConfirm: (Item)->Unit){
     Surface(modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp)
     ) {
@@ -52,7 +52,8 @@ fun ConfirmDeleteDialog(item: Item, onDismiss: ()->Unit, onEvent: (DayCalendarEv
                     ))
                 }
                 Button(onClick = {
-                    onEvent(DayCalendarEvent.DeleteItem(item))
+                    //onEvent(DayCalendarEvent.DeleteItem(item))
+                    onConfirm(item)
                 }) {
                     Text(stringResource(R.string.delete))
                 }
@@ -67,6 +68,6 @@ fun PreviewConfirmDeleteDialog(){
     ConfirmDeleteDialog(
         item = Item("coffee break"),
         onDismiss = {},
-        onEvent = {}
+        onConfirm = {}
         )
 }

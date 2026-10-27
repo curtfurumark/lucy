@@ -9,17 +9,20 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import se.curtrune.lucy.classes.State
 import se.curtrune.lucy.persist.SettingsStore
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.screens.top_appbar.TopAppBarEvent
 import se.curtrune.lucy.persist.Repository
+import se.curtrune.lucy.screens.navigation.Route
+import se.curtrune.lucy.screens.projects.composables.DropDownItems
 import java.time.LocalDate
 import java.time.LocalTime
 
 class ProjectsViewModel(private val repository: Repository) : ViewModel() {
     val _state = MutableStateFlow(ProjectsState())
-    private val eventChannel = Channel<ProjectsChannel>()
-    val eventFlow = eventChannel.receiveAsFlow()
+    private val _channel = Channel<ProjectsChannel>()
+    val channel = _channel.receiveAsFlow()
     val state = _state.asStateFlow()
     private var items: List<Item> = emptyList()
     private var currentParent: Item? = null
@@ -60,6 +63,7 @@ class ProjectsViewModel(private val repository: Repository) : ViewModel() {
             is ProjectsEvent.OnTabClick -> { onTabClick(event.tab) }
             is ProjectsEvent.InsertItem -> {insertItem(event.item)}
             is ProjectsEvent.RequestDelete -> requestDelete(event.item)
+            is ProjectsEvent.OnDropDownItemClicked -> onDropDownItemClicked(event.item,event.action)
         }
     }
     fun onEvent(event: TopAppBarEvent){
@@ -85,7 +89,7 @@ class ProjectsViewModel(private val repository: Repository) : ViewModel() {
         if( !deleted){
             println("error deleting item")
             viewModelScope.launch {
-                eventChannel.send(ProjectsChannel.ShowMessage("error deleting item"))
+                _channel.send(ProjectsChannel.ShowMessage("error deleting item"))
             }
         }
     }
@@ -109,13 +113,42 @@ class ProjectsViewModel(private val repository: Repository) : ViewModel() {
     private fun message(message: String){
         println("...message:(${message})")
         viewModelScope.launch {
-            eventChannel.send(ProjectsChannel.ShowMessage(message))
+            _channel.send(ProjectsChannel.ShowMessage(message))
+        }
+    }
+    private fun onDropDownItemClicked(item: Item ,action: DropDownItems){
+        println("onDropDownItemClicked()")
+        when(action){
+            DropDownItems.ADD_CHILD -> {
+                viewModelScope.launch {
+                    _channel.send(ProjectsChannel.ShowMessage("not implemented"))
+                }
+            }
+            DropDownItems.ADD_LIST -> {
+                viewModelScope.launch {
+                    _channel.send(ProjectsChannel.Navigate(
+                        key = Route.EditListNavKey(item)
+                    ))
+                }
+            }
+        }
+    }
+    private fun refresh(){
+        //println("...refresh, current parent ${currentParent.heading}")
+        items = repository.selectChildren(currentParent)
+        _state.update {
+            it.copy(
+                items = items
+                //currentParent = currentParent,
+                //tabs = it.tabs + ProjectTab(parent = currentParent, index = numberTabs++)
+            )
         }
     }
     private fun requestDelete(item: Item){
         println("...requestDelete(${item.heading})")
         viewModelScope.launch {
-            eventChannel.send(ProjectsChannel.ShowMessage("delete item"))
+            //_channel.send(ProjectsChannel.ShowMessage("delete item"))
+            _channel.send(ProjectsChannel.ConfirmDelete(item))
         }
 
     }
@@ -136,7 +169,7 @@ class ProjectsViewModel(private val repository: Repository) : ViewModel() {
                 }
             ))}
         viewModelScope.launch {
-            eventChannel.send(ProjectsChannel.ShowAddItemDialog)
+            _channel.send(ProjectsChannel.ShowAddItemDialog)
         }
     }
 
@@ -157,7 +190,7 @@ class ProjectsViewModel(private val repository: Repository) : ViewModel() {
     private fun onLongItemClick(item: Item) {
         println("...onLongItemClick(${item.heading})")
         viewModelScope.launch {
-            eventChannel.send(ProjectsChannel.Edit(item))
+            _channel.send(ProjectsChannel.Edit(item))
         }
     }
 
@@ -166,7 +199,13 @@ class ProjectsViewModel(private val repository: Repository) : ViewModel() {
         val rowsAffected = repository.update(item)
         if( rowsAffected != 1){
             println("error updating item")
+            message("error updating item")
+        }else{
+            message(" is done ${item.isDone}")
         }
+        refresh()
+        val savedItem = repository.selectItem(item.id)
+        message("saved item ${savedItem?.isDone}")
     }
 
     private fun onItemClick(item: Item){
@@ -183,7 +222,7 @@ class ProjectsViewModel(private val repository: Repository) : ViewModel() {
         }else{
             println("...item does not have  child -> ItemEditorFragment")
             viewModelScope.launch {
-                eventChannel.send(ProjectsChannel.Edit(item))
+                _channel.send(ProjectsChannel.Edit(item))
             }
         }
     }

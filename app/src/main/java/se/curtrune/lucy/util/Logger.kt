@@ -110,14 +110,10 @@ open class Logger {
                 log("log mental called with null mental")
                 return
             }
-            log("\tcategory", mental.category)
-            log("\tisDone", mental.isDone)
-            log("\tcreated", Converter.epochToFormattedDateTime(mental.createdEpoch))
             log("\tanxiety", mental.anxiety)
             log("\tmood", mental.mood)
             log("\tenergy", mental.energy)
             log("\tstress", mental.stress)
-            log("\tisTemplate", mental.isTemplate)
         }
 
         @RequiresApi(Build.VERSION_CODES.O)

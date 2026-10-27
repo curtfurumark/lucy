@@ -18,8 +18,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
 import se.curtrune.lucy.app.LucindaApplication
+import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.composables.AddItemFab
 import se.curtrune.lucy.composables.add_item.AddItemBottomSheet
+import se.curtrune.lucy.composables.dialogs.ConfirmDeleteDialog
 import se.curtrune.lucy.screens.top_appbar.FlexibleTopBar
 import se.curtrune.lucy.screens.top_appbar.LucindaTopAppBar
 import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
@@ -37,9 +39,13 @@ fun ProjectsScreen(onNavigate: (NavKey)->Unit){
         ProjectsViewModel(LucindaApplication.appModule.repository)
     }
     val state by viewModel.state.collectAsState()
+    var itemToDelete: Item? by remember {
+        mutableStateOf(null)
+    }
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val topAppBarState = TopAppbarModule.topAppBarState.collectAsStateWithLifecycle()
     var showAddItemBottomSheet by remember { mutableStateOf(false) }
+    var showConfirmDeleteDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
     Scaffold(
         topBar = {
@@ -65,7 +71,7 @@ fun ProjectsScreen(onNavigate: (NavKey)->Unit){
         ProjectsList(state = state, onEvent = viewModel::onEvent, modifier = Modifier.padding(padding))
     }
     LaunchedEffect(viewModel) {
-        viewModel.eventFlow.collect { event ->
+        viewModel.channel.collect { event ->
             when (event) {
                 is ProjectsChannel.Edit -> {
                     onNavigate(ItemEditorNavKey(event.item))
@@ -76,6 +82,15 @@ fun ProjectsScreen(onNavigate: (NavKey)->Unit){
                 }
                 is ProjectsChannel.ShowMessage -> {
                     Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
+                }
+
+                is ProjectsChannel.Navigate -> {
+                    onNavigate(event.key)
+                }
+
+                is ProjectsChannel.ConfirmDelete -> {
+                    itemToDelete = event.item
+                    showConfirmDeleteDialog = true
                 }
             }
         }
@@ -91,6 +106,19 @@ fun ProjectsScreen(onNavigate: (NavKey)->Unit){
                 showAddItemBottomSheet = false
             }
         )
+    }
+    if( showConfirmDeleteDialog){
+        println("showConfirmDeleteDialog")
+        itemToDelete?.let {
+            ConfirmDeleteDialog(item = it, onDismiss = {
+                showConfirmDeleteDialog = false
+            }, onConfirm = {
+                showConfirmDeleteDialog = false
+                viewModel.onEvent(ProjectsEvent.Delete(
+                    item = it
+                ))
+            })
+        }
     }
 }
 

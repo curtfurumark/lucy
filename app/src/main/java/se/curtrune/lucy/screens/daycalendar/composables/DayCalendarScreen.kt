@@ -95,9 +95,9 @@ fun DayCalendarScreen(date: String, navigate: (NavKey) -> Unit, modifier: Modifi
     if( showConfirmDeleteDialog) {
         ConfirmDeleteDialog(item = state.currentItem!!, onDismiss = {
             showConfirmDeleteDialog = false
-        }, onEvent = {
+        }, onConfirm = {
             showConfirmDeleteDialog = false
-            viewModel.onEvent(it)
+            viewModel.onEvent(DayCalendarEvent.DeleteItem(it))
         })
     }
 }

@@ -47,12 +47,10 @@ fun ProjectsTab(onNavigate: (NavKey)->Unit){
         ProjectsList(state = state.value, onEvent = viewModel::onEvent, modifier = Modifier.padding(padding))
     }
     LaunchedEffect(viewModel) {
-        viewModel.eventFlow.collect { event ->
+        viewModel.channel.collect { event ->
             when (event) {
                 is ProjectsChannel.Edit -> {
-                    //editItem(event.item)
                     onNavigate(ItemEditorNavKey(event.item))
-                    //println("editItem(Item: ${event.item.heading})")
                 }
 
                 ProjectsChannel.ShowAddItemDialog -> {
@@ -60,6 +58,9 @@ fun ProjectsTab(onNavigate: (NavKey)->Unit){
                 }
                 is ProjectsChannel.ShowMessage -> {
                     Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
+                }
+                else->{
+                    println("not applicable")
                 }
             }
         }

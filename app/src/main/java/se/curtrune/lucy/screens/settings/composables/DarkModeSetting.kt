@@ -19,8 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.R
-import se.curtrune.lucy.screens.settings.UserEvent
-import se.curtrune.lucy.screens.settings.UserState
+import se.curtrune.lucy.screens.settings.screens.main.UserEvent
+import se.curtrune.lucy.screens.settings.screens.main.UserState
 
 @Composable
 fun DarkModeSetting(state: UserState, onEvent: (UserEvent) -> Unit){

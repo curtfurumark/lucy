@@ -1,7 +1,8 @@
-package se.curtrune.lucy.screens.settings
+package se.curtrune.lucy.screens.settings.screens.main
 
 import se.curtrune.lucy.app.InitialScreen
 import se.curtrune.lucy.classes.google_calendar.GoogleCalendarEvent
+import se.curtrune.lucy.screens.settings.screens.panic.PanicOption
 
 data class UserState(
     var syncWithGoogle: Boolean = false,
@@ -17,16 +18,8 @@ data class UserState(
     var mentalFlag: MentalFlag = MentalFlag(),
     var panicOption: PanicOption = PanicOption.URL,
     var initialScreen: InitialScreen = InitialScreen.CALENDER_DATE,
-    var showAppointments: Boolean = true,
-    var showDevScreen: Boolean = false,
-    var showDuration: Boolean = false,
-    var showProjects: Boolean = false,
-    var showMedicine: Boolean = false,
-    var showMyManual: Boolean= false,
-    var showTimeLine: Boolean = true,
-    var showToDo: Boolean = false,
-    var showMentalStats: Boolean = false
-)
+
+    )
 
 data class MentalFlag(
     var anxiety: Int = 0,

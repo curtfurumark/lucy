@@ -25,8 +25,8 @@ import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.classes.google_calendar.GoogleCalendar
-import se.curtrune.lucy.screens.settings.UserEvent
-import se.curtrune.lucy.screens.settings.UserState
+import se.curtrune.lucy.screens.settings.screens.main.UserEvent
+import se.curtrune.lucy.screens.settings.screens.main.UserState
 
 
 @Composable

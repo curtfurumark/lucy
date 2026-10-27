@@ -14,8 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import se.curtrune.lucy.activities.ui.theme.LucyTheme
 import se.curtrune.lucy.app.InitialScreen
-import se.curtrune.lucy.screens.settings.UserEvent
-import se.curtrune.lucy.screens.settings.UserState
+import se.curtrune.lucy.screens.settings.screens.main.UserEvent
+import se.curtrune.lucy.screens.settings.screens.main.UserState
 
 @Composable
 fun InitialScreenSetting(state: UserState, onEvent: (UserEvent)->Unit){
