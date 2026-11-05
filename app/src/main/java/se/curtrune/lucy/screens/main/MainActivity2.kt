@@ -44,6 +44,7 @@ import se.curtrune.lucy.screens.navigation.Route.DayCalendarNavKey
 import se.curtrune.lucy.screens.navigation.Route.DevScreenNavKey
 import se.curtrune.lucy.screens.navigation.LucindaNavigationDrawer
 import se.curtrune.lucy.screens.navigation.NavigationRoot
+import se.curtrune.lucy.screens.navigation.Route
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.web.VersionInfo
 import java.time.LocalDate
@@ -172,12 +173,16 @@ class MainActivity2 : AppCompatActivity() {
                     }
                 }
                 if (showPanicDialog) {
-                    ChoosePanicActionDialog(
+                    backStack.add(Route.BreatheScreenNavKey)
+                    /**ChoosePanicActionDialog(
                         state = state,
                         onDismiss = {
                             showPanicDialog = false
                         },
-                        onEvent = {})
+                        onEvent = {
+
+
+                        })*/
                 }
                 if (showQuoteDialog) {
                     QuoteDialog(onDismiss = {
