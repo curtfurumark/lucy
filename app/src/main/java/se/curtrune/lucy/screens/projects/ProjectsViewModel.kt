@@ -24,7 +24,7 @@ class ProjectsViewModel(private val repository: Repository) : ViewModel() {
     private val _channel = Channel<ProjectsChannel>()
     val channel = _channel.receiveAsFlow()
     val state = _state.asStateFlow()
-    private var items: List<Item> = emptyList()
+    //private var items: List<Item> = emptyList()
     private var currentParent: Item? = null
     private var numberTabs = 0
     init {
@@ -33,22 +33,23 @@ class ProjectsViewModel(private val repository: Repository) : ViewModel() {
         if(currentParent== null){
             message("projects root not found")
         }
-        items = repository.selectChildren(currentParent)
+        //items = repository.selectChildren(currentParent)
         _state.update{
             it.copy(
-                items = items,
+                items = repository.selectChildren(currentParent),
                 currentParent = currentParent,
                 tabs = it.tabs + ProjectTab(parent = currentParent, index = numberTabs++)
             )
         }
     }
+
     fun filter(filter: String) {
-        val filteredItems = items.filter { item-> item.contains(filter) }
-        _state.update {
+    /**    val filteredItems = items.filter { item-> item.contains(filter) }
+           _state.update {
             it.copy(
                 items = filteredItems
             )
-        }
+        }*/
     }
 
     fun onEvent(event: ProjectsEvent){
@@ -69,18 +70,9 @@ class ProjectsViewModel(private val repository: Repository) : ViewModel() {
     fun onEvent(event: TopAppBarEvent){
         when(event){
             is TopAppBarEvent.OnSearch -> {filter(event.filter)}
-            TopAppBarEvent.ActionMenu -> TODO()
-            TopAppBarEvent.CheckForUpdate -> TODO()
-            TopAppBarEvent.DayCalendar -> TODO()
-            TopAppBarEvent.DayClicked -> TODO()
-            TopAppBarEvent.DevActivity -> TODO()
-            TopAppBarEvent.DrawerMenu -> TODO()
-            TopAppBarEvent.MedicinesClicked -> TODO()
-            TopAppBarEvent.MonthClicked -> TODO()
-            TopAppBarEvent.OnBoost -> TODO()
-            TopAppBarEvent.OnPanic -> TODO()
-            TopAppBarEvent.SettingsClicked -> TODO()
-            TopAppBarEvent.WeekClicked -> TODO()
+            else -> {
+                message("top bar event not implemented")
+            }
         }
     }
     private fun delete(item: Item) {
@@ -133,21 +125,10 @@ class ProjectsViewModel(private val repository: Repository) : ViewModel() {
             }
         }
     }
-    private fun refresh(){
-        //println("...refresh, current parent ${currentParent.heading}")
-        items = repository.selectChildren(currentParent)
-        _state.update {
-            it.copy(
-                items = items
-                //currentParent = currentParent,
-                //tabs = it.tabs + ProjectTab(parent = currentParent, index = numberTabs++)
-            )
-        }
-    }
+
     private fun requestDelete(item: Item){
         println("...requestDelete(${item.heading})")
         viewModelScope.launch {
-            //_channel.send(ProjectsChannel.ShowMessage("delete item"))
             _channel.send(ProjectsChannel.ConfirmDelete(item))
         }
 
@@ -157,15 +138,16 @@ class ProjectsViewModel(private val repository: Repository) : ViewModel() {
     }
 
     private fun showAddItemDialog() {
-        println("...showAddItemDialog() pannkakor")
-        _state.update {it.copy(
+        println("...showAddItemDialog()")
+        _state.update {
+            it.copy(
             defaultItemSettings = it.defaultItemSettings.copy(
                 parent = currentParent,
                 isEvent = false,
-                item = Item().also {
-                    it.targetDate = LocalDate.of(0, 1, 1)
-                    it.targetTime = LocalTime.ofSecondOfDay(0)
-                    it.parent = currentParent
+                item = Item().also { item->
+                    item.targetDate = LocalDate.of(0, 1, 1)
+                    item.targetTime = LocalTime.ofSecondOfDay(0)
+                    item.parent = currentParent
                 }
             ))}
         viewModelScope.launch {
@@ -177,11 +159,10 @@ class ProjectsViewModel(private val repository: Repository) : ViewModel() {
         println("...onTabClick($tab,   ${tab.index})")
         val tabs = state.value.tabs.filter { it.index < tab.index +1 }
         numberTabs = tabs.size
-        items = repository.selectChildren(tab.parent)
         _state.update {
             it.copy(
                 currentParent = tab.parent,
-                items = items,
+                items = repository.selectChildren(tab.parent),
                 tabs = tabs
             )
         }
@@ -201,9 +182,9 @@ class ProjectsViewModel(private val repository: Repository) : ViewModel() {
             println("error updating item")
             message("error updating item")
         }else{
-            message(" is done ${item.isDone}")
+            message(" is done ${item.isDone}, ${item.heading}")
         }
-        refresh()
+        //refresh()
         val savedItem = repository.selectItem(item.id)
         message("saved item ${savedItem?.isDone}")
     }
@@ -212,15 +193,14 @@ class ProjectsViewModel(private val repository: Repository) : ViewModel() {
         println("...onItemClick(${item.heading})")
         if(item.hasChild()){
             currentParent = item
-            items = repository.selectChildren(item)
+            //items = repository.selectChildren(item)
             _state.update{
                 it.copy(
-                    items = items,
+                    items = repository.selectChildren(item),
                     currentParent = item,
                     tabs = it.tabs + ProjectTab(parent = item, index = numberTabs++))
             }
         }else{
-            println("...item does not have  child -> ItemEditorFragment")
             viewModelScope.launch {
                 _channel.send(ProjectsChannel.Edit(item))
             }

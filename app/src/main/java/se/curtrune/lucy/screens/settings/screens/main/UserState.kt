@@ -1,8 +1,8 @@
 package se.curtrune.lucy.screens.settings.screens.main
 
 import se.curtrune.lucy.app.InitialScreen
+import se.curtrune.lucy.classes.PanicOption
 import se.curtrune.lucy.classes.google_calendar.GoogleCalendarEvent
-import se.curtrune.lucy.screens.settings.screens.panic.PanicOption
 
 data class UserState(
     var syncWithGoogle: Boolean = false,

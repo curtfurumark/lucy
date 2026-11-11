@@ -6,9 +6,9 @@ import kotlinx.coroutines.flow.update
 import se.curtrune.lucy.app.InitialScreen
 import se.curtrune.lucy.persist.SettingsStore
 import se.curtrune.lucy.app.UserPrefs
+import se.curtrune.lucy.classes.PanicOption
 import se.curtrune.lucy.screens.navigation.NavigationDrawerState
 import se.curtrune.lucy.screens.settings.screens.main.MentalFlag
-import se.curtrune.lucy.screens.settings.screens.panic.PanicOption
 import se.curtrune.lucy.util.Logger
 import java.util.Arrays
 

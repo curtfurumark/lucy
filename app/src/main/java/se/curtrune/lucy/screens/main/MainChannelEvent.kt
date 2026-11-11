@@ -1,13 +1,15 @@
 package se.curtrune.lucy.screens.main
 
+import androidx.navigation3.runtime.NavKey
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.screens.affirmations.Affirmation
 import se.curtrune.lucy.screens.affirmations.Quote
 
 sealed interface MainChannelEvent{
+    data class Navigate(val key: NavKey): MainChannelEvent
     data object  UpdateAvailable: MainChannelEvent
-    data class ShowBoostDialog(val quote: Quote? = null): MainChannelEvent
-    data class ShowAffirmation(val affirmation: Affirmation? = null): MainChannelEvent
+    //data class ShowBoostDialog(val quote: Quote? = null): MainChannelEvent
+    //data class ShowAffirmation(val affirmation: Affirmation? = null): MainChannelEvent
     data class ShowMessage(val message: String): MainChannelEvent
     data object ShowPanicDialog: MainChannelEvent
     data class ShowNavigationDrawer(val show: Boolean) : MainChannelEvent

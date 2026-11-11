@@ -26,7 +26,7 @@ fun ICECard(state: PanicSettingState, onEvent: (PanicSettingEvent)->Unit){
     Card(modifier = Modifier.fillMaxWidth()){
         Row() {
             OutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.weight(0.75f),
                 label = { Text(text = "ice") },
                 value = number.toString(),
                 onValueChange = {})

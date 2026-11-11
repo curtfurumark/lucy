@@ -17,11 +17,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import se.curtrune.lucy.classes.PanicOption
 
 @Composable
-fun BreatheSettingCard(onBreatheChecked: (Boolean)-> Unit){
+fun BreatheSettingCard(state: PanicSettingState, onBreatheChecked: (Boolean)-> Unit){
     var checked by remember {
-        mutableStateOf(false)
+        mutableStateOf(state.panicOption == PanicOption.BREATHE)
     }
     Card(
         modifier = Modifier.fillMaxWidth()
@@ -32,8 +33,12 @@ fun BreatheSettingCard(onBreatheChecked: (Boolean)-> Unit){
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically) {
             Text(text = "breathe", modifier = Modifier.padding(start = 8.dp))
-            Checkbox(checked = checked, onCheckedChange = {
-                checked = it }
+            Checkbox(
+                checked = checked,
+                onCheckedChange = {
+                    checked = it
+                    onBreatheChecked(it)
+                }
             )
         }
     }
@@ -42,6 +47,6 @@ fun BreatheSettingCard(onBreatheChecked: (Boolean)-> Unit){
 @Composable
 @PreviewLightDark
 fun PreviewBreatheSettingCard(){
-    BreatheSettingCard {  }
+    BreatheSettingCard(state = PanicSettingState(), onBreatheChecked = {})
 
 }

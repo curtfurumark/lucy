@@ -28,9 +28,9 @@ public class SettingsStore {
     private long panicID;
     private long theRootID;
 
-    public enum PanicAction{
+/*    public enum PanicAction{
         GAME, URL, SEQUENCE, PENDING, ICE
-    }
+    }*/
     public enum Root{
         TODO, DAILY, PROJECTS, APPOINTMENTS, PANIC, THE_ROOT
     }

@@ -42,6 +42,9 @@ sealed interface Route: NavKey{
     data class FileViewerScreenNavKey(val item: Item): Route
 
     @Serializable
+    data object Five4321ScreenNavKey: Route{
+    }
+    @Serializable
     data class ItemEditorNavKey(val item: @Contextual Item): Route
 
     @Serializable

@@ -16,9 +16,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import se.curtrune.lucy.classes.PanicOption;
 import se.curtrune.lucy.persist.SettingsStore;
 import se.curtrune.lucy.screens.settings.screens.main.MentalFlag;
-import se.curtrune.lucy.screens.settings.screens.panic.PanicOption;
 import se.curtrune.lucy.workers.SettingsWorker;
 
 public class UserPrefs {
@@ -118,9 +118,6 @@ public class UserPrefs {
     public static String getLanguage(Context context) {
         return SettingsStore.getString(KEY_LANGUAGE, "sv", context);
     }
-    public static SettingsStore.PanicAction getPanicAction(Context context) {
-        return SettingsStore.PanicAction.valueOf(SettingsStore.getString(KEY_PANIC_ACTION, SettingsStore.PanicAction.SEQUENCE.toString(), context));
-    }
 
     public static Set<String> getPanicUrls(Context context){
         return SettingsStore.getSet(KEY_PANIC_URLS, context);
@@ -148,9 +145,7 @@ public class UserPrefs {
     }
     public static void  setShowDevScreen(boolean show, Context context) {
         SettingsStore.addBoolean(KEY_DEV_MODE, show, context);
-
     }
-
     public static void setIcePhoneNumber(int phoneNumber, Context context){
         SettingsStore.addInt(KEY_ICE_PHONE_NUMBER, phoneNumber, context);
     }
@@ -209,11 +204,6 @@ public class UserPrefs {
     public static void setDevMode(boolean devMode, Context context){
         SettingsStore.addBoolean(KEY_DEV_MODE, devMode, context);
     }
-
-    public static void setPanicAction(SettingsStore.PanicAction panicAction, Context context) {
-        SettingsStore.addString(KEY_PANIC_ACTION, panicAction.toString(), context);
-    }
-
     public static void setLanguage(String language, Context context) {
         log("UserPrefs.setLanguage(String, Context)");
         SettingsStore.addString(KEY_LANGUAGE, language , context);

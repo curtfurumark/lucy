@@ -34,10 +34,10 @@ class DayCalendarViewModel(private val date: LocalDate): ViewModel(){
     private val eventChannel = Channel<DayCalendarChannel>()
     val eventFlow = eventChannel.receiveAsFlow()
     private val _state = MutableStateFlow(DayCalendarState())
+    val state = _state.asStateFlow()
     private var itemToDelete: Item? = null
     private var latestDeletedItem: Item? = null
     private val todoRoot: Item? = repository.getTodoRoot()
-    val state = _state.asStateFlow()
     val defaultItemSettings = DefaultItemSettings()
 
     init{

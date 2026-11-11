@@ -25,26 +25,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.rememberNavBackStack
 import kotlinx.coroutines.launch
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
 import se.curtrune.lucy.app.LucindaApplication
-import se.curtrune.lucy.persist.SettingsStore.PanicAction
 import se.curtrune.lucy.app.UserPrefs
+import se.curtrune.lucy.classes.PanicOption
 import se.curtrune.lucy.classes.item.Item
 import se.curtrune.lucy.screens.top_appbar.FlexibleTopBar
 import se.curtrune.lucy.screens.top_appbar.LucindaTopAppBar
 import se.curtrune.lucy.dialogs.UpdateDialog
 import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
 import se.curtrune.lucy.screens.affirmations.Quote
+import se.curtrune.lucy.screens.main.composables.BoostDialog
 import se.curtrune.lucy.screens.main.composables.ChoosePanicActionDialog
 import se.curtrune.lucy.screens.main.composables.QuoteDialog
 import se.curtrune.lucy.screens.navigation.Route.DayCalendarNavKey
 import se.curtrune.lucy.screens.navigation.Route.DevScreenNavKey
 import se.curtrune.lucy.screens.navigation.LucindaNavigationDrawer
 import se.curtrune.lucy.screens.navigation.NavigationRoot
-import se.curtrune.lucy.screens.navigation.Route
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.web.VersionInfo
 import java.time.LocalDate
@@ -91,15 +92,6 @@ class MainActivity2 : AppCompatActivity() {
                             showPanicDialog = true
                         }
 
-                        is MainChannelEvent.ShowAffirmation -> {
-                            Toast.makeText(applicationContext,
-                                event.affirmation?.affirmation ?: "you're the greatest", Toast.LENGTH_LONG).show()
-                        }
-
-                        is MainChannelEvent.ShowBoostDialog -> {
-                            Toast.makeText(applicationContext, "boost me", Toast.LENGTH_LONG).show()
-                        }
-
                         is MainChannelEvent.ShowQuoteDialog -> {
                             quote = event.quote!!
                             showQuoteDialog = true
@@ -133,6 +125,10 @@ class MainActivity2 : AppCompatActivity() {
                             }else{
                                 drawerState.close()
                             }
+                        }
+
+                        is MainChannelEvent.Navigate -> {
+                            backStack.add(event.key)
                         }
                     }
                 }
@@ -173,16 +169,16 @@ class MainActivity2 : AppCompatActivity() {
                     }
                 }
                 if (showPanicDialog) {
-                    backStack.add(Route.BreatheScreenNavKey)
-                    /**ChoosePanicActionDialog(
+                    //backStack.add(Route.BreatheScreenNavKey)
+                    ChoosePanicActionDialog(
                         state = state,
                         onDismiss = {
                             showPanicDialog = false
                         },
                         onEvent = {
-
-
-                        })*/
+                            showPanicDialog = false
+                            mainViewModel.onEvent(it)
+                        })
                 }
                 if (showQuoteDialog) {
                     QuoteDialog(onDismiss = {
@@ -191,6 +187,7 @@ class MainActivity2 : AppCompatActivity() {
                 }
                 if (showAffirmation) {
                     println("showAffirmation")
+                    BoostDialog()
                 }
             }
         }
@@ -203,13 +200,6 @@ class MainActivity2 : AppCompatActivity() {
         mainViewModel.fragment.observe(this) { fragment: Fragment? ->
             Logger.log(" new fragment observed")
             loadFragment(fragment)
-        }
-        mainViewModel.message.observe(
-            this
-        ) { message: String? ->
-            Toast.makeText(
-                applicationContext, message, Toast.LENGTH_LONG
-            ).show()
         }
     }
 
@@ -265,71 +255,6 @@ class MainActivity2 : AppCompatActivity() {
     private fun panicActionPending() {
         Logger.log("...panicActionPending()")
     }
-
-    private fun panic(panicAction: PanicAction) {
-        Logger.log("...panic(PanicAction))")
-        Logger.log("....panicAction", panicAction.toString())
-        when (panicAction) {
-            PanicAction.GAME ->{
-                Toast.makeText(applicationContext, "game not implemented", Toast.LENGTH_LONG).show()
-            }
-                //startActivity(
-/*                Intent(
-                    this,
-                    //GameActivity::class.java
-                )*/
-            PanicAction.URL -> {
-                val url = UserPrefs.getRandomPanicUrl(this)
-                openWebPage(url)
-            }
-
-            PanicAction.SEQUENCE -> {
-                println("...SEQUENCE")
-                mainViewModel.onEvent(MainEvent.StartSequence(Item()))
-                //navigate(SequenceFragment(panicRoot))
-                //}
-            }
-
-            PanicAction.ICE -> panicActionICE()
-            PanicAction.PENDING -> panicActionPending()
-        }
-    }
-
-/*    private fun showPanicAction() {
-        val panicAction = mainViewModel!!.getPanicAction(this)
-        Logger.log("...showPanicAction()", panicAction.toString())
-        when (panicAction) {
-            PanicAction.GAME -> startActivity(
-                Intent(
-                    this,
-                    GameActivity::class.java
-                )
-            )
-
-            PanicAction.URL -> {
-                val url = UserPrefs.getRandomPanicUrl(this)
-                openWebPage(url)
-            }
-
-            PanicAction.SEQUENCE -> {
-                val panicRoot = ItemsWorker.getPanicRoot(this)
-                if (panicRoot == null) {
-                    Logger.log("ERROR...panicRoot == null")
-                } else {
-                    navigate(SequenceFragment(panicRoot))
-                }
-            }
-
-            PanicAction.ICE -> panicActionICE()
-            PanicAction.PENDING -> panicActionPending()
-            else ->                 //TODO, translate
-                Toast.makeText(
-                    this,
-                    "go to customize and set preferred panic action",
-                    Toast.LENGTH_LONG
-                ).show()
-        }
-    }*/
     private fun showUpdateDialog(versionInfo: VersionInfo){
         val dialog = UpdateDialog(versionInfo) {
             Logger.log("here we go")

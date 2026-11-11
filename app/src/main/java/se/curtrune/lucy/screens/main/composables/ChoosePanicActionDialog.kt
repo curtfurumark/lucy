@@ -5,7 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import se.curtrune.lucy.R
+import se.curtrune.lucy.classes.PanicOption
 import se.curtrune.lucy.screens.main.MainEvent
 import se.curtrune.lucy.screens.main.MainState
 
@@ -47,11 +48,15 @@ fun ChoosePanicActionDialog(
         Column(
             modifier = Modifier.fillMaxWidth()
                 .padding(16.dp)) {
-/*            Row(
+            Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween){
                 Text(text = "phone home")
-            }*/
+                Spacer(modifier = Modifier.weight(1f))
+                Checkbox(onCheckedChange = {
+                    onEvent(MainEvent.ChosenPanicOption(PanicOption.ICE))
+                }, checked = false)
+            }
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -70,6 +75,20 @@ fun ChoosePanicActionDialog(
                         Text(text = "diary")
                     })
                 }
+            }
+            Row(modifier = Modifier.fillMaxWidth()){
+                Text(text = "breathe")
+                Spacer(modifier = Modifier.weight(1f))
+                Checkbox(onCheckedChange = {
+                    onEvent(MainEvent.ChosenPanicOption(PanicOption.BREATHE))
+                }, checked = false)
+            }
+            Row(modifier = Modifier.fillMaxWidth()){
+                Text(text = "postpone")
+                Spacer(modifier = Modifier.weight(1f))
+                Checkbox(onCheckedChange = {
+                    onEvent(MainEvent.ChosenPanicOption(PanicOption.POSTPONE))
+                }, checked = false)
             }
             Row(
                 modifier = Modifier.fillMaxWidth(),

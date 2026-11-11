@@ -14,12 +14,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import se.curtrune.lucy.app.LucindaApplication
 import se.curtrune.lucy.persist.SettingsStore
-import se.curtrune.lucy.persist.SettingsStore.PanicAction
-import se.curtrune.lucy.app.UserPrefs
 import se.curtrune.lucy.classes.Mental
+import se.curtrune.lucy.classes.PanicOption
 import se.curtrune.lucy.composables.top_app_bar.SearchFilter
 import se.curtrune.lucy.screens.top_appbar.TopAppBarEvent
 import se.curtrune.lucy.screens.navigation.NavigationDrawerState
+import se.curtrune.lucy.screens.navigation.Route
 import se.curtrune.lucy.util.Logger
 import se.curtrune.lucy.web.LucindaApi
 
@@ -36,7 +36,7 @@ class MainViewModel : ViewModel() {
     val topAppBarState = _topAppBarState.asStateFlow()
     private val _eventChannel = Channel<MainChannelEvent>()
     val eventChannel = _eventChannel.receiveAsFlow()
-    private val mutableMessage = MutableLiveData<String>()
+    //private val mutableMessage = MutableLiveData<String>()
     private val _searchFilter = MutableStateFlow(SearchFilter("", false))
     val searchFilter = _searchFilter.asStateFlow()
     private val _mental = MutableLiveData<Mental>()
@@ -101,6 +101,14 @@ class MainViewModel : ViewModel() {
             is MainEvent.StartSequence -> {
                 startSequence()
             }
+
+            is MainEvent.ChosenPanicOption -> chosenPanicOption(event.option)
+        }
+    }
+    private fun ice() {
+        println("MainViewModel.ice()")
+        viewModelScope.launch {
+            _eventChannel.send(MainChannelEvent.ShowMessage("ICE not implemented"))
         }
     }
     fun navigate(fragment: LucindaFragment){
@@ -128,6 +136,26 @@ class MainViewModel : ViewModel() {
             is TopAppBarEvent.ActionMenu -> {println("action menu")}
             is TopAppBarEvent.CheckForUpdate -> {checkIfUpdateAvailable()}
             is TopAppBarEvent.DevActivity -> {navigateDevActivity()}
+        }
+    }
+    private fun breathe(){
+        println("breathe")
+        viewModelScope.launch {
+            _eventChannel.send(MainChannelEvent.Navigate(Route.BreatheScreenNavKey))
+        }
+    }
+
+    private fun chosenPanicOption(option: PanicOption){
+        when(option){
+            PanicOption.BREATHE-> breathe()
+            PanicOption.URL -> {}
+            PanicOption.ICE -> {}
+            PanicOption.GAME -> {}
+            PanicOption.MEDITATION -> {}
+            PanicOption.POSTPONE -> postpone()
+            PanicOption.PENDING -> {}
+            PanicOption.SEQUENCE -> {}
+            PanicOption.FIVE4321 -> {}
         }
     }
 
@@ -188,13 +216,12 @@ class MainViewModel : ViewModel() {
         _searchFilter.update { SearchFilter(filter, everywhere) }
     }
 
-    fun getPanicAction(context: Context?): PanicAction {
-        Logger.log("LucindaViewModel.getPanicAction()")
-        return UserPrefs.getPanicAction(context)
+    private fun postpone() {
+        println("LucindaViewModel.postpone()")
+        viewModelScope.launch {
+            _eventChannel.send(MainChannelEvent.ShowMessage("postpone"))
+        }
     }
-
-    val message: LiveData<String>
-        get() = mutableMessage
 
     private fun requestAffirmation() {
         println("LucindaViewModel.requestAffirmation()")
@@ -209,7 +236,7 @@ class MainViewModel : ViewModel() {
             val affirmation = LucindaApi.create().getAffirmation()
             println(affirmation.toString())
             _eventChannel.send(
-                MainChannelEvent.ShowAffirmation(affirmation)
+                MainChannelEvent.ShowQuoteDialog()
             )
         }
     }
@@ -223,9 +250,44 @@ class MainViewModel : ViewModel() {
     }
 
     private fun showPanicDialog(){
-        viewModelScope.launch{
-            _eventChannel.send(MainChannelEvent.ShowPanicDialog)
+        val panicOption = LucindaApplication.appModule.userSettings.panicOption
+        if( panicOption == PanicOption.PENDING) {
+            viewModelScope.launch {
+                _eventChannel.send(MainChannelEvent.ShowPanicDialog)
+            }
+        }else{
+            when(panicOption){
+                PanicOption.BREATHE -> breathe()
+                PanicOption.ICE -> ice()
+                PanicOption.URL -> url()
+                PanicOption.GAME -> game()
+                PanicOption.SEQUENCE -> sequence()
+                PanicOption.MEDITATION -> meditation()
+                PanicOption.POSTPONE -> {}
+                PanicOption.FIVE4321 -> {}
+            }
         }
+    }
+    private fun meditation() {
+        println("meditation")
+        viewModelScope.launch {
+            _eventChannel.send(MainChannelEvent.ShowMessage("meditation not implemented"))
+        }
+    }
+    private fun sequence() {
+        println("sequence")
+        viewModelScope.launch {
+            _eventChannel.send(MainChannelEvent.ShowMessage("sequence not implemented"))
+        }
+    }
+    private fun game() {
+        println("game")
+        viewModelScope.launch {
+            _eventChannel.send(MainChannelEvent.ShowMessage("game not implemented"))
+        }
+    }
+    private fun url() {
+        println("url")
     }
 
     private val currentFragment = MutableLiveData<Fragment>()

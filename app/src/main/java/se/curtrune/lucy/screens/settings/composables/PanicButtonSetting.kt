@@ -27,7 +27,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import se.curtrune.lucy.R
 import se.curtrune.lucy.activities.kotlin.ui.theme.LucyTheme
-import se.curtrune.lucy.screens.settings.screens.panic.PanicOption
+import se.curtrune.lucy.classes.PanicOption
 import se.curtrune.lucy.screens.settings.screens.main.UserEvent
 import se.curtrune.lucy.screens.settings.screens.main.UserState
 

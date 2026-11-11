@@ -2,7 +2,7 @@ package se.curtrune.lucy.screens.settings.screens.main
 
 import androidx.navigation3.runtime.NavKey
 import se.curtrune.lucy.app.InitialScreen
-import se.curtrune.lucy.screens.settings.screens.panic.PanicOption
+import se.curtrune.lucy.classes.PanicOption
 
 sealed interface UserEvent {
     data class Navigate(val navKey: NavKey): UserEvent

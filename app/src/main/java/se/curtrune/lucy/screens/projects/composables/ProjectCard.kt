@@ -40,6 +40,7 @@ fun ProjectCard(item: Item, modifier: Modifier = Modifier, onEvent: (ProjectsEve
     var dropDownExpanded by remember {
         mutableStateOf(false)
     }
+    println("item ${item.heading} isDone $isDone")
     val swipeState = rememberSwipeToDismissBoxState(
         confirmValueChange = {
             if( it == SwipeToDismissBoxValue.EndToStart){

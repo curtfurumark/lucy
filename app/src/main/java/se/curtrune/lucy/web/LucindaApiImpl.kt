@@ -154,6 +154,10 @@ class LucindaApiImpl(private val client: HttpClient): LucindaApi {
         return client.get(Urls.GET_QUOTES_URL).body()
     }
 
+    override suspend fun getMyQuote(): Quote {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun updateMessage(message: Message): String {
         return try {
             client.post {

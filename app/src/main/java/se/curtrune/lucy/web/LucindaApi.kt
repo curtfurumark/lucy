@@ -28,6 +28,7 @@ interface LucindaApi {
     suspend fun getUpdateAvailable(): VersionInfo
     suspend fun insertMessage(message: Message): String
     suspend fun getQuotes(): List<Quote>
+    suspend fun getMyQuote(): Quote
     suspend fun updateMessage(message: Message): String
 
     companion object{

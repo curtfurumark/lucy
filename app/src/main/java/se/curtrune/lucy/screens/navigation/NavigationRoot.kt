@@ -31,6 +31,7 @@ import se.curtrune.lucy.screens.duration.composables.DurationScreen
 import se.curtrune.lucy.screens.file_attach_screen.FileAttachScreen
 import se.curtrune.lucy.screens.file_viewer.FileViewerScreen
 import se.curtrune.lucy.screens.edit.composables.ItemEditorScreen
+import se.curtrune.lucy.screens.five4321.Five4321Screen
 import se.curtrune.lucy.screens.lists.composables.EditableBulletListScreen
 import se.curtrune.lucy.screens.medicine.composable.MedicineScreen
 import se.curtrune.lucy.screens.mental_stats.composables.MentalStatsScreen
@@ -156,6 +157,12 @@ fun NavigationRoot(modifier: Modifier = Modifier, backStack: NavBackStack<NavKey
                         FileViewerScreen(navKey.item, onBack = {
                             backStack.removeLastOrNull()
                         })
+                    }
+                }
+                is Route.Five4321ScreenNavKey -> {
+                    NavEntry(
+                        key = navKey) {
+                        Five4321Screen(modifier = modifier)
                     }
                 }
 

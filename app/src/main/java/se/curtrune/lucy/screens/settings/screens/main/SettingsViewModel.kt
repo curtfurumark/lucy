@@ -13,8 +13,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import se.curtrune.lucy.app.InitialScreen
 import se.curtrune.lucy.app.LucindaApplication
+import se.curtrune.lucy.classes.PanicOption
 import se.curtrune.lucy.classes.google_calendar.GoogleFactory
-import se.curtrune.lucy.screens.settings.screens.panic.PanicOption
 import se.curtrune.lucy.screens.settings.UserChannel
 import se.curtrune.lucy.screens.top_appbar.TopAppbarModule
 
